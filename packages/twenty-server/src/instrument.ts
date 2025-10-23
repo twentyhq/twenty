@@ -40,11 +40,15 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       Sentry.expressIntegration(),
       Sentry.graphqlIntegration(),
       Sentry.postgresIntegration(),
-      Sentry.vercelAIIntegration(),
+      Sentry.vercelAIIntegration({
+        recordInputs: true,
+        recordOutputs: true,
+      }),
       nodeProfilingIntegration(),
     ],
     tracesSampleRate: 0.1,
     profilesSampleRate: 0.3,
+    sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
   });
 }

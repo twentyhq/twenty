@@ -15,6 +15,7 @@ import { getAppPath } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -131,6 +132,7 @@ export class AgentExecutionService implements AgentExecutionContext {
         messages: convertToModelMessages(messages),
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
         providerOptions,
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
         experimental_repairToolCall: async ({
           toolCall,
           tools: toolsForRepair,
