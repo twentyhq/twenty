@@ -73,47 +73,16 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
       objectMetadataNameSingular,
     );
 
-    let queryBuilderWithFiltersAndWithoutGroupBy =
-      executionArgs.repository.createQueryBuilder(objectMetadataNameSingular);
+    const shouldIncludeRecords = this.shouldIncludeRecords(executionArgs);
 
     let appliedFilters =
       executionArgs.args.filter ?? ({} as ObjectRecordFilter);
 
-    if (executionArgs.args.viewId) {
-      appliedFilters = await this.addFiltersFromView({
-        executionArgs,
-        objectMetadataItemWithFieldMaps,
-        appliedFilters,
-      });
-
-      executionArgs.graphqlQueryParser.applyFilterToBuilder(
-        queryBuilderWithFiltersAndWithoutGroupBy,
-        objectMetadataNameSingular,
-        appliedFilters,
-      );
-    }
-
-    executionArgs.graphqlQueryParser.applyFilterToBuilder(
+    await this.addFiltersToQueryBuilder({
+      executionArgs,
+      appliedFilters,
       queryBuilder,
-      objectMetadataNameSingular,
-      appliedFilters,
-    );
-
-    executionArgs.graphqlQueryParser.applyFilterToBuilder(
-      queryBuilderWithFiltersAndWithoutGroupBy,
-      objectMetadataNameSingular,
-      appliedFilters,
-    );
-
-    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
-      queryBuilder,
-      appliedFilters,
-    );
-
-    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
-      queryBuilderWithFiltersAndWithoutGroupBy,
-      appliedFilters,
-    );
+    });
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
       selectedAggregatedFields:
@@ -152,8 +121,6 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
           : undefined,
       };
     });
-
-    const shouldIncludeRecords = this.shouldIncludeRecords(executionArgs);
 
     groupByDefinitions.forEach((groupByColumn, index) => {
       queryBuilder.addSelect(groupByColumn.expression, groupByColumn.alias);
@@ -199,9 +166,17 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     );
 
     if (shouldIncludeRecords) {
+      const queryBuilderWithFiltersAndWithoutGroupBy =
+        executionArgs.repository.createQueryBuilder(objectMetadataNameSingular);
+
+      await this.addFiltersToQueryBuilder({
+        executionArgs,
+        appliedFilters,
+        queryBuilder: queryBuilderWithFiltersAndWithoutGroupBy,
+      });
+
       return this.groupByWithRecordService.resolveWithRecords({
-        queryBuilderWithFiltersAndWithoutGroupBy:
-          queryBuilderWithFiltersAndWithoutGroupBy as WorkspaceSelectQueryBuilder<ObjectLiteral>,
+        queryBuilderWithFiltersAndWithoutGroupBy,
         queryBuilderWithGroupBy: queryBuilder,
         groupByDefinitions,
         executionArgs,
@@ -327,6 +302,41 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
     ]);
 
     return appliedFilters;
+  }
+
+  private async addFiltersToQueryBuilder({
+    executionArgs,
+    appliedFilters,
+    queryBuilder,
+  }: {
+    executionArgs: GraphqlQueryResolverExecutionArgs<GroupByResolverArgs>;
+    appliedFilters: ObjectRecordFilter;
+    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>;
+  }): Promise<void> {
+    const objectMetadataItemWithFieldMaps =
+      executionArgs.options.objectMetadataItemWithFieldMaps;
+
+    const objectMetadataNameSingular =
+      objectMetadataItemWithFieldMaps.nameSingular;
+
+    if (executionArgs.args.viewId) {
+      appliedFilters = await this.addFiltersFromView({
+        executionArgs,
+        objectMetadataItemWithFieldMaps,
+        appliedFilters,
+      });
+    }
+
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
+      queryBuilder,
+      objectMetadataNameSingular,
+      appliedFilters,
+    );
+
+    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
+      queryBuilder,
+      appliedFilters,
+    );
   }
 
   async validate(
