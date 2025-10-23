@@ -1,20 +1,14 @@
-import {
-  type ToolUIPart,
-  type UIDataTypes,
-  type UIMessagePart,
-  type UITools,
-} from 'ai';
+import { type ToolUIPart } from 'ai';
+import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { type AgentChatMessagePartEntity } from 'src/engine/metadata-modules/agent/agent-chat-message-part.entity';
 
-const isToolPart = (
-  part: UIMessagePart<UIDataTypes, UITools>,
-): part is ToolUIPart => {
+const isToolPart = (part: ExtendedUIMessagePart): part is ToolUIPart => {
   return part.type.includes('tool-') && 'toolCallId' in part;
 };
 
 export const mapUIMessagePartsToDBParts = (
-  uiMessageParts: UIMessagePart<UIDataTypes, UITools>[],
+  uiMessageParts: ExtendedUIMessagePart[],
   messageId: string,
 ): Partial<AgentChatMessagePartEntity>[] => {
   return uiMessageParts.map((part, index) => {
@@ -61,6 +55,12 @@ export const mapUIMessagePartsToDBParts = (
         };
       case 'step-start':
         return basePart;
+      case 'data-routing-status':
+        return {
+          ...basePart,
+          textContent: part.data.text,
+          state: part.data.state,
+        };
       default:
         {
           if (isToolPart(part)) {

@@ -11,11 +11,11 @@ import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful update field metadata %s tests suite v2',
@@ -128,6 +128,7 @@ describe.each(fieldMetadataEnumTypes)(
         : rawDefaultValue;
 
       const { data: firstUpdate } = await updateOneFieldMetadata({
+        expectToFail: false,
         input: {
           idToUpdate: createdFieldMetadataId,
           updatePayload: {
@@ -146,6 +147,7 @@ describe.each(fieldMetadataEnumTypes)(
 
       const updatedOptions = initialOptions.slice(1);
       const { data: secondUpdate, errors } = await updateOneFieldMetadata({
+        expectToFail: false,
         input: {
           idToUpdate: createdFieldMetadataId,
           updatePayload: {

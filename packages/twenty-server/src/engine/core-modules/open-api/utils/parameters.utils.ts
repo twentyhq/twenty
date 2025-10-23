@@ -75,6 +75,20 @@ export const computeUpsertParameters = (): OpenAPIV3_1.ParameterObject => {
   };
 };
 
+export const computeSoftDeleteParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'soft_delete',
+    in: 'query',
+    description:
+      'If true, soft deletes the objects. If false, objects are permanently deleted.',
+    required: false,
+    schema: {
+      type: 'boolean',
+      default: false,
+    },
+  };
+};
+
 export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'filter',

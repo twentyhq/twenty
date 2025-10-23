@@ -83,6 +83,7 @@ export {
   IconMessageCircle as IconComment,
   IconCopy,
   IconCopyPlus,
+  IconCpu,
   IconCreativeCommonsSa,
   IconCreditCard,
   IconCsv,

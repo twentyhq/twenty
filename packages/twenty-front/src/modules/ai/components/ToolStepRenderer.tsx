@@ -4,13 +4,17 @@ import { useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { JsonTree } from 'twenty-ui/json-visualizer';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { type ToolInput } from '@/ai/types/ToolInput';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
+import { useLingui } from '@lingui/react/macro';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
+import { type JsonValue } from 'type-fest';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -53,11 +57,6 @@ const StyledDisplayMessage = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledPre = styled.pre`
-  margin-top: ${({ theme }) => theme.spacing(1)};
-  white-space: pre-wrap;
-`;
-
 const StyledIconTextContainer = styled.div`
   display: flex;
   align-items: center;
@@ -68,6 +67,35 @@ const StyledIconTextContainer = styled.div`
   }
 `;
 
+const StyledTabContainer = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledTab = styled.div<{ isActive: boolean }>`
+  color: ${({ theme, isActive }) =>
+    isActive ? theme.font.color.primary : theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme, isActive }) =>
+    isActive ? theme.font.weight.medium : theme.font.weight.regular};
+  cursor: pointer;
+  transition: color ${({ theme }) => theme.animation.duration.normal}s;
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+
+  &:hover {
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
+`;
+
+const StyledJsonContainer = styled.div`
+  max-height: 400px;
+  overflow: auto;
+`;
+
+type TabType = 'output' | 'input';
+
 export const ToolStepRenderer = ({
   input,
   output,
@@ -77,10 +105,15 @@ export const ToolStepRenderer = ({
   output: ToolUIPart['output'];
   toolName: string;
 }) => {
+  const { t } = useLingui();
   const theme = useTheme();
+  const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('output');
 
   const isExpandable = isDefined(output);
+
+  const isTwoFirstDepths = ({ depth }: { depth: number }) => depth < 2;
 
   if (!output) {
     return (
@@ -132,7 +165,33 @@ export const ToolStepRenderer = ({
       {isExpandable && (
         <AnimatedExpandableContainer isExpanded={isExpanded}>
           <StyledContentContainer>
-            <StyledPre>{JSON.stringify(result, null, 2)}</StyledPre>
+            <StyledTabContainer>
+              <StyledTab
+                isActive={activeTab === 'output'}
+                onClick={() => setActiveTab('output')}
+              >
+                Output
+              </StyledTab>
+              <StyledTab
+                isActive={activeTab === 'input'}
+                onClick={() => setActiveTab('input')}
+              >
+                Input
+              </StyledTab>
+            </StyledTabContainer>
+
+            <StyledJsonContainer>
+              <JsonTree
+                value={(activeTab === 'output' ? result : input) as JsonValue}
+                shouldExpandNodeInitially={isTwoFirstDepths}
+                emptyArrayLabel={t`Empty Array`}
+                emptyObjectLabel={t`Empty Object`}
+                emptyStringLabel={t`[empty string]`}
+                arrowButtonCollapsedLabel={t`Expand`}
+                arrowButtonExpandedLabel={t`Collapse`}
+                onNodeValueClick={copyToClipboard}
+              />
+            </StyledJsonContainer>
           </StyledContentContainer>
         </AnimatedExpandableContainer>
       )}

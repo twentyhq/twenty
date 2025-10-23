@@ -47,6 +47,7 @@ export { workflowWebhookTriggerSchema } from './schemas/webhook-trigger-schema';
 export { workflowActionSchema } from './schemas/workflow-action-schema';
 export { workflowDelayActionSchema } from './schemas/workflow-delay-action-schema';
 export { workflowDelayActionSettingsSchema } from './schemas/workflow-delay-action-settings-schema';
+export { workflowFileSchema } from './schemas/workflow-file-action-schema';
 export { workflowRunSchema } from './schemas/workflow-run-schema';
 export { workflowRunStateSchema } from './schemas/workflow-run-state-schema';
 export { workflowRunStateStepInfoSchema } from './schemas/workflow-run-state-step-info-schema';

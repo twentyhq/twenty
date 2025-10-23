@@ -82,4 +82,9 @@ export class UpdateWorkspaceInput {
   @Min(0)
   @IsOptional()
   trashRetentionDays?: number;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  routerModel?: string;
 }
