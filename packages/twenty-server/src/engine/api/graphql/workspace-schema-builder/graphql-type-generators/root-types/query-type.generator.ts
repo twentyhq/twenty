@@ -18,7 +18,7 @@ export class QueryTypeGenerator {
   async buildAndStore(objectMetadataCollection: ObjectMetadataEntity[]) {
     return this.rootTypeGenerator.buildAndStore(
       objectMetadataCollection,
-      [...workspaceResolverBuilderMethodNames.queries],
+      workspaceResolverBuilderMethodNames.queries,
       GqlOperation.Query,
     );
   }
