@@ -29,6 +29,7 @@ export enum CommonQueryNames {
   FIND_DUPLICATES = 'findDuplicates',
   RESTORE_MANY = 'restoreMany',
   RESTORE_ONE = 'restoreOne',
+  MERGE_MANY = 'mergeMany',
 }
 
 interface BaseQueryArgs {
@@ -103,6 +104,12 @@ export interface RestoreManyQueryArgs {
 
 export interface RestoreOneQueryArgs {
   id: string;
+}
+
+export interface MergeManyQueryArgs {
+  ids: string[];
+  conflictPriorityIndex: number;
+  dryRun?: boolean;
 }
 
 export type CommonQueryArgs =
