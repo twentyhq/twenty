@@ -81,6 +81,65 @@ export const getFindOneResponse200 = (
   };
 };
 
+export const getRestoreOneResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`restore${capitalize(item.nameSingular)}`]: {
+                  $ref: schemaRef,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+export const getRestoreManyResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(
+    item.nameSingular,
+  )}ForResponse`;
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`restore${capitalize(item.namePlural)}`]: {
+                  type: 'array',
+                  items: {
+                    $ref: schemaRef,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
 export const getCreateOneResponse201 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
   fromMetadata = false,

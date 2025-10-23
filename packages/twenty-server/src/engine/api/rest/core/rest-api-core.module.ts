@@ -13,6 +13,8 @@ import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/
 import { RestApiFindManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-many.handler';
 import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-one.handler';
 import { RestApiGroupByHandler } from 'src/engine/api/rest/core/handlers/rest-api-group-by.handler';
+import { RestApiRestoreManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-restore-many.handler';
+import { RestApiRestoreOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-restore-one.handler';
 import { RestApiUpdateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-many.handler';
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
 import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/core-query-builder.module';
@@ -45,6 +47,8 @@ const restApiCoreResolvers = [
   RestApiDestroyManyHandler,
   RestApiDeleteOneHandler,
   RestApiDeleteManyHandler,
+  RestApiRestoreOneHandler,
+  RestApiRestoreManyHandler,
 ];
 
 @Module({

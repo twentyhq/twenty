@@ -27,6 +27,8 @@ export enum CommonQueryNames {
   UPDATE_ONE = 'updateOne',
   UPDATE_MANY = 'updateMany',
   FIND_DUPLICATES = 'findDuplicates',
+  RESTORE_MANY = 'restoreMany',
+  RESTORE_ONE = 'restoreOne',
 }
 
 interface BaseQueryArgs {
@@ -95,6 +97,14 @@ export interface FindDuplicatesQueryArgs {
   ids?: string[];
 }
 
+export interface RestoreManyQueryArgs {
+  filter: ObjectRecordFilter;
+}
+
+export interface RestoreOneQueryArgs {
+  id: string;
+}
+
 export type CommonQueryArgs =
   | FindOneQueryArgs
   | FindManyQueryArgs
@@ -107,7 +117,9 @@ export type CommonQueryArgs =
   | DeleteManyQueryArgs
   | UpdateOneQueryArgs
   | UpdateManyQueryArgs
-  | FindDuplicatesQueryArgs;
+  | FindDuplicatesQueryArgs
+  | RestoreManyQueryArgs
+  | RestoreOneQueryArgs;
 
 export type CommonInput<T extends CommonQueryArgs> = T & BaseQueryArgs;
 

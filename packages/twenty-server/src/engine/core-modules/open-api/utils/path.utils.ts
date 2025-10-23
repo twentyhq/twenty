@@ -16,6 +16,8 @@ import {
   getFindManyResponse200,
   getFindOneResponse200,
   getJsonResponse,
+  getRestoreManyResponse200,
+  getRestoreOneResponse200,
   getUpdateManyResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
@@ -197,6 +199,48 @@ export const computeDuplicatesResultPath = (
       requestBody: getFindDuplicatesRequestBody(capitalize(item.nameSingular)),
       responses: {
         '200': getFindDuplicatesResponse200(item),
+        '400': { $ref: '#/components/responses/400' },
+        '401': { $ref: '#/components/responses/401' },
+      },
+    },
+  } as OpenAPIV3_1.PathItemObject;
+};
+
+export const computeRestoreOneResultPath = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3_1.PathItemObject => {
+  return {
+    patch: {
+      tags: [item.namePlural],
+      summary: `Restore One ${item.nameSingular}`,
+      operationId: `restoreOne${capitalize(item.nameSingular)}`,
+      parameters: [
+        { $ref: '#/components/parameters/idPath' },
+        { $ref: '#/components/parameters/depth' },
+      ],
+      responses: {
+        '200': getRestoreOneResponse200(item),
+        '400': { $ref: '#/components/responses/400' },
+        '401': { $ref: '#/components/responses/401' },
+      },
+    },
+  } as OpenAPIV3_1.PathItemObject;
+};
+
+export const computeRestoreManyResultPath = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3_1.PathItemObject => {
+  return {
+    patch: {
+      tags: [item.namePlural],
+      summary: `Restore Many ${item.namePlural}`,
+      operationId: `restoreMany${capitalize(item.namePlural)}`,
+      parameters: [
+        { $ref: '#/components/parameters/filter' },
+        { $ref: '#/components/parameters/depth' },
+      ],
+      responses: {
+        '200': getRestoreManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },

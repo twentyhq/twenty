@@ -106,6 +106,19 @@ export class RestApiCoreController {
     res.status(200).send(result);
   }
 
+  @Patch('restore/*')
+  async handleApiRestore(
+    @Req() request: AuthenticatedRequest,
+    @Res() res: Response,
+  ) {
+    this.logger.log(
+      `[REST API] Processing RESTORE request to ${request.path} on workspace ${request.workspaceId}`,
+    );
+    const result = await this.restApiCoreService.restore(request);
+
+    res.status(200).send(result);
+  }
+
   @Patch('*')
   async handleApiPatch(
     @Req() request: AuthenticatedRequest,

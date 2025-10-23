@@ -12,7 +12,7 @@ export const parseCorePath = (
     .split('/')
     .filter(Boolean);
 
-  if (queryAction.length > 2) {
+  if (queryAction.length > 3) {
     throw new BadRequestException(
       `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
     );
@@ -34,6 +34,16 @@ export const parseCorePath = (
 
   if (queryAction[1] === 'duplicates' || queryAction[1] === 'group') {
     return { object: queryAction[0] };
+  }
+
+  if (queryAction[0] === 'restore') {
+    return {
+      object: queryAction[1],
+      id:
+        queryAction.length === 3 && isValidUuid(queryAction[2])
+          ? queryAction[2]
+          : undefined,
+    };
   }
 
   const recordId = queryAction[1];

@@ -12,6 +12,8 @@ import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/
 import { RestApiFindManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-many.handler';
 import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-one.handler';
 import { RestApiGroupByHandler } from 'src/engine/api/rest/core/handlers/rest-api-group-by.handler';
+import { RestApiRestoreManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-restore-many.handler';
+import { RestApiRestoreOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-restore-one.handler';
 import { RestApiUpdateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-many.handler';
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
@@ -35,6 +37,8 @@ export class RestApiCoreService {
     private readonly restApiDestroyManyHandler: RestApiDestroyManyHandler,
     private readonly restApiDeleteOneHandler: RestApiDeleteOneHandler,
     private readonly restApiDeleteManyHandler: RestApiDeleteManyHandler,
+    private readonly restApiRestoreOneHandler: RestApiRestoreOneHandler,
+    private readonly restApiRestoreManyHandler: RestApiRestoreManyHandler,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -149,5 +153,23 @@ export class RestApiCoreService {
     throw new BadRequestException(
       'Activate feature flag IS_COMMON_API_ENABLED to use Delete in the REST API',
     );
+  }
+
+  async restore(request: AuthenticatedRequest) {
+    const { id: recordId } = parseCorePath(request);
+
+    const isCommonApiEnabled = await this.isCommonApiEnabled(request);
+
+    if (isCommonApiEnabled) {
+      if (isDefined(recordId)) {
+        return await this.restApiRestoreOneHandler.handle(request);
+      } else {
+        return await this.restApiRestoreManyHandler.handle(request);
+      }
+    } else {
+      throw new BadRequestException(
+        'Activate feature flag to use Restore in the REST API',
+      );
+    }
   }
 }
