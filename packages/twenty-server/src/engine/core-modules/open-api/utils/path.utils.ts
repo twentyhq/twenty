@@ -4,6 +4,7 @@ import { capitalize } from 'twenty-shared/utils';
 import {
   getArrayRequestBody,
   getFindDuplicatesRequestBody,
+  getMergeManyRequestBody,
   getRequestBody,
   getUpdateRequestBody,
 } from 'src/engine/core-modules/open-api/utils/request-body.utils';
@@ -16,6 +17,7 @@ import {
   getFindManyResponse200,
   getFindOneResponse200,
   getJsonResponse,
+  getMergeManyResponse200,
   getRestoreManyResponse200,
   getRestoreOneResponse200,
   getUpdateManyResponse200,
@@ -241,6 +243,25 @@ export const computeRestoreManyResultPath = (
       ],
       responses: {
         '200': getRestoreManyResponse200(item),
+        '400': { $ref: '#/components/responses/400' },
+        '401': { $ref: '#/components/responses/401' },
+      },
+    },
+  } as OpenAPIV3_1.PathItemObject;
+};
+
+export const computeMergeManyResultPath = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3_1.PathItemObject => {
+  return {
+    patch: {
+      tags: [item.namePlural],
+      summary: `Merge Many ${item.namePlural}`,
+      operationId: `mergeMany${capitalize(item.namePlural)}`,
+      parameters: [{ $ref: '#/components/parameters/depth' }],
+      requestBody: getMergeManyRequestBody(),
+      responses: {
+        '200': getMergeManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },

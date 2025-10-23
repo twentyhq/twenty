@@ -28,6 +28,7 @@ import {
   computeBatchPath,
   computeDuplicatesResultPath,
   computeManyResultPath,
+  computeMergeManyResultPath,
   computeRestoreManyResultPath,
   computeRestoreOneResultPath,
   computeSingleResultPath,
@@ -130,6 +131,7 @@ export class OpenApiService {
       paths[`/restore/${item.namePlural}/{id}`] =
         computeRestoreOneResultPath(item);
       paths[`/restore/${item.namePlural}`] = computeRestoreManyResultPath(item);
+      paths[`/${item.namePlural}/merge`] = computeMergeManyResultPath(item);
 
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);

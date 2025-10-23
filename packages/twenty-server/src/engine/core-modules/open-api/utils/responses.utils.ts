@@ -439,3 +439,32 @@ export const getFindDuplicatesResponse200 = (
     },
   };
 };
+
+export const getMergeManyResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(
+    item.nameSingular,
+  )}ForResponse`;
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`merge${capitalize(item.namePlural)}`]: {
+                  $ref: schemaRef,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
