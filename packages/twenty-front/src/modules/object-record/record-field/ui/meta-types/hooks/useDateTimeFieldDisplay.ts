@@ -1,9 +1,8 @@
 import { useContext } from 'react';
 
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
-
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldDateTimeMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useDateTimeFieldDisplay = () => {

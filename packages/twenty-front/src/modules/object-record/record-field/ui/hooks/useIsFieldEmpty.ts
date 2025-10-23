@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldContext } from '../contexts/FieldContext';
 

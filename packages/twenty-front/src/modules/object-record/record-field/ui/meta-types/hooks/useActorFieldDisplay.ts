@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
 
 import { AuthContext } from '@/auth/contexts/AuthContext';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceMember } from '~/generated-metadata/graphql';
 import { FieldContext } from '../../contexts/FieldContext';

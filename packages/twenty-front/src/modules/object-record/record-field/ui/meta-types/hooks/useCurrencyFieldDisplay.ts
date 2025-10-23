@@ -1,9 +1,8 @@
 import { useContext } from 'react';
 
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
-
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { FieldContext } from '../../contexts/FieldContext';
 import { type FieldCurrencyValue } from '../../types/FieldMetadata';

@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
-
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useBooleanFieldDisplay = () => {

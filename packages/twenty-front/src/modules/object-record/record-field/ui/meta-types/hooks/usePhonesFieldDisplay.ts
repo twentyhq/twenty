@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/useRecordFieldValue';
 
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const usePhonesFieldDisplay = () => {
