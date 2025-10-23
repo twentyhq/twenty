@@ -5,7 +5,7 @@ import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/use
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { type NumberChartConfiguration } from '~/generated/graphql';
+import { type AggregateChartConfiguration } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 export const useGraphWidgetAggregateQuery = ({
@@ -13,7 +13,7 @@ export const useGraphWidgetAggregateQuery = ({
   configuration,
 }: {
   objectMetadataItemId: string;
-  configuration: NumberChartConfiguration;
+  configuration: AggregateChartConfiguration;
 }) => {
   const { objectMetadataItem, gqlOperationFilter, aggregateField } =
     useGraphWidgetQueryCommon({

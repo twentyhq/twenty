@@ -2,7 +2,7 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
 import { lazy, Suspense } from 'react';
 import {
-  type NumberChartConfiguration,
+  type AggregateChartConfiguration,
   type PageLayoutWidget,
 } from '~/generated/graphql';
 
@@ -21,7 +21,7 @@ export const GraphWidgetNumberChartRenderer = ({
 }) => {
   const { value, loading } = useGraphWidgetAggregateQuery({
     objectMetadataItemId: widget.objectMetadataId,
-    configuration: widget.configuration as NumberChartConfiguration,
+    configuration: widget.configuration as AggregateChartConfiguration,
   });
 
   if (loading) {

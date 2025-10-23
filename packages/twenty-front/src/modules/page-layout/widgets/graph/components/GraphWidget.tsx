@@ -63,7 +63,7 @@ export const GraphWidget = ({
   }
 
   switch (graphType) {
-    case GraphType.NUMBER:
+    case GraphType.AGGREGATE:
       return <GraphWidgetNumberChartRenderer widget={widget} />;
 
     case GraphType.GAUGE:

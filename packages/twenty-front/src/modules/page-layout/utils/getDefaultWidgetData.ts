@@ -2,7 +2,7 @@ import { GraphType } from '~/generated-metadata/graphql';
 
 export const getDefaultWidgetData = (graphType: GraphType) => {
   switch (graphType) {
-    case GraphType.NUMBER:
+    case GraphType.AGGREGATE:
       return {
         value: '1,234',
         trendPercentage: 15.2,

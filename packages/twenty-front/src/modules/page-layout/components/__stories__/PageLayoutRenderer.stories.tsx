@@ -88,8 +88,8 @@ const mixedGraphsPageLayoutMocks = {
             columnSpan: 3,
           },
           configuration: {
-            __typename: 'NumberChartConfiguration',
-            graphType: GraphType.NUMBER,
+            __typename: 'AggregateChartConfiguration',
+            graphType: GraphType.AGGREGATE,
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
           },

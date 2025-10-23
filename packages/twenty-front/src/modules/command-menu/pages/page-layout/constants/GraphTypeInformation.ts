@@ -1,6 +1,6 @@
+import { AGGREGATE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/AggregateChartSettings';
 import { GAUGE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/GaugeChartSettings';
 import { LINE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/LineChartSettings';
-import { NUMBER_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/NumberChartSettings';
 import { PIE_CHART_SETTINGS } from '@/command-menu/pages/page-layout/constants/PieChartSettings';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { getBarChartSettings } from '@/command-menu/pages/page-layout/utils/getBarChartSettings';
@@ -45,10 +45,10 @@ export const GRAPH_TYPE_INFORMATION: Record<
     icon: IconChartLine,
     settings: LINE_CHART_SETTINGS,
   },
-  [GraphType.NUMBER]: {
-    label: msg`Number`,
+  [GraphType.AGGREGATE]: {
+    label: msg`Aggregate`,
     icon: Icon123,
-    settings: NUMBER_CHART_SETTINGS,
+    settings: AGGREGATE_CHART_SETTINGS,
   },
   [GraphType.GAUGE]: {
     label: msg`Gauge`,
