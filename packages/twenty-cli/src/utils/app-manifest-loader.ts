@@ -163,12 +163,15 @@ export const loadManifest = async (
     (manifest, path) => validateSchema('object', manifest, path),
   );
 
-  const serverlessFunctions = await loadCoreEntity(
+  const serverlessFunctionsFromManifest = await loadCoreEntity(
     path.join(appPath, 'serverlessFunctions'),
     (manifest, path) => validateSchema('serverlessFunction', manifest, path),
   );
 
-  const { objects: objectsFromDecorators } = loadManifestFromDecorators();
+  const {
+    objects: objectsFromDecorators,
+    serverlessFunctions: serverlessFunctionsFromDecorators,
+  } = loadManifestFromDecorators();
 
   const objects = (
     [...objectFromManifests, ...objectsFromDecorators] as ObjectManifest[]
@@ -176,6 +179,16 @@ export const loadManifest = async (
     object.standardId = object.universalIdentifier;
     return object;
   });
+
+  const sources = await loadFolderContentIntoJson('src');
+
+  const serverlessFunctions = [
+    ...serverlessFunctionsFromManifest,
+    ...serverlessFunctionsFromDecorators.map((serverlessFunction) => ({
+      ...serverlessFunction,
+      code: { src: sources },
+    })),
+  ];
 
   return {
     packageJson,

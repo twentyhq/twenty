@@ -26,6 +26,7 @@ export type AppManifest = PackageJson & {
   agents: AgentManifest[];
   objects: ObjectManifest[];
   serverlessFunctions: ServerlessFunctionManifest[];
+  sources: Sources;
 };
 
 export type CoreEntityManifest =
@@ -41,6 +42,8 @@ export type ServerlessFunctionManifest = {
   timeoutSeconds?: number;
   triggers: ServerlessFunctionTriggerManifest[];
   code: ServerlessFunctionCodeManifest;
+  handlerPath: string;
+  handlerName: string;
 };
 
 export enum HTTPMethod {
@@ -51,21 +54,27 @@ export enum HTTPMethod {
   DELETE = 'DELETE',
 }
 
+export type DatabaseEventTrigger = {
+  type: 'databaseEvent';
+  eventName: string;
+};
+
+export type CronTrigger = {
+  type: 'cron';
+  pattern: string;
+};
+
+export type RouteTrigger = {
+  type: 'route';
+  path: string;
+  httpMethod: string;
+  isAuthRequired: boolean;
+};
+
 export type ServerlessFunctionTriggerManifest =
-  | {
-      type: 'cron';
-      schedule: string;
-    }
-  | {
-      type: 'databaseEvent';
-      eventName: string;
-    }
-  | {
-      type: 'route';
-      path: string;
-      httpMethod: HTTPMethod;
-      isAuthRequired: boolean;
-    };
+  | CronTrigger
+  | DatabaseEventTrigger
+  | RouteTrigger;
 
 type Sources = { [key: string]: string | Sources };
 

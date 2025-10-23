@@ -398,6 +398,8 @@ export class ApplicationSyncService {
           name: serverlessFunctionToSync.name,
           timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
           code: serverlessFunctionToSync.code,
+          handlerPath: serverlessFunctionToSync.handlerPath,
+          handlerName: serverlessFunctionToSync.handlerName,
         },
       };
 
@@ -431,6 +433,8 @@ export class ApplicationSyncService {
         code: serverlessFunctionToCreate.code,
         universalIdentifier: serverlessFunctionToCreate.universalIdentifier,
         timeoutSeconds: serverlessFunctionToCreate.timeoutSeconds,
+        handlerPath: serverlessFunctionToCreate.handlerPath,
+        handlerName: serverlessFunctionToCreate.handlerName,
         applicationId,
         serverlessFunctionLayerId,
       };
@@ -659,7 +663,7 @@ export class ApplicationSyncService {
         id: triggerToUpdate.id,
         update: {
           settings: {
-            pattern: triggerToSync.schedule,
+            pattern: triggerToSync.pattern,
           },
         },
       };
@@ -677,7 +681,7 @@ export class ApplicationSyncService {
 
       const createCronTriggerInput = {
         settings: {
-          pattern: triggerToCreate.schedule,
+          pattern: triggerToCreate.pattern,
         },
         universalIdentifier: triggerToCreate.universalIdentifier,
         serverlessFunctionId,

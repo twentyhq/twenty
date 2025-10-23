@@ -1,16 +1,8 @@
-import { type SyncableEntityOptions } from '@/decorators/types/syncable-entity-options.type';
-
-enum HTTPMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
-}
+import { type SyncableEntityOptions } from '@/types/syncable-entity-options.type';
 
 type RouteTriggerOptions = SyncableEntityOptions & {
   path: string;
-  httpMethod: HTTPMethod;
+  httpMethod: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   isAuthRequired: boolean;
 };
 

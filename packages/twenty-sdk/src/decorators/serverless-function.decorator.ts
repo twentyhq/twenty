@@ -1,4 +1,4 @@
-import { type SyncableEntityOptions } from '@/decorators/types/syncable-entity-options.type';
+import { type SyncableEntityOptions } from '@/types/syncable-entity-options.type';
 
 type ServerlessFunctionOptions = SyncableEntityOptions & {
   name?: string;
