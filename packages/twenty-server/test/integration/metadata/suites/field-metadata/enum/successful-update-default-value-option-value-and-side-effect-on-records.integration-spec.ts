@@ -11,7 +11,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 const TEST_OBJECT_NAME_SINGULAR = 'testSelectObject';
 const TEST_OBJECT_NAME_PLURAL = 'testSelectObjects';
 
-describe('update default value option value', () => {
+describe('successful update default value option value and side effect on records', () => {
   let createdObjectMetadataId: string;
   let createdFieldMetadataId: string;
   let firstOptionId: string;
