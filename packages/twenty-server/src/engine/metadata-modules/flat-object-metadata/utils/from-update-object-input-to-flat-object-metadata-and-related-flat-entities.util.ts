@@ -1,5 +1,4 @@
 import {
-  extractAndSanitizeObjectStringFields,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
@@ -12,13 +11,12 @@ import {
   type FlatObjectMetadataUpdateSideEffects,
   handleFlatObjectMetadataUpdateSideEffect,
 } from 'src/engine/metadata-modules/flat-object-metadata/utils/handle-flat-object-metadata-update-side-effect.util';
-import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
+import { sanitizeRawUpdateObjectInput } from 'src/engine/metadata-modules/flat-object-metadata/utils/sanitize-raw-update-object-input';
 import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { type ObjectMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-standard-overrides-properties.types';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
@@ -63,53 +61,11 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     }
 
     const isStandardObject = isStandardMetadata(existingFlatObjectMetadata);
-    const updatedEditableObjectProperties =
-      extractAndSanitizeObjectStringFields(rawUpdateObjectInput.update, [
-        ...new Set([
-          ...FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES.standard,
-          ...FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES.custom,
-        ]),
-      ]);
-
-    if (isStandardObject) {
-      const invalidUpdatedProperties = Object.keys(
-        updatedEditableObjectProperties,
-      ).filter(
-        (property) =>
-          !FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES.standard.includes(
-            property as ObjectMetadataStandardOverridesProperties,
-          ),
-      );
-
-      if (invalidUpdatedProperties.length > 0) {
-        throw new ObjectMetadataException(
-          `Cannot edit standard object metadata properties: ${invalidUpdatedProperties.join(', ')}`,
-          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-        );
-      }
-    }
-
-    const standardOverrides = isStandardObject
-      ? OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
-          (acc, property) => {
-            const isPropertyUpdated =
-              updatedEditableObjectProperties[property] !== undefined;
-
-            if (!isPropertyUpdated) {
-              return acc;
-            }
-            const propertyValue = updatedEditableObjectProperties[property];
-
-            delete updatedEditableObjectProperties[property];
-
-            return {
-              ...acc,
-              [property]: propertyValue,
-            };
-          },
-          existingFlatObjectMetadata.standardOverrides,
-        )
-      : null;
+    const { standardOverrides, updatedEditableObjectProperties } =
+      sanitizeRawUpdateObjectInput({
+        existingFlatObjectMetadata,
+        rawUpdateObjectInput,
+      });
 
     const toFlatObjectMetadata = {
       ...mergeUpdateInExistingRecord({
