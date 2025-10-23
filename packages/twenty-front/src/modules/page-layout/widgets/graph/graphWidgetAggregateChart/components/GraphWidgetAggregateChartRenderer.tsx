@@ -30,7 +30,7 @@ export const GraphWidgetAggregateChartRenderer = ({
 
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
-      <GraphWidgetAggregateChart value={value ?? 0} />
+      <GraphWidgetAggregateChart value={value} />
     </Suspense>
   );
 };
