@@ -7,9 +7,9 @@ import {
 import { Queue } from 'bullmq';
 
 import { HEALTH_INDICATORS } from 'src/engine/core-modules/admin-panel/constants/health-indicators.constants';
-import { type AdminPanelHealthServiceData } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service-data.dto';
-import { type QueueMetricsData } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-data.dto';
-import { type SystemHealth } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
+import { type AdminPanelHealthServiceDataDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-health-service-data.dto';
+import { type QueueMetricsDataDTO } from 'src/engine/core-modules/admin-panel/dtos/queue-metrics-data.dto';
+import { type SystemHealthDTO } from 'src/engine/core-modules/admin-panel/dtos/system-health.dto';
 import { AdminPanelHealthServiceStatus } from 'src/engine/core-modules/admin-panel/enums/admin-panel-health-service-status.enum';
 import { QueueMetricsTimeRange } from 'src/engine/core-modules/admin-panel/enums/queue-metrics-time-range.enum';
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
@@ -117,7 +117,7 @@ export class AdminPanelHealthService {
 
   async getIndicatorHealthStatus(
     indicatorId: HealthIndicatorId,
-  ): Promise<AdminPanelHealthServiceData> {
+  ): Promise<AdminPanelHealthServiceDataDTO> {
     const healthIndicator = this.healthIndicators[indicatorId];
 
     if (!healthIndicator) {
@@ -145,7 +145,7 @@ export class AdminPanelHealthService {
     return indicatorStatus;
   }
 
-  async getSystemHealthStatus(): Promise<SystemHealth> {
+  async getSystemHealthStatus(): Promise<SystemHealthDTO> {
     const [
       databaseResult,
       redisResult,
@@ -198,8 +198,8 @@ export class AdminPanelHealthService {
   async getQueueMetrics(
     queueName: MessageQueue,
     timeRange: QueueMetricsTimeRange = QueueMetricsTimeRange.OneDay,
-  ): Promise<QueueMetricsData> {
-    const redis = this.redisClient.getClient();
+  ): Promise<QueueMetricsDataDTO> {
+    const redis = this.redisClient.getQueueClient();
     const queue = new Queue(queueName, { connection: redis });
 
     try {
@@ -325,7 +325,7 @@ export class AdminPanelHealthService {
     timeRange: QueueMetricsTimeRange,
     queueName: MessageQueue,
     queueDetails: WorkerQueueHealth | null,
-  ): QueueMetricsData {
+  ): QueueMetricsDataDTO {
     try {
       return {
         queueName,

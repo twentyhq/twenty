@@ -10,7 +10,7 @@ registerEnumType(DatabaseEventAction, {
   description: 'Database Event Action',
 });
 
-@ObjectType()
+@ObjectType('OnDbEvent')
 export class OnDbEventDTO {
   @Field(() => DatabaseEventAction)
   action: DatabaseEventAction;

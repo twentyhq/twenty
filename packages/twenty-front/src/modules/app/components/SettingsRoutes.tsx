@@ -243,14 +243,6 @@ const SettingsIntegrationDatabase = lazy(() =>
   ),
 );
 
-const SettingsIntegrationMCP = lazy(() =>
-  import('~/pages/settings/integrations/SettingsIntegrationMCPPage').then(
-    (module) => ({
-      default: module.SettingsIntegrationMCPPage,
-    }),
-  ),
-);
-
 const SettingsIntegrationNewDatabaseConnection = lazy(() =>
   import(
     '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection'
@@ -348,6 +340,14 @@ const SettingsAdminIndicatorHealthStatus = lazy(() =>
   ).then((module) => ({
     default: module.SettingsAdminIndicatorHealthStatus,
   })),
+);
+
+const SettingsAdminQueueDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminQueueDetail').then(
+    (module) => ({
+      default: module.SettingsAdminQueueDetail,
+    }),
+  ),
 );
 
 const SettingsAdminConfigVariableDetails = lazy(() =>
@@ -584,10 +584,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.IntegrationDatabaseConnection}
           element={<SettingsIntegrationShowDatabaseConnection />}
         />
-        <Route
-          path={SettingsPath.IntegrationMCP}
-          element={<SettingsIntegrationMCP />}
-        />
       </Route>
 
       <Route
@@ -635,6 +631,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelQueueDetail}
+            element={<SettingsAdminQueueDetail />}
           />
 
           <Route

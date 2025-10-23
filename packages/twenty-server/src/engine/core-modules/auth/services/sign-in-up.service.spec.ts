@@ -5,7 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type Repository } from 'typeorm';
 
-import { type AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -17,18 +17,18 @@ import {
   type ExistingUserOrPartialUserWithPicture,
   type SignInUpBaseParams,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
@@ -40,26 +40,26 @@ jest.mock('src/utils/image', () => {
 
 describe('SignInUpService', () => {
   let service: SignInUpService;
-  let UserRepository: Repository<User>;
-  let WorkspaceRepository: Repository<Workspace>;
+  let UserRepository: Repository<UserEntity>;
+  let WorkspaceRepository: Repository<WorkspaceEntity>;
   let workspaceInvitationService: WorkspaceInvitationService;
   let userWorkspaceService: UserWorkspaceService;
   let twentyConfigService: TwentyConfigService;
-  let domainManagerService: DomainManagerService;
+  let subdomainManagerService: SubdomainManagerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SignInUpService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             create: jest.fn(),
             save: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {
             save: jest.fn(),
             create: jest.fn(),
@@ -116,11 +116,11 @@ describe('SignInUpService', () => {
               id: 'test-user-id',
               email: 'test@test.com',
               isEmailVerified: true,
-            } as User),
+            } as UserEntity),
           },
         },
         {
-          provide: DomainManagerService,
+          provide: SubdomainManagerService,
           useValue: {
             generateSubdomain: jest.fn(),
           },
@@ -147,34 +147,35 @@ describe('SignInUpService', () => {
     }).compile();
 
     service = module.get<SignInUpService>(SignInUpService);
-    UserRepository = module.get(getRepositoryToken(User));
-    WorkspaceRepository = module.get(getRepositoryToken(Workspace));
+    UserRepository = module.get(getRepositoryToken(UserEntity));
+    WorkspaceRepository = module.get(getRepositoryToken(WorkspaceEntity));
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
     );
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
+    subdomainManagerService = module.get<SubdomainManagerService>(
+      SubdomainManagerService,
+    );
   });
 
   it('should handle signInUp with valid personal invitation', async () => {
     const params: SignInUpBaseParams &
       ExistingUserOrPartialUserWithPicture &
       AuthProviderWithPasswordType = {
-      invitation: { value: 'invitationToken' } as AppToken,
+      invitation: { value: 'invitationToken' } as AppTokenEntity,
       workspace: {
         id: 'workspaceId',
         activationStatus: WorkspaceActivationStatus.ACTIVE,
-      } as Workspace,
+      } as WorkspaceEntity,
       authParams: {
         provider: AuthProviderEnum.Password,
         password: 'validPassword',
       },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'test@example.com' } as User,
+        existingUser: { email: 'test@example.com' } as UserEntity,
       },
     };
 
@@ -182,7 +183,7 @@ describe('SignInUpService', () => {
       .spyOn(workspaceInvitationService, 'validatePersonalInvitation')
       .mockResolvedValue({
         isValid: true,
-        workspace: params.workspace as Workspace,
+        workspace: params.workspace as WorkspaceEntity,
       });
 
     jest
@@ -206,7 +207,7 @@ describe('SignInUpService', () => {
     expect(
       workspaceInvitationService.invalidateWorkspaceInvitation,
     ).toHaveBeenCalledWith(
-      (params.workspace as Workspace).id,
+      (params.workspace as WorkspaceEntity).id,
       'test@example.com',
     );
     expect(
@@ -221,14 +222,14 @@ describe('SignInUpService', () => {
       workspace: {
         id: 'workspaceId',
         activationStatus: WorkspaceActivationStatus.ACTIVE,
-      } as Workspace,
+      } as WorkspaceEntity,
       authParams: {
         provider: AuthProviderEnum.Password,
         password: 'validPassword',
       },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'test@example.com' } as User,
+        existingUser: { email: 'test@example.com' } as UserEntity,
       },
     };
 
@@ -264,22 +265,24 @@ describe('SignInUpService', () => {
 
     jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
     jest.spyOn(WorkspaceRepository, 'count').mockResolvedValue(0);
-    jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
+    jest
+      .spyOn(WorkspaceRepository, 'create')
+      .mockReturnValue({} as WorkspaceEntity);
     jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
       id: 'newWorkspaceId',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-    } as Workspace);
-    jest.spyOn(UserRepository, 'create').mockReturnValue({} as User);
+    } as WorkspaceEntity);
+    jest.spyOn(UserRepository, 'create').mockReturnValue({} as UserEntity);
     jest
-      .spyOn(domainManagerService, 'generateSubdomain')
+      .spyOn(subdomainManagerService, 'generateSubdomain')
       .mockResolvedValue('a-subdomain');
     jest
       .spyOn(UserRepository, 'save')
 
-      .mockResolvedValue({ id: 'newUserId' } as User);
+      .mockResolvedValue({ id: 'newUserId' } as UserEntity);
     jest
       .spyOn(userWorkspaceService, 'create')
-      .mockResolvedValue({} as UserWorkspace);
+      .mockResolvedValue({} as UserWorkspaceEntity);
 
     const result = await service.signInUp(params);
 
@@ -304,14 +307,14 @@ describe('SignInUpService', () => {
       workspace: {
         id: 'workspaceId',
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-      } as Workspace,
+      } as WorkspaceEntity,
       authParams: {
         provider: AuthProviderEnum.Password,
         password: 'validPassword',
       },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'test@example.com' } as User,
+        existingUser: { email: 'test@example.com' } as UserEntity,
       },
     };
 
@@ -321,7 +324,7 @@ describe('SignInUpService', () => {
       .mockResolvedValue(undefined);
     jest
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
-      .mockResolvedValue({} as UserWorkspace);
+      .mockResolvedValue({} as UserWorkspaceEntity);
 
     const result = await service.signInUp(params);
 
@@ -339,14 +342,14 @@ describe('SignInUpService', () => {
       workspace: {
         id: 'workspaceId',
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-      } as Workspace,
+      } as WorkspaceEntity,
       authParams: {
         provider: AuthProviderEnum.Password,
         password: 'validPassword',
       },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'test@example.com' } as User,
+        existingUser: { email: 'test@example.com' } as UserEntity,
       },
     };
 
@@ -374,17 +377,19 @@ describe('SignInUpService', () => {
       },
       userData: {
         type: 'existingUser',
-        existingUser: { email: 'existinguser@example.com' } as User,
+        existingUser: { email: 'existinguser@example.com' } as UserEntity,
       },
     };
 
     jest.spyOn(twentyConfigService, 'get').mockReturnValue(false);
     jest.spyOn(WorkspaceRepository, 'count').mockResolvedValue(0);
-    jest.spyOn(WorkspaceRepository, 'create').mockReturnValue({} as Workspace);
+    jest
+      .spyOn(WorkspaceRepository, 'create')
+      .mockReturnValue({} as WorkspaceEntity);
     jest.spyOn(WorkspaceRepository, 'save').mockResolvedValue({
       id: 'newWorkspaceId',
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-    } as Workspace);
+    } as WorkspaceEntity);
     jest.spyOn(userWorkspaceService, 'create').mockResolvedValue({} as any);
 
     const result = await service.signInUp(params);

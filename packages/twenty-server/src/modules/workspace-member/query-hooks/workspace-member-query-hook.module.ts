@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceMemberCreateManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-create-many.pre-query.hook';
 import { WorkspaceMemberCreateOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-create-one.pre-query.hook';
@@ -33,7 +33,7 @@ import { WorkspaceMemberUpdateOnePreQueryHook } from 'src/modules/workspace-memb
   imports: [
     FeatureFlagModule,
     PermissionsModule,
-    TypeOrmModule.forFeature([UserWorkspace]),
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
 })
 export class WorkspaceMemberQueryHookModule {}

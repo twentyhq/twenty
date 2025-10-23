@@ -2,11 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
 import { type ObjectRecord } from 'twenty-shared/types';
-import {
-  assertIsDefinedOrThrow,
-  capitalize,
-  isDefined,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
@@ -14,7 +10,6 @@ import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interf
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   type ResolverArgs,
-  ResolverArgsType,
   type WorkspaceResolverBuilderMethodNames,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -40,7 +35,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -115,8 +110,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const computedArgs = (await this.queryRunnerArgsFactory.create(
         hookedArgs,
         options,
-        // @ts-expect-error legacy noImplicitAny
-        ResolverArgsType[capitalize(operationName)],
+        operationName,
       )) as Input;
 
       let roleId: string | undefined;
@@ -168,11 +162,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const selectedFields = graphqlFields(options.info);
 
       const graphqlQuerySelectedFieldsResult =
-        graphqlQueryParser.parseSelectedFields(
-          objectMetadataItemWithFieldMaps,
-          selectedFields,
-          options.objectMetadataMaps,
-        );
+        graphqlQueryParser.parseSelectedFields(selectedFields);
 
       const graphqlQueryResolverExecutionArgs = {
         args: computedArgs,

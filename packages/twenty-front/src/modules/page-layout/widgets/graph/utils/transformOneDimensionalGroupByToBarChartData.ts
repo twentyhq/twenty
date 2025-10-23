@@ -28,6 +28,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
+  hasTooManyGroups: boolean;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -87,5 +88,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     indexBy: indexByKey,
     keys: [aggregateField.name],
     series,
+    hasTooManyGroups: rawResults.length > GRAPH_MAXIMUM_NUMBER_OF_GROUPS,
   };
 };

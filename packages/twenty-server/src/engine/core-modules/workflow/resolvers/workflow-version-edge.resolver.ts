@@ -6,7 +6,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { CreateWorkflowVersionEdgeInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-edge-input.dto';
 import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { WorkflowVersionEdgeGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-edge-graphql-api-exception.filter';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -34,7 +34,7 @@ export class WorkflowVersionEdgeResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async createWorkflowVersionEdge(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     {
       source,
@@ -54,7 +54,7 @@ export class WorkflowVersionEdgeResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async deleteWorkflowVersionEdge(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     {
       source,

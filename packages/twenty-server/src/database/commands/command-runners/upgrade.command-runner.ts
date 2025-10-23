@@ -15,7 +15,7 @@ import {
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import {
@@ -39,8 +39,8 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   public readonly VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG?: true;
 
   constructor(
-    @InjectRepository(Workspace)
-    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
@@ -90,7 +90,7 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
 
   private async workspacesThatAreBelowFromWorkspaceVersion(
     fromWorkspaceVersion: SemVer,
-  ): Promise<Pick<Workspace, 'id' | 'displayName' | 'version'>[]> {
+  ): Promise<Pick<WorkspaceEntity, 'id' | 'displayName' | 'version'>[]> {
     try {
       const allActiveOrSuspendedWorkspaces =
         await this.loadActiveOrSuspendedWorkspace();

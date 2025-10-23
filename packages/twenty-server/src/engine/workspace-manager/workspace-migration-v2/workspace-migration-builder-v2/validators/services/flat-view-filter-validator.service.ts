@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
@@ -77,7 +76,6 @@ export class FlatViewFilterValidatorService {
   validateFlatViewFilterDeletion({
     flatEntityToValidate: flatViewFilterToValidate,
     optimisticFlatEntityMaps: optimisticFlatViewFilterMaps,
-    dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
   >): FailedFlatEntityValidation<FlatViewFilter> {
@@ -102,29 +100,6 @@ export class FlatViewFilterValidatorService {
       });
 
       return validationResult;
-    }
-
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: existingViewFilter.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(flatFieldMetadata)) {
-      return validationResult;
-    }
-
-    const shouldValidateDeletion = isEnumFlatFieldMetadata(flatFieldMetadata)
-      ? flatFieldMetadata.options.some(
-          (option) => option.value === existingViewFilter.value,
-        )
-      : true;
-
-    if (shouldValidateDeletion && !isDefined(existingViewFilter.deletedAt)) {
-      validationResult.errors.push({
-        code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-        message: t`View filter has to be soft deleted first`,
-        userFriendlyMessage: msg`View filter has to be soft deleted first`,
-      });
     }
 
     return validationResult;

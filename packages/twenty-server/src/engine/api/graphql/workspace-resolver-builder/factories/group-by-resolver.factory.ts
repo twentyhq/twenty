@@ -11,6 +11,7 @@ import {
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
+import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { GraphqlQueryGroupByResolverService } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/graphql-query-group-by-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
@@ -44,13 +45,11 @@ export class GroupByResolverFactory
         const selectedFields = graphqlFields(info);
 
         try {
-          return await this.commonGroupByQueryRunnerService.run({
-            args: { ...args, selectedFields },
-            authContext: internalContext.authContext,
-            objectMetadataMaps: internalContext.objectMetadataMaps,
-            objectMetadataItemWithFieldMaps:
-              internalContext.objectMetadataItemWithFieldMaps,
-          });
+          return await this.commonGroupByQueryRunnerService.execute(
+            { ...args, selectedFields },
+            internalContext,
+            CommonQueryNames.GROUP_BY,
+          );
         } catch (error) {
           return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }

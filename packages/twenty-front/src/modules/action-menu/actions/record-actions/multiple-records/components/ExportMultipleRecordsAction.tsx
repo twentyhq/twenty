@@ -1,12 +1,15 @@
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
+import { computeProgressText } from '@/action-menu/utils/computeProgressText';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const ExportMultipleRecordsAction = () => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
@@ -31,38 +34,30 @@ export const ExportMultipleRecordsAction = () => {
 
   const { closeActionMenu } = useCloseActionMenu({});
 
+  const exportProgress = progress
+    ? {
+        processedRecordCount: progress.processedRecordCount,
+        totalRecordCount: progress.totalRecordCount,
+      }
+    : undefined;
+
   const actionConfig = useContext(ActionConfigContext);
 
-  const dynamicActionConfig = useMemo(() => {
-    if (!actionConfig) return null;
-
-    const originalLabel =
-      typeof actionConfig.label === 'string'
-        ? actionConfig.label
-        : actionConfig.label?.message || 'Export';
-
-    const originalShortLabel =
-      typeof actionConfig.shortLabel === 'string'
-        ? actionConfig.shortLabel
-        : actionConfig.shortLabel?.message || 'Export';
-
-    const progressText =
-      progress?.exportedRecordCount !== undefined
-        ? progress.displayType === 'percentage' && progress.totalRecordCount
-          ? ` (${Math.round((progress.exportedRecordCount / progress.totalRecordCount) * 100)}%)`
-          : ` (${progress.exportedRecordCount})`
-        : '';
-
-    return {
-      ...actionConfig,
-      label: `${originalLabel}${progressText}`,
-      shortLabel: `${originalShortLabel}${progressText}`,
-    };
-  }, [actionConfig, progress]);
-
-  if (!dynamicActionConfig) {
+  if (!isDefined(actionConfig)) {
     return null;
   }
+
+  const originalLabel = getActionLabel(actionConfig.label);
+
+  const originalShortLabel = getActionLabel(actionConfig.shortLabel ?? '');
+
+  const progressText = computeProgressText(exportProgress);
+
+  const actionConfigWithProgress = {
+    ...actionConfig,
+    label: `${originalLabel}${progressText}`,
+    shortLabel: `${originalShortLabel}${progressText}`,
+  };
 
   const handleClick = async () => {
     try {
@@ -75,7 +70,7 @@ export const ExportMultipleRecordsAction = () => {
   };
 
   return (
-    <ActionConfigContext.Provider value={dynamicActionConfig}>
+    <ActionConfigContext.Provider value={actionConfigWithProgress}>
       <ActionDisplay onClick={handleClick} />
     </ActionConfigContext.Provider>
   );

@@ -10,13 +10,13 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { TwoFactorAuthenticationMethod } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import {
   TwoFactorAuthenticationException,
@@ -32,8 +32,8 @@ const PENDING_METHOD_REUSE_WINDOW_MS = 60 * 60 * 1000;
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class TwoFactorAuthenticationService {
   constructor(
-    @InjectRepository(TwoFactorAuthenticationMethod)
-    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
+    @InjectRepository(TwoFactorAuthenticationMethodEntity)
+    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly simpleSecretEncryptionUtil: SimpleSecretEncryptionUtil,
   ) {}
@@ -57,8 +57,8 @@ export class TwoFactorAuthenticationService {
    * @param userTwoFactorAuthenticationMethods - Optional array of user's 2FA methods
    */
   async validateTwoFactorAuthenticationRequirement(
-    targetWorkspace: Workspace,
-    userTwoFactorAuthenticationMethods?: TwoFactorAuthenticationMethod[],
+    targetWorkspace: WorkspaceEntity,
+    userTwoFactorAuthenticationMethods?: TwoFactorAuthenticationMethodEntity[],
   ) {
     if (
       twoFactorAuthenticationMethodsValidator.areDefined(
@@ -150,9 +150,9 @@ export class TwoFactorAuthenticationService {
   }
 
   async validateStrategy(
-    userId: User['id'],
+    userId: UserEntity['id'],
     token: string,
-    workspaceId: Workspace['id'],
+    workspaceId: WorkspaceEntity['id'],
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
   ) {
     const userTwoFactorAuthenticationMethod =
@@ -208,9 +208,9 @@ export class TwoFactorAuthenticationService {
   }
 
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
-    userId: User['id'],
+    userId: UserEntity['id'],
     token: string,
-    workspaceId: Workspace['id'],
+    workspaceId: WorkspaceEntity['id'],
   ) {
     await this.validateStrategy(
       userId,

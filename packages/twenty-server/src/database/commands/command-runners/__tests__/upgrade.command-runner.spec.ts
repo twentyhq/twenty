@@ -10,7 +10,7 @@ import { type Repository } from 'typeorm';
 import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -44,7 +44,7 @@ type CommandRunnerValues =
   | typeof BasicUpgradeCommandRunner
   | typeof InvalidUpgradeCommandRunner;
 
-const generateMockWorkspace = (overrides?: Partial<Workspace>) =>
+const generateMockWorkspace = (overrides?: Partial<WorkspaceEntity>) =>
   ({
     id: 'workspace-id',
     version: '1.0.0',
@@ -60,10 +60,10 @@ const generateMockWorkspace = (overrides?: Partial<Workspace>) =>
     activationStatus: 'active',
     workspaceMembersCount: 1,
     ...overrides,
-  }) as Workspace;
+  }) as WorkspaceEntity;
 
 type BuildUpgradeCommandModuleArgs = {
-  workspaces: Workspace[];
+  workspaces: WorkspaceEntity[];
   appVersion: string | null;
   commandRunner: CommandRunnerValues;
 };
@@ -76,7 +76,7 @@ const buildUpgradeCommandModule = async ({
     providers: [
       commandRunner,
       {
-        provide: getRepositoryToken(Workspace),
+        provide: getRepositoryToken(WorkspaceEntity),
         useValue: {
           findOneByOrFail: jest
             .fn()
@@ -124,7 +124,7 @@ const buildUpgradeCommandModule = async ({
 
 describe('UpgradeCommandRunner', () => {
   let upgradeCommandRunner: BasicUpgradeCommandRunner;
-  let workspaceRepository: Repository<Workspace>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
   let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
   let runAfterSyncMetadataSpy: jest.SpyInstance;
   let runBeforeSyncMetadataSpy: jest.SpyInstance;
@@ -133,8 +133,8 @@ describe('UpgradeCommandRunner', () => {
 
   type BuildModuleAndSetupSpiesArgs = {
     numberOfWorkspace?: number;
-    workspaceOverride?: Partial<Workspace>;
-    workspaces?: Workspace[];
+    workspaceOverride?: Partial<WorkspaceEntity>;
+    workspaces?: WorkspaceEntity[];
     appVersion?: string | null;
     commandRunner?: CommandRunnerValues;
   };
@@ -178,8 +178,8 @@ describe('UpgradeCommandRunner', () => {
       .spyOn(upgradeCommandRunner, 'runCoreMigrations')
       .mockImplementation(() => Promise.resolve());
 
-    workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+    workspaceRepository = module.get<Repository<WorkspaceEntity>>(
+      getRepositoryToken(WorkspaceEntity),
     );
     syncWorkspaceMetadataCommand = module.get(SyncWorkspaceMetadataCommand);
     twentyORMGlobalManagerSpy = module.get<TwentyORMGlobalManager>(

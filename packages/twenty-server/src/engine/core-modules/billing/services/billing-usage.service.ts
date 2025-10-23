@@ -11,21 +11,21 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { type BillingMeteredProductUsageOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-metered-product-usage.output';
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { type BillingUsageEvent } from 'src/engine/core-modules/billing/types/billing-usage-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingUsageService {
   protected readonly logger = new Logger(BillingUsageService.name);
   constructor(
-    @InjectRepository(BillingCustomer)
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -81,7 +81,7 @@ export class BillingUsageService {
   }
 
   async getMeteredProductsUsage(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
   ): Promise<BillingMeteredProductUsageOutput[]> {
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(

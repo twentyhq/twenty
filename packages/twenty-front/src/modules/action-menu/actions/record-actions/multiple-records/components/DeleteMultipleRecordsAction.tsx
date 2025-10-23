@@ -1,4 +1,7 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
+import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
+import { computeProgressText } from '@/action-menu/utils/computeProgressText';
+import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -6,13 +9,14 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
-import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { useIncrementalDeleteManyRecords } from '@/object-record/hooks/useIncrementalDeleteManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteMultipleRecordsAction = () => {
   const { recordIndexId, objectMetadataItem } =
@@ -27,10 +31,6 @@ export const DeleteMultipleRecordsAction = () => {
   }
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
-
-  const { deleteManyRecords } = useDeleteManyRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -59,30 +59,45 @@ export const DeleteMultipleRecordsAction = () => {
     contextStoreAnyFieldFilterValue,
   });
 
-  const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    filter: graphqlFilter,
-    limit: DEFAULT_QUERY_PAGE_SIZE,
-    recordGqlFields: { id: true },
-  });
+  const { incrementalDeleteManyRecords, progress } =
+    useIncrementalDeleteManyRecords({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      filter: graphqlFilter,
+      pageSize: DEFAULT_QUERY_PAGE_SIZE,
+      delayInMsBetweenMutations: 50,
+    });
+
+  const actionConfig = useContext(ActionConfigContext);
+
+  if (!isDefined(actionConfig)) {
+    return null;
+  }
+
+  const originalLabel = getActionLabel(actionConfig.label);
+
+  const originalShortLabel = getActionLabel(actionConfig.shortLabel ?? '');
+
+  const progressText = computeProgressText(progress);
+
+  const actionConfigWithProgress = {
+    ...actionConfig,
+    label: `${originalLabel}${progressText}`,
+    shortLabel: `${originalShortLabel}${progressText}`,
+  };
 
   const handleDeleteClick = async () => {
-    const recordsToDelete = await fetchAllRecordIds();
-    const recordIdsToDelete = recordsToDelete.map((record) => record.id);
-
     resetTableRowSelection();
-
-    await deleteManyRecords({
-      recordIdsToDelete,
-    });
+    await incrementalDeleteManyRecords();
   };
 
   return (
-    <ActionModal
-      title="Delete Records"
-      subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
-      onConfirmClick={handleDeleteClick}
-      confirmButtonText="Delete Records"
-    />
+    <ActionConfigContext.Provider value={actionConfigWithProgress}>
+      <ActionModal
+        title={t`Delete Records`}
+        subtitle={t`Are you sure you want to delete these records? They can be recovered from the Command menu.`}
+        onConfirmClick={handleDeleteClick}
+        confirmButtonText={t`Delete Records`}
+      />
+    </ActionConfigContext.Provider>
   );
 };

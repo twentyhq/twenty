@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { GmailGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/gmail/gmail-get-all-folders.service';
 import { ImapGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/imap/imap-get-all-folders.service';
@@ -18,7 +19,8 @@ import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-im
     FeatureFlagModule,
     WorkspaceDataSourceModule,
     DataSourceModule,
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
+    OAuth2ClientManagerModule,
     MessagingGmailDriverModule,
     MessagingMicrosoftDriverModule,
     MessagingIMAPDriverModule,

@@ -20,9 +20,11 @@ export const getMockFieldMetadataEntity = <
   overrides: GetMockFieldMetadataEntityOverride<T>,
 ): FieldMetadataEntity => {
   return {
+    calendarViews: [],
     viewFilters: [],
     viewFields: [],
     viewGroups: [],
+    kanbanAggregateOperationViews: [],
     morphId: null,
     fieldPermissions: [],
     icon: null,

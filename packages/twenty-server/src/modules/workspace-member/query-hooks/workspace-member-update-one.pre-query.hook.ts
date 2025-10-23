@@ -13,7 +13,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
@@ -23,8 +23,8 @@ export class WorkspaceMemberUpdateOnePreQueryHook
 {
   constructor(
     private readonly workspaceMemberPreQueryHookService: WorkspaceMemberPreQueryHookService,
-    @InjectRepository(UserWorkspace)
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async execute(

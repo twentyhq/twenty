@@ -1,7 +1,7 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class WorkspaceUrls {
+@ObjectType('WorkspaceUrls')
+export class WorkspaceUrlsDTO {
   @Field(() => String, { nullable: true })
   customUrl?: string;
 

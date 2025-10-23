@@ -9,7 +9,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import {
   CRON_TRIGGER_ENTITY_RELATION_PROPERTIES,
-  CronTrigger,
+  CronTriggerEntity,
 } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
@@ -26,8 +26,8 @@ export class WorkspaceFlatCronTriggerMapCacheService extends WorkspaceFlatMapCac
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     cacheStorageService: CacheStorageService,
-    @InjectRepository(CronTrigger)
-    private readonly cronTriggerRepository: Repository<CronTrigger>,
+    @InjectRepository(CronTriggerEntity)
+    private readonly cronTriggerRepository: Repository<CronTriggerEntity>,
   ) {
     super(cacheStorageService);
   }

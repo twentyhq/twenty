@@ -4,12 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
+import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
@@ -19,8 +19,8 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 @Injectable()
 export class RenewTokenService {
   constructor(
-    @InjectRepository(AppToken)
-    private readonly appTokenRepository: Repository<AppToken>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
     private readonly refreshTokenService: RefreshTokenService,

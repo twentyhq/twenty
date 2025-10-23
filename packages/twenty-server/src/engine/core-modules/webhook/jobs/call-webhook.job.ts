@@ -9,6 +9,8 @@ import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/even
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 export type CallWebhookJobData = {
   targetUrl: string;
@@ -28,6 +30,7 @@ export class CallWebhookJob {
   constructor(
     private readonly httpService: HttpService,
     private readonly auditService: AuditService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   private generateSignature(
@@ -94,6 +97,11 @@ export class CallWebhookJob {
         status: response.status,
         success,
         ...commonPayload,
+      });
+
+      this.metricsService.incrementCounter({
+        key: MetricsKeys.JobWebhookCallCompleted,
+        shouldStoreInCache: false,
       });
     } catch (err) {
       auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {

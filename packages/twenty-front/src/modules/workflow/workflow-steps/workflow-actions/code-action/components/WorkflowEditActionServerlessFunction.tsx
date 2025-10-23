@@ -38,7 +38,9 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
+import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
@@ -51,7 +53,6 @@ import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
-import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 
@@ -326,7 +327,7 @@ export const WorkflowEditActionServerlessFunction = ({
 
   const headerTitle = isDefined(action.name)
     ? action.name
-    : 'Code - Serverless Function';
+    : CODE_ACTION.defaultLabel;
   const headerIcon = getActionIcon(action.type);
   const headerIconColor = useActionIconColorOrThrow(action.type);
   const headerType = useActionHeaderTypeOrThrow(action.type);
@@ -431,6 +432,7 @@ export const WorkflowEditActionServerlessFunction = ({
           initialTitle={headerTitle}
           headerType={headerType}
           disabled={actionOptions.readonly}
+          iconTooltip={CODE_ACTION.defaultLabel}
         />
         <WorkflowStepBody>
           {activeTabId === WorkflowServerlessFunctionTabId.CODE && (
@@ -488,7 +490,7 @@ export const WorkflowEditActionServerlessFunction = ({
           )}
         </WorkflowStepBody>
         {!actionOptions.readonly && (
-          <WorkflowActionFooter
+          <WorkflowStepFooter
             stepId={action.id}
             additionalActions={
               activeTabId === WorkflowServerlessFunctionTabId.TEST

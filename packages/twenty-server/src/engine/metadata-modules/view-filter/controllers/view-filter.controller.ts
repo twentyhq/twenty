@@ -13,7 +13,7 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
@@ -37,7 +37,7 @@ export class ViewFilterController {
 
   @Get()
   async findMany(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
   ): Promise<ViewFilterDTO[]> {
     if (viewId) {
@@ -50,7 +50,7 @@ export class ViewFilterController {
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
     const viewFilter = await this.viewFilterService.findById(id, workspace.id);
 
@@ -75,7 +75,7 @@ export class ViewFilterController {
   @Post()
   async create(
     @Body() input: CreateViewFilterInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
     return this.viewFilterService.create({
       ...input,
@@ -87,7 +87,7 @@ export class ViewFilterController {
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFilterInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterDTO> {
     const updateInput: UpdateViewFilterInput = {
       id,
@@ -106,7 +106,7 @@ export class ViewFilterController {
   @Delete(':id')
   async delete(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<{ success: boolean }> {
     const deletedViewFilter = await this.viewFilterService.delete(
       id,

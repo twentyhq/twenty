@@ -7,15 +7,15 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 export const CHECK_PUBLIC_DOMAINS_VALID_RECORDS_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class CheckPublicDomainsValidRecordsCronJob {
   constructor(
-    @InjectRepository(PublicDomain)
-    private readonly publicDomainRepository: Repository<PublicDomain>,
+    @InjectRepository(PublicDomainEntity)
+    private readonly publicDomainRepository: Repository<PublicDomainEntity>,
     private readonly publicDomainService: PublicDomainService,
   ) {}
 

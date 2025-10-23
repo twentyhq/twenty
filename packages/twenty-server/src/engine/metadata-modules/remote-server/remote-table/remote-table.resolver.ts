@@ -3,7 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FindManyRemoteTablesInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/find-many-remote-tables-input';
@@ -22,7 +22,7 @@ export class RemoteTableResolver {
   @Query(() => [RemoteTableDTO])
   async findDistantTablesWithStatus(
     @Args('input') input: FindManyRemoteTablesInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.remoteTableService.findDistantTablesWithStatus(
@@ -38,7 +38,7 @@ export class RemoteTableResolver {
   @Mutation(() => RemoteTableDTO)
   async syncRemoteTable(
     @Args('input') input: RemoteTableInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.remoteTableService.syncRemoteTable(input, workspaceId);
@@ -50,7 +50,7 @@ export class RemoteTableResolver {
   @Mutation(() => RemoteTableDTO)
   async unsyncRemoteTable(
     @Args('input') input: RemoteTableInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.remoteTableService.unsyncRemoteTable(
@@ -65,7 +65,7 @@ export class RemoteTableResolver {
   @Mutation(() => RemoteTableDTO)
   async syncRemoteTableSchemaChanges(
     @Args('input') input: RemoteTableInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.remoteTableService.syncRemoteTableSchemaChanges(

@@ -43,17 +43,17 @@ type TwentyConfigServicePrivateProps = {
 
 const mockConfigVarMetadata = {
   TEST_VAR: {
-    group: ConfigVariablesGroup.GoogleAuth,
+    group: ConfigVariablesGroup.GOOGLE_AUTH,
     description: 'Test variable',
     isEnvOnly: false,
   },
   ENV_ONLY_VAR: {
-    group: ConfigVariablesGroup.StorageConfig,
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
     description: 'Environment only variable',
     isEnvOnly: true,
   },
   SENSITIVE_VAR: {
-    group: ConfigVariablesGroup.Logging,
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Sensitive variable',
     isSensitive: true,
   },

@@ -4,7 +4,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated/graphql';
 
 type PrefillRecordArgs = {
@@ -34,6 +34,28 @@ export const prefillRecord = <T extends ObjectRecord>({
             [fieldMetadataItem.name, fieldValue],
             [fieldMetadataItem.settings?.joinColumnName, joinColumnValue],
           ];
+        }
+        if (
+          fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION &&
+          fieldMetadataItem.settings?.relationType === RelationType.MANY_TO_ONE
+        ) {
+          const gqlFields = fieldMetadataItem.morphRelations?.map(
+            (morphRelation) => {
+              return computeMorphRelationFieldName({
+                fieldName: fieldMetadataItem.name,
+                relationType: morphRelation.type,
+                targetObjectMetadataNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural:
+                  morphRelation.targetObjectMetadata.namePlural,
+              });
+            },
+          );
+
+          return gqlFields?.flatMap((gqlField) => [
+            [gqlField, fieldValue],
+            [`${gqlField}Id`, input[`${gqlField}Id`] ?? null],
+          ]);
         }
 
         return [[fieldMetadataItem.name, fieldValue]];

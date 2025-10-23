@@ -15,6 +15,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
@@ -88,6 +89,22 @@ export class FlatFieldMetadataValidatorService {
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
         message: 'Label identifier field metadata id does not exist',
         userFriendlyMessage: msg`Object related to updated field does not have a label identifier`,
+      });
+    } else if (
+      flatObjectMetadata.labelIdentifierFieldMetadataId ===
+        flatFieldMetadataToValidate.id &&
+      isDefined(
+        findFlatEntityPropertyUpdate({
+          flatEntityUpdates: updates,
+          property: 'isActive',
+        }),
+      ) &&
+      flatFieldMetadataToValidate.isActive === false
+    ) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
+        message: 'Label identifier field metadata cannot be deactivated',
+        userFriendlyMessage: msg`Label identifier field cannot be deactivated`,
       });
     }
 

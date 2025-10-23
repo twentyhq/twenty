@@ -1,15 +1,15 @@
 import { type ExecutionContext } from '@nestjs/common';
-import { Test, type TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@nestjs/passport';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type Issuer } from 'openid-client';
 
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
-import { type WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { type WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 const createMockExecutionContext = (mockedRequest: any): ExecutionContext => {
   return {
@@ -60,7 +60,7 @@ describe('OIDCAuthGuard', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: WorkspaceDomainsService,
           useValue: {
             getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain:
               jest.fn(),
@@ -92,7 +92,7 @@ describe('OIDCAuthGuard', () => {
       id: 'test-id',
       issuer: 'https://issuer.example.com',
       workspace: {},
-    } as SSOConfiguration & WorkspaceSSOIdentityProvider);
+    } as SSOConfiguration & WorkspaceSSOIdentityProviderEntity);
 
     const result = await guard.canActivate(mockExecutionContext);
 
