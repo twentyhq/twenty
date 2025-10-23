@@ -53,7 +53,7 @@ export const DEFAULT_TASK_PAGE_LAYOUT: PageLayout = {
           id: 'task-widget-note',
           pageLayoutTabId: 'task-tab-fields',
           title: 'Note',
-          type: WidgetType.NOTES,
+          type: WidgetType.RICH_TEXT,
           objectMetadataId: null,
           gridPosition: {
             __typename: 'GridPosition',

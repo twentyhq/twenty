@@ -4,7 +4,7 @@ import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
 /**
  * Default Note PageLayout.
- * Minimal layout: Fields, Timeline, Files
+ * Includes special NOTE widget plus: Fields, Timeline, Files
  */
 export const DEFAULT_NOTE_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
@@ -41,6 +41,25 @@ export const DEFAULT_NOTE_PAGE_LAYOUT: PageLayout = {
             row: 0,
             column: 0,
             rowSpan: 12,
+            columnSpan: 12,
+          },
+          configuration: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
+        },
+        {
+          __typename: 'PageLayoutWidget',
+          id: 'note-widget-note',
+          pageLayoutTabId: 'note-tab-fields',
+          title: 'Note',
+          type: WidgetType.RICH_TEXT,
+          objectMetadataId: null,
+          gridPosition: {
+            __typename: 'GridPosition',
+            row: 12,
+            column: 0,
+            rowSpan: 6,
             columnSpan: 12,
           },
           configuration: null,
