@@ -52,7 +52,7 @@ export const useGraphWidgetAggregateQuery = ({
   });
 
   return {
-    value: value ?? '-',
+    value,
     label,
     loading,
     error,
