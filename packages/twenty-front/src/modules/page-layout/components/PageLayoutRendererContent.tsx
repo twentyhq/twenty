@@ -34,15 +34,6 @@ const StyledShowPageRightContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledShowPageRightContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: start;
-  width: 100%;
-  overflow: auto;
-`;
-
 const StyledTabList = styled(PageLayoutTabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
