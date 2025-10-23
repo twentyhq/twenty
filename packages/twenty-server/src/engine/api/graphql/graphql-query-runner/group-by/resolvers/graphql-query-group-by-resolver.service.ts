@@ -155,11 +155,6 @@ export class GraphqlQueryGroupByResolverService extends GraphqlQueryBaseResolver
 
     const shouldIncludeRecords = this.shouldIncludeRecords(executionArgs);
 
-    // if (shouldIncludeRecords) {
-    //   queryBuilderWithFiltersAndWithoutGroupBy =
-    //     queryBuilder.cloneWithParameters();
-    // }
-
     groupByDefinitions.forEach((groupByColumn, index) => {
       queryBuilder.addSelect(groupByColumn.expression, groupByColumn.alias);
 

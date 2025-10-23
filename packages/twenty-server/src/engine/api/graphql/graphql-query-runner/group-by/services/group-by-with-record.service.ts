@@ -227,7 +227,7 @@ export class GroupByWithRecordService {
       return value.toString();
     }
     if (typeof value === 'boolean') {
-      return value ? 'TRUE' : 'FALSE';
+      return value === true ? 'TRUE' : 'FALSE';
     }
     if (value instanceof Date) {
       return `'${value.toISOString()}'`;
