@@ -1,4 +1,4 @@
-import { generateGroupColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/generateGroupColor';
+import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { isDefined } from 'twenty-shared/utils';
 import { type GraphColor } from '../types/GraphColor';
 import { type GraphColorRegistry } from '../types/GraphColorRegistry';
