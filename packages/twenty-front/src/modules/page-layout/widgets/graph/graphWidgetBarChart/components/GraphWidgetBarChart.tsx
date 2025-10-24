@@ -20,7 +20,7 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveBar } from '@nivo/bar';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const LEGEND_THRESHOLD = 10;
@@ -147,17 +147,19 @@ export const GraphWidgetBarChart = ({
     );
   };
 
-  // Create a wrapper component that passes keys and groupMode to CustomBarItem
-  const BarItemWithContext = (props: any) => (
-    <CustomBarItem
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...props}
-      keys={keys}
-      groupMode={groupMode}
-      data={data}
-      indexBy={indexBy}
-      layout={layout}
-    />
+  const BarItemWithContext = useMemo(
+    () => (props: any) => (
+      <CustomBarItem
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...props}
+        keys={keys}
+        groupMode={groupMode}
+        data={data}
+        indexBy={indexBy}
+        layout={layout}
+      />
+    ),
+    [keys, groupMode, data, indexBy, layout],
   );
 
   return (
