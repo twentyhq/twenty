@@ -5,6 +5,7 @@ import { AddWorkflowRunStopStatusesCommand } from 'src/database/commands/upgrade
 import { CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-clean-orphaned-kanban-aggregate-operation-field-metadata-id.command';
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
+import { MigrateMessageChannelCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-message-channel.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -27,6 +28,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
   providers: [
     MigrateAttachmentAuthorToCreatedByCommand,
     MigrateAttachmentTypeToFileCategoryCommand,
+    MigrateMessageChannelCommand,
     RegenerateSearchVectorsCommand,
     AddWorkflowRunStopStatusesCommand,
     CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
@@ -34,6 +36,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
   exports: [
     MigrateAttachmentAuthorToCreatedByCommand,
     MigrateAttachmentTypeToFileCategoryCommand,
+    MigrateMessageChannelCommand,
     RegenerateSearchVectorsCommand,
     AddWorkflowRunStopStatusesCommand,
     CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
