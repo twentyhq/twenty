@@ -113,7 +113,7 @@ export class FlatViewValidatorService {
     const optimisticFlatObjectMetadata =
       flatObjectMetadataMaps.byId[flatViewToValidate.objectMetadataId];
 
-    if (!isDefined(optimisticFlatObjectMetadata)) {
+    if (true) {
       validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`Object metadata not found`,

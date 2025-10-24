@@ -1,3 +1,4 @@
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -53,6 +54,7 @@ export const SettingsObjectNewFieldConfigure = () => {
     (searchParams.get('fieldType') as FieldMetadataType) ||
     FieldMetadataType.TEXT;
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { handleMetadataError } = useMetadataErrorHandler();
 
   const { findActiveObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -180,9 +182,14 @@ export const SettingsObjectNewFieldConfigure = () => {
       setIsSaving(false);
     } catch (error) {
       setIsSaving(false);
-      enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
-      });
+
+      if (error instanceof ApolloError) {
+        handleMetadataError(error, {
+          primaryEntityType: 'fieldMetadata',
+        });
+      } else {
+        enqueueErrorSnackBar({ message: t`An error occurred.` });
+      }
     }
   };
   if (!activeObjectMetadataItem) return null;

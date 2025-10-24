@@ -18,11 +18,15 @@ export const workspaceMigrationBuilderExceptionV2Formatter = (
       i18n,
     );
 
-  throw new BaseGraphQLError(error.message, ErrorCode.BAD_USER_INPUT, {
-    code: 'METADATA_VALIDATION_ERROR',
-    errors,
-    summary,
-    message: `Validation failed for 0 object(s) and 0 field(s)`,
-    userFriendlyMessage: msg`Validation failed for 0 object(s) and 0 field(s)`,
-  });
+  throw new BaseGraphQLError(
+    error.message,
+    ErrorCode.METADATA_VALIDATION_FAILED,
+    {
+      code: 'METADATA_VALIDATION_ERROR',
+      errors,
+      summary,
+      message: `Validation failed for 0 object(s) and 0 field(s)`,
+      userFriendlyMessage: msg`Validation failed for 0 object(s) and 0 field(s)`,
+    },
+  );
 };
