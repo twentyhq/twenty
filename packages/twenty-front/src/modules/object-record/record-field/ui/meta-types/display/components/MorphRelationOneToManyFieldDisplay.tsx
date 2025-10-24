@@ -3,9 +3,9 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMorphRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMorphRelationFromManyFieldDisplay';
 
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { Fragment, useContext } from 'react';
+import { useContext } from 'react';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MorphRelationOneToManyFieldDisplay = () => {
@@ -17,38 +17,40 @@ export const MorphRelationOneToManyFieldDisplay = () => {
   if (!isDefined(morphValuesWithObjectNameSingular)) {
     return null;
   }
+
   const areMorphValuesWithObjectNameSingularEmpty =
     morphValuesWithObjectNameSingular.every(
       (morphValueWithObjectNameSingular) =>
         morphValueWithObjectNameSingular.value.length === 0,
     );
+
   if (areMorphValuesWithObjectNameSingularEmpty) {
     return null;
   }
 
+  const flattenMorphValuesWithObjectNameSingular =
+    morphValuesWithObjectNameSingular.flatMap(
+      (morphValueWithObjectNameSingular) =>
+        morphValueWithObjectNameSingular.value.map((record: ObjectRecord) => ({
+          objectNameSingular:
+            morphValueWithObjectNameSingular.objectNameSingular,
+          record,
+        })),
+    );
+
   return (
     <ExpandableList isChipCountDisplayed={isFocused}>
-      {morphValuesWithObjectNameSingular
+      {flattenMorphValuesWithObjectNameSingular
         .filter(isDefined)
-        .map((morphValueWithObjectNameSingular) => {
+        .map(({ objectNameSingular, record }) => {
           return (
-            <Fragment key={morphValueWithObjectNameSingular.objectNameSingular}>
-              {morphValueWithObjectNameSingular.value.map(
-                (record: ObjectRecord) => {
-                  return (
-                    <RecordChip
-                      key={record.id}
-                      objectNameSingular={
-                        morphValueWithObjectNameSingular.objectNameSingular
-                      }
-                      record={record}
-                      forceDisableClick={disableChipClick}
-                      triggerEvent={triggerEvent}
-                    />
-                  );
-                },
-              )}
-            </Fragment>
+            <RecordChip
+              key={record.id}
+              objectNameSingular={objectNameSingular}
+              record={record}
+              forceDisableClick={disableChipClick}
+              triggerEvent={triggerEvent}
+            />
           );
         })}
     </ExpandableList>
