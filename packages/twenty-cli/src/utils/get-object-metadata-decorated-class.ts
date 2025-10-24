@@ -1,6 +1,6 @@
 import camelcase from 'lodash.camelcase';
 
-export const getDecoratedClass = ({
+export const getObjectMetadataDecoratedClass = ({
   data,
   name,
 }: {

@@ -9,7 +9,8 @@ import { HTTPMethod } from '../types/config.types';
 import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
 import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
-import { getDecoratedClass } from '../utils/get-decorated-class';
+import { getObjectMetadataDecoratedClass } from '../utils/get-object-metadata-decorated-class';
+import { getServerlessFunctionDecoratedClass } from '../utils/get-serverless-function-decorated-class';
 
 export enum SyncableEntity {
   AGENT = 'agent',
@@ -64,7 +65,23 @@ export class AppAddCommand {
 
         const objectFileName = `${camelcase(entityName)}.ts`;
 
-        const decoratedObject = getDecoratedClass({
+        const decoratedObject = getObjectMetadataDecoratedClass({
+          data: entityData,
+          name: entityName,
+        });
+
+        await fs.writeFile(path.join(appPath, objectFileName), decoratedObject);
+
+        return;
+      }
+
+      if (entity === SyncableEntity.SERVERLESS_FUNCTION) {
+        delete entityData['standardId'];
+        delete entityData['$schema'];
+
+        const objectFileName = `${camelcase(entityName)}.ts`;
+
+        const decoratedObject = getServerlessFunctionDecoratedClass({
           data: entityData,
           name: entityName,
         });
