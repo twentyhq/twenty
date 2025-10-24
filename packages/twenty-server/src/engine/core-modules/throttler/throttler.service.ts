@@ -40,7 +40,7 @@ export class ThrottlerService {
     const { tokens, lastRefillAt } = (await this.cacheStorage.get<{
       tokens: number;
       lastRefillAt: number;
-    }>(key)) || { tokens: maxTokens, lastRefillAt: Date.now() };
+    }>(key)) || { tokens: maxTokens, lastRefillAt: now };
 
     const refillAmount = Math.floor((now - lastRefillAt) * refillRate);
 

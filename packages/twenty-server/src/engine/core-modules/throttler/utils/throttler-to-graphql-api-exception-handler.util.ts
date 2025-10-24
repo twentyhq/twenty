@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   type ThrottlerException,
@@ -10,5 +12,8 @@ export const throttlerToGraphqlApiExceptionHandler = (
   switch (error.code) {
     case ThrottlerExceptionCode.LIMIT_REACHED:
       throw new UserInputError(error);
+    default: {
+      return assertUnreachable(error.code);
+    }
   }
 };
