@@ -12,6 +12,7 @@ import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -33,6 +34,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     ViewModule,
     ViewFilterModule,
     ViewFilterGroupModule,
+    ThrottlerModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,
