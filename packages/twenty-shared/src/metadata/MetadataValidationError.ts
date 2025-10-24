@@ -1,4 +1,4 @@
-import { AllMetadataName } from '@/metadata/all-metadata-name.type';
+import { type AllMetadataName } from '@/metadata/all-metadata-name.type';
 
 export type FailedMetadataValidationError = {
   code: string;

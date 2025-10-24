@@ -8,7 +8,7 @@ import { useSetRecoilState } from 'recoil';
 import { useUpdateViewAggregate } from '../useUpdateViewAggregate';
 
 jest.mock('@/ui/utilities/state/component-state/hooks/useRecoilComponentValue');
-jest.mock('@/views/hooks/useUpdateView');
+jest.mock('@/views/hooks/internal/usePersistView');
 jest.mock('@/views/hooks/useRefreshCoreViewsByObjectMetadataId');
 jest.mock('recoil');
 describe('useUpdateViewAggregate', () => {
@@ -43,8 +43,10 @@ describe('useUpdateViewAggregate', () => {
       // updateView is called with 'EARLIEST' converted to 'MIN'
       expect(mockUpdateView).toHaveBeenCalledWith({
         id: mockCurrentViewId,
-        kanbanAggregateOperationFieldMetadataId: 'test-field-id',
-        kanbanAggregateOperation: AggregateOperations.MIN,
+        input: {
+          kanbanAggregateOperationFieldMetadataId: 'test-field-id',
+          kanbanAggregateOperation: AggregateOperations.MIN,
+        },
       });
 
       // setAggregateOperation is called with 'EARLIEST'

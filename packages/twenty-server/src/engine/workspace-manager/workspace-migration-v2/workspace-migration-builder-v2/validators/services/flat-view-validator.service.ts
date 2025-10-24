@@ -1,5 +1,6 @@
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -8,7 +9,6 @@ import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/works
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 export class FlatViewValidatorService {
   constructor() {}
