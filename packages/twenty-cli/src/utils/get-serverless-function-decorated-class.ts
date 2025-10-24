@@ -24,6 +24,8 @@ export const getServerlessFunctionDecoratedClass = ({
 /**
  * Here is your new serverless function
  *
+ * ✅Triggers
+ *
  * This function can be invoked via a trigger (DatabaseEventTrigger, RouteTrigger, or CronTrigger)
  * once the appropriate trigger decorator is uncommented and configured.
  *
@@ -46,6 +48,17 @@ export const getServerlessFunctionDecoratedClass = ({
  *   universalIdentifier: '${v4()}',
  *   pattern: '0 * * * *', // Every hour
  * })
+ *
+ * ✅Environment variables
+ *
+ * import { ApplicationVariable } from 'twenty-sdk';
+ * @ApplicationVariable({
+ *   universalIdentifier: '${v4()}',
+ *   key: 'ENV_VAR_KEY',
+ *   description: '',
+ *   isSecret: true,
+ * })
+ *
  */
 @ServerlessFunction({
 ${decoratorOptions}

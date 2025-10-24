@@ -26,6 +26,7 @@ export type AppManifest = PackageJson & {
   agents: AgentManifest[];
   objects: ObjectManifest[];
   serverlessFunctions: ServerlessFunctionManifest[];
+  applicationVariables: ApplicationVariableManifest[];
   sources: Sources;
 };
 
@@ -33,6 +34,14 @@ export type CoreEntityManifest =
   | AgentManifest
   | ObjectManifest
   | ServerlessFunctionManifest;
+
+export type ApplicationVariableManifest = {
+  universalIdentifier: string;
+  key: string;
+  description?: string;
+  isSecret?: boolean;
+  value?: string;
+};
 
 export type ServerlessFunctionManifest = {
   $schema?: string;
@@ -45,14 +54,6 @@ export type ServerlessFunctionManifest = {
   handlerPath: string;
   handlerName: string;
 };
-
-export enum HTTPMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
-}
 
 export type DatabaseEventTrigger = {
   type: 'databaseEvent';

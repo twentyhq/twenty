@@ -4,8 +4,15 @@ import {
   ServerlessFunction,
   RouteTrigger,
   CronTrigger,
+  ApplicationVariable,
 } from 'twenty-sdk';
 
+@ApplicationVariable({
+  universalIdentifier: 'dedc53eb-9c12-4fe2-ba86-4a2add19d305',
+  key: 'TWENTY_API_KEY',
+  description: 'Twenty API Key',
+  isSecret: true,
+})
 @DatabaseEventTrigger({
   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
   eventName: 'person.created',
