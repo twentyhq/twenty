@@ -4,8 +4,8 @@ import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
 import { captchaState } from '@/client-config/states/captchaState';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useRequestFreshCaptchaToken = () => {
   const setCaptchaToken = useSetRecoilState(captchaTokenState);
@@ -22,14 +22,15 @@ export const useRequestFreshCaptchaToken = () => {
 
         const captcha = snapshot.getLoadable(captchaState).getValue();
 
-        if (isUndefinedOrNull(captcha?.provider)) {
+        if (!isDefined(captcha)) {
           return;
         }
+
+        assertIsDefinedOrThrow(captcha);
 
         setIsRequestingCaptchaToken(true);
 
         let captchaWidget: any;
-
         switch (captcha.provider) {
           case CaptchaDriverType.GOOGLE_RECAPTCHA:
             window.grecaptcha
