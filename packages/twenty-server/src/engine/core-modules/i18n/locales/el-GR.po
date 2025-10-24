@@ -54,9 +54,15 @@ msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "Το {fieldName} και το {fieldName}Id δεν μπορούν να παρέχονται και τα δύο."
 
 #. js-lingui-id: ZkHTHm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
 msgstr "Τα πεδία {fieldType} δεν μπορούν να είναι μοναδικά."
+
+#. js-lingui-id: LeIJhm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "{fieldType} fields cannot have a default value."
+msgstr "Τα πεδία {fieldType} δεν μπορούν να έχουν προεπιλεγμένη τιμή."
 
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
@@ -812,7 +818,7 @@ msgid "Contradicting field permissions have been detected on a relation field ({
 msgstr "Αντιφατικές άδειες πεδίων ανιχνεύθηκαν σε ένα πεδίο σχέσης ({fieldName})."
 
 #. js-lingui-id: LZf/L8
-#: src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+#: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 msgid "Could not find flat entity in maps"
 msgstr "Δεν μπόρεσα να βρω την επίπεδη οντότητα στους χάρτες"
 
@@ -1415,6 +1421,8 @@ msgid "Field Metadata Id"
 msgstr "Κωδικός Μεταδεδομένων Πεδίου"
 
 #. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -1645,6 +1653,7 @@ msgstr "Το σχετικό αντικείμενο του ευρετηρίου �
 
 #. js-lingui-id: fY2zUQ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
 msgid "Index to delete not found"
 msgstr "Το ευρετήριο για διαγραφή δεν βρέθηκε"
 
@@ -2193,6 +2202,7 @@ msgstr "Η προεπιλεγμένη τιμή πεδίου πολλαπλής �
 
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "Βρέθηκαν πολλαπλές εγγραφές με τις ίδιες μοναδικές τιμές πεδίων για {conflictingFieldsValues}. Δεν είναι δυνατός ο προσδιορισμός της εγγραφής προς ενημέρωση."
 
@@ -3610,6 +3620,12 @@ msgstr "Τύπος"
 msgid "Unique field cannot have a default value"
 msgstr "Ένα μοναδικό πεδίο δεν μπορεί να έχει προεπιλεγμένη τιμή"
 
+#. js-lingui-id: WWSSTx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
+msgstr "Μοναδικό ευρετήριο δεν μπορεί να δημιουργηθεί για το πεδίο {fieldName} τύπου {fieldType}"
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -3956,6 +3972,16 @@ msgstr "\\\\"
 msgid "View Group"
 msgstr "\\\\"
 
+#. js-lingui-id: MGbEFN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata already exists"
+msgstr "Τα μεταδεδομένα ομάδας προβολής ήδη υπάρχουν"
+
+#. js-lingui-id: lbyQO4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata with id {flatViewGroupId} already exists"
+msgstr "Τα μεταδεδομένα ομάδας προβολής με id {flatViewGroupId} ήδη υπάρχουν"
+
 #. js-lingui-id: uQ3c2q
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group related view"
@@ -3965,6 +3991,43 @@ msgstr "\\\\"
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group target field"
 msgstr "\\\\"
+
+#. js-lingui-id: tdtXoB
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to delete has not been soft deleted"
+msgstr "Η ομάδα προβολής για διαγραφή δεν έχει διαγραφεί προσωρινά"
+
+#. js-lingui-id: JdAvYa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to delete not found"
+msgstr "Δεν βρέθηκε ομάδα προβολής για διαγραφή"
+
+#. js-lingui-id: 34hWb7
+#: src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to destroy not found"
+msgstr "Δεν βρέθηκε ομάδα προβολής για καταστροφή"
+
+#. js-lingui-id: UP/TXo
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
+msgid "View group to update not found"
+msgstr "Δεν βρέθηκε ομάδα προβολής για ενημέρωση"
+
+#. js-lingui-id: XbOhpY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent field not found"
+msgstr "Δεν βρέθηκε το πεδίο γονικής ομάδας προβολής για ενημέρωση"
+
+#. js-lingui-id: P0grPG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent view not found"
+msgstr "Δεν βρέθηκε η γονική προβολή ομάδας για ενημέρωση"
 
 #. js-lingui-id: b1Vc+l
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -4003,6 +4066,8 @@ msgstr "\\\\"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts

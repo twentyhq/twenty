@@ -54,9 +54,15 @@ msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "{fieldName} 및 {fieldName}Id는 둘 다 제공될 수 없습니다."
 
 #. js-lingui-id: ZkHTHm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
 msgstr "{fieldType} 필드는 고유할 수 없습니다."
+
+#. js-lingui-id: LeIJhm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "{fieldType} fields cannot have a default value."
+msgstr "{fieldType} 필드는 기본값을 가질 수 없습니다."
 
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
@@ -812,7 +818,7 @@ msgid "Contradicting field permissions have been detected on a relation field ({
 msgstr "관련 필드({fieldName})에서 상충되는 필드 권한이 감지되었습니다."
 
 #. js-lingui-id: LZf/L8
-#: src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+#: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 msgid "Could not find flat entity in maps"
 msgstr "지도에서 평면 엔터티를 찾을 수 없습니다"
 
@@ -1415,6 +1421,8 @@ msgid "Field Metadata Id"
 msgstr "필드 메타데이터 ID"
 
 #. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -1645,6 +1653,7 @@ msgstr "색인 관련된 객체를 찾을 수 없습니다"
 
 #. js-lingui-id: fY2zUQ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
 msgid "Index to delete not found"
 msgstr "삭제할 색인을 찾을 수 없습니다"
 
@@ -2193,6 +2202,7 @@ msgstr "멀티 선택 필드 기본값은 배열이어야 합니다."
 
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "{conflictingFieldsValues}에 대해 동일한 고유 필드 값이 있는 여러 레코드가 발견되었습니다. 업데이트할 레코드를 결정할 수 없습니다."
 
@@ -3610,6 +3620,12 @@ msgstr "유형"
 msgid "Unique field cannot have a default value"
 msgstr "고유 필드는 기본값을 가질 수 없습니다."
 
+#. js-lingui-id: WWSSTx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
+msgstr "필드 {fieldName}의 유형 {fieldType}에 대한 고유 인덱스를 생성할 수 없습니다."
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -3956,6 +3972,16 @@ msgstr "보기 필터"
 msgid "View Group"
 msgstr "보기 그룹"
 
+#. js-lingui-id: MGbEFN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata already exists"
+msgstr "뷰 그룹 메타데이터가 이미 존재합니다"
+
+#. js-lingui-id: lbyQO4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata with id {flatViewGroupId} already exists"
+msgstr "ID가 {flatViewGroupId}인 뷰 그룹 메타데이터가 이미 존재합니다"
+
 #. js-lingui-id: uQ3c2q
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group related view"
@@ -3965,6 +3991,43 @@ msgstr "보기 그룹 관련 보기"
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group target field"
 msgstr "보기 그룹 대상 필드"
+
+#. js-lingui-id: tdtXoB
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to delete has not been soft deleted"
+msgstr "삭제할 뷰 그룹이 소프트 삭제되지 않았습니다"
+
+#. js-lingui-id: JdAvYa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to delete not found"
+msgstr "삭제할 뷰 그룹을 찾을 수 없음"
+
+#. js-lingui-id: 34hWb7
+#: src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to destroy not found"
+msgstr "삭제할 뷰 그룹을 찾을 수 없음"
+
+#. js-lingui-id: UP/TXo
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
+msgid "View group to update not found"
+msgstr "업데이트할 뷰 그룹을 찾을 수 없음"
+
+#. js-lingui-id: XbOhpY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent field not found"
+msgstr "부모 필드를 업데이트할 뷰 그룹을 찾을 수 없음"
+
+#. js-lingui-id: P0grPG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent view not found"
+msgstr "부모 보기를 업데이트할 뷰 그룹을 찾을 수 없음"
 
 #. js-lingui-id: b1Vc+l
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -4003,6 +4066,8 @@ msgstr "보기 이름"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts

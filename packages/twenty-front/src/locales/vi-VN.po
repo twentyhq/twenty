@@ -126,6 +126,7 @@ msgstr "{formattedCreatedRecordsProgress} trong tổng số {formattedRecordsToI
 
 #. js-lingui-id: 2EPGDl
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter.tsx
 msgid "{graphTypeLabel} Chart"
 msgstr "Biểu đồ {graphTypeLabel}"
 
@@ -149,6 +150,11 @@ msgstr "{roleLabel} không thể {humanReadableAction} bản ghi {objectLabel}"
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} sẽ được gán vào vai trò \"{newRoleName}\"."
 
+#. js-lingui-id: Bzjg0/
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
+msgid "{stepNumber}. Calendar"
+msgstr "{stepNumber}. Lịch"
+
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
@@ -165,6 +171,12 @@ msgstr "{workspaceMemberName} sẽ không còn được phân công vào vai tr�
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "••••••••"
 msgstr "••••••••"
+
+#. js-lingui-id: tEdOxj
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+msgid "1. Email"
+msgstr "1. Email"
 
 #. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -316,6 +328,8 @@ msgid "About this workspace"
 msgstr "Giới thiệu về không gian làm việc này"
 
 #. js-lingui-id: AeXO77
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
@@ -326,6 +340,11 @@ msgstr "Tài khoản"
 #: src/utils/title-utils.ts
 msgid "Account - Settings"
 msgstr "Tài khoản - Cài đặt"
+
+#. js-lingui-id: gW0DoU
+#: src/pages/settings/accounts/SettingsAccountsConfiguration.tsx
+msgid "Account added successfully. Sync started."
+msgstr "Tài khoản đã được thêm thành công. Đồng bộ hóa đã bắt đầu."
 
 #. js-lingui-id: nD0Y+a
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -386,7 +405,7 @@ msgstr "Kích hoạt Workflow"
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Active"
@@ -417,9 +436,16 @@ msgid "Add a Trigger"
 msgstr "Thêm một Trình kích hoạt"
 
 #. js-lingui-id: MPPZ54
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Thêm tài khoản"
+
+#. js-lingui-id: 27lqO4
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Add an Action"
+msgstr "Thêm một hành động"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -443,8 +469,8 @@ msgid "Add Field"
 msgstr "Thêm Trường"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/Attachments.tsx
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "Add file"
 msgstr "Thêm tệp"
 
@@ -481,7 +507,7 @@ msgid "Add new"
 msgstr "Thêm mới"
 
 #. js-lingui-id: ApsD9J
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+#: src/modules/object-record/record-table/components/RecordTableNoRecordGroupAddNew.tsx
 msgid "Add New"
 msgstr "Thêm mới"
 
@@ -620,6 +646,12 @@ msgstr "Nâng cao"
 msgid "Advanced filter"
 msgstr "Bộ lọc nâng cao"
 
+#. js-lingui-id: miuPUc
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+msgid "Advanced objects"
+msgstr "Các đối tượng nâng cao"
+
 #. js-lingui-id: WsKDNF
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 msgid "Advanced:"
@@ -657,6 +689,11 @@ msgstr "Vai trò Đại lý"
 msgid "Agents"
 msgstr "Đại lý"
 
+#. js-lingui-id: Y1fJZS
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Agents created by application"
+msgstr "Các đại lý được tạo bởi ứng dụng"
+
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Agents used to route queries to specialized agents"
@@ -691,7 +728,7 @@ msgstr "Schema phản hồi AI"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "All"
 msgstr "Tất cả"
 
@@ -794,6 +831,11 @@ msgstr "Cho phép người dùng đăng nhập với email và mật khẩu."
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "An error occurred while checking user existence"
 msgstr "Đã xảy ra lỗi khi kiểm tra sự tồn tại của người dùng"
+
+#. js-lingui-id: I/scZd
+#: src/modules/ai/components/AIChatErrorMessage.tsx
+msgid "An error occurred while processing your message"
+msgstr "Đã xảy ra lỗi khi xử lý tin nhắn của bạn"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -925,6 +967,35 @@ msgstr "Giao diện"
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Applicability"
 msgstr "Tính áp dụng"
+
+#. js-lingui-id: uNojI9
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application agents"
+msgstr "Đại lý ứng dụng"
+
+#. js-lingui-id: vdieHo
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application details"
+msgstr "Chi tiết ứng dụng"
+
+#. js-lingui-id: E5NJII
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application objects"
+msgstr "Các đối tượng ứng dụng"
+
+#. js-lingui-id: fqP45C
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application serverless functions"
+msgstr "Các hàm serverless của ứng dụng"
+
+#. js-lingui-id: fL7WXr
+#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Applications"
+msgstr "Ứng dụng"
 
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -1090,6 +1161,11 @@ msgstr "vào phút {remainingValues} và {lastValue}"
 msgid "at the top of the hour"
 msgstr "vào đầu giờ"
 
+#. js-lingui-id: DzqB0O
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Auth Required"
+msgstr "Yêu cầu xác thực"
+
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Authentication"
@@ -1178,11 +1254,6 @@ msgstr "Quay lại"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Quay lại nội dung"
-
-#. js-lingui-id: GoBp8L
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Bar"
-msgstr "Cột"
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -1471,7 +1542,6 @@ msgstr "Nhật ký thay đổi"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
 msgid "Chart"
 msgstr "Biểu đồ"
 
@@ -1673,6 +1743,7 @@ msgstr "hoàn thành"
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartFilters.tsx
 msgid "Conditions"
 msgstr "Điều kiện"
 
@@ -2131,6 +2202,11 @@ msgstr "Tín dụng theo giai đoạn"
 msgid "Credits Used"
 msgstr "Tín dụng đã sử dụng"
 
+#. js-lingui-id: 6Oaeoc
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Cron"
+msgstr "Cron"
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2280,6 +2356,11 @@ msgstr "Loại dữ liệu"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Database configuration is currently disabled."
 msgstr "Cấu hình cơ sở dữ liệu hiện đang bị vô hiệu hóa."
+
+#. js-lingui-id: lP42oc
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Database event"
+msgstr "Sự kiện cơ sở dữ liệu"
 
 #. js-lingui-id: mYGY3B
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -2592,6 +2673,7 @@ msgstr "Mô tả khi nào việc chuyển giao này nên được sử dụng"
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -3017,14 +3099,9 @@ msgid "Empty Array"
 msgstr "Mảng trống"
 
 #. js-lingui-id: 8X+jbk
-#: src/modules/activities/emails/components/EmailThreads.tsx
+#: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Empty Inbox"
 msgstr "Hộp thư rỗng"
-
-#. js-lingui-id: hGwouC
-#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-msgid "Empty Node"
-msgstr "Nút Trống"
 
 #. js-lingui-id: 3hSGoJ
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -3158,10 +3235,10 @@ msgstr "Đã sao chép ID thực thể vào bảng tạm"
 msgid "Environment variable"
 msgstr "Biến môi trường"
 
-#. js-lingui-id: SlfejT
-#: src/modules/ai/components/ErrorStepRenderer.tsx
-msgid "Error"
-msgstr "Lỗi"
+#. js-lingui-id: BlLvRP
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Erasure of soft-deleted records"
+msgstr "Xóa vĩnh viễn các bản ghi đã xóa mềm"
 
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -3506,6 +3583,7 @@ msgstr "Xuất các quy trình công việc"
 
 #. js-lingui-id: 1JBTZV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Expression"
 msgstr "Biểu thức"
 
@@ -3523,6 +3601,11 @@ msgstr "Thất bại"
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
 msgstr "Không tạo được chuyển giao"
+
+#. js-lingui-id: Ukrbw5
+#: src/modules/ai/components/AIChatErrorMessage.tsx
+msgid "Failed to get response"
+msgstr "Không thể lấy được phản hồi"
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -3586,8 +3669,7 @@ msgid "Field"
 msgstr "Trường"
 
 #. js-lingui-id: nrXDdR
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field name"
 msgstr "Tên trường"
 
@@ -3597,7 +3679,7 @@ msgid "Field Name"
 msgstr "Tên Trường"
 
 #. js-lingui-id: x07QTl
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field on destination"
 msgstr "Trường ở điểm đến"
 
@@ -3643,11 +3725,13 @@ msgstr "Thứ năm"
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/components/ChartFilters.tsx
 msgid "Filter"
 msgstr "\"Lọc\""
 
 #. js-lingui-id: cSev+j
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
 msgid "Filters"
 msgstr "\"Bộ lọc\""
 
@@ -3731,6 +3815,7 @@ msgstr "Định dạng ví dụ: d-MMM-y (qqq''yy)"
 
 #. js-lingui-id: xMJhWJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
 msgstr "Định dạng: [Phút] [Giờ] [Ngày của Tháng] [Tháng] [Ngày của Tuần]"
 
@@ -3763,11 +3848,6 @@ msgstr "từ {startDay} đến {endDay}"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
-msgstr "\\"
-
-#. js-lingui-id: xANKBj
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Functions"
 msgstr "\\"
 
 #. js-lingui-id: tkr79G
@@ -3989,6 +4069,11 @@ msgstr "Ẩn nhóm trống"
 msgid "Hide hidden groups"
 msgstr "Ẩn nhóm ẩn"
 
+#. js-lingui-id: Hq6/gt
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Horizontal Bar"
+msgstr "Thanh ngang"
+
 #. js-lingui-id: N0Yhtw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Hours between triggers"
@@ -4003,6 +4088,11 @@ msgstr "Cách bạn sẽ được nhận diện trong ứng dụng."
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
 msgstr "Tình trạng hệ thống của bạn"
+
+#. js-lingui-id: gwfyXo
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Http"
+msgstr "Http"
 
 #. js-lingui-id: DvpBQM
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -4165,14 +4255,14 @@ msgid "In {dateDiff}"
 msgstr "Trong {dateDiff}"
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
 msgstr "Không hoạt động"
 
 #. js-lingui-id: Gp4Yi6
-#: src/modules/activities/emails/components/EmailThreads.tsx
+#: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Inbox"
 msgstr "Hộp thư"
 
@@ -4898,6 +4988,11 @@ msgstr "Tạo tập tin Metadata thất bại"
 msgid "Metered tier switching has been cancelled."
 msgstr "Chuyển đổi cấp đo đã bị hủy."
 
+#. js-lingui-id: fiPesM
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Method"
+msgstr "Phương pháp"
+
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4995,9 +5090,11 @@ msgstr "phải là một mảng email hợp lệ"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionsTable.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -5173,6 +5270,7 @@ msgid "New SSO provider"
 msgstr "Nhà cung cấp SSO mới"
 
 #. js-lingui-id: hXzOVo
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
@@ -5312,12 +5410,12 @@ msgid "No description"
 msgstr "Không có mô tả"
 
 #. js-lingui-id: mINrlz
-#: src/modules/activities/emails/components/EmailThreads.tsx
+#: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "No email exchange has occurred with this record yet."
 msgstr "Chưa có trao đổi email nào với hồ sơ này."
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "No Files"
 msgstr "Không có tệp"
 
@@ -5498,6 +5596,12 @@ msgstr "Không trống"
 msgid "Not Found"
 msgstr "Không tìm thấy"
 
+#. js-lingui-id: NpVtef
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
+msgid "Not Set"
+msgstr "Không được đặt"
+
 #. js-lingui-id: 51G4/+
 #: src/modules/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
@@ -5559,8 +5663,8 @@ msgid "Object"
 msgstr "Đối tượng"
 
 #. js-lingui-id: Zrauom
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
 msgstr "Điểm đến đối tượng"
 
@@ -5586,10 +5690,20 @@ msgstr "Các đối tượng"
 msgid "Objects and fields permissions settings"
 msgstr "Cài đặt quyền đối tượng và trường"
 
+#. js-lingui-id: X51S3F
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Objects created by application"
+msgstr "Các đối tượng được tạo bởi ứng dụng"
+
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "Lạc lối"
+
+#. js-lingui-id: +rvV4v
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Omit zero values"
+msgstr "Bỏ qua giá trị bằng 0"
 
 #. js-lingui-id: jcwJgk
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -5751,6 +5865,7 @@ msgid "Organization"
 msgstr "Tổ chức"
 
 #. js-lingui-id: /IX/7x
+#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/releases/SettingsReleases.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -5758,6 +5873,11 @@ msgstr "Tổ chức"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
 msgstr "Khác"
+
+#. js-lingui-id: 9LV44m
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Other security settings"
+msgstr "Các cài đặt bảo mật khác"
 
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
@@ -5805,6 +5925,11 @@ msgstr "Đường dẫn đặt lại mật khẩu đã được gửi đến ema
 msgid "Paste the code below"
 msgstr "Dán mã bên dưới"
 
+#. js-lingui-id: I6gXOa
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Path"
+msgstr "Đường dẫn"
+
 #. js-lingui-id: UbRKMZ
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Pending"
@@ -5847,6 +5972,11 @@ msgstr "Phần trăm không trống"
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Percentage"
 msgstr "Phần trăm"
+
+#. js-lingui-id: wSpwGR
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Permanent deletion. Enter the number of days."
+msgstr "Xóa vĩnh viễn. Nhập số ngày."
 
 #. js-lingui-id: rDky0a
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
@@ -6174,8 +6304,7 @@ msgid "Regenerate Key"
 msgstr "Tái Tạo Khóa"
 
 #. js-lingui-id: UiAJoB
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
 msgstr "Loại quan hệ"
 
@@ -6349,6 +6478,11 @@ msgstr "Khôi phục bản ghi"
 #: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
 msgid "Results"
 msgstr "Kết quả"
+
+#. js-lingui-id: 6gRgw8
+#: src/modules/ai/components/AIChatErrorMessage.tsx
+msgid "Retry"
+msgstr "Thử lại"
 
 #. js-lingui-id: Wz7mbi
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -6573,7 +6707,7 @@ msgid "Search folders..."
 msgstr "Tìm kiếm thư mục..."
 
 #. js-lingui-id: ofuw3g
-#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 msgid "Search for an object..."
 msgstr "Tìm kiếm một đối tượng..."
 
@@ -6806,6 +6940,11 @@ msgstr "Chọn Nguồn"
 msgid "Select the default value for this boolean field"
 msgstr "Chọn giá trị mặc định cho trường boolean này"
 
+#. js-lingui-id: E3D4LZ
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Select the events that should trigger the function"
+msgstr "Chọn các sự kiện cần kích hoạt chức năng"
+
 #. js-lingui-id: xraglu
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Select the events you wish to send to this endpoint"
@@ -6856,6 +6995,11 @@ msgstr "Đã gửi và Nhận"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
 msgstr "Tiếng Serbia (Chữ Cyrillic)"
+
+#. js-lingui-id: eGHP1w
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Serverless functions created by application"
+msgstr "Các hàm serverless được tạo bởi ứng dụng"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -7132,6 +7276,11 @@ msgstr "Đăng nhập một lần"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
+
+#. js-lingui-id: nNpwX2
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Stacked bars"
+msgstr "Thanh chồng lên nhau"
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -7542,7 +7691,7 @@ msgid "then"
 msgstr "sau đó"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "There are no associated files with this record."
 msgstr "Không có tệp nào được liên kết với hồ sơ này."
 
@@ -7753,6 +7902,16 @@ msgstr "Khoảng thời gian kích hoạt"
 msgid "Trigger Type"
 msgstr "Loại Kích hoạt"
 
+#. js-lingui-id: zk64Yo
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Triggers the function at regular intervals"
+msgstr "Kích hoạt chức năng theo định kỳ"
+
+#. js-lingui-id: juqoz0
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Triggers the function with Http request"
+msgstr "Kích hoạt chức năng với yêu cầu Http"
+
 #. js-lingui-id: c+xCSz
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -7956,6 +8115,8 @@ msgstr "Sử dụng API của chúng tôi hoặc thêm {objectLabel} của bạn
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -8066,6 +8227,11 @@ msgstr "Xác minh mã từ ứng dụng"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
 msgstr "Phiên bản của ứng dụng"
+
+#. js-lingui-id: JEDLoS
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Vertical Bar"
+msgstr "Thanh dọc"
 
 #. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -8268,6 +8434,8 @@ msgstr "Quy Trình Làm Việc"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx

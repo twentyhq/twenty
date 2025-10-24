@@ -126,6 +126,7 @@ msgstr "{formattedCreatedRecordsProgress} kayıttan {formattedRecordsToImportCou
 
 #. js-lingui-id: 2EPGDl
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter.tsx
 msgid "{graphTypeLabel} Chart"
 msgstr "{graphTypeLabel} Grafiği"
 
@@ -149,6 +150,11 @@ msgstr "{roleLabel} {objectLabel} kayıtlarını {humanReadableAction} yapamaz"
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} \"{newRoleName}\" rolüne atanacak."
 
+#. js-lingui-id: Bzjg0/
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
+msgid "{stepNumber}. Calendar"
+msgstr "{stepNumber}. Takvim"
+
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
@@ -165,6 +171,12 @@ msgstr "{workspaceMemberName} aşağıdaki rolden atılacak:"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "••••••••"
 msgstr "••••••••"
+
+#. js-lingui-id: tEdOxj
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+msgid "1. Email"
+msgstr "1. E-posta"
 
 #. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -316,6 +328,8 @@ msgid "About this workspace"
 msgstr "Bu çalışma alanı hakkında"
 
 #. js-lingui-id: AeXO77
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
@@ -326,6 +340,11 @@ msgstr "Hesap"
 #: src/utils/title-utils.ts
 msgid "Account - Settings"
 msgstr "Hesap - Ayarlar"
+
+#. js-lingui-id: gW0DoU
+#: src/pages/settings/accounts/SettingsAccountsConfiguration.tsx
+msgid "Account added successfully. Sync started."
+msgstr "Hesap başarıyla eklendi. Eşitleme başlatıldı."
 
 #. js-lingui-id: nD0Y+a
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -386,7 +405,7 @@ msgstr "İş Akışını Aktif Et"
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Active"
@@ -417,9 +436,16 @@ msgid "Add a Trigger"
 msgstr "Bir Tetikleyici Ekle"
 
 #. js-lingui-id: MPPZ54
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Yeni hesap"
+
+#. js-lingui-id: 27lqO4
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Add an Action"
+msgstr "Bir Eylem Ekle"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -443,8 +469,8 @@ msgid "Add Field"
 msgstr "Alan Ekle"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/Attachments.tsx
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "Add file"
 msgstr "Dosya ekle"
 
@@ -481,7 +507,7 @@ msgid "Add new"
 msgstr "Yeni ekle"
 
 #. js-lingui-id: ApsD9J
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+#: src/modules/object-record/record-table/components/RecordTableNoRecordGroupAddNew.tsx
 msgid "Add New"
 msgstr "Yeni ekle"
 
@@ -620,6 +646,12 @@ msgstr "Gelişmiş"
 msgid "Advanced filter"
 msgstr "Gelişmiş filtre"
 
+#. js-lingui-id: miuPUc
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+msgid "Advanced objects"
+msgstr "Gelişmiş nesneler"
+
 #. js-lingui-id: WsKDNF
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 msgid "Advanced:"
@@ -657,6 +689,11 @@ msgstr "Temsilci Roller"
 msgid "Agents"
 msgstr "Temsilciler"
 
+#. js-lingui-id: Y1fJZS
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Agents created by application"
+msgstr "Uygulama tarafından oluşturulan ajanlar"
+
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Agents used to route queries to specialized agents"
@@ -691,7 +728,7 @@ msgstr "AI Yanıt Şeması"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "All"
 msgstr "Tüm"
 
@@ -794,6 +831,11 @@ msgstr "Kullanıcıların e-posta ve şifre ile oturum açmasına izin ver."
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "An error occurred while checking user existence"
 msgstr "Kullanıcı varlığı kontrol edilirken bir hata oluştu"
+
+#. js-lingui-id: I/scZd
+#: src/modules/ai/components/AIChatErrorMessage.tsx
+msgid "An error occurred while processing your message"
+msgstr "Mesajınızı işlerken bir hata oluştu"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -925,6 +967,35 @@ msgstr "Görünüm"
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Applicability"
 msgstr "Geçerlilik"
+
+#. js-lingui-id: uNojI9
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application agents"
+msgstr "Uygulama ajanları"
+
+#. js-lingui-id: vdieHo
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application details"
+msgstr "Uygulama detayları"
+
+#. js-lingui-id: E5NJII
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application objects"
+msgstr "Uygulama nesneleri"
+
+#. js-lingui-id: fqP45C
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application serverless functions"
+msgstr "Uygulama sunucusuz fonksiyonlar"
+
+#. js-lingui-id: fL7WXr
+#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Applications"
+msgstr "Uygulamalar"
 
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -1090,6 +1161,11 @@ msgstr "dakika {remainingValues} ve {lastValue} saatlerinde"
 msgid "at the top of the hour"
 msgstr "saatin başında"
 
+#. js-lingui-id: DzqB0O
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Auth Required"
+msgstr "Kimlik Doğrulama Gerekli"
+
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Authentication"
@@ -1178,11 +1254,6 @@ msgstr "Geri"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "İçeriğe geri dön"
-
-#. js-lingui-id: GoBp8L
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Bar"
-msgstr "Çubuk"
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -1471,7 +1542,6 @@ msgstr "Değişiklik Günlüğü"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
 msgid "Chart"
 msgstr "Grafik"
 
@@ -1673,6 +1743,7 @@ msgstr "tamamlandı"
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartFilters.tsx
 msgid "Conditions"
 msgstr "Şartlar"
 
@@ -2131,6 +2202,11 @@ msgstr "Döneme göre krediler"
 msgid "Credits Used"
 msgstr "Kullanılan Krediler"
 
+#. js-lingui-id: 6Oaeoc
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Cron"
+msgstr "Cron"
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2280,6 +2356,11 @@ msgstr "Veri tipi"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Database configuration is currently disabled."
 msgstr "Veritabanı yapılandırması şu anda devre dışı."
+
+#. js-lingui-id: lP42oc
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Database event"
+msgstr "Veritabanı olayı"
 
 #. js-lingui-id: mYGY3B
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -2592,6 +2673,7 @@ msgstr "Bu devrinin ne zaman kullanılacağını tarif edin"
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -3017,14 +3099,9 @@ msgid "Empty Array"
 msgstr "Boş Dizi"
 
 #. js-lingui-id: 8X+jbk
-#: src/modules/activities/emails/components/EmailThreads.tsx
+#: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Empty Inbox"
 msgstr "Boş Gelen Kutusu"
-
-#. js-lingui-id: hGwouC
-#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-msgid "Empty Node"
-msgstr "Boş Düğüm"
 
 #. js-lingui-id: 3hSGoJ
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -3158,10 +3235,10 @@ msgstr "Varlık Kimliği panoya kopyalandı"
 msgid "Environment variable"
 msgstr "Çevre değişkeni"
 
-#. js-lingui-id: SlfejT
-#: src/modules/ai/components/ErrorStepRenderer.tsx
-msgid "Error"
-msgstr "Hata"
+#. js-lingui-id: BlLvRP
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Erasure of soft-deleted records"
+msgstr "Yumuşak silinmiş kayıtların silinmesi"
 
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -3506,6 +3583,7 @@ msgstr "İş Akışlarını Dışa Aktar"
 
 #. js-lingui-id: 1JBTZV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Expression"
 msgstr "İfade"
 
@@ -3523,6 +3601,11 @@ msgstr "Başarısız"
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
 msgstr "Devir oluşturulamadı"
+
+#. js-lingui-id: Ukrbw5
+#: src/modules/ai/components/AIChatErrorMessage.tsx
+msgid "Failed to get response"
+msgstr "Yanıt alınamadı"
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -3586,8 +3669,7 @@ msgid "Field"
 msgstr "Alan"
 
 #. js-lingui-id: nrXDdR
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field name"
 msgstr "Alan adı"
 
@@ -3597,7 +3679,7 @@ msgid "Field Name"
 msgstr "Alan Adı"
 
 #. js-lingui-id: x07QTl
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field on destination"
 msgstr "Hedefteki alan"
 
@@ -3643,11 +3725,13 @@ msgstr "Beşinci"
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/components/ChartFilters.tsx
 msgid "Filter"
 msgstr "Filtre"
 
 #. js-lingui-id: cSev+j
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
 msgid "Filters"
 msgstr "Filtreler"
 
@@ -3731,6 +3815,7 @@ msgstr "Format örn. d-MMM-y (qqq''yy)"
 
 #. js-lingui-id: xMJhWJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
 msgstr "Format: [Dakika] [Saat] [Ayın Günü] [Ay] [Haftanın Günü]"
 
@@ -3764,11 +3849,6 @@ msgstr "{startDay} ve {endDay} arasında"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "Tam erişim"
-
-#. js-lingui-id: xANKBj
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Functions"
-msgstr "Fonksiyonlar"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -3989,6 +4069,11 @@ msgstr "Boş grupları gizle"
 msgid "Hide hidden groups"
 msgstr "Gizli grupları gizle"
 
+#. js-lingui-id: Hq6/gt
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Horizontal Bar"
+msgstr "Yatay Çubuk"
+
 #. js-lingui-id: N0Yhtw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Hours between triggers"
@@ -4003,6 +4088,11 @@ msgstr "Uygulamada nasıl tanınacağınız."
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
 msgstr "Sisteminizin durumu"
+
+#. js-lingui-id: gwfyXo
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Http"
+msgstr "Http"
 
 #. js-lingui-id: DvpBQM
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -4165,14 +4255,14 @@ msgid "In {dateDiff}"
 msgstr "{dateDiff} sonra"
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
 msgstr "Aktif Olmayan"
 
 #. js-lingui-id: Gp4Yi6
-#: src/modules/activities/emails/components/EmailThreads.tsx
+#: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Inbox"
 msgstr "Gelen Kutusu"
 
@@ -4898,6 +4988,11 @@ msgstr "Metadata dosyası oluşturulamadı"
 msgid "Metered tier switching has been cancelled."
 msgstr "Ölçülen seviye değişikliği iptal edildi."
 
+#. js-lingui-id: fiPesM
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Method"
+msgstr "Yöntem"
+
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4995,9 +5090,11 @@ msgstr "geçerli e-posta adreslerinden oluşan bir dizi olmalıdır"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionsTable.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -5173,6 +5270,7 @@ msgid "New SSO provider"
 msgstr "Yeni SSO sağlayıcısı"
 
 #. js-lingui-id: hXzOVo
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
@@ -5312,12 +5410,12 @@ msgid "No description"
 msgstr "Açıklama yok"
 
 #. js-lingui-id: mINrlz
-#: src/modules/activities/emails/components/EmailThreads.tsx
+#: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "No email exchange has occurred with this record yet."
 msgstr "Bu kayıtla henüz bir e-posta alışverişi yapılmadı."
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "No Files"
 msgstr "Dosya Yok"
 
@@ -5498,6 +5596,12 @@ msgstr "Boş değil"
 msgid "Not Found"
 msgstr "Bulunamadı"
 
+#. js-lingui-id: NpVtef
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
+msgid "Not Set"
+msgstr "Belirlenmedi"
+
 #. js-lingui-id: 51G4/+
 #: src/modules/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
@@ -5559,8 +5663,8 @@ msgid "Object"
 msgstr "Nesne"
 
 #. js-lingui-id: Zrauom
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
 msgstr "Nesne hedefi"
 
@@ -5586,10 +5690,20 @@ msgstr "Nesneler"
 msgid "Objects and fields permissions settings"
 msgstr "Nesneler ve alanlar izin ayarları"
 
+#. js-lingui-id: X51S3F
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Objects created by application"
+msgstr "Uygulama tarafından oluşturulan nesneler"
+
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "Alışılmışın dışında"
+
+#. js-lingui-id: +rvV4v
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Omit zero values"
+msgstr "Sıfır değerleri hariç tut"
 
 #. js-lingui-id: jcwJgk
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -5751,6 +5865,7 @@ msgid "Organization"
 msgstr "Kuruluş"
 
 #. js-lingui-id: /IX/7x
+#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/releases/SettingsReleases.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -5758,6 +5873,11 @@ msgstr "Kuruluş"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
 msgstr "Diğer"
+
+#. js-lingui-id: 9LV44m
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Other security settings"
+msgstr "Diğer güvenlik ayarları"
 
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
@@ -5805,6 +5925,11 @@ msgstr "Parola sıfırlama bağlantısı e-postaya gönderildi"
 msgid "Paste the code below"
 msgstr "Aşağıdaki kodu yapıştırın"
 
+#. js-lingui-id: I6gXOa
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Path"
+msgstr "Yol"
+
 #. js-lingui-id: UbRKMZ
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Pending"
@@ -5847,6 +5972,11 @@ msgstr "Yüzde olarak dolu"
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Percentage"
 msgstr "Yüzde"
+
+#. js-lingui-id: wSpwGR
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Permanent deletion. Enter the number of days."
+msgstr "Kalıcı silme. Gün sayısını girin."
 
 #. js-lingui-id: rDky0a
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
@@ -6174,8 +6304,7 @@ msgid "Regenerate Key"
 msgstr "Anahtar Yeniden Oluştur"
 
 #. js-lingui-id: UiAJoB
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
 msgstr "İlişki türü"
 
@@ -6349,6 +6478,11 @@ msgstr "Kayıtları Geri Yükle"
 #: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
 msgid "Results"
 msgstr "Sonuçlar"
+
+#. js-lingui-id: 6gRgw8
+#: src/modules/ai/components/AIChatErrorMessage.tsx
+msgid "Retry"
+msgstr "Tekrar dene"
 
 #. js-lingui-id: Wz7mbi
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -6573,7 +6707,7 @@ msgid "Search folders..."
 msgstr "Klasör ara..."
 
 #. js-lingui-id: ofuw3g
-#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 msgid "Search for an object..."
 msgstr "Bir nesne ara..."
 
@@ -6806,6 +6940,11 @@ msgstr "Kaynağı Seç"
 msgid "Select the default value for this boolean field"
 msgstr "Bu boolean alanı için varsayılan değeri seçin"
 
+#. js-lingui-id: E3D4LZ
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Select the events that should trigger the function"
+msgstr "Fonksiyonu tetikleyecek olayları seçin"
+
 #. js-lingui-id: xraglu
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Select the events you wish to send to this endpoint"
@@ -6856,6 +6995,11 @@ msgstr "Gönderildi ve Alındı"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
 msgstr "Sırpça (Kiril)"
+
+#. js-lingui-id: eGHP1w
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Serverless functions created by application"
+msgstr "Uygulama tarafından oluşturulan sunucusuz fonksiyonlar"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -7132,6 +7276,11 @@ msgstr "Tek Oturum Açma"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
+
+#. js-lingui-id: nNpwX2
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Stacked bars"
+msgstr "Birikimli çubuklar"
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -7542,7 +7691,7 @@ msgid "then"
 msgstr "sonra"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "There are no associated files with this record."
 msgstr "Bu kayıtla ilişkili dosya yok."
 
@@ -7753,6 +7902,16 @@ msgstr "Tetikleme aralığı"
 msgid "Trigger Type"
 msgstr "Tetikleyici Türü"
 
+#. js-lingui-id: zk64Yo
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Triggers the function at regular intervals"
+msgstr "Fonksiyonu düzenli aralıklarla tetikler"
+
+#. js-lingui-id: juqoz0
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Triggers the function with Http request"
+msgstr "Http isteği ile fonksiyonu tetikler"
+
 #. js-lingui-id: c+xCSz
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -7956,6 +8115,8 @@ msgstr "API'mızı kullanın veya ilk {objectLabel} kaydınızı manuel olarak e
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -8066,6 +8227,11 @@ msgstr "Uygulamadan kodu doğrulayın"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
 msgstr "Uygulamanın versiyonu"
+
+#. js-lingui-id: JEDLoS
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Vertical Bar"
+msgstr "Dikey Çubuk"
 
 #. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -8268,6 +8434,8 @@ msgstr "İş Akışları"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx

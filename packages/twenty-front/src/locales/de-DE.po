@@ -126,6 +126,7 @@ msgstr "{formattedCreatedRecordsProgress} von {formattedRecordsToImportCount} Da
 
 #. js-lingui-id: 2EPGDl
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter.tsx
 msgid "{graphTypeLabel} Chart"
 msgstr "{graphTypeLabel} Diagram"
 
@@ -149,6 +150,11 @@ msgstr "{roleLabel} kann {humanReadableAction} {objectLabel} Datensätze nicht"
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} wird die Rolle \"{newRoleName}\" zugewiesen."
 
+#. js-lingui-id: Bzjg0/
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
+msgid "{stepNumber}. Calendar"
+msgstr "{stepNumber}. Kalender"
+
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
@@ -165,6 +171,12 @@ msgstr "{workspaceMemberName} wird von folgender Rolle abgezogen:"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "••••••••"
 msgstr "••••••••"
+
+#. js-lingui-id: tEdOxj
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+msgid "1. Email"
+msgstr "1. E-Mail"
 
 #. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -316,6 +328,8 @@ msgid "About this workspace"
 msgstr "Über diesen Arbeitsbereich"
 
 #. js-lingui-id: AeXO77
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
@@ -326,6 +340,11 @@ msgstr "Konto"
 #: src/utils/title-utils.ts
 msgid "Account - Settings"
 msgstr "Konto - Einstellungen"
+
+#. js-lingui-id: gW0DoU
+#: src/pages/settings/accounts/SettingsAccountsConfiguration.tsx
+msgid "Account added successfully. Sync started."
+msgstr "Konto erfolgreich hinzugefügt. Synchronisierung gestartet."
 
 #. js-lingui-id: nD0Y+a
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -386,7 +405,7 @@ msgstr "Workflow aktivieren"
 
 #. js-lingui-id: F6pfE9
 #: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Active"
@@ -417,9 +436,16 @@ msgid "Add a Trigger"
 msgstr "Einen Auslöser hinzufügen"
 
 #. js-lingui-id: MPPZ54
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Konto hinzufügen"
+
+#. js-lingui-id: 27lqO4
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Add an Action"
+msgstr "Aktion hinzufügen"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -443,8 +469,8 @@ msgid "Add Field"
 msgstr "Feld hinzufügen"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/Attachments.tsx
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "Add file"
 msgstr "Datei hinzufügen"
 
@@ -481,7 +507,7 @@ msgid "Add new"
 msgstr "Neu hinzufügen"
 
 #. js-lingui-id: ApsD9J
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+#: src/modules/object-record/record-table/components/RecordTableNoRecordGroupAddNew.tsx
 msgid "Add New"
 msgstr "Neu hinzufügen"
 
@@ -620,6 +646,12 @@ msgstr "Fortgeschritten"
 msgid "Advanced filter"
 msgstr "Erweiterter Filter"
 
+#. js-lingui-id: miuPUc
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+#: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
+msgid "Advanced objects"
+msgstr "Erweiterte Objekte"
+
 #. js-lingui-id: WsKDNF
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 msgid "Advanced:"
@@ -657,6 +689,11 @@ msgstr "Agentenrollen"
 msgid "Agents"
 msgstr "Agenten"
 
+#. js-lingui-id: Y1fJZS
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Agents created by application"
+msgstr "Von Anwendung erstellte Agenten"
+
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Agents used to route queries to specialized agents"
@@ -691,7 +728,7 @@ msgstr "Scheman der KI-Antwort"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "All"
 msgstr "Alle"
 
@@ -794,6 +831,11 @@ msgstr "Benutzern erlauben, sich mit E-Mail und Passwort anzumelden."
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
 msgid "An error occurred while checking user existence"
 msgstr "Beim Überprüfen der Benutzerexistenz ist ein Fehler aufgetreten"
+
+#. js-lingui-id: I/scZd
+#: src/modules/ai/components/AIChatErrorMessage.tsx
+msgid "An error occurred while processing your message"
+msgstr "Ein Fehler ist bei der Verarbeitung Ihrer Nachricht aufgetreten"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -925,6 +967,35 @@ msgstr "Erscheinungsbild"
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Applicability"
 msgstr "Anwendbarkeit"
+
+#. js-lingui-id: uNojI9
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application agents"
+msgstr "Anwendungsagenten"
+
+#. js-lingui-id: vdieHo
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application details"
+msgstr "Anwendungsdetails"
+
+#. js-lingui-id: E5NJII
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application objects"
+msgstr "Anwendungsobjekte"
+
+#. js-lingui-id: fqP45C
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Application serverless functions"
+msgstr "Anwendungs-Serverless-Funktionen"
+
+#. js-lingui-id: fL7WXr
+#: src/pages/settings/serverless-functions/SettingsServerlessFunctionDetail.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Applications"
+msgstr "Anwendungen"
 
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -1090,6 +1161,11 @@ msgstr "um Minuten {remainingValues} und {lastValue}"
 msgid "at the top of the hour"
 msgstr "am Anfang der Stunde"
 
+#. js-lingui-id: DzqB0O
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Auth Required"
+msgstr "Authentifizierung erforderlich"
+
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Authentication"
@@ -1178,11 +1254,6 @@ msgstr "Zurück"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Zurück zum Inhalt"
-
-#. js-lingui-id: GoBp8L
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Bar"
-msgstr "Balken"
 
 #. js-lingui-id: NgFKo1
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -1471,7 +1542,6 @@ msgstr "Änderungsprotokoll"
 
 #. js-lingui-id: nuBbBr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
 msgid "Chart"
 msgstr "Diagramm"
 
@@ -1673,6 +1743,7 @@ msgstr "abgeschlossen"
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartFilters.tsx
 msgid "Conditions"
 msgstr "Bedingungen"
 
@@ -2131,6 +2202,11 @@ msgstr "Guthaben nach Zeitraum"
 msgid "Credits Used"
 msgstr "Verwendete Guthaben"
 
+#. js-lingui-id: 6Oaeoc
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Cron"
+msgstr "Cron"
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2280,6 +2356,11 @@ msgstr "Datentyp"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Database configuration is currently disabled."
 msgstr "Datenbankkonfiguration ist derzeit deaktiviert."
+
+#. js-lingui-id: lP42oc
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Database event"
+msgstr "Datenbankereignis"
 
 #. js-lingui-id: mYGY3B
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -2592,6 +2673,7 @@ msgstr "Beschreiben Sie, wann diese Weitergabe genutzt werden soll"
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -3017,14 +3099,9 @@ msgid "Empty Array"
 msgstr "Leeres Array"
 
 #. js-lingui-id: 8X+jbk
-#: src/modules/activities/emails/components/EmailThreads.tsx
+#: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Empty Inbox"
 msgstr "Leerer Posteingang"
-
-#. js-lingui-id: hGwouC
-#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-msgid "Empty Node"
-msgstr "Leerer Knoten"
 
 #. js-lingui-id: 3hSGoJ
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -3158,10 +3235,10 @@ msgstr "Entity ID in die Zwischenablage kopiert"
 msgid "Environment variable"
 msgstr "Umgebungsvariable"
 
-#. js-lingui-id: SlfejT
-#: src/modules/ai/components/ErrorStepRenderer.tsx
-msgid "Error"
-msgstr "Fehler"
+#. js-lingui-id: BlLvRP
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Erasure of soft-deleted records"
+msgstr "Löschung weicher gelöschter Datensätze"
 
 #. js-lingui-id: XOEl9R
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
@@ -3506,6 +3583,7 @@ msgstr "Workflows exportieren"
 
 #. js-lingui-id: 1JBTZV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Expression"
 msgstr "Ausdruck"
 
@@ -3523,6 +3601,11 @@ msgstr "Fehlgeschlagen"
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
 msgstr "Fehler beim Erstellen der Weitergabe"
+
+#. js-lingui-id: Ukrbw5
+#: src/modules/ai/components/AIChatErrorMessage.tsx
+msgid "Failed to get response"
+msgstr "Antwort konnte nicht abgerufen werden"
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -3586,8 +3669,7 @@ msgid "Field"
 msgstr "Feld"
 
 #. js-lingui-id: nrXDdR
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field name"
 msgstr "Feldname"
 
@@ -3597,7 +3679,7 @@ msgid "Field Name"
 msgstr "Feldname"
 
 #. js-lingui-id: x07QTl
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Field on destination"
 msgstr "Feld am Ziel"
 
@@ -3643,11 +3725,13 @@ msgstr "Fünfte"
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/components/ChartFilters.tsx
 msgid "Filter"
 msgstr "Filter"
 
 #. js-lingui-id: cSev+j
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
 msgid "Filters"
 msgstr "Filter"
 
@@ -3731,6 +3815,7 @@ msgstr "Format z.B. T-MMM-J (qqq''JJ)"
 
 #. js-lingui-id: xMJhWJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
 msgstr "Format: [Minute] [Stunde] [Tag des Monats] [Monat] [Wochentag]"
 
@@ -3764,11 +3849,6 @@ msgstr "von {startDay} bis {endDay}"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Full access"
 msgstr "Vollzugriff"
-
-#. js-lingui-id: xANKBj
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Functions"
-msgstr "Funktionen"
 
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
@@ -3989,6 +4069,11 @@ msgstr "Leere Gruppen ausblenden"
 msgid "Hide hidden groups"
 msgstr "Verborgene Gruppen ausblenden"
 
+#. js-lingui-id: Hq6/gt
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Horizontal Bar"
+msgstr "Horizontale Leiste"
+
 #. js-lingui-id: N0Yhtw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Hours between triggers"
@@ -4003,6 +4088,11 @@ msgstr "Wie Sie in der App identifiziert werden."
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 msgid "How your system is doing"
 msgstr "Wie Ihr System läuft"
+
+#. js-lingui-id: gwfyXo
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Http"
+msgstr "HTTP"
 
 #. js-lingui-id: DvpBQM
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -4165,14 +4255,14 @@ msgid "In {dateDiff}"
 msgstr "In {dateDiff}"
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
 msgstr "Inaktiv"
 
 #. js-lingui-id: Gp4Yi6
-#: src/modules/activities/emails/components/EmailThreads.tsx
+#: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Inbox"
 msgstr "Posteingang"
 
@@ -4898,6 +4988,11 @@ msgstr "Generierung der Metadatendatei fehlgeschlagen"
 msgid "Metered tier switching has been cancelled."
 msgstr "Der Zählertarifwechsel wurde abgebrochen."
 
+#. js-lingui-id: fiPesM
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Method"
+msgstr "Methode"
+
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -4995,9 +5090,11 @@ msgstr "muss ein Array von gültigen E-Mails sein"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/workspace/components/NameField.tsx
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionsTable.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -5173,6 +5270,7 @@ msgid "New SSO provider"
 msgstr "Neuer SSO-Anbieter"
 
 #. js-lingui-id: hXzOVo
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
@@ -5312,12 +5410,12 @@ msgid "No description"
 msgstr "Keine Beschreibung"
 
 #. js-lingui-id: mINrlz
-#: src/modules/activities/emails/components/EmailThreads.tsx
+#: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "No email exchange has occurred with this record yet."
 msgstr "Es hat noch kein E-Mail-Austausch mit diesem Datensatz stattgefunden."
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "No Files"
 msgstr "Keine Dateien"
 
@@ -5498,6 +5596,12 @@ msgstr "Nicht leer"
 msgid "Not Found"
 msgstr "Nicht gefunden"
 
+#. js-lingui-id: NpVtef
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
+#: src/modules/page-layout/widgets/graph/utils/formatDimensionValue.ts
+msgid "Not Set"
+msgstr "Nicht gesetzt"
+
 #. js-lingui-id: 51G4/+
 #: src/modules/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
@@ -5559,8 +5663,8 @@ msgid "Object"
 msgstr "Objekt"
 
 #. js-lingui-id: Zrauom
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
 msgstr "Objektdestination"
 
@@ -5586,10 +5690,20 @@ msgstr "Objekte"
 msgid "Objects and fields permissions settings"
 msgstr "Objekt- und Feldberechtigungseinstellungen"
 
+#. js-lingui-id: X51S3F
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Objects created by application"
+msgstr "Von Anwendung erstellte Objekte"
+
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "Abseits der ausgetretenen Pfade"
+
+#. js-lingui-id: +rvV4v
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Omit zero values"
+msgstr "Nullwerte auslassen"
 
 #. js-lingui-id: jcwJgk
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -5751,6 +5865,7 @@ msgid "Organization"
 msgstr "Organisation"
 
 #. js-lingui-id: /IX/7x
+#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/releases/SettingsReleases.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
@@ -5758,6 +5873,11 @@ msgstr "Organisation"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Other"
 msgstr "Andere"
+
+#. js-lingui-id: 9LV44m
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Other security settings"
+msgstr "Andere Sicherheitseinstellungen"
 
 #. js-lingui-id: +vDFPm
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
@@ -5805,6 +5925,11 @@ msgstr "Der Link zum Zurücksetzen des Passworts wurde an die E-Mail gesendet"
 msgid "Paste the code below"
 msgstr "Fügen Sie den Code unten ein"
 
+#. js-lingui-id: I6gXOa
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Path"
+msgstr "Pfad"
+
 #. js-lingui-id: UbRKMZ
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Pending"
@@ -5847,6 +5972,11 @@ msgstr "Prozent nicht leer"
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Percentage"
 msgstr "Prozentsatz"
+
+#. js-lingui-id: wSpwGR
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Permanent deletion. Enter the number of days."
+msgstr "Dauerhafte Löschung. Geben Sie die Anzahl der Tage ein."
 
 #. js-lingui-id: rDky0a
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
@@ -6174,8 +6304,7 @@ msgid "Regenerate Key"
 msgstr "Schlüssel regenerieren"
 
 #. js-lingui-id: UiAJoB
-#: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Relation type"
 msgstr "Beziehungstyp"
 
@@ -6349,6 +6478,11 @@ msgstr "Datensätze wiederherstellen"
 #: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
 msgid "Results"
 msgstr "Ergebnisse"
+
+#. js-lingui-id: 6gRgw8
+#: src/modules/ai/components/AIChatErrorMessage.tsx
+msgid "Retry"
+msgstr "Erneut versuchen"
 
 #. js-lingui-id: Wz7mbi
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -6573,7 +6707,7 @@ msgid "Search folders..."
 msgstr "Ordner durchsuchen..."
 
 #. js-lingui-id: ofuw3g
-#: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjectTable.tsx
 msgid "Search for an object..."
 msgstr "Objekt suchen..."
 
@@ -6806,6 +6940,11 @@ msgstr "Quelle auswählen"
 msgid "Select the default value for this boolean field"
 msgstr "Wählen Sie den Standardwert für dieses boolesche Feld aus"
 
+#. js-lingui-id: E3D4LZ
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Select the events that should trigger the function"
+msgstr "Wählen Sie die Ereignisse aus, die die Funktion auslösen sollen"
+
 #. js-lingui-id: xraglu
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Select the events you wish to send to this endpoint"
@@ -6856,6 +6995,11 @@ msgstr "Gesendet und Empfangen"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
 msgstr "Serbisch (Kyrillisch)"
+
+#. js-lingui-id: eGHP1w
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Serverless functions created by application"
+msgstr "Serverless-Funktionen, die von Anwendung erstellt wurden"
 
 #. js-lingui-id: LUc0oL
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -7132,6 +7276,11 @@ msgstr "SSO"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
+
+#. js-lingui-id: nNpwX2
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Stacked bars"
+msgstr "Gestapelte Balken"
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -7542,7 +7691,7 @@ msgid "then"
 msgstr "dann"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/Attachments.tsx
+#: src/modules/activities/files/components/FilesCard.tsx
 msgid "There are no associated files with this record."
 msgstr "Es sind keine Dateien mit diesem Datensatz verknüpft."
 
@@ -7753,6 +7902,16 @@ msgstr "Trigger-Intervall"
 msgid "Trigger Type"
 msgstr "Auslöser-Typ"
 
+#. js-lingui-id: zk64Yo
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Triggers the function at regular intervals"
+msgstr "Löst die Funktion in regelmäßigen Abständen aus"
+
+#. js-lingui-id: juqoz0
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
+msgid "Triggers the function with Http request"
+msgstr "Löst die Funktion mit HTTP-Anfrage aus"
+
 #. js-lingui-id: c+xCSz
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -7956,6 +8115,8 @@ msgstr "Verwenden Sie unsere API oder fügen Sie Ihr erstes {objectLabel} manuel
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -8066,6 +8227,11 @@ msgstr "Bestätigen Sie den Code von der App"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
 msgstr "Anwendungsversion"
+
+#. js-lingui-id: JEDLoS
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Vertical Bar"
+msgstr "Vertikale Leiste"
 
 #. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -8268,6 +8434,8 @@ msgstr "Workflows"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
