@@ -5,9 +5,13 @@ import { FileWidget } from '@/page-layout/widgets/files/components/FileWidget';
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
 import { NoteWidget } from '@/page-layout/widgets/notes/components/NoteWidget';
+import { RichTextWidget } from '@/page-layout/widgets/rich-text/components/RichTextWidget';
 import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
 import { TimelineWidget } from '@/page-layout/widgets/timeline/components/TimelineWidget';
-import { type PageLayoutWidget, WidgetType } from '~/generated/graphql';
+import {
+  type PageLayoutWidget,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 type WidgetContentRendererProps = {
   widget: PageLayoutWidget;
@@ -34,6 +38,9 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.NOTES:
       return <NoteWidget widget={widget} />;
+
+    case WidgetType.RICH_TEXT:
+      return <RichTextWidget widget={widget} />;
 
     case WidgetType.FILES:
       return <FileWidget widget={widget} />;
