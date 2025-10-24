@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { GraphqlQueryGroupByResolverService } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/graphql-query-group-by-resolver.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations-v2.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
@@ -39,7 +38,6 @@ const graphqlQueryResolvers = [
   GraphqlQueryFindDuplicatesResolverService,
   GraphqlQueryFindManyResolverService,
   GraphqlQueryFindOneResolverService,
-  GraphqlQueryGroupByResolverService,
   GraphqlQueryMergeManyResolverService,
   GraphqlQueryRestoreManyResolverService,
   GraphqlQueryRestoreOneResolverService,

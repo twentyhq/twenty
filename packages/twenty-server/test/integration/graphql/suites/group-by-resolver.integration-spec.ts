@@ -16,7 +16,7 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
-describe('group-by resolvers (integration)', () => {
+describe('group-by resolver (integration)', () => {
   describe('standard case', () => {
     const testPersonId = randomUUID();
     const testPerson2Id = randomUUID();

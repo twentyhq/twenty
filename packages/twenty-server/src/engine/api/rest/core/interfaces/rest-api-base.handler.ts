@@ -14,6 +14,7 @@ import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
+import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
@@ -596,7 +597,7 @@ export abstract class RestApiBaseHandler {
     depth?: Depth | undefined;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
-  }) {
+  }): Promise<CommonSelectedFields> {
     const { objectsPermissions } =
       await this.getObjectsPermissions(authContext);
 
