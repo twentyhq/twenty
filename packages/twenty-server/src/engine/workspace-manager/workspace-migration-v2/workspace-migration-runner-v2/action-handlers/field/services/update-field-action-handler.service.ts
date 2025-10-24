@@ -156,10 +156,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     let wasDefaultValueHandledByEnumUpdate = false;
 
-    const sortedUpdatesWithDefaultValuesUpdateLast = [...updates].sort(
-      (a, b) =>
-        +(a.property === 'defaultValue') - +(b.property === 'defaultValue'),
-    );
+    const sortedUpdatesWithDefaultValuesUpdateLast = hasDefaultValueUpdate
+      ? [
+          ...updates.filter((update) => update.property !== 'defaultValue'),
+          defaultValueUpdate,
+        ]
+      : updates;
 
     for (const update of sortedUpdatesWithDefaultValuesUpdateLast) {
       if (isPropertyUpdate(update, 'name')) {

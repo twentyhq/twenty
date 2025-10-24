@@ -3,6 +3,7 @@ import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/h
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -22,7 +23,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { type AggregateOperations } from '~/generated/graphql';
+import { GraphType, type AggregateOperations } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const ChartAggregateOperationSelectionDropdownContent = ({
@@ -40,7 +41,8 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
   if (
     widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
     widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'NumberChartConfiguration'
+    widgetInEditMode?.configuration?.__typename !==
+      'AggregateChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }
@@ -71,7 +73,21 @@ export const ChartAggregateOperationSelectionDropdownContent = ({
       })
     : [];
 
-  const aggregateOperationsWithLabels = availableAggregateOperations.map(
+  const isAggregateOrGaugeChart =
+    widgetInEditMode.configuration.graphType === GraphType.AGGREGATE ||
+    widgetInEditMode.configuration.graphType === GraphType.GAUGE;
+
+  const filteredAggregateOperations = availableAggregateOperations.filter(
+    (operation) => {
+      return (
+        isAggregateOrGaugeChart ||
+        (operation !== DateAggregateOperations.EARLIEST &&
+          operation !== DateAggregateOperations.LATEST)
+      );
+    },
+  );
+
+  const aggregateOperationsWithLabels = filteredAggregateOperations.map(
     (operation) => ({
       operation,
       label: getAggregateOperationLabel(operation),

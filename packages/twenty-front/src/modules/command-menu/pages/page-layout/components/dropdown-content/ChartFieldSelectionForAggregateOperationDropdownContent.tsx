@@ -14,7 +14,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
@@ -32,7 +31,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   if (
     configuration?.__typename !== 'BarChartConfiguration' &&
     configuration?.__typename !== 'LineChartConfiguration' &&
-    configuration?.__typename !== 'NumberChartConfiguration'
+    configuration?.__typename !== 'AggregateChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }
@@ -61,12 +60,7 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     searchQuery,
     getSearchableValues: (item) => [item.label, item.name],
     // TODO: remove the relation filter once group by is supported for relation fields
-  }).filter(
-    (field) =>
-      !isFieldRelation(field) &&
-      !field.isSystem &&
-      !isFieldMetadataDateKind(field.type),
-  );
+  }).filter((field) => !isFieldRelation(field) && !field.isSystem);
 
   const { getIcon } = useIcons();
 

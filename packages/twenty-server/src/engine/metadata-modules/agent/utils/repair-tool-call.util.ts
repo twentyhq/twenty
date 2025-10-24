@@ -1,6 +1,8 @@
 import { generateObject, type LanguageModel, NoSuchToolError } from 'ai';
 import { type z } from 'zod';
 
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
+
 type ToolCall = {
   type: 'tool-call';
   toolCallId: string;
@@ -57,6 +59,7 @@ export const repairToolCall = async ({
         `- Object structures must match the schema shape`,
         `- Array items must follow the specified format`,
       ].join('\n'),
+      experimental_telemetry: AI_TELEMETRY_CONFIG,
     });
 
     return {

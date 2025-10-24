@@ -29,7 +29,7 @@ describe('convertPageLayoutToTabLayouts', () => {
               title: 'Widget 1',
               type: WidgetType.GRAPH,
               configuration: {
-                graphType: GraphType.NUMBER,
+                graphType: GraphType.AGGREGATE,
                 aggregateOperation: AggregateOperations.COUNT,
                 aggregateFieldMetadataId: 'id',
                 displayDataLabel: false,

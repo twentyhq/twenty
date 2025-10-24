@@ -3,7 +3,7 @@ import { DATA_DISPLAY_AGGREGATE_SETTING } from '@/command-menu/pages/page-layout
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 
-export const NUMBER_CHART_SETTINGS: ChartSettingsGroup[] = [
+export const AGGREGATE_CHART_SETTINGS: ChartSettingsGroup[] = [
   {
     heading: 'Data',
     items: [

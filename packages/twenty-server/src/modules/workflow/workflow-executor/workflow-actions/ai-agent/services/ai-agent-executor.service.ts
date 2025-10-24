@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { generateObject, generateText, stepCountIs, ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
@@ -117,6 +118,7 @@ export class AiAgentExecutorService {
         model: registeredModel.model,
         prompt: userPrompt,
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
       if (Object.keys(schema).length === 0) {
@@ -134,6 +136,7 @@ export class AiAgentExecutorService {
 
                  Please generate the structured output based on the execution results and context above.`,
         schema: convertOutputSchemaToZod(schema),
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
       return {
