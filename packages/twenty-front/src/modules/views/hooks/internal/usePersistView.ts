@@ -5,10 +5,10 @@ import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequ
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import {
-    type CreateViewInput,
-    type UpdateViewInput,
+    type CreateCoreViewMutationVariables,
+    type DeleteCoreViewMutationVariables,
+    type UpdateCoreViewMutationVariables,
     useCreateCoreViewMutation,
     useDeleteCoreViewMutation,
     useUpdateCoreViewMutation,
@@ -24,15 +24,13 @@ export const usePersistView = () => {
 
   const createView = useCallback(
     async (
-      input: CreateViewInput,
+      variables: CreateCoreViewMutationVariables,
     ): Promise<
       MetadataRequestResult<Awaited<ReturnType<typeof createCoreViewMutation>>>
     > => {
       try {
         const result = await createCoreViewMutation({
-          variables: {
-            input,
-          },
+          variables,
         });
 
         return {
@@ -59,24 +57,13 @@ export const usePersistView = () => {
 
   const updateView = useCallback(
     async (
-      id: string,
-      input: UpdateViewInput,
+      variables: UpdateCoreViewMutationVariables,
     ): Promise<
       MetadataRequestResult<Awaited<ReturnType<typeof updateCoreViewMutation>>>
     > => {
-      if (!isDefined(id)) {
-        return {
-          status: 'failed',
-          error: new Error('View ID is required'),
-        };
-      }
-
       try {
         const result = await updateCoreViewMutation({
-          variables: {
-            id,
-            input,
-          },
+          variables,
         });
 
         return {
@@ -103,22 +90,13 @@ export const usePersistView = () => {
 
   const deleteView = useCallback(
     async (
-      id: string,
+      variables: DeleteCoreViewMutationVariables,
     ): Promise<
       MetadataRequestResult<Awaited<ReturnType<typeof deleteCoreViewMutation>>>
     > => {
-      if (!isDefined(id)) {
-        return {
-          status: 'failed',
-          error: new Error('View ID is required'),
-        };
-      }
-
       try {
         const result = await deleteCoreViewMutation({
-          variables: {
-            id,
-          },
+          variables,
         });
 
         return {
