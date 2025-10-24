@@ -95,10 +95,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
+    const columnsToReturn = buildColumnsToReturn({
+      select: args.selectedFieldsResult.select,
+      relations: args.selectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    });
+
     await queryBuilder
       .softDelete()
       .whereInIds(idsToDelete)
-      .returning('*')
+      .returning(columnsToReturn)
       .execute();
 
     const updatedRecord = await this.updatePriorityRecord(
