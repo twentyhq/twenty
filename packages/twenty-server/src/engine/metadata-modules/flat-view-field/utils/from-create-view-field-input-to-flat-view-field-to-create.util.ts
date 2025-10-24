@@ -29,10 +29,12 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     createdAt: createdAt,
     updatedAt: createdAt,
     deletedAt: null,
-    universalIdentifier: viewFieldId,
+    universalIdentifier:
+      createViewFieldInput.universalIdentifier ?? viewFieldId,
     isVisible: createViewFieldInput.isVisible ?? true,
     size: createViewFieldInput.size ?? DEFAULT_VIEW_FIELD_SIZE,
     position: createViewFieldInput.position ?? 0,
     aggregateOperation: createViewFieldInput.aggregateOperation ?? null,
+    applicationId: createViewFieldInput.applicationId ?? null,
   };
 };

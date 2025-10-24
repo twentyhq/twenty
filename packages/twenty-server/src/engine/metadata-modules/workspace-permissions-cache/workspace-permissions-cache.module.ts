@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -13,7 +13,7 @@ import { WorkspacePermissionsCacheService } from './workspace-permissions-cache.
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     TypeOrmModule.forFeature([
       ObjectMetadataEntity,
       RoleEntity,

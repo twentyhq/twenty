@@ -9,7 +9,7 @@ import { formatSlug } from '@/shared-utils/formatSlug';
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(
-  props: PageProps<'/twenty-ui/section/[folder]'>,
+  props: { params: Promise<{ folder: string }> },
 ): Promise<Metadata> {
   const { folder } = await props.params;
   const formattedSlug = formatSlug(folder);
@@ -22,7 +22,7 @@ export async function generateMetadata(
 }
 
 export default async function TwentyUISlug(
-  props: PageProps<'/twenty-ui/section/[folder]'>,
+  props: { params: Promise<{ folder: string }> },
 ) {
   const { folder } = await props.params;
   const filePath = `src/content/twenty-ui/${folder}/`;

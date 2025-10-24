@@ -6,7 +6,7 @@ import {
 
 import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
@@ -35,19 +35,21 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const selectedFieldsResult = await this.computeSelectedFields({
+      const selectedFields = await this.computeSelectedFields({
         depth,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
         authContext,
       });
 
-      const record = await this.commonCreateOneQueryRunnerService.run({
-        args: { data, selectedFieldsResult, upsert },
-        authContext,
-        objectMetadataMaps,
-        objectMetadataItemWithFieldMaps,
-      });
+      const record = await this.commonCreateOneQueryRunnerService.execute(
+        { data, selectedFields, upsert },
+        {
+          authContext,
+          objectMetadataMaps,
+          objectMetadataItemWithFieldMaps,
+        },
+      );
 
       return this.formatRestResponse(
         record,
@@ -59,7 +61,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
   }
 
   private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
-    return { data: { [objectNameSingular]: record } };
+    return { data: { [`create${capitalize(objectNameSingular)}`]: record } };
   }
 
   private parseRequestArgs(request: AuthenticatedRequest) {

@@ -12,6 +12,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
@@ -184,6 +185,7 @@ export const SignInUpTOTPVerification = () => {
 
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
+  const { isCaptchaReady } = useCaptcha();
   const loginToken = useRecoilValue(loginTokenState);
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const { t } = useLingui();
@@ -193,7 +195,15 @@ export const SignInUpTOTPVerification = () => {
   const submitOTP = async (values: OTPFormValues) => {
     setIsLoading(true);
     try {
-      const captchaToken = await readCaptchaToken();
+      if (!isCaptchaReady) {
+        enqueueErrorSnackBar({
+          message: t`Captcha (anti-bot check) is still loading, try again`,
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      const captchaToken = readCaptchaToken();
 
       if (!loginToken) {
         return navigate(AppPath.SignInUp);

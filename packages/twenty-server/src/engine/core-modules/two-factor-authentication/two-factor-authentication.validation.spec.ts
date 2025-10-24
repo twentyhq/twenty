@@ -4,13 +4,13 @@ import {
 } from './two-factor-authentication.exception';
 import { twoFactorAuthenticationMethodsValidator } from './two-factor-authentication.validation';
 
-import { type TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { type TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 import { OTPStatus } from './strategies/otp/otp.constants';
 
 describe('twoFactorAuthenticationMethodsValidator', () => {
   const createMockMethod = (
     status: OTPStatus = OTPStatus.VERIFIED,
-  ): TwoFactorAuthenticationMethod =>
+  ): TwoFactorAuthenticationMethodEntity =>
     ({
       id: 'method-123',
       status,
@@ -21,7 +21,7 @@ describe('twoFactorAuthenticationMethodsValidator', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: new Date(),
-    }) as unknown as TwoFactorAuthenticationMethod;
+    }) as unknown as TwoFactorAuthenticationMethodEntity;
 
   describe('assertIsDefinedOrThrow', () => {
     it('should not throw when method is defined', () => {
@@ -91,7 +91,7 @@ describe('twoFactorAuthenticationMethodsValidator', () => {
     });
 
     it('should return false when methods array is empty', () => {
-      const methods: TwoFactorAuthenticationMethod[] = [];
+      const methods: TwoFactorAuthenticationMethodEntity[] = [];
 
       const result =
         twoFactorAuthenticationMethodsValidator.areDefined(methods);
@@ -151,7 +151,7 @@ describe('twoFactorAuthenticationMethodsValidator', () => {
     });
 
     it('should return false when methods array is empty', () => {
-      const methods: TwoFactorAuthenticationMethod[] = [];
+      const methods: TwoFactorAuthenticationMethodEntity[] = [];
 
       const result =
         twoFactorAuthenticationMethodsValidator.areVerified(methods);

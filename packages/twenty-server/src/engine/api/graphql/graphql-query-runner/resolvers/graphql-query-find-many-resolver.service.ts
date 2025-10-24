@@ -50,8 +50,6 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
     const objectMetadataNameSingular =
       objectMetadataItemWithFieldMaps.nameSingular;
 
-    const { roleId } = executionArgs;
-
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataNameSingular,
     );
@@ -185,9 +183,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks:
-          executionArgs.shouldBypassPermissionChecks,
+        rolePermissionConfig: executionArgs.rolePermissionConfig,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

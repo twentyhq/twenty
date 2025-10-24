@@ -6,6 +6,9 @@ import { DATA_DISPLAY_Y_SETTING } from '@/command-menu/pages/page-layout/constan
 import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
 import { GROUP_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GroupBySetting';
+import { OMIT_NULL_VALUES_SETTING } from '@/command-menu/pages/page-layout/constants/settings/OmitNullValuesSetting';
+import { RANGE_MAX_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMaxSetting';
+import { RANGE_MIN_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMinSetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
 import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
 import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
@@ -24,12 +27,15 @@ export const getBarChartSettings = (
   const primaryAxisItems = [
     { ...DATA_DISPLAY_X_SETTING, Icon: dataDisplayXIcon },
     SORT_BY_X_SETTING,
+    OMIT_NULL_VALUES_SETTING,
   ];
 
   const secondaryAxisItems = [
     { ...DATA_DISPLAY_Y_SETTING, Icon: dataDisplayYIcon },
     GROUP_BY_SETTING,
     SORT_BY_GROUP_BY_FIELD_SETTING,
+    RANGE_MIN_SETTING,
+    RANGE_MAX_SETTING,
   ];
 
   const xAxisItems = isHorizontal ? secondaryAxisItems : primaryAxisItems;

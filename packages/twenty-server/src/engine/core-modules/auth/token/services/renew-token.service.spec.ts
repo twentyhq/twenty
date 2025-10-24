@@ -3,20 +3,20 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type User } from 'src/engine/core-modules/user/user.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 import { RenewTokenService } from './renew-token.service';
 
 describe('RenewTokenService', () => {
   let service: RenewTokenService;
-  let appTokenRepository: Repository<AppToken>;
+  let appTokenRepository: Repository<AppTokenEntity>;
   let accessTokenService: AccessTokenService;
   let refreshTokenService: RefreshTokenService;
 
@@ -25,7 +25,7 @@ describe('RenewTokenService', () => {
       providers: [
         RenewTokenService,
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppTokenEntity),
           useClass: Repository,
         },
         {
@@ -51,8 +51,8 @@ describe('RenewTokenService', () => {
     }).compile();
 
     service = module.get<RenewTokenService>(RenewTokenService);
-    appTokenRepository = module.get<Repository<AppToken>>(
-      getRepositoryToken(AppToken),
+    appTokenRepository = module.get<Repository<AppTokenEntity>>(
+      getRepositoryToken(AppTokenEntity),
     );
     accessTokenService = module.get<AccessTokenService>(AccessTokenService);
     refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);
@@ -65,7 +65,7 @@ describe('RenewTokenService', () => {
   describe('generateTokensFromRefreshToken', () => {
     it('should generate new access and refresh tokens', async () => {
       const mockRefreshToken = 'valid-refresh-token';
-      const mockUser = { id: 'user-id' } as User;
+      const mockUser = { id: 'user-id' } as UserEntity;
       const mockWorkspaceId = 'workspace-id';
       const mockTokenId = 'token-id';
       const mockAccessToken = {
@@ -77,14 +77,14 @@ describe('RenewTokenService', () => {
         expiresAt: new Date(),
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
       };
-      const mockAppToken: Partial<AppToken> = {
+      const mockAppToken: Partial<AppTokenEntity> = {
         id: mockTokenId,
         workspaceId: mockWorkspaceId,
-      } as AppToken;
+      } as AppTokenEntity;
 
       jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
         user: mockUser,
-        token: mockAppToken as AppToken,
+        token: mockAppToken as AppTokenEntity,
         authProvider: AuthProviderEnum.Password,
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
         isImpersonating: false,
@@ -132,7 +132,7 @@ describe('RenewTokenService', () => {
 
     it('should propagate impersonation claims when present', async () => {
       const mockRefreshToken = 'valid-refresh-token';
-      const mockUser = { id: 'user-id' } as User;
+      const mockUser = { id: 'user-id' } as UserEntity;
       const mockWorkspaceId = 'workspace-id';
       const mockTokenId = 'token-id';
       const mockAccessToken = {
@@ -147,11 +147,11 @@ describe('RenewTokenService', () => {
       const mockAppToken = {
         id: mockTokenId,
         workspaceId: mockWorkspaceId,
-      } as AppToken;
+      } as AppTokenEntity;
 
       jest.spyOn(refreshTokenService, 'verifyRefreshToken').mockResolvedValue({
         user: mockUser,
-        token: mockAppToken as AppToken,
+        token: mockAppToken as AppTokenEntity,
         authProvider: AuthProviderEnum.Password,
         targetedTokenType: JwtTokenTypeEnum.ACCESS,
         isImpersonating: true,

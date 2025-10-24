@@ -18,7 +18,7 @@ import {
 import { SetupSsoOutput } from 'src/engine/core-modules/sso/dtos/setup-sso.output';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { type SSOException } from 'src/engine/core-modules/sso/sso.exception';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -39,7 +39,7 @@ export class SSOResolver {
   @Mutation(() => SetupSsoOutput)
   async createOIDCIdentityProvider(
     @Args('input') setupSsoInput: SetupOIDCSsoInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<SetupSsoOutput | SSOException> {
     return this.sSOService.createOIDCIdentityProvider(
       setupSsoInput,
@@ -50,7 +50,7 @@ export class SSOResolver {
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Query(() => [FindAvailableSSOIDPOutput])
   async getSSOIdentityProviders(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     return this.sSOService.getSSOIdentityProviders(workspaceId);
   }
@@ -59,7 +59,7 @@ export class SSOResolver {
   @Mutation(() => SetupSsoOutput)
   async createSAMLIdentityProvider(
     @Args('input') setupSsoInput: SetupSAMLSsoInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<SetupSsoOutput | SSOException> {
     return this.sSOService.createSAMLIdentityProvider(
       setupSsoInput,
@@ -71,7 +71,7 @@ export class SSOResolver {
   @Mutation(() => DeleteSsoOutput)
   async deleteSSOIdentityProvider(
     @Args('input') { identityProviderId }: DeleteSsoInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     return this.sSOService.deleteSSOIdentityProvider(
       identityProviderId,
@@ -83,7 +83,7 @@ export class SSOResolver {
   @Mutation(() => EditSsoOutput)
   async editSSOIdentityProvider(
     @Args('input') input: EditSsoInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     return this.sSOService.editSSOIdentityProvider(input, workspaceId);
   }

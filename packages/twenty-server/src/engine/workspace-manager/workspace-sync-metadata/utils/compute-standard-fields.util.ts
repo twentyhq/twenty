@@ -44,7 +44,6 @@ export const computeStandardFields = (
         fields.push({
           ...data,
           ...rest,
-          viewFields: [],
           standardId: relationStandardId,
           defaultValue: null,
           isNullable: true,

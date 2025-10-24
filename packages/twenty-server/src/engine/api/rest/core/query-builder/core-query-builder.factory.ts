@@ -13,8 +13,9 @@ import { parseCoreBatchPath } from 'src/engine/api/rest/core/query-builder/utils
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { type Query } from 'src/engine/api/rest/core/types/query.type';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getObjectMetadataMapItemByNamePlural } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-plural.util';
@@ -23,7 +24,6 @@ import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/works
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -33,7 +33,7 @@ export class CoreQueryBuilderFactory {
     private readonly findDuplicatesQueryFactory: FindDuplicatesQueryFactory,
     private readonly findDuplicatesVariablesFactory: FindDuplicatesVariablesFactory,
     private readonly accessTokenService: AccessTokenService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly featureFlagService: FeatureFlagService,
@@ -69,7 +69,7 @@ export class CoreQueryBuilderFactory {
 
     if (!objectMetadataMaps) {
       throw new BadRequestException(
-        `No object was found for the workspace associated with this API key. You may generate a new one here ${this.domainManagerService
+        `No object was found for the workspace associated with this API key. You may generate a new one here ${this.workspaceDomainsService
           .buildWorkspaceURL({
             workspace,
             pathname: getSettingsPath(SettingsPath.ApiWebhooks),

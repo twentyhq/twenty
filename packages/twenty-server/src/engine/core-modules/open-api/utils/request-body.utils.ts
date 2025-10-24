@@ -73,3 +73,40 @@ export const getFindDuplicatesRequestBody = (name: string) => {
     },
   };
 };
+
+export const getMergeManyRequestBody = () => {
+  return {
+    description: 'body',
+    required: true,
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            ids: {
+              type: 'array',
+              description: 'The IDs of the records to merge',
+              items: {
+                type: 'string',
+                format: 'uuid',
+              },
+            },
+            conflictPriorityIndex: {
+              type: 'number',
+              description:
+                'The index of the record to use when conflicts occur',
+            },
+            dryRun: {
+              description:
+                'If true, the merge will not be performed and a preview of the merge will be returned.',
+              type: 'boolean',
+              default: false,
+            },
+          },
+          example: { ids: [v4()], conflictPriorityIndex: 0, dryRun: false },
+          required: ['ids', 'conflictPriorityIndex'],
+        },
+      },
+    },
+  };
+};

@@ -1,7 +1,7 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ResendEmailVerificationTokenInput } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.input';
 import { ResendEmailVerificationTokenOutput } from 'src/engine/core-modules/email-verification/dtos/resend-email-verification-token.output';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
@@ -20,7 +20,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class EmailVerificationResolver {
   constructor(
     private readonly emailVerificationService: EmailVerificationService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {}
 
   // TODO: this should be an authenticated endpoint
@@ -33,7 +33,7 @@ export class EmailVerificationResolver {
     @Context() context: I18nContext,
   ): Promise<ResendEmailVerificationTokenOutput> {
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 

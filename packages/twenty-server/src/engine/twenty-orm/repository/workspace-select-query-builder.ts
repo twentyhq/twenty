@@ -1,4 +1,4 @@
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import {
   type EntityTarget,
   type FindManyOptions,
@@ -36,14 +36,14 @@ import { EXTERNAL_STORAGE_ALIAS } from 'src/engine/twenty-orm/utils/external-sto
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
 > extends SelectQueryBuilder<T> {
-  objectRecordsPermissions: ObjectsPermissionsDeprecated;
+  objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
   authContext?: AuthContext;
   featureFlagMap?: FeatureFlagMap;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
-    objectRecordsPermissions: ObjectsPermissionsDeprecated,
+    objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,

@@ -11,6 +11,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type GraphOrderBy } from '~/generated/graphql';
@@ -28,6 +29,9 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
     throw new Error('Invalid configuration type');
   }
 
+  if (!isDefined(widgetInEditMode?.objectMetadataId)) {
+    throw new Error('No data source in chart');
+  }
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
   );
@@ -50,7 +54,7 @@ export const ChartSortByGroupByFieldDropdownContent = () => {
   };
 
   const { getGroupBySortOptionLabel } = useGraphGroupBySortOptionLabels({
-    objectMetadataId: widgetInEditMode?.objectMetadataId,
+    objectMetadataId: widgetInEditMode.objectMetadataId,
   });
 
   return (

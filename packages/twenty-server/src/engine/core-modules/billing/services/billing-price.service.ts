@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 
@@ -14,8 +14,8 @@ export class BillingPriceService {
   protected readonly logger = new Logger(BillingPriceService.name);
   constructor(
     private readonly stripeSubscriptionService: StripeSubscriptionService,
-    @InjectRepository(BillingPrice)
-    private readonly billingPriceRepository: Repository<BillingPrice>,
+    @InjectRepository(BillingPriceEntity)
+    private readonly billingPriceRepository: Repository<BillingPriceEntity>,
   ) {}
 
   async getBillingThresholdsByMeterPriceId(meterPriceId: string) {

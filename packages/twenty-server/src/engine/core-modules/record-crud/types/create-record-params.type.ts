@@ -1,8 +1,13 @@
-import { type ObjectRecordProperties } from 'src/engine/core-modules/record-crud/types/object-record-properties.type';
+import {
+  type CreateRecordExecutionContext,
+  type RecordCrudExecutionContext,
+} from './execution-context.type';
+import { type CreateRecordInput } from './record-crud-input.type';
 
-export type CreateRecordParams = {
-  objectName: string;
-  objectRecord: ObjectRecordProperties;
-  workspaceId: string;
-  roleId?: string;
-};
+export type CreateRecordParams = CreateRecordInput &
+  Omit<CreateRecordExecutionContext, 'upsert'> & {
+    upsert?: never;
+  };
+
+export type CreateRecordParamsWithContext = CreateRecordInput &
+  RecordCrudExecutionContext;

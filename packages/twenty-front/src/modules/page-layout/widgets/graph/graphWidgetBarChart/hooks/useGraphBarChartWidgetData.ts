@@ -22,6 +22,7 @@ type UseGraphBarChartWidgetDataResult = {
   layout?: 'vertical' | 'horizontal';
   loading: boolean;
   error?: Error;
+  hasTooManyGroups: boolean;
 };
 
 export const useGraphBarChartWidgetData = ({

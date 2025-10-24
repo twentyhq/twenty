@@ -1,13 +1,14 @@
+//
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type GaxiosError } from 'gaxios';
 import { type calendar_v3 as calendarV3 } from 'googleapis';
 
-import { GoogleCalendarClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/providers/google-calendar.provider';
 import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
 import { parseGaxiosError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-gaxios-error.util';
 import { parseGoogleCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-google-calendar-error.util';
 import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
@@ -15,7 +16,7 @@ export class GoogleCalendarGetEventsService {
   private readonly logger = new Logger(GoogleCalendarGetEventsService.name);
 
   constructor(
-    private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
   ) {}
 
   public async getCalendarEvents(
@@ -25,10 +26,12 @@ export class GoogleCalendarGetEventsService {
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
-    const googleCalendarClient =
-      await this.googleCalendarClientProvider.getGoogleCalendarClient(
+    const oAuth2Client =
+      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
         connectedAccount,
       );
+
+    const googleCalendarClient = oAuth2Client.calendar({ version: 'v3' });
 
     let nextSyncToken: string | null | undefined;
     let nextPageToken: string | undefined;
