@@ -37,7 +37,7 @@ export type CoreEntityManifest =
 export type ServerlessFunctionManifest = {
   $schema?: string;
   universalIdentifier: string;
-  name: string;
+  name?: string;
   description?: string;
   timeoutSeconds?: number;
   triggers: ServerlessFunctionTriggerManifest[];

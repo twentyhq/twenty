@@ -6,5 +6,7 @@ import { ObjectMetadata } from 'twenty-sdk';
   namePlural: 'postCards',
   labelSingular: 'Post card',
   labelPlural: 'Post cards',
+  description: ' A post card object',
+  icon: 'IconMail',
 })
 export class PostCard {}
