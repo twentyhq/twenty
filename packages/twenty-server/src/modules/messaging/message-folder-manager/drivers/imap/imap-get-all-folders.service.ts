@@ -81,13 +81,19 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     for (const mailbox of validMailboxes) {
       const isInbox = await this.isInboxFolder(mailbox);
       const uidValidity = await this.getUidValidity(client, mailbox);
+      const standardFolder = getStandardFolderByRegex(mailbox.path);
+      const isSynced = this.shouldSyncByDefault(
+        mailbox,
+        standardFolder,
+        isInbox,
+      );
 
       folders.push({
         externalId: uidValidity
           ? `${mailbox.path}:${uidValidity}`
           : mailbox.path,
         name: mailbox.path,
-        isSynced: isInbox,
+        isSynced,
         isSentFolder: false,
       });
     }
@@ -126,23 +132,35 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       return true;
     }
 
+    return false;
+  }
+
+  private shouldSyncByDefault(
+    mailbox: ListResponse,
+    standardFolder: StandardFolder | null,
+    isInbox: boolean,
+  ): boolean {
     if (
       mailbox.specialUse === '\\Drafts' ||
       mailbox.specialUse === '\\Trash' ||
       mailbox.specialUse === '\\Junk'
     ) {
-      return true;
-    }
-    const standardFolder = getStandardFolderByRegex(mailbox.path);
-
-    if (!standardFolder) {
       return false;
     }
 
-    return (
-      standardFolder !== StandardFolder.SENT &&
-      standardFolder !== StandardFolder.INBOX
-    );
+    if (
+      standardFolder === StandardFolder.DRAFTS ||
+      standardFolder === StandardFolder.TRASH ||
+      standardFolder === StandardFolder.JUNK
+    ) {
+      return false;
+    }
+
+    if (isInbox) {
+      return true;
+    }
+
+    return false;
   }
 
   private async getUidValidity(
