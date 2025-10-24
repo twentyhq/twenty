@@ -17,16 +17,12 @@ export const MorphRelationOneToManyFieldDisplay = () => {
   if (!isDefined(morphValuesWithObjectNameSingular)) {
     return null;
   }
-  console.log(
-    'morphValuesWithObjectNameSingular',
-    morphValuesWithObjectNameSingular,
-  );
+
   const areMorphValuesWithObjectNameSingularEmpty =
     morphValuesWithObjectNameSingular.every(
       (morphValueWithObjectNameSingular) =>
         morphValueWithObjectNameSingular.value.length === 0,
     );
-
   if (areMorphValuesWithObjectNameSingularEmpty) {
     return null;
   }
