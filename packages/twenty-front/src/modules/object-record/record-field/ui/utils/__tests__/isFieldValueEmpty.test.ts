@@ -3,6 +3,7 @@ import {
   fieldMetadataId,
   fullNameFieldDefinition,
   linksFieldDefinition,
+  morphRelationFieldDefinition,
   relationFieldDefinition,
   selectFieldDefinition,
 } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
@@ -210,6 +211,27 @@ describe('isFieldValueEmpty', () => {
             { url: 'https://docs.twenty.com', label: 'Documentation' },
           ],
         },
+      }),
+    ).toBe(false);
+  });
+
+  it('should return correct value for morph relation field', () => {
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: morphRelationFieldDefinition,
+        fieldValue: null,
+      }),
+    ).toBe(true);
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: morphRelationFieldDefinition,
+        fieldValue: [{ value: null }, { value: [] }],
+      }),
+    ).toBe(true);
+    expect(
+      isFieldValueEmpty({
+        fieldDefinition: morphRelationFieldDefinition,
+        fieldValue: [{ value: [{ id: '123' }] }],
       }),
     ).toBe(false);
   });
