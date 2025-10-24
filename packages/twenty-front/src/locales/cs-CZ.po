@@ -3008,15 +3008,15 @@ msgstr "Domény musí být menší než 256 znaků, nesmí obsahovat mezery a ne
 msgid "Don’t auto-create contacts."
 msgstr "Nevytvářet automaticky kontakty."
 
-#. js-lingui-id: cx0Ws8
+#. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr "Nevytvářet kontakty z/do Gmailu, Outlook e-mailů"
+msgid "Don't create contacts from/to Gmail, Outlook emails"
+msgstr ""
 
-#. js-lingui-id: 3qDEYI
+#. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr "Nesynchronizovat e-maily z team@ support@ noreply@..."
+msgid "Don't sync emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: bd+DPX
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx

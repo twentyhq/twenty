@@ -3008,15 +3008,15 @@ msgstr "A tartományoknak 256 karakternél rövidebbeknek kell lenniük, nem tar
 msgid "Don’t auto-create contacts."
 msgstr "Kapcsolattartók automatikus létrehozása nincs."
 
-#. js-lingui-id: cx0Ws8
+#. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr "Ne hozzon létre kapcsolattartókat Gmail, Outlook emailekből/ből"
+msgid "Don't create contacts from/to Gmail, Outlook emails"
+msgstr ""
 
-#. js-lingui-id: 3qDEYI
+#. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr "Ne szinkronizáljon emaileket a következő címekről: team@ support@ noreply@..."
+msgid "Don't sync emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: bd+DPX
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
