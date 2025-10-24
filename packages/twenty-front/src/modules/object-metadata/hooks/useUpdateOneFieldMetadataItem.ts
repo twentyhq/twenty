@@ -5,6 +5,7 @@ import {
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { ApolloError } from '@apollo/client';
@@ -42,7 +43,11 @@ export const useUpdateOneFieldMetadataItem = () => {
       | 'options'
       | 'isLabelSyncedWithName'
     >;
-  }) => {
+  }): Promise<
+    MetadataRequestResult<
+      Awaited<ReturnType<typeof updateOneFieldMetadataItemMutation>>
+    >
+  > => {
     try {
       const result = await updateOneFieldMetadataItemMutation({
         variables: {
@@ -54,7 +59,10 @@ export const useUpdateOneFieldMetadataItem = () => {
       await refreshObjectMetadataItems();
       await refreshCoreViewsByObjectMetadataId(objectMetadataId);
 
-      return result;
+      return {
+        status: 'successful',
+        data: result,
+      };
     } catch (error) {
       if (error instanceof ApolloError) {
         handleMetadataError(error, {
@@ -63,6 +71,11 @@ export const useUpdateOneFieldMetadataItem = () => {
       } else {
         enqueueErrorSnackBar({ message: t`An error occurred.` });
       }
+
+      return {
+        status: 'failed',
+        error,
+      };
     }
   };
 

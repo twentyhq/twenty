@@ -60,7 +60,7 @@ export const SettingsNewObject = () => {
       console.error(error);
       if (error instanceof ApolloError) {
         handleMetadataError(error, {
-          primaryEntityType: 'objectMetadata',
+          primaryMetadataName: 'objectMetadata',
         });
       } else {
         enqueueErrorSnackBar({ message: t`An error occurred.` });
