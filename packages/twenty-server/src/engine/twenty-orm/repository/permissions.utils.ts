@@ -41,7 +41,7 @@ const getTargetEntityAndOperationType = (
 
   if (isSubQuery) {
     return {
-      isSubQuery: true,
+      isSubQuery: true, // will bypass permission checks because subQuery permissions will be evaluated when it is executed. This is valid for groupBy with records usecase. If your usecase is different, make sure permission checks are run.
     };
   }
 

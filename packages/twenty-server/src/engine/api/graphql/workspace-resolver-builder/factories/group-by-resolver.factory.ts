@@ -57,31 +57,23 @@ export class GroupByResolverFactory
           );
 
         const formattedResults = results.map((group) => {
-          const edges = (group.records ?? []).map((objectRecord) => ({
-            node: typeORMObjectRecordsParser.processRecord({
-              objectRecord,
-              objectName:
-                internalContext.objectMetadataItemWithFieldMaps.nameSingular,
-              objectRecordsAggregatedValues: {},
-              selectedAggregatedFields: {},
-              take: group.records?.length || 0,
-              totalCount: group.records?.length || 0,
-              order: undefined,
-              depth: 0,
-            }),
-            cursor: '',
-          }));
+          const formattedRecords = typeORMObjectRecordsParser.createConnection({
+            objectRecords: group.records ?? [],
+            objectName:
+              internalContext.objectMetadataItemWithFieldMaps.nameSingular,
+            objectRecordsAggregatedValues: {},
+            selectedAggregatedFields: {},
+            take: group.records?.length || 0,
+            totalCount: group.records?.length || 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          });
 
-          const { records, ...groupWithoutRecords } = group;
+          const { _records, ...groupWithoutRecords } = group;
 
           return {
             ...groupWithoutRecords,
-            edges,
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-            },
-            totalCount: records?.length || 0,
+            ...formattedRecords,
           };
         });
 

@@ -23,7 +23,7 @@ export const formatResultWithGroupByDimensionValues = ({
   objectMetadataItemWithFieldMaps?: ObjectMetadataItemWithFieldMaps;
   objectMetadataMaps?: ObjectMetadataMaps;
 }): CommonGroupByOutputItem[] => {
-  let formattedResult: CommonGroupByOutputItem[] = [];
+  const formattedResult: CommonGroupByOutputItem[] = [];
 
   const recordsByGroupKey = new Map<string, Array<Record<string, unknown>>>();
 
@@ -35,7 +35,7 @@ export const formatResultWithGroupByDimensionValues = ({
       throw new Error('Metadata are required to format result');
     }
 
-    recordsResult?.forEach((entry) => {
+    recordsResult.forEach((entry) => {
       const groupKey = createGroupKey(entry, groupByDefinitions);
 
       const records: Record<string, unknown>[] = (
@@ -53,7 +53,7 @@ export const formatResultWithGroupByDimensionValues = ({
   }
 
   groupsResult.forEach((group) => {
-    let dimensionValues: unknown[] = [];
+    const dimensionValues: unknown[] = [];
 
     for (const groupByColumn of groupByDefinitions) {
       dimensionValues.push(

@@ -94,6 +94,7 @@ export class GroupByWithRecordsService {
     const groupConditions = this.buildGroupConditions(
       groupsResult,
       groupByDefinitions,
+      queryBuilderForSubQuery,
     );
 
     const recordSelectWithAlias = Object.keys(columnsToSelect)
@@ -146,17 +147,16 @@ export class GroupByWithRecordsService {
   private buildGroupConditions(
     groupsResult: Array<Record<string, unknown>>,
     groupByDefinitions: GroupByDefinition[],
+    queryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
   ): string {
-    if (groupsResult.length === 0) {
-      return '';
-    }
-
-    const groupConditions = groupsResult.map((group) => {
+    const groupConditions = groupsResult.map((group, groupIndex) => {
       const conditions = groupByDefinitions
-        .map((def) => {
-          const value = group[def.alias];
+        .map((def, defIndex) => {
+          const paramName = `groupValue_${groupIndex}_${defIndex}`;
 
-          return `${def.expression} = ${this.formatValueForSql(value)}`;
+          queryBuilder.setParameter(paramName, group[def.alias]);
+
+          return `${def.expression} = :${paramName}`;
         })
         .join(' AND ');
 
@@ -164,25 +164,5 @@ export class GroupByWithRecordsService {
     });
 
     return `(${groupConditions.join(' OR ')})`;
-  }
-
-  private formatValueForSql(value: unknown): string {
-    if (value === null || value === undefined) {
-      return 'NULL';
-    }
-    if (typeof value === 'string') {
-      return `'${value.replace(/'/g, "''")}'`;
-    }
-    if (typeof value === 'number') {
-      return value.toString();
-    }
-    if (typeof value === 'boolean') {
-      return value === true ? 'TRUE' : 'FALSE';
-    }
-    if (value instanceof Date) {
-      return `'${value.toISOString()}'`;
-    }
-
-    return `'${String(value).replace(/'/g, "''")}'`;
   }
 }

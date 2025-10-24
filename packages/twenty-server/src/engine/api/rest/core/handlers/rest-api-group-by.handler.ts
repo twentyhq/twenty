@@ -24,12 +24,6 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
   async handle(request: AuthenticatedRequest) {
     try {
       const {
-        authContext,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-      } = await this.buildCommonOptions(request);
-
-      const {
         filter,
         orderBy,
         viewId,
@@ -37,6 +31,9 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         selectedFields,
         includeRecords,
         omitNullValues,
+        authContext,
+        objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
       } = await this.parseRequestArgs(request);
 
       return await this.commonGroupByQueryRunnerService.run({
@@ -68,13 +65,10 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
     const includeRecords = parseIncludeRecordsSampleRestRequest(request);
     let selectedFields = { ...aggregateFields, groupByDimensionValues: true };
 
-    if (includeRecords) {
-      const {
-        authContext,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-      } = await this.buildCommonOptions(request);
+    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      await this.buildCommonOptions(request);
 
+    if (includeRecords) {
       const selectableFields = await this.computeSelectedFields({
         depth: 0,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
@@ -86,6 +80,9 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
     }
 
     return {
+      authContext,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
       filter,
       orderBy: orderByWithGroupBy,
       viewId,

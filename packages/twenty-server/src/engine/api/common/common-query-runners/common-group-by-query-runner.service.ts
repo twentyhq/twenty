@@ -111,10 +111,10 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataNameSingular,
     );
 
-    let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
+    let appliedFilters = processedArgs.filter ?? ({} as ObjectRecordFilter);
 
     await this.addFiltersToQueryBuilder({
-      args,
+      args: processedArgs,
       appliedFilters,
       queryBuilder,
       objectMetadataItemWithFieldMaps,

@@ -64,6 +64,10 @@ export const parseGroupByArgs = (
       const fieldMetadata =
         objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
+      if (!isDefined(fieldMetadata) || !isDefined(fieldMetadataId)) {
+        throw new Error(`Unidentified field in groupBy: ${fieldName}`);
+      }
+
       if (
         fieldMetadata.type === FieldMetadataType.DATE ||
         fieldMetadata.type === FieldMetadataType.DATE_TIME

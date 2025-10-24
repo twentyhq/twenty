@@ -4,5 +4,5 @@ export type GroupByDefinition = {
   columnNameWithQuotes: string;
   expression: string;
   alias: string;
-  dateGranularity: ObjectRecordGroupByDateGranularity | undefined;
+  dateGranularity?: ObjectRecordGroupByDateGranularity;
 };
