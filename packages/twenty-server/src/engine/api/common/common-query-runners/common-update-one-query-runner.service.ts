@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
-import { CommonDeleteManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-delete-many-query-runner.service';
+import { CommonUpdateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-many-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -17,30 +16,29 @@ import {
   CommonExtendedInput,
   CommonInput,
   CommonQueryNames,
-  DeleteOneQueryArgs,
+  UpdateOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
-export class CommonDeleteOneQueryRunnerService extends CommonBaseQueryRunnerService<
-  DeleteOneQueryArgs,
+export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerService<
+  UpdateOneQueryArgs,
   ObjectRecord
 > {
   constructor(
-    private readonly commonDeleteManyQueryRunnerService: CommonDeleteManyQueryRunnerService,
+    private readonly commonUpdateManyQueryRunnerService: CommonUpdateManyQueryRunnerService,
   ) {
     super();
   }
-
-  protected readonly operationName = CommonQueryNames.DELETE_ONE;
+  protected readonly operationName = CommonQueryNames.UPDATE_ONE;
 
   async run(
-    args: CommonExtendedInput<DeleteOneQueryArgs>,
+    args: CommonExtendedInput<UpdateOneQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord> {
-    const result = await this.commonDeleteManyQueryRunnerService.run(
+    const result = await this.commonUpdateManyQueryRunnerService.run(
       {
         ...args,
         filter: { id: { eq: args.id } },
@@ -48,7 +46,7 @@ export class CommonDeleteOneQueryRunnerService extends CommonBaseQueryRunnerServ
       queryRunnerContext,
     );
 
-    if (!isDefined(result) || result.length === 0) {
+    if (!result || result.length === 0) {
       throw new CommonQueryRunnerException(
         'Record not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
@@ -59,9 +57,9 @@ export class CommonDeleteOneQueryRunnerService extends CommonBaseQueryRunnerServ
   }
 
   async computeArgs(
-    args: CommonInput<DeleteOneQueryArgs>,
+    args: CommonInput<UpdateOneQueryArgs>,
     _queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<CommonInput<DeleteOneQueryArgs>> {
+  ): Promise<CommonInput<UpdateOneQueryArgs>> {
     return args;
   }
 
@@ -75,7 +73,7 @@ export class CommonDeleteOneQueryRunnerService extends CommonBaseQueryRunnerServ
   }
 
   async validate(
-    args: CommonInput<DeleteOneQueryArgs>,
+    args: CommonInput<UpdateOneQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<void> {
     const { objectMetadataItemWithFieldMaps } = queryRunnerContext;

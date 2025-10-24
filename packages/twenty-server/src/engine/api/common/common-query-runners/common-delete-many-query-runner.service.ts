@@ -17,6 +17,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   DeleteManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
@@ -30,6 +31,8 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
   DeleteManyQueryArgs,
   ObjectRecord[]
 > {
+  protected readonly operationName = CommonQueryNames.DELETE_MANY;
+
   async run(
     args: CommonExtendedInput<DeleteManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,

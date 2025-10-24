@@ -72,10 +72,11 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
 
+  protected abstract readonly operationName: CommonQueryNames;
+
   public async execute(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-    operationName: CommonQueryNames,
   ): Promise<Output> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       queryRunnerContext;
@@ -104,7 +105,7 @@ export abstract class CommonBaseQueryRunnerService<
     const processedArgs = await this.processArgs(
       args,
       queryRunnerContext,
-      operationName,
+      this.operationName,
       commonQueryParser,
     );
 
@@ -121,7 +122,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     return this.enrichResultsWithGettersAndHooks({
       results,
-      operationName,
+      operationName: this.operationName,
       authContext,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,

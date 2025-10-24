@@ -16,6 +16,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   DestroyOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -30,6 +31,8 @@ export class CommonDestroyOneQueryRunnerService extends CommonBaseQueryRunnerSer
   ) {
     super();
   }
+
+  protected readonly operationName = CommonQueryNames.DESTROY_ONE;
 
   async run(
     args: CommonExtendedInput<DestroyOneQueryArgs>,

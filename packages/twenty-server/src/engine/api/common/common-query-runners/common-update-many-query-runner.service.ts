@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
@@ -19,22 +18,25 @@ import {
   CommonExtendedInput,
   CommonInput,
   CommonQueryNames,
-  FindOneQueryArgs,
+  UpdateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
-export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
-  FindOneQueryArgs,
-  ObjectRecord
+export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerService<
+  UpdateManyQueryArgs,
+  ObjectRecord[]
 > {
-  protected readonly operationName = CommonQueryNames.FIND_ONE;
+  protected readonly operationName = CommonQueryNames.UPDATE_MANY;
 
   async run(
-    args: CommonExtendedInput<FindOneQueryArgs>,
+    args: CommonExtendedInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord> {
+  ): Promise<ObjectRecord[]> {
     const {
       repository,
       authContext,
@@ -49,45 +51,38 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
+    const tableName = computeTableName(
+      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataItemWithFieldMaps.isCustom,
+    );
+
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
-      args.filter ?? ({} as ObjectRecordFilter),
+      tableName,
+      args.filter,
     );
 
-    commonQueryParser.applyDeletedAtToBuilder(
-      queryBuilder,
-      args.filter ?? ({} as ObjectRecordFilter),
-    );
-
-    const columnsToSelect = buildColumnsToSelect({
+    const columnsToReturn = buildColumnsToReturn({
       select: args.selectedFieldsResult.select,
       relations: args.selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     });
 
-    const objectRecord = await queryBuilder
-      .setFindOptions({
-        select: columnsToSelect,
-      })
-      .getOne();
+    const updatedObjectRecords = await queryBuilder
+      .update()
+      .set(args.data)
+      .returning(columnsToReturn)
+      .execute();
 
-    if (!objectRecord) {
-      throw new CommonQueryRunnerException(
-        'Record not found',
-        CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
-      );
-    }
-
-    const objectRecords = [objectRecord] as ObjectRecord[];
+    const updatedRecords = updatedObjectRecords.generatedMaps as ObjectRecord[];
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: objectRecords,
-        //TODO : Refacto-common - To fix when switching processNestedRelationsHelper to Common
+        parentObjectRecords: updatedRecords,
+        //TODO : Refacto-common - Typing to fix when switching processNestedRelationsHelper to Common
         relations: args.selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
@@ -100,47 +95,61 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       });
     }
 
-    return objectRecords[0];
+    return updatedRecords;
   }
 
   async computeArgs(
-    args: CommonInput<FindOneQueryArgs>,
+    args: CommonInput<UpdateManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<CommonInput<FindOneQueryArgs>> {
-    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+  ): Promise<CommonInput<UpdateManyQueryArgs>> {
+    const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
 
     return {
       ...args,
-      filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        args.filter,
-        objectMetadataItemWithFieldMaps,
-      ),
+      filter:
+        this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
+          args.filter,
+          objectMetadataItemWithFieldMaps,
+        ) || {},
+      data: (
+        await this.queryRunnerArgsFactory.overrideDataByFieldMetadata({
+          partialRecordInputs: [args.data],
+          authContext,
+          objectMetadataItemWithFieldMaps,
+          shouldBackfillPositionIfUndefined: false,
+        })
+      )[0],
     };
   }
 
+  async validate(
+    args: CommonInput<UpdateManyQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void> {
+    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
+
+    assertMutationNotOnRemoteObject(objectMetadataItemWithFieldMaps);
+    if (!args.filter) {
+      throw new CommonQueryRunnerException(
+        'Filter is required',
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
+
+    args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
+  }
+
   async processQueryResult(
-    queryResult: ObjectRecord,
+    queryResult: ObjectRecord[],
     objectMetadataItemId: string,
     objectMetadataMaps: ObjectMetadataMaps,
     authContext: WorkspaceAuthContext,
-  ): Promise<ObjectRecord> {
-    return this.commonResultGettersService.processRecord(
+  ): Promise<ObjectRecord[]> {
+    return await this.commonResultGettersService.processRecordArray(
       queryResult,
       objectMetadataItemId,
       objectMetadataMaps,
       authContext.workspace.id,
     );
-  }
-
-  async validate(
-    args: CommonInput<FindOneQueryArgs>,
-    _queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<void> {
-    if (!args.filter || Object.keys(args.filter).length === 0) {
-      throw new CommonQueryRunnerException(
-        'Missing filter argument',
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      );
-    }
   }
 }
