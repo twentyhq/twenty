@@ -81,6 +81,65 @@ export const getFindOneResponse200 = (
   };
 };
 
+export const getRestoreOneResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`restore${capitalize(item.nameSingular)}`]: {
+                  $ref: schemaRef,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+export const getRestoreManyResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(
+    item.nameSingular,
+  )}ForResponse`;
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`restore${capitalize(item.namePlural)}`]: {
+                  type: 'array',
+                  items: {
+                    $ref: schemaRef,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
 export const getCreateOneResponse201 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
   fromMetadata = false,
@@ -197,6 +256,36 @@ export const getDeleteManyResponse200 = (
                         format: 'uuid',
                       },
                     },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+export const getUpdateManyResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'namePlural' | 'nameSingular'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(item.nameSingular)}ForResponse`;
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`update${capitalize(item.namePlural)}`]: {
+                  type: 'array',
+                  items: {
+                    $ref: schemaRef,
                   },
                 },
               },
@@ -341,6 +430,35 @@ export const getFindDuplicatesResponse200 = (
                       $ref: schemaRef,
                     },
                   },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+export const getMergeManyResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+) => {
+  const schemaRef = `#/components/schemas/${capitalize(
+    item.nameSingular,
+  )}ForResponse`;
+
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`merge${capitalize(item.namePlural)}`]: {
+                  $ref: schemaRef,
                 },
               },
             },

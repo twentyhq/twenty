@@ -1,5 +1,8 @@
+import { MAX_ATTACHMENT_SIZE } from '@/advanced-text-editor/utils/MaxAttachmentSize';
+import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useCreateFileMutation } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
@@ -21,6 +24,15 @@ export const useUploadWorkflowFile = () => {
     file: File,
   ): Promise<WorkflowFile | null> => {
     try {
+      if (file.size > MAX_ATTACHMENT_SIZE) {
+        const fileName = file.name;
+        const maxUploadSize = formatFileSize(MAX_ATTACHMENT_SIZE);
+        enqueueErrorSnackBar({
+          message: t`File "${fileName}" exceeds ${maxUploadSize}`,
+        });
+        return null;
+      }
+
       const result = await createFile({
         variables: { file },
       });

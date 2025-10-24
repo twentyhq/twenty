@@ -10,6 +10,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { deleteRecordFromCache } from '@/object-record/cache/utils/deleteRecordFromCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
@@ -24,7 +25,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 type useCreateOneRecordProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
@@ -187,7 +188,13 @@ export const useCreateOneRecord = <
 
     registerObjectOperation(objectNameSingular, { type: 'create-one' });
 
-    return createdObject.data?.[mutationResponseField] ?? null;
+    if (!isDefined(createdObject.data?.[mutationResponseField])) {
+      throw new CustomError('Failed to create record');
+    }
+
+    return getRecordFromRecordNode({
+      recordNode: createdObject.data?.[mutationResponseField],
+    });
   };
 
   return {

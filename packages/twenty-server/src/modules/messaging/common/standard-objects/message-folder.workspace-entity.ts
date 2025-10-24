@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
@@ -17,6 +19,16 @@ import { MESSAGE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+
+export enum MessageFolderPendingSyncAction {
+  FOLDER_DELETION = 'FOLDER_DELETION',
+  FOLDER_IMPORT = 'FOLDER_IMPORT',
+  NONE = 'NONE',
+}
+
+registerEnumType(MessageFolderPendingSyncAction, {
+  name: 'MessageFolderPendingSyncAction',
+});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageFolder,
@@ -89,6 +101,36 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   externalId: string | null;
+
+  @WorkspaceField({
+    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.pendingSyncAction,
+    type: FieldMetadataType.SELECT,
+    label: msg`Pending Sync Action`,
+    description: msg`Pending action for folder sync`,
+    icon: 'IconReload',
+    options: [
+      {
+        value: MessageFolderPendingSyncAction.FOLDER_DELETION,
+        label: 'Folder deletion',
+        position: 0,
+        color: 'red',
+      },
+      {
+        value: MessageFolderPendingSyncAction.FOLDER_IMPORT,
+        label: 'Folder import',
+        position: 1,
+        color: 'green',
+      },
+      {
+        value: MessageFolderPendingSyncAction.NONE,
+        label: 'None',
+        position: 2,
+        color: 'blue',
+      },
+    ],
+    defaultValue: `'${MessageFolderPendingSyncAction.NONE}'`,
+  })
+  pendingSyncAction: MessageFolderPendingSyncAction;
 
   @WorkspaceJoinColumn('messageChannel')
   messageChannelId: string;

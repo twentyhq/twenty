@@ -5,6 +5,6 @@ export const GRAPH_TYPE_TO_CONFIG_TYPENAME = {
   [GraphType.HORIZONTAL_BAR]: 'BarChartConfiguration',
   [GraphType.LINE]: 'LineChartConfiguration',
   [GraphType.PIE]: 'PieChartConfiguration',
-  [GraphType.NUMBER]: 'NumberChartConfiguration',
+  [GraphType.AGGREGATE]: 'AggregateChartConfiguration',
   [GraphType.GAUGE]: 'GaugeChartConfiguration',
 } as const;

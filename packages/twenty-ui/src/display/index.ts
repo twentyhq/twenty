@@ -391,6 +391,7 @@ export {
   IconStatusChange,
   IconStepInto,
   IconStrikethrough,
+  IconSum,
   IconSun,
   IconSunMoon,
   IconSwitchHorizontal,

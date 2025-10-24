@@ -18,6 +18,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
@@ -28,6 +29,8 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
   FindOneQueryArgs,
   ObjectRecord
 > {
+  protected readonly operationName = CommonQueryNames.FIND_ONE;
+
   async run(
     args: CommonExtendedInput<FindOneQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,

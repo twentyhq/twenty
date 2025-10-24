@@ -22,7 +22,7 @@ describe('convertLayoutsToWidgets', () => {
         columnSpan: 2,
       },
       configuration: {
-        graphType: GraphType.NUMBER,
+        graphType: GraphType.AGGREGATE,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: 'id',
         displayDataLabel: false,

@@ -126,6 +126,18 @@ export type AgentIdInput = {
   id: Scalars['UUID'];
 };
 
+export type AggregateChartConfiguration = {
+  __typename?: 'AggregateChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
+  filter?: Maybe<Scalars['JSON']>;
+  format?: Maybe<Scalars['String']>;
+  graphType: GraphType;
+  label?: Maybe<Scalars['String']>;
+};
+
 export enum AggregateOperations {
   AVG = 'AVG',
   COUNT = 'COUNT',
@@ -1237,7 +1249,6 @@ export enum FeatureFlagKey {
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
-  IS_GROUP_BY_ENABLED = 'IS_GROUP_BY_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
@@ -1249,6 +1260,7 @@ export enum FeatureFlagKey {
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WORKFLOW_RUN_STOPPAGE_ENABLED = 'IS_WORKFLOW_RUN_STOPPAGE_ENABLED',
   IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
 }
 
@@ -1453,10 +1465,10 @@ export enum GraphOrderBy {
 
 /** Type of graph widget */
 export enum GraphType {
+  AGGREGATE = 'AGGREGATE',
   GAUGE = 'GAUGE',
   HORIZONTAL_BAR = 'HORIZONTAL_BAR',
   LINE = 'LINE',
-  NUMBER = 'NUMBER',
   PIE = 'PIE',
   VERTICAL_BAR = 'VERTICAL_BAR'
 }
@@ -1826,7 +1838,7 @@ export type Mutation = {
   restorePageLayoutWidget: PageLayoutWidget;
   retryJobs: RetryJobsResponse;
   revokeApiKey?: Maybe<ApiKey>;
-  runWorkflowVersion: WorkflowRun;
+  runWorkflowVersion: RunWorkflowVersionOutput;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   setMeteredSubscriptionPrice: BillingUpdateOutput;
@@ -1837,6 +1849,7 @@ export type Mutation = {
   skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   startChannelSync: ChannelSyncSuccess;
+  stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean'];
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
@@ -2517,6 +2530,11 @@ export type MutationStartChannelSyncArgs = {
 };
 
 
+export type MutationStopWorkflowRunArgs = {
+  workflowRunId: Scalars['UUID'];
+};
+
+
 export type MutationSubmitFormStepArgs = {
   input: SubmitFormStepInput;
 };
@@ -2781,18 +2799,6 @@ export type NativeModelCapabilities = {
   __typename?: 'NativeModelCapabilities';
   twitterSearch?: Maybe<Scalars['Boolean']>;
   webSearch?: Maybe<Scalars['Boolean']>;
-};
-
-export type NumberChartConfiguration = {
-  __typename?: 'NumberChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: AggregateOperations;
-  description?: Maybe<Scalars['String']>;
-  displayDataLabel?: Maybe<Scalars['Boolean']>;
-  filter?: Maybe<Scalars['JSON']>;
-  format?: Maybe<Scalars['String']>;
-  graphType: GraphType;
-  label?: Maybe<Scalars['String']>;
 };
 
 export type Object = {
@@ -3703,6 +3709,11 @@ export type RunWorkflowVersionInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
+export type RunWorkflowVersionOutput = {
+  __typename?: 'RunWorkflowVersionOutput';
+  workflowRunId: Scalars['UUID'];
+};
+
 export type SsoConnection = {
   __typename?: 'SSOConnection';
   id: Scalars['UUID'];
@@ -4529,7 +4540,7 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
-export type WidgetConfiguration = BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | NumberChartConfiguration | PieChartConfiguration;
+export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration;
 
 export enum WidgetType {
   CALENDAR = 'CALENDAR',
@@ -4586,8 +4597,20 @@ export enum WorkflowActionType {
 
 export type WorkflowRun = {
   __typename?: 'WorkflowRun';
-  workflowRunId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  status: WorkflowRunStatusEnum;
 };
+
+/** Status of the workflow run */
+export enum WorkflowRunStatusEnum {
+  COMPLETED = 'COMPLETED',
+  ENQUEUED = 'ENQUEUED',
+  FAILED = 'FAILED',
+  NOT_STARTED = 'NOT_STARTED',
+  RUNNING = 'RUNNING',
+  STOPPED = 'STOPPED',
+  STOPPING = 'STOPPING'
+}
 
 export type WorkflowStepPosition = {
   __typename?: 'WorkflowStepPosition';
@@ -6153,7 +6176,14 @@ export type RunWorkflowVersionMutationVariables = Exact<{
 }>;
 
 
-export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'WorkflowRun', workflowRunId: string } };
+export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'RunWorkflowVersionOutput', workflowRunId: string } };
+
+export type StopWorkflowRunMutationVariables = Exact<{
+  workflowRunId: Scalars['UUID'];
+}>;
+
+
+export type StopWorkflowRunMutation = { __typename?: 'Mutation', stopWorkflowRun: { __typename: 'WorkflowRun', id: string, status: WorkflowRunStatusEnum } };
 
 export type UpdateWorkflowRunStepMutationVariables = Exact<{
   input: UpdateWorkflowRunStepInput;
@@ -13866,6 +13896,41 @@ export function useRunWorkflowVersionMutation(baseOptions?: Apollo.MutationHookO
 export type RunWorkflowVersionMutationHookResult = ReturnType<typeof useRunWorkflowVersionMutation>;
 export type RunWorkflowVersionMutationResult = Apollo.MutationResult<RunWorkflowVersionMutation>;
 export type RunWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
+export const StopWorkflowRunDocument = gql`
+    mutation StopWorkflowRun($workflowRunId: UUID!) {
+  stopWorkflowRun(workflowRunId: $workflowRunId) {
+    id
+    status
+    __typename
+  }
+}
+    `;
+export type StopWorkflowRunMutationFn = Apollo.MutationFunction<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>;
+
+/**
+ * __useStopWorkflowRunMutation__
+ *
+ * To run a mutation, you first call `useStopWorkflowRunMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStopWorkflowRunMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [stopWorkflowRunMutation, { data, loading, error }] = useStopWorkflowRunMutation({
+ *   variables: {
+ *      workflowRunId: // value for 'workflowRunId'
+ *   },
+ * });
+ */
+export function useStopWorkflowRunMutation(baseOptions?: Apollo.MutationHookOptions<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>(StopWorkflowRunDocument, options);
+      }
+export type StopWorkflowRunMutationHookResult = ReturnType<typeof useStopWorkflowRunMutation>;
+export type StopWorkflowRunMutationResult = Apollo.MutationResult<StopWorkflowRunMutation>;
+export type StopWorkflowRunMutationOptions = Apollo.BaseMutationOptions<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>;
 export const UpdateWorkflowRunStepDocument = gql`
     mutation UpdateWorkflowRunStep($input: UpdateWorkflowRunStepInput!) {
   updateWorkflowRunStep(input: $input) {

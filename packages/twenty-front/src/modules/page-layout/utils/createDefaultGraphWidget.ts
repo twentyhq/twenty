@@ -18,13 +18,13 @@ const createDefaultGraphConfiguration = (
   fieldSelection?: GraphWidgetFieldSelection,
 ): WidgetConfiguration | null => {
   switch (graphType) {
-    case GraphType.NUMBER:
+    case GraphType.AGGREGATE:
       if (!isDefined(fieldSelection?.aggregateFieldMetadataId)) {
         return null;
       }
       return {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: AggregateOperations.COUNT,
         displayDataLabel: true,

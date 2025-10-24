@@ -114,6 +114,7 @@ export type SelectFilter = {
   is?: IsFilter;
   in?: string[];
   eq?: string;
+  neq?: string;
 };
 
 export type MultiSelectFilter = {
