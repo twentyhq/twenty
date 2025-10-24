@@ -185,7 +185,7 @@ export const SettingsObjectNewFieldConfigure = () => {
 
       if (error instanceof ApolloError) {
         handleMetadataError(error, {
-          primaryEntityType: 'fieldMetadata',
+          primaryMetadataName: 'fieldMetadata',
         });
       } else {
         enqueueErrorSnackBar({ message: t`An error occurred.` });

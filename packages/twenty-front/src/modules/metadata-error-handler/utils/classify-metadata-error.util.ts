@@ -11,8 +11,8 @@ export type MetadataErrorClassification =
   | {
       type: 'v2-validation';
       extensions: MetadataValidationErrorResponse;
-      targetEntity: AllMetadataName;
-      relatedEntities: AllMetadataName[];
+      primaryMetadataName: AllMetadataName;
+      relatedFailingMetadataNames: AllMetadataName[];
     }
   | {
       type: 'v2-internal';
@@ -38,10 +38,14 @@ const isMetadataInternalError = (
   );
 };
 
-export const classifyMetadataError = (
-  error: ApolloError,
-  primaryEntityType: AllMetadataName,
-): MetadataErrorClassification => {
+type ClassifyMetadataErrorArgs = {
+  error: ApolloError;
+  primaryMetadataName: AllMetadataName;
+};
+export const classifyMetadataError = ({
+  error,
+  primaryMetadataName,
+}: ClassifyMetadataErrorArgs): MetadataErrorClassification => {
   const extensions = error.graphQLErrors?.[0]?.extensions;
 
   if (!isDefined(extensions)) {
@@ -49,22 +53,20 @@ export const classifyMetadataError = (
   }
 
   if (isMetadataValidationError(extensions)) {
-    const allEntityTypes = Object.keys(extensions.errors) as [
+    const failingMetadataNames = Object.keys(extensions.errors) as [
       keyof MetadataValidationErrorResponse['errors'],
     ];
-    const entitiesWithErrors = allEntityTypes.filter(
-      (entityType) => extensions.errors[entityType].length > 0,
-    );
-
-    const relatedEntities = entitiesWithErrors.filter(
-      (entityType) => entityType !== primaryEntityType,
+    const relatedFailingMetadataNames = failingMetadataNames.filter(
+      (metadataName) =>
+        extensions.errors[metadataName].length > 0 &&
+        metadataName !== primaryMetadataName,
     );
 
     return {
       type: 'v2-validation',
       extensions,
-      targetEntity: primaryEntityType,
-      relatedEntities,
+      primaryMetadataName,
+      relatedFailingMetadataNames,
     };
   }
 

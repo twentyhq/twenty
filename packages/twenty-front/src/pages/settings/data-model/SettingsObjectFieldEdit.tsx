@@ -5,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { type z } from 'zod';
 
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -25,7 +26,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
-import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -60,6 +60,7 @@ export const SettingsObjectFieldEdit = () => {
   ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { handleMetadataError } = useMetadataErrorHandler();
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
@@ -127,47 +128,43 @@ export const SettingsObjectFieldEdit = () => {
     const { dirtyFields } = formConfig.formState;
     setNewNameDuringSave(formValues.name);
 
-    try {
-      if (
-        formValues.type === FieldMetadataType.RELATION &&
-        'relation' in formValues &&
-        'relation' in dirtyFields
-      ) {
-        const { relationFieldMetadataItem } =
-          getRelationMetadata({
-            fieldMetadataItem: fieldMetadataItem,
-          }) ?? {};
+    if (
+      formValues.type === FieldMetadataType.RELATION &&
+      'relation' in formValues &&
+      'relation' in dirtyFields
+    ) {
+      const { relationFieldMetadataItem } =
+        getRelationMetadata({
+          fieldMetadataItem: fieldMetadataItem,
+        }) ?? {};
 
-        if (isDefined(relationFieldMetadataItem)) {
-          await updateOneFieldMetadataItem({
-            objectMetadataId: objectMetadataItem.id,
-            fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
-            updatePayload: formValues.relation.field,
-          });
-        }
-      }
-
-      const otherDirtyFields = omit(dirtyFields, 'relation');
-
-      if (Object.keys(otherDirtyFields).length > 0) {
-        const formattedInput = Object.fromEntries(
-          Object.entries(formatFieldMetadataItemInput(formValues)).filter(
-            ([key]) => Object.keys(otherDirtyFields).includes(key),
-          ),
-        );
-
+      if (isDefined(relationFieldMetadataItem)) {
         await updateOneFieldMetadataItem({
           objectMetadataId: objectMetadataItem.id,
-          fieldMetadataIdToUpdate: fieldMetadataItem.id,
-          updatePayload: formattedInput,
+          fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
+          updatePayload: formValues.relation.field,
         });
+      }
+    }
 
+    const otherDirtyFields = omit(dirtyFields, 'relation');
+
+    if (Object.keys(otherDirtyFields).length > 0) {
+      const formattedInput = Object.fromEntries(
+        Object.entries(formatFieldMetadataItemInput(formValues)).filter(
+          ([key]) => Object.keys(otherDirtyFields).includes(key),
+        ),
+      );
+
+      const updateResult = await updateOneFieldMetadataItem({
+        objectMetadataId: objectMetadataItem.id,
+        fieldMetadataIdToUpdate: fieldMetadataItem.id,
+        updatePayload: formattedInput,
+      });
+
+      if (updateResult.status === 'successful') {
         navigateBackOrToSettings();
       }
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
-      });
     }
   };
 
@@ -198,10 +195,15 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
-    await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
-    navigateSettings(SettingsPath.ObjectDetail, {
-      objectNamePlural,
-    });
+    const deactivationResult = await deactivateMetadataField(
+      fieldMetadataItem.id,
+      objectMetadataItem.id,
+    );
+    if (deactivationResult.status === 'successful') {
+      navigateSettings(SettingsPath.ObjectDetail, {
+        objectNamePlural,
+      });
+    }
   };
 
   const handleActivate = async () => {
@@ -209,10 +211,16 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
-    await activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
-    navigateSettings(SettingsPath.ObjectDetail, {
-      objectNamePlural,
-    });
+    const activationResult = await activateMetadataField(
+      fieldMetadataItem.id,
+      objectMetadataItem.id,
+    );
+
+    if (activationResult.status === 'successful') {
+      navigateSettings(SettingsPath.ObjectDetail, {
+        objectNamePlural,
+      });
+    }
   };
 
   return (

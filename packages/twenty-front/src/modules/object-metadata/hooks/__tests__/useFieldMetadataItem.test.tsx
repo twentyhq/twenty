@@ -15,6 +15,7 @@ import {
   variables,
 } from '../__mocks__/useFieldMetadataItem';
 
+import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util.test';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedUserData } from '~/testing/mock-data/users';
 import {
@@ -140,12 +141,14 @@ describe('useFieldMetadataItem', () => {
     });
 
     await act(async () => {
-      const res = await result.current.activateMetadataField(
+      const response = await result.current.activateMetadataField(
         fieldMetadataItem.id,
         objectMetadataId,
       );
 
-      expect(res.data).toEqual({
+      jestExpectSuccessfulMetadataRequestResult(response);
+
+      expect(response.data).toEqual({
         updateOneField: responseData.default,
       });
     });
@@ -177,12 +180,13 @@ describe('useFieldMetadataItem', () => {
     });
 
     await act(async () => {
-      const res = await result.current.deactivateMetadataField(
+      const response = await result.current.deactivateMetadataField(
         fieldMetadataItem.id,
         objectMetadataId,
       );
 
-      expect(res.data).toEqual({
+      jestExpectSuccessfulMetadataRequestResult(response);
+      expect(response.data).toEqual({
         updateOneField: responseData.default,
       });
     });
