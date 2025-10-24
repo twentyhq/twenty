@@ -27,6 +27,7 @@ import {
   isNewExpression,
 } from 'typescript';
 import {
+  ApplicationVariableManifest,
   AppManifest,
   CronTrigger,
   DatabaseEventTrigger,
@@ -202,7 +203,8 @@ const posixRelativeFromCwd = (absPath: string) => {
 };
 
 const collectServerlessFunctions = (program: Program) => {
-  const items: ServerlessFunctionManifest[] = [];
+  const serverlessFunctions: ServerlessFunctionManifest[] = [];
+  const applicationVariables: ApplicationVariableManifest[] = [];
 
   for (const sf of program.getSourceFiles()) {
     if (sf.isDeclarationFile) {
@@ -226,6 +228,17 @@ const collectServerlessFunctions = (program: Program) => {
       }
 
       const className = node.name?.escapedText ?? 'serverless-function';
+
+      // ApplicationVariables
+      const applicationVariableDecs = decorators.filter((d) =>
+        isDecoratorNamed(d, 'ApplicationVariable'),
+      );
+
+      const serverlessApplicationVariables = applicationVariableDecs
+        .map((d) => getFirstArgObject(d))
+        .filter(Boolean) as ApplicationVariableManifest[];
+
+      applicationVariables.push(...serverlessApplicationVariables);
 
       // CronTrigger
       const cronTrigDecs = decorators.filter((d) =>
@@ -279,7 +292,7 @@ const collectServerlessFunctions = (program: Program) => {
       const serverlessFunctionInfo = (getFirstArgObject(sfnDec) ??
         {}) as ServerlessFunctionManifest;
 
-      items.push({
+      serverlessFunctions.push({
         name: className,
         ...serverlessFunctionInfo,
         triggers: [...cronTriggers, ...dbTriggers, ...routeTriggers],
@@ -294,7 +307,10 @@ const collectServerlessFunctions = (program: Program) => {
     visit(sf);
   }
 
-  return items;
+  return {
+    serverlessFunctions,
+    applicationVariables,
+  };
 };
 
 const validateProgram = (program: Program) => {
@@ -316,7 +332,7 @@ const validateProgram = (program: Program) => {
 
 export const loadManifestFromDecorators = (): Pick<
   AppManifest,
-  'objects' | 'serverlessFunctions'
+  'objects' | 'serverlessFunctions' | 'applicationVariables'
 > => {
   const program = getProgramFromTsconfig('tsconfig.json');
 
@@ -324,7 +340,8 @@ export const loadManifestFromDecorators = (): Pick<
 
   const objects = collectObjects(program);
 
-  const serverlessFunctions = collectServerlessFunctions(program);
+  const { serverlessFunctions, applicationVariables } =
+    collectServerlessFunctions(program);
 
-  return { objects, serverlessFunctions };
+  return { objects, serverlessFunctions, applicationVariables };
 };

@@ -3,6 +3,7 @@ import assert from 'assert';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
+  ApplicationVariableManifest,
   AppManifest,
   CoreEntityManifest,
   ObjectManifest,
@@ -121,38 +122,6 @@ export const loadManifest = async (
 
   const rawYarnLock = await fs.readFile(yarnLockPath, 'utf8');
 
-  let envFile = '';
-
-  try {
-    const envFilePath = await findPathFile(appPath, '.env');
-
-    envFile = await fs.readFile(envFilePath, 'utf8');
-  } catch {
-    // Allow missing .env
-  }
-
-  const envVariables = dotenv.parse(envFile);
-
-  const packageJsonEnv = rawPackageJson.env || {};
-
-  for (const key of Object.keys(envVariables)) {
-    if (packageJsonEnv[key]) {
-      packageJsonEnv[key] = {
-        isSecret: false,
-        ...packageJsonEnv[key],
-        value: envVariables[key],
-      };
-    } else {
-      throw new Error(
-        `Environment variable "${key}" is defined in .env but missing from package.json. Please add it to the "env" section in package.json.`,
-      );
-    }
-  }
-
-  const packageJson = { ...rawPackageJson, env: packageJsonEnv };
-
-  await validateSchema('appManifest', packageJson, packageJsonPath);
-
   const agents = await loadCoreEntity(
     path.join(appPath, 'agents'),
     (manifest, path) => validateSchema('agent', manifest, path),
@@ -171,6 +140,7 @@ export const loadManifest = async (
   const {
     objects: objectsFromDecorators,
     serverlessFunctions: serverlessFunctionsFromDecorators,
+    applicationVariables: applicationVariablesFromDecorators,
   } = loadManifestFromDecorators();
 
   const objects = (
@@ -189,6 +159,54 @@ export const loadManifest = async (
       code: { src: sources },
     })),
   ];
+
+  let envFile = '';
+
+  try {
+    const envFilePath = await findPathFile(appPath, '.env');
+
+    envFile = await fs.readFile(envFilePath, 'utf8');
+  } catch {
+    // Allow missing .env
+  }
+
+  const envVariables = dotenv.parse(envFile);
+
+  const packageJsonEnvFromDecorators =
+    applicationVariablesFromDecorators.reduce(
+      (acc, applicationVariable) => {
+        const { key, ...applicationVariableWithoutKey } = applicationVariable;
+        acc[key] = {
+          ...applicationVariableWithoutKey,
+        };
+        return acc;
+      },
+      {} as Record<
+        string,
+        Omit<ApplicationVariableManifest, 'universalIdentifier' | 'key'>
+      >,
+    );
+  const packageJsonEnv = {
+    ...rawPackageJson.env,
+    ...packageJsonEnvFromDecorators,
+  };
+
+  for (const key of Object.keys(envVariables)) {
+    if (packageJsonEnv[key]) {
+      packageJsonEnv[key] = {
+        ...packageJsonEnv[key],
+        value: envVariables[key],
+      };
+    } else {
+      throw new Error(
+        `Environment variable "${key}" is defined in .env but missing from package.json. Please add it to the "env" section in package.json.`,
+      );
+    }
+  }
+
+  const packageJson = { ...rawPackageJson, env: packageJsonEnv };
+
+  await validateSchema('appManifest', packageJson, packageJsonPath);
 
   return {
     packageJson,
