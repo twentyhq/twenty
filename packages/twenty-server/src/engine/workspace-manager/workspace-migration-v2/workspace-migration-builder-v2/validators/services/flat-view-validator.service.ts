@@ -6,7 +6,7 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
@@ -113,7 +113,7 @@ export class FlatViewValidatorService {
     const optimisticFlatObjectMetadata =
       flatObjectMetadataMaps.byId[flatViewToValidate.objectMetadataId];
 
-    if (true) {
+    if (!isDefined(optimisticFlatObjectMetadata)) {
       validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`Object metadata not found`,
