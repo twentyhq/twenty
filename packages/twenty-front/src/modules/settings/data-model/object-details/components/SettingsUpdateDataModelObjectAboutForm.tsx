@@ -6,7 +6,6 @@ import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
@@ -23,7 +22,6 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
 }: SettingsUpdateDataModelObjectAboutFormProps) => {
   const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar } = useSnackBar();
   const setUpdatedObjectNamePlural = useSetRecoilState(
     updatedObjectNamePluralState,
   );
