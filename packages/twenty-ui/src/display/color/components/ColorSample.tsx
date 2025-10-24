@@ -25,8 +25,7 @@ const getColor = (theme: ThemeType, colorName?: ThemeColor, color?: string) => {
 const StyledColorSample = styled.div<ColorSampleProps>`
   background-color: ${({ theme, colorName, color }) =>
     getColor(theme, colorName, color)};
-  border: 1px solid
-    ${({ theme, colorName, color }) => getColor(theme, colorName, color)};
+  border: 1px solid ${({ theme }) => theme.border.color.transparentStrong};
   border-radius: 60px;
   height: ${({ theme }) => theme.spacing(4)};
   width: ${({ theme }) => theme.spacing(3)};
