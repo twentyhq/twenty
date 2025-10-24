@@ -92,43 +92,43 @@ export const CustomBarItem = <D extends BarDatum>({
   }, [hideTooltip]);
 
   const isTopBar = useMemo(() => {
-    if (
-      groupMode !== 'stacked' ||
-      !isDefined(keys) ||
-      keys.length === 0 ||
-      !isDefined(chartData) ||
-      !isDefined(indexBy)
-    ) {
+    const isStackedAndValid =
+      groupMode === 'stacked' &&
+      isDefined(keys) &&
+      keys.length > 0 &&
+      isDefined(chartData) &&
+      isDefined(indexBy);
+
+    if (!isStackedAndValid) {
       return true;
     }
 
-    const currentIndexValue = barData.indexValue;
-    const dataPoint = chartData.find((d) => d[indexBy] === currentIndexValue);
+    const dataPoint = chartData.find(
+      (data) => data[indexBy] === barData.indexValue,
+    );
 
     if (!isDefined(dataPoint)) {
       return true;
     }
 
     const currentKeyIndex = keys.findIndex((key) => key === barData.id);
+
     if (currentKeyIndex === -1) {
       return true;
     }
 
-    for (let i = currentKeyIndex + 1; i < keys.length; i++) {
-      const value = dataPoint[keys[i]];
-      if (isNumber(value) && value > 0) {
-        return false;
-      }
-    }
+    const keysAboveCurrentKey = keys.slice(currentKeyIndex + 1);
+    const hasBarAbove = keysAboveCurrentKey.some((key) => {
+      const value = dataPoint[key];
+      return isNumber(value) && value > 0;
+    });
 
-    return true;
+    return !hasBarAbove;
   }, [groupMode, keys, barData, chartData, indexBy]);
-
-  const shouldApplyClipPath = groupMode !== 'stacked' || isTopBar;
 
   return (
     <animated.g transform={transform}>
-      {shouldApplyClipPath && (
+      {isTopBar && (
         <defs>
           <clipPath id={`round-corner-${label}`}>
             <animated.rect
@@ -144,9 +144,7 @@ export const CustomBarItem = <D extends BarDatum>({
       )}
 
       <animated.rect
-        clipPath={
-          shouldApplyClipPath ? `url(#round-corner-${label})` : undefined
-        }
+        clipPath={isTopBar ? `url(#round-corner-${label})` : undefined}
         width={to(width, (value) => Math.max(value, 0))}
         height={to(height, (value) => Math.max(value, 0))}
         fill={barData.fill ?? color}
