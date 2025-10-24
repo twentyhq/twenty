@@ -35,6 +35,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
+import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -59,7 +60,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const recordsToMerge = await this.fetchRecordsToMerge(
       queryRunnerContext,
-      args.ids,
+      args,
     );
 
     const priorityRecord = this.validateAndGetPriorityRecord(
@@ -126,13 +127,21 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
   private async fetchRecordsToMerge(
     context: CommonExtendedQueryRunnerContext,
-    ids: string[],
+    args: CommonExtendedInput<MergeManyQueryArgs>,
   ): Promise<ObjectRecord[]> {
-    const recordsToMerge = await context.repository.find({
-      where: { id: In(ids) },
+    const columnsToSelect = buildColumnsToSelect({
+      select: args.selectedFieldsResult.select,
+      relations: args.selectedFieldsResult.relations,
+      objectMetadataItemWithFieldMaps: context.objectMetadataItemWithFieldMaps,
+      objectMetadataMaps: context.objectMetadataMaps,
     });
 
-    if (recordsToMerge.length !== ids.length) {
+    const recordsToMerge = await context.repository.find({
+      where: { id: In(args.ids) },
+      select: columnsToSelect,
+    });
+
+    if (recordsToMerge.length !== args.ids.length) {
       throw new CommonQueryRunnerException(
         'One or more records not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
