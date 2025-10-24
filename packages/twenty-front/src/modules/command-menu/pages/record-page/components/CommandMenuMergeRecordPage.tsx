@@ -1,8 +1,6 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { MergeRecordsContainer } from '@/object-record/record-merge/components/MergeRecordsContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -36,20 +34,15 @@ export const CommandMenuMergeRecordPage = () => {
     <RecordComponentInstanceContextsWrapper
       componentInstanceId={`record-merge-${commandMenuPageInstanceId}`}
     >
-      <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+      <ActionMenuComponentInstanceContext.Provider
+        value={{ instanceId: commandMenuPageInstanceId }}
       >
-        <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: commandMenuPageInstanceId }}
-        >
-          <StyledRightDrawerRecord isMobile={isMobile}>
-            <MergeRecordsContainer
-              objectNameSingular={objectMetadataItem.nameSingular}
-              componentInstanceId={commandMenuPageInstanceId}
-            />
-          </StyledRightDrawerRecord>
-        </ActionMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
+        <StyledRightDrawerRecord isMobile={isMobile}>
+          <MergeRecordsContainer
+            objectNameSingular={objectMetadataItem.nameSingular}
+          />
+        </StyledRightDrawerRecord>
+      </ActionMenuComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
   );
 };
