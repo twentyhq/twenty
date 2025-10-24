@@ -6,6 +6,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import styled from '@emotion/styled';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -26,13 +27,23 @@ import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/inte
 import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { type PublicWorkspaceDataOutput } from '~/generated/graphql';
+import { Loader } from 'twenty-ui/feedback';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+
+const StyledLoaderContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing(8)};
+  width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+`;
 
 const StandardContent = ({
   workspacePublicData,
@@ -124,6 +135,14 @@ export const SignInUp = () => {
   ]);
 
   const signInUpForm = useMemo(() => {
+    if (getPublicWorkspaceDataLoading || !isCaptchaReady()) {
+      return (
+        <StyledLoaderContainer>
+          <Loader color="gray" />
+        </StyledLoaderContainer>
+      );
+    }
+
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
       return (
         <>
@@ -164,9 +183,11 @@ export const SignInUp = () => {
       </>
     );
   }, [
+    isCaptchaReady,
     isDefaultDomain,
     isMultiWorkspaceEnabled,
     isOnAWorkspace,
+    getPublicWorkspaceDataLoading,
     signInUpStep,
     workspacePublicData,
   ]);
