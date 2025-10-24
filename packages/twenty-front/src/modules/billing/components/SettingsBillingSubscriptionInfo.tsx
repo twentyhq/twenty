@@ -339,8 +339,6 @@ export const SettingsBillingSubscriptionInfo = ({
     }
   };
 
-  console.log('>>>>>>>>>>>>>>', nextBillingPhase);
-
   return (
     <Section>
       <H2Title title={t`Subscription`} description={t`About my subscription`} />
