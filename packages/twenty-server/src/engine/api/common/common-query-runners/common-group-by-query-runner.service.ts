@@ -66,7 +66,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   async run(
     args: CommonExtendedInput<GroupByQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-    shouldIncludeRecords?: boolean,
   ): Promise<CommonGroupByOutputItem[]> {
     const {
       repository,
@@ -146,6 +145,8 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       args.orderBy ?? [],
       groupByFields,
     );
+
+    const shouldIncludeRecords = args.includeRecords ?? false;
 
     if (shouldIncludeRecords) {
       const queryBuilderWithFiltersAndWithoutGroupBy =
