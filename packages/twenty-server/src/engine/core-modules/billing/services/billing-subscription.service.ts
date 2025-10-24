@@ -231,7 +231,6 @@ export class BillingSubscriptionService {
       nextEditable: updatedNextEditable,
     } = (await this.maybeUpgradeNowIfHigherTier(
       billingSubscription,
-      currentPhaseDetails,
       targetCap,
       currentCap,
       mappedCurrentMeteredId,
@@ -575,7 +574,6 @@ export class BillingSubscriptionService {
   private async replaceCurrentMeteredItem(
     billingSubscription: BillingSubscriptionEntity,
     newMeteredPriceId: string,
-    licensedPriceIdForThresholds: string,
   ): Promise<void> {
     const licensedItem =
       this.getCurrentLicensedBillingSubscriptionItemOrThrow(
@@ -677,9 +675,6 @@ export class BillingSubscriptionService {
 
   private async maybeUpgradeNowIfHigherTier(
     billingSubscription: BillingSubscriptionEntity,
-    currentPhaseDetails: Awaited<
-      ReturnType<BillingSubscriptionPhaseService['getDetailsFromPhase']>
-    >,
     targetCap: number,
     currentCap: number,
     mappedCurrentMeteredId: string,
@@ -693,12 +688,9 @@ export class BillingSubscriptionService {
     | undefined
   > {
     if (targetCap > currentCap) {
-      const currentLicensedId = currentPhaseDetails.licensedPrice.stripePriceId;
-
       await this.replaceCurrentMeteredItem(
         billingSubscription,
         mappedCurrentMeteredId,
-        currentLicensedId,
       );
       const { subscription, schedule, currentEditable, nextEditable } =
         await this.loadScheduleEditable(
