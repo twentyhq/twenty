@@ -49,7 +49,7 @@ export const useUpdateOneFieldMetadataItem = () => {
     >
   > => {
     try {
-      const result = await updateOneFieldMetadataItemMutation({
+      const response = await updateOneFieldMetadataItemMutation({
         variables: {
           idToUpdate: fieldMetadataIdToUpdate,
           updatePayload: updatePayload,
@@ -61,7 +61,7 @@ export const useUpdateOneFieldMetadataItem = () => {
 
       return {
         status: 'successful',
-        data: result,
+        response,
       };
     } catch (error) {
       if (error instanceof ApolloError) {

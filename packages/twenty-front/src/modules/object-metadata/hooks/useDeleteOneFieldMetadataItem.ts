@@ -1,9 +1,14 @@
 import { useDeleteOneFieldMetadataItemMutation } from '~/generated-metadata/graphql';
 
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 
 export const useDeleteOneFieldMetadataItem = () => {
@@ -14,6 +19,9 @@ export const useDeleteOneFieldMetadataItem = () => {
     useRefreshObjectMetadataItems('network-only');
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
+
+  const { handleMetadataError } = useMetadataErrorHandler();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [
     recordIndexKanbanAggregateOperation,
@@ -37,19 +45,41 @@ export const useDeleteOneFieldMetadataItem = () => {
   }: {
     idToDelete: string;
     objectMetadataId: string;
-  }) => {
-    const result = await deleteOneFieldMetadataItemMutation({
-      variables: {
-        idToDelete,
-      },
-    });
+  }): Promise<
+    MetadataRequestResult<
+      Awaited<ReturnType<typeof deleteOneFieldMetadataItemMutation>>
+    >
+  > => {
+    try {
+      const response = await deleteOneFieldMetadataItemMutation({
+        variables: {
+          idToDelete,
+        },
+      });
 
-    await resetRecordIndexKanbanAggregateOperation(idToDelete);
+      await resetRecordIndexKanbanAggregateOperation(idToDelete);
 
-    await refreshObjectMetadataItems();
-    await refreshCoreViewsByObjectMetadataId(objectMetadataId);
+      await refreshObjectMetadataItems();
+      await refreshCoreViewsByObjectMetadataId(objectMetadataId);
 
-    return result;
+      return {
+        status: 'successful',
+        response,
+      };
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        handleMetadataError(error, {
+          primaryMetadataName: 'fieldMetadata',
+        });
+      } else {
+        enqueueErrorSnackBar({ message: t`An error occurred.` });
+      }
+
+      return {
+        status: 'failed',
+        error,
+      };
+    }
   };
 
   return {
