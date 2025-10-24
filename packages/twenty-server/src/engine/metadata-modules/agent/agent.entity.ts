@@ -18,7 +18,6 @@ import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ModelConfiguration } from 'src/engine/metadata-modules/agent/types/modelConfiguration';
 
-import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentHandoffEntity } from './agent-handoff.entity';
 
 @Entity('agent')
@@ -69,9 +68,6 @@ export class AgentEntity
   })
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
-
-  @OneToMany(() => AgentChatThreadEntity, (chatThread) => chatThread.agent)
-  chatThreads: Relation<AgentChatThreadEntity[]>;
 
   @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.fromAgent)
   outgoingHandoffs: Relation<AgentHandoffEntity[]>;

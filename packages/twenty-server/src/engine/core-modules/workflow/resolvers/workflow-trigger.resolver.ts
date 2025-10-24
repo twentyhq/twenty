@@ -7,6 +7,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { RunWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version-input.dto';
+import { RunWorkflowVersionOutput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version-output.dto';
 import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-run.dto';
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -59,7 +60,7 @@ export class WorkflowTriggerResolver {
     );
   }
 
-  @Mutation(() => WorkflowRunDTO)
+  @Mutation(() => RunWorkflowVersionOutput)
   async runWorkflowVersion(
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -90,5 +91,13 @@ export class WorkflowTriggerResolver {
         workspaceMemberId: workspaceMember.id,
       }),
     });
+  }
+
+  @Mutation(() => WorkflowRunDTO)
+  async stopWorkflowRun(
+    @Args('workflowRunId', { type: () => UUIDScalarType })
+    workflowRunId: string,
+  ) {
+    return this.workflowTriggerWorkspaceService.stopWorkflowRun(workflowRunId);
   }
 }

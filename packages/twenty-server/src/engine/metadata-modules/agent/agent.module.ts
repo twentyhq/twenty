@@ -15,6 +15,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
 import { AgentChatController } from 'src/engine/metadata-modules/agent/agent-chat.controller';
+import { AiRouterModule } from 'src/engine/metadata-modules/ai-router/ai-router.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -66,6 +67,7 @@ import { AgentActorContextService } from './services/agent-actor-context.service
     FileModule,
     ObjectMetadataModule,
     PermissionsModule,
+    AiRouterModule,
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,

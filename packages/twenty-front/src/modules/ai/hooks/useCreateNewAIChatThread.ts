@@ -1,19 +1,18 @@
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useRecoilState } from 'recoil';
-import { useCreateAgentChatThreadMutation } from '~/generated-metadata/graphql';
+import { useCreateChatThreadMutation } from '~/generated-metadata/graphql';
 
-export const useCreateNewAIChatThread = ({ agentId }: { agentId: string }) => {
+export const useCreateNewAIChatThread = () => {
   const [, setCurrentAIChatThread] = useRecoilState(currentAIChatThreadState);
 
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
-  const [createAgentChatThread] = useCreateAgentChatThreadMutation({
-    variables: { input: { agentId } },
+  const [createChatThread] = useCreateChatThreadMutation({
     onCompleted: (data) => {
-      setCurrentAIChatThread(data.createAgentChatThread.id);
+      setCurrentAIChatThread(data.createChatThread.id);
       openAskAIPage();
     },
   });
 
-  return { createAgentChatThread };
+  return { createChatThread };
 };

@@ -42,19 +42,13 @@ export class GqlTypeGenerator {
     private readonly mutationTypeGenerator: MutationTypeGenerator,
   ) {}
 
-  async buildAndStore(
-    objectMetadataCollection: ObjectMetadataEntity[],
-    workspaceId: string,
-  ) {
+  async buildAndStore(objectMetadataCollection: ObjectMetadataEntity[]) {
     const compositeTypeCollection = [...compositeTypeDefinitions.values()];
 
     this.buildAndStoreCompositeFieldMetadataGqlTypes(compositeTypeCollection);
     this.buildAndStoreDateFieldMetadataGroupByGqlTypes();
     this.buildAndStoreObjectMetadataGqlTypes(objectMetadataCollection);
-    await this.queryTypeGenerator.buildAndStore(
-      objectMetadataCollection,
-      workspaceId,
-    );
+    await this.queryTypeGenerator.buildAndStore(objectMetadataCollection);
     this.mutationTypeGenerator.buildAndStore(objectMetadataCollection);
   }
 

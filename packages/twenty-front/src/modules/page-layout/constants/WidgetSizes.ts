@@ -6,7 +6,7 @@ type WidgetSizeConfig = {
 };
 
 export const WIDGET_SIZES: Record<GraphType, WidgetSizeConfig> = {
-  [GraphType.NUMBER]: {
+  [GraphType.AGGREGATE]: {
     default: { w: 3, h: 2 },
     minimum: { w: 2, h: 2 },
   },

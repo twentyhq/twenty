@@ -3,21 +3,50 @@ import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-action
 import { SingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/types/SingleRecordActionsKey';
 import { SeeVersionWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeVersionWorkflowRunSingleRecordAction';
 import { SeeWorkflowWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/SeeWorkflowWorkflowRunSingleRecordAction';
+import { StopWorkflowRunSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/components/StopWorkflowRunSingleRecordAction';
 import { WorkflowRunSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-run-actions/types/WorkflowRunSingleRecordActionsKeys';
 import { inheritActionsFromDefaultConfig } from '@/action-menu/actions/record-actions/utils/inheritActionsFromDefaultConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { msg } from '@lingui/core/macro';
-import { IconSettingsAutomation, IconVersions } from 'twenty-ui/display';
+import {
+  IconPlayerStop,
+  IconSettingsAutomation,
+  IconVersions,
+} from 'twenty-ui/display';
 
 export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
+    [WorkflowRunSingleRecordActionKeys.STOP]: {
+      key: WorkflowRunSingleRecordActionKeys.STOP,
+      label: msg`Stop`,
+      shortLabel: msg`Stop`,
+      position: 0,
+      isPinned: true,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      Icon: IconPlayerStop,
+      shouldBeRegistered: ({
+        selectedRecord,
+        isWorkflowRunStoppageEnabled,
+      }) => {
+        return (
+          selectedRecord?.status === 'RUNNING' && isWorkflowRunStoppageEnabled
+        );
+      },
+      availableOn: [
+        ActionViewType.SHOW_PAGE,
+        ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+        ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ],
+      component: <StopWorkflowRunSingleRecordAction />,
+    },
     [WorkflowRunSingleRecordActionKeys.SEE_WORKFLOW]: {
       key: WorkflowRunSingleRecordActionKeys.SEE_WORKFLOW,
       label: msg`See workflow`,
       shortLabel: msg`See workflow`,
-      position: 0,
+      position: 1,
       isPinned: true,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
@@ -33,7 +62,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       key: WorkflowRunSingleRecordActionKeys.SEE_VERSION,
       label: msg`See version`,
       shortLabel: msg`See version`,
-      position: 1,
+      position: 2,
       isPinned: true,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
@@ -68,63 +97,63 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   propertiesToOverwrite: {
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
       isPinned: false,
-      position: 2,
+      position: 3,
     },
     [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       isPinned: false,
-      position: 3,
+      position: 4,
     },
     [SingleRecordActionKeys.EXPORT_FROM_RECORD_INDEX]: {
-      position: 4,
+      position: 5,
       label: msg`Export run`,
     },
     [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
-      position: 4,
+      position: 5,
       label: msg`Export run`,
     },
     [MultipleRecordsActionKeys.EXPORT]: {
-      position: 5,
+      position: 6,
       label: msg`Export runs`,
     },
     [NoSelectionRecordActionKeys.EXPORT_VIEW]: {
-      position: 6,
+      position: 7,
       label: msg`Export view`,
     },
     [NoSelectionRecordActionKeys.SEE_DELETED_RECORDS]: {
-      position: 7,
+      position: 8,
       label: msg`See deleted runs`,
     },
     [NoSelectionRecordActionKeys.HIDE_DELETED_RECORDS]: {
-      position: 8,
+      position: 9,
       label: msg`Hide deleted runs`,
     },
     [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-      position: 9,
-    },
-    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
       position: 10,
     },
-    [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
       position: 11,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+      position: 12,
       isPinned: true,
     },
     [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-      position: 12,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
       position: 13,
     },
-    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
       position: 14,
     },
-    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
       position: 15,
     },
-    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
       position: 16,
     },
-    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
       position: 17,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 18,
     },
   },
 });

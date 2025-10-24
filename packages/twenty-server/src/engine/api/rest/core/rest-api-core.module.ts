@@ -5,7 +5,10 @@ import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.modul
 import { RestApiCoreController } from 'src/engine/api/rest/core/controllers/rest-api-core.controller';
 import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-many.handler';
 import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-one.handler';
+import { RestApiDeleteManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-delete-many.handler';
 import { RestApiDeleteOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-delete-one.handler';
+import { RestApiDestroyManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-destroy-many.handler';
+import { RestApiDestroyOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-destroy-one.handler';
 import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-duplicates.handler';
 import { RestApiFindManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-many.handler';
 import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-one.handler';
@@ -28,14 +31,17 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 const restApiCoreResolvers = [
-  RestApiDeleteOneHandler,
   RestApiCreateOneHandler,
   RestApiCreateManyHandler,
-  RestApiUpdateOneHandler,
   RestApiFindOneHandler,
   RestApiFindManyHandler,
   RestApiFindDuplicatesHandler,
   RestApiGroupByHandler,
+  RestApiUpdateOneHandler,
+  RestApiDestroyOneHandler,
+  RestApiDestroyManyHandler,
+  RestApiDeleteOneHandler,
+  RestApiDeleteManyHandler,
 ];
 
 @Module({
