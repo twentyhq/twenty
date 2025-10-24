@@ -53,7 +53,9 @@ export const useBillingWording = () => {
       new Error(`No renew date defined for current subscription.`),
     );
 
-    return beautifyExactDate(currentBillingSubscription.currentPeriodEnd);
+    return beautifyExactDate(
+      new Date(currentBillingSubscription.currentPeriodEnd),
+    );
   };
 
   const getIntervalLabelAsAdjectiveCapitalize = (isMonthlyPlan: boolean) => {

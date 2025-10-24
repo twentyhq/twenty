@@ -1321,10 +1321,11 @@ export class BillingSubscriptionService {
     const { scheduleId, subscription } = params;
     let { nextPhase, currentPhaseSnapshot } = params;
 
-    const currentPhaseToPersist: Stripe.SubscriptionScheduleUpdateParams.Phase = {
-      ...currentPhaseSnapshot,
-      end_date: subscription.current_period_end,
-    };
+    const currentPhaseToPersist: Stripe.SubscriptionScheduleUpdateParams.Phase =
+      {
+        ...currentPhaseSnapshot,
+        end_date: subscription.current_period_end,
+      };
 
     if (
       nextPhase &&
