@@ -148,7 +148,7 @@ describe('useFieldMetadataItem', () => {
 
       jestExpectSuccessfulMetadataRequestResult(response);
 
-      expect(response.data).toEqual({
+      expect(response.response).toEqual({
         updateOneField: responseData.default,
       });
     });
@@ -167,8 +167,9 @@ describe('useFieldMetadataItem', () => {
         name: 'fieldName',
         isLabelSyncedWithName: true,
       });
+      jestExpectSuccessfulMetadataRequestResult(res);
 
-      expect(res.data).toEqual({
+      expect(res.response).toEqual({
         createOneField: responseData.createMetadataField,
       });
     });
@@ -186,7 +187,7 @@ describe('useFieldMetadataItem', () => {
       );
 
       jestExpectSuccessfulMetadataRequestResult(response);
-      expect(response.data).toEqual({
+      expect(response.response).toEqual({
         updateOneField: responseData.default,
       });
     });
@@ -202,8 +203,9 @@ describe('useFieldMetadataItem', () => {
         idToDelete: fieldMetadataItem.id,
         objectMetadataId,
       });
+      jestExpectSuccessfulMetadataRequestResult(res);
 
-      expect(res.data).toEqual({
+      expect(res.response).toEqual({
         deleteOneField: responseData.default,
       });
     });
@@ -219,8 +221,9 @@ describe('useFieldMetadataItem', () => {
         idToDelete: fieldRelationMetadataItem.id,
         objectMetadataId,
       });
+      jestExpectSuccessfulMetadataRequestResult(res);
 
-      expect(res.data).toEqual({
+      expect(res.response).toEqual({
         deleteOneField: responseData.fieldRelation,
       });
     });

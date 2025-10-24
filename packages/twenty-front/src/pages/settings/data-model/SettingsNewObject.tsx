@@ -1,7 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FormProvider, useForm } from 'react-hook-form';
-
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -11,11 +7,11 @@ import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { ApolloError } from '@apollo/client';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -25,8 +21,6 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 export const SettingsNewObject = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const { handleMetadataError } = useMetadataErrorHandler();
   const [isLoading, setIsLoading] = useState(false);
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
 
@@ -45,29 +39,21 @@ export const SettingsNewObject = () => {
   const handleSave = async (
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
-    try {
-      setIsLoading(true);
-      const { data: response } = await createOneObjectMetadataItem(formValues);
+    setIsLoading(true);
 
+    const result = await createOneObjectMetadataItem(formValues);
+
+    if (result.status === 'successful') {
+      const response = result.response.data;
       navigate(
         response ? SettingsPath.ObjectDetail : SettingsPath.Objects,
         response
           ? { objectNamePlural: response.createOneObject.namePlural }
           : undefined,
       );
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      if (error instanceof ApolloError) {
-        handleMetadataError(error, {
-          primaryMetadataName: 'objectMetadata',
-        });
-      } else {
-        enqueueErrorSnackBar({ message: t`An error occurred.` });
-      }
-    } finally {
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   return (
