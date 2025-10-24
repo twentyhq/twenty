@@ -25,6 +25,8 @@ import {
   SourceFile,
   isVariableStatement,
   isNewExpression,
+  isArrowFunction,
+  isFunctionExpression,
 } from 'typescript';
 import {
   ApplicationVariableManifest,
@@ -159,13 +161,20 @@ const collectObjects = (program: Program) => {
 };
 
 /**
- * Finds: `export const <handlerName> = new <ClassName>().main;`
- * Returns the exported const identifier (handlerName) or undefined.
+ * Finds an exported handler:
+ *  - `export const <handlerName> = async (...) => { ... }`
+ *  - `export const <handlerName> = function (...) { ... }`
+ *  - `export function <handlerName>(...) { ... }`
+ * Returns the exported identifier (handlerName) or undefined.
+ * NOTE: Prefers a variable named "handler" if multiple matches are present.
  */
 const findExportedHandlerNameForClass = (
   sf: SourceFile,
-  className: string,
+  _className: string, // no longer needed, kept for backwards compatibility
 ): string | undefined => {
+  const candidates: string[] = [];
+
+  // 1) export const <name> = <arrow|function expression>
   for (const st of sf.statements) {
     if (!isVariableStatement(st)) continue;
 
@@ -176,24 +185,45 @@ const findExportedHandlerNameForClass = (
     for (const decl of st.declarationList.declarations) {
       if (!isIdentifier(decl.name) || !decl.initializer) continue;
 
-      // Expect initializer like: new CreateNewPostCard().main
       const init = decl.initializer;
-
-      if (isPropertyAccessExpression(init) && init.name.text === 'main') {
-        const expr = init.expression;
-        if (
-          isNewExpression(expr) &&
-          expr.expression &&
-          isIdentifier(expr.expression)
-        ) {
-          if (expr.expression.text === className) {
-            return decl.name.text;
-          }
-        }
+      if (isArrowFunction(init) || isFunctionExpression(init)) {
+        const name = decl.name.text;
+        if (name === 'handler') return name; // prefer canonical name
+        candidates.push(name);
       }
     }
   }
-  return undefined;
+
+  // 2) export function <name>(...) { ... }
+  for (const st of sf.statements) {
+    if (
+      st.kind === SyntaxKind.FunctionDeclaration &&
+      (st as any).modifiers?.some(
+        (m: any) => m.kind === SyntaxKind.ExportKeyword,
+      )
+    ) {
+      const fd = st as import('typescript').FunctionDeclaration;
+      if (fd.name && isIdentifier(fd.name)) {
+        const name = fd.name.text;
+        if (name === 'handler') return name;
+        candidates.push(name);
+      }
+    }
+  }
+
+  if (!candidates.length) {
+    throw new Error(
+      `No exported serverlessFunction handler found in ${sf.fileName}`,
+    );
+  }
+
+  if (candidates.length !== 1) {
+    throw new Error(
+      `Only one handler should be exported in serverlessFunction file ${sf.fileName}. Found ${candidates.length}: ${candidates.join(', ')}`,
+    );
+  }
+
+  return candidates[0];
 };
 
 const posixRelativeFromCwd = (absPath: string) => {

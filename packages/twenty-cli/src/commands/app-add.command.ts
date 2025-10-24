@@ -76,12 +76,17 @@ export class AppAddCommand {
 
         const objectFileName = `${camelcase(entityName)}.ts`;
 
-        const decoratedObject = getServerlessFunctionDecoratedClass({
-          data: entityData,
-          name: entityName,
-        });
+        const decoratedServerlessFunction = getServerlessFunctionDecoratedClass(
+          {
+            data: entityData,
+            name: entityName,
+          },
+        );
 
-        await fs.writeFile(path.join(appPath, objectFileName), decoratedObject);
+        await fs.writeFile(
+          path.join(appPath, objectFileName),
+          decoratedServerlessFunction,
+        );
 
         return;
       }

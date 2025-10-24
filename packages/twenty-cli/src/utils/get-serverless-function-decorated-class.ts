@@ -1,4 +1,3 @@
-import camelcase from 'lodash.camelcase';
 import kebabCase from 'lodash.kebabcase';
 import { v4 } from 'uuid';
 
@@ -9,15 +8,11 @@ export const getServerlessFunctionDecoratedClass = ({
   data: object;
   name: string;
 }) => {
-  const decoratorOptions = Object.entries(data)
-    .map(([key, value]) => `  ${key}: '${value}',`)
-    .join('\n');
-
-  const camelCaseName = camelcase(name);
-
   const kebabCaseName = kebabCase(name);
 
-  const className = camelCaseName[0].toUpperCase() + camelCaseName.slice(1);
+  const decoratorOptions = Object.entries({ name: kebabCaseName, ...data })
+    .map(([key, value]) => `  ${key}: '${value}',`)
+    .join('\n');
 
   return `import { ServerlessFunction } from 'twenty-sdk';
 
@@ -63,8 +58,9 @@ export const getServerlessFunctionDecoratedClass = ({
 @ServerlessFunction({
 ${decoratorOptions}
 })
-export class ${className} {
-  main = async (params: {
+export class ServerlessFunctionDefinition {}
+
+export const main = async (params: {
     a: string;
     b: number;
   }): Promise<{ message: string }> => {
@@ -76,8 +72,5 @@ export class ${className} {
 
     return { message };
   };
-}
-
-export const ${camelCaseName} = new ${className}().main;
 `;
 };
