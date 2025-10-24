@@ -4,11 +4,7 @@ import {
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-import {
-  assertIsDefinedOrThrow,
-  capitalize,
-  isDefined,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, capitalize } from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
@@ -52,18 +48,14 @@ export const useBillingWording = () => {
           : t`year`;
 
   const getBeautifiedRenewDate = () => {
-    const endDateFromPhase = currentBillingSubscription.phases?.[0]?.end_date;
-    const renewData = endDateFromPhase
-      ? endDateFromPhase * 1000
-      : currentBillingSubscription.currentPeriodEnd
-        ? new Date(currentBillingSubscription.currentPeriodEnd)
-        : undefined;
+    assertIsDefinedOrThrow(
+      currentBillingSubscription.currentPeriodEnd,
+      new Error(`No renew date defined for current subscription.`),
+    );
 
-    if (!isDefined(renewData)) {
-      throw new Error(`No renew date defined for current subscription.`);
-    }
-
-    return beautifyExactDate(renewData);
+    return beautifyExactDate(
+      new Date(currentBillingSubscription.currentPeriodEnd),
+    );
   };
 
   const getIntervalLabelAsAdjectiveCapitalize = (isMonthlyPlan: boolean) => {
