@@ -60,7 +60,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
     await this.ensureUnaccentFunctionExists();
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
-    const isDryRun = Boolean(options.dryRun);
+    const isDryRun = options.dryRun || false;
 
     const searchableObjects = await this.fetchSearchableObjects(workspaceId);
 
@@ -361,7 +361,7 @@ function buildStandardSearchExpressions(): Partial<Record<string, string>> {
     workflow: SEARCH_FIELDS_FOR_WORKFLOWS,
     workflowVersion: SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS,
     workflowRun: SEARCH_FIELDS_FOR_WORKFLOW_RUNS,
-  } as const;
+  };
 
   const expressions: Partial<Record<string, string>> = {};
 
