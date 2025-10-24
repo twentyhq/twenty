@@ -1,4 +1,5 @@
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+
 import { type OrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 
 export const EMPTY_ORCHESTRATOR_FAILURE_REPORT = (

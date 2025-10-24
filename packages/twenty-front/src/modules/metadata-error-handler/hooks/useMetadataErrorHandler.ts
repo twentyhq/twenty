@@ -1,23 +1,17 @@
 import { type ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import {
-  MetadataInternalErrorCode,
-  type MetadataEntityType,
-  type TranslatedFlatEntityValidationError,
-  type ValidationErrorFieldResponse,
-  type ValidationErrorObjectResponse,
-} from 'twenty-shared/types';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { AllMetadataName, FailedMetadataValidationError, WorkspaceMigrationV2ExceptionCode } from 'twenty-shared/metadata';
 import { classifyMetadataError } from '../utils/classify-metadata-error.util';
 
 type DisplayErrorOptions = {
-  primaryEntityType: MetadataEntityType;
+  primaryEntityType: AllMetadataName;
   entityDisplayName?: string;
 };
 
-const ENTITY_DISPLAY_NAMES: Record<MetadataEntityType, string> = {
+const ENTITY_DISPLAY_NAMES: Record<AllMetadataName, string> = {
   objectMetadata: t`object`,
   fieldMetadata: t`field`,
   view: t`view`,
@@ -31,14 +25,14 @@ const ENTITY_DISPLAY_NAMES: Record<MetadataEntityType, string> = {
   routeTrigger: t`route trigger`,
 };
 
-const getEntityDisplayName = (entityType: MetadataEntityType): string => {
+const getEntityDisplayName = (entityType: AllMetadataName): string => {
   return ENTITY_DISPLAY_NAMES[entityType] || entityType;
 };
 
 const formatValidationError = (
-  error: TranslatedFlatEntityValidationError,
+  error: FailedMetadataValidationError,
 ): string => {
-  return error.userFriendlyMessage || error.message || t`Validation error`;
+  return error.userFriendlyMessage ?? error.message;
 };
 
 export const useMetadataErrorHandler = () => {
@@ -65,20 +59,12 @@ export const useMetadataErrorHandler = () => {
 
           const targetErrors = extensions.errors[targetEntity] || [];
           if (targetErrors.length > 0) {
-            targetErrors.forEach(
-              (
-                entityError:
-                  | ValidationErrorObjectResponse
-                  | ValidationErrorFieldResponse,
-              ) => {
-                entityError.errors.forEach(
-                  (validationError: TranslatedFlatEntityValidationError) => {
-                    const errorMessage = formatValidationError(validationError);
-                    enqueueErrorSnackBar({ message: errorMessage });
-                  },
-                );
-              },
-            );
+            targetErrors.forEach((entityError) => {
+              entityError.errors.forEach((validationError) => {
+                const errorMessage = formatValidationError(validationError);
+                enqueueErrorSnackBar({ message: errorMessage });
+              });
+            });
           }
 
           if (targetErrors.length === 0 && relatedEntities.length > 0) {
@@ -102,7 +88,7 @@ export const useMetadataErrorHandler = () => {
         case 'v2-internal': {
           const { code } = classification;
           const errorMessage =
-            code === MetadataInternalErrorCode.BUILDER_INTERNAL_SERVER_ERROR
+            code === WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR
               ? t`An internal error occurred while validating your changes. Please contact support.`
               : t`An internal error occurred while applying your changes. Please contact support and try again later.`;
 
