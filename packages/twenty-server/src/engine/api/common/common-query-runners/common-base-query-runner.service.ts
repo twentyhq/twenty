@@ -332,10 +332,30 @@ export abstract class CommonBaseQueryRunnerService<
   }
 
   private async throttleQueryExecution(workspaceId: string) {
-    const key = `common-api-throttle-${workspaceId}`;
-    const maxTokens = this.twentyConfigService.get('API_RATE_LIMITING_LIMIT');
-    const timeWindow = this.twentyConfigService.get('API_RATE_LIMITING_TTL');
+    const shortConfig = {
+      key: `${workspaceId}-common-api-throttle-short`,
+      maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_SHORT_LIMIT'),
+      timeWindow: this.twentyConfigService.get('API_RATE_LIMITING_SHORT_TTL'),
+    };
 
-    await this.throttlerService.tokenBucketThrottle(key, 1, 3, 10000);
+    const longConfig = {
+      key: `${workspaceId}-common-api-throttle-long`,
+      maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
+      timeWindow: this.twentyConfigService.get('API_RATE_LIMITING_LONG_TTL'),
+    };
+
+    await this.throttlerService.tokenBucketThrottle(
+      shortConfig.key,
+      1,
+      shortConfig.maxTokens,
+      shortConfig.timeWindow,
+    );
+
+    await this.throttlerService.tokenBucketThrottle(
+      longConfig.key,
+      1,
+      longConfig.maxTokens,
+      longConfig.timeWindow,
+    );
   }
 }

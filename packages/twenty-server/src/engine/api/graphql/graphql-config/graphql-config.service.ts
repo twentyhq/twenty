@@ -17,7 +17,6 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
@@ -55,13 +54,6 @@ export class GraphQLConfigService
     const isDebugMode =
       this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT;
     const plugins = [
-      useThrottler({
-        ttl: this.twentyConfigService.get('API_RATE_LIMITING_TTL'),
-        limit: this.twentyConfigService.get('API_RATE_LIMITING_LIMIT'),
-        identifyFn: (context) => {
-          return context.req.user?.id ?? context.req.ip ?? 'anonymous';
-        },
-      }),
       useGraphQLErrorHandlerHook({
         metricsService: this.metricsService,
         exceptionHandlerService: this.exceptionHandlerService,
