@@ -3,6 +3,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
 import { useCreateFileMutation } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
+import { ATTACHMENT_SIZE } from '@/advanced-text-editor/utils/AttachmentSize';
 
 type WorkflowFile = {
   id: string;
@@ -21,6 +22,13 @@ export const useUploadWorkflowFile = () => {
     file: File,
   ): Promise<WorkflowFile | null> => {
     try {
+      if (file.size > ATTACHMENT_SIZE) {
+        enqueueErrorSnackBar({
+          message: `File "${file.name}" exceeds 10 Mb`,
+        });
+        return null;
+      }
+
       const result = await createFile({
         variables: { file },
       });
