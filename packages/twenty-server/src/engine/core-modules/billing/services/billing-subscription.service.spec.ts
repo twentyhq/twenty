@@ -2342,6 +2342,7 @@ describe('BillingSubscriptionService', () => {
           'scheduleId',
           expect.objectContaining({
             currentPhaseSnapshot: {
+              end_date: expect.any(Number),
               items: [
                 { price: LICENSE_PRICE_ENTERPRISE_MONTH_ID, quantity: 7 },
                 { price: METER_PRICE_ENTERPRISE_MONTH_TIER_HIGH_ID },
