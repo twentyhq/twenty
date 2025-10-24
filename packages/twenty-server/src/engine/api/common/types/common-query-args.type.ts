@@ -24,6 +24,12 @@ export enum CommonQueryNames {
   DESTROY_ONE = 'destroyOne',
   DELETE_MANY = 'deleteMany',
   DELETE_ONE = 'deleteOne',
+  UPDATE_ONE = 'updateOne',
+  UPDATE_MANY = 'updateMany',
+  FIND_DUPLICATES = 'findDuplicates',
+  RESTORE_MANY = 'restoreMany',
+  RESTORE_ONE = 'restoreOne',
+  MERGE_MANY = 'mergeMany',
 }
 
 interface BaseQueryArgs {
@@ -77,6 +83,35 @@ export interface DeleteManyQueryArgs {
   filter: ObjectRecordFilter;
 }
 
+export interface UpdateOneQueryArgs {
+  id: string;
+  data: Partial<ObjectRecord>;
+}
+
+export interface UpdateManyQueryArgs {
+  filter: ObjectRecordFilter;
+  data: Partial<ObjectRecord>;
+}
+
+export interface FindDuplicatesQueryArgs {
+  data?: Partial<ObjectRecord>[];
+  ids?: string[];
+}
+
+export interface RestoreManyQueryArgs {
+  filter: ObjectRecordFilter;
+}
+
+export interface RestoreOneQueryArgs {
+  id: string;
+}
+
+export interface MergeManyQueryArgs {
+  ids: string[];
+  conflictPriorityIndex: number;
+  dryRun?: boolean;
+}
+
 export type CommonQueryArgs =
   | FindOneQueryArgs
   | FindManyQueryArgs
@@ -86,7 +121,12 @@ export type CommonQueryArgs =
   | DestroyOneQueryArgs
   | DestroyManyQueryArgs
   | DeleteOneQueryArgs
-  | DeleteManyQueryArgs;
+  | DeleteManyQueryArgs
+  | UpdateOneQueryArgs
+  | UpdateManyQueryArgs
+  | FindDuplicatesQueryArgs
+  | RestoreManyQueryArgs
+  | RestoreOneQueryArgs;
 
 export type CommonInput<T extends CommonQueryArgs> = T & BaseQueryArgs;
 

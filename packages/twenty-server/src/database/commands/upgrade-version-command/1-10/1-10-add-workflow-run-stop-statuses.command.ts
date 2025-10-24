@@ -43,6 +43,7 @@ export class AddWorkflowRunStopStatusesCommand extends ActiveOrSuspendedWorkspac
       await this.fieldMetadataRepository.findOne({
         where: {
           standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.status,
+          workspaceId,
         },
       });
 

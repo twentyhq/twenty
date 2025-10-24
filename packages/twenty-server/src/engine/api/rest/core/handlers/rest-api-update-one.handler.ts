@@ -5,17 +5,79 @@ import {
 } from '@nestjs/common';
 
 import isEmpty from 'lodash.isempty';
-import { isDefined } from 'twenty-shared/utils';
+import { ObjectRecord } from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
+import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiUpdateOneHandler extends RestApiBaseHandler {
+  constructor(
+    private readonly commonUpdateOneQueryRunnerService: CommonUpdateOneQueryRunnerService,
+  ) {
+    super();
+  }
+
+  async commonHandle(request: AuthenticatedRequest) {
+    try {
+      const { id, data, depth } = this.parseRequestArgs(request);
+
+      const {
+        authContext,
+        objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+      } = await this.buildCommonOptions(request);
+
+      const selectedFields = await this.computeSelectedFields({
+        depth,
+        objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+        authContext,
+      });
+
+      const record = await this.commonUpdateOneQueryRunnerService.execute(
+        { id, data, selectedFields },
+        {
+          authContext,
+          objectMetadataMaps,
+          objectMetadataItemWithFieldMaps,
+        },
+      );
+
+      return this.formatRestResponse(
+        record,
+        objectMetadataItemWithFieldMaps.nameSingular,
+      );
+    } catch (error) {
+      workspaceQueryRunnerRestApiExceptionHandler(error);
+    }
+  }
+
+  private formatRestResponse(record: ObjectRecord, objectNameSingular: string) {
+    return { data: { [`update${capitalize(objectNameSingular)}`]: record } };
+  }
+
+  private parseRequestArgs(request: AuthenticatedRequest) {
+    const { id } = parseCorePath(request);
+
+    if (!id) {
+      throw new BadRequestException('Record ID not found');
+    }
+
+    return {
+      id,
+      data: request.body,
+      depth: parseDepthRestRequest(request),
+    };
+  }
+
   async handle(request: AuthenticatedRequest) {
     const { id: recordId } = parseCorePath(request);
 

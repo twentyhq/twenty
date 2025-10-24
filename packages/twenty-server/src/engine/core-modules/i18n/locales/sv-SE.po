@@ -54,9 +54,15 @@ msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "{fieldName} och {fieldName}Id kan inte båda tillhandahållas."
 
 #. js-lingui-id: ZkHTHm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
 msgstr "{fieldType}-fält kan inte vara unika."
+
+#. js-lingui-id: LeIJhm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "{fieldType} fields cannot have a default value."
+msgstr "{fieldType} fält kan inte ha ett standardvärde."
 
 #. js-lingui-id: iEZavm
 #: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
@@ -256,10 +262,10 @@ msgstr "Belopp"
 msgid "An attachment"
 msgstr "En bilaga"
 
-#. js-lingui-id: Q7akko
+#. js-lingui-id: eW83iC
 #: src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception.ts
-msgid "An error occurred during message import"
-msgstr "Ett fel inträffade vid meddelandeimport"
+msgid "An error occurred during messages import"
+msgstr "Ett fel inträffade vid meddelandeimporten"
 
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
@@ -344,10 +350,10 @@ msgstr "Minst en relation krävs"
 msgid "Attachment"
 msgstr "Bilaga"
 
-#. js-lingui-id: JAefBH
+#. js-lingui-id: dda+ze
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment author"
-msgstr "Bilagans författare"
+msgid "Attachment author (deprecated - use createdBy)"
+msgstr "Bilagans författare (föråldrad - använd skapadAv)"
 
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -358,6 +364,11 @@ msgstr "Bilagans företag"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment dashboard"
 msgstr "Bilagedashboard"
+
+#. js-lingui-id: u3pBxa
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment file category"
+msgstr "Bilagans filkategori"
 
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -389,10 +400,10 @@ msgstr "Bilagans person"
 msgid "Attachment task"
 msgstr "Bilagans uppgift"
 
-#. js-lingui-id: 4qqxMt
+#. js-lingui-id: ZXjjRz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment type"
-msgstr "Bilagans typ"
+msgid "Attachment type (deprecated - use fileCategory)"
+msgstr "Bilagans typ (föråldrad - använd filkategorin)"
 
 #. js-lingui-id: tH6L3e
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -656,11 +667,6 @@ msgstr "Kan inte aktivera unikhet på grund av befintliga dubbla värden. Vänli
 msgid "Cannot have more than one active workflow version"
 msgstr "Kan inte ha mer än en aktiv arbetsflödesversion"
 
-#. js-lingui-id: UcdPY5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr "Kan inte uppdatera standardfältegenskaper: {invalidProperties}"
-
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
@@ -812,7 +818,7 @@ msgid "Contradicting field permissions have been detected on a relation field ({
 msgstr "Motstridiga fältbehörigheter har upptäckts på ett relationsfält ({fieldName})."
 
 #. js-lingui-id: LZf/L8
-#: src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+#: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 msgid "Could not find flat entity in maps"
 msgstr "Kunde inte hitta plan entitet i kartor"
 
@@ -834,6 +840,7 @@ msgstr "Kunde inte hitta objektsmetadata relaterad till index"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "Skapad av"
@@ -1020,7 +1027,7 @@ msgid "Domain is already registered"
 msgstr "Domän är redan registrerad"
 
 #. js-lingui-id: PfJswy
-#: src/engine/core-modules/workspace/services/workspace.service.ts
+#: src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service.ts
 msgid "Domain is already registered as public domain"
 msgstr "Domän är redan registrerad som offentlig domän."
 
@@ -1207,6 +1214,21 @@ msgstr "Förväntade att samma begränsningsfält ska användas konsekvent i all
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
 msgstr "Externt ID"
+
+#. js-lingui-id: pUligB
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to delete jobs. Please try again later."
+msgstr "Misslyckades med att ta bort jobb. Vänligen försök igen senare."
+
+#. js-lingui-id: HfhmrS
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to load queue jobs. Please try again later."
+msgstr "Misslyckades med att ladda köjobb. Vänligen försök igen senare."
+
+#. js-lingui-id: SJEIIJ
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to retry jobs. Please try again later."
+msgstr "Misslyckades med att försöka igen med jobb. Vänligen försök igen senare."
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1415,6 +1437,8 @@ msgid "Field Metadata Id"
 msgstr "Id för fältmetadata"
 
 #. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -1504,6 +1528,11 @@ msgstr "FieldMetadataId krävs för att skapa en vygrupp."
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "FieldMetadataId krävs för att skapa en vynsortering."
+
+#. js-lingui-id: i+AQUz
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "File category"
+msgstr "Filkategori"
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1645,6 +1674,7 @@ msgstr "Relaterat objekt till index hittades inte"
 
 #. js-lingui-id: fY2zUQ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
 msgid "Index to delete not found"
 msgstr "Index att ta bort hittades inte"
 
@@ -1863,9 +1893,16 @@ msgstr "kanbanfieldMetadataId"
 msgid "Key"
 msgstr "Nyckel"
 
+#. js-lingui-id: ljUvzm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Label identifier field cannot be deactivated"
+msgstr "Etikettidentifieringsfält kan inte deaktiveras"
+
 #. js-lingui-id: ACUSmL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "Label identifier view field cannot be deleted"
 msgstr "Etikettidentifierarens vyfält kan inte tas bort"
 
@@ -2164,7 +2201,8 @@ msgstr "Saknas obligatoriska fält: minst en unik begränsning måste vara fulls
 #. js-lingui-id: hty0d5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
-msgstr "M\n"
+msgstr ""
+"M\n"
 "ndags"
 
 #. js-lingui-id: FqzlX4
@@ -2194,6 +2232,7 @@ msgstr "Multi-select fält standardvärde måste vara en array"
 
 #. js-lingui-id: 6rLmLu
 #: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "Flera poster hittades med samma unika fältvärden för {conflictingFieldsValues}. Kan inte avgöra vilken post som ska uppdateras."
 
@@ -2950,7 +2989,8 @@ msgstr "K\"or"
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
-msgstr "L\n"
+msgstr ""
+"L\n"
 "urdag"
 
 #. js-lingui-id: N/rFzD
@@ -3101,7 +3141,8 @@ msgstr "\"amnet"
 #. js-lingui-id: DBC3t5
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
-msgstr "S\n"
+msgstr ""
+"S\n"
 "nd"
 
 #. js-lingui-id: oyJYg7
@@ -3307,6 +3348,7 @@ msgstr "Företagets webbplats-URL. Vi använder denna url för att hämta föret
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "Skaparen av posten"
@@ -3603,15 +3645,25 @@ msgstr "Tisdag"
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "Typ"
+
+#. js-lingui-id: UhRoLN
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Type (deprecated)"
+msgstr "Typ (föråldrad)"
 
 #. js-lingui-id: RBJNRI
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Unique field cannot have a default value"
 msgstr "Unikt fält kan inte ha ett standardvärde"
+
+#. js-lingui-id: WWSSTx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
+msgstr "Unik index kan inte skapas för fältet {fieldName} av typen {fieldType}"
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -3810,12 +3862,6 @@ msgstr "Visa fältstorlek"
 msgid "View Field target field"
 msgstr "Visa fältmål"
 
-#. js-lingui-id: gYT3e0
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-msgid "View field to delete has not been soft deleted"
-msgstr "Vyfältet att radera har inte blivit logiskt raderat"
-
 #. js-lingui-id: XJlyZS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -3892,12 +3938,6 @@ msgstr "Visa filtergrupps-id"
 msgid "View Filter Groups"
 msgstr "Visa filtergrupper"
 
-#. js-lingui-id: DjGFaP
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-msgid "View filter has to be soft deleted first"
-msgstr "Visningsfilter måste först mjukraderas"
-
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -3959,6 +3999,16 @@ msgstr "Visa filter"
 msgid "View Group"
 msgstr "Visa grupp"
 
+#. js-lingui-id: MGbEFN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata already exists"
+msgstr "Vymetadata finns redan"
+
+#. js-lingui-id: lbyQO4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata with id {flatViewGroupId} already exists"
+msgstr "Vymetadata med id {flatViewGroupId} finns redan"
+
 #. js-lingui-id: uQ3c2q
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group related view"
@@ -3968,6 +4018,37 @@ msgstr "Visa grupp relaterad vy"
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group target field"
 msgstr "Visa grupp målfält"
+
+#. js-lingui-id: JdAvYa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to delete not found"
+msgstr "Vygruppen att ta bort hittades inte"
+
+#. js-lingui-id: 34hWb7
+#: src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to destroy not found"
+msgstr "Vygruppen att förstöra hittades inte"
+
+#. js-lingui-id: UP/TXo
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
+msgid "View group to update not found"
+msgstr "Vygruppen att uppdatera hittades inte"
+
+#. js-lingui-id: XbOhpY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent field not found"
+msgstr "Vygruppen att uppdatera föräldrafält hittades inte"
+
+#. js-lingui-id: P0grPG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent view not found"
+msgstr "Vygruppen att uppdatera föräldravyn hittades inte"
 
 #. js-lingui-id: b1Vc+l
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -3985,6 +4066,14 @@ msgstr "Visa grupper"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View icon"
 msgstr "Visa ikon"
+
+#. js-lingui-id: M7KWZV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View kanban aggregate field metadata not found"
+msgstr "Visa kanbanaggregatfältmetadata hittades inte"
 
 #. js-lingui-id: cd/+ZD
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -4006,6 +4095,8 @@ msgstr "Visa namn"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -4059,12 +4150,6 @@ msgstr "Visa sorteringar"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View target object"
 msgstr "Visa målobjekt"
-
-#. js-lingui-id: eF5yH4
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-msgid "View to delete has not been soft deleted"
-msgstr "Visning för att radera har inte blivit mjukmarkerad som raderad"
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -4231,6 +4316,11 @@ msgstr "Arbetsflödeskörningen avslutades vid"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run enqueued at"
 msgstr "Arbetsflödeskörningen köades vid"
+
+#. js-lingui-id: C5dusT
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "Workflow run is not running"
+msgstr "Arbetsflödeskören kör inte"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts

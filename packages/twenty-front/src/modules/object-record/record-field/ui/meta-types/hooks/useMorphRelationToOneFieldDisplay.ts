@@ -11,8 +11,9 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 
-import { recordStoreMorphManyToOneValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphManyToOneValueWithObjectNameFamilySelector';
-import { useRecoilValue } from 'recoil';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useMorphRelationToOneFieldDisplay = () => {
@@ -33,12 +34,10 @@ export const useMorphRelationToOneFieldDisplay = () => {
 
   const button = fieldDefinition.editButtonIcon;
 
-  const morphFieldValueWithObjectName = useRecoilValue(
-    recordStoreMorphManyToOneValueWithObjectNameFamilySelector({
-      recordId,
-      morphRelations: fieldDefinition.metadata.morphRelations,
-    }),
-  );
+  const morphFieldValueWithObjectName = useRecordFieldValue<{
+    objectNameSingular: string;
+    value: ObjectRecord;
+  }>(recordId, fieldDefinition.metadata.fieldName, fieldDefinition);
 
   if (!isDefined(morphFieldValueWithObjectName)) {
     return {
