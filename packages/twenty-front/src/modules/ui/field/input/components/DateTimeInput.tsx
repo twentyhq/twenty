@@ -122,7 +122,6 @@ export const DateTimeInput = ({
         onEscape={onEscape}
         onClear={handleClear}
         hideHeaderInput={hideHeaderInput}
-        isDateTimeInput={true}
       />
     </div>
   );

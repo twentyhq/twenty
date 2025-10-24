@@ -8,8 +8,8 @@ import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
-import { useParseDateToString } from '@/ui/input/components/internal/date/hooks/useParseDateToString';
-import { useParseStringToDate } from '@/ui/input/components/internal/date/hooks/useParseStringToDate';
+import { useParseDateInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToJSDate';
+import { useParsePlainDateToDateInputString } from '@/ui/input/components/internal/date/hooks/useParsePlainDateToDateInputString';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -93,8 +93,8 @@ export const FormDateFieldInput = ({
 }: FormDateFieldInputProps) => {
   const instanceId = useId();
 
-  const { parseDateToString } = useParseDateToString();
-  const { parseStringToDate } = useParseStringToDate();
+  const { parsePlainDateToDateInputString: parseDateToString } = useParsePlainDateToDateInputString();
+  const { parseDateInputStringToJSDate: parseStringToDate } = useParseDateInputStringToJSDate();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)

@@ -65,7 +65,7 @@ export const DatePickerHeader = ({
   return (
     <>
       {!hideInput && (
-        <DatePickerInput valueFromProps={date} onChange={onChange} />
+        <DatePickerInput date={date} onChange={onChange} />
       )}
       <StyledCustomDatePickerHeader>
         <ClickOutsideListenerContext.Provider
@@ -77,7 +77,7 @@ export const DatePickerHeader = ({
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
             options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
-            value={dateParsed?.getUTCMonth()}
+            value={dateParsed?.getMonth()}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
@@ -89,7 +89,7 @@ export const DatePickerHeader = ({
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
-            value={dateParsed?.getUTCFullYear()}
+            value={dateParsed?.getFullYear()}
             options={years}
             fullWidth
           />

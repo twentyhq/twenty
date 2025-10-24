@@ -8,10 +8,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
-import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
-import { useParseDateToString } from '@/ui/input/components/internal/date/hooks/useParseDateToString';
-import { useParseStringToDate } from '@/ui/input/components/internal/date/hooks/useParseStringToDate';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
@@ -352,9 +349,6 @@ export const DatePicker = ({
   highlightedDateRange,
   hideHeaderInput,
 }: DatePickerProps) => {
-  const { parseDateToString } = useParseDateToString();
-  const { parseStringToDate } = useParseStringToDate();
-
   const localDate = date
     ? parse(date, DATE_TYPE_FORMAT, new Date())
     : new Date();
@@ -472,14 +466,10 @@ export const DatePicker = ({
           <ReactDatePicker
             open={true}
             selected={localDate}
-            selectedDates={[]}
             openToDate={localDate}
             disabledKeyboardNavigation
             onChange={handleDateChange}
             calendarStartDay={calendarStartDay}
-            customInput={
-              <DatePickerInput valueFromProps={date} onChange={onChange} />
-            }
             renderCustomHeader={({
               prevMonthButtonDisabled,
               nextMonthButtonDisabled,

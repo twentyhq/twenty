@@ -11,8 +11,8 @@ import {
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
-import { useParseDateTimeToString } from '@/ui/input/components/internal/date/hooks/useParseDateTimeToString';
-import { useParseStringToDateTime } from '@/ui/input/components/internal/date/hooks/useParseStringToDateTime';
+import { useParseDateTimeInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateTimeInputStringToJSDate';
+import { useParseJSDateToDateTimeInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToDateTimeInputString';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -96,8 +96,8 @@ export const FormDateTimeFieldInput = ({
 }: FormDateTimeFieldInputProps) => {
   const instanceId = useId();
 
-  const { parseDateTimeToString } = useParseDateTimeToString();
-  const { parseStringToDateTime } = useParseStringToDateTime();
+  const { parseJSDateToDateTimeInputString: parseDateTimeToString } = useParseJSDateToDateTimeInputString();
+  const { parseDateTimeInputStringToJSDate: parseStringToDateTime } = useParseDateTimeInputStringToJSDate();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)
@@ -335,7 +335,6 @@ export const FormDateTimeFieldInput = ({
                     <OverlayContainer>
                       <DateTimePicker
                         date={pickerDate ?? new Date()}
-                        isDateTimeInput={false}
                         onChange={handlePickerChange}
                         onClose={handlePickerMouseSelect}
                         onEnter={handlePickerEnter}

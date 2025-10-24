@@ -2,6 +2,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.17",
+    "@date-fns/tz": "^1.4.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@floating-ui/react": "^0.24.3",
@@ -41,6 +42,7 @@
     "lodash.pickby": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
     "lodash.upperfirst": "^4.3.1",
+    "luxon": "^3.7.2",
     "microdiff": "^1.3.2",
     "planer": "^1.2.0",
     "pluralize": "^8.0.0",

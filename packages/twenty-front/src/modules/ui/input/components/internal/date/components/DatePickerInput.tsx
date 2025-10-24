@@ -7,10 +7,12 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
-import { useParseDateToString } from '@/ui/input/components/internal/date/hooks/useParseDateToString';
-import { useParseStringToDate } from '@/ui/input/components/internal/date/hooks/useParseStringToDate';
+import { useParseDateInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToJSDate';
+import { useParsePlainDateToDateInputString } from '@/ui/input/components/internal/date/hooks/useParsePlainDateToDateInputString';
 import { getDateMask } from '@/ui/input/components/internal/date/utils/getDateMask';
-import { isNull } from '@sniptt/guards';
+
+import { useParseDateInputStringToPlainDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToPlainDate';
+import { useParseIMaskJSDateIMaskDateInputString } from '@/ui/input/components/internal/date/hooks/useParseIMaskJSDateIMaskDateInputString';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledInputContainer = styled.div`
@@ -41,65 +43,68 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
 
 type DatePickerInputProps = {
   onChange?: (date: string | null) => void;
-  valueFromProps: string | null;
+  date: string | null;
 };
 
-export const DatePickerInput = ({
-  valueFromProps,
-  onChange,
-}: DatePickerInputProps) => {
+export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
   const { dateFormat } = useDateTimeFormat();
 
-  const [hasError, setHasError] = useState(false);
+  const [internalDate, setInternalDate] = useState(date);
 
-  const { parseStringToDate } = useParseStringToDate();
-  const { parseDateToString } = useParseDateToString();
+  const { parseDateInputStringToPlainDate } =
+    useParseDateInputStringToPlainDate();
+  const { parseDateInputStringToJSDate } = useParseDateInputStringToJSDate();
+  const { parsePlainDateToDateInputString } =
+    useParsePlainDateToDateInputString();
 
-  const handleParseStringToDate = (newDateAsString: string) => {
-    const date = parseStringToDate(newDateAsString);
+  const { parseIMaskJSDateIMaskDateInputString } =
+    useParseIMaskJSDateIMaskDateInputString();
 
-    setHasError(isNull(date) === true);
+  const parseIMaskDateInputStringToJSDate = (newDateAsString: string) => {
+    const newDate = parseDateInputStringToJSDate(newDateAsString);
 
-    return date;
+    return newDate;
   };
 
   const pattern = getDateMask(dateFormat);
   const blocks = DATE_BLOCKS;
 
+  const defaultValue = internalDate
+    ? (parsePlainDateToDateInputString(internalDate) ?? undefined)
+    : undefined;
+
   const { ref, setValue, value } = useIMask(
     {
+      mask: Date,
       pattern,
       blocks,
       min: MIN_DATE,
       max: MAX_DATE,
-      format: (date: any) => parseDateToString(date),
-      parse: handleParseStringToDate,
+      format: (date: any) => parseIMaskJSDateIMaskDateInputString(date),
+      parse: parseIMaskDateInputStringToJSDate,
       lazy: false,
       autofix: true,
     },
     {
+      defaultValue,
       onComplete: (newValue) => {
         console.log({ newValue });
 
-        const parsedDate = parseStringToDate(newValue);
+        const parsedDate = parseDateInputStringToPlainDate(newValue);
 
         console.log({ parsedDate });
 
         onChange?.(parsedDate);
       },
-      onAccept: () => {
-        setHasError(false);
-      },
     },
   );
 
   useEffect(() => {
-    if (!isDefined(valueFromProps)) {
-      return;
+    if (isDefined(date) && internalDate !== date) {
+      setInternalDate(date);
+      setValue(parsePlainDateToDateInputString(date));
     }
-
-    setValue(parseDateToString(valueFromProps));
-  }, [valueFromProps, setValue, parseDateToString]);
+  }, [date, internalDate, parsePlainDateToDateInputString, setValue]);
 
   return (
     <StyledInputContainer>
@@ -108,7 +113,6 @@ export const DatePickerInput = ({
         ref={ref as any}
         value={value}
         onChange={() => {}} // Prevent React warning
-        hasError={hasError}
       />
     </StyledInputContainer>
   );

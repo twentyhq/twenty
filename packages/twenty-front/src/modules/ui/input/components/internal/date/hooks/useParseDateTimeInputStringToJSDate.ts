@@ -1,15 +1,11 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { UserContext } from '@/users/contexts/UserContext';
 import { isValid, parse } from 'date-fns';
-import { zonedTimeToUtc } from 'date-fns-tz';
-import { useContext } from 'react';
 import { getDateTimeFormatString } from '~/utils/date-utils';
 
-export const useParseStringToDateTime = () => {
+export const useParseDateTimeInputStringToJSDate = () => {
   const { dateFormat } = useDateTimeFormat();
-  const { timeZone } = useContext(UserContext);
 
-  const parseStringToDateTime = (dateAsString: string) => {
+  const parseDateTimeInputStringToJSDate = (dateAsString: string) => {
     const parsingFormat = getDateTimeFormatString(dateFormat);
     const referenceDate = new Date();
 
@@ -19,10 +15,10 @@ export const useParseStringToDateTime = () => {
       return null;
     }
 
-    return zonedTimeToUtc(parsedDate, timeZone);
+    return parsedDate;
   };
 
   return {
-    parseStringToDateTime,
+    parseDateTimeInputStringToJSDate,
   };
 };
