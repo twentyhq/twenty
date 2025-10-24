@@ -11,6 +11,7 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
@@ -55,7 +56,7 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
         workspaceId,
         kanbanAggregateOperationFieldMetadataId: Not(IsNull()),
       },
-      select: ['id', 'kanbanAggregateOperationFieldMetadataId'],
+      select: ['id', 'kanbanAggregateOperationFieldMetadataId', 'type'],
     });
 
     const orphanedViews = viewsWithOrphanedFieldMetadata.filter(
@@ -74,17 +75,40 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
       return;
     }
 
-    const orphanedViewIds = orphanedViews.map((view) => view.id);
+    const kanbanViewsToDelete = orphanedViews.filter(
+      (view) => view.type === ViewType.KANBAN,
+    );
+    const otherViewsToUpdate = orphanedViews.filter(
+      (view) => view.type !== ViewType.KANBAN,
+    );
+
+    let deletedCount = 0;
+    let updatedCount = 0;
 
     if (!options.dryRun) {
-      await this.viewRepository.update(
-        { id: In(orphanedViewIds) },
-        { kanbanAggregateOperationFieldMetadataId: null },
-      );
+      if (kanbanViewsToDelete.length > 0) {
+        const kanbanViewIds = kanbanViewsToDelete.map((view) => view.id);
+
+        await this.viewRepository.delete({ id: In(kanbanViewIds) });
+        deletedCount = kanbanViewsToDelete.length;
+      }
+
+      if (otherViewsToUpdate.length > 0) {
+        const otherViewIds = otherViewsToUpdate.map((view) => view.id);
+
+        await this.viewRepository.update(
+          { id: In(otherViewIds) },
+          { kanbanAggregateOperationFieldMetadataId: null },
+        );
+        updatedCount = otherViewsToUpdate.length;
+      }
+    } else {
+      deletedCount = kanbanViewsToDelete.length;
+      updatedCount = otherViewsToUpdate.length;
     }
 
     this.logger.log(
-      `${options.dryRun ? 'DRY RUN - Would have' : ''}Cleaned ${orphanedViews.length} orphaned kanbanAggregateOperationFieldMetadataId references`,
+      `${options.dryRun ? 'DRY RUN - Would have' : ''}Deleted ${deletedCount} KANBAN views and updated ${updatedCount} other views with orphaned kanbanAggregateOperationFieldMetadataId references`,
     );
   }
 }
