@@ -47,16 +47,6 @@ export class MigrateMessageChannelCommand extends ActiveOrSuspendedWorkspacesMig
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(`Migrating pending actions for workspace ${workspaceId}`);
 
-    await this.updateMessageChannelPendingGroupEmailsActionFieldMetadata(
-      workspaceId,
-      options,
-    );
-
-    await this.updateMessageFolderPendingSyncActionFieldMetadata(
-      workspaceId,
-      options,
-    );
-
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
     await this.migrateMessageChannelPendingGroupEmailsAction(
@@ -68,6 +58,16 @@ export class MigrateMessageChannelCommand extends ActiveOrSuspendedWorkspacesMig
     await this.migrateMessageFolderPendingSyncAction(
       workspaceId,
       schemaName,
+      options,
+    );
+
+    await this.updateMessageChannelPendingGroupEmailsActionFieldMetadata(
+      workspaceId,
+      options,
+    );
+
+    await this.updateMessageFolderPendingSyncActionFieldMetadata(
+      workspaceId,
       options,
     );
 
