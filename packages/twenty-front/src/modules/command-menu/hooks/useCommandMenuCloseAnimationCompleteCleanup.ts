@@ -3,7 +3,7 @@ import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/con
 import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -90,7 +90,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         });
         set(isCommandMenuOpenedState, false);
         set(commandMenuSearchState, '');
-        set(commandMenuNavigationMorphItemByPageState, new Map());
+        set(commandMenuNavigationMorphItemsByPageState, new Map());
         set(commandMenuNavigationStackState, []);
         resetSelectedItem();
         set(hasUserSelectedCommandState, false);
@@ -105,7 +105,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         );
 
         for (const [pageId, morphItems] of snapshot
-          .getLoadable(commandMenuNavigationMorphItemByPageState)
+          .getLoadable(commandMenuNavigationMorphItemsByPageState)
           .getValue()) {
           set(
             activeTabIdComponentState.atomFamily({

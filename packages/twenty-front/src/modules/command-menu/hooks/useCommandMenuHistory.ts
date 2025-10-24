@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -40,7 +40,7 @@ export const useCommandMenuHistory = () => {
         set(commandMenuNavigationStackState, newNavigationStack);
 
         const currentMorphItems = snapshot
-          .getLoadable(commandMenuNavigationMorphItemByPageState)
+          .getLoadable(commandMenuNavigationMorphItemsByPageState)
           .getValue();
 
         if (currentNavigationStack.length > 0) {
@@ -49,7 +49,7 @@ export const useCommandMenuHistory = () => {
           if (isDefined(removedItem)) {
             const newMorphItems = new Map(currentMorphItems);
             newMorphItems.delete(removedItem.pageId);
-            set(commandMenuNavigationMorphItemByPageState, newMorphItems);
+            set(commandMenuNavigationMorphItemsByPageState, newMorphItems);
 
             const morphItems = currentMorphItems.get(removedItem.pageId);
             if (isNonEmptyArray(morphItems)) {
@@ -97,7 +97,7 @@ export const useCommandMenuHistory = () => {
         instanceId: newNavigationStackItem.pageId,
       });
       const currentMorphItems = snapshot
-        .getLoadable(commandMenuNavigationMorphItemByPageState)
+        .getLoadable(commandMenuNavigationMorphItemsByPageState)
         .getValue();
 
       for (const [pageId, morphItems] of currentMorphItems.entries()) {
@@ -120,7 +120,7 @@ export const useCommandMenuHistory = () => {
         ),
       );
 
-      set(commandMenuNavigationMorphItemByPageState, newMorphItems);
+      set(commandMenuNavigationMorphItemsByPageState, newMorphItems);
 
       set(hasUserSelectedCommandState, false);
     };

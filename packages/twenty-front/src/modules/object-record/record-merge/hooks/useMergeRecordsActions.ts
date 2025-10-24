@@ -3,8 +3,9 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
+import { useMergePreview } from '@/object-record/record-merge/hooks/useMergePreview';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { AppPath, type ObjectRecord } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isMergeInProgressState } from '../states/mergeInProgressState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
@@ -18,7 +19,9 @@ export const useMergeRecordsActions = ({
 }: UseMergeRecordsActionsProps) => {
   const mergeSettings = useRecoilValue(mergeSettingsState);
 
-  const selectedRecords: ObjectRecord[] = [];
+  const { selectedRecords } = useMergePreview({
+    objectNameSingular,
+  });
 
   const { mergeManyRecords, loading: isMerging } = useMergeManyRecords({
     objectNameSingular,

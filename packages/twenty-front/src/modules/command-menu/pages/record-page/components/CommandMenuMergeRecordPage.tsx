@@ -40,7 +40,6 @@ export const CommandMenuMergeRecordPage = () => {
         <StyledRightDrawerRecord isMobile={isMobile}>
           <MergeRecordsContainer
             objectNameSingular={objectMetadataItem.nameSingular}
-            componentInstanceId={commandMenuPageInstanceId}
           />
         </StyledRightDrawerRecord>
       </ActionMenuComponentInstanceContext.Provider>

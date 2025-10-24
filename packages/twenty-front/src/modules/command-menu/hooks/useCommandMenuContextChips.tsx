@@ -1,6 +1,6 @@
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -31,12 +31,12 @@ export const useCommandMenuContextChips = () => {
 
   const theme = useTheme();
 
-  const commandMenuNavigationMorphItemByPage = useRecoilValue(
-    commandMenuNavigationMorphItemByPageState,
+  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+    commandMenuNavigationMorphItemsByPageState,
   );
 
   const allRecordIds = Array.from(
-    commandMenuNavigationMorphItemByPage.entries(),
+    commandMenuNavigationMorphItemsByPage.entries(),
   ).flatMap(([, morphItems]) =>
     morphItems.map((morphItem) => morphItem.recordId),
   );
@@ -64,11 +64,10 @@ export const useCommandMenuContextChips = () => {
           index === filteredCommandMenuNavigationStack.length - 1;
 
         const isRecordPage = page.page === CommandMenuPages.ViewRecord;
-        const commandMenuNavigationMorphItems =
-          commandMenuNavigationMorphItemByPage.get(page.pageId);
+
         if (isRecordPage && !isLastChip) {
           const commandMenuNavigationMorphItem =
-            commandMenuNavigationMorphItemByPage.get(page.pageId)?.[0];
+            commandMenuNavigationMorphItemsByPage.get(page.pageId)?.[0];
 
           if (!isDefined(commandMenuNavigationMorphItem?.recordId)) {
             return null;
@@ -138,7 +137,7 @@ export const useCommandMenuContextChips = () => {
       })
       .filter(isDefined);
   }, [
-    commandMenuNavigationMorphItemByPage,
+    commandMenuNavigationMorphItemsByPage,
     commandMenuNavigationStack,
     navigateCommandMenuHistory,
     objectMetadataItems,

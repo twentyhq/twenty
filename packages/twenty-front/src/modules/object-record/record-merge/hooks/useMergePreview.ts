@@ -1,4 +1,5 @@
-import { useSelectedRecordIds } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIds';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordRelationships } from '@/object-record/record-merge/hooks/useMergeRecordRelationships';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -28,7 +29,14 @@ export const useMergePreview = ({
     objectNameSingular,
   });
 
-  const selectedRecordIds = useSelectedRecordIds();
+  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+    commandMenuNavigationMorphItemsByPageState,
+  );
+
+  const selectedRecordIds =
+    commandMenuNavigationMorphItemsByPage
+      .get(CommandMenuPages.MergeRecords)
+      ?.map((morphItem) => morphItem.recordId) ?? [];
   const selectedRecords = useRecoilValue(
     recordStoreRecordsSelector({
       recordIds: selectedRecordIds,
@@ -82,6 +90,7 @@ export const useMergePreview = ({
   ]);
 
   return {
+    selectedRecords,
     mergePreviewRecord,
     isGeneratingPreview: isGeneratingPreview || isLoadingRelationships,
   };

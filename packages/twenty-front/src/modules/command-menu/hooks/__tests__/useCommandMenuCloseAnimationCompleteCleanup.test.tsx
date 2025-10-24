@@ -7,7 +7,7 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -73,8 +73,8 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
           commandMenuNavigationStackState,
         );
 
-        const commandMenuNavigationMorphItemByPage = useRecoilValue(
-          commandMenuNavigationMorphItemByPageState,
+        const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+          commandMenuNavigationMorphItemsByPageState,
         );
         const hasUserSelectedCommand = useRecoilValue(
           hasUserSelectedCommandState,
@@ -110,7 +110,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
           isCommandMenuOpened,
           commandMenuSearch,
           commandMenuNavigationStack,
-          commandMenuNavigationMorphItemByPage,
+          commandMenuNavigationMorphItemsByPage,
           hasUserSelectedCommand,
           isCommandMenuClosing,
           viewableRecordId,
