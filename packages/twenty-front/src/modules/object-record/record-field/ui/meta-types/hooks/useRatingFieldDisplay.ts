@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { type FieldRatingValue } from 'twenty-shared/types';
 import { FieldContext } from '../../contexts/FieldContext';
 
@@ -10,7 +9,11 @@ export const useRatingFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<FieldRatingValue>(recordId, fieldName);
+  const fieldValue = useRecordFieldValue<FieldRatingValue>(
+    recordId,
+    fieldName,
+    fieldDefinition,
+  );
 
   const rating = fieldValue ?? null;
 
