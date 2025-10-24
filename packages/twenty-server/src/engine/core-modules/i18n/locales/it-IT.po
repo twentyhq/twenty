@@ -262,9 +262,9 @@ msgstr "Importo"
 msgid "An attachment"
 msgstr "Un allegato"
 
-#. js-lingui-id: Q7akko
+#. js-lingui-id: eW83iC
 #: src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception.ts
-msgid "An error occurred during message import"
+msgid "An error occurred during messages import"
 msgstr "Si è verificato un errore durante l'importazione del messaggio"
 
 #. js-lingui-id: XyOToQ
@@ -350,10 +350,10 @@ msgstr "È richiesta almeno una relazione"
 msgid "Attachment"
 msgstr "Allegato"
 
-#. js-lingui-id: JAefBH
+#. js-lingui-id: dda+ze
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment author"
-msgstr "Autore dell'allegato"
+msgid "Attachment author (deprecated - use createdBy)"
+msgstr "Autore allegato (deprecato - usa creatoDa)"
 
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -364,6 +364,11 @@ msgstr "Azienda dell'allegato"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment dashboard"
 msgstr "Pannello di controllo degli allegati"
+
+#. js-lingui-id: u3pBxa
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment file category"
+msgstr "Categoria file allegato"
 
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -395,10 +400,10 @@ msgstr "Persona dell'allegato"
 msgid "Attachment task"
 msgstr "Attività dell'allegato"
 
-#. js-lingui-id: 4qqxMt
+#. js-lingui-id: ZXjjRz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment type"
-msgstr "Tipo di allegato"
+msgid "Attachment type (deprecated - use fileCategory)"
+msgstr "Tipo allegato (deprecato - usa categoriaFile)"
 
 #. js-lingui-id: tH6L3e
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -662,11 +667,6 @@ msgstr "Impossibile abilitare l'unicità a causa di valori duplicati esistenti. 
 msgid "Cannot have more than one active workflow version"
 msgstr "Non è possibile avere più di una versione del flusso di lavoro attiva"
 
-#. js-lingui-id: UcdPY5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr "Impossibile aggiornare le proprietà del campo standard: {invalidProperties}"
-
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
@@ -840,6 +840,7 @@ msgstr "Impossibile trovare i metadati dell'oggetto correlato all'indice"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "Creato da"
@@ -1026,7 +1027,7 @@ msgid "Domain is already registered"
 msgstr "Il dominio è già registrato."
 
 #. js-lingui-id: PfJswy
-#: src/engine/core-modules/workspace/services/workspace.service.ts
+#: src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service.ts
 msgid "Domain is already registered as public domain"
 msgstr "Il dominio è già registrato come dominio pubblico"
 
@@ -1213,6 +1214,21 @@ msgstr "Si prevede che gli stessi campi di vincolo siano utilizzati in modo coer
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
 msgstr "ID esterno"
+
+#. js-lingui-id: pUligB
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to delete jobs. Please try again later."
+msgstr "Impossibile eliminare i lavori. Per favore riprova più tardi."
+
+#. js-lingui-id: HfhmrS
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to load queue jobs. Please try again later."
+msgstr "Impossibile caricare i lavori della coda. Per favore riprova più tardi."
+
+#. js-lingui-id: SJEIIJ
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to retry jobs. Please try again later."
+msgstr "Impossibile riprovare i lavori. Per favore riprova più tardi."
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1512,6 +1528,11 @@ msgstr "FieldMetadataId è necessario per creare un gruppo di visualizzazione."
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "FieldMetadataId è necessario per creare un ordinamento di visualizzazione."
+
+#. js-lingui-id: i+AQUz
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "File category"
+msgstr "Categoria del file"
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1872,9 +1893,16 @@ msgstr "kanbanfieldMetadataId"
 msgid "Key"
 msgstr "Chiave"
 
+#. js-lingui-id: ljUvzm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Label identifier field cannot be deactivated"
+msgstr "Il campo identificatore etichetta non può essere disattivato"
+
 #. js-lingui-id: ACUSmL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "Label identifier view field cannot be deleted"
 msgstr "Il campo di visualizzazione identificatore etichetta non può essere eliminato"
 
@@ -3314,6 +3342,7 @@ msgstr "L'URL del sito web dell'azienda. Utilizziamo questo URL per recuperare l
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "Il creatore del record"
@@ -3610,9 +3639,13 @@ msgstr "Martedì"
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "Tipo"
+
+#. js-lingui-id: UhRoLN
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Type (deprecated)"
+msgstr "Tipo (deprecato)"
 
 #. js-lingui-id: RBJNRI
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
@@ -3823,12 +3856,6 @@ msgstr "Dimensione del campo vista"
 msgid "View Field target field"
 msgstr "Campo di destinazione del campo vista"
 
-#. js-lingui-id: gYT3e0
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-msgid "View field to delete has not been soft deleted"
-msgstr "Il campo di visualizzazione da eliminare non è stato eliminato temporaneamente"
-
 #. js-lingui-id: XJlyZS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -3904,12 +3931,6 @@ msgstr "ID gruppo di filtri vista"
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "View Filter Groups"
 msgstr "Gruppi di filtri vista"
-
-#. js-lingui-id: DjGFaP
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-msgid "View filter has to be soft deleted first"
-msgstr "Il filtro vista deve essere eliminato prima tramite soft delete"
 
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -3992,12 +4013,6 @@ msgstr "Vista correlata del gruppo vista"
 msgid "View Group target field"
 msgstr "Campo di destinazione del gruppo vista"
 
-#. js-lingui-id: tdtXoB
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-msgid "View group to delete has not been soft deleted"
-msgstr "Il gruppo di visualizzazione da eliminare non è stato eliminato temporaneamente"
-
 #. js-lingui-id: JdAvYa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -4045,6 +4060,14 @@ msgstr "Gruppi vista"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View icon"
 msgstr "Icona vista"
+
+#. js-lingui-id: M7KWZV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View kanban aggregate field metadata not found"
+msgstr "Metadati del campo aggregato di visualizzazione kanban non trovati"
 
 #. js-lingui-id: cd/+ZD
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -4121,12 +4144,6 @@ msgstr "Ordinamenti vista"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View target object"
 msgstr "Oggetto di destinazione vista"
-
-#. js-lingui-id: eF5yH4
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-msgid "View to delete has not been soft deleted"
-msgstr "La visualizzazione da eliminare non è stata eliminata temporaneamente"
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -4293,6 +4310,11 @@ msgstr "Esecuzione del workflow terminata il"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run enqueued at"
 msgstr "Esecuzione del workflow accodata il"
+
+#. js-lingui-id: C5dusT
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "Workflow run is not running"
+msgstr "Esecuzione del flusso di lavoro non in corso"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts

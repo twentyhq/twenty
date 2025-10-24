@@ -83,10 +83,29 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #. js-lingui-id: ZBGbuw
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
-#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/ai/components/ToolStepRenderer.tsx
 msgid "[empty string]"
 msgstr "[leë string]"
+
+#. js-lingui-id: Z2fCN4
+#. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
+#: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
+msgid "{0, plural, one {{1} job could not be deleted} other {{2} jobs could not be deleted}}"
+msgstr "{0, plural, one {{1} werk kon nie uitgevee word nie} other {{2} werke kon nie uitgevee word nie}}"
+
+#. js-lingui-id: VjPlMz
+#. placeholder {0}: failedResults.length
+#. placeholder {1}: failedResults.length
+#. placeholder {2}: failedResults.length
+#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
+msgid "{0, plural, one {{1} job could not be retried} other {{2} jobs could not be retried}}"
+msgstr "{0, plural, one {{1} werk kon nie herprobeer word nie} other {{2} werke kon nie herprobeer word nie}}"
 
 #. js-lingui-id: m6BGdm
 #. placeholder {0}: Math.abs(days)
@@ -104,6 +123,24 @@ msgstr "{0, plural, one {{dae} {1}} other {{dae} {2}}}"
 msgid "{0, plural, one {{years} {1}} other {{years} {2}}}"
 msgstr "{0, plural, one {{jare} {1}} other {{jare} {2}}}"
 
+#. js-lingui-id: Qvm3VE
+#. placeholder {0}: selectedOptions.length
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+msgid "{0, plural, one {# Object} other {# Objects}}"
+msgstr "{0, plural, one {# Voorwerp} other {# Voorwerpe}}"
+
+#. js-lingui-id: WTc9VY
+#. placeholder {0}: restriction.fieldNames.length
+#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
+msgid "{0, plural, one {You do not have permission to access the {fieldsList} field} other {You do not have permission to access the {fieldsList} fields}}"
+msgstr "{0, plural, one {Jy het nie toestemming om toegang tot die {fieldsList} veld te hê nie} other {Jy het nie toestemming om toegang tot die {fieldsList} velde te hê nie}}"
+
+#. js-lingui-id: qdQhzv
+#: src/modules/views/components/AdvancedFilterChip.tsx
+msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
+msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} gevorderde reël} other {{advancedFilterCount} gevorderde reëls}}"
+
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -113,6 +150,26 @@ msgstr "{aggregateLabel} van {fieldLabel}"
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
 msgstr "{contextStoreNumberOfSelectedRecords} geselekteer"
+
+#. js-lingui-id: 8SynPU
+#. placeholder {0}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {1}: type === 'percentage' ? '%' : ''
+#. placeholder {2}: (type === 'percentage' ? 99 : 1000).toFixed(count)
+#. placeholder {3}: type === 'percentage' ? '%' : ''
+#: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
+msgid "{count, plural, one {E.g. {0}{1} for {count} decimal} other {E.g. {2}{3} for {count} decimals}}"
+msgstr "{count, plural, one {Byv. {0}{1} vir {count} desimaal} other {Byv. {2}{3} vir {count} desimale}}"
+
+#. js-lingui-id: 0aO0VO
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
+msgid "{days, plural, one {{days} day} other {{days} days}}"
+msgstr "{days, plural, one {{days} dag} other {{days} dae}}"
+
+#. js-lingui-id: MIIEDl
+#: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
+#: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
+msgid "{deletedCount, plural, one {Successfully deleted {deletedCount} job} other {Successfully deleted {deletedCount} jobs}}"
+msgstr "{deletedCount, plural, one {Suksesvol uitgevee {deletedCount} werk} other {Suksesvol uitgevee {deletedCount} werke}}"
 
 #. js-lingui-id: POhzPf
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
@@ -124,16 +181,57 @@ msgstr "{failedCount} lêer(s) het nie opgelaai nie"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} van {formattedRecordsToImportCount} rekords ingevoer."
 
+#. js-lingui-id: YF/a2j
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
+msgstr "{grantedBy, plural, one {Toegestaan vir {grantedBy} voorwerp} other {Toegestaan vir {grantedBy} voorwerpe}}"
+
 #. js-lingui-id: 2EPGDl
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect.tsx
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter.tsx
 msgid "{graphTypeLabel} Chart"
 msgstr "{graphTypeLabel} Grafiek"
 
+#. js-lingui-id: pEl0a0
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
+msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
+msgstr "{hours, plural, one {{hours} uur} other {{hours} ure}}"
+
+#. js-lingui-id: j9A2IB
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
+msgid "{jobCount, plural, one {Delete {jobCount} Job} other {Delete {jobCount} Jobs}}"
+msgstr "{jobCount, plural, one {Verwyder {jobCount} Werk} other {Verwyder {jobCount} Werke}}"
+
+#. js-lingui-id: 48w++B
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+msgid "{jobCount, plural, one {Retry {jobCount} Job} other {Retry {jobCount} Jobs}}"
+msgstr "{jobCount, plural, one {Probeer {jobCount} Werk weer} other {Probeer {jobCount} Werke weer}}"
+
+#. js-lingui-id: X78+Nn
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
+msgid "{jobCount, plural, one {This will permanently remove it from the queue. This action cannot be undone.} other {This will permanently remove them from the queue. This action cannot be undone.}}"
+msgstr "{jobCount, plural, one {Dit sal dit permanent uit die waglyn verwyder. Hierdie aksie kan nie ongedaan gemaak word nie.} other {Dit sal hulle permanent uit die waglyn verwyder. Hierdie aksie kan nie ongedaan gemaak word nie.}}"
+
+#. js-lingui-id: QJYN9L
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
+msgstr "{jobCount, plural, one {Dit sal die geselekteerde werk herprobeer. Dit sal van vooraf weer uitgevoer word.} other {Dit sal die geselekteerde werke herprobeer. Hulle sal van vooraf weer uitgevoer word.}}"
+
 #. js-lingui-id: g9mDO3
 #: src/utils/format/getOrdinalNumber.ts
 msgid "{num, selectordinal, one {{num}st} two {{num}nd} few {{num}rd} other {{num}th}}"
 msgstr "{num, selectordinal, one {{num}ste} other {{num}de}}"
+
+#. js-lingui-id: 5d0hY6
+#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
+#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
+msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
+msgstr "{retriedCount, plural, one {Suksesvol weer probeer {retriedCount} werk} other {Suksesvol weer probeer {retriedCount} werke}}"
+
+#. js-lingui-id: hcRYEH
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
+msgid "{revokedBy, plural, one {Revoked for {revokedBy} object} other {Revoked for {revokedBy} objects}}"
+msgstr "{revokedBy, plural, one {Herroep vir {revokedBy} voorwerp} other {Herroep vir {revokedBy} voorwerpe}}"
 
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
@@ -150,13 +248,23 @@ msgstr "{roleLabel} kan nie {humanReadableAction} {objectLabel} rekords nie"
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} sal aan die rol \"{newRoleName}\" toegewys word."
 
+#. js-lingui-id: kvVMdH
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "{selectedCount, plural, one {Delete {selectedCount} Job} other {Delete {selectedCount} Jobs}}"
+msgstr "{selectedCount, plural, one {Verwyder {selectedCount} Werk} other {Verwyder {selectedCount} Werke}}"
+
+#. js-lingui-id: 1y0QK1
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "{selectedCount, plural, one {Retry {selectedCount} Job} other {Retry {selectedCount} Jobs}}"
+msgstr "{selectedCount, plural, one {Probeer {selectedCount} Werk weer} other {Probeer {selectedCount} Werke weer}}"
+
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
 msgid "{stepNumber}. Calendar"
 msgstr "{stepNumber}. Kalender"
 
 #. js-lingui-id: riMLMq
-#: src/modules/workflow/workflow-steps/components/WorkflowIteratorSubStepSwitcher.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
 msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
 
@@ -327,6 +435,11 @@ msgstr "Oor hierdie gebruiker"
 msgid "About this workspace"
 msgstr "Oor hierdie werkruimte"
 
+#. js-lingui-id: c2UA7k
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
+msgstr "Kry toegang tot jou werksruimte data vanaf jou gunsteling MCP-kliënt soos Claude Desktop, Windsurf of Cursor."
+
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -408,6 +521,7 @@ msgstr "Aktiveer Werkstroom"
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Active"
 msgstr "Aktief"
 
@@ -441,11 +555,6 @@ msgstr "Voeg 'n Sneller by"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
 msgid "Add account"
 msgstr "Voeg rekening by"
-
-#. js-lingui-id: 27lqO4
-#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-msgid "Add an Action"
-msgstr "Voeg 'n Aksie by"
 
 #. js-lingui-id: HD0x5p
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
@@ -573,6 +682,7 @@ msgid "Add to Favorite"
 msgstr "Voeg by tot gunstelinge"
 
 #. js-lingui-id: pBsoKL
+#: src/modules/favorites/components/PageFavoriteButton.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -628,6 +738,7 @@ msgid "Adjust the role-related settings"
 msgstr "Stel die rolverwante instellings aan"
 
 #. js-lingui-id: g1in8j
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -662,6 +773,11 @@ msgstr "Gevorderd:"
 msgid "Afrikaans"
 msgstr "Afrikaans"
 
+#. js-lingui-id: 5wZlI9
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "After a set amount of time"
+msgstr "Na 'n gestelde hoeveelheid tyd"
+
 #. js-lingui-id: iEQQyu
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -685,33 +801,35 @@ msgstr "Agentrolle"
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr "Agente"
 
 #. js-lingui-id: Y1fJZS
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Agents created by application"
 msgstr "Agente geskep deur toepassing"
 
 #. js-lingui-id: 0k5XwN
-#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 msgid "Agents used to route queries to specialized agents"
 msgstr "Agentse gebruik om navrae na gespesialiseerde agente te stuur"
+
+#. js-lingui-id: 3y9hVY
+#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
+msgid "Aggregate"
+msgstr "Som"
 
 #. js-lingui-id: jsQZMk
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "AI"
 msgstr "KI"
-
-#. js-lingui-id: MnmJG1
-#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-msgid "AI Agent"
-msgstr "KI Agent"
 
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -746,6 +864,11 @@ msgstr "Alle Aksies Toegang"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
 msgstr "Alle e-posse en gebeurtenisse wat aan hierdie rekening ({accountHandle}) gekoppel is, sal verwyder word"
+
+#. js-lingui-id: GNJgJf
+#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
+msgid "All failed jobs have been retried"
+msgstr "Alle mislukte werke is weer probeer"
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -969,7 +1092,7 @@ msgid "Applicability"
 msgstr "Toepaslikheid"
 
 #. js-lingui-id: uNojI9
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Application agents"
 msgstr "Toepassingsagente"
 
@@ -979,12 +1102,12 @@ msgid "Application details"
 msgstr "Toepassing besonderhede"
 
 #. js-lingui-id: E5NJII
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Application objects"
 msgstr "Toepassing voorwerpe"
 
 #. js-lingui-id: fqP45C
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Application serverless functions"
 msgstr "Toepassing se serverless funksies"
 
@@ -1021,6 +1144,11 @@ msgstr "Is jy seker jy wil hierdie rekords uitvee? Hulle kan herstel word vanaf 
 #: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
 msgid "Are you sure you want to delete this record? It can be recovered from the Command menu."
 msgstr "Is jy seker jy wil hierdie rekord uitvee? Dit kan herstel word vanaf die Command menu."
+
+#. js-lingui-id: OJOR8q
+#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+msgid "Are you sure you want to destroy these records? They won't be recoverable anymore."
+msgstr "Is jy seker jy wil hierdie rekords vernietig? Hulle sal nie meer herstelbaar wees nie."
 
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -1136,6 +1264,11 @@ msgstr "om {remainingTimes} en {lastTime}"
 msgid "at 1 minute past the hour"
 msgstr "om 1 minuut na die uur"
 
+#. js-lingui-id: vyXyF0
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "At a specific date or time"
+msgstr "Op 'n spesifieke datum of tyd"
+
 #. js-lingui-id: H8QGSx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpPasswordField.tsx
 msgid "At least 8 characters long."
@@ -1227,7 +1360,6 @@ msgid "Automatically create People records when receiving or sending emails"
 msgstr "Outomaties skep van Persoonlike rekords by ontvang of stuur van e-posse"
 
 #. js-lingui-id: lXkUEV
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Availability"
 msgstr "Beskikbaarheid"
@@ -1380,9 +1512,14 @@ msgid "Calendar start day"
 msgstr "Kalenderbegin dag"
 
 #. js-lingui-id: LbIh3Y
-#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus.tsx
 msgid "Calendar Sync"
 msgstr "Kalendersinchronisasie"
+
+#. js-lingui-id: CpnBmA
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus.tsx
+msgid "Calendar Sync is not available because the service is down"
+msgstr "Kalender Sinchronisering is nie beskikbaar nie omdat die diens nie werk nie"
 
 #. js-lingui-id: alkXJ5
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1423,11 +1560,13 @@ msgstr "Kan nie skandeer nie? Kopieer die"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel"
 msgstr "Kanselleer"
 
 #. js-lingui-id: HYLdMN
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel Edition"
 msgstr "Kanselleer uitgawe"
@@ -1478,6 +1617,14 @@ msgstr "Kanselleer jou intekening"
 msgid "Cannot impersonate selected user"
 msgstr "Kan nie gekose gebruiker naboots nie"
 
+#. js-lingui-id: Po5MgW
+#: src/pages/auth/PasswordReset.tsx
+#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
+#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+msgid "Captcha (anti-bot check) is still loading, try again"
+msgstr "Captcha (anti-bot greep) laai steeds, probeer weer"
+
 #. js-lingui-id: M1RLfx
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
@@ -1494,7 +1641,7 @@ msgid "Change email"
 msgstr "Verander e-pos"
 
 #. js-lingui-id: Vf6hT6
-#: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Change node type"
 msgstr "Verander nodustipe"
 
@@ -1675,11 +1822,6 @@ msgstr "Maak toe"
 msgid "Close command menu"
 msgstr "Sluit opdragkieslys"
 
-#. js-lingui-id: EWPtMO
-#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-msgid "Code"
-msgstr "Kode"
-
 #. js-lingui-id: /8PmQ9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Code Editor"
@@ -1688,8 +1830,11 @@ msgstr "Kode-redigeerder"
 #. js-lingui-id: H86f9p
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
-#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/ai/components/ToolStepRenderer.tsx
 msgid "Collapse"
 msgstr "Vou in"
 
@@ -1714,7 +1859,6 @@ msgid "Columns not matched:"
 msgstr "Kolomme nie ooreenstem nie:"
 
 #. js-lingui-id: RyZt4H
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Command Icon"
 msgstr "Opdrag ikoon"
@@ -1740,10 +1884,20 @@ msgstr "Maatskappye"
 msgid "completed"
 msgstr "voltooi"
 
+#. js-lingui-id: qqWcBV
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Completed"
+msgstr "Voltooi"
+
+#. js-lingui-id: 6y7/Rf
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
+msgid "Completed jobs kept for {completedDuration}, failed jobs kept for {failedDuration} (max {maxCount} each)"
+msgstr "Voltooide werke behou vir {completedDuration}, mislukte werke behou vir {failedDuration} (maks {maxCount} elk)"
+
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
-#: src/modules/command-menu/pages/page-layout/components/ChartFilters.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
 msgid "Conditions"
 msgstr "Voorwaardes"
 
@@ -1778,6 +1932,11 @@ msgstr "Stel CalDAV-instellings op om u kalendergebeurtenisse te sinchroniseer."
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure date, time, number, timezone, and calendar start day"
 msgstr "Konfigureer datum, tyd, nommer, tydsone, en kalender begin dag"
+
+#. js-lingui-id: c7wznw
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Configure filters"
+msgstr "Stel filters op"
 
 #. js-lingui-id: ghdb7+
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -1985,6 +2144,7 @@ msgid "Copy this key as it will not be visible again"
 msgstr "Kopieer hierdie sleutel aangesien dit nie weer sigbaar sal wees nie"
 
 #. js-lingui-id: SGsgDO
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Core"
@@ -2223,6 +2383,7 @@ msgid "Current value from server environment. Set a custom value to override."
 msgstr "Huidige waarde vanaf bediener-omgewing. Stel 'n pasgemaakte waarde om te oorskryf."
 
 #. js-lingui-id: Hd06oy
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Current version"
 msgstr "Huidige weergawe"
@@ -2322,6 +2483,13 @@ msgstr "Dataverwydering"
 msgid "Data labels"
 msgstr "Datamerkers"
 
+#. js-lingui-id: BCllhB
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+msgid "Data Labels"
+msgstr "Data-etikette"
+
 #. js-lingui-id: 5cNMFz
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2339,6 +2507,7 @@ msgid "Data model - Settings"
 msgstr "Datamodel - Instellings"
 
 #. js-lingui-id: fM466x
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -2400,6 +2569,11 @@ msgstr "Dag"
 #: src/utils/date-utils.ts
 msgid "days"
 msgstr "dae"
+
+#. js-lingui-id: HuVZMK
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "Days"
+msgstr "Dae"
 
 #. js-lingui-id: cpDASC
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -2498,6 +2672,16 @@ msgstr "Definieer gebruikersrolle en toegangsvlakke"
 msgid "Define what will be visible to other users in your workspace"
 msgstr "Bepaal wat aan ander gebruikers in jou werkruimte sigbaar sal wees"
 
+#. js-lingui-id: EcAkBs
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "Delay until date"
+msgstr "Vertraag tot datum"
+
+#. js-lingui-id: pZXwuH
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Delayed"
+msgstr "Vertraag"
+
 #. js-lingui-id: HNlEFZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
 msgid "delete"
@@ -2517,6 +2701,8 @@ msgstr "verwyder"
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2565,9 +2751,25 @@ msgstr "Verwyder paneelbord"
 msgid "Delete field"
 msgstr "Verwyder veld"
 
+#. js-lingui-id: Wk+A9S
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
+msgid "Delete node"
+msgstr "Verwyder nodus"
+
+#. js-lingui-id: 4dpwsE
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
+msgid "Delete record"
+msgstr "Verwyder rekord"
+
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Delete records"
+msgstr "Verwyder rekords"
+
+#. js-lingui-id: rMgHjD
+#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
+#: src/modules/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction.tsx
+msgid "Delete Records"
 msgstr "Verwyder rekords"
 
 #. js-lingui-id: mcXHCJ
@@ -2673,6 +2875,7 @@ msgstr "Beskryf wanneer hierdie oorhandiging gebruik moet word"
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -2686,6 +2889,11 @@ msgstr "Beskrywing"
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Description (Optional)"
 msgstr "Beskrywing (Opsioneel)"
+
+#. js-lingui-id: CuAMy4
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "Description of the application"
+msgstr "Beskrywing van die aansoek"
 
 #. js-lingui-id: +ow7t4
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -2702,6 +2910,11 @@ msgstr "Vernietig"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Destroy {objectLabelPlural}"
 msgstr "Vernietig {objectLabelPlural}"
+
+#. js-lingui-id: kG5yO6
+#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+msgid "Destroy Records"
+msgstr "Vernietig rekords"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -2720,7 +2933,6 @@ msgid "Display"
 msgstr "Vertoon"
 
 #. js-lingui-id: r/aDR/
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Display a button in the top navbar to trigger this workflow"
 msgstr "Wys 'n knoppie in die boonste kiesbalk om hierdie werksvloei te aktiveer"
@@ -2833,7 +3045,7 @@ msgid "Drop file here..."
 msgstr "Los lêer hier..."
 
 #. js-lingui-id: qaE1sk
-#: src/modules/workflow/workflow-steps/components/WorkflowActionFooter.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
 msgstr "Dupliseer node"
 
@@ -2874,12 +3086,14 @@ msgid "Earliest date"
 msgstr "Vroegste datum"
 
 #. js-lingui-id: ePK91l
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Edit"
 msgstr "Redigeer"
@@ -2941,6 +3155,11 @@ msgstr "Wysig iFrame"
 msgid "Edit iFrame Widget"
 msgstr "Wysig iFrame-widget"
 
+#. js-lingui-id: NZubw3
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
+msgid "Edit Layout"
+msgstr "Redigeer uitleg"
+
 #. js-lingui-id: h2KoTu
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
@@ -2993,7 +3212,7 @@ msgid "Email copied to clipboard"
 msgstr "E-pos na knipbord gekopieer"
 
 #. js-lingui-id: GXLHVG
-#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Email Editor"
 msgstr "E-posredigeerder"
 
@@ -3002,6 +3221,11 @@ msgstr "E-posredigeerder"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Email integration"
 msgstr "E-pos integrasie"
+
+#. js-lingui-id: ZsZeV2
+#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
+msgid "Email is required"
+msgstr "E-pos word benodig"
 
 #. js-lingui-id: QT/Wo7
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -3093,8 +3317,11 @@ msgstr "Leeg"
 #. js-lingui-id: OMbipf
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
-#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/ai/components/ToolStepRenderer.tsx
 msgid "Empty Array"
 msgstr "Leë Reeks"
 
@@ -3106,8 +3333,11 @@ msgstr "Leë Inboks"
 #. js-lingui-id: 3hSGoJ
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
-#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/ai/components/ToolStepRenderer.tsx
 msgid "Empty Object"
 msgstr "Leë Objek"
 
@@ -3162,7 +3392,7 @@ msgid "Enter an item"
 msgstr "Voer n item in"
 
 #. js-lingui-id: kOybqX
-#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
 msgid "Enter array of items or variable expression"
 msgstr "Voer reeks items of veranderlike-uitdrukking in"
 
@@ -3172,7 +3402,7 @@ msgid "Enter in <0>Unicode</0> format"
 msgstr "Voer in <0>Unicode</0> formaat"
 
 #. js-lingui-id: O6t21f
-#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/text-bubble-menu/EditLinkPopover.tsx
+#: src/modules/advanced-text-editor/components/EditLinkPopover.tsx
 msgid "Enter link"
 msgstr "Tik skakel in"
 
@@ -3235,6 +3465,11 @@ msgstr "Entiteit-ID na knipbord gekopieer"
 msgid "Environment variable"
 msgstr "Omgewingsveranderlike"
 
+#. js-lingui-id: wqJ4zc
+#: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionTabEnvironmentVariablesSection.tsx
+msgid "Environment Variables"
+msgstr "Omgewingsveranderlikes"
+
 #. js-lingui-id: BlLvRP
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Erasure of soft-deleted records"
@@ -3269,6 +3504,11 @@ msgstr "Fout met die redigering van SSO Identiteitsverskaffer"
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Error loading message"
 msgstr "Fout met die laai van boodskap"
+
+#. js-lingui-id: bnJA0G
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+msgid "Error Message"
+msgstr "Foutboodskap"
 
 #. js-lingui-id: PfAip2
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -3453,8 +3693,11 @@ msgstr "Verlaat Instellings"
 #. js-lingui-id: 1A3EXy
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
-#: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/ai/components/ToolStepRenderer.tsx
 msgid "Expand"
 msgstr "Vou uit"
 
@@ -3531,6 +3774,11 @@ msgstr "Voer CSV uit"
 msgid "Export dashboard"
 msgstr "Exporteer paneelbord"
 
+#. js-lingui-id: G5DJkP
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
+msgid "Export record"
+msgstr "Voer rekord uit"
+
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Export records"
@@ -3594,6 +3842,7 @@ msgstr "Ekstra Krediete Gebruik"
 
 #. js-lingui-id: 7Bj3x9
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Failed"
 msgstr "Misluk"
 
@@ -3601,6 +3850,11 @@ msgstr "Misluk"
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
 msgstr "Kon nie oorhandiging skep nie"
+
+#. js-lingui-id: pUligB
+#: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
+msgid "Failed to delete jobs. Please try again later."
+msgstr "Kon nie werke uitvee nie. Probeer asseblief later weer."
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AIChatErrorMessage.tsx
@@ -3622,10 +3876,20 @@ msgstr "Kon nie oorhandiging verwyder nie"
 msgid "Failed to remove override"
 msgstr "Kon nie oorskrywing verwyder nie"
 
+#. js-lingui-id: SJEIIJ
+#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
+msgid "Failed to retry jobs. Please try again later."
+msgstr "Kon nie werke herprobeer nie. Probeer asseblief later weer."
+
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
 msgstr "Kon nie prys opdateer nie."
+
+#. js-lingui-id: yS3a92
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Failed to update router model"
+msgstr "Kon nie router-model opdateer nie"
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -3638,7 +3902,7 @@ msgid "Failed to upload file: {fileName}"
 msgstr "Kon nie lêer oplaaai nie: {fileName}"
 
 #. js-lingui-id: wJb11y
-#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Failed to upload image: "
 msgstr "Kon nie beeld opgelaai word nie: "
 
@@ -3647,6 +3911,11 @@ msgstr "Kon nie beeld opgelaai word nie: "
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "False"
 msgstr "Vals"
+
+#. js-lingui-id: 9Ue4+J
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Fast model to route to the right agent"
+msgstr "Vinnige model om na die regte agent te stuur"
 
 #. js-lingui-id: X9kySA
 #: src/modules/favorites/components/CurrentWorkspaceMemberFavoritesFolders.tsx
@@ -3720,18 +3989,16 @@ msgid "Fifth"
 msgstr "Vyfde"
 
 #. js-lingui-id: o7J4JM
-#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
-#: src/modules/command-menu/pages/page-layout/components/ChartFilters.tsx
+#: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
 msgid "Filter"
 msgstr "Filtreer"
 
 #. js-lingui-id: cSev+j
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
 msgid "Filters"
 msgstr "Filtreerders"
 
@@ -3789,6 +4056,7 @@ msgid "First Name"
 msgstr "Voornaam"
 
 #. js-lingui-id: ylQd2j
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Flow"
 msgstr "Vloei"
@@ -3949,11 +4217,6 @@ msgstr "Gaan na werkvloeie"
 msgid "Grant access to your workspace so we can troubleshoot problems."
 msgstr "Gee toegang tot u werkspasie sodat ons probleme kan oplos."
 
-#. js-lingui-id: MM43i1
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "Granted for {grantedBy} {pluralizedGrantedObject}"
-msgstr "Toegeken vir {grantedBy} {pluralizedGrantedObject}"
-
 #. js-lingui-id: WUgtid
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "Granted for this object"
@@ -4009,6 +4272,7 @@ msgid "Handoff removed successfully"
 msgstr "Oorhandiging suksesvol verwyder"
 
 #. js-lingui-id: I1IOmb
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatus.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
@@ -4069,10 +4333,15 @@ msgstr "Versteek leë groepe"
 msgid "Hide hidden groups"
 msgstr "Versteek versteekte groepe"
 
-#. js-lingui-id: Hq6/gt
+#. js-lingui-id: pzu7v4
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Horizontal Bar"
-msgstr "Horlosontiek Bar"
+msgid "Horizontal"
+msgstr "Horisontaal"
+
+#. js-lingui-id: yY8wAv
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "Hours"
+msgstr "Ure"
 
 #. js-lingui-id: N0Yhtw
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -4094,17 +4363,13 @@ msgstr "Hoe jou stelsel vaar"
 msgid "Http"
 msgstr "HTTP"
 
-#. js-lingui-id: DvpBQM
-#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-msgid "HTTP Request"
-msgstr "HTTP Versoek"
-
 #. js-lingui-id: 0yRnXS
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "https://example.com/webhook"
 msgstr "https://example.com/webhook"
 
 #. js-lingui-id: khBRyu
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Human Input"
 msgstr "Menslike Invoer"
@@ -4305,8 +4570,6 @@ msgstr "Instruksies vir KI"
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
-#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
@@ -4318,7 +4581,7 @@ msgid "Integrations - Settings"
 msgstr "Integrasies - Instellings"
 
 #. js-lingui-id: ntgzzG
-#: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
 msgid "Interact with your workspace data"
 msgstr "Interaksie met jou werkspasie-data"
 
@@ -4563,19 +4826,29 @@ msgid "Italian"
 msgstr "Italiaans"
 
 #. js-lingui-id: +qz/bj
-#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
 msgid "Items to iterate over"
 msgstr "Items om oor te gaan"
-
-#. js-lingui-id: E08FMd
-#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
-msgid "Iterator"
-msgstr "Iterateur"
 
 #. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
 msgstr "Japanees"
+
+#. js-lingui-id: TH7loN
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+msgid "Job Data"
+msgstr "Werkdata"
+
+#. js-lingui-id: ruJO57
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Job Name"
+msgstr "Werknaam"
+
+#. js-lingui-id: Tof7pX
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
+msgid "Jobs"
+msgstr "Werk"
 
 #. js-lingui-id: C5FAaq
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -4625,7 +4898,7 @@ msgid "Last 1 hour"
 msgstr "Laaste 1 uur"
 
 #. js-lingui-id: 0LzSIl
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Last 1 Hour (oldest → newest)"
 msgstr "Laaste 1 Uur (oudste → nuutste)"
 
@@ -4635,12 +4908,12 @@ msgid "Last 12 hours"
 msgstr "Laaste 12 uur"
 
 #. js-lingui-id: n7EOpf
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Last 12 Hours (oldest → newest)"
 msgstr "Laaste 12 Ure (oudste → nuutste)"
 
 #. js-lingui-id: j5nqnO
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Last 24 Hours (oldest → newest)"
 msgstr "Laaste 24 Ure (oudste → nuutste)"
 
@@ -4650,12 +4923,12 @@ msgid "Last 4 hours"
 msgstr "Laaste 4 uur"
 
 #. js-lingui-id: MjAVB0
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Last 4 Hours (oldest → newest)"
 msgstr "Laaste 4 Ure (oudste → nuutste)"
 
 #. js-lingui-id: GQgBSj
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Last 7 Days (oldest → newest)"
 msgstr "Laaste 7 Dae (oudste → nuutste)"
 
@@ -4691,6 +4964,7 @@ msgid "Latest date"
 msgstr "Nuutste datum"
 
 #. js-lingui-id: zUzYWu
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
 msgstr "Nuutste weergawe"
@@ -4767,8 +5041,13 @@ msgstr "Lyste"
 msgid "Loading csv ... "
 msgstr "Laai csv ... "
 
+#. js-lingui-id: IFQsdb
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Loading jobs..."
+msgstr "Laai werke..."
+
 #. js-lingui-id: s1MstR
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Loading metrics data..."
 msgstr "Laai maatstawedata..."
 
@@ -4776,6 +5055,11 @@ msgstr "Laai maatstawedata..."
 #: src/modules/ui/input/components/IconPicker.tsx
 msgid "Loading more..."
 msgstr "Meer laai..."
+
+#. js-lingui-id: nDnbEe
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
+msgid "Loading retention configuration..."
+msgstr "Laai retensie-konfigurasie..."
 
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -4806,6 +5090,11 @@ msgstr "Aanmeldingsteken ontbreek. Twee Faktor Magtiging kan nie geaktiveer word
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Logout"
 msgstr "Teken uit"
+
+#. js-lingui-id: w/bY7R
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+msgid "Logs"
+msgstr "Logboeke"
 
 #. js-lingui-id: PTozs8
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -4881,13 +5170,24 @@ msgstr "Pas Kolomme Aan"
 #. js-lingui-id: CK1KXz
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/RangeMaxSetting.ts
 msgid "Max"
 msgstr "Maks"
+
+#. js-lingui-id: y2rk49
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Max {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter"
+msgstr "Maks {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per grafiek. Oorweeg om 'n filter by te voeg"
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API."
 msgstr "Maksimum invoer kapasiteit: {formatSpreadsheetMaxRecordImportCapacity} rekords. Andersins, oorweeg om jou lêer te verdeel of die API te gebruik."
+
+#. js-lingui-id: 2ICF9k
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Max range"
+msgstr "Maksimum reeks"
 
 #. js-lingui-id: DBiUDH
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
@@ -4910,14 +5210,19 @@ msgid "Maximum values"
 msgstr "Maksimum waardes"
 
 #. js-lingui-id: nA8kxD
-#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 msgid "MCP"
 msgstr "MCP"
 
 #. js-lingui-id: NvQoNb
-#: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
 msgid "MCP Configuration copied to clipboard"
 msgstr "MCP-konfigurasie na knipbord gekopieer"
+
+#. js-lingui-id: 8CWirf
+#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+msgid "MCP Server"
+msgstr "MCP-bediener"
 
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
@@ -4966,9 +5271,19 @@ msgid "Message not found"
 msgstr "Boodskap nie gevind nie"
 
 #. js-lingui-id: elpx6r
-#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus.tsx
 msgid "Message Sync"
 msgstr "Boodskap Sinchronisasie"
+
+#. js-lingui-id: i2zgN4
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus.tsx
+msgid "Message Sync and Calendar Sync are not available because the service is down"
+msgstr "Boodskap Sinchronisering en Kalender Sinchronisering is nie beskikbaar nie omdat die diens nie werk nie"
+
+#. js-lingui-id: VRi9O8
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus.tsx
+msgid "Message Sync is not available because the service is down"
+msgstr "Boodskap Sinchronisering is nie beskikbaar nie omdat die diens nie werk nie"
 
 #. js-lingui-id: 6GBt0m
 #: src/modules/settings/playground/constants/SettingsPlaygroundFormSchemaSelectOptions.ts
@@ -4996,8 +5311,19 @@ msgstr "Metode"
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/RangeMinSetting.ts
 msgid "Min"
 msgstr "Min"
+
+#. js-lingui-id: JBisyL
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Min range"
+msgstr "Minimum reeks"
+
+#. js-lingui-id: agRWc1
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "Minutes"
+msgstr "Minute"
 
 #. js-lingui-id: APfhM/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -5010,12 +5336,12 @@ msgid "Monday"
 msgstr "Maandag"
 
 #. js-lingui-id: 8g3Cgz
-#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your calendar events sync job"
 msgstr "Monitor die uitvoering van jou kalendergebeurtenisse se sinchronisasie werk"
 
 #. js-lingui-id: IL/nIb
-#: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminConnectedAccountHealthStatus.tsx
 msgid "Monitor the execution of your emails sync job"
 msgstr "Monitor die uitvoering van jou e-posse se sinchronisasie werk"
 
@@ -5090,6 +5416,7 @@ msgstr "moet 'n reeks van geldige e-posse wees"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/onboarding/CreateProfile.tsx
@@ -5121,6 +5448,11 @@ msgstr "Naam kan nie leeg wees nie"
 msgid "Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
 msgstr "Naam in beide enkelvoudige (bv. 'Faktuur') en meervoudige (bv. 'Fakture') vorme."
 
+#. js-lingui-id: 9H6m8L
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "Name of the application"
+msgstr "Naam van die aansoek"
+
 #. js-lingui-id: z+6jaZ
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -5133,7 +5465,6 @@ msgid "Name of your workspace"
 msgstr "Naam van jou werkruimte"
 
 #. js-lingui-id: JxC/pi
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Navbar"
 msgstr "Kiesbalk"
@@ -5144,6 +5475,7 @@ msgid "Navigate to next dashboard"
 msgstr "Navigeer na volgende paneelbord"
 
 #. js-lingui-id: 2T8KCk
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
 msgstr "Navigeer na volgende rekord"
@@ -5164,6 +5496,7 @@ msgid "Navigate to previous dashboard"
 msgstr "Navigeer na vorige paneelbord"
 
 #. js-lingui-id: 2tw9bo
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to previous record"
 msgstr "Navigeer na vorige rekord"
@@ -5271,6 +5604,7 @@ msgstr "Nuwe SSO Verskaffer"
 
 #. js-lingui-id: hXzOVo
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Next"
@@ -5323,11 +5657,6 @@ msgstr "Geen agente beskikbaar vir oorhandiging nie"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
 msgstr "Geen agente voldoen aan jou soektog nie"
-
-#. js-lingui-id: B85wFV
-#: src/modules/command-menu/pages/ask-ai/components/CommandMenuAskAIPage.tsx
-msgid "No AI Agent found."
-msgstr "Geen KI Agent gevind nie."
 
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -5405,6 +5734,7 @@ msgid "No deleted records matching the filter criteria were found."
 msgstr "Geen gedeleteerde rekords wat aan die filterkriteria voldoen nie, is gevind."
 
 #. js-lingui-id: flmDTf
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
 msgstr "Geen beskrywing"
@@ -5444,7 +5774,23 @@ msgstr "Geen oorhandigings vir hierdie agent gekonfigureer nie"
 msgid "No handoffs match your search"
 msgstr "Geen oorhandigings voldoen aan jou soektog nie"
 
+#. js-lingui-id: lj3GoP
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "No jobs found"
+msgstr "Geen werke gevind nie"
+
+#. js-lingui-id: PtRwQi
+#: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
+msgid "No jobs were deleted{errorDetails}"
+msgstr "Geen werke is uitgevee nie{errorDetails}"
+
+#. js-lingui-id: ULhEV8
+#: src/modules/settings/admin-panel/health-status/hooks/useRetryJobs.ts
+msgid "No jobs were retried{errorDetails}"
+msgstr "Geen werke is herprobeer nie{errorDetails}"
+
 #. js-lingui-id: OcMef3
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "No latest version found"
 msgstr "Geen jongste weergawe gevind nie"
@@ -5465,7 +5811,7 @@ msgid "No members match your search"
 msgstr "Geen lede voldoen aan jou soektog nie"
 
 #. js-lingui-id: 0NudpV
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "No metrics data available"
 msgstr "Geen maatstawedata beskikbaar"
 
@@ -5630,7 +5976,6 @@ msgstr "nou"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
-#: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Number"
 msgstr "Nommer"
@@ -5656,7 +6001,6 @@ msgid "Number type"
 msgstr "Nommer tipe"
 
 #. js-lingui-id: W0i24j
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Object"
@@ -5691,9 +6035,14 @@ msgid "Objects and fields permissions settings"
 msgstr "Voorwerp- en veldtoestemminginstellings"
 
 #. js-lingui-id: X51S3F
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Objects created by application"
 msgstr "Objekte geskep deur toepassing"
+
+#. js-lingui-id: BwJKBw
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "of"
+msgstr "van"
 
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
@@ -5752,7 +6101,6 @@ msgid "on weekdays only"
 msgstr "slegs op weekdae"
 
 #. js-lingui-id: 4e9dd8
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "On which object(s) should this trigger be available"
 msgstr "Op watter voorwerp(e) behoort hierdie sneller beskikbaar te wees"
@@ -5819,11 +6167,6 @@ msgstr "Maak oop in"
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Outlook"
 msgstr "Maak Outlook oop"
-
-#. js-lingui-id: avIMon
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
-msgid "Open the ⌘K to trigger this workflow"
-msgstr "Maak die ⌘K oop om hierdie werkvloei te aktiveer"
 
 #. js-lingui-id: OV5wZZ
 #: src/modules/object-metadata/components/NavigationDrawerOpenedSection.tsx
@@ -5899,6 +6242,11 @@ msgstr "Uitvoerveld {fieldNumber}"
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Override Draft"
 msgstr "Oorskryf Konsep"
+
+#. js-lingui-id: 6WdDG7
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Page"
+msgstr "Bladsy"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -5984,6 +6332,7 @@ msgid "Permanently destroy dashboard"
 msgstr "Vernietig paneelbord permanent"
 
 #. js-lingui-id: Bv3y5w
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy record"
 msgstr "Vernietig rekord permanent"
@@ -5991,6 +6340,11 @@ msgstr "Vernietig rekord permanent"
 #. js-lingui-id: xjWlSJ
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Permanently destroy records"
+msgstr "Vernietig rekords permanent"
+
+#. js-lingui-id: YyP8vD
+#: src/modules/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction.tsx
+msgid "Permanently Destroy Records"
 msgstr "Vernietig rekords permanent"
 
 #. js-lingui-id: 0bQ5ba
@@ -6127,6 +6481,11 @@ msgstr "Voorkom dat dieselfde waarde aan verskillende rekords toegeken word"
 msgid "Preview"
 msgstr "Voorskou"
 
+#. js-lingui-id: DHhJ7s
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Previous"
+msgstr "Vorige"
+
 #. js-lingui-id: 2WAUd8
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Previous AI Chats"
@@ -6142,6 +6501,11 @@ msgstr "Prys opdateer."
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
 msgid "Primary Email"
 msgstr "Primêre E-pos"
+
+#. js-lingui-id: rW8PxS
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Prioritized"
+msgstr "Geprioritiseer"
 
 #. js-lingui-id: 1hKEom
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
@@ -6220,14 +6584,19 @@ msgid "Public Domains"
 msgstr "Publieke Domeine"
 
 #. js-lingui-id: /IUt/5
-#: src/modules/settings/admin-panel/health-status/components/WorkerHealthStatus.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
 msgstr "Wagryinligting is nie beskikbaar nie want die werker is buite werking"
 
 #. js-lingui-id: e9OqcR
-#: src/modules/settings/admin-panel/health-status/components/WorkerQueueMetricsSection.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection.tsx
 msgid "Queue performance"
 msgstr "Wagryprestasie"
+
+#. js-lingui-id: Qsq82i
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
+msgid "Queue: {queueName}"
+msgstr "Wagry: {queueName}"
 
 #. js-lingui-id: v3xM25
 #: src/modules/settings/profile/components/ChangePassword.tsx
@@ -6235,7 +6604,7 @@ msgid "Receive an email containing password update link"
 msgstr "Ontvang 'n e-pos met skakel om wagwoord op te dateer"
 
 #. js-lingui-id: ZVr1+K
-#: src/modules/settings/admin-panel/health-status/components/WorkerMetricsGraph.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
 msgstr "Onlangse Gebeure (oudste → nuutste)"
 
@@ -6243,6 +6612,11 @@ msgstr "Onlangse Gebeure (oudste → nuutste)"
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Reconnect"
 msgstr "Herlaai"
+
+#. js-lingui-id: w80YWM
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Record"
+msgstr "Rekord"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -6353,6 +6727,7 @@ msgid "Remove Deleted filter"
 msgstr "Verwyder Gedeleteerde filter"
 
 #. js-lingui-id: T/pF0Z
+#: src/modules/favorites/components/PageFavoriteButton.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Remove from favorites"
@@ -6465,6 +6840,7 @@ msgid "Restore dashboard"
 msgstr "Herstel paneelbord"
 
 #. js-lingui-id: y4Ib1n
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Restore record"
 msgstr "Herstel rekord"
@@ -6479,15 +6855,27 @@ msgstr "Herstel rekords"
 msgid "Results"
 msgstr "Resultate"
 
+#. js-lingui-id: v39wLo
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "Resume"
+msgstr "Hervat"
+
 #. js-lingui-id: 6gRgw8
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/ai/components/AIChatErrorMessage.tsx
 msgid "Retry"
 msgstr "Probeer weer"
 
-#. js-lingui-id: Wz7mbi
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
-msgid "Revoked for {revokedBy} {pluralizedRevokedObject}"
-msgstr "Herroep vir {revokedBy} {pluralizedRevokedObject}"
+#. js-lingui-id: ex8PR1
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Retry All Failed"
+msgstr "Herprobeer Alles wat misluk het"
+
+#. js-lingui-id: ZbpKL+
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+msgid "Return Value"
+msgstr "Terugvoerwaarde"
 
 #. js-lingui-id: GG37FL
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -6533,6 +6921,26 @@ msgstr "Rolle"
 msgid "Romanian"
 msgstr "Roemeens"
 
+#. js-lingui-id: 4E5bBq
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Router"
+msgstr "Router"
+
+#. js-lingui-id: jBPgd3
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Router is used in the chat to dispatch to the right agent"
+msgstr "Router word in die kletstransaksie gebruik om na die regte agent te stuur"
+
+#. js-lingui-id: nWR0bQ
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Router Model"
+msgstr "Router Model"
+
+#. js-lingui-id: ilPOUX
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+msgid "Router model updated successfully"
+msgstr "Router model suksesvol opdateer"
+
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
@@ -6556,6 +6964,7 @@ msgstr "Saterdag"
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Save"
 msgstr "Stoor"
@@ -6569,6 +6978,11 @@ msgstr "Stoor as nuwe aansig"
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Save Dashboard"
 msgstr "Stoor Paneelbord"
+
+#. js-lingui-id: j6v3nO
+#: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
+msgid "Save Layout"
+msgstr "Stoor uitleg"
 
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -6584,6 +6998,11 @@ msgstr "Skedule loop in UTC tydsone."
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Schema"
 msgstr "Skema"
+
+#. js-lingui-id: pUfoQJ
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+msgid "Schema name"
+msgstr "Skema naam"
 
 #. js-lingui-id: A1taO8
 #: src/modules/views/components/ViewBarFilterDropdownVectorSearchButton.tsx
@@ -6761,6 +7180,11 @@ msgstr "tweede"
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Second"
 msgstr "Tweede"
+
+#. js-lingui-id: V+rJKF
+#: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
+msgid "Seconds"
+msgstr "Sekondes"
 
 #. js-lingui-id: 8VEDbV
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6997,7 +7421,7 @@ msgid "Serbian (Cyrillic)"
 msgstr "Serwies (Sirillies)"
 
 #. js-lingui-id: eGHP1w
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Serverless functions created by application"
 msgstr "Serverless funksies geskep deur toepassing"
 
@@ -7048,6 +7472,7 @@ msgstr "Instelling van jou databasis..."
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -7251,6 +7676,11 @@ msgstr "Sorteer"
 msgid "Sort by"
 msgstr "Sorteer volgens"
 
+#. js-lingui-id: vKy//U
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+msgid "Sort By Group"
+msgstr "Sorteer per groep"
+
 #. js-lingui-id: wdxz7K
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -7276,6 +7706,11 @@ msgstr "EGS"
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
+
+#. js-lingui-id: uavm+q
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
+msgid "Stack Trace"
+msgstr "Stapelspoor"
 
 #. js-lingui-id: nNpwX2
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -7309,6 +7744,7 @@ msgstr "Verifikasiestelsel begin"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "State"
 msgstr "Staat"
 
@@ -7319,6 +7755,12 @@ msgstr "Staat"
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Toestand"
+
+#. js-lingui-id: ygCKqB
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowRunsActionsConfig.tsx
+msgid "Stop"
+msgstr "Stop"
 
 #. js-lingui-id: I8EmDx
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
@@ -7489,10 +7931,10 @@ msgstr "Sinkroniseer Objekte se Etikette en API Name"
 msgid "System"
 msgstr "Stelsel"
 
-#. js-lingui-id: ERq5FY
+#. js-lingui-id: FHPe8O
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
-msgid "System Prompt*"
-msgstr "Stelsel Prompt*"
+msgid "System Prompt"
+msgstr "Stelsel Prompt"
 
 #. js-lingui-id: D4SseJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -7587,6 +8029,11 @@ msgstr "Teks"
 msgid "Text copied to clipboard"
 msgstr "Teks na knipbord gekopieer"
 
+#. js-lingui-id: YXRaNg
+#: src/modules/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput.tsx
+msgid "Text Editor"
+msgstr "Teksredigeerder"
+
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "The default country code for new phone numbers."
@@ -7614,7 +8061,6 @@ msgid "The email associated to your account"
 msgstr "Die e-pos geassosieerd met jou rekening"
 
 #. js-lingui-id: diO3fm
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Die ikoon wat jou werkvloeiproses in die opdragmenu sal vertoon"
@@ -7649,11 +8095,6 @@ msgstr "Die bladsy waarna jy soek is of weg of het nooit bestaan nie. Kom ons kr
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The selected record will be passed to your workflow"
 msgstr "Die geselekteerde rekord sal na u werkvloei gestuur word"
-
-#. js-lingui-id: 3lMl10
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated.tsx
-msgid "The selected record(s) will be passed to your workflow"
-msgstr "Die geselekteerde rekord(s) sal na u werkvloei gestuur word"
 
 #. js-lingui-id: f1lGdk
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -7800,8 +8241,14 @@ msgstr "Dit sal die geskeduleerde planverandering kanselleer en jou huidige plan
 msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
 msgstr "Dit sal die databasiswaarde na omgewing/verstekwaarde herstel. Die databasis oorskryding sal verwyder word en die stelsel sal die omgewingsinstellings gebruik."
 
+#. js-lingui-id: 5g/sE8
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Tidy up"
+msgstr "Maak skoon"
+
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Tidy up workflow"
 msgstr "Maak werkvloeie netjies"
 
@@ -7821,6 +8268,11 @@ msgstr "Tydsone"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Timeline"
 msgstr "Tydlyn"
+
+#. js-lingui-id: 8TMaZI
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Timestamp"
+msgstr "Tydstempel"
 
 #. js-lingui-id: /VwdtK
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -8000,6 +8452,7 @@ msgstr "Uniek"
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
+#: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Unknown"
 msgstr "Onbekend"
@@ -8027,7 +8480,7 @@ msgid "Untitled role"
 msgstr "Ongenoemde rol"
 
 #. js-lingui-id: p1M9l4
-#: src/modules/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Untitled Workflow"
 msgstr "Ongenoemde Werkvloei"
@@ -8076,6 +8529,7 @@ msgstr "Laai .xlsx, .xls of .csv lêer op"
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+#: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
 msgid "Upload file"
 msgstr "Laai lêer op"
 
@@ -8167,6 +8621,7 @@ msgid "Validate Data"
 msgstr "Valideer data"
 
 #. js-lingui-id: wMHvYH
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow.tsx
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
@@ -8223,15 +8678,21 @@ msgstr "Verifieer kode vanaf die app"
 msgid "Verify the code from the app"
 msgstr "Verifieer die kode vanaf die app"
 
+#. js-lingui-id: eE0JZ4
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+msgid "Version"
+msgstr "Weergawe"
+
 #. js-lingui-id: IHIWR4
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
 msgstr "Weergawe van die aansoek"
 
-#. js-lingui-id: JEDLoS
+#. js-lingui-id: mX/isJ
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
-msgid "Vertical Bar"
-msgstr "Vertikale bar"
+msgid "Vertical"
+msgstr "Vertikaal"
 
 #. js-lingui-id: fROFIL
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -8247,6 +8708,11 @@ msgstr "Aansig"
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Sien faktuurbesonderhede"
+
+#. js-lingui-id: lh5BED
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection.tsx
+msgid "View Jobs"
+msgstr "Bekyk Werke"
 
 #. js-lingui-id: ecVcAx
 #: src/modules/ai/components/AIChatTab.tsx
@@ -8281,6 +8747,16 @@ msgstr "Sigbare groepe"
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
 msgid "Visualize"
 msgstr "Visualiseer"
+
+#. js-lingui-id: uUehLT
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Waiting"
+msgstr "Wag"
+
+#. js-lingui-id: iKFXyT
+#: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
+msgid "Waiting Children"
+msgstr "Wagende Kinders"
 
 #. js-lingui-id: zFSQY3
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
@@ -8403,6 +8879,11 @@ msgstr "Widgettitel"
 msgid "Widget type"
 msgstr "Widget tipe"
 
+#. js-lingui-id: 3J7l5w
+#: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
+msgid "Worker"
+msgstr "Werker"
+
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
@@ -8417,7 +8898,6 @@ msgstr "Werksvloeie"
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -8507,6 +8987,12 @@ msgstr "Skryf 'n beskrywing vir hierdie agent"
 msgid "X axis"
 msgstr "X-as"
 
+#. js-lingui-id: sbYPEJ
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+msgid "X Axis Data"
+msgstr "X-as Data"
+
 #. js-lingui-id: fplGg6
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 msgid "Y axis"
@@ -8571,11 +9057,6 @@ msgid "You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
 msgstr "Jy kan nie hierdie verbinding wysig omdat dit opgespoorde tabelle het nie.\n"
 "As jy veranderinge wil aanbring, skep asseblief 'n nuwe verbinding of ontkoppel eers die tabelle."
-
-#. js-lingui-id: CjCGSm
-#: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
-msgid "You do not have permission to access the {fieldsList} {fieldWord}"
-msgstr "U het nie vergunning om toegang te verkry tot die {fieldsList} {fieldWord} nie"
 
 #. js-lingui-id: eqUj2Z
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx

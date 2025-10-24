@@ -22,6 +22,7 @@ import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-ma
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   FindManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
@@ -36,6 +37,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
   FindManyQueryArgs,
   CommonFindManyOutput
 > {
+  protected readonly operationName = CommonQueryNames.FIND_MANY;
+
   async run(
     args: CommonExtendedInput<FindManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,

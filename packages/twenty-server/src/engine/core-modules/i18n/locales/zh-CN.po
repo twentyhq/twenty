@@ -262,9 +262,9 @@ msgstr "金额"
 msgid "An attachment"
 msgstr "附件"
 
-#. js-lingui-id: Q7akko
+#. js-lingui-id: eW83iC
 #: src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception.ts
-msgid "An error occurred during message import"
+msgid "An error occurred during messages import"
 msgstr "导入消息时发生错误"
 
 #. js-lingui-id: XyOToQ
@@ -350,10 +350,10 @@ msgstr "至少需要一个关系"
 msgid "Attachment"
 msgstr "附件"
 
-#. js-lingui-id: JAefBH
+#. js-lingui-id: dda+ze
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment author"
-msgstr "附件作者"
+msgid "Attachment author (deprecated - use createdBy)"
+msgstr "附件作者（已弃用 - 使用 createdBy）"
 
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -364,6 +364,11 @@ msgstr "附件公司"
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment dashboard"
 msgstr "附件仪表板"
+
+#. js-lingui-id: u3pBxa
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment file category"
+msgstr "附件文件类别"
 
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -395,10 +400,10 @@ msgstr "附件联系人"
 msgid "Attachment task"
 msgstr "附件任务"
 
-#. js-lingui-id: 4qqxMt
+#. js-lingui-id: ZXjjRz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment type"
-msgstr "附件类型"
+msgid "Attachment type (deprecated - use fileCategory)"
+msgstr "附件类型（已弃用 - 使用 fileCategory）"
 
 #. js-lingui-id: tH6L3e
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -662,11 +667,6 @@ msgstr "由于存在重复值，无法启用唯一性。请先查看并修复您
 msgid "Cannot have more than one active workflow version"
 msgstr "不能有多个活动中的工作流程版本"
 
-#. js-lingui-id: UcdPY5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr "无法更新标准字段属性: {invalidProperties}"
-
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
@@ -840,6 +840,7 @@ msgstr "找不到与索引相关的对象元数据"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "创建者"
@@ -1026,7 +1027,7 @@ msgid "Domain is already registered"
 msgstr "域名已注册"
 
 #. js-lingui-id: PfJswy
-#: src/engine/core-modules/workspace/services/workspace.service.ts
+#: src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service.ts
 msgid "Domain is already registered as public domain"
 msgstr "域名已注册为公共域。"
 
@@ -1213,6 +1214,21 @@ msgstr "预期在所有操作中一致地使用相同的约束字段用于{conne
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
 msgstr "外部 ID"
+
+#. js-lingui-id: pUligB
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to delete jobs. Please try again later."
+msgstr "删除作业失败。请稍后再试。"
+
+#. js-lingui-id: HfhmrS
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to load queue jobs. Please try again later."
+msgstr "加载队列作业失败。请稍后再试。"
+
+#. js-lingui-id: SJEIIJ
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to retry jobs. Please try again later."
+msgstr "重试作业失败。请稍后再试。"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1512,6 +1528,11 @@ msgstr "需要FieldMetadataId才能创建视图组。"
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "需要FieldMetadataId才能创建视图排序。"
+
+#. js-lingui-id: i+AQUz
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "File category"
+msgstr "文件类别"
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1872,9 +1893,16 @@ msgstr "kanbanfieldMetadataId"
 msgid "Key"
 msgstr "键"
 
+#. js-lingui-id: ljUvzm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Label identifier field cannot be deactivated"
+msgstr "标签标识字段无法停用"
+
 #. js-lingui-id: ACUSmL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "Label identifier view field cannot be deleted"
 msgstr "标签标识视图字段无法删除"
 
@@ -3314,6 +3342,7 @@ msgstr "公司网站 URL。我们使用该网址获取公司图标"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "记录创建者"
@@ -3610,9 +3639,13 @@ msgstr "星期二"
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "类型"
+
+#. js-lingui-id: UhRoLN
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Type (deprecated)"
+msgstr "类型（已弃用）"
 
 #. js-lingui-id: RBJNRI
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
@@ -3823,12 +3856,6 @@ msgstr "视图字段大小"
 msgid "View Field target field"
 msgstr "视图字段目标"
 
-#. js-lingui-id: gYT3e0
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-msgid "View field to delete has not been soft deleted"
-msgstr "要删除的视图字段尚未被软删除"
-
 #. js-lingui-id: XJlyZS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -3904,12 +3931,6 @@ msgstr "视图过滤器组 ID"
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 msgid "View Filter Groups"
 msgstr "视图过滤器组"
-
-#. js-lingui-id: DjGFaP
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-msgid "View filter has to be soft deleted first"
-msgstr "视图过滤器必须先软删除"
 
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -3992,12 +4013,6 @@ msgstr "视图组相关视图"
 msgid "View Group target field"
 msgstr "视图组目标字段"
 
-#. js-lingui-id: tdtXoB
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-msgid "View group to delete has not been soft deleted"
-msgstr "要删除的视图组尚未被软删除"
-
 #. js-lingui-id: JdAvYa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -4045,6 +4060,14 @@ msgstr "视图组"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View icon"
 msgstr "视图图标"
+
+#. js-lingui-id: M7KWZV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View kanban aggregate field metadata not found"
+msgstr "未找到看板聚合字段的元数据"
 
 #. js-lingui-id: cd/+ZD
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -4121,12 +4144,6 @@ msgstr "视图排序"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View target object"
 msgstr "视图目标对象"
-
-#. js-lingui-id: eF5yH4
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-msgid "View to delete has not been soft deleted"
-msgstr "要删除的视图尚未被软删除"
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -4293,6 +4310,11 @@ msgstr "工作流运行结束于"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run enqueued at"
 msgstr "工作流运行排队于"
+
+#. js-lingui-id: C5dusT
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "Workflow run is not running"
+msgstr "工作流运行未启动"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts

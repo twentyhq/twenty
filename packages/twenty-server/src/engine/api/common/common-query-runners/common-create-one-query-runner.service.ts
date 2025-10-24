@@ -11,6 +11,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import {
   CommonExtendedInput,
   CommonInput,
+  CommonQueryNames,
   CreateManyQueryArgs,
   CreateOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
@@ -28,6 +29,8 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
   ) {
     super();
   }
+
+  protected readonly operationName = CommonQueryNames.CREATE_ONE;
 
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
