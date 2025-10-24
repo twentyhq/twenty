@@ -67,7 +67,7 @@ export const WorkflowFindRecordsSorts = ({
 
     const newSort: RecordSort = {
       id: uuidv4(),
-      fieldMetadataId: '',
+      fieldMetadataId: sortableFields[0]?.value ?? '',
       direction: ViewSortDirection.ASC,
     };
 
