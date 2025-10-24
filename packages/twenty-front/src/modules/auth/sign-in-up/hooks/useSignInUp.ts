@@ -67,7 +67,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         message: t`Email is required`,
       });
     }
-    if (!isCaptchaReady()) {
+    if (!isCaptchaReady) {
       return enqueueErrorSnackBar({
         message: t`Captcha (anti-bot check) is still loading, try again`,
       });
@@ -113,7 +113,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         throw new Error('Email and password are required');
       }
 
-      if (!isCaptchaReady()) {
+      if (!isCaptchaReady) {
         return enqueueErrorSnackBar({
           message: t`Captcha (anti-bot check) is still loading, try again`,
         });

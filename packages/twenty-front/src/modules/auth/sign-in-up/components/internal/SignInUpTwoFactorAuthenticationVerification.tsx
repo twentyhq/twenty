@@ -195,7 +195,7 @@ export const SignInUpTOTPVerification = () => {
   const submitOTP = async (values: OTPFormValues) => {
     setIsLoading(true);
     try {
-      if (!isCaptchaReady()) {
+      if (!isCaptchaReady) {
         enqueueErrorSnackBar({
           message: t`Captcha (anti-bot check) is still loading, try again`,
         });

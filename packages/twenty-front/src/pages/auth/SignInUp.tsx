@@ -5,8 +5,8 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from '@emotion/styled';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -27,14 +27,14 @@ import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/inte
 import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { type PublicWorkspaceDataOutput } from '~/generated/graphql';
-import { Loader } from 'twenty-ui/feedback';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;
@@ -82,7 +82,7 @@ const StandardContent = ({
 export const SignInUp = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const { isCaptchaReady } = useCaptcha();
+  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
@@ -135,7 +135,7 @@ export const SignInUp = () => {
   ]);
 
   const signInUpForm = useMemo(() => {
-    if (getPublicWorkspaceDataLoading || !isCaptchaReady()) {
+    if (getPublicWorkspaceDataLoading || !clientConfigApiStatus.isLoadedOnce) {
       return (
         <StyledLoaderContainer>
           <Loader color="gray" />
@@ -183,7 +183,7 @@ export const SignInUp = () => {
       </>
     );
   }, [
-    isCaptchaReady,
+    clientConfigApiStatus.isLoadedOnce,
     isDefaultDomain,
     isMultiWorkspaceEnabled,
     isOnAWorkspace,

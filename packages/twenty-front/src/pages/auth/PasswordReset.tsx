@@ -153,7 +153,7 @@ export const PasswordReset = () => {
         return;
       }
 
-      if (!isCaptchaReady()) {
+      if (!isCaptchaReady) {
         enqueueErrorSnackBar({
           message: t`Captcha (anti-bot check) is still loading, try again`,
         });
