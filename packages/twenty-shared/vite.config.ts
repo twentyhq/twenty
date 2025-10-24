@@ -1,11 +1,15 @@
+// @ts-ignore
 import path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
+// @ts-ignore
 import packageJson from './package.json';
 
 const moduleEntries = Object.keys((packageJson as any).exports || {})
-  .filter((key) => key !== './style.css' && key !== '.' && !key.startsWith('./src/'))
+  .filter(
+    (key) => key !== './style.css' && key !== '.' && !key.startsWith('./src/'),
+  )
   .map((module) => `src/${module.replace(/^\.\//, '')}/index.ts`);
 
 const entries = ['src/index.ts', ...moduleEntries];
@@ -37,7 +41,10 @@ export default defineConfig(() => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-shared',
-    plugins: [tsconfigPaths(), dts({ entryRoot: 'src', tsconfigPath: tsConfigPath })],
+    plugins: [
+      tsconfigPaths(),
+      dts({ entryRoot: 'src', tsconfigPath: tsConfigPath }),
+    ],
     build: {
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-shared' },
@@ -58,8 +65,6 @@ export default defineConfig(() => {
         ],
       },
     },
-    logLevel: 'warn'
+    logLevel: 'warn',
   };
 });
-
-
