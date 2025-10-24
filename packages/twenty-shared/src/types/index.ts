@@ -29,6 +29,20 @@ export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export type { FromTo } from './FromToType';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
+export type {
+  TranslatedFlatEntityValidationError,
+  ValidationErrorFieldInfo,
+  ValidationErrorFieldResponse,
+  ValidationErrorObjectInfo,
+  ValidationErrorObjectResponse,
+  ValidationErrorGenericResponse,
+  OrchestratorFailureReport,
+  ValidationErrorSummary,
+  ValidationErrorResponse,
+  MetadataValidationErrorExtensions,
+  MetadataEntityType,
+} from './MetadataValidationError';
+export { MetadataInternalErrorCode } from './MetadataValidationError';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';

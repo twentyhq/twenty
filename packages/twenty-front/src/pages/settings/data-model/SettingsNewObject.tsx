@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -25,6 +26,7 @@ export const SettingsNewObject = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { handleMetadataError } = useMetadataErrorHandler();
   const [isLoading, setIsLoading] = useState(false);
   const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
 
@@ -56,9 +58,13 @@ export const SettingsNewObject = () => {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);
-      enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
-      });
+      if (error instanceof ApolloError) {
+        handleMetadataError(error, {
+          primaryEntityType: 'objectMetadata',
+        });
+      } else {
+        enqueueErrorSnackBar({ message: t`An error occurred.` });
+      }
     } finally {
       setIsLoading(false);
     }
