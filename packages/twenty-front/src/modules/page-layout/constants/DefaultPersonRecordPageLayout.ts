@@ -1,38 +1,33 @@
-import { DEFAULT_COMPANY_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyPageLayoutId';
+import { DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPersonRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
-/**
- * Default Company PageLayout.
- * Includes: Fields, Timeline, Tasks, Notes, Files, Emails, Calendar
- */
-export const DEFAULT_COMPANY_PAGE_LAYOUT: PageLayout = {
+export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
-  id: DEFAULT_COMPANY_PAGE_LAYOUT_ID,
-  name: 'Default Company Layout',
+  id: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
+  name: 'Default Person Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
   tabs: [
-    // Fields tab (position 100)
     {
       __typename: 'PageLayoutTab',
-      id: 'company-tab-fields',
+      id: 'person-tab-fields',
       title: 'Fields',
       position: 100,
       layoutMode: 'vertical-list',
       selfDisplayMode: 'pinned-left',
-      pageLayoutId: DEFAULT_COMPANY_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'company-widget-fields',
-          pageLayoutTabId: 'company-tab-fields',
+          id: 'person-widget-fields',
+          pageLayoutTabId: 'person-tab-fields',
           title: 'Fields',
           type: WidgetType.FIELDS,
           objectMetadataId: null,
@@ -50,22 +45,21 @@ export const DEFAULT_COMPANY_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Timeline tab (position 200)
     {
       __typename: 'PageLayoutTab',
-      id: 'company-tab-timeline',
+      id: 'person-tab-timeline',
       title: 'Timeline',
       position: 200,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_COMPANY_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'company-widget-timeline',
-          pageLayoutTabId: 'company-tab-timeline',
+          id: 'person-widget-timeline',
+          pageLayoutTabId: 'person-tab-timeline',
           title: 'Timeline',
           type: WidgetType.TIMELINE,
           objectMetadataId: null,
@@ -83,22 +77,21 @@ export const DEFAULT_COMPANY_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Tasks tab (position 300)
     {
       __typename: 'PageLayoutTab',
-      id: 'company-tab-tasks',
+      id: 'person-tab-tasks',
       title: 'Tasks',
       position: 300,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_COMPANY_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'company-widget-tasks',
-          pageLayoutTabId: 'company-tab-tasks',
+          id: 'person-widget-tasks',
+          pageLayoutTabId: 'person-tab-tasks',
           title: 'Tasks',
           type: WidgetType.TASKS,
           objectMetadataId: null,
@@ -116,22 +109,21 @@ export const DEFAULT_COMPANY_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Notes tab (position 400)
     {
       __typename: 'PageLayoutTab',
-      id: 'company-tab-notes',
+      id: 'person-tab-notes',
       title: 'Notes',
       position: 400,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_COMPANY_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'company-widget-notes',
-          pageLayoutTabId: 'company-tab-notes',
+          id: 'person-widget-notes',
+          pageLayoutTabId: 'person-tab-notes',
           title: 'Notes',
           type: WidgetType.NOTES,
           objectMetadataId: null,
@@ -149,22 +141,21 @@ export const DEFAULT_COMPANY_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Files tab (position 500)
     {
       __typename: 'PageLayoutTab',
-      id: 'company-tab-files',
+      id: 'person-tab-files',
       title: 'Files',
       position: 500,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_COMPANY_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'company-widget-files',
-          pageLayoutTabId: 'company-tab-files',
+          id: 'person-widget-files',
+          pageLayoutTabId: 'person-tab-files',
           title: 'Files',
           type: WidgetType.FILES,
           objectMetadataId: null,
@@ -182,22 +173,21 @@ export const DEFAULT_COMPANY_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Emails tab (position 600)
     {
       __typename: 'PageLayoutTab',
-      id: 'company-tab-emails',
+      id: 'person-tab-emails',
       title: 'Emails',
       position: 600,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_COMPANY_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'company-widget-emails',
-          pageLayoutTabId: 'company-tab-emails',
+          id: 'person-widget-emails',
+          pageLayoutTabId: 'person-tab-emails',
           title: 'Emails',
           type: WidgetType.EMAILS,
           objectMetadataId: null,
@@ -215,22 +205,21 @@ export const DEFAULT_COMPANY_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Calendar tab (position 700)
     {
       __typename: 'PageLayoutTab',
-      id: 'company-tab-calendar',
+      id: 'person-tab-calendar',
       title: 'Calendar',
       position: 700,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_COMPANY_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'company-widget-calendar',
-          pageLayoutTabId: 'company-tab-calendar',
+          id: 'person-widget-calendar',
+          pageLayoutTabId: 'person-tab-calendar',
           title: 'Calendar',
           type: WidgetType.CALENDAR,
           objectMetadataId: null,

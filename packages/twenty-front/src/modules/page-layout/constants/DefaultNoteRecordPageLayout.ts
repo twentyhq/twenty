@@ -1,38 +1,33 @@
-import { DEFAULT_TASK_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultTaskPageLayoutId';
+import { DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultNoteRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
-/**
- * Default Task PageLayout.
- * Includes special NOTE widget plus: Fields, Timeline, Files
- */
-export const DEFAULT_TASK_PAGE_LAYOUT: PageLayout = {
+export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
-  id: DEFAULT_TASK_PAGE_LAYOUT_ID,
-  name: 'Default Task Layout',
+  id: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
+  name: 'Default Note Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
   tabs: [
-    // Fields tab (position 100)
     {
       __typename: 'PageLayoutTab',
-      id: 'task-tab-fields',
+      id: 'note-tab-fields',
       title: 'Fields',
       position: 100,
       layoutMode: 'vertical-list',
       selfDisplayMode: 'pinned-left',
-      pageLayoutId: DEFAULT_TASK_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'task-widget-fields',
-          pageLayoutTabId: 'task-tab-fields',
+          id: 'note-widget-fields',
+          pageLayoutTabId: 'note-tab-fields',
           title: 'Fields',
           type: WidgetType.FIELDS,
           objectMetadataId: null,
@@ -50,8 +45,8 @@ export const DEFAULT_TASK_PAGE_LAYOUT: PageLayout = {
         },
         {
           __typename: 'PageLayoutWidget',
-          id: 'task-widget-note',
-          pageLayoutTabId: 'task-tab-fields',
+          id: 'note-widget-note',
+          pageLayoutTabId: 'note-tab-fields',
           title: 'Note',
           type: WidgetType.RICH_TEXT,
           objectMetadataId: null,
@@ -69,22 +64,21 @@ export const DEFAULT_TASK_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Timeline tab (position 200)
     {
       __typename: 'PageLayoutTab',
-      id: 'task-tab-timeline',
+      id: 'note-tab-timeline',
       title: 'Timeline',
       position: 200,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_TASK_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'task-widget-timeline',
-          pageLayoutTabId: 'task-tab-timeline',
+          id: 'note-widget-timeline',
+          pageLayoutTabId: 'note-tab-timeline',
           title: 'Timeline',
           type: WidgetType.TIMELINE,
           objectMetadataId: null,
@@ -102,22 +96,21 @@ export const DEFAULT_TASK_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Files tab (position 300)
     {
       __typename: 'PageLayoutTab',
-      id: 'task-tab-files',
+      id: 'note-tab-files',
       title: 'Files',
       position: 300,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_TASK_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'task-widget-files',
-          pageLayoutTabId: 'task-tab-files',
+          id: 'note-widget-files',
+          pageLayoutTabId: 'note-tab-files',
           title: 'Files',
           type: WidgetType.FILES,
           objectMetadataId: null,

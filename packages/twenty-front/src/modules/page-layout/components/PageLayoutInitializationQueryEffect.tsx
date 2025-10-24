@@ -1,16 +1,16 @@
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
-import { DEFAULT_COMPANY_PAGE_LAYOUT } from '@/page-layout/constants/DefaultCompanyPageLayout';
-import { DEFAULT_COMPANY_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyPageLayoutId';
-import { DEFAULT_NOTE_PAGE_LAYOUT } from '@/page-layout/constants/DefaultNotePageLayout';
-import { DEFAULT_NOTE_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultNotePageLayoutId';
-import { DEFAULT_OPPORTUNITY_PAGE_LAYOUT } from '@/page-layout/constants/DefaultOpportunityPageLayout';
-import { DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultOpportunityPageLayoutId';
-import { DEFAULT_PAGE_LAYOUT } from '@/page-layout/constants/DefaultPageLayout';
-import { DEFAULT_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
-import { DEFAULT_PERSON_PAGE_LAYOUT } from '@/page-layout/constants/DefaultPersonPageLayout';
-import { DEFAULT_PERSON_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPersonPageLayoutId';
-import { DEFAULT_TASK_PAGE_LAYOUT } from '@/page-layout/constants/DefaultTaskPageLayout';
-import { DEFAULT_TASK_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultTaskPageLayoutId';
+import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultCompanyRecordPageLayout';
+import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyRecordPageLayoutId';
+import { DEFAULT_NOTE_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultNoteRecordPageLayout';
+import { DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultNoteRecordPageLayoutId';
+import { DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultOpportunityRecordPageLayout';
+import { DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultOpportunityRecordPageLayoutId';
+import { DEFAULT_PERSON_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultPersonRecordPageLayout';
+import { DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPersonRecordPageLayoutId';
+import { DEFAULT_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultRecordPageLayout';
+import { DEFAULT_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultRecordPageLayoutId';
+import { DEFAULT_TASK_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultTaskRecordPageLayout';
+import { DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultTaskRecordPageLayoutId';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -27,19 +27,19 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const getDefaultLayoutById = (layoutId: string): PageLayout => {
   switch (layoutId) {
-    case DEFAULT_COMPANY_PAGE_LAYOUT_ID:
-      return DEFAULT_COMPANY_PAGE_LAYOUT;
-    case DEFAULT_PERSON_PAGE_LAYOUT_ID:
-      return DEFAULT_PERSON_PAGE_LAYOUT;
-    case DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID:
-      return DEFAULT_OPPORTUNITY_PAGE_LAYOUT;
-    case DEFAULT_NOTE_PAGE_LAYOUT_ID:
-      return DEFAULT_NOTE_PAGE_LAYOUT;
-    case DEFAULT_TASK_PAGE_LAYOUT_ID:
-      return DEFAULT_TASK_PAGE_LAYOUT;
-    case DEFAULT_PAGE_LAYOUT_ID:
+    case DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID:
+      return DEFAULT_COMPANY_RECORD_PAGE_LAYOUT;
+    case DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID:
+      return DEFAULT_PERSON_RECORD_PAGE_LAYOUT;
+    case DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID:
+      return DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT;
+    case DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID:
+      return DEFAULT_NOTE_RECORD_PAGE_LAYOUT;
+    case DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID:
+      return DEFAULT_TASK_RECORD_PAGE_LAYOUT;
+    case DEFAULT_RECORD_PAGE_LAYOUT_ID:
     default:
-      return DEFAULT_PAGE_LAYOUT;
+      return DEFAULT_RECORD_PAGE_LAYOUT;
   }
 };
 
@@ -55,12 +55,12 @@ export const PageLayoutInitializationQueryEffect = ({
   const [isInitialized, setIsInitialized] = useState(false);
 
   const isDefaultLayout =
-    pageLayoutId === DEFAULT_PAGE_LAYOUT_ID ||
-    pageLayoutId === DEFAULT_COMPANY_PAGE_LAYOUT_ID ||
-    pageLayoutId === DEFAULT_PERSON_PAGE_LAYOUT_ID ||
-    pageLayoutId === DEFAULT_OPPORTUNITY_PAGE_LAYOUT_ID ||
-    pageLayoutId === DEFAULT_NOTE_PAGE_LAYOUT_ID ||
-    pageLayoutId === DEFAULT_TASK_PAGE_LAYOUT_ID;
+    pageLayoutId === DEFAULT_RECORD_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID;
 
   const { data } = useQuery(FIND_ONE_PAGE_LAYOUT, {
     variables: {

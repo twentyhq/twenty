@@ -1,38 +1,33 @@
-import { DEFAULT_PERSON_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPersonPageLayoutId';
+import { DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultOpportunityRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
-/**
- * Default Person PageLayout.
- * Includes: Fields, Timeline, Tasks, Notes, Files, Emails, Calendar
- */
-export const DEFAULT_PERSON_PAGE_LAYOUT: PageLayout = {
+export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
-  id: DEFAULT_PERSON_PAGE_LAYOUT_ID,
-  name: 'Default Person Layout',
+  id: DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID,
+  name: 'Default Opportunity Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
   tabs: [
-    // Fields tab (position 100)
     {
       __typename: 'PageLayoutTab',
-      id: 'person-tab-fields',
+      id: 'opportunity-tab-fields',
       title: 'Fields',
       position: 100,
       layoutMode: 'vertical-list',
       selfDisplayMode: 'pinned-left',
-      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'person-widget-fields',
-          pageLayoutTabId: 'person-tab-fields',
+          id: 'opportunity-widget-fields',
+          pageLayoutTabId: 'opportunity-tab-fields',
           title: 'Fields',
           type: WidgetType.FIELDS,
           objectMetadataId: null,
@@ -50,22 +45,21 @@ export const DEFAULT_PERSON_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Timeline tab (position 200)
     {
       __typename: 'PageLayoutTab',
-      id: 'person-tab-timeline',
+      id: 'opportunity-tab-timeline',
       title: 'Timeline',
       position: 200,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'person-widget-timeline',
-          pageLayoutTabId: 'person-tab-timeline',
+          id: 'opportunity-widget-timeline',
+          pageLayoutTabId: 'opportunity-tab-timeline',
           title: 'Timeline',
           type: WidgetType.TIMELINE,
           objectMetadataId: null,
@@ -83,22 +77,21 @@ export const DEFAULT_PERSON_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Tasks tab (position 300)
     {
       __typename: 'PageLayoutTab',
-      id: 'person-tab-tasks',
+      id: 'opportunity-tab-tasks',
       title: 'Tasks',
       position: 300,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'person-widget-tasks',
-          pageLayoutTabId: 'person-tab-tasks',
+          id: 'opportunity-widget-tasks',
+          pageLayoutTabId: 'opportunity-tab-tasks',
           title: 'Tasks',
           type: WidgetType.TASKS,
           objectMetadataId: null,
@@ -116,22 +109,21 @@ export const DEFAULT_PERSON_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Notes tab (position 400)
     {
       __typename: 'PageLayoutTab',
-      id: 'person-tab-notes',
+      id: 'opportunity-tab-notes',
       title: 'Notes',
       position: 400,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'person-widget-notes',
-          pageLayoutTabId: 'person-tab-notes',
+          id: 'opportunity-widget-notes',
+          pageLayoutTabId: 'opportunity-tab-notes',
           title: 'Notes',
           type: WidgetType.NOTES,
           objectMetadataId: null,
@@ -149,22 +141,21 @@ export const DEFAULT_PERSON_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Files tab (position 500)
     {
       __typename: 'PageLayoutTab',
-      id: 'person-tab-files',
+      id: 'opportunity-tab-files',
       title: 'Files',
       position: 500,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'person-widget-files',
-          pageLayoutTabId: 'person-tab-files',
+          id: 'opportunity-widget-files',
+          pageLayoutTabId: 'opportunity-tab-files',
           title: 'Files',
           type: WidgetType.FILES,
           objectMetadataId: null,
@@ -182,22 +173,21 @@ export const DEFAULT_PERSON_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Emails tab (position 600)
     {
       __typename: 'PageLayoutTab',
-      id: 'person-tab-emails',
+      id: 'opportunity-tab-emails',
       title: 'Emails',
       position: 600,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'person-widget-emails',
-          pageLayoutTabId: 'person-tab-emails',
+          id: 'opportunity-widget-emails',
+          pageLayoutTabId: 'opportunity-tab-emails',
           title: 'Emails',
           type: WidgetType.EMAILS,
           objectMetadataId: null,
@@ -215,22 +205,21 @@ export const DEFAULT_PERSON_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Calendar tab (position 700)
     {
       __typename: 'PageLayoutTab',
-      id: 'person-tab-calendar',
+      id: 'opportunity-tab-calendar',
       title: 'Calendar',
       position: 700,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PERSON_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
-          id: 'person-widget-calendar',
-          pageLayoutTabId: 'person-tab-calendar',
+          id: 'opportunity-widget-calendar',
+          pageLayoutTabId: 'opportunity-tab-calendar',
           title: 'Calendar',
           type: WidgetType.CALENDAR,
           objectMetadataId: null,
