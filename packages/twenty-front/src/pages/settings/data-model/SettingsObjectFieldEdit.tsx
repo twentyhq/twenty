@@ -5,7 +5,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { type z } from 'zod';
 
-import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -22,7 +21,6 @@ import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/field
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
@@ -58,9 +56,6 @@ export const SettingsObjectFieldEdit = () => {
     shouldNavigateBackToMemorizedUrlOnSave,
     setShouldNavigateBackToMemorizedUrlOnSave,
   ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
-
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const { handleMetadataError } = useMetadataErrorHandler();
 
   const { objectNamePlural = '', fieldName = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =

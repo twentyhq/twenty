@@ -1,22 +1,14 @@
-import { useMutation } from '@apollo/client';
-
-import {
-  type DeleteOneFieldMetadataItemMutation,
-  type DeleteOneFieldMetadataItemMutationVariables,
-} from '~/generated-metadata/graphql';
+import { useDeleteOneFieldMetadataItemMutation } from '~/generated-metadata/graphql';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useRecoilState } from 'recoil';
-import { DELETE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
 export const useDeleteOneFieldMetadataItem = () => {
-  const [mutate] = useMutation<
-    DeleteOneFieldMetadataItemMutation,
-    DeleteOneFieldMetadataItemMutationVariables
-  >(DELETE_ONE_FIELD_METADATA_ITEM);
+  const [deleteOneFieldMetadataItemMutation] =
+    useDeleteOneFieldMetadataItemMutation();
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
@@ -29,7 +21,7 @@ export const useDeleteOneFieldMetadataItem = () => {
   ] = useRecoilState(recordIndexKanbanAggregateOperationState);
 
   const resetRecordIndexKanbanAggregateOperation = async (
-    idToDelete: DeleteOneFieldMetadataItemMutationVariables['idToDelete'],
+    idToDelete: string,
   ) => {
     if (recordIndexKanbanAggregateOperation?.fieldMetadataId === idToDelete) {
       setRecordIndexKanbanAggregateOperation({
@@ -43,10 +35,10 @@ export const useDeleteOneFieldMetadataItem = () => {
     idToDelete,
     objectMetadataId,
   }: {
-    idToDelete: DeleteOneFieldMetadataItemMutationVariables['idToDelete'];
+    idToDelete: string;
     objectMetadataId: string;
   }) => {
-    const result = await mutate({
+    const result = await deleteOneFieldMetadataItemMutation({
       variables: {
         idToDelete,
       },

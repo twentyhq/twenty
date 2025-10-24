@@ -1,10 +1,11 @@
-import { MetadataRequestResult, SuccessfulMetadataRequestResult } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
+import { MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { SuccessfulMetadataRequestResult } from '@/object-metadata/types/SuccessfulMetadataRequestResult.type';
 
 type AssertIsSuccessfulMetadataRequestResult = <T>(
   value: MetadataRequestResult<T>,
 ) => asserts value is SuccessfulMetadataRequestResult<T>;
 
 export const jestExpectSuccessfulMetadataRequestResult: AssertIsSuccessfulMetadataRequestResult =
-  <T>(value: MetadataRequestResult<T>) => {
+  (value) => {
     expect(value.status).toBe('successful');
   };
