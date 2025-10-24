@@ -6,12 +6,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import {
-    type CreateCoreViewMutationVariables,
-    type DeleteCoreViewMutationVariables,
-    type UpdateCoreViewMutationVariables,
-    useCreateCoreViewMutation,
-    useDeleteCoreViewMutation,
-    useUpdateCoreViewMutation,
+  type CreateCoreViewMutationVariables,
+  type DeleteCoreViewMutationVariables,
+  type UpdateCoreViewMutationVariables,
+  useCreateCoreViewMutation,
+  useDeleteCoreViewMutation,
+  useUpdateCoreViewMutation,
 } from '~/generated/graphql';
 
 export const usePersistView = () => {
@@ -127,4 +127,3 @@ export const usePersistView = () => {
     deleteView,
   };
 };
-

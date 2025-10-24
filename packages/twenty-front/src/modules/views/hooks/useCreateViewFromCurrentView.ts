@@ -265,9 +265,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             }),
           );
 
-          const filterResult = await createViewFilters(
-            createViewFilterInputs,
-          );
+          const filterResult = await createViewFilters(createViewFilterInputs);
 
           if (filterResult.status === 'failed') {
             set(isPersistingViewFieldsState, false);

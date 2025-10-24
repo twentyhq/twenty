@@ -11,11 +11,8 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFiltersToViewFilters = () => {
-  const {
-    createViewFilters,
-    updateViewFilters,
-    deleteViewFilters,
-  } = usePersistViewFilterRecords();
+  const { createViewFilters, updateViewFilters, deleteViewFilters } =
+    usePersistViewFilterRecords();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -94,23 +91,17 @@ export const useSaveRecordFiltersToViewFilters = () => {
           }),
         );
 
-        const createResult = await createViewFilters(
-          createViewFilterInputs,
-        );
+        const createResult = await createViewFilters(createViewFilterInputs);
         if (createResult.status === 'failed') {
           return;
         }
 
-        const updateResult = await updateViewFilters(
-          updateViewFilterInputs,
-        );
+        const updateResult = await updateViewFilters(updateViewFilterInputs);
         if (updateResult.status === 'failed') {
           return;
         }
 
-        const deleteResult = await deleteViewFilters(
-          deleteViewFilterInputs,
-        );
+        const deleteResult = await deleteViewFilters(deleteViewFilterInputs);
         if (deleteResult.status === 'failed') {
           return;
         }
