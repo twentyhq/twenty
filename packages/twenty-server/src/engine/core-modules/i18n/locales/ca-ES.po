@@ -667,6 +667,11 @@ msgstr "No es pot habilitar la unicitat a causa de valors duplicats existents. R
 msgid "Cannot have more than one active workflow version"
 msgstr "No es pot tenir més d'una versió de flux de treball activa"
 
+#. js-lingui-id: PjZIyI
+#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
+msgstr ""
+
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
@@ -2076,6 +2081,11 @@ msgstr "Associació de missatge del canal de missatges"
 msgid "Message Channel Message Associations"
 msgstr "Associacions de missatge del canal de missatges"
 
+#. js-lingui-id: LOU3x5
+#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+msgid "Message channel not found"
+msgstr ""
+
 #. js-lingui-id: k7LXPQ
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2718,6 +2728,26 @@ msgstr "Id de Grup de Filtratge de la Vista Pare"
 msgid "Password too weak"
 msgstr "La contrasenya és massa dèbil"
 
+#. js-lingui-id: l6qKfi
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Pending action for folder sync"
+msgstr ""
+
+#. js-lingui-id: ttZgHv
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Pending action for group emails"
+msgstr ""
+
+#. js-lingui-id: 5aGQev
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Pending group emails action"
+msgstr ""
+
+#. js-lingui-id: 6jM9pB
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Pending Sync Action"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -3138,6 +3168,16 @@ msgstr "Assumpte"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
 msgstr "Diumenge"
+
+#. js-lingui-id: VuvnTL
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Sync all folders"
+msgstr ""
+
+#. js-lingui-id: 9PsZjo
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Sync all folders including new ones"
+msgstr ""
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts

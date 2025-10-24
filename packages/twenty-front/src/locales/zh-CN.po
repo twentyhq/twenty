@@ -3008,15 +3008,15 @@ msgstr "域名必须小于256个字符，不能包含空格和任何特殊字符
 msgid "Don’t auto-create contacts."
 msgstr "不要自动创建联系人。"
 
-#. js-lingui-id: cx0Ws8
+#. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr "不要从 Gmail、Outlook 邮件中创建联系人"
+msgid "Don't create contacts from/to Gmail, Outlook emails"
+msgstr ""
 
-#. js-lingui-id: 3qDEYI
+#. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr "不要同步来自 team@、support@、noreply@ 的电子邮件……"
+msgid "Don't sync emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: bd+DPX
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx

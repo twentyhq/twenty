@@ -3008,15 +3008,15 @@ msgstr "Miền phải nhỏ hơn 256 ký tự, không được chứa khoảng t
 msgid "Don’t auto-create contacts."
 msgstr "Không tự động tạo liên hệ."
 
-#. js-lingui-id: cx0Ws8
+#. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr "Không tạo liên hệ từ/đến email Gmail, Outlook"
+msgid "Don't create contacts from/to Gmail, Outlook emails"
+msgstr ""
 
-#. js-lingui-id: 3qDEYI
+#. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr "Không đồng bộ email từ team@ support@ noreply@..."
+msgid "Don't sync emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: bd+DPX
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx

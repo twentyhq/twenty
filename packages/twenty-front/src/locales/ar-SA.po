@@ -3008,15 +3008,15 @@ msgstr "يجب أن تكون النطاقات أصغر من 256 حرفًا، و�
 msgid "Don’t auto-create contacts."
 msgstr "لا تقم بإنشاء جهات اتصال تلقائيًا."
 
-#. js-lingui-id: cx0Ws8
+#. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr "لا تقم بإنشاء جهات اتصال من/إلى بريد Gmail، Outlook"
+msgid "Don't create contacts from/to Gmail, Outlook emails"
+msgstr ""
 
-#. js-lingui-id: 3qDEYI
+#. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr "لا تقم بمزامنة رسائل البريد الإلكتروني من team@ support@ noreply@..."
+msgid "Don't sync emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: bd+DPX
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx

@@ -667,6 +667,11 @@ msgstr "중복된 값이 존재하여 고유성을 설정할 수 없습니다. �
 msgid "Cannot have more than one active workflow version"
 msgstr "활성 워크플로우 버전이 두 개 이상 존재할 수 없습니다"
 
+#. js-lingui-id: PjZIyI
+#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
+msgstr ""
+
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot update workflow version status manually"
@@ -2076,6 +2081,11 @@ msgstr "메시지 채널 메시지 연결"
 msgid "Message Channel Message Associations"
 msgstr "메시지 채널 메시지 연결"
 
+#. js-lingui-id: LOU3x5
+#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+msgid "Message channel not found"
+msgstr ""
+
 #. js-lingui-id: k7LXPQ
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2718,6 +2728,26 @@ msgstr "상위 뷰 필터 그룹 ID"
 msgid "Password too weak"
 msgstr "비밀번호가 너무 약합니다"
 
+#. js-lingui-id: l6qKfi
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Pending action for folder sync"
+msgstr ""
+
+#. js-lingui-id: ttZgHv
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Pending action for group emails"
+msgstr ""
+
+#. js-lingui-id: 5aGQev
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Pending group emails action"
+msgstr ""
+
+#. js-lingui-id: 6jM9pB
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Pending Sync Action"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -3138,6 +3168,16 @@ msgstr "제목"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
 msgstr "일요일"
+
+#. js-lingui-id: VuvnTL
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Sync all folders"
+msgstr ""
+
+#. js-lingui-id: 9PsZjo
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Sync all folders including new ones"
+msgstr ""
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts

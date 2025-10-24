@@ -3008,15 +3008,15 @@ msgstr "Domeinen moeten kleiner zijn dan 256 tekens, mogen geen spaties bevatten
 msgid "Don’t auto-create contacts."
 msgstr "Niet automatisch contacten aanmaken."
 
-#. js-lingui-id: cx0Ws8
+#. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr "Maak geen contacten aan van/naar Gmail, Outlook e-mails"
+msgid "Don't create contacts from/to Gmail, Outlook emails"
+msgstr ""
 
-#. js-lingui-id: 3qDEYI
+#. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr "Synchroniseer geen e-mails van team@ support@ noreply@..."
+msgid "Don't sync emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: bd+DPX
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
