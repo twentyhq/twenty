@@ -77,35 +77,59 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
 
     let queryRunner: QueryRunner | undefined;
 
-    try {
+    if (isDryRun) {
       queryRunner = this.coreDataSource.createQueryRunner();
       await queryRunner.connect();
       await queryRunner.startTransaction();
+    }
 
+    let successCount = 0;
+    let skipCount = 0;
+    let errorCount = 0;
+
+    try {
       for (const object of searchableObjects) {
-        await this.regenerateSearchVectorForObject(
-          queryRunner,
-          object,
-          allIndexes,
-          schemaName,
-          workspaceId,
-        );
+        try {
+          const result = await this.regenerateSearchVectorForObject(
+            queryRunner,
+            object,
+            allIndexes,
+            schemaName,
+            workspaceId,
+          );
+
+          if (result === 'skipped') {
+            skipCount++;
+          } else {
+            successCount++;
+          }
+        } catch (error) {
+          errorCount++;
+          this.logger.error(
+            `Failed to regenerate search vector for ${object.nameSingular} in workspace ${workspaceId}`,
+            error,
+          );
+
+          if (isDryRun) {
+            throw error;
+          }
+        }
       }
 
-      if (isDryRun) {
+      if (isDryRun && queryRunner) {
         await queryRunner.rollbackTransaction();
-        this.logger.log('DRY RUN: Rolled back all changes');
+        this.logger.log(
+          `DRY RUN: Would regenerate ${successCount} search vectors, skip ${skipCount}, ${errorCount} errors - rolled back all changes`,
+        );
       } else {
-        await queryRunner.commitTransaction();
+        this.logger.log(
+          `Search vector regeneration complete for workspace ${workspaceId}: ${successCount} succeeded, ${skipCount} skipped, ${errorCount} failed out of ${searchableObjects.length} total`,
+        );
       }
     } catch (error) {
       if (queryRunner?.isTransactionActive) {
         await queryRunner.rollbackTransaction();
       }
-
-      this.logger.error(
-        `Failed to regenerate search vectors for workspace ${workspaceId}`,
-      );
 
       throw error;
     } finally {
@@ -139,12 +163,12 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
   }
 
   private async regenerateSearchVectorForObject(
-    queryRunner: QueryRunner,
+    queryRunner: QueryRunner | undefined,
     object: ObjectMetadataEntity,
     allIndexes: IndexMetadataEntity[],
     schemaName: string,
     workspaceId: string,
-  ): Promise<void> {
+  ): Promise<'success' | 'skipped'> {
     const searchVectorField = this.findSearchVectorField(object);
 
     if (!searchVectorField) {
@@ -152,7 +176,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
         `Search vector field not found for ${object.nameSingular} in workspace ${workspaceId}, skipping`,
       );
 
-      return;
+      return 'skipped';
     }
 
     const searchExpression = this.buildSearchExpression(object);
@@ -162,7 +186,7 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
         `Cannot determine search expression for ${object.nameSingular} in workspace ${workspaceId}, skipping`,
       );
 
-      return;
+      return 'skipped';
     }
 
     const tableName = computeObjectTargetTable({
@@ -176,31 +200,53 @@ export class RegenerateSearchVectorsCommand extends ActiveOrSuspendedWorkspacesM
       searchVectorField.id,
     );
 
-    if (existingIndex) {
-      await this.dropIndex(queryRunner, schemaName, existingIndex.name);
+    let localQueryRunner: QueryRunner;
+    const shouldRelease = !queryRunner;
+
+    if (queryRunner) {
+      localQueryRunner = queryRunner;
+    } else {
+      localQueryRunner = this.coreDataSource.createQueryRunner();
+      await localQueryRunner.connect();
     }
 
-    await this.dropSearchVectorColumn(queryRunner, schemaName, tableName);
+    try {
+      if (existingIndex) {
+        await this.dropIndex(localQueryRunner, schemaName, existingIndex.name);
+      }
 
-    await this.createSearchVectorColumn(
-      queryRunner,
-      schemaName,
-      tableName,
-      searchExpression,
-    );
-
-    if (existingIndex) {
-      await this.recreateIndex(
-        queryRunner,
+      await this.dropSearchVectorColumn(
+        localQueryRunner,
         schemaName,
         tableName,
-        existingIndex,
       );
-    }
 
-    this.logger.log(
-      `Regenerated search vector for ${object.nameSingular} in workspace ${workspaceId}`,
-    );
+      await this.createSearchVectorColumn(
+        localQueryRunner,
+        schemaName,
+        tableName,
+        searchExpression,
+      );
+
+      if (existingIndex) {
+        await this.recreateIndex(
+          localQueryRunner,
+          schemaName,
+          tableName,
+          existingIndex,
+        );
+      }
+
+      this.logger.log(
+        `Regenerated search vector for ${object.nameSingular} in workspace ${workspaceId}`,
+      );
+
+      return 'success';
+    } finally {
+      if (shouldRelease) {
+        await localQueryRunner.release();
+      }
+    }
   }
 
   private findSearchVectorField(
