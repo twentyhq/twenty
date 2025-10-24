@@ -188,9 +188,11 @@ export const useCreateOneRecord = <
 
     registerObjectOperation(objectNameSingular, { type: 'create-one' });
 
-    return getRecordFromRecordNode({
-      recordNode: createdObject.data?.[mutationResponseField] ?? null,
-    });
+    return isDefined(createdObject.data?.[mutationResponseField])
+      ? getRecordFromRecordNode({
+          recordNode: createdObject.data?.[mutationResponseField],
+        })
+      : null;
   };
 
   return {
