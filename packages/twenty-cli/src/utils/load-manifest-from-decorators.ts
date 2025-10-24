@@ -23,18 +23,13 @@ import {
   isObjectLiteralExpression,
   forEachChild,
   SourceFile,
-  isPropertyDeclaration,
-  isArrowFunction,
-  isMethodDeclaration,
   isVariableStatement,
   isNewExpression,
 } from 'typescript';
-import kebabCase from 'lodash.kebabcase';
 import {
   AppManifest,
   CronTrigger,
   DatabaseEventTrigger,
-  HTTPMethod,
   ObjectManifest,
   RouteTrigger,
   ServerlessFunctionManifest,
@@ -231,9 +226,6 @@ const collectServerlessFunctions = (program: Program) => {
       }
 
       const className = node.name?.escapedText ?? 'serverless-function';
-      const kebabName = kebabCase(className);
-      const sfnCfg = getFirstArgObject(sfnDec) ?? {};
-      const sfnUuid = String(sfnCfg.universalIdentifier ?? '');
 
       // CronTrigger
       const cronTrigDecs = decorators.filter((d) =>
@@ -284,9 +276,12 @@ const collectServerlessFunctions = (program: Program) => {
 
       const handlerName = findExportedHandlerNameForClass(sf, className) ?? ''; // empty string if not found
 
+      const serverlessFunctionInfo = (getFirstArgObject(sfnDec) ??
+        {}) as ServerlessFunctionManifest;
+
       items.push({
-        universalIdentifier: sfnUuid,
-        name: kebabName,
+        name: className,
+        ...serverlessFunctionInfo,
         triggers: [...cronTriggers, ...dbTriggers, ...routeTriggers],
         handlerPath,
         handlerName,
