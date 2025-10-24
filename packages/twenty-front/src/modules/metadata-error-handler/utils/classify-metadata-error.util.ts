@@ -1,7 +1,7 @@
 import { type ApolloError } from '@apollo/client';
 import {
-  AllMetadataName,
-  MetadataValidationErrorResponse,
+  type AllMetadataName,
+  type MetadataValidationErrorResponse,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';

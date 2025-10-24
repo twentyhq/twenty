@@ -319,10 +319,7 @@ export const SettingsObjectFieldItemTableRow = ({
               })
             }
             onActivate={() =>
-              activateMetadataField(
-                fieldMetadataItem.id,
-                objectMetadataItem.id,
-              )
+              activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
             }
             onDelete={() =>
               deleteOneFieldMetadataItem({
