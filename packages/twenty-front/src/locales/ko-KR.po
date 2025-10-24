@@ -3988,6 +3988,11 @@ msgstr "다섯 번째"
 msgid "Fifth"
 msgstr "다섯 번째"
 
+#. js-lingui-id: sWmIx3
+#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+msgid "File \"{fileName}\" exceeds {maxUploadSize}"
+msgstr ""
+
 #. js-lingui-id: o7J4JM
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/views/components/ViewBarFilterButton.tsx
