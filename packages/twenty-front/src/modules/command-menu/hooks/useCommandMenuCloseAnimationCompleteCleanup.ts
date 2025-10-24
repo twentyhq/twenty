@@ -104,14 +104,14 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
           WorkflowServerlessFunctionTabId.CODE,
         );
 
-        for (const [pageId, morphItem] of snapshot
+        for (const [pageId, morphItems] of snapshot
           .getLoadable(commandMenuNavigationMorphItemByPageState)
           .getValue()) {
           set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId,
-                targetObjectId: morphItem.recordId,
+                targetObjectId: morphItems[0].recordId,
               }),
             }),
             null,

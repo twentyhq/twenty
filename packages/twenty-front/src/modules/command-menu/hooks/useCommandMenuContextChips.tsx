@@ -37,7 +37,9 @@ export const useCommandMenuContextChips = () => {
 
   const allRecordIds = Array.from(
     commandMenuNavigationMorphItemByPage.entries(),
-  ).map(([, morphItem]) => morphItem.recordId);
+  ).flatMap(([, morphItems]) =>
+    morphItems.map((morphItem) => morphItem.recordId),
+  );
 
   const recordIdentifiers = useRecoilValue(
     recordStoreIdentifiersFamilySelector({
@@ -62,10 +64,11 @@ export const useCommandMenuContextChips = () => {
           index === filteredCommandMenuNavigationStack.length - 1;
 
         const isRecordPage = page.page === CommandMenuPages.ViewRecord;
-
+        const commandMenuNavigationMorphItems =
+          commandMenuNavigationMorphItemByPage.get(page.pageId);
         if (isRecordPage && !isLastChip) {
           const commandMenuNavigationMorphItem =
-            commandMenuNavigationMorphItemByPage.get(page.pageId);
+            commandMenuNavigationMorphItemByPage.get(page.pageId)?.[0];
 
           if (!isDefined(commandMenuNavigationMorphItem?.recordId)) {
             return null;

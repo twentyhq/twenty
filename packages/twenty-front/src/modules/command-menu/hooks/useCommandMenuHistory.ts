@@ -8,6 +8,7 @@ import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuHistory = () => {
@@ -50,13 +51,13 @@ export const useCommandMenuHistory = () => {
             newMorphItems.delete(removedItem.pageId);
             set(commandMenuNavigationMorphItemByPageState, newMorphItems);
 
-            const morphItem = currentMorphItems.get(removedItem.pageId);
-            if (isDefined(morphItem)) {
+            const morphItems = currentMorphItems.get(removedItem.pageId);
+            if (isNonEmptyArray(morphItems)) {
               set(
                 activeTabIdComponentState.atomFamily({
                   instanceId: getShowPageTabListComponentId({
                     pageId: removedItem.pageId,
-                    targetObjectId: morphItem.recordId,
+                    targetObjectId: morphItems[0].recordId,
                   }),
                 }),
                 null,
@@ -99,13 +100,13 @@ export const useCommandMenuHistory = () => {
         .getLoadable(commandMenuNavigationMorphItemByPageState)
         .getValue();
 
-      for (const [pageId, morphItem] of currentMorphItems.entries()) {
+      for (const [pageId, morphItems] of currentMorphItems.entries()) {
         if (!newNavigationStack.some((item) => item.pageId === pageId)) {
           set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId,
-                targetObjectId: morphItem.recordId,
+                targetObjectId: morphItems[0].recordId,
               }),
             }),
             null,

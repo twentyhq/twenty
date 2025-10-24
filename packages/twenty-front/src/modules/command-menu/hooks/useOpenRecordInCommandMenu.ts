@@ -150,10 +150,10 @@ export const useOpenRecordInCommandMenu = () => {
           recordId,
         };
 
-        const newMorphItems = new Map(currentMorphItems);
-        newMorphItems.set(pageComponentInstanceId, morphItemToAdd);
+        const newMorphItemsMap = new Map(currentMorphItems);
+        newMorphItemsMap.set(pageComponentInstanceId, [morphItemToAdd]);
 
-        set(commandMenuNavigationMorphItemByPageState, newMorphItems);
+        set(commandMenuNavigationMorphItemByPageState, newMorphItemsMap);
 
         const Icon = objectMetadataItem?.icon
           ? getIcon(objectMetadataItem.icon)
