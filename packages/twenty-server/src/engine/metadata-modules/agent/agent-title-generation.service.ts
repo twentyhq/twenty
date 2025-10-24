@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { generateText } from 'ai';
 
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 
 @Injectable()
@@ -25,6 +26,7 @@ export class AgentTitleGenerationService {
       const result = await generateText({
         model: defaultModel.model,
         prompt: `Generate a concise, descriptive title (maximum 60 characters) for a chat thread based on the following message. The title should capture the main topic or purpose of the conversation. Return only the title, nothing else. Message: "${messageContent}"`,
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
       return this.cleanTitle(result.text);

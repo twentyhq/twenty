@@ -169,8 +169,8 @@ export const WithNumberChart: Story = {
         columnSpan: 3,
       },
       configuration: {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
@@ -277,8 +277,8 @@ export const SmallWidget: Story = {
         columnSpan: 2,
       },
       configuration: {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
@@ -409,8 +409,8 @@ export const WideWidget: Story = {
         columnSpan: 8,
       },
       configuration: {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
         aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,

@@ -190,10 +190,28 @@ export const usePersistField = ({
             .getValue();
 
           if (fieldIsRelationManyToOne) {
-            if (
-              fieldIsRelationManyToOne &&
-              valueToPersist?.id === currentValue?.id
-            ) {
+            if (valueToPersist?.id === currentValue?.id) {
+              return;
+            }
+
+            const newRecord = await updateOneRecord?.({
+              idToUpdate: recordId,
+              updateOneRecordInput: {
+                [getForeignKeyNameFromRelationFieldName(fieldName)]:
+                  valueToPersist?.id ?? null,
+              },
+            });
+
+            upsertRecordsInStore([
+              getRecordFromRecordNode({
+                recordNode: newRecord,
+              }),
+            ]);
+            return;
+          }
+
+          if (fieldIsMorphRelationManyToOne) {
+            if (valueToPersist?.id === currentValue?.id) {
               return;
             }
 

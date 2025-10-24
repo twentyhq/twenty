@@ -14,6 +14,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilCallback } from 'recoil';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useOpenMorphRelationOneToManyFieldInput = () => {
@@ -83,12 +84,14 @@ export const useOpenMorphRelationOneToManyFieldInput = () => {
                 return [];
               }
 
-              return recordWithObjectNameSingular.value.map((recordValue) => ({
-                objectMetadataId: objectMetadataItem.id,
-                recordId: recordValue.id,
-                isSelected: true,
-                isMatchingSearchFilter: true,
-              }));
+              return recordWithObjectNameSingular.value.map(
+                (recordValue: ObjectRecord) => ({
+                  objectMetadataId: objectMetadataItem.id,
+                  recordId: recordValue.id,
+                  isSelected: true,
+                  isMatchingSearchFilter: true,
+                }),
+              );
             },
           );
 

@@ -6,6 +6,7 @@ import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout
 import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -83,7 +84,11 @@ export const useChartSettingsValues = ({
       fieldMetadataItem.id === configuration.aggregateFieldMetadataId,
   );
 
-  const yAxisAggregateOperation = configuration.aggregateOperation;
+  const aggregateOperation =
+    convertAggregateOperationToExtendedAggregateOperation(
+      configuration.aggregateOperation,
+      aggregateField?.type,
+    );
 
   const xAxisOrderByLabel =
     isDefined(xAxisOrderBy) && isDefined(groupByFieldXId)
@@ -131,11 +136,11 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_AGGREGATE: {
         const hasAggregateLabel = isDefined(aggregateField?.label);
-        const hasAggregateOperation = isDefined(yAxisAggregateOperation);
+        const hasAggregateOperation = isDefined(aggregateOperation);
 
         return `${aggregateField?.label ?? ''}${
           hasAggregateLabel && hasAggregateOperation
-            ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})`
+            ? ` (${getAggregateOperationLabel(aggregateOperation)})`
             : ''
         }`;
       }

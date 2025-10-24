@@ -12,7 +12,6 @@ import {
 import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
 import { CommonDeleteManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-delete-many-query-runner.service';
-import { CommonQueryNames } from 'src/engine/api/common/types/common-query-args.type';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { GraphqlQueryDeleteManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-delete-many-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -52,7 +51,6 @@ export class DeleteManyResolverFactory
           const records = await this.commonDeleteManyQueryRunnerService.execute(
             { ...args, selectedFields },
             internalContext,
-            CommonQueryNames.DELETE_MANY,
           );
 
           const typeORMObjectRecordsParser =
@@ -70,7 +68,7 @@ export class DeleteManyResolverFactory
             }),
           );
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

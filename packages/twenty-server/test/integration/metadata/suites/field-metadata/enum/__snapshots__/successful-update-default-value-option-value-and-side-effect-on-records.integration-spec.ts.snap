@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`successful update default value option value and side effect on records should update existing records when default value option value is changed and not mutate when default option is changed 1`] = `
+[
+  {
+    "color": "green",
+    "id": Any<String>,
+    "label": "Option 1",
+    "position": 0,
+    "value": "OPTION_1_MODIFIED",
+  },
+  {
+    "color": "blue",
+    "id": Any<String>,
+    "label": "Option 2",
+    "position": 1,
+    "value": "OPTION_2",
+  },
+  {
+    "color": "red",
+    "id": Any<String>,
+    "label": "Option 3",
+    "position": 2,
+    "value": "OPTION_3",
+  },
+]
+`;

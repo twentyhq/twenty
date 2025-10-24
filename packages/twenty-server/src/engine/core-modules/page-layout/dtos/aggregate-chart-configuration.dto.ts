@@ -17,12 +17,12 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
-@ObjectType('NumberChartConfiguration')
-export class NumberChartConfigurationDTO {
+@ObjectType('AggregateChartConfiguration')
+export class AggregateChartConfigurationDTO {
   @Field(() => GraphType)
   @IsEnum(GraphType)
   @IsNotEmpty()
-  graphType: GraphType.NUMBER;
+  graphType: GraphType.AGGREGATE;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
