@@ -137,10 +137,12 @@ describe('useOpenRecordInCommandMenu', () => {
     expect(result.current.commandMenuNavigationMorphItemsByPage.size).toBe(1);
     expect(
       result.current.commandMenuNavigationMorphItemsByPage.get('mocked-uuid'),
-    ).toEqual({
-      objectMetadataId: personMockObjectMetadataItem.id,
-      recordId,
-    });
+    ).toEqual([
+      {
+        objectMetadataId: personMockObjectMetadataItem.id,
+        recordId,
+      },
+    ]);
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: CommandMenuPages.ViewRecord,
