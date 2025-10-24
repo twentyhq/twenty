@@ -44,25 +44,33 @@ export const mergeLinksFieldValues = (
     }
   }
 
-  const allSecondaryLinks: LinkMetadata[] = [];
+  const allLinks: LinkMetadata[] = [];
 
   recordsWithValues.forEach((record) => {
+    if (hasRecordFieldValue(record.value.primaryLinkUrl)) {
+      allLinks.push({
+        url: record.value.primaryLinkUrl,
+        label: record.value.primaryLinkLabel,
+      });
+    }
+
     const secondaryLinks = parseArrayOrJsonStringToArray<LinkMetadata>(
       record.value.secondaryLinks,
     );
 
-    allSecondaryLinks.push(
+    allLinks.push(
       ...secondaryLinks.filter((link) => hasRecordFieldValue(link.url)),
     );
   });
 
-  const uniqueSecondaryLinks = uniqBy(allSecondaryLinks, 'url');
+  const uniqueLinks = uniqBy(allLinks, 'url').filter(
+    (link) => link.url !== primaryLinkUrl,
+  );
 
   const result = {
     primaryLinkLabel,
     primaryLinkUrl,
-    secondaryLinks:
-      uniqueSecondaryLinks.length > 0 ? uniqueSecondaryLinks : null,
+    secondaryLinks: uniqueLinks.length > 0 ? uniqueLinks : null,
   };
 
   return result;

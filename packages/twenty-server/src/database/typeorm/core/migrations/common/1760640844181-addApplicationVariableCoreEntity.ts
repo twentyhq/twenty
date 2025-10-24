@@ -1,6 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddApplicationVariableCoreEntity1760640844181
+export class AddApplicationVariableEntityCoreEntity1760640844181
   implements MigrationInterface
 {
   name = 'AddApplicationVariableCoreEntity1760640844181';

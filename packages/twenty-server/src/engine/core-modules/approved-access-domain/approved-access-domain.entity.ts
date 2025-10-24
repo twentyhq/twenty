@@ -13,15 +13,15 @@ import {
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'approvedAccessDomain', schema: 'core' })
-@ObjectType()
+@ObjectType('ApprovedAccessDomain')
 @Unique('IDX_APPROVED_ACCESS_DOMAIN_DOMAIN_WORKSPACE_ID_UNIQUE', [
   'domain',
   'workspaceId',
 ])
-export class ApprovedAccessDomain {
+export class ApprovedAccessDomainEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -40,9 +40,13 @@ export class ApprovedAccessDomain {
   @Column()
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.approvedAccessDomains, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(
+    () => WorkspaceEntity,
+    (workspace) => workspace.approvedAccessDomains,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 }

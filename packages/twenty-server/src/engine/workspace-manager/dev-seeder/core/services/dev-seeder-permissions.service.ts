@@ -4,7 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { DataSource, Repository } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
@@ -137,10 +137,12 @@ export class DevSeederPermissionsService {
       workspaceId,
     });
 
-    await this.coreDataSource.getRepository(Workspace).update(workspaceId, {
-      defaultRoleId: memberRole.id,
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-    });
+    await this.coreDataSource
+      .getRepository(WorkspaceEntity)
+      .update(workspaceId, {
+        defaultRoleId: memberRole.id,
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      });
 
     if (memberUserWorkspaceIds) {
       for (const memberUserWorkspaceId of memberUserWorkspaceIds) {

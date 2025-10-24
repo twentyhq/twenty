@@ -15,10 +15,9 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ModelConfiguration } from 'src/engine/metadata-modules/agent/types/modelConfiguration';
 
-import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentHandoffEntity } from './agent-handoff.entity';
 
 @Entity('agent')
@@ -64,14 +63,11 @@ export class AgentEntity
   @Column({ default: false })
   isCustom: boolean;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.agents, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.agents, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
-
-  @OneToMany(() => AgentChatThreadEntity, (chatThread) => chatThread.agent)
-  chatThreads: Relation<AgentChatThreadEntity[]>;
+  workspace: Relation<WorkspaceEntity>;
 
   @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.fromAgent)
   outgoingHandoffs: Relation<AgentHandoffEntity[]>;

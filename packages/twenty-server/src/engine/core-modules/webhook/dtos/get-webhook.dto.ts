@@ -5,7 +5,7 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
-export class GetWebhookDTO {
+export class GetWebhookInput {
   @Field(() => UUIDScalarType)
   @IsNotEmpty()
   @IsUUID()

@@ -48,13 +48,10 @@ export class CreateManyResolverFactory
         const selectedFields = graphqlFields(info);
 
         try {
-          const records = await this.commonCreateManyQueryRunnerService.run({
-            args: { ...args, selectedFields },
-            authContext: internalContext.authContext,
-            objectMetadataMaps: internalContext.objectMetadataMaps,
-            objectMetadataItemWithFieldMaps:
-              internalContext.objectMetadataItemWithFieldMaps,
-          });
+          const records = await this.commonCreateManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            internalContext,
+          );
 
           const typeORMObjectRecordsParser =
             new ObjectRecordsToGraphqlConnectionHelper(
@@ -71,7 +68,7 @@ export class CreateManyResolverFactory
             }),
           );
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

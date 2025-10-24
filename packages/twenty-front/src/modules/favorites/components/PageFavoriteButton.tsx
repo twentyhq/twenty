@@ -1,5 +1,6 @@
-import { Button } from 'twenty-ui/input';
+import { t } from '@lingui/core/macro';
 import { IconHeart, IconHeartOff } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 
 type PageFavoriteButtonProps = {
   isFavorite: boolean;
@@ -10,7 +11,7 @@ export const PageFavoriteButton = ({
   isFavorite,
   onClick,
 }: PageFavoriteButtonProps) => {
-  const title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
+  const title = isFavorite ? t`Remove from favorites` : t`Add to favorites`;
 
   return (
     <Button

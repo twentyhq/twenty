@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -22,7 +22,7 @@ import { MatchParticipantModule } from 'src/modules/match-participant/match-part
     WorkspaceDataSourceModule,
     WorkspaceModule,
     TypeOrmModule.forFeature([ObjectMetadataEntity, FieldMetadataEntity]),
-    NestjsQueryTypeOrmModule.forFeature([Workspace]),
+    NestjsQueryTypeOrmModule.forFeature([WorkspaceEntity]),
     ContactCreationManagerModule,
     MatchParticipantModule,
   ],

@@ -15,7 +15,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -47,7 +47,7 @@ export class ViewController {
   @Get()
   async findMany(
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<ViewDTO[]> {
     const views = objectMetadataId
@@ -64,7 +64,7 @@ export class ViewController {
   async findOne(
     @Param('id') id: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO> {
     const view = await this.viewService.findById(id, workspace.id);
 
@@ -95,7 +95,7 @@ export class ViewController {
   @Post()
   async create(
     @Body() input: CreateViewInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @RequestLocale() locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO> {
     const view = await this.viewService.create({
@@ -117,7 +117,7 @@ export class ViewController {
     @Param('id') id: string,
     @Body() input: UpdateViewInput,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO> {
     const updatedView = await this.viewService.update(id, workspace.id, input);
 
@@ -133,7 +133,7 @@ export class ViewController {
   @Delete(':id')
   async delete(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<{ success: boolean }> {
     const deletedView = await this.viewService.delete(id, workspace.id);
 

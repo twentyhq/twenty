@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
@@ -38,23 +38,15 @@ export class GroupByResolverFactory
         Object.keys(selectedFields.edges?.node).length > 0;
 
       try {
-        const results = await this.commonGroupByQueryRunnerService.run({
-          args: { ...args, selectedFields },
-          authContext: internalContext.authContext,
-          objectMetadataMaps: internalContext.objectMetadataMaps,
-          objectMetadataItemWithFieldMaps:
-            internalContext.objectMetadataItemWithFieldMaps,
-          shouldIncludeRecords,
-        });
-
-        if (!shouldIncludeRecords) {
-          return results;
-        }
-
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(
             internalContext.objectMetadataMaps,
           );
+
+        const results = await this.commonGroupByQueryRunnerService.execute(
+          { ...args, selectedFields, includeRecords: shouldIncludeRecords },
+          internalContext,
+        );
 
         const formattedResults = results.map((group) => {
           const formattedRecords = typeORMObjectRecordsParser.createConnection({
@@ -79,7 +71,7 @@ export class GroupByResolverFactory
 
         return formattedResults;
       } catch (error) {
-        return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
       }
     };
   }

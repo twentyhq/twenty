@@ -7,7 +7,7 @@ import {
   EmailingDomainDriver,
   EmailingDomainStatus,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
-import { VerificationRecord } from 'src/engine/core-modules/emailing-domain/dtos/verification-record.dto';
+import { VerificationRecordDTO } from 'src/engine/core-modules/emailing-domain/dtos/verification-record.dto';
 
 registerEnumType(EmailingDomainDriver, {
   name: 'EmailingDomainDriver',
@@ -37,8 +37,8 @@ export class EmailingDomainDto {
   @Field(() => EmailingDomainStatus)
   status: EmailingDomainStatus;
 
-  @Field(() => [VerificationRecord], { nullable: true })
-  verificationRecords: VerificationRecord[] | null;
+  @Field(() => [VerificationRecordDTO], { nullable: true })
+  verificationRecords: VerificationRecordDTO[] | null;
 
   @Field(() => Date, { nullable: true })
   verifiedAt: Date | null;

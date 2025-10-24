@@ -9,7 +9,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import {
   TwoFactorAuthenticationException,
@@ -17,7 +17,7 @@ import {
 } from './two-factor-authentication.exception';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
-import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 import { OTPStatus } from './strategies/otp/otp.constants';
 
 const totpStrategyMocks = {
@@ -74,7 +74,7 @@ describe('TwoFactorAuthenticationService', () => {
       providers: [
         TwoFactorAuthenticationService,
         {
-          provide: getRepositoryToken(TwoFactorAuthenticationMethod),
+          provide: getRepositoryToken(TwoFactorAuthenticationMethodEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -99,7 +99,9 @@ describe('TwoFactorAuthenticationService', () => {
     service = module.get<TwoFactorAuthenticationService>(
       TwoFactorAuthenticationService,
     );
-    repository = module.get(getRepositoryToken(TwoFactorAuthenticationMethod));
+    repository = module.get(
+      getRepositoryToken(TwoFactorAuthenticationMethodEntity),
+    );
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
     simpleSecretEncryptionUtil = module.get<SimpleSecretEncryptionUtil>(
@@ -117,7 +119,7 @@ describe('TwoFactorAuthenticationService', () => {
     it('should do nothing if workspace does not enforce 2FA', async () => {
       const mockWorkspace = {
         isTwoFactorAuthenticationEnforced: false,
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
 
       await expect(
         service.validateTwoFactorAuthenticationRequirement(mockWorkspace),
@@ -127,7 +129,7 @@ describe('TwoFactorAuthenticationService', () => {
     it('should throw PROVISION_REQUIRED if 2FA is required but not set up', async () => {
       const mockWorkspace = {
         isTwoFactorAuthenticationEnforced: true,
-      } as unknown as Workspace;
+      } as unknown as WorkspaceEntity;
       const expectedError = new AuthException(
         'Two factor authentication setup required',
         AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
@@ -139,12 +141,12 @@ describe('TwoFactorAuthenticationService', () => {
     });
 
     it('should throw VERIFICATION_REQUIRED if 2FA is set up', async () => {
-      const mockWorkspace = {} as Workspace;
+      const mockWorkspace = {} as WorkspaceEntity;
       const mockProvider = [
         {
           status: 'VERIFIED',
         },
-      ] as TwoFactorAuthenticationMethod[];
+      ] as TwoFactorAuthenticationMethodEntity[];
       const expectedError = new AuthException(
         'Two factor authentication verification required',
         AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED,

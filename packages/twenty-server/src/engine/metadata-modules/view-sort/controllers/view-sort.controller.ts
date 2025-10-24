@@ -13,7 +13,7 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
@@ -37,7 +37,7 @@ export class ViewSortController {
 
   @Get()
   async findMany(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
   ): Promise<ViewSortDTO[]> {
     if (viewId) {
@@ -50,7 +50,7 @@ export class ViewSortController {
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
     const viewSort = await this.viewSortService.findById(id, workspace.id);
 
@@ -75,7 +75,7 @@ export class ViewSortController {
   @Post()
   async create(
     @Body() input: CreateViewSortInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
     return this.viewSortService.create({
       ...input,
@@ -87,7 +87,7 @@ export class ViewSortController {
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewSortInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
     const updatedViewSort = await this.viewSortService.update(
       id,
@@ -101,7 +101,7 @@ export class ViewSortController {
   @Delete(':id')
   async delete(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<{ success: boolean }> {
     const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
 

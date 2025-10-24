@@ -12,16 +12,16 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 
 @Injectable()
 export class BillingWebhookEntitlementService {
   constructor(
-    @InjectRepository(BillingCustomer)
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
-    @InjectRepository(BillingEntitlement)
-    private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectRepository(BillingEntitlementEntity)
+    private readonly billingEntitlementRepository: Repository<BillingEntitlementEntity>,
   ) {}
 
   async processStripeEvent(

@@ -1,11 +1,11 @@
 import { getActionHeaderTypeOrThrow } from '../getActionHeaderTypeOrThrow';
 
 describe('getActionHeaderTypeOrThrow', () => {
-  it('should return "Code" for CODE action type', () => {
-    expect(getActionHeaderTypeOrThrow('CODE').message).toBe('Code');
+  it('should return "Core" for CODE action type', () => {
+    expect(getActionHeaderTypeOrThrow('CODE').message).toBe('Core');
   });
 
-  it('should return "Action" for record-related action types', () => {
+  it('should return "Record" for record-related action types', () => {
     const recordActionTypes = [
       'CREATE_RECORD',
       'UPDATE_RECORD',
@@ -14,28 +14,23 @@ describe('getActionHeaderTypeOrThrow', () => {
     ] as const;
 
     recordActionTypes.forEach((type) => {
-      expect(getActionHeaderTypeOrThrow(type).message).toBe('Action');
+      expect(getActionHeaderTypeOrThrow(type).message).toBe('Record');
     });
   });
 
-  it('should return "Action" for FORM action type', () => {
-    expect(getActionHeaderTypeOrThrow('FORM').message).toBe('Action');
+  it('should return "Human Input" for FORM action type', () => {
+    expect(getActionHeaderTypeOrThrow('FORM').message).toBe('Human Input');
   });
 
-  it('should return "Action" for SEND_EMAIL action type', () => {
-    expect(getActionHeaderTypeOrThrow('SEND_EMAIL').message).toBe('Action');
+  it('should return "Core" for SEND_EMAIL action type', () => {
+    expect(getActionHeaderTypeOrThrow('SEND_EMAIL').message).toBe('Core');
   });
 
-  it('should return "HTTP Request" for HTTP_REQUEST action type', () => {
-    expect(getActionHeaderTypeOrThrow('HTTP_REQUEST').message).toBe(
-      'HTTP Request',
-    );
+  it('should return "Core" for HTTP_REQUEST action type', () => {
+    expect(getActionHeaderTypeOrThrow('HTTP_REQUEST').message).toBe('Core');
   });
 
-  it('should throw error for unknown action type', () => {
-    // @ts-expect-error Testing invalid action type
-    expect(() => getActionHeaderTypeOrThrow('UNKNOWN_ACTION')).toThrow(
-      'Unsupported action type: UNKNOWN_ACTION',
-    );
+  it('should return "AI" for AI_AGENT action type', () => {
+    expect(getActionHeaderTypeOrThrow('AI_AGENT').message).toBe('AI');
   });
 });

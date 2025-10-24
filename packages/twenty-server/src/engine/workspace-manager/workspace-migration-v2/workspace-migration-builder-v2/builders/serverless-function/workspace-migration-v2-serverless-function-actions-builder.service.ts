@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
-import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import {
+  ValidateAndBuildArgs,
+  ValidateAndBuildReturnType,
+  WorkspaceEntityMigrationBuilderV2Service,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatServerlessFunctionValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
@@ -18,6 +21,43 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     private readonly flatServerlessFunctionValidatorService: FlatServerlessFunctionValidatorService,
   ) {
     super(ALL_METADATA_NAME.serverlessFunction);
+  }
+
+  public async validateAndBuild(
+    args: ValidateAndBuildArgs<typeof ALL_METADATA_NAME.serverlessFunction>,
+  ): Promise<
+    ValidateAndBuildReturnType<typeof ALL_METADATA_NAME.serverlessFunction>
+  > {
+    const { to: toFlatEntityMaps } = args;
+    const baseResult = await super.validateAndBuild(args);
+
+    if (baseResult.status === 'fail') {
+      return baseResult;
+    }
+
+    const updatedActions = baseResult.actions.updated.map((action) => {
+      if (action.type !== 'update_serverless_function') {
+        return action;
+      }
+
+      const toServerlessFunction = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: action.serverlessFunctionId,
+        flatEntityMaps: toFlatEntityMaps,
+      });
+
+      return {
+        ...action,
+        code: toServerlessFunction?.code,
+      };
+    });
+
+    return {
+      ...baseResult,
+      actions: {
+        ...baseResult.actions,
+        updated: updatedActions,
+      },
+    };
   }
 
   protected async validateFlatEntityCreation(
@@ -116,25 +156,12 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
-      optimisticFlatEntityMaps,
     } = args;
-
-    const existingEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId,
-      flatEntityMaps: optimisticFlatEntityMaps,
-    });
-    const updatedEntity = {
-      ...existingEntity,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
-    };
 
     const updateServerlessFunctionAction: UpdateServerlessFunctionAction = {
       type: 'update_serverless_function',
       serverlessFunctionId: flatEntityId,
       updates: flatEntityUpdates,
-      code: updatedEntity.code,
     };
 
     return {

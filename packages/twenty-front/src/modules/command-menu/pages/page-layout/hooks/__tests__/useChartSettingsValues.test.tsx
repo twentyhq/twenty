@@ -6,10 +6,10 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layou
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  AggregateOperations,
   AxisNameDisplay,
   type BarChartConfiguration,
   BarChartGroupMode,
-  ExtendedAggregateOperations,
   FieldMetadataType,
   GraphOrderBy,
   GraphType,
@@ -64,7 +64,7 @@ const buildBarChartConfiguration = (
   ({
     __typename: 'BarChartConfiguration',
     aggregateFieldMetadataId: 'field-amount',
-    aggregateOperation: ExtendedAggregateOperations.SUM,
+    aggregateOperation: AggregateOperations.SUM,
     graphType: GraphType.VERTICAL_BAR,
     primaryAxisGroupByFieldMetadataId: 'field-company-name',
     primaryAxisGroupBySubFieldName: null,
@@ -545,7 +545,7 @@ describe('useChartSettingsValues', () => {
         primaryAxisGroupByFieldMetadataId: 'field-company-name',
         secondaryAxisGroupByFieldMetadataId: 'field-stage',
         aggregateFieldMetadataId: 'field-amount',
-        aggregateOperation: ExtendedAggregateOperations.SUM,
+        aggregateOperation: AggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
         axisNameDisplay: AxisNameDisplay.BOTH,

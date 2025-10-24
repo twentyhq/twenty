@@ -1,6 +1,6 @@
 import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import {
-  ExtendedAggregateOperations,
+  AggregateOperations,
   type PageLayoutWidget,
 } from '~/generated/graphql';
 import { type PageLayoutTab } from '../../types/PageLayoutTab';
@@ -14,8 +14,8 @@ describe('addWidgetToTab', () => {
     title: 'Test Widget',
     type: WidgetType.GRAPH,
     configuration: {
-      graphType: GraphType.NUMBER,
-      aggregateOperation: ExtendedAggregateOperations.COUNT,
+      graphType: GraphType.AGGREGATE,
+      aggregateOperation: AggregateOperations.COUNT,
       aggregateFieldMetadataId: 'id',
       displayDataLabel: false,
     },

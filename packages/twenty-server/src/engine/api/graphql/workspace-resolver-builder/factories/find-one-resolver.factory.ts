@@ -44,13 +44,10 @@ export class FindOneResolverFactory
         try {
           const selectedFields = graphqlFields(info);
 
-          const record = await this.commonFindOneQueryRunnerService.run({
-            args: { ...args, selectedFields },
-            authContext: internalContext.authContext,
-            objectMetadataMaps: internalContext.objectMetadataMaps,
-            objectMetadataItemWithFieldMaps:
-              internalContext.objectMetadataItemWithFieldMaps,
-          });
+          const record = await this.commonFindOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            internalContext,
+          );
 
           const typeORMObjectRecordsParser =
             new ObjectRecordsToGraphqlConnectionHelper(
@@ -65,7 +62,7 @@ export class FindOneResolverFactory
             totalCount: 1,
           });
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

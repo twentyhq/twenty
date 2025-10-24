@@ -28,6 +28,9 @@ import {
   computeBatchPath,
   computeDuplicatesResultPath,
   computeManyResultPath,
+  computeMergeManyResultPath,
+  computeRestoreManyResultPath,
+  computeRestoreOneResultPath,
   computeSingleResultPath,
 } from 'src/engine/core-modules/open-api/utils/path.utils';
 import {
@@ -42,13 +45,13 @@ import {
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 import { getServerUrl } from 'src/utils/get-server-url';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class OpenApiService {
@@ -72,7 +75,7 @@ export class OpenApiService {
     }
   }
 
-  private async getObjectMetadataItems(workspace: Workspace) {
+  private async getObjectMetadataItems(workspace: WorkspaceEntity) {
     return await this.objectMetadataService.findManyWithinWorkspace(
       workspace.id,
       {
@@ -125,6 +128,10 @@ export class OpenApiService {
       paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
       paths[`/${item.namePlural}/duplicates`] =
         computeDuplicatesResultPath(item);
+      paths[`/restore/${item.namePlural}/{id}`] =
+        computeRestoreOneResultPath(item);
+      paths[`/restore/${item.namePlural}`] = computeRestoreManyResultPath(item);
+      paths[`/${item.namePlural}/merge`] = computeMergeManyResultPath(item);
 
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);

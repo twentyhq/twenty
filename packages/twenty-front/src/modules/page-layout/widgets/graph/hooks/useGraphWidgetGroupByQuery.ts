@@ -1,14 +1,11 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
+import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
 import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
 import { generateGroupByQueryVariablesFromBarChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromBarChartConfiguration';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
-import {
-  computeRecordGqlOperationFilter,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated-metadata/graphql';
 
 export const useGraphWidgetGroupByQuery = ({
@@ -18,9 +15,15 @@ export const useGraphWidgetGroupByQuery = ({
   objectMetadataItemId: string;
   configuration: BarChartConfiguration;
 }) => {
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataItemId,
-  });
+  const { objectMetadataItem, aggregateField, gqlOperationFilter } =
+    useGraphWidgetQueryCommon({
+      objectMetadataItemId,
+      configuration,
+    });
+
+  if (!isDefined(aggregateField)) {
+    throw new Error('Aggregate field not found');
+  }
 
   const availableAggregations = useMemo(
     () =>
@@ -29,16 +32,6 @@ export const useGraphWidgetGroupByQuery = ({
       ),
     [objectMetadataItem.readableFields],
   );
-
-  const aggregateFieldId = configuration.aggregateFieldMetadataId;
-
-  const aggregateField = objectMetadataItem.readableFields.find(
-    (field) => field.id === aggregateFieldId,
-  );
-
-  if (!isDefined(aggregateField)) {
-    throw new Error('Aggregate field not found');
-  }
 
   const aggregateOperation =
     availableAggregations[aggregateField.name]?.[
@@ -49,27 +42,16 @@ export const useGraphWidgetGroupByQuery = ({
     throw new Error('Aggregate operation not found');
   }
 
-  const gqlOperationFilter = computeRecordGqlOperationFilter({
-    fields: objectMetadataItem.fields,
-    filterValueDependencies: {},
-    recordFilters: configuration.filter?.recordFilters ?? [],
-    recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
-  });
-
-  const filterQueryVariables = {
-    filter: gqlOperationFilter,
-  };
-
   const groupByQueryVariables =
     generateGroupByQueryVariablesFromBarChartConfiguration({
       objectMetadataItem,
       barChartConfiguration: configuration,
-      aggregateOperation,
+      aggregateOperation: aggregateOperation,
     });
 
   const variables = {
     ...groupByQueryVariables,
-    ...filterQueryVariables,
+    filter: gqlOperationFilter,
   };
 
   const query = generateGroupByQuery({
@@ -89,6 +71,6 @@ export const useGraphWidgetGroupByQuery = ({
     loading,
     error,
     refetch,
-    aggregateOperation,
+    aggregateOperation: aggregateOperation,
   };
 };

@@ -25,9 +25,9 @@ export const CRON_TRIGGER_ENTITY_RELATION_PROPERTIES = [
 
 @Entity({ name: 'cronTrigger', schema: 'core' })
 @Index('IDX_CRON_TRIGGER_WORKSPACE_ID', ['workspaceId'])
-export class CronTrigger
+export class CronTriggerEntity
   extends SyncableEntity
-  implements Required<CronTrigger>
+  implements Required<CronTriggerEntity>
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -144,6 +144,7 @@ export class FieldMetadataServiceV2 {
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -154,6 +155,7 @@ export class FieldMetadataServiceV2 {
           'flatViewFilterMaps',
           'flatViewGroupMaps',
           'flatViewMaps',
+          'flatViewFieldMaps',
         ],
       },
     );
@@ -165,10 +167,19 @@ export class FieldMetadataServiceV2 {
       updateFieldInput,
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatViewGroupMaps: existingFlatViewGroupMaps,
+      flatViewMaps: existingFlatViewMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
     });
 
     if (inputTranspilationResult.status === 'fail') {
-      throw inputTranspilationResult.error;
+      throw new FieldMetadataException(
+        inputTranspilationResult.error.message,
+        inputTranspilationResult.error.code,
+        {
+          userFriendlyMessage:
+            inputTranspilationResult.error.userFriendlyMessage,
+        },
+      );
     }
 
     const {
@@ -181,6 +192,9 @@ export class FieldMetadataServiceV2 {
       flatViewGroupsToUpdate,
       flatViewFiltersToDelete,
       flatViewFiltersToUpdate,
+      flatViewFieldsToDelete,
+      flatViewsToUpdate,
+      flatViewsToDelete,
     } = inputTranspilationResult.result;
 
     const validateAndBuildResult =
@@ -215,6 +229,18 @@ export class FieldMetadataServiceV2 {
               flatEntityToDelete: flatViewGroupsToDelete,
               flatEntityToUpdate: flatViewGroupsToUpdate,
             }),
+            flatViewMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: flatViewsToDelete,
+              flatEntityToUpdate: flatViewsToUpdate,
+            }),
+            flatViewFieldMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFieldMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: flatViewFieldsToDelete,
+              flatEntityToUpdate: [],
+            }),
           },
           buildOptions: {
             isSystemBuild: false,
@@ -222,6 +248,7 @@ export class FieldMetadataServiceV2 {
               index: true,
               viewGroup: true,
               viewFilter: true,
+              view: true,
             },
           },
           workspaceId,

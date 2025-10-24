@@ -19,20 +19,18 @@ import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
-import {
-  CommonQueryRunnerException,
-  CommonQueryRunnerExceptionCode,
-} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import {
+  CommonExtendedInput,
+  CommonInput,
   CommonQueryNames,
   GroupByQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
 import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
-import { computeIsNumericReturningAggregate } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/compute-is-numeric-returning-aggregate.util';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
@@ -40,7 +38,6 @@ import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/gr
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
@@ -51,7 +48,10 @@ import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 @Injectable()
-export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService {
+export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerService<
+  GroupByQueryArgs,
+  CommonGroupByOutputItem[]
+> {
   constructor(
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
@@ -61,48 +61,20 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     super();
   }
 
-  async run({
-    args,
-    authContext,
-    objectMetadataMaps,
-    objectMetadataItemWithFieldMaps,
-    shouldIncludeRecords,
-  }: {
-    args: GroupByQueryArgs;
-    authContext: AuthContext;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    shouldIncludeRecords?: boolean;
-  }): Promise<CommonGroupByOutputItem[]> {
-    if (!isWorkspaceAuthContext(authContext)) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-      );
-    }
+  protected readonly operationName = CommonQueryNames.GROUP_BY;
 
-    const { repository } = await this.prepareQueryRunnerContext({
+  async run(
+    args: CommonExtendedInput<GroupByQueryArgs>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+    shouldIncludeRecords?: boolean,
+  ): Promise<CommonGroupByOutputItem[]> {
+    const {
+      repository,
+      commonQueryParser,
+      objectMetadataItemWithFieldMaps,
       authContext,
-      objectMetadataItemWithFieldMaps,
-    });
-
-    //TODO : Refacto-common - QueryParser should be common branded service
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-    );
-
-    const selectedFieldsResult = commonQueryParser.parseSelectedFields(
-      objectMetadataItemWithFieldMaps,
-      args.selectedFields,
-      objectMetadataMaps,
-    );
-
-    const processedArgs = await this.processQueryArgs({
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      args,
-    });
+    } = queryRunnerContext;
 
     const objectMetadataNameSingular =
       objectMetadataItemWithFieldMaps.nameSingular;
@@ -111,10 +83,10 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       objectMetadataNameSingular,
     );
 
-    let appliedFilters = processedArgs.filter ?? ({} as ObjectRecordFilter);
+    let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
 
     await this.addFiltersToQueryBuilder({
-      args: processedArgs,
+      args,
       appliedFilters,
       queryBuilder,
       objectMetadataItemWithFieldMaps,
@@ -123,13 +95,13 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     });
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: selectedFieldsResult.aggregate,
+      selectedAggregatedFields: args.selectedFieldsResult.aggregate,
       queryBuilder,
       objectMetadataNameSingular,
     });
 
     const groupByFields = parseGroupByArgs(
-      processedArgs,
+      args,
       objectMetadataItemWithFieldMaps,
     );
 
@@ -169,35 +141,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       }
     });
 
-    if (processedArgs.omitNullValues) {
-      const aggregateFields = selectedFieldsResult.aggregate ?? {};
-
-      Object.values(aggregateFields).forEach((aggregationField) => {
-        const aggregateExpression =
-          ProcessAggregateHelper.getAggregateExpression(
-            aggregationField,
-            objectMetadataNameSingular,
-          );
-
-        if (aggregateExpression) {
-          queryBuilder.andHaving(`${aggregateExpression} IS NOT NULL`);
-
-          const isNumericReturningAggregate =
-            computeIsNumericReturningAggregate(
-              aggregationField.aggregateOperation,
-              aggregationField.fromFieldType,
-            );
-
-          if (isNumericReturningAggregate) {
-            queryBuilder.andHaving(`${aggregateExpression} != 0`);
-          }
-        }
-      });
-    }
-
     commonQueryParser.applyGroupByOrderToBuilder(
       queryBuilder,
-      processedArgs.orderBy ?? [],
+      args.orderBy ?? [],
       groupByFields,
     );
 
@@ -206,7 +152,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         repository.createQueryBuilder(objectMetadataNameSingular);
 
       await this.addFiltersToQueryBuilder({
-        args: processedArgs,
+        args,
         objectMetadataItemWithFieldMaps,
         workspaceId: authContext.workspace.id,
         commonQueryParser,
@@ -221,15 +167,24 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
         repository,
-        selectedFieldsResult,
+        selectedFieldsResult: args.selectedFieldsResult,
       });
     }
 
     return this.resolveWithoutRecords({
       queryBuilder,
       groupByDefinitions,
-      selectedFieldsResult,
+      selectedFieldsResult: args.selectedFieldsResult,
     });
+  }
+
+  async processQueryResult(
+    queryResult: CommonGroupByOutputItem[],
+    _objectMetadataItemId: string,
+    _objectMetadataMaps: ObjectMetadataMaps,
+    _authContext: WorkspaceAuthContext,
+  ): Promise<CommonGroupByOutputItem[]> {
+    return queryResult;
   }
 
   private async addFiltersFromView({
@@ -372,28 +327,21 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     });
   }
 
-  async processQueryArgs({
-    authContext,
-    objectMetadataItemWithFieldMaps,
-    args,
-  }: {
-    authContext: WorkspaceAuthContext;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    args: GroupByQueryArgs;
-  }): Promise<GroupByQueryArgs> {
-    const hookedArgs =
-      (await this.workspaceQueryHookService.executePreQueryHooks(
-        authContext,
-        objectMetadataItemWithFieldMaps.nameSingular,
-        CommonQueryNames.groupBy,
-        args,
-        //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
-      )) as GroupByQueryArgs;
+  async validate(
+    _args: CommonInput<GroupByQueryArgs>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void> {}
+
+  async computeArgs(
+    args: CommonInput<GroupByQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<CommonInput<GroupByQueryArgs>> {
+    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
 
     return {
-      ...hookedArgs,
+      ...args,
       filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        hookedArgs.filter,
+        args.filter,
         objectMetadataItemWithFieldMaps,
       ),
     };

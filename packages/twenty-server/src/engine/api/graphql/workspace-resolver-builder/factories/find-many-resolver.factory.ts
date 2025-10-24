@@ -51,13 +51,10 @@ export class FindManyResolverFactory
             totalCount,
             pageInfo,
             selectedFieldsResult,
-          } = await this.commonFindManyQueryRunnerService.run({
-            args: { ...args, selectedFields },
-            authContext: internalContext.authContext,
-            objectMetadataMaps: internalContext.objectMetadataMaps,
-            objectMetadataItemWithFieldMaps:
-              internalContext.objectMetadataItemWithFieldMaps,
-          });
+          } = await this.commonFindManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            internalContext,
+          );
 
           const typeORMObjectRecordsParser =
             new ObjectRecordsToGraphqlConnectionHelper(
@@ -77,7 +74,7 @@ export class FindManyResolverFactory
             hasPreviousPage: pageInfo.hasPreviousPage,
           });
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

@@ -4,7 +4,11 @@ import { useTheme } from '@emotion/react';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-type Action = { type: WorkflowActionType; label: string; icon: string };
+type Action = {
+  defaultLabel: string;
+  type: WorkflowActionType;
+  icon: string;
+};
 
 export const WorkflowActionMenuItems = ({
   actions,
@@ -34,7 +38,7 @@ export const WorkflowActionMenuItems = ({
                 size={16}
               />
             )}
-            text={action.label}
+            text={action.defaultLabel}
             onClick={() => onClick(action.type)}
           />
         );
