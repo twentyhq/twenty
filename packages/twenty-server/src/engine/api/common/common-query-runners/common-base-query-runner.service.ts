@@ -333,7 +333,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   private async throttleQueryExecution(workspaceId: string) {
     const shortConfig = {
-      key: `${workspaceId}-common-api-throttle-short`,
+      key: `api:throttler:${workspaceId}-short-limit`,
       maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_SHORT_LIMIT'),
       timeWindow: this.twentyConfigService.get(
         'API_RATE_LIMITING_SHORT_TTL_IN_MS',
@@ -341,7 +341,7 @@ export abstract class CommonBaseQueryRunnerService<
     };
 
     const longConfig = {
-      key: `${workspaceId}-common-api-throttle-long`,
+      key: `api:throttler:${workspaceId}-long-limit`,
       maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
       timeWindow: this.twentyConfigService.get(
         'API_RATE_LIMITING_LONG_TTL_IN_MS',
