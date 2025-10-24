@@ -57,20 +57,9 @@ export const DateTimePickerHeader = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const endOfDayInLocalTimezone = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    23,
-    59,
-    59,
-    999,
-  );
-
   return (
     <>
       {!hideInput && <DateTimePickerInput date={date} onChange={onChange} />}
-
       <StyledCustomDatePickerHeader>
         <ClickOutsideListenerContext.Provider
           value={{
@@ -81,7 +70,7 @@ export const DateTimePickerHeader = ({
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
             options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
-            value={endOfDayInLocalTimezone.getMonth()}
+            value={date.getMonth()}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
@@ -93,7 +82,7 @@ export const DateTimePickerHeader = ({
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
-            value={endOfDayInLocalTimezone.getFullYear()}
+            value={date.getFullYear()}
             options={years}
             fullWidth
           />

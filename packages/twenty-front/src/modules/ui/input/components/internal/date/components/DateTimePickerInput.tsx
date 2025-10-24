@@ -8,11 +8,12 @@ import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { getDateTimeMask } from '@/ui/input/components/internal/date/utils/getDateTimeMask';
-import { parseDateTimeToString } from '@/ui/input/components/internal/date/utils/parseDateTimeToString';
 
+import { useParseDateTimeToString } from '@/ui/input/components/internal/date/hooks/useParseDateTimeToString';
 import { useParseStringToDateTime } from '@/ui/input/components/internal/date/hooks/useParseStringToDateTime';
 import { UserContext } from '@/users/contexts/UserContext';
 import { isNull } from '@sniptt/guards';
+
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledInputContainer = styled.div`
@@ -55,11 +56,23 @@ export const DateTimePickerInput = ({
   const { timeZone } = useContext(UserContext);
 
   const { parseStringToDateTime } = useParseStringToDateTime();
+  const { parseDateTimeToString } = useParseDateTimeToString();
+
+  console.log('DateTimePickerInput', { date });
 
   const handleParseStringToDate = (newDateAsString: string) => {
     const date = parseStringToDateTime(newDateAsString);
 
+    console.log({
+      newDateAsString,
+      date,
+    });
+
     setHasError(isNull(date) === true);
+
+    // if (isDefined(date)) {
+    //   onChange?.(date);
+    // }
 
     return date;
   };
@@ -68,19 +81,14 @@ export const DateTimePickerInput = ({
 
   const blocks = DATE_TIME_BLOCKS;
 
-  const { ref, setValue, value } = useIMask(
+  const { ref, setValue } = useIMask(
     {
       mask: Date,
       pattern,
       blocks,
       min: MIN_DATE,
       max: MAX_DATE,
-      format: (date: any) =>
-        parseDateTimeToString({
-          date,
-          userTimezone: timeZone,
-          dateFormat,
-        }),
+      format: (date: any) => parseDateTimeToString(date),
       parse: handleParseStringToDate,
       lazy: false,
       autofix: true,
@@ -89,9 +97,15 @@ export const DateTimePickerInput = ({
       onComplete: (value) => {
         const parsedDate = parseStringToDateTime(value);
 
-        onChange?.(parsedDate);
+        console.log({
+          value,
+          parsedDate,
+        });
+
+        // onChange?.(parsedDate);
       },
-      onAccept: () => {
+      onAccept: (newValue) => {
+        console.log('accept', newValue);
         setHasError(false);
       },
     },
@@ -102,23 +116,17 @@ export const DateTimePickerInput = ({
       return;
     }
 
-    setValue(
-      parseDateTimeToString({
-        date,
-        userTimezone: timeZone,
-        dateFormat,
-      }),
-    );
-  }, [date, setValue, dateFormat, timeZone]);
+    setValue(parseDateTimeToString(date));
+  }, [date, setValue, parseDateTimeToString]);
 
   return (
     <StyledInputContainer>
       <StyledInput
         type="text"
         ref={ref as any}
-        value={value}
-        onChange={() => {}} // Prevent React warning
-        hasError={hasError}
+        // value={value}
+        // onChange={() => {}} // Prevent React warning
+        // hasError={hasError}
       />
     </StyledInputContainer>
   );

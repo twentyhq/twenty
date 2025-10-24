@@ -1,5 +1,12 @@
 import styled from '@emotion/styled';
-import { addMonths, setDate, setMonth, setYear, subMonths } from 'date-fns';
+import {
+  addMinutes,
+  addMonths,
+  setDate,
+  setMonth,
+  setYear,
+  subMonths,
+} from 'date-fns';
 import { lazy, Suspense, type ComponentType } from 'react';
 import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -15,6 +22,8 @@ import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/g
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { utcToZonedTime } from 'date-fns-tz';
+import { DateTime } from 'luxon';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRecoilValue } from 'recoil';
 import {
@@ -349,6 +358,37 @@ export const DateTimePicker = ({
   highlightedDateRange,
   hideHeaderInput,
 }: DateTimePickerProps) => {
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const now = new Date();
+
+  const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const systemDate = utcToZonedTime(now, systemTimeZone);
+
+  const userDate = utcToZonedTime(
+    now,
+    currentWorkspaceMember?.timeZone !== 'system'
+      ? (currentWorkspaceMember?.timeZone ?? systemTimeZone)
+      : systemTimeZone,
+  );
+
+  console.log({
+    now,
+    systemDate,
+    userDate,
+    a: +systemDate,
+    b: +userDate,
+    currentWorkspaceMember,
+    systemTimeZone,
+    sub: +systemDate - +userDate,
+  });
+
+  // Compute offset difference in hours
+  const timezoneDifferenceInMinutes = (+systemDate - +userDate) / (60 * 1000);
+
+  console.log(`Difference: ${timezoneDifferenceInMinutes} minutes`);
+
   const internalDate = date ?? new Date();
 
   const dateWithoutTime = new Date(
@@ -370,12 +410,18 @@ export const DateTimePicker = ({
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const internalDateTimeOnUserTimezone = DateTime.fromJSDate(
+    internalDate,
+  ).setZone(currentWorkspaceMember?.timeZone ?? '');
+
+  console.log({ internalDateTimeOnUserTimezone, internalDate });
 
   const handleClear = () => {
     closeDropdowns();
     onClear?.();
   };
+
+  currentWorkspaceMember?.timeZone;
 
   const closeDropdowns = () => {
     closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
@@ -408,52 +454,50 @@ export const DateTimePicker = ({
     onChange?.(dateParsed);
   };
 
-  const handleDateChange = (date: Date) => {
-    console.log({
-      date,
-    });
-    let dateParsed = setYear(internalDate, date.getFullYear());
-    dateParsed = setMonth(dateParsed, date.getMonth());
-    dateParsed = setDate(dateParsed, date.getDate());
+  const handleDateChange = (newDate: Date) => {
+    const newDateWithTimezoneShift = addMinutes(
+      newDate,
+      timezoneDifferenceInMinutes,
+    );
+
+    let dateParsed = setYear(
+      internalDate,
+      newDateWithTimezoneShift.getFullYear(),
+    );
+    dateParsed = setMonth(dateParsed, newDateWithTimezoneShift.getMonth());
+    dateParsed = setDate(dateParsed, newDateWithTimezoneShift.getDate());
 
     console.log({
+      newDate,
+      utcDay: newDate.getUTCDate(),
+      day: newDate.getDate(),
+      timezone: currentWorkspaceMember?.timeZone,
+      newDateWithTimezoneShift,
+      internalDate,
       dateParsed,
     });
 
     onChange?.(dateParsed);
   };
 
-  const handleDateSelect = (date: Date) => {
-    console.log({
-      date,
-    });
-    let dateParsed = setYear(internalDate, date.getFullYear());
-    dateParsed = setMonth(dateParsed, date.getMonth());
-    dateParsed = setDate(dateParsed, date.getDate());
-
-    console.log({
-      dateParsed,
-    });
-
-    handleClose?.(dateParsed);
+  const handleDateSelect = (newDateSelected: Date) => {
+    console.log('select', { newDateSelected });
+    // let dateParsed = setYear(internalDate, date.getFullYear());
+    // dateParsed = setMonth(dateParsed, date.getMonth());
+    // dateParsed = setDate(dateParsed, date.getDate());
+    // handleClose?.(dateParsed);
   };
 
   const highlightedDates = getHighlightedDates(highlightedDateRange);
 
   const selectedDates = isRelative ? highlightedDates : [dateWithoutTime];
 
-  const serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift =
-    new Date().getTimezoneOffset() * 60 * 1000;
-
-  const shiftedDate = new Date(
-    internalDate.getTime() +
-      serverOffsetInMillisecondsToCounterActTypeORMAutomaticTimezoneShift,
-  );
+  const dateSelected = addMinutes(internalDate, -timezoneDifferenceInMinutes);
 
   console.log({
     internalDate,
-    shiftedDate,
     dateWithoutTime,
+    dateSelected,
   });
 
   return (
@@ -489,9 +533,9 @@ export const DateTimePicker = ({
         >
           <ReactDatePicker
             open={true}
-            selected={dateWithoutTime}
+            selected={dateSelected}
             selectedDates={selectedDates}
-            openToDate={dateWithoutTime}
+            openToDate={dateSelected}
             disabledKeyboardNavigation
             onChange={handleDateChange}
             calendarStartDay={
@@ -516,7 +560,7 @@ export const DateTimePicker = ({
                 />
               ) : (
                 <DateTimePickerHeader
-                  date={internalDate}
+                  date={dateSelected}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}
                   onChangeYear={handleChangeYear}

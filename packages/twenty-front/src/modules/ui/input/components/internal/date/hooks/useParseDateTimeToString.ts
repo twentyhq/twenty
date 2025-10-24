@@ -1,6 +1,6 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { UserContext } from '@/users/contexts/UserContext';
-import { formatInTimeZone } from 'date-fns-tz';
+import { format } from 'date-fns';
 import { useContext } from 'react';
 import { getDateTimeFormatString } from '~/utils/date-utils';
 
@@ -11,7 +11,12 @@ export const useParseDateTimeToString = () => {
   const parseDateTimeToString = (date: Date) => {
     const parsingFormat = getDateTimeFormatString(dateFormat);
 
-    return formatInTimeZone(date, timeZone, parsingFormat);
+    console.log({
+      parsingFormat,
+      date,
+      formatted: format(date, parsingFormat),
+    });
+    return format(date, parsingFormat);
   };
 
   return {
