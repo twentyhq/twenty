@@ -13,6 +13,7 @@ type UseBarChartDataProps = {
   series?: BarChartSeries[];
   colorRegistry: GraphColorRegistry;
   seriesLabels?: Record<string, string>;
+  groupMode?: 'grouped' | 'stacked';
 };
 
 export const useBarChartData = ({
@@ -33,11 +34,12 @@ export const useBarChartData = ({
       const indexValue = dataPoint[indexBy];
       return keys.map((key, keyIndex): BarChartConfig => {
         const seriesConfig = seriesConfigMap.get(key);
-        const colorScheme = getColorScheme(
-          colorRegistry,
-          seriesConfig?.color,
-          keyIndex,
-        );
+        const colorScheme = getColorScheme({
+          registry: colorRegistry,
+          colorName: seriesConfig?.color,
+          fallbackIndex: keyIndex,
+          totalGroups: keys.length,
+        });
 
         return {
           key,
@@ -50,11 +52,13 @@ export const useBarChartData = ({
 
   const enrichedKeys: BarChartEnrichedKey[] = keys.map((key, index) => {
     const seriesConfig = seriesConfigMap.get(key);
-    const colorScheme = getColorScheme(
-      colorRegistry,
-      seriesConfig?.color,
-      index,
-    );
+    const colorScheme = getColorScheme({
+      registry: colorRegistry,
+      colorName: seriesConfig?.color,
+      fallbackIndex: index,
+      totalGroups: keys.length,
+    });
+
     return {
       key,
       colorScheme,

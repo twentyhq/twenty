@@ -4,6 +4,7 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
@@ -115,6 +116,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
   const series: BarChartSeries[] = keys.map((key) => ({
     key,
     label: key,
+    color: configuration.color as GraphColor,
   }));
 
   return {
