@@ -1,4 +1,5 @@
-import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataValidationRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { type MetadataWorkspaceMigrationAction } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
