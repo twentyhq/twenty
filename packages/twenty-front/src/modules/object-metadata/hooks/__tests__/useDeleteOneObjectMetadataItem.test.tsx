@@ -19,6 +19,7 @@ import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
 } from '../__mocks__/useFindManyObjectMetadataItems';
+import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util.test';
 
 const mocks = [
   {
@@ -83,7 +84,8 @@ describe('useDeleteOneObjectMetadataItem', () => {
       const res =
         await result.current.deleteOneObjectMetadataItem('idToDelete');
 
-      expect(res.data).toEqual({ deleteOneObject: responseData });
+      jestExpectSuccessfulMetadataRequestResult(res);
+      expect(res.response).toEqual({ deleteOneObject: responseData });
     });
   });
 });
