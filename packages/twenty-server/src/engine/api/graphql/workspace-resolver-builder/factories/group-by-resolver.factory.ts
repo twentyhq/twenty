@@ -56,7 +56,7 @@ export class GroupByResolverFactory
             objectRecordsAggregatedValues: {},
             selectedAggregatedFields: {},
             take: group.records?.length || 0,
-            totalCount: group.records?.length || 0,
+            totalCount: Number(group.totalCount ?? 0),
             hasNextPage: false,
             hasPreviousPage: false,
           });
