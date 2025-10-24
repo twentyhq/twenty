@@ -7,8 +7,13 @@ import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePrev
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
-import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
+import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
+import { AIChatErrorMessageWithRecordsContext } from '@/ai/components/internal/AIChatErrorMessageWithRecordsContext';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -46,7 +51,9 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  white-space: pre-wrap;
+  /* Pre-wrap within the whole container turns every newline between block
+     elements into extra spacing; keep normal flow and only pre-wrap code. */
+  white-space: normal;
 
   code {
     overflow: auto;
@@ -139,12 +146,23 @@ const StyledFilesContainer = styled.div`
 export const AIChatMessage = ({
   message,
   isLastMessageStreaming,
+  error,
 }: {
-  message: UIMessageWithMetadata;
+  message: ExtendedUIMessage;
   isLastMessageStreaming: boolean;
+  error?: Error | null;
 }) => {
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
+
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
+  const showError =
+    isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
+
+  const fileParts = message.parts.filter((part) => part.type === 'file');
 
   return (
     <StyledMessageBubble
@@ -174,17 +192,22 @@ export const AIChatMessage = ({
             <AIChatAssistantMessageRenderer
               isLastMessageStreaming={isLastMessageStreaming}
               messageParts={message.parts}
+              hasError={showError}
             />
           </StyledMessageText>
-          {message.parts.length > 0 && (
+          {fileParts.length > 0 && (
             <StyledFilesContainer>
-              {message.parts
-                .filter((part) => part.type === 'file')
-                .map((file) => (
-                  <AgentChatFilePreview key={file.filename} file={file} />
-                ))}
+              {fileParts.map((file) => (
+                <AgentChatFilePreview key={file.filename} file={file} />
+              ))}
             </StyledFilesContainer>
           )}
+          {showError &&
+            (contextStoreCurrentObjectMetadataItemId ? (
+              <AIChatErrorMessageWithRecordsContext error={error} />
+            ) : (
+              <AIChatErrorMessage error={error} />
+            ))}
           {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
               <span>

@@ -1,8 +1,9 @@
 import { type Decorator } from '@storybook/react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -25,6 +26,8 @@ import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { useEffect, useMemo } from 'react';
@@ -43,6 +46,12 @@ const InternalTableStateLoaderEffect = ({
   const setCurrentRecordFields = useSetRecoilComponentState(
     currentRecordFieldsComponentState,
   );
+
+  const setContextStoreCurrentViewId = useSetRecoilComponentState(
+    contextStoreCurrentViewIdComponentState,
+  );
+
+  const setCoreViews = useSetRecoilState(coreViewsState);
 
   const setRecordTableData = useSetRecordTableData({
     recordTableId,
@@ -67,12 +76,18 @@ const InternalTableStateLoaderEffect = ({
       .filter(isDefined);
 
     setCurrentRecordFields(recordFields);
+
+    setCoreViews([view as unknown as CoreViewWithRelations]);
+
+    setContextStoreCurrentViewId(view.id);
   }, [
     loadRecordIndexStates,
     objectMetadataItem,
     setRecordTableData,
     view,
     setCurrentRecordFields,
+    setContextStoreCurrentViewId,
+    setCoreViews,
   ]);
 
   return null;

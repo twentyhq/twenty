@@ -333,7 +333,7 @@ describe('ViewFilterService', () => {
 
       expect(viewFilterService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(viewFilterRepository.delete).toHaveBeenCalledWith(id);
-      expect(result).toEqual(true);
+      expect(result).toEqual(mockViewFilter);
     });
   });
 });

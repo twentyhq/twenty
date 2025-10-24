@@ -4,7 +4,7 @@ import {
   MUTATION_MAX_MERGE_RECORDS,
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +13,6 @@ import {
   GraphqlQueryBaseResolverService,
   type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type MergeManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
@@ -48,7 +47,6 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
     const { ids, conflictPriorityIndex, dryRun } = executionArgs.args;
-    const { roleId } = executionArgs;
 
     const recordsToMerge = await this.fetchRecordsToMerge(executionArgs, ids);
 
@@ -97,12 +95,11 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       mergedData,
     );
 
-    if (roleId) {
+    if (executionArgs.rolePermissionConfig) {
       await this.processNestedRelations({
         executionArgs,
         updatedRecords: [updatedRecord],
         authContext,
-        roleId,
       });
     }
 
@@ -336,8 +333,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       try {
         const repository = executionArgs.workspaceDataSource.getRepository(
           relationField.objectMetadata.nameSingular,
-          executionArgs.isExecutedByApiKey,
-          executionArgs.roleId,
+          executionArgs.rolePermissionConfig,
         );
 
         const whereCondition = { [relationField.joinColumnName]: In(fromIds) };
@@ -364,12 +360,10 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     executionArgs,
     updatedRecords,
     authContext,
-    roleId,
   }: {
     executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>;
     updatedRecords: ObjectRecord[];
     authContext: AuthContext;
-    roleId: string;
   }): Promise<void> {
     const { objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
@@ -383,9 +377,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks:
-          executionArgs.shouldBypassPermissionChecks,
+        rolePermissionConfig: executionArgs.rolePermissionConfig,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

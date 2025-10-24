@@ -15,7 +15,6 @@ import { ServerlessFunctionExecutionResult } from '@/serverless-functions/compon
 import { INDEX_FILE_NAME } from '@/serverless-functions/constants/IndexFileName';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
-import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -39,7 +38,9 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
+import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
@@ -47,6 +48,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { buildOutputSchemaFromValue } from 'twenty-shared/workflow';
 import { IconCode, IconPlayerPlay, useIcons } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -134,7 +136,7 @@ export const WorkflowEditActionServerlessFunction = ({
     if (actionOptions.readonly === true) {
       return;
     }
-    const newOutputSchema = getFunctionOutputSchema(testResult);
+    const newOutputSchema = buildOutputSchemaFromValue(testResult);
     updateAction({
       ...action,
       settings: { ...action.settings, outputSchema: newOutputSchema },
@@ -158,15 +160,16 @@ export const WorkflowEditActionServerlessFunction = ({
     if (actionOptions.readonly === true) {
       return;
     }
-    setFormValues((prevState) => ({
-      ...prevState,
-      code: {
-        ...prevState.code,
-        [SOURCE_FOLDER_NAME]: {
-          [INDEX_FILE_NAME]: newCode,
-        },
-      },
-    }));
+    setFormValues((prevState) => {
+      return {
+        ...prevState,
+        code: computeNewSources({
+          previousCode: prevState['code'],
+          filePath: `${SOURCE_FOLDER_NAME}/${INDEX_FILE_NAME}`,
+          value: newCode,
+        }),
+      };
+    });
     await handleSave();
     await handleUpdateFunctionInputSchema(newCode);
   };
@@ -324,7 +327,7 @@ export const WorkflowEditActionServerlessFunction = ({
 
   const headerTitle = isDefined(action.name)
     ? action.name
-    : 'Code - Serverless Function';
+    : CODE_ACTION.defaultLabel;
   const headerIcon = getActionIcon(action.type);
   const headerIconColor = useActionIconColorOrThrow(action.type);
   const headerType = useActionHeaderTypeOrThrow(action.type);
@@ -376,6 +379,12 @@ export const WorkflowEditActionServerlessFunction = ({
     setIsFullScreen(false);
   };
 
+  const indexFileContent =
+    typeof formValues.code?.[SOURCE_FOLDER_NAME] !== 'string' &&
+    typeof formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME] === 'string'
+      ? formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME]
+      : '';
+
   const fullScreenOverlay = renderFullScreenModal(
     <div data-globally-prevent-click-outside="true">
       <WorkflowEditActionServerlessFunctionFields
@@ -387,7 +396,7 @@ export const WorkflowEditActionServerlessFunction = ({
       <StyledFullScreenCodeEditorContainer>
         <CodeEditor
           height="100%"
-          value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
+          value={indexFileContent}
           language="typescript"
           onChange={handleCodeChange}
           onMount={handleEditorDidMount}
@@ -423,6 +432,7 @@ export const WorkflowEditActionServerlessFunction = ({
           initialTitle={headerTitle}
           headerType={headerType}
           disabled={actionOptions.readonly}
+          iconTooltip={CODE_ACTION.defaultLabel}
         />
         <WorkflowStepBody>
           {activeTabId === WorkflowServerlessFunctionTabId.CODE && (
@@ -434,7 +444,7 @@ export const WorkflowEditActionServerlessFunction = ({
                 readonly={actionOptions.readonly}
               />
               <WorkflowServerlessFunctionCodeEditor
-                value={formValues.code?.[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME]}
+                value={indexFileContent}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
                 options={{
@@ -480,7 +490,7 @@ export const WorkflowEditActionServerlessFunction = ({
           )}
         </WorkflowStepBody>
         {!actionOptions.readonly && (
-          <WorkflowActionFooter
+          <WorkflowStepFooter
             stepId={action.id}
             additionalActions={
               activeTabId === WorkflowServerlessFunctionTabId.TEST

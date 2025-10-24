@@ -9,7 +9,9 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
@@ -30,6 +32,9 @@ type RestoreManyRecordsProps = {
 export const useRestoreManyRecords = ({
   objectNameSingular,
 }: useRestoreManyRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+
   const apiConfig = useRecoilValue(apiConfigState);
 
   const mutationPageSize =
@@ -119,6 +124,8 @@ export const useRestoreManyRecords = ({
               currentRecord: cachedRecordWithConnection,
               updatedRecord: optimisticRecordWithConnection,
               objectMetadataItems,
+              objectPermissionsByObjectMetadataId,
+              upsertRecordsInStore,
             });
           }
         });
@@ -179,6 +186,8 @@ export const useRestoreManyRecords = ({
                 currentRecord: optimisticRecordWithConnection,
                 updatedRecord: cachedRecordWithConnection,
                 objectMetadataItems,
+                objectPermissionsByObjectMetadataId,
+                upsertRecordsInStore,
               });
             }
           });
@@ -190,6 +199,10 @@ export const useRestoreManyRecords = ({
         restoredRecordsResponse.data?.[mutationResponseField] ?? [];
 
       restoredRecords.push(...restoredRecordsForThisBatch);
+
+      registerObjectOperation(objectMetadataItem.nameSingular, {
+        type: 'restore-many',
+      });
 
       if (isDefined(delayInMsBetweenRequests)) {
         await sleep(delayInMsBetweenRequests);

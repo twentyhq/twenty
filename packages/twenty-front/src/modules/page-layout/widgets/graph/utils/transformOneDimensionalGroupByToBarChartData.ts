@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
+import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -19,6 +20,7 @@ type TransformOneDimensionalGroupByToBarChartDataParams = {
   configuration: BarChartConfiguration;
   aggregateOperation: string;
   objectMetadataItem: ObjectMetadataItem;
+  primaryAxisSubFieldName?: string | null;
 };
 
 type TransformOneDimensionalGroupByToBarChartDataResult = {
@@ -26,6 +28,7 @@ type TransformOneDimensionalGroupByToBarChartDataResult = {
   indexBy: string;
   keys: string[];
   series: BarChartSeries[];
+  hasTooManyGroups: boolean;
 };
 
 export const transformOneDimensionalGroupByToBarChartData = ({
@@ -35,19 +38,25 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   configuration,
   aggregateOperation,
   objectMetadataItem,
+  primaryAxisSubFieldName,
 }: TransformOneDimensionalGroupByToBarChartDataParams): TransformOneDimensionalGroupByToBarChartDataResult => {
   const indexByKey = getFieldKey({
     field: groupByFieldX,
-    subFieldName: configuration.groupBySubFieldNameX,
+    subFieldName: primaryAxisSubFieldName ?? undefined,
   });
 
-  const data: BarChartDataItem[] = rawResults.map((result) => {
+  // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
+  const limitedResults = rawResults.slice(0, GRAPH_MAXIMUM_NUMBER_OF_GROUPS);
+
+  const data: BarChartDataItem[] = limitedResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
 
     const xValue = isDefined(dimensionValues?.[0])
       ? formatDimensionValue({
           value: dimensionValues[0],
           fieldMetadata: groupByFieldX,
+          subFieldName:
+            configuration.primaryAxisGroupBySubFieldName ?? undefined,
         })
       : '';
 
@@ -79,5 +88,6 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     indexBy: indexByKey,
     keys: [aggregateField.name],
     series,
+    hasTooManyGroups: rawResults.length > GRAPH_MAXIMUM_NUMBER_OF_GROUPS,
   };
 };

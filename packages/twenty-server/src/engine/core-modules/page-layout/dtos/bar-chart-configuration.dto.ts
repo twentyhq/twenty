@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   IsBoolean,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -14,58 +15,59 @@ import { GraphQLJSON } from 'graphql-type-json';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { ExtendedAggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/extended-aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
+import { BarChartGroupMode } from 'src/engine/core-modules/page-layout/enums/bar-chart-group-mode.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
 @ObjectType('BarChartConfiguration')
 export class BarChartConfigurationDTO {
   @Field(() => GraphType)
-  @IsEnum(GraphType)
+  @IsIn([GraphType.VERTICAL_BAR, GraphType.HORIZONTAL_BAR])
   @IsNotEmpty()
-  graphType: GraphType.BAR;
+  graphType: GraphType.VERTICAL_BAR | GraphType.HORIZONTAL_BAR;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
   aggregateFieldMetadataId: string;
 
-  @Field(() => ExtendedAggregateOperations)
-  @IsEnum(ExtendedAggregateOperations)
+  @Field(() => AggregateOperations)
+  @IsEnum(AggregateOperations)
   @IsNotEmpty()
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  groupByFieldMetadataIdX: string;
+  primaryAxisGroupByFieldMetadataId: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  groupBySubFieldNameX?: string;
+  primaryAxisGroupBySubFieldName?: string;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
   @IsOptional()
-  orderByX?: GraphOrderBy;
+  primaryAxisOrderBy?: GraphOrderBy;
 
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
-  groupByFieldMetadataIdY?: string;
+  secondaryAxisGroupByFieldMetadataId?: string;
 
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  groupBySubFieldNameY?: string;
+  secondaryAxisGroupBySubFieldName?: string;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
   @IsOptional()
-  orderByY?: GraphOrderBy;
+  secondaryAxisOrderBy?: GraphOrderBy;
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
@@ -109,4 +111,12 @@ export class BarChartConfigurationDTO {
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => BarChartGroupMode, {
+    nullable: true,
+    defaultValue: BarChartGroupMode.STACKED,
+  })
+  @IsEnum(BarChartGroupMode)
+  @IsOptional()
+  groupMode?: BarChartGroupMode;
 }

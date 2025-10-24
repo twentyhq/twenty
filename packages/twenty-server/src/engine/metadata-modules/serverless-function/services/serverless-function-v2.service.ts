@@ -2,12 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/get-sub-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import type { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
@@ -19,7 +17,6 @@ import { fromCreateServerlessFunctionInputToFlatServerlessFunction } from 'src/e
 import { fromUpdateServerlessFunctionInputToFlatServerlessFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
-import type { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 
 @Injectable()
 export class ServerlessFunctionV2Service {
@@ -54,24 +51,20 @@ export class ServerlessFunctionV2Service {
         workspaceId,
       });
 
-    const toFlatServerlessFunctionMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: flatServerlessFunctionToCreate,
-      flatEntityMaps: existingFlatServerlessFunctionMaps,
-    });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: {
-              from: existingFlatServerlessFunctionMaps,
-              to: toFlatServerlessFunctionMaps,
-            },
+            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatServerlessFunctionMaps,
+              flatEntityToCreate: [flatServerlessFunctionToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -120,29 +113,20 @@ export class ServerlessFunctionV2Service {
         updateServerlessFunctionInput: serverlessFunctionInput,
       });
 
-    const fromFlatServerlessFunctionMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [optimisticallyUpdatedFlatServerlessFunction.id],
-      flatEntityMaps: existingFlatServerlessFunctionMaps,
-    });
-    const toFlatServerlessFunctionMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: optimisticallyUpdatedFlatServerlessFunction,
-        flatEntityMaps: fromFlatServerlessFunctionMaps,
-      });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           workspaceId,
           fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: {
-              from: existingFlatServerlessFunctionMaps,
-              to: toFlatServerlessFunctionMaps,
-            },
+            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatServerlessFunctionMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [optimisticallyUpdatedFlatServerlessFunction],
+            }),
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
         },
       );
@@ -202,23 +186,20 @@ export class ServerlessFunctionV2Service {
       deletedAt: new Date(),
     };
 
-    const toFlatServerlessFunctionMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: optimisticallyUpdatedFlatServerlessFunctionWithDeletedAt,
-        flatEntityMaps: existingFlatServerlessFunctionMaps,
-      });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: {
-              from: existingFlatServerlessFunctionMaps,
-              to: toFlatServerlessFunctionMaps,
-            },
+            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatServerlessFunctionMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [
+                optimisticallyUpdatedFlatServerlessFunctionWithDeletedAt,
+              ],
+            }),
           },
           buildOptions: {
-            inferDeletionFromMissingEntities: false,
             isSystemBuild,
           },
           workspaceId,
@@ -277,28 +258,22 @@ export class ServerlessFunctionV2Service {
       );
     }
 
-    const fromFlatServerlessFunctionMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: [existingFlatServerlessFunction.id],
-      flatEntityMaps: existingFlatServerlessFunctionMaps,
-    });
-    const toFlatServerlessFunctionMaps =
-      deleteFlatEntityFromFlatEntityMapsOrThrow({
-        flatEntityMaps: fromFlatServerlessFunctionMaps,
-        entityToDeleteId: existingFlatServerlessFunction.id,
-      });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatServerlessFunctionMaps: {
-              from: fromFlatServerlessFunctionMaps,
-              to: toFlatServerlessFunctionMaps,
-            },
+            flatServerlessFunctionMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatServerlessFunctionMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [existingFlatServerlessFunction],
+              flatEntityToUpdate: [],
+            }),
           },
           buildOptions: {
             isSystemBuild,
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              serverlessFunction: true,
+            },
           },
           workspaceId,
         },

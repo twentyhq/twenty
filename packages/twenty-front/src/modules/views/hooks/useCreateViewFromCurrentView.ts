@@ -194,10 +194,14 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             fieldMetadataId: kanbanFieldMetadataId,
           } satisfies ViewGroup);
 
-          await createViewGroupRecords({
-            viewGroupsToCreate,
-            viewId: newViewId,
-          });
+          await createViewGroupRecords(
+            viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
+              input: {
+                ...viewGroup,
+                viewId: newViewId,
+              },
+            })),
+          );
         }
 
         if (shouldCopyFiltersAndSortsAndAggregate === true) {
@@ -231,7 +235,21 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           await createViewFilterGroupRecords(viewFilterGroupsToCreate, {
             id: newViewId,
           });
-          await createViewFilterRecords(viewFiltersToCreate, { id: newViewId });
+          const createViewFilterInputs = viewFiltersToCreate.map(
+            (viewFilter) => ({
+              input: {
+                id: viewFilter.id,
+                fieldMetadataId: viewFilter.fieldMetadataId,
+                viewId: newViewId,
+                value: viewFilter.value,
+                operand: viewFilter.operand,
+                viewFilterGroupId: viewFilter.viewFilterGroupId,
+                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+                subFieldName: viewFilter.subFieldName ?? null,
+              },
+            }),
+          );
+          await createViewFilterRecords(createViewFilterInputs);
           await createViewSortRecords(viewSortsToCreate, { id: newViewId });
         }
 

@@ -5,12 +5,12 @@ import {
 } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { type MutableSnapshot } from 'recoil';
 import { MemoryRouter } from 'react-router-dom';
+import { type MutableSnapshot } from 'recoil';
 
+import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
@@ -21,8 +21,8 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
+  AggregateOperations,
   AxisNameDisplay,
-  ExtendedAggregateOperations,
   type PageLayoutWidget,
 } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -169,9 +169,9 @@ export const WithNumberChart: Story = {
         columnSpan: 3,
       },
       configuration: {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
@@ -206,7 +206,7 @@ export const WithGaugeChart: Story = {
       configuration: {
         __typename: 'GaugeChartConfiguration',
         graphType: GraphType.GAUGE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: false,
       },
@@ -240,11 +240,11 @@ export const WithBarChart: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        graphType: GraphType.VERTICAL_BAR,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
-        groupByFieldMetadataIdX: createdAtField.id,
-        orderByX: GraphOrderBy.FIELD_ASC,
+        primaryAxisGroupByFieldMetadataId: createdAtField.id,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
@@ -277,9 +277,9 @@ export const SmallWidget: Story = {
         columnSpan: 2,
       },
       configuration: {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
@@ -320,11 +320,11 @@ export const MediumWidget: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        graphType: GraphType.VERTICAL_BAR,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
-        groupByFieldMetadataIdX: createdAtField.id,
-        orderByX: GraphOrderBy.FIELD_ASC,
+        primaryAxisGroupByFieldMetadataId: createdAtField.id,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
@@ -365,11 +365,11 @@ export const LargeWidget: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        graphType: GraphType.VERTICAL_BAR,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
-        groupByFieldMetadataIdX: createdAtField.id,
-        orderByX: GraphOrderBy.FIELD_ASC,
+        primaryAxisGroupByFieldMetadataId: createdAtField.id,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
@@ -409,9 +409,9 @@ export const WideWidget: Story = {
         columnSpan: 8,
       },
       configuration: {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
@@ -452,11 +452,11 @@ export const TallWidget: Story = {
       },
       configuration: {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        graphType: GraphType.VERTICAL_BAR,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
-        groupByFieldMetadataIdX: createdAtField.id,
-        orderByX: GraphOrderBy.FIELD_ASC,
+        primaryAxisGroupByFieldMetadataId: createdAtField.id,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },

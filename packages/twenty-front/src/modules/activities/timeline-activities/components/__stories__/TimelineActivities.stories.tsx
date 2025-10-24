@@ -1,34 +1,42 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { HttpResponse, graphql } from 'msw';
 
-import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
+import { TimelineCard } from '@/activities/timeline-activities/components/TimelineCard';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { PageLayoutType } from '~/generated/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { mockedTimelineActivities } from '~/testing/mock-data/timeline-activities';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
-const meta: Meta<typeof TimelineActivities> = {
-  title: 'Modules/TimelineActivities/TimelineActivities',
-  component: TimelineActivities,
+const meta: Meta<typeof TimelineCard> = {
+  title: 'Modules/TimelineActivities/TimelineCard',
+  component: TimelineCard,
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     (Story) => {
       return (
-        <TimelineActivityContext.Provider value={{ recordId: 'mock-id' }}>
-          <Story />
-        </TimelineActivityContext.Provider>
+        <LayoutRenderingProvider
+          value={{
+            targetRecordIdentifier: {
+              id: '1',
+              targetObjectNameSingular: CoreObjectNameSingular.Company,
+            },
+            layoutType: PageLayoutType.RECORD_PAGE,
+            isInRightDrawer: false,
+          }}
+        >
+          <TimelineActivityContext.Provider value={{ recordId: 'mock-id' }}>
+            <Story />
+          </TimelineActivityContext.Provider>
+        </LayoutRenderingProvider>
       );
     },
   ],
-  args: {
-    targetableObject: {
-      id: '1',
-      targetObjectNameSingular: 'company',
-    },
-  },
   parameters: {
     msw: {
       handlers: [
@@ -71,6 +79,6 @@ const meta: Meta<typeof TimelineActivities> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof TimelineActivities>;
+type Story = StoryObj<typeof TimelineCard>;
 
 export const Default: Story = {};

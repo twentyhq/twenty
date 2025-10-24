@@ -3,17 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { isString } from '@sniptt/guards';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
+  BaseOutputSchemaV2,
   BulkRecordsAvailability,
   extractRawVariableNamePart,
   GlobalAvailability,
+  navigateOutputSchemaProperty,
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
@@ -22,10 +22,12 @@ import {
   Node,
   type OutputSchema,
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { extractPropertyPathFromVariable } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/extract-property-path-from-variable';
 import { generateFakeArrayItem } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-array-item';
 import { generateFakeFormResponse } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-response';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
+import { inferArrayItemSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/infer-array-item-schema';
 import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import {
   type WorkflowAction,
@@ -40,7 +42,6 @@ import {
 export class WorkflowSchemaWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async computeStepOutputSchema({
@@ -62,25 +63,11 @@ export class WorkflowSchemaWorkspaceService {
         });
       }
       case WorkflowTriggerType.MANUAL: {
-        const isIteratorEnabled =
-          await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
-            workspaceId,
-          );
+        const { availability } = step.settings;
 
-        const { objectType, availability } = step.settings;
-
-        if (isDefined(availability) && isIteratorEnabled) {
+        if (isDefined(availability)) {
           return this.computeTriggerOutputSchemaFromAvailability({
             availability,
-            workspaceId,
-          });
-        }
-
-        // TODO: to be deprecated once all triggers are migrated to the new availability type
-        if (isDefined(objectType)) {
-          return this.computeRecordOutputSchema({
-            objectType,
             workspaceId,
           });
         }
@@ -97,6 +84,7 @@ export class WorkflowSchemaWorkspaceService {
       case WorkflowActionType.CREATE_RECORD:
       case WorkflowActionType.UPDATE_RECORD:
       case WorkflowActionType.DELETE_RECORD:
+      case WorkflowActionType.UPSERT_RECORD:
         return this.computeRecordOutputSchema({
           objectType: step.settings.input.objectName,
           workspaceId,
@@ -413,7 +401,19 @@ export class WorkflowSchemaWorkspaceService {
 
           return DEFAULT_ITERATOR_CURRENT_ITEM;
         }
-        // TODO(t.trompette): handle other trigger types
+        case WorkflowTriggerType.WEBHOOK: {
+          const propertyPath = extractPropertyPathFromVariable(items);
+          const schemaNode = navigateOutputSchemaProperty({
+            schema: trigger.settings.outputSchema as BaseOutputSchemaV2,
+            propertyPath,
+          });
+
+          if (!isDefined(schemaNode)) {
+            return DEFAULT_ITERATOR_CURRENT_ITEM;
+          }
+
+          return inferArrayItemSchema({ schemaNode });
+        }
         default: {
           return DEFAULT_ITERATOR_CURRENT_ITEM;
         }
@@ -446,6 +446,20 @@ export class WorkflowSchemaWorkspaceService {
             workspaceId,
           }),
         };
+      }
+      case WorkflowActionType.CODE:
+      case WorkflowActionType.HTTP_REQUEST: {
+        const propertyPath = extractPropertyPathFromVariable(items);
+        const schemaNode = navigateOutputSchemaProperty({
+          schema: step.settings.outputSchema as BaseOutputSchemaV2,
+          propertyPath,
+        });
+
+        if (!isDefined(schemaNode)) {
+          return DEFAULT_ITERATOR_CURRENT_ITEM;
+        }
+
+        return inferArrayItemSchema({ schemaNode });
       }
       default: {
         return DEFAULT_ITERATOR_CURRENT_ITEM;

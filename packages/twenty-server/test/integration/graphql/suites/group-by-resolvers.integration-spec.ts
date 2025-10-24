@@ -3,12 +3,13 @@ import { randomUUID } from 'crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { createViewFilterGroupOperationFactory } from 'test/integration/graphql/utils/create-view-filter-group-operation-factory.util';
-import { createViewFilterOperationFactory } from 'test/integration/graphql/utils/create-view-filter-operation-factory.util';
-import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { createOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-core-view-filter.util';
+import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -102,6 +103,72 @@ describe('group-by resolvers (integration)', () => {
 
       expect(groupWithCityB.groupByDimensionValues).toEqual([cityB]);
       expect(groupWithCityB.totalCount).toEqual(2);
+    });
+
+    it('computes aggregated metrics on date time field', async () => {
+      const cityA = 'City A';
+      const cityB = 'City B';
+
+      const person1 = (
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            data: { id: testPersonId, city: cityA },
+          }),
+        )
+      ).body.data.createPerson;
+
+      const person2 = (
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: PERSON_GQL_FIELDS,
+            data: { id: testPerson2Id, city: cityB },
+          }),
+        )
+      ).body.data.createPerson;
+
+      await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'person',
+          gqlFields: PERSON_GQL_FIELDS,
+          data: { id: testPerson3Id, city: cityB },
+        }),
+      );
+
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ city: true }],
+          gqlFields: 'minCreatedAt',
+        }),
+      );
+
+      const groups = response.body.data.peopleGroupBy;
+
+      expect(groups).toBeDefined();
+      expect(groups).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ groupByDimensionValues: [cityA] }),
+          expect.objectContaining({ groupByDimensionValues: [cityB] }),
+        ]),
+      );
+
+      const groupWithCityA = groups.find(
+        (group: any) => group.groupByDimensionValues[0] === cityA,
+      );
+
+      expect(groupWithCityA.groupByDimensionValues).toEqual([cityA]);
+      expect(groupWithCityA.minCreatedAt).toEqual(person1.createdAt);
+
+      const groupWithCityB = groups.find(
+        (group: any) => group.groupByDimensionValues[0] === cityB,
+      );
+
+      expect(groupWithCityB.groupByDimensionValues).toEqual([cityB]);
+      expect(groupWithCityB.minCreatedAt).toEqual(person2.createdAt);
     });
   });
 
@@ -417,17 +484,16 @@ describe('group-by resolvers (integration)', () => {
       );
 
       // create a view with a filter: city eq cityToKeep
-      const createViewResponse = await makeGraphqlAPIRequest(
-        createViewOperationFactory({
-          data: {
-            name: 'People View City Keep',
-            objectMetadataId: personObjectMetadataId,
-            icon: 'Icon123',
-          },
-        }),
-      );
+      const { data: createViewData } = await createOneCoreView({
+        input: {
+          name: 'People View City Keep',
+          objectMetadataId: personObjectMetadataId,
+          icon: 'Icon123',
+        },
+        expectToFail: false,
+      });
 
-      viewId = createViewResponse.body.data.createCoreView.id as string;
+      viewId = createViewData.createCoreView.id;
 
       // create a filter group and a filter for the view
       const viewFilterGroupResponse = await makeGraphqlAPIRequest(
@@ -443,18 +509,18 @@ describe('group-by resolvers (integration)', () => {
       const viewFilterGroupId = viewFilterGroupResponse.body.data
         .createCoreViewFilterGroup.id as string;
 
-      await makeGraphqlAPIRequest(
-        createViewFilterOperationFactory({
-          data: {
-            viewId,
-            viewFilterGroupId,
-            fieldMetadataId: cityFieldMetadataId,
-            operand: ViewFilterOperand.CONTAINS,
-            value: cityToKeep,
-            positionInViewFilterGroup: 0,
-          },
-        }),
-      );
+      jestExpectToBeDefined(cityFieldMetadataId);
+      await createOneCoreViewFilter({
+        input: {
+          viewId,
+          viewFilterGroupId,
+          fieldMetadataId: cityFieldMetadataId,
+          operand: ViewFilterOperand.CONTAINS,
+          value: cityToKeep,
+          positionInViewFilterGroup: 0,
+        },
+        expectToFail: false,
+      });
 
       const response = await makeGraphqlAPIRequest(
         groupByOperationFactory({
@@ -508,18 +574,17 @@ describe('group-by resolvers (integration)', () => {
       );
 
       // create a view with any field filter
-      const createViewResponse = await makeGraphqlAPIRequest(
-        createViewOperationFactory({
-          data: {
-            name: 'People View City Keep',
-            objectMetadataId: personObjectMetadataId,
-            icon: 'Icon123',
-            anyFieldFilterValue: cityA,
-          },
-        }),
-      );
+      const { data: createViewData } = await createOneCoreView({
+        input: {
+          name: 'People View City Keep',
+          objectMetadataId: personObjectMetadataId,
+          icon: 'Icon123',
+          anyFieldFilterValue: cityA,
+        },
+        expectToFail: false,
+      });
 
-      viewId = createViewResponse.body.data.createCoreView.id as string;
+      viewId = createViewData.createCoreView.id;
 
       const response = await makeGraphqlAPIRequest(
         groupByOperationFactory({

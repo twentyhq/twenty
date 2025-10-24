@@ -2,8 +2,8 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChartRenderer';
 import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer';
-import { GraphWidgetNumberChart } from '@/page-layout/widgets/graph/graphWidgetNumberChart/components/GraphWidgetNumberChart';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
@@ -63,13 +63,8 @@ export const GraphWidget = ({
   }
 
   switch (graphType) {
-    case GraphType.NUMBER:
-      return (
-        <GraphWidgetNumberChart
-          value={data.value}
-          trendPercentage={data.trendPercentage}
-        />
-      );
+    case GraphType.AGGREGATE:
+      return <GraphWidgetAggregateChartRenderer widget={widget} />;
 
     case GraphType.GAUGE:
       return (
@@ -100,7 +95,8 @@ export const GraphWidget = ({
         </Suspense>
       );
 
-    case GraphType.BAR:
+    case GraphType.VERTICAL_BAR:
+    case GraphType.HORIZONTAL_BAR:
       return <GraphWidgetBarChartRenderer widget={widget} />;
 
     case GraphType.LINE:

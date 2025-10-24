@@ -1,29 +1,41 @@
-import { InternalServerErrorException } from '@nestjs/common';
-
-import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize } from 'twenty-shared/utils';
-
+import { isObject } from 'class-validator';
 import {
-  type ObjectRecordOrderBy,
+  type AggregateOrderByWithGroupByField,
+  FieldMetadataType,
+  ObjectRecordGroupByDateGranularity,
+  type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForScalarField,
+  type ObjectRecordOrderByWithGroupByDateField,
   OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+  type OrderByWithGroupBy,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
+import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
+import {
+  type GroupByDateField,
+  type GroupByField,
+} from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
+import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   type AggregationField,
   getAvailableAggregationsFromObjectFields,
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
-type OrderByCondition = {
+export type OrderByCondition = {
   order: 'ASC' | 'DESC';
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
@@ -39,16 +51,7 @@ export class GraphqlQueryOrderFieldParser {
     orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
-    isGroupBy = false,
   ): Record<string, OrderByCondition> {
-    if (isGroupBy) {
-      return this.parseForGroupBy(
-        orderBy,
-        objectNameSingular,
-        isForwardPagination,
-      );
-    }
-
     return orderBy.reduce(
       (acc, item) => {
         Object.entries(item).forEach(([key, value]) => {
@@ -64,7 +67,7 @@ export class GraphqlQueryOrderFieldParser {
           }
 
           if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-            const compositeOrder = this.parseCompositeFieldForOrder(
+            const compositeOrder = parseCompositeFieldForOrder(
               fieldMetadata,
               value,
               objectNameSingular,
@@ -77,7 +80,7 @@ export class GraphqlQueryOrderFieldParser {
               this.getOptionalOrderByCasting(fieldMetadata);
 
             acc[`"${objectNameSingular}"."${key}"${orderByCasting}`] =
-              this.convertOrderByToFindOptionsOrder(
+              convertOrderByToFindOptionsOrder(
                 value as OrderByDirection,
                 isForwardPagination,
               );
@@ -90,51 +93,104 @@ export class GraphqlQueryOrderFieldParser {
     );
   }
 
-  private parseForGroupBy(
-    orderBy: ObjectRecordOrderBy,
-    objectNameSingular: string,
-    isForwardPagination = true,
-  ): Record<string, OrderByCondition> {
+  parseForGroupBy({
+    orderBy,
+    groupByFields,
+  }: {
+    orderBy: OrderByWithGroupBy;
+    groupByFields: GroupByField[];
+  }): Record<string, OrderByCondition>[] {
+    let parsedOrderBy: Record<string, OrderByCondition>[] = [];
+
     const availableAggregations: Record<string, AggregationField> =
       getAvailableAggregationsFromObjectFields(
         Object.values(this.objectMetadataMapItem.fieldsById),
       );
 
-    let orderByExpressionsAndConditions: Record<string, OrderByCondition> = {};
-
-    for (const orderByCondition of orderBy) {
-      for (const [aggregatedOrderByCondition, direction] of Object.entries(
-        orderByCondition,
-      )) {
-        const selectedAggregation =
-          availableAggregations[aggregatedOrderByCondition];
-
-        if (!selectedAggregation) {
-          throw new InternalServerErrorException(
-            `Selected aggregation not found for ${aggregatedOrderByCondition}`,
-          );
-        }
-
-        const expression = ProcessAggregateHelper.getAggregateExpression(
-          selectedAggregation,
-          objectNameSingular,
+    for (const orderByArg of orderBy) {
+      if (this.isAggregateOrderByArg(orderByArg)) {
+        const parsedAggregateOrderBy = this.parseAggregateOrderByArg(
+          availableAggregations,
+          orderByArg,
+          this.objectMetadataMapItem,
         );
 
-        if (!expression) {
-          throw new InternalServerErrorException(
-            `Aggregate expression not found for ${aggregatedOrderByCondition}`,
-          );
+        parsedOrderBy.push(parsedAggregateOrderBy);
+        continue;
+      }
+
+      const fieldName = Object.keys(orderByArg)[0];
+      const fieldMetadataId =
+        this.objectMetadataMapItem.fieldIdByName[fieldName];
+      const fieldMetadata =
+        this.objectMetadataMapItem.fieldsById[fieldMetadataId];
+
+      if (!isDefined(fieldMetadata)) {
+        throw new UserInputError(`Cannot orderBy unknown field: ${fieldName}.`);
+      }
+
+      if (this.isObjectRecordOrderByForScalarField(orderByArg)) {
+        const parsedOrderByForScalarField =
+          this.parseObjectRecordOrderByForScalarField({
+            groupByFields,
+            orderByArg,
+            objectMetadataItemWithFieldMaps: this.objectMetadataMapItem,
+            fieldMetadata,
+          });
+
+        if (!isDefined(parsedOrderByForScalarField)) {
+          continue;
         }
 
-        orderByExpressionsAndConditions[expression] =
-          this.convertOrderByToFindOptionsOrder(direction, isForwardPagination);
+        parsedOrderBy.push(parsedOrderByForScalarField);
+        continue;
       }
+
+      if (
+        this.isObjectRecordOrderByWithGroupByDateField(
+          orderByArg,
+          fieldMetadata.type,
+        )
+      ) {
+        const parsedOrderByForGroupByDateField =
+          this.parseObjectRecordOrderByWithGroupByDateField({
+            groupByFields,
+            orderByArg,
+            fieldMetadataId,
+          });
+
+        if (!isDefined(parsedOrderByForGroupByDateField)) {
+          continue;
+        }
+
+        parsedOrderBy.push(parsedOrderByForGroupByDateField);
+        continue;
+      }
+
+      if (this.isObjectRecordOrderByForCompositeField(orderByArg)) {
+        const parsedOrderByForCompositeField =
+          this.parseObjectRecordOrderByForCompositeField({
+            groupByFields,
+            orderByArg,
+            objectMetadataItemWithFieldMaps: this.objectMetadataMapItem,
+            fieldMetadata,
+          });
+
+        if (!isDefined(parsedOrderByForCompositeField)) {
+          continue;
+        }
+
+        parsedOrderBy.push(parsedOrderByForCompositeField);
+        continue;
+      }
+
+      throw new UserInputError(`Unknown orderBy value: ${orderByArg}`);
     }
 
-    return orderByExpressionsAndConditions;
+    return parsedOrderBy;
   }
 
-  private getOptionalOrderByCasting(
+  getOptionalOrderByCasting(
     fieldMetadata: Pick<FieldMetadataEntity, 'type'>,
   ): string {
     if (
@@ -147,87 +203,299 @@ export class GraphqlQueryOrderFieldParser {
     return '';
   }
 
-  private parseCompositeFieldForOrder(
-    fieldMetadata: FieldMetadataEntity,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    value: any,
-    objectNameSingular: string,
-    isForwardPagination = true,
-  ): Record<string, OrderByCondition> {
-    const compositeType = compositeTypeDefinitions.get(
-      fieldMetadata.type as CompositeFieldMetadataType,
-    );
+  isAggregateOrderByArg = (
+    orderByArg:
+      | ObjectRecordOrderByForScalarField
+      | ObjectRecordOrderByForCompositeField
+      | AggregateOrderByWithGroupByField
+      | ObjectRecordOrderByWithGroupByDateField,
+  ): orderByArg is AggregateOrderByWithGroupByField => {
+    return isDefined(orderByArg.aggregate);
+  };
 
-    if (!compositeType) {
-      throw new Error(
-        `Composite type definition not found for type: ${fieldMetadata.type}`,
+  isObjectRecordOrderByForScalarField = (
+    orderByArg:
+      | ObjectRecordOrderByForScalarField
+      | ObjectRecordOrderByForCompositeField
+      | ObjectRecordOrderByWithGroupByDateField,
+  ): orderByArg is ObjectRecordOrderByForScalarField => {
+    if (Object.keys(orderByArg).length > 1) {
+      throw new UserInputError(
+        'Please provide orderBy field criteria one by one in orderBy array',
       );
     }
 
-    return Object.entries(value).reduce(
-      (acc, [subFieldKey, subFieldValue]) => {
-        const subFieldMetadata = compositeType.properties.find(
-          (property) => property.name === subFieldKey,
-        );
+    const scalarFieldOrCompositeFieldOrderByValue =
+      Object.values(orderByArg)[0];
 
-        if (!subFieldMetadata) {
-          throw new Error(
-            `Sub field metadata not found for composite type: ${fieldMetadata.type}`,
-          );
-        }
-
-        const fullFieldName = `"${objectNameSingular}"."${fieldMetadata.name}${capitalize(subFieldKey)}"`;
-
-        if (!this.isOrderByDirection(subFieldValue)) {
-          throw new Error(
-            `Sub field order by value must be of type OrderByDirection, but got: ${subFieldValue}`,
-          );
-        }
-        acc[fullFieldName] = this.convertOrderByToFindOptionsOrder(
-          subFieldValue,
-          isForwardPagination,
-        );
-
-        return acc;
-      },
-      {} as Record<string, OrderByCondition>,
-    );
-  }
-
-  private convertOrderByToFindOptionsOrder(
-    direction: OrderByDirection,
-    isForwardPagination = true,
-  ): OrderByCondition {
-    switch (direction) {
-      case OrderByDirection.AscNullsFirst:
-        return {
-          order: isForwardPagination ? 'ASC' : 'DESC',
-          nulls: 'NULLS FIRST',
-        };
-      case OrderByDirection.AscNullsLast:
-        return {
-          order: isForwardPagination ? 'ASC' : 'DESC',
-          nulls: 'NULLS LAST',
-        };
-      case OrderByDirection.DescNullsFirst:
-        return {
-          order: isForwardPagination ? 'DESC' : 'ASC',
-          nulls: 'NULLS FIRST',
-        };
-      case OrderByDirection.DescNullsLast:
-        return {
-          order: isForwardPagination ? 'DESC' : 'ASC',
-          nulls: 'NULLS LAST',
-        };
-      default:
-        throw new GraphqlQueryRunnerException(
-          `Invalid direction: ${direction}`,
-          GraphqlQueryRunnerExceptionCode.INVALID_DIRECTION,
-        );
+    if (
+      Object.values(OrderByDirection).includes(
+        scalarFieldOrCompositeFieldOrderByValue,
+      )
+    ) {
+      return true;
     }
-  }
 
-  private isOrderByDirection(value: unknown): value is OrderByDirection {
-    return Object.values(OrderByDirection).includes(value as OrderByDirection);
-  }
+    return false;
+  };
+
+  isObjectRecordOrderByForCompositeField = (
+    orderByArg:
+      | ObjectRecordOrderByForScalarField
+      | ObjectRecordOrderByForCompositeField
+      | ObjectRecordOrderByWithGroupByDateField,
+  ): orderByArg is ObjectRecordOrderByForCompositeField => {
+    const compositeFieldOrderByValue = Object.values(orderByArg)[0];
+
+    if (!isObject(compositeFieldOrderByValue)) {
+      throw new UserInputError(
+        `Unknown orderBy value: ${compositeFieldOrderByValue}`,
+      );
+    }
+
+    if (Object.values(compositeFieldOrderByValue).length > 1) {
+      throw new UserInputError(
+        'Please provide orderBy field criteria one by one in orderBy array',
+      );
+    }
+
+    const compositeFieldOrderByDirection = Object.values(
+      compositeFieldOrderByValue,
+    )[0];
+
+    if (
+      Object.values(OrderByDirection).includes(
+        compositeFieldOrderByDirection as OrderByDirection,
+      )
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
+  isObjectRecordOrderByWithGroupByDateField = (
+    orderByArg:
+      | ObjectRecordOrderByForScalarField
+      | ObjectRecordOrderByForCompositeField
+      | AggregateOrderByWithGroupByField
+      | ObjectRecordOrderByWithGroupByDateField,
+    fieldMetadataType: FieldMetadataType,
+  ): orderByArg is ObjectRecordOrderByWithGroupByDateField => {
+    if (
+      fieldMetadataType !== FieldMetadataType.DATE &&
+      fieldMetadataType !== FieldMetadataType.DATE_TIME
+    ) {
+      return false;
+    }
+
+    if (Object.keys(orderByArg).length > 1) {
+      throw new UserInputError(
+        'Please provide orderBy field criteria one by one in orderBy array',
+      );
+    }
+
+    const dateFieldOrderByValue = Object.values(orderByArg)[0];
+
+    if (!isDefined(dateFieldOrderByValue)) {
+      return false;
+    }
+
+    if (!isDefined(dateFieldOrderByValue.orderBy)) {
+      return false;
+    }
+
+    if (
+      !Object.values(OrderByDirection).includes(dateFieldOrderByValue.orderBy)
+    ) {
+      return false;
+    }
+
+    if (!isDefined(dateFieldOrderByValue.granularity)) {
+      return false;
+    }
+
+    if (
+      !Object.values(ObjectRecordGroupByDateGranularity).includes(
+        dateFieldOrderByValue.granularity,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+
+  parseAggregateOrderByArg = (
+    availableAggregations: Record<string, AggregationField>,
+    orderByArg: AggregateOrderByWithGroupByField,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  ): Record<string, OrderByCondition> => {
+    const aggregate = orderByArg.aggregate;
+
+    if (Object.keys(aggregate).length > 1) {
+      throw new UserInputError(
+        'Please provide aggregate criteria one by one in orderBy array',
+      );
+    }
+
+    const aggregateField = availableAggregations[Object.keys(aggregate)[0]];
+
+    if (!aggregateField) {
+      throw new UserInputError(
+        `Unknown aggregate field: ${Object.keys(aggregate)[0]}`,
+      );
+    }
+
+    const aggregateExpression = ProcessAggregateHelper.getAggregateExpression(
+      aggregateField,
+      objectMetadataItemWithFieldMaps.nameSingular,
+    );
+
+    if (!isDefined(aggregateExpression)) {
+      throw new UserInputError(
+        `Cannot find expression for aggregate field: ${Object.keys(aggregate)[0]}`,
+      );
+    }
+    const orderByDirection = Object.values(aggregate)[0];
+    const convertedDirection =
+      convertOrderByToFindOptionsOrder(orderByDirection);
+
+    return {
+      [aggregateExpression]: convertedDirection,
+    };
+  };
+
+  parseObjectRecordOrderByForScalarField = ({
+    groupByFields,
+    orderByArg,
+    objectMetadataItemWithFieldMaps,
+    fieldMetadata,
+  }: {
+    groupByFields: GroupByField[];
+    orderByArg: ObjectRecordOrderByForScalarField;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    fieldMetadata: FieldMetadataEntity;
+  }): Record<string, OrderByCondition> | null => {
+    const fieldIsInGroupBy = groupByFields.some(
+      (groupByField) => groupByField.fieldMetadata.id === fieldMetadata.id,
+    );
+
+    if (!fieldIsInGroupBy) {
+      throw new UserInputError(
+        `Cannot order by a field that is not an aggregate nor in groupBy criteria: ${fieldMetadata.name}.`,
+      );
+    }
+
+    const orderByCasting = this.getOptionalOrderByCasting(fieldMetadata);
+    const orderByDirection = Object.values(orderByArg)[0];
+
+    if (!isDefined(orderByDirection)) {
+      return null;
+    }
+
+    return {
+      [`"${objectMetadataItemWithFieldMaps.nameSingular}"."${fieldMetadata.name}"${orderByCasting}`]:
+        convertOrderByToFindOptionsOrder(orderByDirection),
+    };
+  };
+
+  parseObjectRecordOrderByForCompositeField = ({
+    groupByFields,
+    orderByArg,
+    objectMetadataItemWithFieldMaps,
+    fieldMetadata,
+  }: {
+    groupByFields: GroupByField[];
+    orderByArg: ObjectRecordOrderByForCompositeField;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    fieldMetadata: FieldMetadataEntity;
+  }): Record<string, OrderByCondition> | null => {
+    const fieldName = Object.keys(orderByArg)[0];
+    const orderBySubField = orderByArg[fieldName];
+
+    if (!isDefined(orderBySubField)) {
+      return null;
+    }
+
+    if (Object.keys(orderBySubField).length > 1) {
+      throw new UserInputError(
+        `Subfields must be provided one by one in orderBy array.`,
+      );
+    }
+
+    const subFieldName = Object.keys(orderBySubField)[0];
+
+    if (
+      !groupByFields.some(
+        (groupByField) =>
+          groupByField.fieldMetadata.id === fieldMetadata.id &&
+          groupByField.subFieldName === subFieldName,
+      )
+    ) {
+      throw new UserInputError(
+        `Cannot order by a field that is not in groupBy or that is not an aggregate field: ${subFieldName}`,
+      );
+    }
+
+    return parseCompositeFieldForOrder(
+      fieldMetadata,
+      orderBySubField,
+      objectMetadataItemWithFieldMaps.nameSingular,
+    );
+  };
+
+  parseObjectRecordOrderByWithGroupByDateField = ({
+    groupByFields,
+    orderByArg,
+    fieldMetadataId,
+  }: {
+    groupByFields: GroupByField[];
+    orderByArg: ObjectRecordOrderByWithGroupByDateField;
+    fieldMetadataId: string;
+  }): Record<string, OrderByCondition> | null => {
+    const orderByDirection = Object.values(orderByArg)[0]?.orderBy;
+
+    if (!isDefined(orderByDirection)) {
+      return null;
+    }
+
+    const granularity = Object.values(orderByArg)[0]?.granularity;
+
+    if (!isDefined(granularity)) {
+      throw new UserInputError(
+        `Missing date granularity for field ${Object.keys(orderByArg)[0]}`,
+      );
+    }
+
+    const associatedGroupByField = groupByFields.find(
+      (groupByField) =>
+        groupByField.fieldMetadata.id === fieldMetadataId &&
+        (groupByField as GroupByDateField).dateGranularity === granularity,
+    );
+
+    if (!isDefined(associatedGroupByField)) {
+      throw new UserInputError(
+        `Cannot order by a date granularity that is not in groupBy criteria: ${granularity}`,
+      );
+    }
+
+    const columnNameWithQuotes = `"${
+      formatColumnNamesFromCompositeFieldAndSubfields(
+        associatedGroupByField.fieldMetadata.name,
+        associatedGroupByField.subFieldName
+          ? [associatedGroupByField.subFieldName]
+          : undefined,
+      )[0]
+    }"`;
+
+    const expression = getGroupByExpression({
+      groupByField: associatedGroupByField,
+      columnNameWithQuotes,
+    });
+
+    return {
+      [expression]: convertOrderByToFindOptionsOrder(orderByDirection),
+    };
+  };
 }

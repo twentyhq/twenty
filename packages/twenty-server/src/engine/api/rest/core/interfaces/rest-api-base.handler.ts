@@ -1,21 +1,19 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 
-import { type Request } from 'express';
 import chunk from 'lodash.chunk';
 import isEmpty from 'lodash.isempty';
 import {
   FieldMetadataType,
+  ObjectRecord,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { In, type ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-import {
-  type ObjectRecord,
-  type ObjectRecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/core-query-builder.factory';
@@ -23,11 +21,9 @@ import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/fact
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest-to-common-args-handlers/selected-fields-handler';
 import { type QueryVariables } from 'src/engine/api/rest/core/types/query-variables.type';
-import {
-  DepthInputFactory,
-  MAX_DEPTH,
-  type Depth,
-} from 'src/engine/api/rest/input-factories/depth-input.factory';
+import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
+import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
+import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
@@ -93,8 +89,6 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly getVariablesFactory: GetVariablesFactory;
   @Inject()
-  protected readonly depthInputFactory: DepthInputFactory;
-  @Inject()
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   @Inject()
   protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
@@ -111,7 +105,9 @@ export abstract class RestApiBaseHandler {
 
   protected abstract handle(
     request: AuthenticatedRequest,
-  ): Promise<FormatResult | { data: FormatResult[] }>;
+  ): Promise<
+    FormatResult | { data: FormatResult[] } | CommonGroupByOutputItem[]
+  >;
 
   public async getRepositoryAndMetadataOrFail(request: AuthenticatedRequest) {
     const { workspace, apiKey, userWorkspaceId } = request;
@@ -182,8 +178,9 @@ export abstract class RestApiBaseHandler {
 
     const repository = workspaceDataSource.getRepository<ObjectRecord>(
       objectMetadataNameSingular,
-      false,
-      roleId,
+      {
+        unionOf: [roleId],
+      },
     );
 
     const objectMetadataPermissions =
@@ -392,7 +389,7 @@ export abstract class RestApiBaseHandler {
     extraFilters,
     restrictedFields,
   }: {
-    request: Request;
+    request: AuthenticatedRequest;
     recordId?: string;
     repository: WorkspaceRepository<ObjectLiteral>;
     objectMetadata: {
@@ -463,7 +460,7 @@ export abstract class RestApiBaseHandler {
       recordIds: recordIds.map((record) => record.id),
       repository,
       objectMetadata,
-      depth: this.depthInputFactory.create(request),
+      depth: parseDepthRestRequest(request),
       restrictedFields,
     });
 
@@ -596,7 +593,7 @@ export abstract class RestApiBaseHandler {
     objectMetadataMaps,
   }: {
     authContext: WorkspaceAuthContext;
-    depth: Depth;
+    depth?: Depth | undefined;
     objectMetadataMapItem: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
   }) {
@@ -609,5 +606,23 @@ export abstract class RestApiBaseHandler {
       objectMetadataMapItem,
       depth,
     });
+  }
+
+  async buildCommonOptions(request: AuthenticatedRequest) {
+    const { object: parsedObject } = parseCorePath(request);
+
+    const { objectMetadataMaps, objectMetadataMapItem } =
+      await this.coreQueryBuilderFactory.getObjectMetadata(
+        request,
+        parsedObject,
+      );
+
+    const authContext = this.getAuthContextFromRequest(request);
+
+    return {
+      authContext,
+      objectMetadataItemWithFieldMaps: objectMetadataMapItem,
+      objectMetadataMaps: objectMetadataMaps,
+    };
   }
 }

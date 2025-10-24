@@ -43,7 +43,7 @@ const RelationOneToManyFieldInputWithContext = () => {
 
   const fieldDefinition = useMemo(
     () => ({
-      fieldMetadataId: 'relation',
+      fieldMetadataId: 'e82262eb-7f58-4167-a23c-fc51ec584d1b',
       label: 'People',
       type: FieldMetadataType.RELATION,
       iconName: 'IconLink',
@@ -53,7 +53,7 @@ const RelationOneToManyFieldInputWithContext = () => {
         relationObjectMetadataNamePlural: 'companies',
         relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
         objectMetadataNameSingular: 'person',
-        relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
+        relationFieldMetadataId: '3c211c59-02a1-4904-ad0f-5bb30b736461',
       },
     }),
     [],

@@ -11,23 +11,24 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 // Should get deprecated in favor of the FlatFieldMetadata
 export type PartialFieldMetadata<
   T extends FieldMetadataType = FieldMetadataType,
-> = Omit<
+> = Pick<
   FieldMetadataEntity<T>,
-  | 'id'
-  | 'label'
-  | 'description'
-  | 'objectMetadataId'
-  | 'createdAt'
-  | 'updatedAt'
-  | 'standardId'
-  | 'icon'
-  | 'isSystem'
-  | 'workspaceId'
-  | 'isActive'
-  | 'asExpression'
-  | 'indexFieldMetadatas'
-  | 'fieldPermissions'
-  | 'object'
+  | 'type'
+  | 'name'
+  | 'defaultValue'
+  | 'standardOverrides'
+  | 'options'
+  | 'settings'
+  | 'isCustom'
+  | 'isUIReadOnly'
+  | 'isNullable'
+  | 'isUnique'
+  | 'isLabelSyncedWithName'
+  | 'relationTargetFieldMetadataId'
+  | 'relationTargetFieldMetadata'
+  | 'relationTargetObjectMetadataId'
+  | 'relationTargetObjectMetadata'
+  | 'morphId'
 > & {
   standardId: string;
   label: string | ((objectMetadata: ObjectMetadataEntity) => string);

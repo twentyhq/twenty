@@ -3,10 +3,7 @@ import {
   NOT_EXISTING_TEST_PERSON_ID,
   TEST_PERSON_1_ID,
 } from 'test/integration/constants/test-person-ids.constants';
-import {
-  TEST_PRIMARY_LINK_URL,
-  TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
-} from 'test/integration/constants/test-primary-link-url.constant';
+import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
@@ -98,9 +95,6 @@ describe('Core REST API Update One endpoint', () => {
         const updatedPerson = res.body.data.updatePerson;
 
         expect(updatedPerson.company).toBeDefined();
-        expect(updatedPerson.company.domainName.primaryLinkUrl).toBe(
-          TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
-        );
         expect(updatedPerson.company.people).not.toBeDefined();
       });
   });

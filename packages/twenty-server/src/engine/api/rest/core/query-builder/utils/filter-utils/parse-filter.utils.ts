@@ -1,12 +1,12 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { checkFields } from 'src/engine/api/rest/core/query-builder/utils/check-fields.utils';
-import { checkFilterEnumValues } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/check-filter-enum-values';
-import { formatFieldValue } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/format-field-values.utils';
-import { parseBaseFilter } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-base-filter.utils';
-import { parseFilterContent } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter-content.utils';
 import { getFieldType } from 'src/engine/api/rest/core/query-builder/utils/get-field-type.utils';
 import { type FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
+import { checkFilterEnumValues } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-enum-values.util';
+import { formatFieldValue } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/format-field-values.util';
+import { parseBaseFilter } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-base-filter.util';
+import { parseFilterContent } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-content.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export enum Conjunctions {
@@ -19,7 +19,7 @@ export const parseFilter = (
   filterQuery: string,
   objectMetadataItem: ObjectMetadataItemWithFieldMaps,
 ): Record<string, FieldValue> => {
-  const result = {};
+  const result: Record<string, FieldValue> = {};
   const match = filterQuery.match(
     `^(${Object.values(Conjunctions).join('|')})\\((.+)\\)$`,
   );
@@ -42,10 +42,8 @@ export const parseFilter = (
           `'filter' invalid. 'not' conjunction should contain only 1 condition. eg: not(field[eq]:1)`,
         );
       }
-      // @ts-expect-error legacy noImplicitAny
       result[conjunction] = subResult[0];
     } else {
-      // @ts-expect-error legacy noImplicitAny
       result[conjunction] = subResult;
     }
 

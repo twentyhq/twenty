@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -8,10 +9,8 @@ import {
   type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
-  type ObjectRecord,
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,
-  OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -47,8 +46,6 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
     const objectMetadataNameSingular =
       objectMetadataItemWithFieldMaps.nameSingular;
-
-    const { roleId } = executionArgs;
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataNameSingular,
@@ -129,6 +126,10 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       objectMetadataMaps,
     });
 
+    if (isDefined(executionArgs.args.offset)) {
+      queryBuilder.skip(executionArgs.args.offset);
+    }
+
     const objectRecords = (await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
@@ -160,9 +161,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks:
-          executionArgs.shouldBypassPermissionChecks,
+        rolePermissionConfig: executionArgs.rolePermissionConfig,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
@@ -171,7 +170,9 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.createConnection({
-      objectRecords,
+      objectRecords: isForwardPagination
+        ? objectRecords
+        : objectRecords.reverse(),
       objectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
       selectedAggregatedFields:
         executionArgs.graphqlQuerySelectedFieldsResult.aggregate,

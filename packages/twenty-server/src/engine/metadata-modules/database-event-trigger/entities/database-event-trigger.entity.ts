@@ -25,9 +25,9 @@ export const DATABASE_EVENT_TRIGGER_ENTITY_RELATION_PROPERTIES = [
 
 @Entity('databaseEventTrigger')
 @Index('IDX_DATABASE_EVENT_TRIGGER_WORKSPACE_ID', ['workspaceId'])
-export class DatabaseEventTrigger
+export class DatabaseEventTriggerEntity
   extends SyncableEntity
-  implements Required<DatabaseEventTrigger>
+  implements Required<DatabaseEventTriggerEntity>
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;

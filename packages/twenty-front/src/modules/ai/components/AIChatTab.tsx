@@ -17,7 +17,7 @@ import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
-import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
@@ -59,7 +59,7 @@ const StyledButtonsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const AIChatTab = ({ agentId }: { agentId: string }) => {
+export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   const {
@@ -69,14 +69,15 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
     scrollWrapperId,
     messages,
     isStreaming,
-  } = useAgentChatContextOrThrow();
+    error,
+  } = useAgentChat();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
 
   const { uploadFiles } = useAIChatFileUpload();
-  const { createAgentChatThread } = useCreateNewAIChatThread({ agentId });
+  const { createChatThread } = useCreateNewAIChatThread();
   const { navigateCommandMenu } = useCommandMenu();
 
   return (
@@ -94,16 +95,20 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
         <>
           {messages.length !== 0 && (
             <StyledScrollWrapper componentInstanceId={scrollWrapperId}>
-              {messages.map((message) => (
-                <AIChatMessage
-                  isLastMessageStreaming={
-                    isStreaming &&
-                    message.id === messages[messages.length - 1].id
-                  }
-                  message={message}
-                  key={message.id}
-                />
-              ))}
+              {messages.map((message, index) => {
+                const isLastMessage = index === messages.length - 1;
+                const isLastMessageStreaming = isStreaming && isLastMessage;
+                const shouldShowError = error && isLastMessage;
+
+                return (
+                  <AIChatMessage
+                    isLastMessageStreaming={isLastMessageStreaming}
+                    message={message}
+                    key={message.id}
+                    error={shouldShowError ? error : null}
+                  />
+                );
+              })}
             </StyledScrollWrapper>
           )}
           {messages.length === 0 && <AIChatEmptyState />}
@@ -136,7 +141,7 @@ export const AIChatTab = ({ agentId }: { agentId: string }) => {
                 variant="secondary"
                 size="small"
                 Icon={IconMessageCirclePlus}
-                onClick={() => createAgentChatThread()}
+                onClick={() => createChatThread()}
               />
               <AgentChatFileUploadButton />
               {contextStoreCurrentObjectMetadataItemId ? (

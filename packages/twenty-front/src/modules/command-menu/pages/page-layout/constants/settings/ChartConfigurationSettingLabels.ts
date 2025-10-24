@@ -11,6 +11,11 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   DATA_ON_DISPLAY_X: msg`Data on display`,
   DATA_ON_DISPLAY_Y: msg`Data on display`,
   DATA_ON_DISPLAY_PIE_CHART: msg`Data on display`,
+  DATA_ON_DISPLAY_AGGREGATE: msg`Data on display`,
   EACH_SLICE_REPRESENTS: msg`Each slice represents`,
   AXIS_NAME: msg`Axis name`,
+  STACKED_BARS: msg`Stacked bars`,
+  OMIT_NULL_VALUES: msg`Omit zero values`,
+  MIN_RANGE: msg`Min range`,
+  MAX_RANGE: msg`Max range`,
 };

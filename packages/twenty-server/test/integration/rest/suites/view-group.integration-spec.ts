@@ -65,6 +65,7 @@ describe('View Group REST API', () => {
         createOneField: { id: fieldMetadataId },
       },
     } = await createOneFieldMetadata({
+      expectToFail: false,
       input: createFieldInput,
       gqlFields: `
           id
@@ -88,6 +89,7 @@ describe('View Group REST API', () => {
       },
     });
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
   });

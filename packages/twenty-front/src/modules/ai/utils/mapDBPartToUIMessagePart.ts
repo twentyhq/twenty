@@ -1,14 +1,10 @@
-import {
-  type ReasoningUIPart,
-  type ToolUIPart,
-  type UIMessagePart,
-  type UITool,
-} from 'ai';
+import { type ReasoningUIPart, type ToolUIPart } from 'ai';
+import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type AgentChatMessagePart } from '~/generated/graphql';
 
 export const mapDBPartToUIMessagePart = (
   part: AgentChatMessagePart,
-): UIMessagePart<never, Record<string, UITool>> => {
+): ExtendedUIMessagePart => {
   switch (part.type) {
     case 'text':
       return {
@@ -48,6 +44,14 @@ export const mapDBPartToUIMessagePart = (
     case 'step-start':
       return {
         type: 'step-start',
+      };
+    case 'data-routing-status':
+      return {
+        type: part.type,
+        data: {
+          text: part.textContent!,
+          state: part.state!,
+        },
       };
     default:
       {

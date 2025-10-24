@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
-import { IconGripVertical, IconPencil, IconX } from 'twenty-ui/display';
+import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
+
+import { WidgetGrip } from './WidgetGrip';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -10,19 +12,8 @@ const StyledHeader = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledDragHandleButton = styled(IconButton)`
-  cursor: grab;
-  display: flex;
-  align-items: center;
-  user-select: none;
-
-  &:active {
-    cursor: grabbing;
-  }
-`;
-
 const StyledTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.primary};
   flex: 1;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -33,37 +24,24 @@ type WidgetHeaderProps = {
   isInEditMode: boolean;
   isEmpty?: boolean;
   title: string;
-  onRemove?: () => void;
-  onEdit?: () => void;
+  onRemove?: (e?: React.MouseEvent) => void;
 };
 
 export const WidgetHeader = ({
   isEmpty = false,
   isInEditMode = false,
   title,
-  onEdit,
   onRemove,
 }: WidgetHeaderProps) => {
   return (
     <StyledHeader>
-      {isInEditMode && (
-        <StyledDragHandleButton
-          Icon={IconGripVertical}
+      {!isEmpty && isInEditMode && (
+        <WidgetGrip
           className="drag-handle"
-          variant="tertiary"
-          size="small"
-          disabled={isEmpty}
+          onClick={(e) => e.stopPropagation()}
         />
       )}
       <StyledTitle>{isEmpty ? 'Add Widget' : title}</StyledTitle>
-      {!isEmpty && isInEditMode && onEdit && (
-        <IconButton
-          onClick={onEdit}
-          Icon={IconPencil}
-          variant="tertiary"
-          size="small"
-        />
-      )}
       {!isEmpty && isInEditMode && onRemove && (
         <IconButton
           onClick={onRemove}

@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
-import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { transformEventToWebhookEvent } from 'src/engine/core-modules/webhook/utils/transform-event-to-webhook-event';
 
 @Injectable()
 export class SubscriptionsService {
@@ -14,32 +13,20 @@ export class SubscriptionsService {
   async publish(
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<void> {
-    for (const eventData of workspaceEventBatch.events) {
-      const [nameSingular, operation] = workspaceEventBatch.name.split('.');
-      const record =
-        'after' in eventData.properties && isDefined(eventData.properties.after)
-          ? eventData.properties.after
-          : 'before' in eventData.properties &&
-              isDefined(eventData.properties.before)
-            ? eventData.properties.before
-            : {};
-      const updatedFields =
-        'updatedFields' in eventData.properties
-          ? eventData.properties.updatedFields
-          : undefined;
+    const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
-      const isWebhookEvent = nameSingular === 'webhook';
-      const sanitizedRecord = removeSecretFromWebhookRecord(
-        record,
-        isWebhookEvent,
-      );
+    for (const eventData of workspaceEventBatch.events) {
+      const { record, updatedFields } = transformEventToWebhookEvent({
+        eventName: workspaceEventBatch.name,
+        event: eventData,
+      });
 
       await this.pubSub.publish('onDbEvent', {
         onDbEvent: {
           action: operation,
           objectNameSingular: nameSingular,
           eventDate: new Date(),
-          record: sanitizedRecord,
+          record,
           ...(updatedFields && { updatedFields }),
         },
       });

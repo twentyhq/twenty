@@ -57,6 +57,8 @@ const mockWorkspace = {
     customUrl: 'test.com',
   },
   isTwoFactorAuthenticationEnforced: false,
+  trashRetentionDays: 14,
+  routerModel: 'auto',
 };
 
 const createMockOptions = (): Options<any> => ({

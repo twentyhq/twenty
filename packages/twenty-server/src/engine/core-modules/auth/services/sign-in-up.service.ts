@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
-import { type AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -26,15 +26,15 @@ import {
   type SignInUpBaseParams,
   type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
@@ -43,17 +43,17 @@ import { isWorkEmail } from 'src/utils/is-work-email';
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class SignInUpService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly httpService: HttpService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly subdomainManagerService: SubdomainManagerService,
     private readonly userService: UserService,
   ) {}
 
@@ -153,7 +153,9 @@ export class SignInUpService {
   }
 
   private async signInUpWithPersonalInvitation(
-    params: { invitation: AppToken } & ExistingUserOrPartialUserWithPicture,
+    params: {
+      invitation: AppTokenEntity;
+    } & ExistingUserOrPartialUserWithPicture,
   ) {
     if (!params.invitation) {
       throw new AuthException(
@@ -206,7 +208,7 @@ export class SignInUpService {
   }
 
   private async throwIfWorkspaceIsNotReadyForSignInUp(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     user: ExistingUserOrPartialUserWithPicture,
   ) {
     if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) return;
@@ -240,7 +242,7 @@ export class SignInUpService {
 
   async signInUpOnExistingWorkspace(
     params: {
-      workspace: Workspace;
+      workspace: WorkspaceEntity;
     } & ExistingUserOrPartialUserWithPicture,
   ) {
     await this.throwIfWorkspaceIsNotReadyForSignInUp(params.workspace, params);
@@ -270,7 +272,7 @@ export class SignInUpService {
 
     const userData = params.userData as {
       type: 'existingUser';
-      existingUser: User;
+      existingUser: UserEntity;
     };
 
     const user = userData.existingUser;
@@ -283,7 +285,10 @@ export class SignInUpService {
     return user;
   }
 
-  private async activateOnboardingForUser(user: User, workspace: Workspace) {
+  private async activateOnboardingForUser(
+    user: UserEntity,
+    workspace: WorkspaceEntity,
+  ) {
     await this.onboardingService.setOnboardingConnectAccountPending({
       userId: user.id,
       workspaceId: workspace.id,
@@ -368,7 +373,7 @@ export class SignInUpService {
   }
 
   async checkWorkspaceCreationIsAllowedOrThrow(
-    currentUser: User,
+    currentUser: UserEntity,
   ): Promise<void> {
     if (!this.isWorkspaceCreationLimitedToServerAdmins()) return;
 
@@ -423,8 +428,8 @@ export class SignInUpService {
       isWorkEmailFound && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceToCreate = this.workspaceRepository.create({
-      subdomain: await this.domainManagerService.generateSubdomain(
-        isWorkEmailFound ? { email } : {},
+      subdomain: await this.subdomainManagerService.generateSubdomain(
+        isWorkEmailFound ? { userEmail: email } : {},
       ),
       displayName: '',
       inviteHash: v4(),
@@ -465,14 +470,17 @@ export class SignInUpService {
     newUserParams: SignInUpNewUserPayload,
     authParams: AuthProviderWithPasswordType['authParams'],
   ) {
-    await this.userService.findUserByEmailOrThrow(
+    const userExists = await this.userService.findUserByEmail(
       newUserParams.email,
-      new AuthException(
-        'User already exist',
-        AuthExceptionCode.USER_ALREADY_EXIST,
-        { userFriendlyMessage: msg`User already exists` },
-      ),
     );
+
+    if (userExists) {
+      throw new AuthException(
+        'User already exists',
+        AuthExceptionCode.USER_ALREADY_EXISTS,
+        { userFriendlyMessage: msg`User already exists` },
+      );
+    }
 
     return this.saveNewUser(
       await this.computePartialUserFromUserPayload(newUserParams, authParams),

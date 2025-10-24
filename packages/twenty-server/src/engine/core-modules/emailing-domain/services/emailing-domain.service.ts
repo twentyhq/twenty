@@ -8,22 +8,22 @@ import {
   EmailingDomainDriver,
   EmailingDomainStatus,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
-import { EmailingDomain } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class EmailingDomainService {
   constructor(
-    @InjectRepository(EmailingDomain)
-    private readonly emailingDomainRepository: Repository<EmailingDomain>,
+    @InjectRepository(EmailingDomainEntity)
+    private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
   ) {}
 
   async createEmailingDomain(
     domain: string,
     driver: EmailingDomainDriver,
-    workspace: Workspace,
-  ): Promise<EmailingDomain> {
+    workspace: WorkspaceEntity,
+  ): Promise<EmailingDomainEntity> {
     const existingDomain = await this.emailingDomainRepository.findOneBy({
       domain,
       workspaceId: workspace.id,
@@ -53,7 +53,7 @@ export class EmailingDomainService {
   }
 
   async deleteEmailingDomain(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     emailingDomainId: string,
   ): Promise<void> {
     const emailingDomain = await this.emailingDomainRepository.findOneBy({
@@ -70,7 +70,9 @@ export class EmailingDomainService {
     });
   }
 
-  async getEmailingDomains(workspace: Workspace): Promise<EmailingDomain[]> {
+  async getEmailingDomains(
+    workspace: WorkspaceEntity,
+  ): Promise<EmailingDomainEntity[]> {
     return await this.emailingDomainRepository.find({
       where: {
         workspaceId: workspace.id,
@@ -82,9 +84,9 @@ export class EmailingDomainService {
   }
 
   async getEmailingDomain(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     emailingDomainId: string,
-  ): Promise<EmailingDomain | null> {
+  ): Promise<EmailingDomainEntity | null> {
     return await this.emailingDomainRepository.findOneBy({
       id: emailingDomainId,
       workspaceId: workspace.id,
@@ -92,9 +94,9 @@ export class EmailingDomainService {
   }
 
   async verifyEmailingDomain(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     emailingDomainId: string,
-  ): Promise<EmailingDomain> {
+  ): Promise<EmailingDomainEntity> {
     const emailingDomain = await this.getEmailingDomain(
       workspace,
       emailingDomainId,
@@ -123,9 +125,9 @@ export class EmailingDomainService {
   }
 
   async syncEmailingDomain(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     emailingDomainId: string,
-  ): Promise<EmailingDomain> {
+  ): Promise<EmailingDomainEntity> {
     const emailingDomain = await this.getEmailingDomain(
       workspace,
       emailingDomainId,

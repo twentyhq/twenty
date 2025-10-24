@@ -17,6 +17,8 @@ export type { AvatarSize } from './avatar/types/AvatarSize';
 export type { AvatarType } from './avatar/types/AvatarType';
 export type { BannerVariant } from './banner/components/Banner';
 export { Banner } from './banner/components/Banner';
+export type { SidePanelInformationBannerProps } from './banner/components/SidePanelInformationBanner';
+export { SidePanelInformationBanner } from './banner/components/SidePanelInformationBanner';
 export type { AnimatedCheckmarkProps } from './checkmark/components/AnimatedCheckmark';
 export { AnimatedCheckmark } from './checkmark/components/AnimatedCheckmark';
 export type { CheckmarkProps } from './checkmark/components/Checkmark';
@@ -27,6 +29,7 @@ export type {
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
 export { IconAddressBook } from './icon/components/IconAddressBook';
+export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
 export { IconGoogle } from './icon/components/IconGoogle';
 export { IconGoogleCalendar } from './icon/components/IconGoogleCalendar';
@@ -106,6 +109,7 @@ export {
   IconBrandLinkedin,
   IconBrandX,
   IconBriefcase,
+  IconBroadcast,
   IconBrowserMaximize,
   IconBuildingSkyscraper,
   IconCalendar,
@@ -144,6 +148,7 @@ export {
   IconComment,
   IconCopy,
   IconCopyPlus,
+  IconCpu,
   IconCreativeCommonsSa,
   IconCreditCard,
   IconCsv,
@@ -255,6 +260,7 @@ export {
   IconHistory,
   IconHistoryToggle,
   IconHome,
+  IconHourglassHigh,
   IconHours24,
   IconHttpGet,
   IconHttpPost,
@@ -294,6 +300,8 @@ export {
   IconMailCog,
   IconMailX,
   IconMap,
+  IconMathMax,
+  IconMathMin,
   IconMathXy,
   IconMaximize,
   IconMessage,
@@ -333,7 +341,9 @@ export {
   IconPrinter,
   IconProgressCheck,
   IconPuzzle,
+  IconPuzzle2,
   IconQuestionMark,
+  IconRadiusBottomRight,
   IconRefresh,
   IconRefreshAlert,
   IconRefreshDot,
@@ -377,9 +387,11 @@ export {
   IconSquareNumber9,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
+  IconStack2,
   IconStatusChange,
   IconStepInto,
   IconStrikethrough,
+  IconSum,
   IconSun,
   IconSunMoon,
   IconSwitchHorizontal,

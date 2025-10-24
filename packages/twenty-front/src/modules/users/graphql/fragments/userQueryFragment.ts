@@ -75,10 +75,9 @@ export const USER_QUERY_FRAGMENT = gql`
       defaultRole {
         ...RoleFragment
       }
-      defaultAgent {
-        id
-      }
+      routerModel
       isTwoFactorAuthenticationEnforced
+      trashRetentionDays
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment

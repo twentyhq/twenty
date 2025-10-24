@@ -6,7 +6,7 @@ export enum CommandMenuPages {
   ViewCalendarEvent = 'view-calendar-event',
   EditRichText = 'edit-rich-text',
   Copilot = 'copilot',
-  WorkflowStepSelectTriggerType = 'workflow-step-select-trigger-type',
+  WorkflowTriggerSelectType = 'workflow-trigger-select-type',
   WorkflowStepCreate = 'workflow-step-create',
   WorkflowStepEditType = 'workflow-step-edit-type',
   WorkflowStepView = 'workflow-step-view',
@@ -17,5 +17,6 @@ export enum CommandMenuPages {
   ViewPreviousAIChats = 'view-previous-ai-chats',
   PageLayoutWidgetTypeSelect = 'page-layout-widget-type-select',
   PageLayoutGraphTypeSelect = 'page-layout-graph-type-select',
+  PageLayoutGraphFilter = 'page-layout-graph-filter',
   PageLayoutIframeConfig = 'page-layout-iframe-config',
 }

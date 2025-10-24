@@ -14,7 +14,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
@@ -27,22 +26,24 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
+  const configuration = widgetInEditMode?.configuration;
+
   if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+    configuration?.__typename !== 'BarChartConfiguration' &&
+    configuration?.__typename !== 'LineChartConfiguration' &&
+    configuration?.__typename !== 'AggregateChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }
 
-  const currentFieldMetadataId =
-    widgetInEditMode.configuration.groupByFieldMetadataIdY;
+  const currentFieldMetadataId = configuration.aggregateFieldMetadataId;
 
   const [selectedFieldMetadataId, setSelectedFieldMetadataId] = useState(
     currentFieldMetadataId,
   );
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === widgetInEditMode.objectMetadataId,
+    (item) => item.id === widgetInEditMode?.objectMetadataId,
   );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
@@ -62,10 +63,6 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   }).filter((field) => !isFieldRelation(field) && !field.isSystem);
 
   const { getIcon } = useIcons();
-
-  if (!isDefined(sourceObjectMetadataItem)) {
-    return null;
-  }
 
   if (isSubMenuOpen) {
     return (

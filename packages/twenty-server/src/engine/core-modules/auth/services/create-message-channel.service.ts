@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
+  MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelType,
   MessageChannelVisibility,
@@ -50,7 +51,8 @@ export class CreateMessageChannelService {
         handle,
         visibility:
           messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
-        syncStatus: MessageChannelSyncStatus.ONGOING,
+        syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
+        syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
       },
       {},
       manager,

@@ -147,7 +147,7 @@ describe('useWorkflowCommandMenu', () => {
     expect(result.current.workflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.WorkflowStepSelectTriggerType,
+      page: CommandMenuPages.WorkflowTriggerSelectType,
       pageTitle: t`Trigger Type`,
       pageIcon: IconBolt,
       pageId: 'mocked-uuid',

@@ -1,17 +1,16 @@
 import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { type BaseOutputSchemaDeprecated } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
+import { type AiAgentOutputSchema } from '@/workflow/workflow-variables/types/AiAgentOutputSchema';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
@@ -39,16 +38,15 @@ export const WorkflowEditActionAiAgent = ({
   action,
   actionOptions,
 }: WorkflowEditActionAiAgentProps) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { getIcon } = useIcons();
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'AI Agent',
+      defaultTitle: AI_AGENT_ACTION.defaultLabel,
     });
 
   const { handleOutputSchemaChange, outputFields } = useAiAgentOutputSchema(
-    action.settings.outputSchema as BaseOutputSchemaDeprecated,
+    action.settings.outputSchema as AiAgentOutputSchema,
     actionOptions.readonly === true ? undefined : actionOptions.onActionUpdate,
     action,
     actionOptions.readonly,
@@ -60,13 +58,11 @@ export const WorkflowEditActionAiAgent = ({
     SelectOption<string>[]
   >(
     (acc, agent) => {
-      if (agent.id !== currentWorkspace?.defaultAgent?.id) {
-        acc.push({
-          label: agent.label,
-          value: agent.id,
-          Icon: agent.icon ? getIcon(agent.icon) : undefined,
-        });
-      }
+      acc.push({
+        label: agent.label,
+        value: agent.id,
+        Icon: agent.icon ? getIcon(agent.icon) : undefined,
+      });
       return acc;
     },
     [
@@ -111,6 +107,7 @@ export const WorkflowEditActionAiAgent = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={actionOptions.readonly}
+        iconTooltip={AI_AGENT_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         <div>
@@ -146,7 +143,7 @@ export const WorkflowEditActionAiAgent = ({
           readonly={actionOptions.readonly}
         />
       </WorkflowStepBody>
-      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

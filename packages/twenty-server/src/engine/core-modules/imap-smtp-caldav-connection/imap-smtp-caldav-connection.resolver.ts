@@ -15,12 +15,12 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedImapSmtpCaldavAccount } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
-import { ImapSmtpCaldavConnectionSuccess } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
+import { ConnectedImapSmtpCaldavAccountDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
+import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
 import { EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
 import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -43,12 +43,12 @@ export class ImapSmtpCaldavResolver {
     private readonly mailConnectionValidatorService: ImapSmtpCaldavValidatorService,
   ) {}
 
-  @Query(() => ConnectedImapSmtpCaldavAccount)
+  @Query(() => ConnectedImapSmtpCaldavAccountDTO)
   @UseGuards(WorkspaceAuthGuard)
   async getConnectedImapSmtpCaldavAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<ConnectedImapSmtpCaldavAccount> {
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ConnectedImapSmtpCaldavAccountDTO> {
     const connectedAccountRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
         workspace.id,
@@ -74,7 +74,7 @@ export class ImapSmtpCaldavResolver {
     };
   }
 
-  @Mutation(() => ImapSmtpCaldavConnectionSuccess)
+  @Mutation(() => ImapSmtpCaldavConnectionSuccessDTO)
   @UseGuards(WorkspaceAuthGuard)
   async saveImapSmtpCaldavAccount(
     @Args('accountOwnerId', { type: () => UUIDScalarType })
@@ -82,9 +82,9 @@ export class ImapSmtpCaldavResolver {
     @Args('handle') handle: string,
     @Args('connectionParameters')
     connectionParameters: EmailAccountConnectionParameters,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
-  ): Promise<ImapSmtpCaldavConnectionSuccess> {
+  ): Promise<ImapSmtpCaldavConnectionSuccessDTO> {
     const isImapSmtpCaldavFeatureFlagEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
@@ -103,16 +103,18 @@ export class ImapSmtpCaldavResolver {
       handle,
     );
 
-    await this.imapSmtpCaldavApisService.processAccount({
-      handle,
-      workspaceMemberId: accountOwnerId,
-      workspaceId: workspace.id,
-      connectionParameters: validatedParams,
-      connectedAccountId: id,
-    });
+    const connectedAccountId =
+      await this.imapSmtpCaldavApisService.processAccount({
+        handle,
+        workspaceMemberId: accountOwnerId,
+        workspaceId: workspace.id,
+        connectionParameters: validatedParams,
+        connectedAccountId: id,
+      });
 
     return {
       success: true,
+      connectedAccountId,
     };
   }
 

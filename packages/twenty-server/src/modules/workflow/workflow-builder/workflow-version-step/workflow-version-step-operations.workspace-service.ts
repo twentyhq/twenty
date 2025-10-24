@@ -245,6 +245,28 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.UPSERT_RECORD: {
+        const activeObjectMetadataItem =
+          await this.objectMetadataRepository.findOne({
+            where: { workspaceId, isActive: true, isSystem: false },
+          });
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Create or Update Record',
+            type: WorkflowActionType.UPSERT_RECORD,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                objectName: activeObjectMetadataItem?.nameSingular || '',
+                objectRecord: {},
+                fieldsToUpdate: [],
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.FIND_RECORDS: {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
@@ -351,6 +373,27 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             },
           },
           additionalCreatedSteps: [emptyNodeStep],
+        };
+      }
+      case WorkflowActionType.DELAY: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Delay',
+            type: WorkflowActionType.DELAY,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                delayType: 'DURATION',
+                duration: {
+                  days: 0,
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0,
+                },
+              },
+            },
+          },
         };
       }
       default:
@@ -515,7 +558,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     const emptyNodeStep: WorkflowEmptyAction = {
       id: v4(),
-      name: 'Empty Node',
+      name: 'Add an Action',
       type: WorkflowActionType.EMPTY,
       valid: true,
       nextStepIds: [iteratorStepId],

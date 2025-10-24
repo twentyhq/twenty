@@ -11,19 +11,18 @@ import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workfl
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
 import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
 import { WorkflowEditActionUpdateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord';
+import { WorkflowEditActionUpsertRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord';
+import { WorkflowEditActionDelay } from '@/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay';
 import { WorkflowEditActionFilter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilter';
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFiller';
 import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
-import { WorkflowEditActionIterator } from '@/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator';
+import { WorkflowEditActionIterator } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManual } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManual';
-import { WorkflowEditTriggerManualDeprecated } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManualDeprecated';
 import { WorkflowEditTriggerWebhookForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowRunStepNodeDetailProps = {
   stepId: string;
@@ -44,10 +43,6 @@ export const WorkflowRunStepNodeDetail = ({
     steps,
   });
 
-  const isIteratorEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
-  );
-
   if (!isDefined(stepDefinition) || !isDefined(stepDefinition.definition)) {
     return null;
   }
@@ -67,20 +62,8 @@ export const WorkflowRunStepNodeDetail = ({
           );
         }
         case 'MANUAL': {
-          if (isIteratorEnabled) {
-            return (
-              <WorkflowEditTriggerManual
-                key={stepId}
-                trigger={stepDefinition.definition}
-                triggerOptions={{
-                  readonly: true,
-                }}
-              />
-            );
-          }
-
           return (
-            <WorkflowEditTriggerManualDeprecated
+            <WorkflowEditTriggerManual
               key={stepId}
               trigger={stepDefinition.definition}
               triggerOptions={{
@@ -190,6 +173,18 @@ export const WorkflowRunStepNodeDetail = ({
           );
         }
 
+        case 'UPSERT_RECORD': {
+          return (
+            <WorkflowEditActionUpsertRecord
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+
         case 'FORM': {
           return (
             <WorkflowEditActionFormFiller
@@ -249,6 +244,16 @@ export const WorkflowRunStepNodeDetail = ({
         case 'EMPTY': {
           return (
             <WorkflowEditActionEmpty
+              key={stepId}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+        case 'DELAY': {
+          return (
+            <WorkflowEditActionDelay
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{

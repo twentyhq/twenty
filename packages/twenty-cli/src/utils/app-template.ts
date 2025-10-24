@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { getSchemaUrls } from './schema-validator';
 import * as fs from 'fs-extra';
-import { BASE_APPLICATION_PROJECT_PATH } from '../constants/base-application-project-path';
+import { BASE_APPLICATION_PROJECT_PATH } from '../constants/constants-path';
 import { writeJsoncFile } from '../utils/jsonc-parser';
 import { join } from 'path';
 import path from 'path';
@@ -16,6 +16,13 @@ export const copyBaseApplicationProject = async ({
   appDirectory: string;
 }) => {
   await fs.copy(BASE_APPLICATION_PROJECT_PATH, appDirectory);
+
+  await fs.rename(
+    join(appDirectory, 'gitignore'),
+    join(appDirectory, '.gitignore'),
+  );
+
+  await fs.copy(join(appDirectory, '.env.example'), join(appDirectory, '.env'));
 
   await createBasePackageJson({
     appName,

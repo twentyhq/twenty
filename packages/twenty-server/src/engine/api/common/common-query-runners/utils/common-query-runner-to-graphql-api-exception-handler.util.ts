@@ -16,10 +16,16 @@ export const commonQueryRunnerToGraphqlApiExceptionHandler = (
   switch (error.code) {
     case CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND:
       throw new NotFoundError(error);
+    case CommonQueryRunnerExceptionCode.ARGS_CONFLICT:
+    case CommonQueryRunnerExceptionCode.INVALID_ARGS_FIRST:
+    case CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST:
     case CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
+    case CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT:
       throw new UserInputError(error);
     case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:
       throw new AuthenticationError(error);
+    case CommonQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD:
+      throw error;
     default: {
       return assertUnreachable(error.code);
     }

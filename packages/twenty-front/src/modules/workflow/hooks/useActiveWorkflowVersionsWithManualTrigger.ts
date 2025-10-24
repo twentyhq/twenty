@@ -6,9 +6,7 @@ import {
   type ManualTriggerWorkflowVersion,
   type Workflow,
 } from '@/workflow/types/Workflow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useActiveWorkflowVersionsWithManualTrigger = ({
   objectMetadataItem,
@@ -17,10 +15,6 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
   objectMetadataItem?: ObjectMetadataItem;
   skip?: boolean;
 }) => {
-  const isIteratorEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
-  );
-
   const filters = [
     {
       status: {
@@ -34,20 +28,12 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
     },
   ];
 
-  const objectTypeFilter = isIteratorEnabled
-    ? {
-        trigger: {
-          like: `%"objectNameSingular": "${objectMetadataItem?.nameSingular}"%`,
-        },
-      }
-    : {
-        trigger: {
-          like: `%"objectType": "${objectMetadataItem?.nameSingular}"%`,
-        },
-      };
-
   if (isDefined(objectMetadataItem)) {
-    filters.push(objectTypeFilter);
+    filters.push({
+      trigger: {
+        like: `%"objectNameSingular": "${objectMetadataItem?.nameSingular}"%`,
+      },
+    });
   }
 
   const { records } = useFindManyRecords<
@@ -79,7 +65,7 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
         (record) =>
           record.status === 'ACTIVE' &&
           isDefined(record.trigger) &&
-          isGlobalManualTrigger(record.trigger, isIteratorEnabled),
+          isGlobalManualTrigger(record.trigger),
       ),
     };
   }

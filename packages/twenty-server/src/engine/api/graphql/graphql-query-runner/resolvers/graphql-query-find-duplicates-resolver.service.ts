@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import isEmpty from 'lodash.isempty';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { OrderByDirection, type ObjectRecord } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
 import {
   GraphqlQueryBaseResolverService,
   type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import {
-  type ObjectRecord,
-  OrderByDirection,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type FindDuplicatesResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -117,6 +115,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           .setFindOptions({
             select: columnsToSelect,
           })
+          .take(QUERY_MAX_RECORDS)
           .getMany()) as ObjectRecord[];
 
         return typeORMObjectRecordsParser.createConnection({

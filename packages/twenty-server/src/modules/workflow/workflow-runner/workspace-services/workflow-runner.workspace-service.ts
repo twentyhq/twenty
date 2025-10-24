@@ -14,13 +14,16 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
-  RunWorkflowJob,
-  RunWorkflowJobData,
-} from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+  WorkflowRunException,
+  WorkflowRunExceptionCode,
+} from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -176,7 +179,7 @@ export class WorkflowRunnerWorkspaceService {
     });
   }
 
-  private async enqueueWorkflowRun(
+  async enqueueWorkflowRun(
     workspaceId: string,
     workflowRunId: string,
     lastExecutedStepId?: string,
@@ -192,5 +195,53 @@ export class WorkflowRunnerWorkspaceService {
     await this.workflowRunQueueWorkspaceService.increaseWorkflowRunQueuedCount(
       workspaceId,
     );
+  }
+
+  async stopWorkflowRun(workspaceId: string, workflowRunId: string) {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
+      throw new WorkflowRunException(
+        'Workflow run is not running',
+        WorkflowRunExceptionCode.INVALID_OPERATION,
+        {
+          userFriendlyMessage: msg`Workflow run is not running`,
+        },
+      );
+    }
+
+    let newStatus: WorkflowRunStatus;
+
+    if (
+      workflowHasRunningSteps({
+        stepInfos: workflowRun.state.stepInfos,
+        steps: workflowRun.state.flow.steps,
+      })
+    ) {
+      await this.workflowRunWorkspaceService.updateWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        partialUpdate: {
+          status: WorkflowRunStatus.STOPPING,
+        },
+      });
+      newStatus = WorkflowRunStatus.STOPPING;
+    } else {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.STOPPED,
+      });
+      newStatus = WorkflowRunStatus.STOPPED;
+    }
+
+    return {
+      id: workflowRun.id,
+      status: newStatus,
+    };
   }
 }

@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
@@ -13,8 +13,8 @@ type RecomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdateArgs = {
 } & Pick<AllFlatEntityMaps, 'flatViewFieldMaps' | 'flatViewMaps'>;
 
 type FlatViewFieldToCreateAndUpdate = {
-  flatViewFieldToCreate: FlatViewField[];
-  flatViewFieldToUpdate: FlatViewField[];
+  flatViewFieldsToCreate: FlatViewField[];
+  flatViewFieldsToUpdate: FlatViewField[];
 };
 export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
   existingFlatObjectMetadata,
@@ -28,8 +28,8 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
   });
 
   const accumulator: FlatViewFieldToCreateAndUpdate = {
-    flatViewFieldToCreate: [],
-    flatViewFieldToUpdate: [],
+    flatViewFieldsToCreate: [],
+    flatViewFieldsToUpdate: [],
   };
 
   for (const flatView of flatViews) {
@@ -66,9 +66,10 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         deletedAt: null,
         universalIdentifier: viewFieldId,
         aggregateOperation: null,
+        applicationId: existingFlatObjectMetadata.applicationId,
       };
 
-      accumulator.flatViewFieldToCreate.push(flatViewFieldToCreate);
+      accumulator.flatViewFieldsToCreate.push(flatViewFieldToCreate);
     } else if (
       labelMetadataIdentifierViewField.position > lowestViewFieldPosition
     ) {
@@ -77,7 +78,7 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         position: lowestViewFieldPosition - 1,
       };
 
-      accumulator.flatViewFieldToUpdate.push(updatedFlatViewField);
+      accumulator.flatViewFieldsToUpdate.push(updatedFlatViewField);
     }
   }
 

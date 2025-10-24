@@ -8,20 +8,20 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { DatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import {
   ServerlessFunctionTriggerJob,
   ServerlessFunctionTriggerJobData,
 } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
   constructor(
     @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(DatabaseEventTrigger)
-    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTrigger>,
+    @InjectRepository(DatabaseEventTriggerEntity)
+    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTriggerEntity>,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)

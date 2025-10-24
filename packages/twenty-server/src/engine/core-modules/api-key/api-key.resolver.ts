@@ -15,12 +15,12 @@ import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
-import { CreateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
-import { GetApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
-import { RevokeApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
-import { UpdateApiKeyDTO } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
+import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.dto';
+import { GetApiKeyInput } from 'src/engine/core-modules/api-key/dtos/get-api-key.dto';
+import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.dto';
+import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.dto';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -28,10 +28,10 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 import { ApiKeyRoleService } from './api-key-role.service';
-import { ApiKey } from './api-key.entity';
+import { ApiKeyEntity } from './api-key.entity';
 import { ApiKeyService } from './api-key.service';
 
-@Resolver(() => ApiKey)
+@Resolver(() => ApiKeyEntity)
 @UseGuards(
   WorkspaceAuthGuard,
   SettingsPermissionsGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
@@ -42,16 +42,18 @@ export class ApiKeyResolver {
     private readonly apiKeyRoleService: ApiKeyRoleService,
   ) {}
 
-  @Query(() => [ApiKey])
-  async apiKeys(@AuthWorkspace() workspace: Workspace): Promise<ApiKey[]> {
+  @Query(() => [ApiKeyEntity])
+  async apiKeys(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApiKeyEntity[]> {
     return this.apiKeyService.findActiveByWorkspaceId(workspace.id);
   }
 
-  @Query(() => ApiKey, { nullable: true })
+  @Query(() => ApiKeyEntity, { nullable: true })
   async apiKey(
-    @Args('input') input: GetApiKeyDTO,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<ApiKey | null> {
+    @Args('input') input: GetApiKeyInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ApiKeyEntity | null> {
     try {
       const apiKey = await this.apiKeyService.findById(input.id, workspace.id);
 
@@ -66,11 +68,11 @@ export class ApiKeyResolver {
     }
   }
 
-  @Mutation(() => ApiKey)
+  @Mutation(() => ApiKeyEntity)
   async createApiKey(
-    @AuthWorkspace() workspace: Workspace,
-    @Args('input') input: CreateApiKeyDTO,
-  ): Promise<ApiKey> {
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') input: CreateApiKeyInput,
+  ): Promise<ApiKeyEntity> {
     return this.apiKeyService.create({
       name: input.name,
       expiresAt: new Date(input.expiresAt),
@@ -80,12 +82,12 @@ export class ApiKeyResolver {
     });
   }
 
-  @Mutation(() => ApiKey, { nullable: true })
+  @Mutation(() => ApiKeyEntity, { nullable: true })
   async updateApiKey(
-    @AuthWorkspace() workspace: Workspace,
-    @Args('input') input: UpdateApiKeyDTO,
-  ): Promise<ApiKey | null> {
-    const updateData: QueryDeepPartialEntity<ApiKey> = {};
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') input: UpdateApiKeyInput,
+  ): Promise<ApiKeyEntity | null> {
+    const updateData: QueryDeepPartialEntity<ApiKeyEntity> = {};
 
     if (input.name !== undefined) updateData.name = input.name;
     if (input.expiresAt !== undefined)
@@ -97,17 +99,17 @@ export class ApiKeyResolver {
     return this.apiKeyService.update(input.id, workspace.id, updateData);
   }
 
-  @Mutation(() => ApiKey, { nullable: true })
+  @Mutation(() => ApiKeyEntity, { nullable: true })
   async revokeApiKey(
-    @AuthWorkspace() workspace: Workspace,
-    @Args('input') input: RevokeApiKeyDTO,
-  ): Promise<ApiKey | null> {
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') input: RevokeApiKeyInput,
+  ): Promise<ApiKeyEntity | null> {
     return this.apiKeyService.revoke(input.id, workspace.id);
   }
 
   @Mutation(() => Boolean)
   async assignRoleToApiKey(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('apiKeyId', { type: () => UUIDScalarType }) apiKeyId: string,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
   ): Promise<boolean> {
@@ -127,8 +129,8 @@ export class ApiKeyResolver {
 
   @ResolveField(() => RoleDTO)
   async role(
-    @Parent() apiKey: ApiKey,
-    @AuthWorkspace() workspace: Workspace,
+    @Parent() apiKey: ApiKeyEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RoleDTO> {
     const rolesMap = await this.apiKeyRoleService.getRolesByApiKeys({
       apiKeyIds: [apiKey.id],
