@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Standard object metadata update should succeed when setting isActive to false 1`] = `
+{
+  "description": "A company",
+  "icon": "IconBuildingSkyscraper",
+  "id": Any<String>,
+  "isActive": false,
+  "labelPlural": "Companies",
+  "labelSingular": "Company",
+  "namePlural": "companies",
+  "nameSingular": "company",
+  "shortcut": "C",
+  "standardOverrides": null,
+}
+`;
+
+exports[`Standard object metadata update should succeed when updating description 1`] = `
+{
+  "description": "Updated test description for company",
+  "icon": "IconBuildingSkyscraper",
+  "id": Any<String>,
+  "isActive": true,
+  "labelPlural": "Companies",
+  "labelSingular": "Company",
+  "namePlural": "companies",
+  "nameSingular": "company",
+  "shortcut": "C",
+  "standardOverrides": {
+    "description": "Updated test description for company",
+    "icon": null,
+    "labelPlural": null,
+    "labelSingular": null,
+  },
+}
+`;
+
+exports[`Standard object metadata update should succeed when updating icon 1`] = `
+{
+  "description": "A company",
+  "icon": "IconBuildingSkyscraper",
+  "id": Any<String>,
+  "isActive": true,
+  "labelPlural": "Companies",
+  "labelSingular": "Company",
+  "namePlural": "companies",
+  "nameSingular": "company",
+  "shortcut": "C",
+  "standardOverrides": null,
+}
+`;
+
+exports[`Standard object metadata update should succeed when updating labelSingular and labelPlural 1`] = `
+{
+  "description": "A company",
+  "icon": "IconBuildingSkyscraper",
+  "id": Any<String>,
+  "isActive": true,
+  "labelPlural": "Businesses",
+  "labelSingular": "Business",
+  "namePlural": "companies",
+  "nameSingular": "company",
+  "shortcut": "C",
+  "standardOverrides": {
+    "description": null,
+    "icon": null,
+    "labelPlural": "Businesses",
+    "labelSingular": "Business",
+  },
+}
+`;

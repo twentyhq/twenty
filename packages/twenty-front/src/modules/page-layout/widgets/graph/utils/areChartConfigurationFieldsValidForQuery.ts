@@ -53,7 +53,7 @@ export const areChartConfigurationFieldsValidForQuery = (
         fieldExists(configuration.groupByFieldMetadataId, objectMetadataItem)
       );
 
-    case 'NumberChartConfiguration':
+    case 'AggregateChartConfiguration':
     case 'GaugeChartConfiguration':
       return fieldExists(
         configuration.aggregateFieldMetadataId,

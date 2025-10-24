@@ -233,12 +233,14 @@ export class QueryRunnerArgsFactory {
     return allOverriddenRecords;
   }
 
-  public overrideFilterByFieldMetadata(
-    filter: ObjectRecordFilter | undefined,
+  public overrideFilterByFieldMetadata<
+    T extends ObjectRecordFilter | undefined,
+  >(
+    filter: T,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  ) {
-    if (!filter) {
-      return;
+  ): T {
+    if (!isDefined(filter)) {
+      return filter;
     }
 
     const overrideFilter = (filterObject: ObjectRecordFilter) => {
@@ -264,7 +266,7 @@ export class QueryRunnerArgsFactory {
       }, {});
     };
 
-    return overrideFilter(filter);
+    return overrideFilter(filter) as T;
   }
 
   private transformFilterValueByType(
@@ -300,7 +302,7 @@ export class QueryRunnerArgsFactory {
     }
   }
 
-  private async overrideValueByFieldMetadata(
+  async overrideValueByFieldMetadata(
     key: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,

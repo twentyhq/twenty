@@ -17,7 +17,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
@@ -116,15 +115,8 @@ export class WorkspaceResolverFactory {
         continue;
       }
 
-      const isGroupByEnabled =
-        workspaceFeatureFlagsMap[FeatureFlagKey.IS_GROUP_BY_ENABLED];
-
       // Generate query resolvers
       for (const methodName of workspaceResolverBuilderMethods.queries) {
-        if (methodName === 'groupBy' && !isGroupByEnabled) {
-          continue;
-        }
-
         const resolverName = getResolverName(objectMetadata, methodName);
         const resolverFactory = factories.get(methodName);
 

@@ -3,7 +3,6 @@ import { groupThreadsByDate } from '../groupThreadsByDate';
 
 describe('groupThreadsByDate', () => {
   const baseThread: Omit<AgentChatThread, 'createdAt' | 'id'> = {
-    agentId: 'agent-1',
     title: 'Test Thread',
     updatedAt: new Date().toISOString(),
   };

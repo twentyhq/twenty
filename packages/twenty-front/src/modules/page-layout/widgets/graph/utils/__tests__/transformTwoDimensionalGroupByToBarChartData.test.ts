@@ -3,7 +3,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
-  ExtendedAggregateOperations,
+  AggregateOperations,
   GraphOrderBy,
   GraphType,
   type BarChartConfiguration,
@@ -43,7 +43,7 @@ describe('transformTwoDimensionalGroupByToBarChartData', () => {
     __typename: 'BarChartConfiguration',
     graphType: GraphType.VERTICAL_BAR,
     aggregateFieldMetadataId: 'field-aggregate',
-    aggregateOperation: ExtendedAggregateOperations.SUM,
+    aggregateOperation: AggregateOperations.SUM,
     primaryAxisGroupByFieldMetadataId: 'field-x',
     secondaryAxisGroupByFieldMetadataId: 'field-y',
     secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,

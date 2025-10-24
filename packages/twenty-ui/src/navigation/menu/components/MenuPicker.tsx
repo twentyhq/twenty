@@ -75,7 +75,6 @@ const StyledLabel = styled.div<{
   font-family: ${({ theme }) => theme.font.family};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: 1;
   max-width: 100%;
   overflow: hidden;
   text-align: center;

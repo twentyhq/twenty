@@ -19,8 +19,10 @@ import { AddEnqueuedStatusToWorkflowRunCommand } from 'src/database/commands/upg
 import { FixSchemaArrayTypeCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-schema-array-type.command';
 import { FixUpdateStandardFieldsIsLabelSyncedWithName } from 'src/database/commands/upgrade-version-command/1-1/1-1-fix-update-standard-field-is-label-synced-with-name.command';
 import { MigrateWorkflowRunStatesCommand } from 'src/database/commands/upgrade-version-command/1-1/1-1-migrate-workflow-run-state.command';
+import { AddWorkflowRunStopStatusesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-add-workflow-run-stop-statuses.command';
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
+import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
 import { AddEnqueuedStatusToWorkflowRunV2Command } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-enqueued-status-to-workflow-run-v2.command';
 import { AddNextStepIdsToWorkflowVersionTriggers } from 'src/database/commands/upgrade-version-command/1-2/1-2-add-next-step-ids-to-workflow-version-triggers.command';
 import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-version-command/1-2/1-2-remove-workflow-runs-without-state.command';
@@ -101,6 +103,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.10 Commands
     protected readonly migrateAttachmentAuthorToCreatedByCommand: MigrateAttachmentAuthorToCreatedByCommand,
     protected readonly migrateAttachmentTypeToFileCategoryCommand: MigrateAttachmentTypeToFileCategoryCommand,
+    protected readonly regenerateSearchVectorsCommand: RegenerateSearchVectorsCommand,
+    protected readonly addWorkflowRunStopStatusesCommand: AddWorkflowRunStopStatusesCommand,
   ) {
     super(
       workspaceRepository,
@@ -206,7 +210,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1100: VersionCommands = {
-      beforeSyncMetadata: [],
+      beforeSyncMetadata: [
+        this.regenerateSearchVectorsCommand,
+        this.addWorkflowRunStopStatusesCommand,
+      ],
       afterSyncMetadata: [
         this.migrateAttachmentAuthorToCreatedByCommand,
         this.migrateAttachmentTypeToFileCategoryCommand,

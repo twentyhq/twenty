@@ -1,11 +1,11 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync, type ValidationError } from 'class-validator';
 
+import { AggregateChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/bar-chart-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
-import { NumberChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/number-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
 import { type WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
@@ -79,9 +79,9 @@ const validateGraphConfiguration = (
 
       return instance;
     }
-    case GraphType.NUMBER: {
+    case GraphType.AGGREGATE: {
       const instance = plainToInstance(
-        NumberChartConfigurationDTO,
+        AggregateChartConfigurationDTO,
         configuration,
       );
 

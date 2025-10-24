@@ -25,10 +25,16 @@ import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/sta
 import { useLingui } from '@lingui/react/macro';
 import {
   AppPath,
+  FieldMetadataType,
   ViewFilterOperand,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import {
+  computeMorphRelationFieldName,
+  CustomError,
+  getAppPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
@@ -59,6 +65,19 @@ export const RecordDetailRelationSection = ({
   const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
     ({ id }) => id === relationFieldMetadataId,
   );
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItemToFind) =>
+      objectMetadataItemToFind.nameSingular === objectMetadataNameSingular,
+  );
+
+  if (!objectMetadataItem) {
+    throw new CustomError(
+      'Object metadata item not found',
+      'OBJECT_METADATA_ITEM_NOT_FOUND',
+    );
+  }
 
   const fieldValue = useRecoilValue<
     ({ id: string } & Record<string, any>) | ObjectRecord[] | null
@@ -108,9 +127,29 @@ export const RecordDetailRelationSection = ({
     filterQueryParams,
   );
 
+  const persistField = usePersistField({
+    objectMetadataItemId: objectMetadataItem?.id ?? '',
+  });
+
+  const relationFieldMetadataIsMorphRelation =
+    relationFieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
+
+  const computedName = isDefined(relationFieldMetadataItem)
+    ? computeMorphRelationFieldName({
+        fieldName: relationFieldMetadataItem.name,
+        relationType: relationFieldMetadataItem.settings.relationType,
+        targetObjectMetadataNameSingular: objectMetadataItem.nameSingular,
+        targetObjectMetadataNamePlural: objectMetadataItem.namePlural,
+      })
+    : undefined;
+
+  const gqlFieldName = relationFieldMetadataIsMorphRelation
+    ? computedName
+    : relationFieldMetadataItem?.name;
+
   const filtersForAggregate = isToManyObjects
     ? ({
-        [`${relationFieldMetadataItem?.name}Id`]: {
+        [`${gqlFieldName}Id`]: {
           in: [recordId],
         },
       } satisfies RecordGqlOperationFilter)
@@ -125,19 +164,6 @@ export const RecordDetailRelationSection = ({
     recordGqlFieldsAggregate: {
       id: [AggregateOperations.COUNT],
     },
-  });
-
-  // TODO: refactor this when we have refactored columnDefinitions and field definitions because
-  //    we should be able to get the objectMetadataItem from a context way more easily
-  const { objectMetadataItems } = useObjectMetadataItems();
-
-  const objectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItemToFind) =>
-      objectMetadataItemToFind.nameSingular === objectMetadataNameSingular,
-  );
-
-  const persistField = usePersistField({
-    objectMetadataItemId: objectMetadataItem?.id ?? '',
   });
 
   const handleSubmit: FieldInputEvent = ({ newValue }) => {
@@ -178,7 +204,15 @@ export const RecordDetailRelationSection = ({
         }
       >
         {relationRecords.length > 0 && (
-          <RecordDetailRelationRecordsList relationRecords={relationRecords} />
+          <RecordDetailRelationRecordsList
+            recordsWithObjectNameSingular={relationRecords.map(
+              (relationRecord) => ({
+                value: relationRecord,
+                objectNameSingular: relationObjectMetadataNameSingular,
+                fieldMetadataId: relationFieldMetadataId,
+              }),
+            )}
+          />
         )}
       </RecordDetailSectionContainer>
     </FieldInputEventContext.Provider>

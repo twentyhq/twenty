@@ -42,6 +42,7 @@ import {
   getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -65,7 +66,6 @@ import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { loginTokenState } from '../states/loginTokenState';
-import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);

@@ -30,20 +30,22 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
       const { filter, orderBy, viewId, groupBy, selectedFields } =
         this.parseRequestArgs(request);
 
-      return await this.commonGroupByQueryRunnerService.run({
-        args: {
+      return await this.commonGroupByQueryRunnerService.execute(
+        {
           filter,
           orderBy,
           viewId,
           groupBy,
           selectedFields,
         },
-        authContext,
-        objectMetadataMaps,
-        objectMetadataItemWithFieldMaps,
-      });
+        {
+          authContext,
+          objectMetadataMaps,
+          objectMetadataItemWithFieldMaps,
+        },
+      );
     } catch (error) {
-      throw workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 

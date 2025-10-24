@@ -44,15 +44,12 @@ export class GroupByResolverFactory
         const selectedFields = graphqlFields(info);
 
         try {
-          return await this.commonGroupByQueryRunnerService.run({
-            args: { ...args, selectedFields },
-            authContext: internalContext.authContext,
-            objectMetadataMaps: internalContext.objectMetadataMaps,
-            objectMetadataItemWithFieldMaps:
-              internalContext.objectMetadataItemWithFieldMaps,
-          });
+          return await this.commonGroupByQueryRunnerService.execute(
+            { ...args, selectedFields },
+            internalContext,
+          );
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

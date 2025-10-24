@@ -45,13 +45,10 @@ export class CreateOneResolverFactory
         const selectedFields = graphqlFields(info);
 
         try {
-          const record = await this.commonCreateOneQueryRunnerService.run({
-            args: { ...args, selectedFields },
-            authContext: internalContext.authContext,
-            objectMetadataMaps: internalContext.objectMetadataMaps,
-            objectMetadataItemWithFieldMaps:
-              internalContext.objectMetadataItemWithFieldMaps,
-          });
+          const record = await this.commonCreateOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            internalContext,
+          );
 
           const typeORMObjectRecordsParser =
             new ObjectRecordsToGraphqlConnectionHelper(
@@ -66,7 +63,7 @@ export class CreateOneResolverFactory
             totalCount: 1,
           });
         } catch (error) {
-          return workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+          workspaceQueryRunnerGraphqlApiExceptionHandler(error);
         }
       }
 

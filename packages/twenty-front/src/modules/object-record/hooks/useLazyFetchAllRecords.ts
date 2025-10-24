@@ -2,6 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { type UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
+import { type ObjectRecordQueryProgress } from '@/object-record/types/ObjectRecordQueryProgress';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
@@ -15,12 +16,6 @@ type UseLazyFetchAllRecordIdsParams<T> = Omit<
   maximumRequests?: number;
 };
 
-type ExportProgress = {
-  exportedRecordCount?: number;
-  totalRecordCount?: number;
-  displayType: 'percentage' | 'number';
-};
-
 export const useLazyFetchAllRecords = <T>({
   objectNameSingular,
   filter,
@@ -31,7 +26,7 @@ export const useLazyFetchAllRecords = <T>({
   recordGqlFields,
 }: UseLazyFetchAllRecordIdsParams<T>) => {
   const [isDownloading, setIsDownloading] = useState(false);
-  const [progress, setProgress] = useState<ExportProgress>({
+  const [progress, setProgress] = useState<ObjectRecordQueryProgress>({
     displayType: 'number',
   });
   const { fetchMoreRecordsLazy, findManyRecordsLazy } = useLazyFindManyRecords({
@@ -64,7 +59,7 @@ export const useLazyFetchAllRecords = <T>({
     const records = firstQueryResult?.edges?.map((edge) => edge.node) ?? [];
 
     setProgress({
-      exportedRecordCount: recordsCount,
+      processedRecordCount: recordsCount,
       totalRecordCount: totalCount,
       displayType: totalCount ? 'percentage' : 'number',
     });
@@ -101,7 +96,7 @@ export const useLazyFetchAllRecords = <T>({
       }
 
       setProgress({
-        exportedRecordCount: records.length,
+        processedRecordCount: records.length,
         totalRecordCount: totalCount,
         displayType: totalCount ? 'percentage' : 'number',
       });

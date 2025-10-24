@@ -82,9 +82,23 @@ export const isFieldValueEmpty = ({
   }
 
   if (isFieldMorphRelation(fieldDefinition)) {
-    return isArray(fieldValue)
-      ? !isNonEmptyArray(fieldValue)
-      : isValueEmpty(fieldValue);
+    if (!isArray(fieldValue)) {
+      return isValueEmpty(fieldValue);
+    }
+
+    const areValuesEmpty = fieldValue
+      .filter(isDefined)
+      .every((fieldValueWithObjectNameSingular) => {
+        if ('value' in fieldValueWithObjectNameSingular) {
+          const value = fieldValueWithObjectNameSingular?.value;
+          if (!isArray(value)) {
+            return isValueEmpty(value);
+          }
+          return !isNonEmptyArray(value);
+        }
+        return true;
+      });
+    return areValuesEmpty;
   }
 
   if (isFieldMultiSelect(fieldDefinition) || isFieldArray(fieldDefinition)) {

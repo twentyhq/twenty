@@ -64,7 +64,8 @@ export class AiController {
     }
 
     try {
-      const registeredModel = this.aiModelRegistryService.getDefaultModel();
+      const registeredModel =
+        this.aiModelRegistryService.getDefaultPerformanceModel();
 
       const result = this.aiService.streamText({
         messages,

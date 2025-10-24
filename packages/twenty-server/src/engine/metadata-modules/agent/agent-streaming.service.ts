@@ -9,6 +9,7 @@ import {
   UITools,
 } from 'ai';
 import { type Response } from 'express';
+import { ExtendedUIMessage } from 'twenty-shared/ai';
 import { Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,6 +22,7 @@ import {
   AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { AiRouterService } from 'src/engine/metadata-modules/ai-router/ai-router.service';
 
 export type StreamAgentChatOptions = {
   threadId: string;
@@ -40,6 +42,7 @@ export class AgentStreamingService {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly agentExecutionService: AgentExecutionService,
+    private readonly aiRouterService: AiRouterService,
   ) {}
 
   async streamAgentChat({
@@ -56,7 +59,7 @@ export class AgentStreamingService {
           id: threadId,
           userWorkspaceId,
         },
-        relations: ['messages', 'agent'],
+        relations: ['messages'],
       });
 
       if (!thread) {
@@ -66,11 +69,54 @@ export class AgentStreamingService {
         );
       }
 
-      const stream = createUIMessageStream({
+      const stream = createUIMessageStream<ExtendedUIMessage>({
         execute: async ({ writer }) => {
+          writer.write({
+            type: 'data-routing-status' as const,
+            id: 'routing-status',
+            data: {
+              text: 'Finding the best agent for your request...',
+              state: 'loading',
+            },
+          });
+
+          const agent = await this.aiRouterService.routeMessage({
+            messages,
+            workspaceId: workspace.id,
+            routerModel: workspace.routerModel,
+          });
+
+          if (!agent) {
+            writer.write({
+              type: 'data-routing-status' as const,
+              id: 'routing-status',
+              data: {
+                text: '',
+                state: 'error',
+              },
+            });
+            throw new AgentException(
+              'No agents available for routing',
+              AgentExceptionCode.AGENT_EXECUTION_FAILED,
+            );
+          }
+
+          this.logger.log(`Using agent ${agent.id} for message routing`);
+
+          const routedStatusPart = {
+            type: 'data-routing-status' as const,
+            id: 'routing-status',
+            data: {
+              text: `Routed to ${agent.label} agent`,
+              state: 'routed',
+            },
+          };
+
+          writer.write(routedStatusPart);
+
           const result = await this.agentExecutionService.streamChatResponse({
             workspace,
-            agentId: thread.agent.id,
+            agentId: agent.id,
             userWorkspaceId,
             messages,
             recordIdsByObjectMetadataNameSingular,
@@ -81,6 +127,7 @@ export class AgentStreamingService {
               onError: (error) => {
                 return error instanceof Error ? error.message : String(error);
               },
+              sendStart: false,
               onFinish: async ({ responseMessage }) => {
                 if (responseMessage.parts.length === 0) {
                   return;
@@ -101,9 +148,13 @@ export class AgentStreamingService {
                     ],
                   },
                 });
+
                 await this.agentChatService.addMessage({
                   threadId,
-                  uiMessage: responseMessage,
+                  uiMessage: {
+                    ...responseMessage,
+                    parts: [routedStatusPart, ...responseMessage.parts],
+                  },
                 });
               },
               sendReasoning: true,

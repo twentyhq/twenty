@@ -1,11 +1,13 @@
-import { type ObjectRecordProperties } from 'src/engine/core-modules/record-crud/types/object-record-properties.type';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import {
+  type CreateRecordExecutionContext,
+  type RecordCrudExecutionContext,
+} from './execution-context.type';
+import { type CreateRecordInput } from './record-crud-input.type';
 
-export type CreateRecordParams = {
-  objectName: string;
-  objectRecord: ObjectRecordProperties;
-  workspaceId: string;
-  rolePermissionConfig?: RolePermissionConfig;
-  createdBy?: ActorMetadata;
-};
+export type CreateRecordParams = CreateRecordInput &
+  Omit<CreateRecordExecutionContext, 'upsert'> & {
+    upsert?: never;
+  };
+
+export type CreateRecordParamsWithContext = CreateRecordInput &
+  RecordCrudExecutionContext;

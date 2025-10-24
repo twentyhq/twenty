@@ -16,11 +16,26 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { isChartSettingDisabled } from '@/command-menu/pages/page-layout/utils/isChartSettingDisabled';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
+import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import { SidePanelInformationBanner } from 'twenty-ui/display';
 
-import { type GraphType, type PageLayoutWidget } from '~/generated/graphql';
+import {
+  AggregateOperations,
+  GraphType,
+  type PageLayoutWidget,
+} from '~/generated/graphql';
+
+const StyledSidePanelInformationBanner = styled(SidePanelInformationBanner)`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
 
 export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { updateCommandMenuPageInfo } = useUpdateCommandMenuPageInfo();
@@ -32,6 +47,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { setSelectedItemId } = useSelectableList(
     COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
   );
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   if (widget.configuration?.__typename === 'IframeConfiguration') {
     throw new Error(t`IframeConfiguration is not supported`);
@@ -56,18 +72,53 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const isGroupByEnabled = getChartSettingsValues(
     CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
   );
+  const [hasWidgetTooManyGroups, setHasWidgetTooManyGroups] =
+    useRecoilComponentState(hasWidgetTooManyGroupsComponentState);
 
   const handleGraphTypeChange = (graphType: GraphType) => {
+    const configToUpdate: Record<string, any> = {
+      __typename: GRAPH_TYPE_TO_CONFIG_TYPENAME[graphType],
+      graphType,
+    };
+
+    if (graphType !== GraphType.AGGREGATE && graphType !== GraphType.GAUGE) {
+      const currentAggregateFieldMetadataId =
+        configuration.aggregateFieldMetadataId;
+
+      const objectMetadataItem = objectMetadataItems.find(
+        (item) => item.id === widget.objectMetadataId,
+      );
+
+      if (isDefined(objectMetadataItem)) {
+        const aggregateField = objectMetadataItem.fields.find(
+          (field) => field.id === currentAggregateFieldMetadataId,
+        );
+
+        if (
+          isDefined(aggregateField) &&
+          isFieldMetadataDateKind(aggregateField.type) &&
+          (configuration.aggregateOperation === AggregateOperations.MIN ||
+            configuration.aggregateOperation === AggregateOperations.MAX)
+        ) {
+          configToUpdate.aggregateOperation = AggregateOperations.COUNT;
+        }
+      }
+    }
+
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        __typename: GRAPH_TYPE_TO_CONFIG_TYPENAME[graphType],
-        graphType,
-      },
+      configToUpdate,
     });
 
     updateCommandMenuPageInfo({
       pageIcon: GRAPH_TYPE_INFORMATION[graphType].icon,
     });
+
+    if (
+      graphType !== GraphType.VERTICAL_BAR &&
+      graphType !== GraphType.HORIZONTAL_BAR
+    ) {
+      setHasWidgetTooManyGroups(false);
+    }
   };
 
   const chartSettings = GRAPH_TYPE_INFORMATION[currentGraphType].settings;
@@ -83,6 +134,11 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
         currentGraphType={currentGraphType}
         setCurrentGraphType={handleGraphTypeChange}
       />
+      {hasWidgetTooManyGroups && (
+        <StyledSidePanelInformationBanner
+          message={t`Max ${GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter`}
+        />
+      )}
       {chartSettings.map((group) => (
         <CommandGroup key={group.heading} heading={group.heading}>
           {group.items.map((item) => {

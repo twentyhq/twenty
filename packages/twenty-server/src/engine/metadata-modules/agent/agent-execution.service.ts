@@ -15,6 +15,7 @@ import { getAppPath } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -35,6 +36,8 @@ import { AgentModelConfigService } from './agent-model-config.service';
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
+
+import { repairToolCall } from './utils/repair-tool-call.util';
 
 export interface AgentExecutionResult {
   result: object;
@@ -129,6 +132,31 @@ export class AgentExecutionService implements AgentExecutionContext {
         messages: convertToModelMessages(messages),
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
         providerOptions,
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
+        experimental_repairToolCall: async ({
+          toolCall,
+          tools: toolsForRepair,
+          inputSchema,
+          error,
+        }: {
+          toolCall: {
+            type: 'tool-call';
+            toolCallId: string;
+            toolName: string;
+            input: string;
+          };
+          tools: Record<string, unknown>;
+          inputSchema: (toolCall: { toolName: string }) => unknown;
+          error: Error;
+        }) => {
+          return repairToolCall({
+            toolCall,
+            tools: toolsForRepair,
+            inputSchema,
+            error,
+            model: registeredModel.model,
+          });
+        },
       };
     } catch (error) {
       this.logger.error(
