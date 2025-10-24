@@ -14,6 +14,7 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   groupMode?: 'grouped' | 'stacked';
   data?: readonly D[];
   indexBy?: string;
+  layout?: 'vertical' | 'horizontal';
 };
 
 const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
@@ -60,6 +61,7 @@ export const CustomBarItem = <D extends BarDatum>({
   groupMode = 'grouped',
   data: chartData,
   indexBy,
+  layout = 'vertical',
 }: CustomBarItemProps<D>) => {
   const theme = useTheme();
   const { showTooltipFromEvent, showTooltipAt, hideTooltip } = useTooltip();
@@ -138,18 +140,24 @@ export const CustomBarItem = <D extends BarDatum>({
     return !hasBarAbove;
   }, [groupMode, keys, barData, chartData, indexBy]);
 
+  const isHorizontal = layout === 'horizontal';
+
   return (
     <animated.g transform={transform}>
       {isTopBar && (
         <defs>
           <clipPath id={`round-corner-${label}`}>
             <animated.rect
-              x="0"
-              y="0"
+              x={isHorizontal ? -borderRadius : 0}
+              y={0}
               rx={borderRadius}
               ry={borderRadius}
-              width={to(width, (value) => Math.max(value, 0))}
-              height={to(height, (value) => Math.max(value + borderRadius, 0))}
+              width={to(width, (value) =>
+                Math.max(value + (isHorizontal ? borderRadius : 0), 0),
+              )}
+              height={to(height, (value) =>
+                Math.max(value + (isHorizontal ? 0 : borderRadius), 0),
+              )}
             />
           </clipPath>
         </defs>

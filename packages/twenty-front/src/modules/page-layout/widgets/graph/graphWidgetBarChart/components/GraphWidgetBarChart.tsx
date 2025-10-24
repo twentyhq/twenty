@@ -156,6 +156,7 @@ export const GraphWidgetBarChart = ({
       groupMode={groupMode}
       data={data}
       indexBy={indexBy}
+      layout={layout}
     />
   );
 
