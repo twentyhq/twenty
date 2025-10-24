@@ -1,6 +1,7 @@
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import styled from '@emotion/styled';
+import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { MAIN_COLORS, type ThemeColor } from 'twenty-ui/theme';
 
@@ -14,15 +15,6 @@ type ChartColorGradientOptionProps = {
   currentColor: string | null | undefined;
   onSelectColor: (colorName: ThemeColor | 'auto') => void;
 };
-
-const StyledColorSample = styled.div<{ color: string }>`
-  background-color: ${({ color }) => color};
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
-  border-radius: 60px;
-  flex-shrink: 0;
-  height: ${({ theme }) => theme.spacing(4)};
-  width: ${({ theme }) => theme.spacing(3)};
-`;
 
 const StyledColorSamplesContainer = styled.div`
   align-items: center;
@@ -50,7 +42,7 @@ export const ChartColorGradientOption = ({
           reversedIndex,
           COLOR_GROUP_COUNT,
         );
-        return <StyledColorSample key={index} color={groupColor} />;
+        return <ColorSample key={index} color={groupColor} />;
       })}
     </StyledColorSamplesContainer>
   );

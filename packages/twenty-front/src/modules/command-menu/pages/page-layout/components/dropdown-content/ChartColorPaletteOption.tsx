@@ -1,5 +1,6 @@
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import styled from '@emotion/styled';
+import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { MAIN_COLORS, type ThemeColor } from 'twenty-ui/theme';
 
@@ -8,15 +9,6 @@ type ChartColorPaletteOptionProps = {
   currentColor: string | null | undefined;
   onSelectColor: (colorName: ThemeColor | 'auto') => void;
 };
-
-const StyledColorSample = styled.div<{ color: string }>`
-  background-color: ${({ color }) => color};
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
-  border-radius: 60px;
-  flex-shrink: 0;
-  height: ${({ theme }) => theme.spacing(4)};
-  width: ${({ theme }) => theme.spacing(3)};
-`;
 
 const StyledColorSamplesContainer = styled.div`
   align-items: center;
@@ -41,7 +33,7 @@ export const ChartColorPaletteOption = ({
     <StyledColorSamplesContainer>
       {paletteColors.map((paletteColorName) => {
         const baseColor = MAIN_COLORS[paletteColorName];
-        return <StyledColorSample key={paletteColorName} color={baseColor} />;
+        return <ColorSample key={paletteColorName} color={baseColor} />;
       })}
     </StyledColorSamplesContainer>
   );
