@@ -1,3 +1,4 @@
+import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { Text } from '@nivo/text';
 import { useTheme } from '@nivo/theming';
@@ -5,6 +6,7 @@ import { useTooltip } from '@nivo/tooltip';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
 import { createElement, useCallback, useMemo, type MouseEvent } from 'react';
+import styled from 'styled-components';
 import { isDefined } from 'twenty-shared/utils';
 
 type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
@@ -13,6 +15,16 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   data?: readonly D[];
   indexBy?: string;
 };
+
+const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
+  cursor: ${({ $isInteractive }) => ($isInteractive ? 'pointer' : 'default')};
+  transition: filter 0.15s ease-in-out;
+
+  &:hover {
+    filter: ${({ $isInteractive }) =>
+      $isInteractive ? `brightness(${BAR_CHART_HOVER_BRIGHTNESS})` : 'none'};
+  }
+`;
 
 // This is a copy of the BarItem component from @nivo/bar with some design modifications
 export const CustomBarItem = <D extends BarDatum>({
@@ -143,11 +155,12 @@ export const CustomBarItem = <D extends BarDatum>({
         </defs>
       )}
 
-      <animated.rect
+      <StyledBarRect
+        $isInteractive={isInteractive}
         clipPath={isTopBar ? `url(#round-corner-${label})` : undefined}
         width={to(width, (value) => Math.max(value, 0))}
         height={to(height, (value) => Math.max(value, 0))}
-        fill={barData.fill ?? color}
+        fill={color}
         strokeWidth={borderWidth}
         stroke={borderColor}
         focusable={isFocusable}
