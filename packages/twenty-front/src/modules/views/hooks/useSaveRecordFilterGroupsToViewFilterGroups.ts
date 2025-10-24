@@ -63,10 +63,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
           (viewFilterGroup) => viewFilterGroup.id,
         );
 
-        await createViewFilterGroups(
-          viewFilterGroupsToCreate,
-          currentView,
-        );
+        await createViewFilterGroups(viewFilterGroupsToCreate, currentView);
         await updateViewFilterGroups(viewFilterGroupsToUpdate);
         await deleteViewFilterGroups(viewFilterGroupIdsToDelete);
       },

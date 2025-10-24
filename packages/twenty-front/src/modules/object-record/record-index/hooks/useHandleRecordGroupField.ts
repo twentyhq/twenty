@@ -11,8 +11,7 @@ import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
-  const { createViewGroups, deleteViewGroups } =
-    usePersistViewGroupRecords();
+  const { createViewGroups, deleteViewGroups } = usePersistViewGroupRecords();
 
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,

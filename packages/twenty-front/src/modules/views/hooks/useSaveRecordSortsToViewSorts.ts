@@ -11,11 +11,8 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordSortsToViewSorts = () => {
-  const {
-    createViewSorts,
-    updateViewSorts,
-    deleteViewSorts,
-  } = usePersistViewSortRecords();
+  const { createViewSorts, updateViewSorts, deleteViewSorts } =
+    usePersistViewSortRecords();
 
   const { currentView } = useGetCurrentViewOnly();
 

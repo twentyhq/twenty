@@ -83,7 +83,11 @@ export const usePersistServerlessFunction = () => {
         };
       }
     },
-    [createServerlessFunctionMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      createServerlessFunctionMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
   );
 
   const updateServerlessFunction = useCallback(
@@ -121,7 +125,11 @@ export const usePersistServerlessFunction = () => {
         };
       }
     },
-    [updateServerlessFunctionMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      updateServerlessFunctionMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
   );
 
   const deleteServerlessFunction = useCallback(
@@ -160,7 +168,11 @@ export const usePersistServerlessFunction = () => {
         };
       }
     },
-    [deleteServerlessFunctionMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      deleteServerlessFunctionMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
   );
 
   return {
@@ -169,4 +181,3 @@ export const usePersistServerlessFunction = () => {
     deleteServerlessFunction,
   };
 };
-
