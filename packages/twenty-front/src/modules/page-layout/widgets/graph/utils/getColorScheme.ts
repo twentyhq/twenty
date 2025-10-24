@@ -9,8 +9,13 @@ export const getColorScheme = (
   colorName?: GraphColor,
   fallbackIndex?: number,
 ): GraphColorScheme => {
-  if (isDefined(colorName) && isDefined(registry[colorName])) {
+  if (
+    isDefined(colorName) &&
+    colorName !== 'auto' &&
+    isDefined(registry[colorName])
+  ) {
     return registry[colorName];
   }
+
   return getColorSchemeByIndex(registry, fallbackIndex || 0);
 };

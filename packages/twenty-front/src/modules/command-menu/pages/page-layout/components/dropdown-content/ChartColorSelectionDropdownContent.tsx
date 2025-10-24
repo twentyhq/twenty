@@ -19,6 +19,12 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
+type ColorOption = {
+  id: string;
+  name: string;
+  colorName: ThemeColor | 'auto';
+};
+
 export const ChartColorSelectionDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -54,11 +60,18 @@ export const ChartColorSelectionDropdownContent = () => {
 
   const currentColor = configuration.color;
 
-  const colorOptions = MAIN_COLOR_NAMES.map((colorName) => ({
-    id: colorName,
-    name: capitalize(colorName),
-    colorName: colorName,
-  }));
+  const colorOptions: ColorOption[] = [
+    {
+      id: 'auto',
+      name: 'Auto',
+      colorName: 'auto',
+    },
+    ...MAIN_COLOR_NAMES.map((colorName) => ({
+      id: colorName,
+      name: capitalize(colorName),
+      colorName: colorName,
+    })),
+  ];
 
   const filteredColorOptions = filterBySearchQuery({
     items: colorOptions,
@@ -66,7 +79,7 @@ export const ChartColorSelectionDropdownContent = () => {
     getSearchableValues: (item) => [item.name],
   });
 
-  const handleSelectColor = (colorName: ThemeColor) => {
+  const handleSelectColor = (colorName: ThemeColor | 'auto') => {
     updateCurrentWidgetConfig({
       configToUpdate: {
         color: colorName,
@@ -92,27 +105,32 @@ export const ChartColorSelectionDropdownContent = () => {
             (colorOption) => colorOption.id,
           )}
         >
-          {filteredColorOptions.map((colorOption) => (
-            <SelectableListItem
-              key={colorOption.id}
-              itemId={colorOption.id}
-              onEnter={() => {
-                handleSelectColor(colorOption.colorName);
-              }}
-            >
-              <MenuItemSelect
-                text={colorOption.name}
-                selected={currentColor === colorOption.id}
-                focused={selectedItemId === colorOption.id}
-                LeftIcon={() => (
-                  <ColorSample colorName={colorOption.colorName} />
-                )}
-                onClick={() => {
+          {filteredColorOptions.map((colorOption) => {
+            const colorName = colorOption.colorName;
+            const leftIcon =
+              colorName !== 'auto'
+                ? () => <ColorSample colorName={colorName} />
+                : undefined;
+            return (
+              <SelectableListItem
+                key={colorOption.id}
+                itemId={colorOption.id}
+                onEnter={() => {
                   handleSelectColor(colorOption.colorName);
                 }}
-              />
-            </SelectableListItem>
-          ))}
+              >
+                <MenuItemSelect
+                  text={colorOption.name}
+                  selected={currentColor === colorOption.id}
+                  focused={selectedItemId === colorOption.id}
+                  LeftIcon={leftIcon}
+                  onClick={() => {
+                    handleSelectColor(colorOption.colorName);
+                  }}
+                />
+              </SelectableListItem>
+            );
+          })}
         </SelectableList>
       </DropdownMenuItemsContainer>
     </>
