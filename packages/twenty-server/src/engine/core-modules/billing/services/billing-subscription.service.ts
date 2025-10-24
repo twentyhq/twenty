@@ -47,7 +47,6 @@ import { BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing
 import { LicensedBillingSubscriptionItem } from 'src/engine/core-modules/billing/types/billing-subscription-item.type';
 import { SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
-import { ensureFutureStartDate } from 'src/engine/core-modules/billing/utils/ensure-future-start-date.util';
 import { getOppositeInterval } from 'src/engine/core-modules/billing/utils/get-opposite-interval';
 import { getOppositePlan } from 'src/engine/core-modules/billing/utils/get-opposite-plan';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
@@ -258,10 +257,14 @@ export class BillingSubscriptionService {
       nextMutated,
     );
 
+    const currentPhaseSnapshotForUpdate = currentMutated
+      ? { ...currentMutated, end_date: updatedSubscription.current_period_end }
+      : undefined;
+
     await this.stripeSubscriptionScheduleService.replaceEditablePhases(
       updatedSchedule.id,
       {
-        currentPhaseSnapshot: currentMutated ?? undefined,
+        currentPhaseSnapshot: currentPhaseSnapshotForUpdate,
         nextPhase: nextForUpdate,
       },
     );
@@ -589,7 +592,6 @@ export class BillingSubscriptionService {
       meteredPriceId: newMeteredPriceId,
       seats: licensedItem.quantity,
       proration: 'none',
-      thresholdsPriceId: licensedPriceIdForThresholds,
     });
 
     await this.syncSubscriptionToDatabase(
@@ -717,7 +719,7 @@ export class BillingSubscriptionService {
     >,
     mappedCurrentMeteredId: string,
     mappedNextMeteredId: string,
-    subscriptionCurrentPeriodEnd: number | undefined,
+    subscriptionCurrentPeriodEnd: number,
     mutateCurrentNow: boolean,
   ): Promise<{
     currentSnap: Stripe.SubscriptionScheduleUpdateParams.Phase | undefined;
@@ -773,10 +775,7 @@ export class BillingSubscriptionService {
     }
 
     const nextPhaseBase: Stripe.SubscriptionScheduleUpdateParams.Phase = {
-      start_date: ensureFutureStartDate(
-        (currentSnap?.end_date as number | undefined) ??
-          subscriptionCurrentPeriodEnd,
-      ),
+      start_date: subscriptionCurrentPeriodEnd,
       items: baseItems,
       proration_behavior: 'none',
     };
@@ -1018,10 +1017,7 @@ export class BillingSubscriptionService {
         const nextPhaseForYear =
           await this.billingSubscriptionPhaseService.buildSnapshot(
             {
-              start_date: ensureFutureStartDate(
-                (currentSnap?.end_date as number | undefined) ??
-                  subscription.current_period_end,
-              ),
+              start_date: subscription.current_period_end,
               items: currentSnap.items,
               proration_behavior: 'none',
             } as Stripe.SubscriptionScheduleUpdateParams.Phase,
@@ -1203,10 +1199,7 @@ export class BillingSubscriptionService {
         const nextPhase =
           await this.billingSubscriptionPhaseService.buildSnapshot(
             {
-              start_date: ensureFutureStartDate(
-                (currentPhaseSnapshot?.end_date as number | undefined) ??
-                  subscription.current_period_end,
-              ),
+              start_date: subscription.current_period_end,
               items: currentPhaseSnapshot.items,
               proration_behavior: 'none',
             } as Stripe.SubscriptionScheduleUpdateParams.Phase,
@@ -1287,7 +1280,6 @@ export class BillingSubscriptionService {
     seats: number;
     anchor?: Stripe.SubscriptionUpdateParams.BillingCycleAnchor;
     proration?: Stripe.SubscriptionUpdateParams.ProrationBehavior;
-    thresholdsPriceId?: string;
     metadata?: Record<string, string>;
   }) {
     const {
@@ -1326,8 +1318,13 @@ export class BillingSubscriptionService {
     currentPhaseSnapshot: Stripe.SubscriptionScheduleUpdateParams.Phase;
     nextPhase?: Stripe.SubscriptionScheduleUpdateParams.Phase;
   }): Promise<void> {
-    const { scheduleId, currentPhaseSnapshot, subscription } = params;
-    let { nextPhase } = params;
+    const { scheduleId, subscription } = params;
+    let { nextPhase, currentPhaseSnapshot } = params;
+
+    const currentPhaseToPersist: Stripe.SubscriptionScheduleUpdateParams.Phase = {
+      ...currentPhaseSnapshot,
+      end_date: subscription.current_period_end,
+    };
 
     if (
       nextPhase &&
@@ -1342,7 +1339,7 @@ export class BillingSubscriptionService {
     await this.stripeSubscriptionScheduleService.replaceEditablePhases(
       scheduleId,
       {
-        currentPhaseSnapshot,
+        currentPhaseSnapshot: currentPhaseToPersist,
         nextPhase,
       },
     );
@@ -1433,7 +1430,6 @@ export class BillingSubscriptionService {
       seats: prices.seats,
       anchor: 'now',
       proration: 'create_prorations',
-      thresholdsPriceId: prices.licensedPriceId,
     });
 
     await this.syncSubscriptionToDatabase(sub.workspaceId, updatedSubscription);
@@ -1472,8 +1468,7 @@ export class BillingSubscriptionService {
       );
     const next = await this.billingSubscriptionPhaseService.buildSnapshot(
       {
-        start_date:
-          currentPhaseSnapshot.end_date ?? subscription.current_period_end,
+        start_date: subscription.current_period_end,
         items: currentPhaseSnapshot.items,
         proration_behavior: 'none',
       } as Stripe.SubscriptionScheduleUpdateParams.Phase,
