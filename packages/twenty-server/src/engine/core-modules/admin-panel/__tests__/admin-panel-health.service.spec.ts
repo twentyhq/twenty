@@ -40,7 +40,7 @@ describe('AdminPanelHealthService', () => {
     appHealth = { isHealthy: jest.fn() } as any;
     redisClient = {
       getClient: jest.fn().mockReturnValue({} as Redis),
-      getQueueClient: jest.fn().mockReturnValue({} as Redis),
+      getNoevictionClient: jest.fn().mockReturnValue({} as Redis),
     } as any;
     twentyConfigService = { get: jest.fn() } as any;
 
@@ -373,7 +373,7 @@ describe('AdminPanelHealthService', () => {
     beforeEach(() => {
       jest.clearAllMocks();
       redisClient.getClient.mockReturnValue({} as Redis);
-      redisClient.getQueueClient.mockReturnValue({} as Redis);
+      redisClient.getNoevictionClient.mockReturnValue({} as Redis);
       (Queue as unknown as jest.Mock).mockImplementation(() => mockQueue);
     });
 

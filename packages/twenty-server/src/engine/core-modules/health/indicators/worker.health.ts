@@ -54,7 +54,7 @@ export class WorkerHealthIndicator {
       pointsNeeded?: number;
     },
   ): Promise<WorkerQueueHealth | null> {
-    const redis = this.redisClient.getQueueClient();
+    const redis = this.redisClient.getNoevictionClient();
     const queue = new Queue(queueName, { connection: redis });
 
     try {

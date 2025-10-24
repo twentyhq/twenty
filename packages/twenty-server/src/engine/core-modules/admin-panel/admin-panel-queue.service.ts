@@ -30,7 +30,7 @@ export class AdminPanelQueueService {
     limit = 50,
     offset = 0,
   ) {
-    const redis = this.redisClient.getQueueClient();
+    const redis = this.redisClient.getNoevictionClient();
     const queue = new Queue(queueName, { connection: redis });
 
     try {
@@ -124,7 +124,7 @@ export class AdminPanelQueueService {
     retriedCount: number;
     results: JobOperationResult[];
   }> {
-    const redis = this.redisClient.getQueueClient();
+    const redis = this.redisClient.getNoevictionClient();
     const queue = new Queue(queueName, { connection: redis });
 
     try {
@@ -196,7 +196,7 @@ export class AdminPanelQueueService {
     deletedCount: number;
     results: JobOperationResult[];
   }> {
-    const redis = this.redisClient.getQueueClient();
+    const redis = this.redisClient.getNoevictionClient();
     const queue = new Queue(queueName, { connection: redis });
 
     try {

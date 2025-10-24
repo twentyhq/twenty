@@ -29,6 +29,7 @@ export type PartialFieldMetadata<
   | 'relationTargetObjectMetadataId'
   | 'relationTargetObjectMetadata'
   | 'morphId'
+  | 'storage'
 > & {
   standardId: string;
   label: string | ((objectMetadata: ObjectMetadataEntity) => string);
