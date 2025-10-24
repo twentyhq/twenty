@@ -25,7 +25,7 @@ import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeO
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 type useCreateOneRecordProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
@@ -188,11 +188,13 @@ export const useCreateOneRecord = <
 
     registerObjectOperation(objectNameSingular, { type: 'create-one' });
 
-    return isDefined(createdObject.data?.[mutationResponseField])
-      ? getRecordFromRecordNode({
-          recordNode: createdObject.data?.[mutationResponseField],
-        })
-      : null;
+    if (!isDefined(createdObject.data?.[mutationResponseField])) {
+      throw new CustomError('Failed to create record');
+    }
+
+    return getRecordFromRecordNode({
+      recordNode: createdObject.data?.[mutationResponseField],
+    });
   };
 
   return {
