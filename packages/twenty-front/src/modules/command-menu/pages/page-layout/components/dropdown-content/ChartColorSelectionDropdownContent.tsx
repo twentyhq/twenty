@@ -2,6 +2,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
@@ -11,12 +12,16 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
+import {
+  MAIN_COLOR_NAMES,
+  MAIN_COLORS,
+  type ThemeColor,
+} from 'twenty-ui/theme';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ColorOption = {
@@ -24,6 +29,23 @@ type ColorOption = {
   name: string;
   colorName: ThemeColor | 'auto';
 };
+
+const StyledColorSample = styled.div<{ color: string }>`
+  background-color: ${({ color }) => color};
+  border: 1px solid ${({ theme }) => theme.border.color.strong};
+  border-radius: 60px;
+  flex-shrink: 0;
+  height: ${({ theme }) => theme.spacing(4)};
+  width: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledColorSamplesContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(0.5)};
+`;
+
+const COLOR_GROUP_COUNT = 5;
 
 export const ChartColorSelectionDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -107,10 +129,21 @@ export const ChartColorSelectionDropdownContent = () => {
         >
           {filteredColorOptions.map((colorOption) => {
             const colorName = colorOption.colorName;
-            const leftIcon =
-              colorName !== 'auto'
-                ? () => <ColorSample colorName={colorName} />
-                : undefined;
+            const colorSamples =
+              colorName !== 'auto' ? (
+                <StyledColorSamplesContainer>
+                  {Array.from({ length: COLOR_GROUP_COUNT }).map((_, index) => {
+                    const baseColor = MAIN_COLORS[colorName];
+                    const reversedIndex = COLOR_GROUP_COUNT - 1 - index;
+                    const groupColor = generateGroupColor(
+                      baseColor,
+                      reversedIndex,
+                      COLOR_GROUP_COUNT,
+                    );
+                    return <StyledColorSample key={index} color={groupColor} />;
+                  })}
+                </StyledColorSamplesContainer>
+              ) : undefined;
             return (
               <SelectableListItem
                 key={colorOption.id}
@@ -121,9 +154,13 @@ export const ChartColorSelectionDropdownContent = () => {
               >
                 <MenuItemSelect
                   text={colorOption.name}
-                  selected={currentColor === colorOption.id}
-                  focused={selectedItemId === colorOption.id}
-                  LeftIcon={leftIcon}
+                  selected={false}
+                  focused={
+                    selectedItemId === colorOption.id ||
+                    currentColor === colorOption.id
+                  }
+                  contextualText={colorSamples}
+                  contextualTextPosition="right"
                   onClick={() => {
                     handleSelectColor(colorOption.colorName);
                   }}
