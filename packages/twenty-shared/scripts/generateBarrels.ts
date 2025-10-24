@@ -1,9 +1,12 @@
+// @ts-ignore
 import prettier from '@prettier/sync';
 import * as fs from 'fs';
 import { globSync } from 'glob';
+// @ts-ignore
 import path from 'path';
 import { Options } from 'prettier';
 import slash from 'slash';
+// @ts-ignore
 import ts from 'typescript';
 
 // TODO prastoin refactor this file in several one into its dedicated package and make it a TypeScript CLI
