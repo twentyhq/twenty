@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -12,7 +12,7 @@ export const throttlerToRestApiExceptionHandler = (
 ): never => {
   switch (error.code) {
     case ThrottlerExceptionCode.LIMIT_REACHED:
-      throw new BadRequestException(error.message);
+      throw new HttpException(error.message, HttpStatus.TOO_MANY_REQUESTS);
     default: {
       return assertUnreachable(error.code);
     }

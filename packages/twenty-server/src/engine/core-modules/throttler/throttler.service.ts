@@ -48,7 +48,7 @@ export class ThrottlerService {
 
     if (availableTokens < tokensToConsume) {
       throw new ThrottlerException(
-        'Limit reached',
+        `Limit reached (${maxTokens} tokens per ${timeWindow} ms)`,
         ThrottlerExceptionCode.LIMIT_REACHED,
       );
     }

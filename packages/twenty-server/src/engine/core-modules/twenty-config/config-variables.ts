@@ -949,7 +949,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  API_RATE_LIMITING_SHORT_TTL = 100;
+  API_RATE_LIMITING_SHORT_TTL_IN_MS = 1000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -958,7 +958,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  API_RATE_LIMITING_SHORT_LIMIT = 1000;
+  API_RATE_LIMITING_SHORT_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -966,7 +966,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  API_RATE_LIMITING_LONG_TTL = 500;
+  API_RATE_LIMITING_LONG_TTL_IN_MS = 60000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -975,7 +975,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  API_RATE_LIMITING_LONG_LIMIT = 60000;
+  API_RATE_LIMITING_LONG_LIMIT = 500;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SSL,

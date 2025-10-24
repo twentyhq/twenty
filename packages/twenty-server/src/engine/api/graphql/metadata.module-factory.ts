@@ -32,7 +32,7 @@ export const metadataModuleFactory = async (
     resolvers: { JSON: GraphQLJSON },
     plugins: [
       useThrottler({
-        ttl: twentyConfigService.get('API_RATE_LIMITING_LONG_TTL') / 1000,
+        ttl: twentyConfigService.get('API_RATE_LIMITING_LONG_TTL_IN_MS') / 1000,
         limit: twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
         identifyFn: (context) => {
           return context.req.user?.id ?? context.req.ip ?? 'anonymous';
