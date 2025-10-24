@@ -29,32 +29,31 @@ import {
 })
 @ServerlessFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
 })
-class CreateNewPostCard {
-  main = async (params: { recipient: string }): Promise<string> => {
-    const { recipient } = params;
+export class ServerlessFunctionDefinition {}
 
-    const options = {
-      method: 'POST',
-      url: 'http://localhost:3000/rest/postCards',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
-      },
-      data: { name: recipient ?? 'Unknown' },
-    };
+export const main = async (params: { recipient: string }): Promise<string> => {
+  const { recipient } = params;
 
-    try {
-      const { data } = await axios.request(options);
-
-      console.log(`New post card to "${recipient}" created`);
-
-      return data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+  const options = {
+    method: 'POST',
+    url: 'http://localhost:3000/rest/postCards',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
+    },
+    data: { name: recipient ?? 'Unknown' },
   };
-}
 
-export const createNewPostCardHandler = new CreateNewPostCard().main;
+  try {
+    const { data } = await axios.request(options);
+
+    console.log(`New post card to "${recipient}" created`);
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
