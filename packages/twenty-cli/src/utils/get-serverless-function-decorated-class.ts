@@ -1,4 +1,6 @@
 import camelcase from 'lodash.camelcase';
+import kebabCase from 'lodash.kebabcase';
+import { v4 } from 'uuid';
 
 export const getServerlessFunctionDecoratedClass = ({
   data,
@@ -13,10 +15,38 @@ export const getServerlessFunctionDecoratedClass = ({
 
   const camelCaseName = camelcase(name);
 
+  const kebabCaseName = kebabCase(name);
+
   const className = camelCaseName[0].toUpperCase() + camelCaseName.slice(1);
 
   return `import { ServerlessFunction } from 'twenty-sdk';
 
+/**
+ * Here is your new serverless function
+ *
+ * This function can be invoked via a trigger (DatabaseEventTrigger, RouteTrigger, or CronTrigger)
+ * once the appropriate trigger decorator is uncommented and configured.
+ *
+ * import { DatabaseEventTrigger } from 'twenty-sdk';
+ * @DatabaseEventTrigger({
+ *   universalIdentifier: '${v4()}',
+ *   eventName: 'person.created',
+ * })
+ *
+ * import { RouteTrigger } from 'twenty-sdk';
+ * @RouteTrigger({
+ *   universalIdentifier: '${v4()}',
+ *   path: '/trigger-${kebabCaseName}',
+ *   httpMethod: 'GET',
+ *   isAuthRequired: false,
+ * })
+ *
+ * import { CronTrigger } from 'twenty-sdk';
+ * @CronTrigger({
+ *   universalIdentifier: '${v4()}',
+ *   pattern: '0 * * * *', // Every hour
+ * })
+ */
 @ServerlessFunction({
 ${decoratorOptions}
 })

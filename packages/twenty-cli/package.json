@@ -38,7 +38,8 @@
     "lodash.camelcase": "^4.3.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.kebabcase": "^4.1.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.0",
