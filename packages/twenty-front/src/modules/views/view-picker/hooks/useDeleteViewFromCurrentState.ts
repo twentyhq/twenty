@@ -67,7 +67,7 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
           );
         }
 
-        await deleteView(viewPickerReferenceViewId);
+        await deleteView({ id: viewPickerReferenceViewId });
       },
     [
       currentView,

@@ -120,31 +120,33 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         const viewType = type ?? sourceView.type;
 
         const result = await createView({
-          id: id ?? v4(),
-          name: name ?? sourceView.name,
-          icon: icon ?? sourceView.icon,
-          key: null,
-          kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
-            ? sourceView.kanbanAggregateOperation
-            : undefined,
-          kanbanAggregateOperationFieldMetadataId:
-            shouldCopyFiltersAndSortsAndAggregate
-              ? sourceView.kanbanAggregateOperationFieldMetadataId
+          input: {
+            id: id ?? v4(),
+            name: name ?? sourceView.name,
+            icon: icon ?? sourceView.icon,
+            key: null,
+            kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
+              ? sourceView.kanbanAggregateOperation
               : undefined,
-          type: convertViewTypeToCore(viewType),
-          objectMetadataId: sourceView.objectMetadataId,
-          openRecordIn: convertViewOpenRecordInToCore(
-            sourceView.openRecordIn,
-          ),
-          anyFieldFilterValue: anyFieldFilterValue,
-          calendarLayout:
-            viewType === ViewType.Calendar
-              ? ViewCalendarLayout.MONTH
-              : undefined,
-          calendarFieldMetadataId:
-            viewType === ViewType.Calendar
-              ? calendarFieldMetadataId
-              : undefined,
+            kanbanAggregateOperationFieldMetadataId:
+              shouldCopyFiltersAndSortsAndAggregate
+                ? sourceView.kanbanAggregateOperationFieldMetadataId
+                : undefined,
+            type: convertViewTypeToCore(viewType),
+            objectMetadataId: sourceView.objectMetadataId,
+            openRecordIn: convertViewOpenRecordInToCore(
+              sourceView.openRecordIn,
+            ),
+            anyFieldFilterValue: anyFieldFilterValue,
+            calendarLayout:
+              viewType === ViewType.Calendar
+                ? ViewCalendarLayout.MONTH
+                : undefined,
+            calendarFieldMetadataId:
+              viewType === ViewType.Calendar
+                ? calendarFieldMetadataId
+                : undefined,
+          },
         });
 
         if (result.status === 'failed') {
