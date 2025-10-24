@@ -53,7 +53,6 @@ export const MergeRecordsContainer = ({
       recordIds: selectedRecordIds,
     }),
   );
-  console.log('MergeRecordsContainer selectedRecordIds', selectedRecordIds);
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
