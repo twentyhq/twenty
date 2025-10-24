@@ -3,10 +3,10 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { recordStoreFieldValueSelector } from '@/object-record/record-store/states/selectors/recordStoreFieldValueSelector';
 import { useRecoilValue } from 'recoil';
 
-export const useRecordFieldValue = <T,>(
+export const useRecordFieldValue = <T extends unknown>(
   recordId: string,
   fieldName: string,
-  fieldDefinition: FieldDefinition<FieldMetadata>,
+  fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
 ) => {
   const recordFieldValue = useRecoilValue(
     recordStoreFieldValueSelector({

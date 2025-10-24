@@ -4,11 +4,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import {
-  FieldMetadataType,
-  RelationType,
-  type ObjectRecord,
-} from 'twenty-shared/types';
+import { RelationType, type ObjectRecord } from 'twenty-shared/types';
 import {
   computeMorphRelationFieldName,
   CustomError,
@@ -31,15 +27,8 @@ export const recordStoreFieldValueSelector = selectorFamily({
       >;
     }) =>
     ({ get }) => {
-      if (fieldDefinition.type !== FieldMetadataType.MORPH_RELATION) {
-        return get(recordStoreFamilyState(recordId))?.[fieldName];
-      }
-
       if (!isFieldMorphRelation(fieldDefinition)) {
-        throw new CustomError(
-          'Field definition is not a morph relation',
-          'FIELD_DEFINITION_NOT_A_MORPH_RELATION',
-        );
+        return get(recordStoreFamilyState(recordId))?.[fieldName];
       }
 
       const morphRelations = fieldDefinition.metadata.morphRelations;
