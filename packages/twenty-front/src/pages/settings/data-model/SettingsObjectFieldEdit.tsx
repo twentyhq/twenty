@@ -128,23 +128,23 @@ export const SettingsObjectFieldEdit = () => {
       'relation' in formValues &&
       'relation' in dirtyFields
     ) {
-        const { relationFieldMetadataItem } =
-          getRelationMetadata({
-            fieldMetadataItem: fieldMetadataItem,
-          }) ?? {};
+      const { relationFieldMetadataItem } =
+        getRelationMetadata({
+          fieldMetadataItem: fieldMetadataItem,
+        }) ?? {};
 
-        if (isDefined(relationFieldMetadataItem)) {
-          const result = await updateOneFieldMetadataItem({
-            objectMetadataId: objectMetadataItem.id,
-            fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
-            updatePayload: formValues.relation.field,
-          });
+      if (isDefined(relationFieldMetadataItem)) {
+        const result = await updateOneFieldMetadataItem({
+          objectMetadataId: objectMetadataItem.id,
+          fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
+          updatePayload: formValues.relation.field,
+        });
 
-          if (result.status === 'failed') {
-            return;
-          }
+        if (result.status === 'failed') {
+          return;
         }
       }
+    }
 
     const otherDirtyFields = omit(dirtyFields, 'relation');
 

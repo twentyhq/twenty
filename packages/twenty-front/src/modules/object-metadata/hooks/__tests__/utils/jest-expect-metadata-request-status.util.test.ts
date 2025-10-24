@@ -1,5 +1,5 @@
-import { MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { SuccessfulMetadataRequestResult } from '@/object-metadata/types/SuccessfulMetadataRequestResult.type';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { type SuccessfulMetadataRequestResult } from '@/object-metadata/types/SuccessfulMetadataRequestResult.type';
 
 type AssertIsSuccessfulMetadataRequestResult = <T>(
   value: MetadataRequestResult<T>,

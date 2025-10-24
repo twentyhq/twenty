@@ -4,27 +4,26 @@ import { useCallback } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
-  AllMetadataName,
+  type AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
 import { classifyMetadataError } from '../utils/classify-metadata-error.util';
 
-const TRANSLATED_METADATA_NAME = {
-  objectMetadata: t`object`,
-  fieldMetadata: t`field`,
-  view: t`view`,
-  viewField: t`view field`,
-  viewGroup: t`view group`,
-  viewFilter: t`view filter`,
-  index: t`index`,
-  serverlessFunction: t`serverless function`,
-  cronTrigger: t`cron trigger`,
-  databaseEventTrigger: t`database trigger`,
-  routeTrigger: t`route trigger`,
-} as const satisfies Record<AllMetadataName, string>;
-
 export const useMetadataErrorHandler = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
+  const TRANSLATED_METADATA_NAME = {
+    objectMetadata: t`object`,
+    fieldMetadata: t`field`,
+    view: t`view`,
+    viewField: t`view field`,
+    viewGroup: t`view group`,
+    viewFilter: t`view filter`,
+    index: t`index`,
+    serverlessFunction: t`serverless function`,
+    cronTrigger: t`cron trigger`,
+    databaseEventTrigger: t`database trigger`,
+    routeTrigger: t`route trigger`,
+  } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = useCallback(
     (
@@ -103,7 +102,7 @@ export const useMetadataErrorHandler = () => {
         }
       }
     },
-    [enqueueErrorSnackBar],
+    [enqueueErrorSnackBar, TRANSLATED_METADATA_NAME],
   );
 
   return {
