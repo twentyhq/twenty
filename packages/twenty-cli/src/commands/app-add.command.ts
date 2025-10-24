@@ -11,6 +11,8 @@ import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
 import { getObjectMetadataDecoratedClass } from '../utils/get-object-metadata-decorated-class';
 import { getServerlessFunctionDecoratedClass } from '../utils/get-serverless-function-decorated-class';
 
+const ROOT_FOLDER = 'src';
+
 export enum SyncableEntity {
   AGENT = 'agent',
   OBJECT = 'object',
@@ -37,7 +39,7 @@ export const isSyncableEntity = (value: string): value is SyncableEntity => {
 export class AppAddCommand {
   async execute(entityType?: SyncableEntity): Promise<void> {
     try {
-      const appPath = CURRENT_EXECUTION_DIRECTORY;
+      const appPath = CURRENT_EXECUTION_DIRECTORY + '/' + ROOT_FOLDER;
 
       const entity = entityType ?? (await this.getEntity());
 
