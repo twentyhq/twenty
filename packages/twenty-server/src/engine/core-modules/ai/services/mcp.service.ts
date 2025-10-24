@@ -212,11 +212,23 @@ export class McpService {
   private handleToolsListing(id: string | number, toolSet: ToolSet) {
     const toolsArray = Object.entries(toolSet)
       .filter(([, def]) => !!def.inputSchema)
-      .map(([name, def]) => ({
-        name,
-        description: def.description,
-        inputSchema: def.inputSchema,
-      }));
+      .map(([name, def]) => {
+        // Unwrap the AI SDK's jsonSchema wrapper if present
+        // The AI SDK serializes schemas as { jsonSchema: {...} } but MCP expects {...} directly
+        const inputSchema = def.inputSchema;
+        const unwrappedSchema =
+          inputSchema &&
+          typeof inputSchema === 'object' &&
+          'jsonSchema' in inputSchema
+            ? inputSchema.jsonSchema
+            : inputSchema;
+
+        return {
+          name,
+          description: def.description,
+          inputSchema: unwrappedSchema,
+        };
+      });
 
     return wrapJsonRpcResponse(id, {
       result: {
