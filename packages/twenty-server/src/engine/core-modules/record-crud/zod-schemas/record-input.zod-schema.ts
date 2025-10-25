@@ -1,3 +1,4 @@
+import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { generateRecordPropertiesZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-properties.zod-schema';
@@ -6,10 +7,12 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 export const generateRecordInputSchema = (
   objectMetadata: ObjectMetadataEntity,
   includeId = false,
+  restrictedFields?: RestrictedFieldsPermissions,
 ) => {
   const recordPropertiesSchema = generateRecordPropertiesZodSchema(
     objectMetadata,
     false,
+    restrictedFields,
   );
 
   const inputSchema = includeId
