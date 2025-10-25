@@ -143,7 +143,7 @@ export class FindRecordsService {
       withFilterQueryBuilder,
       orderByWithIdCondition,
       objectName,
-      false,
+      true,
     );
 
     return withOrderByQueryBuilder
