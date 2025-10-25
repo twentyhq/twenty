@@ -9,6 +9,7 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { type UpdateRecordParams } from 'src/engine/core-modules/record-crud/types/update-record-params.type';
+import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/record-crud/utils/get-selected-columns-from-restricted-fields.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -59,10 +60,27 @@ export class UpdateRecordService {
           rolePermissionConfig,
         );
 
+      const { objectMetadataItemWithFieldsMaps } =
+        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+          objectName,
+          workspaceId,
+        );
+
+      const restrictedFields =
+        repository.objectRecordsPermissions?.[
+          objectMetadataItemWithFieldsMaps.id
+        ]?.restrictedFields;
+
+      const selectedColumns = getSelectedColumnsFromRestrictedFields(
+        restrictedFields,
+        objectMetadataItemWithFieldsMaps,
+      );
+
       const previousObjectRecord = await repository.findOne({
         where: {
           id: objectRecordId,
         },
+        select: selectedColumns,
       });
 
       if (!previousObjectRecord) {
@@ -81,12 +99,6 @@ export class UpdateRecordService {
           result: previousObjectRecord,
         };
       }
-
-      const { objectMetadataItemWithFieldsMaps } =
-        await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-          objectName,
-          workspaceId,
-        );
 
       if (
         !canObjectBeManagedByWorkflow({
@@ -126,9 +138,14 @@ export class UpdateRecordService {
       };
 
       if (!deepEqual(updatedObjectRecord, previousObjectRecord)) {
-        await repository.update(objectRecordId, {
-          ...transformedObjectRecord,
-        });
+        await repository.update(
+          objectRecordId,
+          {
+            ...transformedObjectRecord,
+          },
+          undefined,
+          selectedColumns,
+        );
       }
 
       this.logger.log(`Record updated successfully in ${objectName}`);

@@ -1,17 +1,23 @@
+import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { ObjectRecordOrderBySchema } from 'src/engine/core-modules/record-crud/zod-schemas/order-by.zod-schema';
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectRecordOrderBySchema } from 'src/engine/core-modules/record-crud/zod-schemas/order-by.zod-schema';
 import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const generateFindToolInputSchema = (
   objectMetadata: ObjectMetadataEntity,
+  restrictedFields?: RestrictedFieldsPermissions,
 ) => {
   const filterShape: Record<string, z.ZodTypeAny> = {};
 
   objectMetadata.fields.forEach((field) => {
     if (shouldExcludeFieldFromAgentToolSchema(field)) {
+      return;
+    }
+
+    if (restrictedFields?.[field.id]?.canRead === false) {
       return;
     }
 

@@ -6,10 +6,11 @@ import { CreateRecordService } from 'src/engine/core-modules/record-crud/service
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
+import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
 import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
-import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
-import { generateRecordInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-input.zod-schema';
+import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
 import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -87,10 +88,15 @@ export class ToolService {
         return;
       }
 
+      const restrictedFields = objectPermission.restrictedFields;
+
       if (objectPermission.canUpdateObjectRecords) {
         tools[`create_${objectMetadata.nameSingular}`] = {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
-          inputSchema: generateRecordInputSchema(objectMetadata),
+          inputSchema: generateCreateRecordInputSchema(
+            objectMetadata,
+            restrictedFields,
+          ),
           execute: async (parameters) => {
             return this.createRecordService.execute({
               objectName: objectMetadata.nameSingular,
@@ -104,9 +110,18 @@ export class ToolService {
 
         tools[`update_${objectMetadata.nameSingular}`] = {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
-          inputSchema: generateRecordInputSchema(objectMetadata),
+          inputSchema: generateUpdateRecordInputSchema(
+            objectMetadata,
+            restrictedFields,
+          ),
           execute: async (parameters) => {
-            const { id, ...objectRecord } = parameters.input;
+            const { id, ...allFields } = parameters.input;
+
+            const objectRecord = Object.fromEntries(
+              Object.entries(allFields).filter(
+                ([, value]) => value !== undefined,
+              ),
+            );
 
             return this.updateRecordService.execute({
               objectName: objectMetadata.nameSingular,
@@ -122,7 +137,10 @@ export class ToolService {
       if (objectPermission.canReadObjectRecords) {
         tools[`find_${objectMetadata.nameSingular}`] = {
           description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Returns an array of matching records with their full data.`,
-          inputSchema: generateFindToolInputSchema(objectMetadata),
+          inputSchema: generateFindToolInputSchema(
+            objectMetadata,
+            restrictedFields,
+          ),
           execute: async (parameters) => {
             const { limit, offset, orderBy, ...filter } = parameters.input;
 

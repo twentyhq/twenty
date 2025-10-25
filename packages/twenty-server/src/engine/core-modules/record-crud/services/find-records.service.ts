@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import isEmpty from 'lodash.isempty';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { OrderByDirection } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
@@ -10,9 +11,12 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -75,6 +79,7 @@ export class FindRecordsService {
         offset,
         repository,
         graphqlQueryParser,
+        objectMetadataItemWithFieldsMaps,
       });
 
       const totalCount = await this.getTotalCount({
@@ -82,6 +87,7 @@ export class FindRecordsService {
         filter,
         repository,
         graphqlQueryParser,
+        objectMetadataItemWithFieldsMaps,
       });
 
       this.logger.log(`Found ${records.length} records in ${objectName}`);
@@ -106,6 +112,32 @@ export class FindRecordsService {
     }
   }
 
+  private applyRestrictedFieldsToQueryBuilder<T extends ObjectLiteral>(
+    queryBuilder: WorkspaceSelectQueryBuilder<T>,
+    repository: WorkspaceRepository<T>,
+    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
+  ): WorkspaceSelectQueryBuilder<T> {
+    const restrictedFields =
+      repository.objectRecordsPermissions?.[objectMetadataItemWithFieldsMaps.id]
+        ?.restrictedFields;
+
+    if (!restrictedFields || isEmpty(restrictedFields)) {
+      return queryBuilder;
+    }
+
+    const selectableFields = getAllSelectableFields({
+      restrictedFields,
+      objectMetadata: {
+        objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+      },
+    });
+
+    return queryBuilder.setFindOptions({
+      // @ts-expect-error - TypeORM typing limitation with dynamic select fields
+      select: selectableFields,
+    });
+  }
+
   private async getObjectRecords<T extends ObjectLiteral>({
     objectName,
     filter,
@@ -114,6 +146,7 @@ export class FindRecordsService {
     offset,
     repository,
     graphqlQueryParser,
+    objectMetadataItemWithFieldsMaps,
   }: {
     objectName: string;
     filter:
@@ -125,6 +158,7 @@ export class FindRecordsService {
     offset: number;
     repository: WorkspaceRepository<T>;
     graphqlQueryParser: GraphqlQueryParser;
+    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<T[]> {
     const queryBuilder = repository.createQueryBuilder(objectName);
 
@@ -146,7 +180,13 @@ export class FindRecordsService {
       false,
     );
 
-    return withOrderByQueryBuilder
+    const queryBuilderWithSelect = this.applyRestrictedFieldsToQueryBuilder(
+      withOrderByQueryBuilder,
+      repository,
+      objectMetadataItemWithFieldsMaps,
+    );
+
+    return queryBuilderWithSelect
       .skip(offset)
       .take(limit ? Math.min(limit, QUERY_MAX_RECORDS) : QUERY_MAX_RECORDS)
       .getMany();
@@ -157,6 +197,7 @@ export class FindRecordsService {
     filter,
     repository,
     graphqlQueryParser,
+    objectMetadataItemWithFieldsMaps,
   }: {
     objectName: string;
     filter:
@@ -165,6 +206,7 @@ export class FindRecordsService {
       | undefined;
     repository: WorkspaceRepository<ObjectLiteral>;
     graphqlQueryParser: GraphqlQueryParser;
+    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps;
   }): Promise<number> {
     const countQueryBuilder = repository.createQueryBuilder(objectName);
 
@@ -180,6 +222,12 @@ export class FindRecordsService {
         filter ?? {},
       );
 
-    return withDeletedCountQueryBuilder.getCount();
+    const queryBuilderWithSelect = this.applyRestrictedFieldsToQueryBuilder(
+      withDeletedCountQueryBuilder,
+      repository,
+      objectMetadataItemWithFieldsMaps,
+    );
+
+    return queryBuilderWithSelect.getCount();
   }
 }
