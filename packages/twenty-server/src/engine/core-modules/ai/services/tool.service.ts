@@ -7,8 +7,8 @@ import { DeleteRecordService } from 'src/engine/core-modules/record-crud/service
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
-import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
+import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { generateRecordInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-input.zod-schema';
 import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
 import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
@@ -104,9 +104,15 @@ export class ToolService {
 
         tools[`update_${objectMetadata.nameSingular}`] = {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
-          inputSchema: generateRecordInputSchema(objectMetadata),
+          inputSchema: generateRecordInputSchema(objectMetadata, true),
           execute: async (parameters) => {
-            const { id, ...objectRecord } = parameters.input;
+            const { id, ...allFields } = parameters.input;
+
+            const objectRecord = Object.fromEntries(
+              Object.entries(allFields).filter(
+                ([, value]) => value !== undefined,
+              ),
+            );
 
             return this.updateRecordService.execute({
               objectName: objectMetadata.nameSingular,
