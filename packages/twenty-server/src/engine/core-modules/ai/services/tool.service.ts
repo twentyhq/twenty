@@ -9,7 +9,10 @@ import { UpdateRecordService } from 'src/engine/core-modules/record-crud/service
 import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
-import { generateRecordInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-input.zod-schema';
+import {
+  generateCreateRecordInputSchema,
+  generateUpdateRecordInputSchema,
+} from 'src/engine/core-modules/record-crud/zod-schemas/record-input.zod-schema';
 import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
 import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -92,9 +95,8 @@ export class ToolService {
       if (objectPermission.canUpdateObjectRecords) {
         tools[`create_${objectMetadata.nameSingular}`] = {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
-          inputSchema: generateRecordInputSchema(
+          inputSchema: generateCreateRecordInputSchema(
             objectMetadata,
-            false,
             restrictedFields,
           ),
           execute: async (parameters) => {
@@ -110,9 +112,8 @@ export class ToolService {
 
         tools[`update_${objectMetadata.nameSingular}`] = {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
-          inputSchema: generateRecordInputSchema(
+          inputSchema: generateUpdateRecordInputSchema(
             objectMetadata,
-            true,
             restrictedFields,
           ),
           execute: async (parameters) => {
