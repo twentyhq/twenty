@@ -9,7 +9,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import isEmpty from 'lodash.isempty';
-import { useId, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   canBeCastAsNumberOrNull,
@@ -50,17 +50,8 @@ export const FormNumberFieldInput = ({
     undefined,
   );
 
-  const [draftValue, setDraftValue] = useState<
-    | {
-        type: 'static';
-        value: string;
-      }
-    | {
-        type: 'variable';
-        value: string;
-      }
-  >(
-    isStandaloneVariableString(defaultValue)
+  const getDraftValue = () => {
+    return isStandaloneVariableString(defaultValue)
       ? {
           type: 'variable',
           value: defaultValue,
@@ -68,8 +59,19 @@ export const FormNumberFieldInput = ({
       : {
           type: 'static',
           value: isDefined(defaultValue) ? String(defaultValue) : '',
-        },
-  );
+        }
+  }
+
+  type DraftValueType = {
+    type: string,
+    value: string
+  }
+
+  const [draftValue, setDraftValue] = useState<DraftValueType>(getDraftValue());
+
+  useEffect(() => {
+    setDraftValue(getDraftValue());
+  }, [defaultValue])
 
   const persistNumber = (newValue: string) => {
     if (!canBeCastAsNumberOrNull(newValue)) {
