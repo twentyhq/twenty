@@ -87,10 +87,16 @@ export class ToolService {
         return;
       }
 
+      const restrictedFields = objectPermission.restrictedFields;
+
       if (objectPermission.canUpdateObjectRecords) {
         tools[`create_${objectMetadata.nameSingular}`] = {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
-          inputSchema: generateRecordInputSchema(objectMetadata),
+          inputSchema: generateRecordInputSchema(
+            objectMetadata,
+            false,
+            restrictedFields,
+          ),
           execute: async (parameters) => {
             return this.createRecordService.execute({
               objectName: objectMetadata.nameSingular,
@@ -104,7 +110,11 @@ export class ToolService {
 
         tools[`update_${objectMetadata.nameSingular}`] = {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
-          inputSchema: generateRecordInputSchema(objectMetadata, true),
+          inputSchema: generateRecordInputSchema(
+            objectMetadata,
+            true,
+            restrictedFields,
+          ),
           execute: async (parameters) => {
             const { id, ...allFields } = parameters.input;
 
@@ -128,7 +138,10 @@ export class ToolService {
       if (objectPermission.canReadObjectRecords) {
         tools[`find_${objectMetadata.nameSingular}`] = {
           description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Returns an array of matching records with their full data.`,
-          inputSchema: generateFindToolInputSchema(objectMetadata),
+          inputSchema: generateFindToolInputSchema(
+            objectMetadata,
+            restrictedFields,
+          ),
           execute: async (parameters) => {
             const { limit, offset, orderBy, ...filter } = parameters.input;
 
