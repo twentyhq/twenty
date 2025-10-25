@@ -45,6 +45,11 @@
           "type": "object",
           "title": "Environment Variable Definition",
           "properties": {
+            "universalIdentifier": {
+              "type": "string",
+              "description": "Unique identifier (UUID format recommended)",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
             "description": {
               "type": "string",
               "description": "Description for this environment variable."
@@ -58,7 +63,6 @@
               "description": "If true, the value will be treated as sensitive and hidden from logs or UI."
             }
           },
-          "required": ["isSecret"],
           "additionalProperties": false
         }
       },

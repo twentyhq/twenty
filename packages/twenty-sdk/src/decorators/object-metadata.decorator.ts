@@ -1,5 +1,6 @@
-type ObjectMetadataOptions = {
-  universalIdentifier: string;
+import { type SyncableEntityOptions } from '@/types/syncable-entity-options.type';
+
+type ObjectMetadataOptions = SyncableEntityOptions & {
   nameSingular: string;
   namePlural: string;
   labelSingular: string;

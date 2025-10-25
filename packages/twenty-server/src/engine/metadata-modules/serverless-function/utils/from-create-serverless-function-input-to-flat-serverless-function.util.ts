@@ -1,7 +1,11 @@
 import { v4 } from 'uuid';
 
 import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
-import { ServerlessFunctionRuntime } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import {
+  DEFAULT_HANDLER_NAME,
+  DEFAULT_HANDLER_PATH,
+  ServerlessFunctionRuntime,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 
@@ -23,6 +27,8 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     id,
     name: rawCreateServerlessFunctionInput.name,
     description: rawCreateServerlessFunctionInput.description ?? null,
+    handlerPath: DEFAULT_HANDLER_PATH,
+    handlerName: DEFAULT_HANDLER_NAME,
     universalIdentifier:
       rawCreateServerlessFunctionInput.universalIdentifier ?? v4(),
     createdAt: currentDate,

@@ -109,8 +109,10 @@ export class LocalDriver implements ServerlessDriver {
       let builtBundleFilePath = '';
 
       try {
-        builtBundleFilePath =
-          await buildServerlessFunctionInMemory(sourceTemporaryDir);
+        builtBundleFilePath = await buildServerlessFunctionInMemory({
+          sourceTemporaryDir,
+          handlerPath: serverlessFunction.handlerPath,
+        });
       } catch (error) {
         return formatBuildError(error, startTime);
       }
@@ -164,10 +166,11 @@ export class LocalDriver implements ServerlessDriver {
       });
 
       try {
-        const runnerPath = await this.writeBootstrapRunner(
-          sourceTemporaryDir,
-          builtBundleFilePath,
-        );
+        const runnerPath = await this.writeBootstrapRunner({
+          dir: sourceTemporaryDir,
+          builtFileAbsPath: builtBundleFilePath,
+          handlerName: serverlessFunction.handlerName,
+        });
 
         const { ok, result, error, stack, stdout, stderr } =
           await this.runChildWithEnv({
@@ -222,7 +225,15 @@ export class LocalDriver implements ServerlessDriver {
     }
   }
 
-  async writeBootstrapRunner(dir: string, builtFileAbsPath: string) {
+  async writeBootstrapRunner({
+    dir,
+    builtFileAbsPath,
+    handlerName,
+  }: {
+    dir: string;
+    builtFileAbsPath: string;
+    handlerName: string;
+  }) {
     const runnerPath = join(dir, '__runner.cjs');
     const code = `
       // Auto-generated. Do not edit.
@@ -232,8 +243,8 @@ export class LocalDriver implements ServerlessDriver {
         try {
           const builtUrl = pathToFileURL(${JSON.stringify(builtFileAbsPath)});
           const mod = await import(builtUrl.href);
-          if (typeof mod.main !== 'function') {
-            throw new Error('Export "main" not found in serverless bundle');
+          if (typeof mod.${handlerName} !== 'function') {
+            throw new Error('Export "${handlerName}" not found in serverless bundle');
           }
       
           let payload = undefined;
@@ -241,7 +252,7 @@ export class LocalDriver implements ServerlessDriver {
             process.on('message', async (msg) => {
               if (!msg || msg.type !== 'run') return;
               try {
-                const out = await mod.main(msg.payload);
+                const out = await mod.${handlerName}(msg.payload);
                 process.send && process.send({ ok: true, result: out });
                 process.exit(0);
               } catch (err) {
@@ -253,7 +264,7 @@ export class LocalDriver implements ServerlessDriver {
             // Fallback: read payload from argv[2] (JSON) and print to stdout
             const json = process.argv[2];
             payload = json ? JSON.parse(json) : undefined;
-            const out = await mod.main(payload);
+            const out = await mod.${handlerName}(payload);
             console.log(JSON.stringify({ ok: true, result: out }));
             process.exit(0);
           }

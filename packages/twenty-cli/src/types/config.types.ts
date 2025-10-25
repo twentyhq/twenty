@@ -26,6 +26,8 @@ export type AppManifest = PackageJson & {
   agents: AgentManifest[];
   objects: ObjectManifest[];
   serverlessFunctions: ServerlessFunctionManifest[];
+  applicationVariables: ApplicationVariableManifest[];
+  sources: Sources;
 };
 
 export type CoreEntityManifest =
@@ -33,39 +35,47 @@ export type CoreEntityManifest =
   | ObjectManifest
   | ServerlessFunctionManifest;
 
+export type ApplicationVariableManifest = {
+  universalIdentifier: string;
+  key: string;
+  description?: string;
+  isSecret?: boolean;
+  value?: string;
+};
+
 export type ServerlessFunctionManifest = {
   $schema?: string;
   universalIdentifier: string;
-  name: string;
+  name?: string;
   description?: string;
   timeoutSeconds?: number;
   triggers: ServerlessFunctionTriggerManifest[];
   code: ServerlessFunctionCodeManifest;
+  handlerPath: string;
+  handlerName: string;
 };
 
-export enum HTTPMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
-}
+export type DatabaseEventTrigger = {
+  type: 'databaseEvent';
+  eventName: string;
+};
+
+export type CronTrigger = {
+  type: 'cron';
+  pattern: string;
+};
+
+export type RouteTrigger = {
+  type: 'route';
+  path: string;
+  httpMethod: string;
+  isAuthRequired: boolean;
+};
 
 export type ServerlessFunctionTriggerManifest =
-  | {
-      type: 'cron';
-      schedule: string;
-    }
-  | {
-      type: 'databaseEvent';
-      eventName: string;
-    }
-  | {
-      type: 'route';
-      path: string;
-      httpMethod: HTTPMethod;
-      isAuthRequired: boolean;
-    };
+  | CronTrigger
+  | DatabaseEventTrigger
+  | RouteTrigger;
 
 type Sources = { [key: string]: string | Sources };
 

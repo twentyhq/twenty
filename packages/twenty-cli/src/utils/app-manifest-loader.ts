@@ -3,6 +3,7 @@ import assert from 'assert';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {
+  ApplicationVariableManifest,
   AppManifest,
   CoreEntityManifest,
   ObjectManifest,
@@ -121,6 +122,44 @@ export const loadManifest = async (
 
   const rawYarnLock = await fs.readFile(yarnLockPath, 'utf8');
 
+  const agents = await loadCoreEntity(
+    path.join(appPath, 'agents'),
+    (manifest, path) => validateSchema('agent', manifest, path),
+  );
+
+  const objectFromManifests = await loadCoreEntity(
+    path.join(appPath, 'objects'),
+    (manifest, path) => validateSchema('object', manifest, path),
+  );
+
+  const serverlessFunctionsFromManifest = await loadCoreEntity(
+    path.join(appPath, 'serverlessFunctions'),
+    (manifest, path) => validateSchema('serverlessFunction', manifest, path),
+  );
+
+  const {
+    objects: objectsFromDecorators,
+    serverlessFunctions: serverlessFunctionsFromDecorators,
+    applicationVariables: applicationVariablesFromDecorators,
+  } = loadManifestFromDecorators();
+
+  const objects = (
+    [...objectFromManifests, ...objectsFromDecorators] as ObjectManifest[]
+  ).map((object) => {
+    object.standardId = object.universalIdentifier;
+    return object;
+  });
+
+  const sources = await loadFolderContentIntoJson('src');
+
+  const serverlessFunctions = [
+    ...serverlessFunctionsFromManifest,
+    ...serverlessFunctionsFromDecorators.map((serverlessFunction) => ({
+      ...serverlessFunction,
+      code: { src: sources },
+    })),
+  ];
+
   let envFile = '';
 
   try {
@@ -133,12 +172,28 @@ export const loadManifest = async (
 
   const envVariables = dotenv.parse(envFile);
 
-  const packageJsonEnv = rawPackageJson.env || {};
+  const packageJsonEnvFromDecorators =
+    applicationVariablesFromDecorators.reduce(
+      (acc, applicationVariable) => {
+        const { key, ...applicationVariableWithoutKey } = applicationVariable;
+        acc[key] = {
+          ...applicationVariableWithoutKey,
+        };
+        return acc;
+      },
+      {} as Record<
+        string,
+        Omit<ApplicationVariableManifest, 'universalIdentifier' | 'key'>
+      >,
+    );
+  const packageJsonEnv = {
+    ...rawPackageJson.env,
+    ...packageJsonEnvFromDecorators,
+  };
 
   for (const key of Object.keys(envVariables)) {
     if (packageJsonEnv[key]) {
       packageJsonEnv[key] = {
-        isSecret: false,
         ...packageJsonEnv[key],
         value: envVariables[key],
       };
@@ -152,30 +207,6 @@ export const loadManifest = async (
   const packageJson = { ...rawPackageJson, env: packageJsonEnv };
 
   await validateSchema('appManifest', packageJson, packageJsonPath);
-
-  const agents = await loadCoreEntity(
-    path.join(appPath, 'agents'),
-    (manifest, path) => validateSchema('agent', manifest, path),
-  );
-
-  const objectFromManifests = await loadCoreEntity(
-    path.join(appPath, 'objects'),
-    (manifest, path) => validateSchema('object', manifest, path),
-  );
-
-  const serverlessFunctions = await loadCoreEntity(
-    path.join(appPath, 'serverlessFunctions'),
-    (manifest, path) => validateSchema('serverlessFunction', manifest, path),
-  );
-
-  const { objects: objectsFromDecorators } = loadManifestFromDecorators();
-
-  const objects = (
-    [...objectFromManifests, ...objectsFromDecorators] as ObjectManifest[]
-  ).map((object) => {
-    object.standardId = object.universalIdentifier;
-    return object;
-  });
 
   return {
     packageJson,
