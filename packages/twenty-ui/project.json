@@ -4,7 +4,8 @@
   "sourceRoot": "packages/twenty-ui/src",
   "projectType": "library",
   "tags": [
-    "scope:frontend"
+    "scope:frontend",
+    "scope:twenty-ui"
   ],
   "targets": {
     "build": {

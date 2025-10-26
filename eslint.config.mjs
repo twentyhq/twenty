@@ -73,6 +73,10 @@ export default [
               sourceTag: 'scope:zapier',
               onlyDependOnLibsWithTags: ['scope:shared'],
             },
+            {
+              sourceTag: 'scope:browser-extension',
+              onlyDependOnLibsWithTags: ['scope:twenty-ui', 'scope:browser-extension']
+            }
           ],
         },
       ],

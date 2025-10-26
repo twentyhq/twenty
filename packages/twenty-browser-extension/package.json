@@ -1,0 +1,27 @@
+{
+  "name": "twenty-browser-extension",
+  "displayName": "Data Capture Extension",
+  "version": "0.0.1",
+  "description": "A basic Plasmo extension.",
+  "author": "Plasmo Corp. <foss@plasmo.com>",
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "plasmo": "^0.90.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "twenty-ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.24",
+    "@types/node": "20.11.5",
+    "@types/react": "^18.2.39",
+    "@types/react-dom": "^18.2.15",
+    "typescript": "5.3.3"
+  },
+  "manifest": {
+    "host_permissions": [
+      "https://*/*"
+    ]
+  }
+}
