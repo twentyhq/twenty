@@ -6,10 +6,9 @@ describe('findAvailableTimeZoneOption', () => {
   it('should find the matching available IANA time zone select option from a given IANA time zone', () => {
     const ianaTimeZone = 'Europe/Paris';
     const value = 'Europe/Paris';
-    const label = '(GMT+02:00) Central European Summer Time - Paris';
 
     const option = findAvailableTimeZoneOption(ianaTimeZone);
 
-    expect(option).toEqual({ value, label });
+    expect(option).toMatchSnapshot({ value });
   });
 });
