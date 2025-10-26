@@ -1,7 +1,7 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent } from '@storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -10,6 +10,7 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { isDefined } from 'twenty-shared/utils';
 
 const EditorWrapper = ({
   readonly = false,
@@ -390,8 +391,6 @@ export const WithLists: Story = {
     }),
   },
   play: async ({ canvasElement, step }) => {
-    const canvas = within(canvasElement);
-
     await step('Verify bullet list is rendered', async () => {
       const listItems = canvasElement.querySelectorAll('ul li');
       expect(listItems.length).toBeGreaterThan(0);
@@ -417,7 +416,7 @@ export const WithLists: Story = {
       expect(editorContent).toBeInTheDocument();
 
       const firstListItem = canvasElement.querySelector('ul li');
-      if (firstListItem) {
+      if (isDefined(firstListItem)) {
         await userEvent.click(firstListItem);
 
         expect(editorContent).toHaveFocus();
