@@ -27,8 +27,6 @@ const translateUserFriendlyMessageInFlatEntityValidationError = <T>(
     parentKey ===
       ('userFriendlyMessage' as const satisfies keyof FlatEntityValidationError)
   ) {
-    obj;
-
     return i18n._(obj) as T;
   }
 
