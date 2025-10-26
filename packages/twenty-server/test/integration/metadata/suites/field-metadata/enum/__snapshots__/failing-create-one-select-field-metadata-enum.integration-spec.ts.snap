@@ -4,7 +4,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -18,7 +18,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value "'OPTION_424242'" must be one of the option values",
     },
@@ -32,7 +32,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Label must not contain a comma",
     },
@@ -46,7 +46,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option id",
     },
@@ -60,7 +60,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option position",
     },
@@ -74,7 +74,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option value",
     },
@@ -88,7 +88,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option value",
     },
@@ -102,7 +102,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -116,7 +116,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -130,7 +130,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -144,7 +144,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
@@ -158,7 +158,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
@@ -172,7 +172,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -186,7 +186,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
     },
@@ -200,7 +200,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -214,7 +214,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -241,7 +241,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "22222"",
     },
@@ -255,7 +255,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is required",
     },
@@ -269,7 +269,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label is required",
     },
@@ -283,7 +283,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -297,7 +297,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value is required",
     },
@@ -311,7 +311,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -325,7 +325,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -339,7 +339,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
@@ -353,7 +353,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
@@ -367,7 +367,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -381,7 +381,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -395,7 +395,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label exceeds 63 characters",
     },
@@ -409,7 +409,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value exceeds 63 characters",
     },
@@ -423,7 +423,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label is required",
     },
@@ -437,7 +437,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value is required",
     },
@@ -451,7 +451,7 @@ exports[`Failing create field metadata RATING tests suite Create should fail wit
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
