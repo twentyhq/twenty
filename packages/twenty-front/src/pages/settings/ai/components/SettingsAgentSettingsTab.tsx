@@ -6,10 +6,16 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isDefined } from 'twenty-shared/utils';
+import { H2Title, IconTrash } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { type Agent } from '~/generated/graphql';
+import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { SettingsAgentModelCapabilities } from '../../components/SettingsAgentModelCapabilities';
-import { type SettingsAIAgentFormValues } from '../../hooks/useSettingsAgentFormState';
+import { SettingsAgentModelCapabilities } from '../components/SettingsAgentModelCapabilities';
+import { type SettingsAIAgentFormValues } from '../hooks/useSettingsAgentFormState';
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -33,29 +39,35 @@ const StyledErrorMessage = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-type SettingsAIAgentFormProps = {
+const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
+
+type SettingsAgentSettingsTabProps = {
   formValues: SettingsAIAgentFormValues;
   onFieldChange: (
     field: keyof SettingsAIAgentFormValues,
     value: SettingsAIAgentFormValues[keyof SettingsAIAgentFormValues],
   ) => void;
   disabled: boolean;
+  agent?: Agent;
 };
 
-export const SettingsAIAgentForm = ({
+export const SettingsAgentSettingsTab = ({
   formValues,
   onFieldChange,
   disabled,
-}: SettingsAIAgentFormProps) => {
+  agent,
+}: SettingsAgentSettingsTabProps) => {
   const { t } = useLingui();
+  const { openModal } = useModal();
 
   const modelOptions = useAiModelOptions();
 
   const noModelsAvailable = modelOptions.length === 0;
 
   const fillNameFromLabel = (label: string) => {
-    isDefined(label) &&
+    if (isDefined(label)) {
       onFieldChange('name', computeMetadataNameFromLabel(label));
+    }
   };
 
   return (
@@ -138,6 +150,25 @@ export const SettingsAIAgentForm = ({
           disabled={disabled}
         />
       </StyledFormContainer>
+
+      {!disabled && agent && formValues.isCustom && (
+        <Section>
+          <H2Title title={t`Danger zone`} description={t`Delete this agent`} />
+          <Button
+            accent="danger"
+            variant="secondary"
+            title={t`Delete Agent`}
+            Icon={IconTrash}
+            onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
+          />
+        </Section>
+      )}
+      {!disabled && agent && (
+        <SettingsAgentDeleteConfirmationModal
+          agentId={agent.id}
+          agentName={agent.label}
+        />
+      )}
     </StyledFormContainer>
   );
 };
