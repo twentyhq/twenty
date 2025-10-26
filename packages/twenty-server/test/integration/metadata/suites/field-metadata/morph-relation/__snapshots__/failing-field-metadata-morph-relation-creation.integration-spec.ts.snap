@@ -4,7 +4,7 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "Name not available",
       "userFriendlyMessage": "This name is not available as it is already used by another field.",
     },
@@ -18,7 +18,7 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "Invalid label",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -32,7 +32,7 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "Exceeds max length",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -46,7 +46,7 @@ exports[`Field metadata morph relation creation should fail relation MANY_TO_ONE
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "Input too short",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -99,7 +99,7 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "Name not available",
       "userFriendlyMessage": "This name is not available as it is already used by another field.",
     },
@@ -113,7 +113,7 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "Invalid label",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -127,7 +127,7 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "Exceeds max length",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -141,7 +141,7 @@ exports[`Field metadata morph relation creation should fail relation ONE_TO_MANY
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "subCode": "Input too short",
       "userFriendlyMessage": "An error occurred.",
     },

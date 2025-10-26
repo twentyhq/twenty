@@ -39,7 +39,7 @@ export const graphQLErrorCodesToFilter = [
   ErrorCode.TIMEOUT,
   ErrorCode.CONFLICT,
   ErrorCode.BAD_USER_INPUT,
-  ErrorCode.METADATA_VALIDATION_FAILED,
+  ErrorCode.METADATA_VALIDATION_FAILED
 ];
 
 export const handleExceptionAndConvertToGraphQLError = (
