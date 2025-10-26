@@ -24,9 +24,9 @@ export const filterEmails = (
     ? filterOutInternals(primaryHandle, messagesWithoutBlocklisted)
     : messagesWithoutBlocklisted;
 
-  const messagesWithoutGroupEmailsAndInternals = excludeGroupEmails
+  const messagesWithoutInternalsAndGroupEmails = excludeGroupEmails
     ? filterOutGroupEmails(messagesWithoutInternals)
     : messagesWithoutInternals;
 
-  return messagesWithoutGroupEmailsAndInternals;
+  return messagesWithoutInternalsAndGroupEmails;
 };
