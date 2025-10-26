@@ -21564,6 +21564,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-list@npm:3.4.2":
+  version: 3.4.2
+  resolution: "@tiptap/extension-list@npm:3.4.2"
+  peerDependencies:
+    "@tiptap/core": ^3.4.2
+    "@tiptap/pm": ^3.4.2
+  checksum: 10c0/6090c5758411201dce90a0bf26e4d766cc74113a3284274d9903580d5295f2eaf7a682ba3e921111e6304fd86c42aead0ac23369296c709038aa15febdb8a900
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-paragraph@npm:^2.11.5":
   version: 2.12.0
   resolution: "@tiptap/extension-paragraph@npm:2.12.0"
@@ -53006,6 +53016,7 @@ __metadata:
     "@tabler/icons-react": "npm:^3.31.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.3.0"
+    "@tiptap/extension-list": "npm:3.4.2"
     "@types/addressparser": "npm:^1.0.3"
     "@types/bcrypt": "npm:^5.0.0"
     "@types/bytes": "npm:^3.1.1"

@@ -55,12 +55,12 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
     },
     {
       Icon: IconList,
-      onClick: () => editor.chain().focus().toggleBulletList().run(),
+      onClick: () => editor.chain().focus().wrapInList('bulletList').run(),
       isActive: state.isBulletList,
     },
     {
       Icon: IconListNumbers,
-      onClick: () => editor.chain().focus().toggleOrderedList().run(),
+      onClick: () => editor.chain().focus().wrapInList('orderedList').run(),
       isActive: state.isOrderedList,
     },
   ];
