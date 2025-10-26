@@ -1,13 +1,7 @@
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { IconCpu, IconSparkles } from 'twenty-ui/display';
-
-const pulseAnimation = keyframes`
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-`;
 
 const StyledRoutingContainer = styled.div`
   align-items: center;
@@ -25,9 +19,19 @@ const StyledRoutingContainer = styled.div`
 const StyledIconContainer = styled.div<{ isLoading: boolean }>`
   align-items: center;
   animation: ${({ isLoading }) =>
-    isLoading ? `${pulseAnimation} 2s ease-in-out infinite` : 'none'};
+    isLoading ? 'pulseAnimation 2s ease-in-out infinite' : 'none'};
   color: ${({ theme }) => theme.color.blue};
   display: flex;
+
+  @keyframes pulseAnimation {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
 `;
 
 const StyledText = styled.div`
