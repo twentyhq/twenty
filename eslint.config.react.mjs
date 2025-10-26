@@ -74,6 +74,10 @@ export default [
               sourceTag: 'scope:zapier',
               onlyDependOnLibsWithTags: ['scope:shared'],
             },
+            {
+              sourceTag: 'scope:browser-extension',
+              onlyDependOnLibsWithTags: ['scope:twenty-ui', 'scope:browser-extension']
+            }
           ],
         },
       ],
@@ -175,7 +179,7 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { 
+        {
           prefer: 'type-imports',
           fixStyle: 'inline-type-imports'
         },
