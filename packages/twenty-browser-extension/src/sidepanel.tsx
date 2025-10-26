@@ -1,8 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import { ThemeProvider } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Tag } from 'twenty-ui/components';
-import { THEME_DARK, ThemeContextProvider } from 'twenty-ui/theme';
+import { Theme } from '~ui/theme/context';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -14,14 +13,12 @@ const StyledContainer = styled.div`
 
 const IndexSidePanel = () => {
   return (
-    <ThemeProvider theme={THEME_DARK}>
-      <ThemeContextProvider theme={THEME_DARK}>
-        <StyledContainer>
-          <Tag color="blue" text="hello world"></Tag>
-          <h1>Hello World</h1>
-        </StyledContainer>
-      </ThemeContextProvider>
-    </ThemeProvider>
+    <Theme>
+      <StyledContainer>
+        <Tag color="blue" text="hello world"></Tag>
+        <h1>Hello World</h1>
+      </StyledContainer>
+    </Theme>
   );
 };
 
