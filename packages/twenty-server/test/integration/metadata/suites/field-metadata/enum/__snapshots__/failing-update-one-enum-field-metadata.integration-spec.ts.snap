@@ -4,7 +4,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -18,7 +18,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -32,7 +32,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Label must not contain a comma",
     },
@@ -46,7 +46,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option id",
     },
@@ -60,7 +60,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option position",
     },
@@ -74,7 +74,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option value",
     },
@@ -88,7 +88,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option value",
     },
@@ -102,7 +102,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "If defined default value must contain at least one value",
     },
@@ -116,7 +116,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -130,7 +130,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -144,7 +144,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -158,7 +158,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
@@ -172,7 +172,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
@@ -186,7 +186,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -200,7 +200,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -214,7 +214,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
     },
@@ -228,7 +228,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -242,7 +242,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -256,7 +256,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -283,7 +283,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "22222"",
     },
@@ -297,7 +297,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is required",
     },
@@ -311,7 +311,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label is required",
     },
@@ -325,7 +325,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value is required",
     },
@@ -339,7 +339,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -353,7 +353,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -367,7 +367,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
@@ -381,7 +381,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
@@ -395,7 +395,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -409,7 +409,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -423,7 +423,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label exceeds 63 characters",
     },
@@ -437,7 +437,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value exceeds 63 characters",
     },
@@ -451,7 +451,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label is required",
     },
@@ -465,7 +465,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value is required",
     },
@@ -479,7 +479,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value "'OPTION_42'" must be one of the option values",
     },
@@ -493,7 +493,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
     },
@@ -507,7 +507,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -521,7 +521,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value "'OPTION_424242'" must be one of the option values",
     },
@@ -535,7 +535,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Label must not contain a comma",
     },
@@ -549,7 +549,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option id",
     },
@@ -563,7 +563,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option position",
     },
@@ -577,7 +577,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option value",
     },
@@ -591,7 +591,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Duplicated option value",
     },
@@ -605,7 +605,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -619,7 +619,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -633,7 +633,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -647,7 +647,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
@@ -661,7 +661,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
@@ -675,7 +675,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -689,7 +689,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
     },
@@ -703,7 +703,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
@@ -717,7 +717,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -744,7 +744,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case "22222"",
     },
@@ -758,7 +758,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is required",
     },
@@ -772,7 +772,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label is required",
     },
@@ -786,7 +786,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value is required",
     },
@@ -800,7 +800,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -814,7 +814,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -828,7 +828,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label "" is beneath 1 character",
     },
@@ -842,7 +842,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value "" is beneath 1 character",
     },
@@ -856,7 +856,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value should be as quoted string",
     },
@@ -870,7 +870,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option id is invalid",
     },
@@ -884,7 +884,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label exceeds 63 characters",
     },
@@ -898,7 +898,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value exceeds 63 characters",
     },
@@ -912,7 +912,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option label is required",
     },
@@ -926,7 +926,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Option value is required",
     },
@@ -940,7 +940,7 @@ exports[`Failing update field metadata SELECT tests suite Update should fail wit
 [
   {
     "extensions": {
-      "code": "METADATA_VALIDATION_FAILED",
+      "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "Default value "'OPTION_42'" must be one of the option values",
     },
