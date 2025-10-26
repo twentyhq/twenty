@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import type React from 'react';
-import { THEME_DARK, ThemeContextProvider } from 'twenty-ui/theme';
+import { THEME_LIGHT, ThemeContextProvider } from 'twenty-ui/theme';
 
 type ThemeProps = {
   children: React.ReactNode;
@@ -8,8 +8,10 @@ type ThemeProps = {
 
 export const Theme = ({ children }: ThemeProps) => {
   return (
-    <ThemeProvider theme={THEME_DARK}>
-      <ThemeContextProvider theme={THEME_DARK}>{children}</ThemeContextProvider>
+    <ThemeProvider theme={THEME_LIGHT}>
+      <ThemeContextProvider theme={THEME_LIGHT}>
+        {children}
+      </ThemeContextProvider>
     </ThemeProvider>
   );
 };
