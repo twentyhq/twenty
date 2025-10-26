@@ -1,6 +1,6 @@
 import { type ExtractPropertiesThatEndsWithId } from 'twenty-shared/types';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 
 type ExtractEntityRelations<TEntity extends MetadataEntity<AllMetadataName>> = {
