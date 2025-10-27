@@ -100,6 +100,7 @@ export const ChartSettingItem = ({
           id={item.id}
           toggled={getChartSettingsValues(item.id) as boolean}
           onToggleChange={onToggleChange}
+          disabled={isDisabled}
         />
       </SelectableListItem>
     );
