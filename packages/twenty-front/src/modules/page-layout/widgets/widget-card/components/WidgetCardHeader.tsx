@@ -45,6 +45,7 @@ const StyledTitle = styled.span`
 const StyledButtonContainer = styled.div`
   display: none;
 `;
+
 export const WidgetCardHeader = ({
   isEmpty = false,
   isInEditMode = false,

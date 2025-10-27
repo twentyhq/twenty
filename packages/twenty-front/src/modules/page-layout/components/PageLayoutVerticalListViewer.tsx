@@ -19,7 +19,7 @@ export const PageLayoutVerticalListViewer = ({
     <StyledVerticalListContainer>
       {widgets.map((widget) => (
         <div key={widget.id}>
-          <WidgetRenderer widget={widget} />
+          <WidgetRenderer widget={widget} context="recordPage" />
         </div>
       ))}
     </StyledVerticalListContainer>
