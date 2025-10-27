@@ -212,11 +212,11 @@ describe('GraphqlQueryParser', () => {
       const parser = new GraphqlQueryParser(objectMetadataItem, missingMaps);
 
       expect(() =>
-        parser.parseSelectedFields(objectMetadataItem, { id: {} }, missingMaps),
+        parser.parseSelectedFields({ id: {} }),
       ).toThrow(GraphqlQueryRunnerException);
 
       try {
-        parser.parseSelectedFields(objectMetadataItem, { id: {} }, missingMaps);
+        parser.parseSelectedFields({ id: {} });
       } catch (e) {
         const err = e as GraphqlQueryRunnerException;
 
@@ -243,9 +243,7 @@ describe('GraphqlQueryParser', () => {
         .mockReturnValue(selectedFieldsResult);
 
       const result = parser.parseSelectedFields(
-        objectMetadataItem,
         { id: {} },
-        objectMetadataMaps,
       );
 
       expect(selectedSpy).toHaveBeenCalled();
