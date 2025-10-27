@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import { isAccessTokenExpiredOrInvalid } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/is-access-token-expired-or-invalid.util';
 import {
@@ -32,6 +33,12 @@ describe('ConnectedAccountRefreshTokensService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ConnectedAccountRefreshTokensService,
+        {
+          provide: GoogleAPIRefreshAccessTokenService,
+          useValue: {
+            refreshTokens: jest.fn(),
+          },
+        },
         {
           provide: MicrosoftAPIRefreshAccessTokenService,
           useValue: {
