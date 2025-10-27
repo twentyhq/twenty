@@ -16,10 +16,7 @@ export const getRecordFilterLabelValue = ({
   const operandIsEmptiness = isEmptinessOperand(recordFilter.operand);
   const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
 
-  const isDateOrDateTimeFilter =
-    recordFilter.type === 'DATE' || recordFilter.type === 'DATE_TIME';
-
-  if (isDateOrDateTimeFilter) {
+  if (recordFilter.type === 'DATE') {
     switch (recordFilter.operand) {
       case RecordFilterOperand.IS_TODAY:
       case RecordFilterOperand.IS_IN_FUTURE:
@@ -28,8 +25,19 @@ export const getRecordFilterLabelValue = ({
       default:
         return `${operandLabelShort} ${recordFilter.displayValue}`;
     }
-  }
-  if (recordFilter.type === 'SELECT' || recordFilter.type === 'MULTI_SELECT') {
+  } else if (recordFilter.type === 'DATE_TIME') {
+    switch (recordFilter.operand) {
+      case RecordFilterOperand.IS_TODAY:
+      case RecordFilterOperand.IS_IN_FUTURE:
+      case RecordFilterOperand.IS_IN_PAST:
+        return operandLabelShort;
+      default:
+        return `${operandLabelShort} ${recordFilter.displayValue}`;
+    }
+  } else if (
+    recordFilter.type === 'SELECT' ||
+    recordFilter.type === 'MULTI_SELECT'
+  ) {
     const valueArray = parseJson<string[]>(recordFilter.value);
 
     if (!Array.isArray(valueArray)) {

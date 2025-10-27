@@ -1,3 +1,4 @@
+import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -93,8 +94,10 @@ export const FormDateFieldInput = ({
 }: FormDateFieldInputProps) => {
   const instanceId = useId();
 
-  const { parsePlainDateToDateInputString: parseDateToString } = useParsePlainDateToDateInputString();
-  const { parseDateInputStringToJSDate: parseStringToDate } = useParseDateInputStringToJSDate();
+  const { parsePlainDateToDateInputString: parseDateToString } =
+    useParsePlainDateToDateInputString();
+  const { parseDateInputStringToJSDate: parseStringToDate } =
+    useParseDateInputStringToJSDate();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)
@@ -142,6 +145,8 @@ export const FormDateFieldInput = ({
     draftValue.type === 'static' && draftValue.mode === 'edit';
 
   const placeholderToDisplay = placeholder ?? 'mm/dd/yyyy';
+
+  const { getInitialFilterValue } = useGetInitialFilterValue();
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
@@ -259,17 +264,17 @@ export const FormDateFieldInput = ({
     //   validatedDate = MAX_DATE;
     // }
 
-    setDraftValue({
-      type: 'static',
-      value: validatedDate,
-      mode: 'edit',
-    });
+    // setDraftValue({
+    //   type: 'static',
+    //   value: validatedDate,
+    //   mode: 'edit',
+    // });
 
-    setPickerDate(validatedDate);
+    // setPickerDate(validatedDate);
 
-    setInputDate(parseDateToString(validatedDate));
+    // setInputDate(parseDateToString(validatedDate));
 
-    persistDate(validatedDate);
+    // persistDate(validatedDate);
   };
 
   const handleVariableTagInsert = (variableName: string) => {

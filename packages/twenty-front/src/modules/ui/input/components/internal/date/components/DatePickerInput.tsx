@@ -12,7 +12,7 @@ import { useParsePlainDateToDateInputString } from '@/ui/input/components/intern
 import { getDateMask } from '@/ui/input/components/internal/date/utils/getDateMask';
 
 import { useParseDateInputStringToPlainDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToPlainDate';
-import { useParseIMaskJSDateIMaskDateInputString } from '@/ui/input/components/internal/date/hooks/useParseIMaskJSDateIMaskDateInputString';
+import { useParseJSDateToIMaskDateInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateInputString';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledInputContainer = styled.div`
@@ -58,7 +58,7 @@ export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
     useParsePlainDateToDateInputString();
 
   const { parseIMaskJSDateIMaskDateInputString } =
-    useParseIMaskJSDateIMaskDateInputString();
+    useParseJSDateToIMaskDateInputString();
 
   const parseIMaskDateInputStringToJSDate = (newDateAsString: string) => {
     const newDate = parseDateInputStringToJSDate(newDateAsString);

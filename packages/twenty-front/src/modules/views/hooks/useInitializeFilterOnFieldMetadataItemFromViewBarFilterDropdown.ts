@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/object-filter-dropdown/hooks/useUpsertObjectFilterDropdownCurrentFilter';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -7,7 +8,7 @@ import { selectedOperandInDropdownComponentState } from '@/object-record/object-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { findDuplicateRecordFilterInNonAdvancedRecordFilters } from '@/object-record/record-filter/utils/findDuplicateRecordFilterInNonAdvancedRecordFilters';
-import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/getDateFilterDisplayValue';
+
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -45,6 +46,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
       useUpsertObjectFilterDropdownCurrentFilter();
 
     const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+    const { getInitialFilterValue } = useGetInitialFilterValue();
 
     const initializeFilterOnFieldMetataItemFromViewBarFilterDropdown =
       useRecoilCallback(
@@ -106,12 +108,9 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
               set(selectedOperandInDropdownCallbackState, defaultOperand);
 
               if (filterType === 'DATE' || filterType === 'DATE_TIME') {
-                const date = new Date();
-                const value = date.toISOString();
-
-                const { displayValue } = getDateFilterDisplayValue(
-                  date,
+                const { displayValue, value } = getInitialFilterValue(
                   filterType,
+                  defaultOperand,
                 );
 
                 const initialDateRecordFilter: RecordFilter = {

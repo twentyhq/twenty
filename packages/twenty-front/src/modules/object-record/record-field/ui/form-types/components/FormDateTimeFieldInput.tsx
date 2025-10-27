@@ -12,7 +12,7 @@ import {
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { useParseDateTimeInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateTimeInputStringToJSDate';
-import { useParseJSDateToDateTimeInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToDateTimeInputString';
+import { useParseJSDateToIMaskDateTimeInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateTimeInputString';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -96,7 +96,7 @@ export const FormDateTimeFieldInput = ({
 }: FormDateTimeFieldInputProps) => {
   const instanceId = useId();
 
-  const { parseJSDateToDateTimeInputString: parseDateTimeToString } = useParseJSDateToDateTimeInputString();
+  const { parseJSDateToDateTimeInputString: parseDateTimeToString } = useParseJSDateToIMaskDateTimeInputString();
   const { parseDateTimeInputStringToJSDate: parseStringToDateTime } = useParseDateTimeInputStringToJSDate();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(

@@ -8,7 +8,7 @@ import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate'
 import { getDateTimeMask } from '@/ui/input/components/internal/date/utils/getDateTimeMask';
 
 import { useParseDateTimeInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateTimeInputStringToJSDate';
-import { useParseJSDateToDateTimeInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToDateTimeInputString';
+import { useParseJSDateToIMaskDateTimeInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateTimeInputString';
 import { useTurnReactDatePickerShiftedDateBackIntoPointInTime } from '@/ui/input/components/internal/date/hooks/useTurnReactDatePickerShiftedDateBackIntoPointInTime';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -53,7 +53,7 @@ export const DateTimePickerInput = ({
   const { parseDateTimeInputStringToJSDate } =
     useParseDateTimeInputStringToJSDate();
   const { parseJSDateToDateTimeInputString } =
-    useParseJSDateToDateTimeInputString();
+    useParseJSDateToIMaskDateTimeInputString();
 
   const handleParseStringToDate = (newDateAsString: string) => {
     const date = parseDateTimeInputStringToJSDate(newDateAsString);

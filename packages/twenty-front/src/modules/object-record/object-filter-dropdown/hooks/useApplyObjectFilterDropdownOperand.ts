@@ -1,4 +1,5 @@
 import { DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW } from '@/object-record/object-filter-dropdown/constants/DateOperandsThatShouldBeInitializedWithNow';
+import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/object-filter-dropdown/hooks/useUpsertObjectFilterDropdownCurrentFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -7,7 +8,7 @@ import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropd
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/getDateFilterDisplayValue';
+
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
@@ -39,6 +40,8 @@ export const useApplyObjectFilterDropdownOperand = () => {
 
   const { createEmptyRecordFilterFromFieldMetadataItem } =
     useCreateEmptyRecordFilterFromFieldMetadataItem();
+
+  const { getInitialFilterValue } = useGetInitialFilterValue();
 
   const applyObjectFilterDropdownOperand = (
     newOperand: RecordFilterOperand,
@@ -84,13 +87,12 @@ export const useApplyObjectFilterDropdownOperand = () => {
       if (
         DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW.includes(newOperand)
       ) {
-        const newDateValue = new Date();
-
-        recordFilterToUpsert.value = newDateValue.toISOString();
-        const { displayValue } = getDateFilterDisplayValue(
-          newDateValue,
+        const { displayValue, value } = getInitialFilterValue(
           recordFilterToUpsert.type,
+          newOperand,
         );
+
+        recordFilterToUpsert.value = value;
 
         recordFilterToUpsert.displayValue = displayValue;
       } else if (newOperand === RecordFilterOperand.IS_RELATIVE) {
@@ -105,6 +107,7 @@ export const useApplyObjectFilterDropdownOperand = () => {
           defaultRelativeDate.amount,
           defaultRelativeDate.unit,
         );
+
         recordFilterToUpsert.displayValue =
           getRelativeDateDisplayValue(defaultRelativeDate);
       } else {
