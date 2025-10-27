@@ -26,8 +26,11 @@ import {
 jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
   useUpdateOneFieldMetadataItem: () => ({
     updateOneFieldMetadataItem: jest.fn().mockResolvedValue({
-      data: {
-        updateOneField: responseData.default,
+      status: 'successful',
+      response: {
+        data: {
+          updateOneField: responseData.default,
+        },
       },
     }),
   }),
@@ -149,7 +152,9 @@ describe('useFieldMetadataItem', () => {
       jestExpectSuccessfulMetadataRequestResult(response);
 
       expect(response.response).toEqual({
-        updateOneField: responseData.default,
+        data: {
+          updateOneField: responseData.default,
+        },
       });
     });
   });
@@ -170,7 +175,9 @@ describe('useFieldMetadataItem', () => {
       jestExpectSuccessfulMetadataRequestResult(res);
 
       expect(res.response).toEqual({
-        createOneField: responseData.createMetadataField,
+        data: {
+          createOneField: responseData.createMetadataField,
+        },
       });
     });
   });
@@ -187,7 +194,7 @@ describe('useFieldMetadataItem', () => {
       );
 
       jestExpectSuccessfulMetadataRequestResult(response);
-      expect(response.response).toEqual({
+      expect(response.response.data).toEqual({
         updateOneField: responseData.default,
       });
     });
@@ -206,7 +213,9 @@ describe('useFieldMetadataItem', () => {
       jestExpectSuccessfulMetadataRequestResult(res);
 
       expect(res.response).toEqual({
-        deleteOneField: responseData.default,
+        data: {
+          deleteOneField: responseData.default,
+        },
       });
     });
   });
@@ -224,7 +233,9 @@ describe('useFieldMetadataItem', () => {
       jestExpectSuccessfulMetadataRequestResult(res);
 
       expect(res.response).toEqual({
-        deleteOneField: responseData.fieldRelation,
+        data: {
+          deleteOneField: responseData.fieldRelation,
+        },
       });
     });
   });
