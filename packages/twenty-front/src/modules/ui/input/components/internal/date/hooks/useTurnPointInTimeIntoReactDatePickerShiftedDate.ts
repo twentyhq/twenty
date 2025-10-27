@@ -9,7 +9,7 @@ export const useTurnPointInTimeIntoReactDatePickerShiftedDate = () => {
   const turnPointInTimeIntoReactDatePickerShiftedDate = (pointInTime: Date) => {
     const dateSure = new TZDate(pointInTime).withTimeZone(userTimezone);
 
-    const dateTz = new TZDate(
+    const shiftedDate = new TZDate(
       dateSure.getFullYear(),
       dateSure.getMonth(),
       dateSure.getDate(),
@@ -19,7 +19,7 @@ export const useTurnPointInTimeIntoReactDatePickerShiftedDate = () => {
       systemTimeZone,
     );
 
-    return dateTz;
+    return shiftedDate;
   };
 
   return {

@@ -349,9 +349,8 @@ export const DatePicker = ({
   highlightedDateRange,
   hideHeaderInput,
 }: DatePickerProps) => {
-  const localDate = date
-    ? parse(date, DATE_TYPE_FORMAT, new Date())
-    : new Date();
+  const dateOrToday = date ?? format(new Date(), DATE_TYPE_FORMAT);
+  const localDate = parse(dateOrToday, DATE_TYPE_FORMAT, new Date());
 
   const theme = useTheme();
 
@@ -466,6 +465,7 @@ export const DatePicker = ({
           <ReactDatePicker
             open={true}
             selected={localDate}
+            selectedDates={selectedDates}
             openToDate={localDate}
             disabledKeyboardNavigation
             onChange={handleDateChange}
@@ -483,7 +483,7 @@ export const DatePicker = ({
                 />
               ) : (
                 <DatePickerHeader
-                  date={date}
+                  date={dateOrToday}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}
                   onChangeYear={handleChangeYear}
