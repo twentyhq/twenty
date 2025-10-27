@@ -42,9 +42,27 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
         viewFields: {
           id: true,
         },
+        viewFilters: {
+          id: true,
+        },
+        viewGroups: {
+          id: true,
+        },
+        kanbanAggregateOperationViews: {
+          id: true,
+        },
+        calendarViews: {
+          id: true,
+        },
       },
       withDeleted: true,
-      relations: ['viewFields'],
+      relations: [
+        'viewFields',
+        'viewFilters',
+        'viewGroups',
+        'kanbanAggregateOperationViews',
+        'calendarViews',
+      ],
     });
 
     return fieldMetadatas.reduce(

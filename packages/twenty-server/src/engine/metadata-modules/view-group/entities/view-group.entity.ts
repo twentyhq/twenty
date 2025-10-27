@@ -13,7 +13,7 @@ import {
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
@@ -22,7 +22,10 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 @Index('IDX_VIEW_GROUP_VIEW_ID', ['viewId'], {
   where: '"deletedAt" IS NULL',
 })
-export class ViewGroupEntity extends SyncableEntity {
+export class ViewGroupEntity
+  extends SyncableEntity
+  implements Required<ViewGroupEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -59,11 +62,9 @@ export class ViewGroupEntity extends SyncableEntity {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date | null;
 
-  @ManyToOne(() => Workspace, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewGroups, {
     onDelete: 'CASCADE',

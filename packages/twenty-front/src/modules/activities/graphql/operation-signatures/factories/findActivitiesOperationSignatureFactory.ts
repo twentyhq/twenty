@@ -34,7 +34,13 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
         name: true,
         __typename: true,
       },
+      // Deprecated: Use createdBy instead
       authorId: true,
+      createdBy: {
+        source: true,
+        workspaceMemberId: true,
+        name: true,
+      },
       assigneeId: true,
       assignee: {
         id: true,

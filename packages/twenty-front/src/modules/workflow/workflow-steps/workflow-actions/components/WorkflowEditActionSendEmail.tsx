@@ -1,23 +1,27 @@
 import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
 import { MICROSOFT_SEND_SCOPE } from '@/accounts/constants/MicrosoftSendScope';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
-import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowSendEmailBody } from '@/workflow/workflow-steps/workflow-actions/email-action/components/WorkflowSendEmailBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { SEND_EMAIL_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/SendEmailAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
@@ -27,6 +31,13 @@ import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
+import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+
+const EMAIL_EDITOR_MIN_HEIGHT = 340;
+
+const EMAIL_EDITOR_MAX_WIDTH = 600;
 
 type WorkflowEditActionSendEmailProps = {
   action: WorkflowSendEmailAction;
@@ -40,11 +51,20 @@ type WorkflowEditActionSendEmailProps = {
       };
 };
 
+type WorkflowFile = {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  createdAt: string;
+};
+
 type SendEmailFormData = {
   connectedAccountId: string;
   email: string;
   subject: string;
   body: string;
+  files: WorkflowFile[];
 };
 
 export const WorkflowEditActionSendEmail = ({
@@ -55,10 +75,15 @@ export const WorkflowEditActionSendEmail = ({
   const { getIcon } = useIcons();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
   );
+
+  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
+
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
   const [formData, setFormData] = useState<SendEmailFormData>({
@@ -66,6 +91,7 @@ export const WorkflowEditActionSendEmail = ({
     email: action.settings.input.email,
     subject: action.settings.input.subject ?? '',
     body: action.settings.input.body ?? '',
+    files: action.settings.input.files ?? [],
   });
 
   const checkConnectedAccountScopes = async (
@@ -115,7 +141,6 @@ export const WorkflowEditActionSendEmail = ({
       if (actionOptions.readonly === true) {
         return;
       }
-
       actionOptions.onActionUpdate({
         ...action,
         settings: {
@@ -125,6 +150,7 @@ export const WorkflowEditActionSendEmail = ({
             email: formData.email,
             subject: formData.subject,
             body: formData.body,
+            files: formData.files,
           },
         },
       });
@@ -152,6 +178,25 @@ export const WorkflowEditActionSendEmail = ({
     setFormData(newFormData);
 
     saveAction(newFormData);
+  };
+
+  const handleUploadAttachment = async (file: File) => {
+    if (!isDefined(workflowVisualizerWorkflowId)) {
+      return undefined;
+    }
+
+    const { attachmentAbsoluteURL } = await uploadAttachmentFile(file, {
+      id: workflowVisualizerWorkflowId,
+      targetObjectNameSingular: CoreObjectNameSingular.Workflow,
+    });
+
+    return attachmentAbsoluteURL;
+  };
+
+  const handleImageUploadError = (_: Error, file: File) => {
+    enqueueErrorSnackBar({
+      message: t`Failed to upload image: `.concat(file.name),
+    });
   };
 
   const filter: { or: object[] } = {
@@ -215,7 +260,7 @@ export const WorkflowEditActionSendEmail = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Send Email',
+      defaultTitle: SEND_EMAIL_ACTION.defaultLabel,
     });
 
   const navigate = useNavigateSettings();
@@ -241,6 +286,7 @@ export const WorkflowEditActionSendEmail = ({
           initialTitle={headerTitle}
           headerType={headerType}
           disabled={actionOptions.readonly}
+          iconTooltip={SEND_EMAIL_ACTION.defaultLabel}
         />
         <WorkflowStepBody>
           <Select
@@ -285,19 +331,43 @@ export const WorkflowEditActionSendEmail = ({
             }}
             VariablePicker={WorkflowVariablePicker}
           />
-          <WorkflowSendEmailBody
-            action={action}
+          <WorkflowSendEmailAttachments
+            label="Attachments"
+            files={formData.files}
+            onChange={(files) => {
+              handleFieldChange('files', files);
+            }}
+          />
+          <FormAdvancedTextFieldInput
             label="Body"
             placeholder="Enter email body"
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
-            onChange={(body) => {
+            onChange={(body: string) => {
               handleFieldChange('body', body);
             }}
             VariablePicker={WorkflowVariablePicker}
+            enableFullScreen={true}
+            fullScreenBreadcrumbs={[
+              {
+                children: workflow?.name?.trim() || t`Untitled Workflow`,
+                href: '#',
+              },
+              {
+                children: headerTitle,
+                href: '#',
+              },
+              {
+                children: t`Email Editor`,
+              },
+            ]}
+            onImageUpload={handleUploadAttachment}
+            onImageUploadError={handleImageUploadError}
+            minHeight={EMAIL_EDITOR_MIN_HEIGHT}
+            maxWidth={EMAIL_EDITOR_MAX_WIDTH}
           />
         </WorkflowStepBody>
-        {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
+        {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
       </>
     )
   );

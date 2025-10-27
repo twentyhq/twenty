@@ -12,7 +12,6 @@ import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -37,13 +36,17 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
     try {
       const type = form.getValues('type');
 
+      const values = form.getValues();
+      const providerKeys = Object.keys(
+        sSOIdentityProviderDefaultValues[type](),
+      );
+
+      const filteredValues = Object.fromEntries(
+        Object.entries(values).filter(([key]) => providerKeys.includes(key)),
+      );
+
       await createSSOIdentityProvider(
-        SSOIdentitiesProvidersParamsSchema.parse(
-          pick(
-            form.getValues(),
-            Object.keys(sSOIdentityProviderDefaultValues[type]()),
-          ),
-        ),
+        SSOIdentitiesProvidersParamsSchema.parse(filteredValues),
       );
 
       navigate(SettingsPath.Security);

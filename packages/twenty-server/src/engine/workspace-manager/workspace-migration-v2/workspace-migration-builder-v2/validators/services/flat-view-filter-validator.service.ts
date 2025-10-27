@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
@@ -98,12 +98,8 @@ export class FlatViewFilterValidatorService {
         message: t`View filter not found`,
         userFriendlyMessage: msg`View filter not found`,
       });
-    } else if (!isDefined(existingViewFilter.deletedAt)) {
-      validationResult.errors.push({
-        code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-        message: t`View filter has to be soft deleted first`,
-        userFriendlyMessage: msg`View filter has to be soft deleted first`,
-      });
+
+      return validationResult;
     }
 
     return validationResult;

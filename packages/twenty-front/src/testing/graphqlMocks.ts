@@ -22,8 +22,10 @@ import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
+import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { isDefined } from 'twenty-shared/utils';
+import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
@@ -35,8 +37,6 @@ import {
 import { oneSucceededWorkflowRunQueryResult } from '~/testing/mock-data/workflow-run';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
-import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
-import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 
 const peopleMock = getPeopleRecordConnectionMock();
 const companiesMock = getCompaniesRecordConnectionMock();
@@ -384,6 +384,7 @@ export const graphqlMocks = {
               startCursor: null,
               endCursor: null,
             },
+            totalCount: mockedData.length,
           },
         },
       });

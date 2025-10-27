@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
@@ -59,6 +59,23 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatViewFilterToValidate.fieldMetadataId,
+      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+    });
+    const updatedFlatFieldMetadataMaps =
+      replaceFlatEntityInFlatEntityMapsOrThrow({
+        flatEntity: {
+          ...flatFieldMetadata,
+          viewFilterIds: [
+            ...flatFieldMetadata.viewFilterIds,
+            flatViewFilterToValidate.id,
+          ],
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      });
+
     return {
       status: 'success',
       action: {
@@ -66,7 +83,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
         viewFilter: flatViewFilterToValidate,
       },
       dependencyOptimisticFlatEntityMaps: {
-        ...dependencyOptimisticFlatEntityMaps,
+        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
         flatViewMaps: updatedFlatViewMaps,
       },
     };

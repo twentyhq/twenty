@@ -102,7 +102,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
         objectMetadataMaps,
       } = await this.buildCommonOptions(request);
 
-      const selectedFieldsResult = await this.computeSelectedFields({
+      const selectedFields = await this.computeSelectedFields({
         depth: parsedArgs.depth,
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
@@ -110,12 +110,14 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
       });
 
       const { records, aggregatedValues, pageInfo } =
-        await this.commonFindManyQueryRunnerService.run({
-          args: { ...parsedArgs, selectedFieldsResult },
-          authContext,
-          objectMetadataMaps,
-          objectMetadataItemWithFieldMaps,
-        });
+        await this.commonFindManyQueryRunnerService.execute(
+          { ...parsedArgs, selectedFields },
+          {
+            authContext,
+            objectMetadataMaps,
+            objectMetadataItemWithFieldMaps,
+          },
+        );
 
       return this.formatRestResponse(
         records,

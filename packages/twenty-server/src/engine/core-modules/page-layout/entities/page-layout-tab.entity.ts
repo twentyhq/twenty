@@ -1,3 +1,5 @@
+import { ObjectType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -14,9 +16,10 @@ import {
 
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'pageLayoutTab', schema: 'core' })
+@ObjectType('PageLayoutTab')
 @Index(
   'IDX_PAGE_LAYOUT_TAB_WORKSPACE_ID_PAGE_LAYOUT_ID',
   ['workspaceId', 'pageLayoutId'],
@@ -32,11 +35,11 @@ export class PageLayoutTabEntity implements Required<PageLayoutTabEntity> {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, {
+  @ManyToOne(() => WorkspaceEntity, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 
   @Column({ nullable: false, type: 'float', default: 0 })
   position: number;

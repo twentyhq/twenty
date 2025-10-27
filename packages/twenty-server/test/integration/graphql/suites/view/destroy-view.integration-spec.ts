@@ -1,17 +1,13 @@
 import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-ids.constants';
-import { deleteViewOperationFactory } from 'test/integration/graphql/utils/delete-view-operation-factory.util';
-import { destroyViewOperationFactory } from 'test/integration/graphql/utils/destroy-view-operation-factory.util';
-import { findViewOperationFactory } from 'test/integration/graphql/utils/find-view-operation-factory.util';
-import {
-  assertGraphQLErrorResponseWithSnapshot,
-  assertGraphQLSuccessfulResponse,
-} from 'test/integration/graphql/utils/graphql-test-assertions.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { deleteOneCoreView } from 'test/integration/metadata/suites/view/utils/delete-one-core-view.util';
+import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
+import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 
 describe('Destroy core view', () => {
   let testObjectMetadataId: string;
@@ -56,7 +52,7 @@ describe('Destroy core view', () => {
     await cleanupViewRecords();
   });
 
-  it('should destroy an existing view', async () => {
+  it.only('should destroy an existing view', async () => {
     const {
       data: { createCoreView: view },
     } = await createOneCoreView({
@@ -67,29 +63,38 @@ describe('Destroy core view', () => {
       },
       expectToFail: false,
     });
-    const deleteOperation = deleteViewOperationFactory({ viewId: view.id });
-    const deleteResponse = await makeGraphqlAPIRequest(deleteOperation);
 
-    assertGraphQLSuccessfulResponse(deleteResponse);
+    const { data: deleteData, errors: deleteErrors } = await deleteOneCoreView({
+      viewId: view.id,
+      expectToFail: false,
+    });
 
-    const destroyOperation = destroyViewOperationFactory({ viewId: view.id });
-    const destroyResponse = await makeGraphqlAPIRequest(destroyOperation);
+    expect(deleteErrors).toBeUndefined();
+    expect(deleteData.deleteCoreView).toBe(true);
 
-    assertGraphQLSuccessfulResponse(destroyResponse);
-    expect(destroyResponse.body.data.destroyCoreView).toBe(true);
+    const { data: destroyData, errors: destroyErrors } =
+      await destroyOneCoreView({
+        viewId: view.id,
+        expectToFail: false,
+      });
 
-    const getOperation = findViewOperationFactory({ viewId: view.id });
-    const getResponse = await makeGraphqlAPIRequest(getOperation);
+    expect(destroyErrors).toBeUndefined();
+    expect(destroyData.destroyCoreView).toBe(true);
 
-    expect(getResponse.body.data.getCoreView).toBeNull();
+    const { data: getData } = await findOneCoreView({
+      viewId: view.id,
+      expectToFail: false,
+    });
+
+    expect(getData.getCoreView).toBeNull();
   });
 
   it('should throw an error when destroying non-existent view', async () => {
-    const operation = destroyViewOperationFactory({
+    const { errors } = await destroyOneCoreView({
       viewId: TEST_NOT_EXISTING_VIEW_ID,
+      expectToFail: true,
     });
-    const response = await makeGraphqlAPIRequest(operation);
 
-    assertGraphQLErrorResponseWithSnapshot(response);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

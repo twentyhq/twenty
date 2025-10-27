@@ -3,7 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
@@ -20,7 +20,7 @@ export class ViewSortResolver {
 
   @Query(() => [ViewSortDTO])
   async getCoreViewSorts(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
     viewId?: string,
   ): Promise<ViewSortDTO[]> {
@@ -34,7 +34,7 @@ export class ViewSortResolver {
   @Query(() => ViewSortDTO, { nullable: true })
   async getCoreViewSort(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewSortDTO | null> {
     return this.viewSortService.findById(id, workspace.id);
   }
@@ -42,7 +42,7 @@ export class ViewSortResolver {
   @Mutation(() => ViewSortDTO)
   async createCoreViewSort(
     @Args('input') input: CreateViewSortInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
     return this.viewSortService.create({
       ...input,
@@ -54,7 +54,7 @@ export class ViewSortResolver {
   async updateCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewSortInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
     return this.viewSortService.update(id, workspace.id, input);
   }
@@ -62,7 +62,7 @@ export class ViewSortResolver {
   @Mutation(() => Boolean)
   async deleteCoreViewSort(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
 
@@ -72,7 +72,7 @@ export class ViewSortResolver {
   @Mutation(() => Boolean)
   async destroyCoreViewSort(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const deletedViewSort = await this.viewSortService.destroy(
       id,

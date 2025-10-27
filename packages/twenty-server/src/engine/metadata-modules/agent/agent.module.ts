@@ -1,22 +1,26 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AiModule } from 'src/engine/core-modules/ai/ai.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
 import { AgentChatController } from 'src/engine/metadata-modules/agent/agent-chat.controller';
+import { AiRouterModule } from 'src/engine/metadata-modules/ai-router/ai-router.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
@@ -39,6 +43,8 @@ import { AgentEntity } from './agent.entity';
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
 
+import { AgentActorContextService } from './services/agent-actor-context.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -50,7 +56,7 @@ import { AgentService } from './agent.service';
       AgentChatMessagePartEntity,
       AgentChatThreadEntity,
       FileEntity,
-      UserWorkspace,
+      UserWorkspaceEntity,
     ]),
     AiModule,
     AgentRoleModule,
@@ -61,11 +67,15 @@ import { AgentService } from './agent.service';
     FileModule,
     ObjectMetadataModule,
     PermissionsModule,
+    AiRouterModule,
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
-    DomainManagerModule,
+    WorkspaceDomainsModule,
     WorkflowToolsModule,
+    forwardRef(() => UserModule),
+    UserWorkspaceModule,
+    UserRoleModule,
   ],
   controllers: [AgentChatController],
   providers: [
@@ -81,6 +91,7 @@ import { AgentService } from './agent.service';
     AgentTitleGenerationService,
     AgentHandoffExecutorService,
     AgentHandoffService,
+    AgentActorContextService,
   ],
   exports: [
     AgentService,

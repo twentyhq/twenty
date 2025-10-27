@@ -30,7 +30,7 @@ export class RootTypeGenerator {
 
   buildAndStore(
     objectMetadataCollection: ObjectMetadataEntity[],
-    workspaceResolverMethodNames: WorkspaceResolverBuilderMethodNames[],
+    workspaceResolverMethodNames: readonly WorkspaceResolverBuilderMethodNames[],
     objectTypeName: GqlOperation,
   ) {
     if (workspaceResolverMethodNames.length === 0) {
@@ -61,7 +61,7 @@ export class RootTypeGenerator {
 
   private generateFields(
     objectMetadataCollection: ObjectMetadataEntity[],
-    workspaceResolverMethodNames: WorkspaceResolverBuilderMethodNames[],
+    workspaceResolverMethodNames: readonly WorkspaceResolverBuilderMethodNames[],
   ): GraphQLRootTypeFieldConfigMap {
     const fieldConfigMap: GraphQLRootTypeFieldConfigMap = {};
 

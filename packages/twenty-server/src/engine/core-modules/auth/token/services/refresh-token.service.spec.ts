@@ -4,14 +4,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 import { RefreshTokenService } from './refresh-token.service';
 
@@ -19,8 +19,8 @@ describe('RefreshTokenService', () => {
   let service: RefreshTokenService;
   let jwtWrapperService: JwtWrapperService;
   let twentyConfigService: TwentyConfigService;
-  let appTokenRepository: Repository<AppToken>;
-  let userRepository: Repository<User>;
+  let appTokenRepository: Repository<AppTokenEntity>;
+  let userRepository: Repository<UserEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,11 +42,11 @@ describe('RefreshTokenService', () => {
           },
         },
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppTokenEntity),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useClass: Repository,
         },
       ],
@@ -55,10 +55,12 @@ describe('RefreshTokenService', () => {
     service = module.get<RefreshTokenService>(RefreshTokenService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    appTokenRepository = module.get<Repository<AppToken>>(
-      getRepositoryToken(AppToken),
+    appTokenRepository = module.get<Repository<AppTokenEntity>>(
+      getRepositoryToken(AppTokenEntity),
     );
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<UserEntity>>(
+      getRepositoryToken(UserEntity),
+    );
   });
 
   it('should be defined', () => {
@@ -76,14 +78,14 @@ describe('RefreshTokenService', () => {
         id: 'token-id',
         workspaceId: 'workspace-id',
         revokedAt: null,
-      } as AppToken;
+      } as AppTokenEntity;
       const mockUser = {
         id: 'some-id',
         firstName: 'John',
         lastName: 'Doe',
         email: 'john.doe@example.com',
         defaultAvatarUrl: '',
-      } as User;
+      } as UserEntity;
 
       jest
         .spyOn(jwtWrapperService, 'verifyJwtToken')
@@ -132,10 +134,10 @@ describe('RefreshTokenService', () => {
       jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
       jest
         .spyOn(appTokenRepository, 'create')
-        .mockReturnValue({ id: 'new-token-id' } as AppToken);
+        .mockReturnValue({ id: 'new-token-id' } as AppTokenEntity);
       jest
         .spyOn(appTokenRepository, 'save')
-        .mockResolvedValue({ id: 'new-token-id' } as AppToken);
+        .mockResolvedValue({ id: 'new-token-id' } as AppTokenEntity);
 
       const result = await service.generateRefreshToken({
         userId,
@@ -195,11 +197,14 @@ describe('RefreshTokenService', () => {
       impersonatedUserWorkspaceId: 'uw-orig',
     });
 
-    const token = { id: tokenId, type: AppTokenType.RefreshToken } as AppToken;
+    const token = {
+      id: tokenId,
+      type: AppTokenType.RefreshToken,
+    } as AppTokenEntity;
 
     jest.spyOn(appTokenRepository, 'findOneBy').mockResolvedValue(token);
 
-    const user = { id: userId } as User;
+    const user = { id: userId } as UserEntity;
 
     jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
 

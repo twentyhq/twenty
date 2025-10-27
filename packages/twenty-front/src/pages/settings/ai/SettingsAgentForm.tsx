@@ -1,19 +1,18 @@
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconTrash } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { H2Title, IconLock, IconSettings } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
   type CreateAgentInput,
@@ -24,12 +23,12 @@ import {
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-import { SettingsAgentDeleteConfirmationModal } from './components/SettingsAgentDeleteConfirmationModal';
-import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
-import { SettingsAgentHandoffSection } from './components/SettingsAgentHandoffSection';
-import { SettingsAIAgentForm } from './forms/components/SettingsAIAgentForm';
-import { useSettingsAgentFormState } from './hooks/useSettingsAgentFormState';
 import { useState } from 'react';
+import { SettingsAgentDetailSkeletonLoader } from './components/SettingsAgentDetailSkeletonLoader';
+import { SettingsAgentRoleTab } from './components/SettingsAgentRoleTab';
+import { SettingsAgentSettingsTab } from './components/SettingsAgentSettingsTab';
+import { SETTINGS_AGENT_DETAIL_TABS } from './constants/SettingsAgentDetailTabs';
+import { useSettingsAgentFormState } from './hooks/useSettingsAgentFormState';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -39,20 +38,25 @@ const StyledContentContainer = styled.div`
   width: 100%;
 `;
 
-const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
+const StyledTabList = styled(TabList)`
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+`;
 
 export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   const { agentId = '' } = useParams<{ agentId: string }>();
   const navigate = useNavigateSettings();
   const navigateApp = useNavigateApp();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { openModal } = useModal();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const [isReadonlyMode, setIsReadonlyMode] = useState(false);
 
   const isEditMode = mode === 'edit';
-
   const isCreateMode = mode === 'create';
+
+  const tabListComponentId = `${SETTINGS_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    tabListComponentId,
+  );
 
   const {
     formValues,
@@ -103,13 +107,24 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
 
   const agent = data?.findOneAgent;
 
-  const isAskAIAgent = agent?.id === currentWorkspace?.defaultAgent?.id;
-
   if (!isCreateMode && !loading && !agent) {
     return null;
   }
 
   const canSave = !isReadonlyMode && validateForm() && !isSubmitting;
+
+  const tabs = [
+    {
+      id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS,
+      title: t`Settings`,
+      Icon: IconSettings,
+    },
+    {
+      id: SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.ROLE,
+      title: t`Role`,
+      Icon: IconLock,
+    },
+  ];
 
   const handleSave = async () => {
     if (isReadonlyMode) {
@@ -187,6 +202,31 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       : agent?.label
     : t`New Agent`;
 
+  const renderActiveTabContent = () => {
+    switch (activeTabId) {
+      case SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.ROLE:
+        return (
+          <SettingsAgentRoleTab
+            formValues={formValues}
+            onFieldChange={handleFieldChange}
+            disabled={isReadonlyMode || (isEditMode ? !agent?.isCustom : false)}
+          />
+        );
+
+      case SETTINGS_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS:
+        return (
+          <SettingsAgentSettingsTab
+            formValues={formValues}
+            onFieldChange={handleFieldChange}
+            disabled={isReadonlyMode || (isEditMode ? !agent?.isCustom : false)}
+            agent={agent}
+          />
+        );
+      default:
+        return <></>;
+    }
+  };
+
   return (
     <>
       <SubMenuTopBarContainer
@@ -213,56 +253,24 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       >
         <SettingsPageContainer>
           <Section>
-            {!isAskAIAgent && (
-              <H2Title title={pageTitle} description={pageDescription} />
-            )}
+            <H2Title title={pageTitle} description={pageDescription} />
             {isEditMode && loading ? (
               <SettingsAgentDetailSkeletonLoader />
             ) : (
-              <StyledContentContainer>
-                {isAskAIAgent ? (
-                  <SettingsAgentHandoffSection agentId={agent?.id ?? ''} />
-                ) : (
-                  <>
-                    <SettingsAIAgentForm
-                      formValues={formValues}
-                      onFieldChange={handleFieldChange}
-                      disabled={
-                        isReadonlyMode ||
-                        (isEditMode ? !agent?.isCustom : false)
-                      }
-                    />
-                    {!isReadonlyMode &&
-                      isEditMode &&
-                      agent &&
-                      formValues.isCustom && (
-                        <Section>
-                          <H2Title
-                            title={t`Danger zone`}
-                            description={t`Delete this agent`}
-                          />
-                          <Button
-                            accent="danger"
-                            variant="secondary"
-                            title={t`Delete Agent`}
-                            Icon={IconTrash}
-                            onClick={() => openModal(DELETE_AGENT_MODAL_ID)}
-                          />
-                        </Section>
-                      )}
-                  </>
-                )}
-              </StyledContentContainer>
+              <>
+                <StyledTabList
+                  tabs={tabs}
+                  className="tab-list"
+                  componentInstanceId={tabListComponentId}
+                />
+                <StyledContentContainer>
+                  {renderActiveTabContent()}
+                </StyledContentContainer>
+              </>
             )}
           </Section>
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
-      {isEditMode && agent && (
-        <SettingsAgentDeleteConfirmationModal
-          agentId={agent.id}
-          agentName={agent.label}
-        />
-      )}
     </>
   );
 };

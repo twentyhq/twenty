@@ -1,21 +1,24 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { SSOIdentityProviderStatus } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { type AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  SSOIdentityProviderStatus,
+  type WorkspaceSSOIdentityProviderEntity,
+} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { type AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export const getAuthProvidersByWorkspace = ({
   workspace,
   systemEnabledProviders,
 }: {
   workspace: Pick<
-    Workspace,
+    WorkspaceEntity,
     | 'isGoogleAuthEnabled'
     | 'isPasswordAuthEnabled'
     | 'isMicrosoftAuthEnabled'
     | 'workspaceSSOIdentityProviders'
   >;
-  systemEnabledProviders: AuthProviders;
+  systemEnabledProviders: AuthProvidersDTO;
 }) => {
   return {
     google: workspace.isGoogleAuthEnabled && systemEnabledProviders.google,
@@ -25,7 +28,7 @@ export const getAuthProvidersByWorkspace = ({
     microsoft:
       workspace.isMicrosoftAuthEnabled && systemEnabledProviders.microsoft,
     sso: workspace.workspaceSSOIdentityProviders
-      .map((identityProvider) =>
+      .map((identityProvider: WorkspaceSSOIdentityProviderEntity) =>
         identityProvider.status === SSOIdentityProviderStatus.Active
           ? {
               id: identityProvider.id,

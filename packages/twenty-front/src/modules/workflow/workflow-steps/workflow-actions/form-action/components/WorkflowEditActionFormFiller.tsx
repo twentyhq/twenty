@@ -10,11 +10,11 @@ import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
 import { WorkflowFormFieldInput } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFormFieldInput';
+import { FORM_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/FormAction';
 import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useSubmitFormStep';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
-import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import { useTheme } from '@emotion/react';
+import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -33,7 +33,6 @@ export const WorkflowEditActionFormFiller = ({
   action,
   actionOptions,
 }: WorkflowEditActionFormFillerProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
@@ -43,8 +42,12 @@ export const WorkflowEditActionFormFiller = ({
   const [error, setError] = useState<string | undefined>(undefined);
 
   const canSubmit = !actionOptions.readonly && !isDefined(error);
-  const headerTitle = isDefined(action.name) ? action.name : `Form`;
-  const headerIcon = getActionIcon(action.type);
+
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: FORM_ACTION.defaultLabel,
+    });
 
   const onFieldUpdate = ({
     fieldId,
@@ -108,10 +111,11 @@ export const WorkflowEditActionFormFiller = ({
     <>
       <SidePanelHeader
         Icon={getIcon(headerIcon)}
-        iconColor={theme.font.color.tertiary}
+        iconColor={headerIconColor}
         initialTitle={headerTitle}
-        headerType="Action"
+        headerType={headerType}
         disabled
+        iconTooltip={FORM_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         {formData.map((field) => {

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { In, Repository } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
 
@@ -21,8 +21,8 @@ export class DeleteWorkspacesCommand extends CommandRunner {
   private readonly logger = new Logger(DeleteWorkspacesCommand.name);
 
   constructor(
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly dataSourceService: DataSourceService,
   ) {
     super();
@@ -61,8 +61,8 @@ export class DeleteWorkspacesCommand extends CommandRunner {
       (dataSource) => dataSource.workspaceId,
     );
 
-    const workspacesToDelete = workspaces.filter((Workspace) =>
-      workspaceIdsWithSchema.includes(Workspace.id),
+    const workspacesToDelete = workspaces.filter((WorkspaceEntity) =>
+      workspaceIdsWithSchema.includes(WorkspaceEntity.id),
     );
 
     if (workspacesToDelete.length) {

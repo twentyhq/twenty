@@ -24,7 +24,7 @@ import {
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
 import { PageLayoutTabRestApiExceptionFilter } from 'src/engine/core-modules/page-layout/filters/page-layout-tab-rest-api-exception.filter';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
@@ -36,7 +36,7 @@ export class PageLayoutTabController {
 
   @Get()
   async findMany(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('pageLayoutId') pageLayoutId: string,
   ): Promise<PageLayoutTabDTO[]> {
     if (!isDefined(pageLayoutId)) {
@@ -57,7 +57,7 @@ export class PageLayoutTabController {
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO | null> {
     return this.pageLayoutTabService.findByIdOrThrow(id, workspace.id);
   }
@@ -65,7 +65,7 @@ export class PageLayoutTabController {
   @Post()
   async create(
     @Body() input: CreatePageLayoutTabInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
     return this.pageLayoutTabService.create(input, workspace.id);
   }
@@ -74,7 +74,7 @@ export class PageLayoutTabController {
   async update(
     @Param('id') id: string,
     @Body() input: UpdatePageLayoutTabInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
     return this.pageLayoutTabService.update(id, workspace.id, input);
   }
@@ -82,7 +82,7 @@ export class PageLayoutTabController {
   @Delete(':id')
   async delete(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
     return this.pageLayoutTabService.delete(id, workspace.id);
   }

@@ -8,8 +8,8 @@ import {
   encryptText,
 } from 'src/engine/core-modules/auth/auth.util';
 import {
-  KeyValuePair,
   KeyValuePairType,
+  KeyValuePairEntity,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
@@ -28,15 +28,15 @@ export class ConfigStorageService implements ConfigStorageInterface {
   private readonly logger = new Logger(ConfigStorageService.name);
 
   constructor(
-    @InjectRepository(KeyValuePair)
-    private readonly keyValuePairRepository: Repository<KeyValuePair>,
+    @InjectRepository(KeyValuePairEntity)
+    private readonly keyValuePairRepository: Repository<KeyValuePairEntity>,
     private readonly configValueConverter: ConfigValueConverterService,
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
 
   private getConfigVariableWhereClause(
     key?: string,
-  ): FindOptionsWhere<KeyValuePair> {
+  ): FindOptionsWhere<KeyValuePairEntity> {
     return {
       type: KeyValuePairType.CONFIG_VARIABLE,
       ...(key ? { key } : {}),

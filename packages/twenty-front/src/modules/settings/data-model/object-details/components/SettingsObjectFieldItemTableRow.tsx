@@ -15,7 +15,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
+import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
   isDefined,
@@ -28,9 +28,9 @@ import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
@@ -208,6 +208,17 @@ export const SettingsObjectFieldItemTableRow = ({
     isDefined(relationObjectMetadataItem?.namePlural) &&
     !relationObjectMetadataItem.isSystem;
 
+  const morphRelationLabel =
+    fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
+      ? `${fieldMetadataItem.morphRelations?.length} Objects`
+      : undefined;
+
+  const label = morphRelationLabel
+    ? morphRelationLabel
+    : relationType === RelationType.MANY_TO_ONE
+      ? relationObjectMetadataItem?.labelSingular
+      : relationObjectMetadataItem?.labelPlural;
+
   return (
     <StyledObjectFieldTableRow
       onClick={
@@ -239,11 +250,7 @@ export const SettingsObjectFieldItemTableRow = ({
       <TableCell>
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
-          label={
-            relationType === RelationType.MANY_TO_ONE
-              ? relationObjectMetadataItem?.labelSingular
-              : relationObjectMetadataItem?.labelPlural
-          }
+          label={label}
           labelDetail={
             fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
           }

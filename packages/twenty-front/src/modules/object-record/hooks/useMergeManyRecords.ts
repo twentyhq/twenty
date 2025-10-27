@@ -103,11 +103,10 @@ export const useMergeManyRecords = <
 
         if (!preview) {
           await refetchAggregateQueries();
+          registerObjectOperation(objectNameSingular, {
+            type: 'merge-records',
+          });
         }
-
-        registerObjectOperation(objectNameSingular, {
-          type: 'merge-records',
-        });
 
         return mergedObject.data?.[mutationResponseField] ?? null;
       } catch (error) {

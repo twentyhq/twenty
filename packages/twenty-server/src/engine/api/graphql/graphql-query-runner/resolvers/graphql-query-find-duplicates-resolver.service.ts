@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import isEmpty from 'lodash.isempty';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { OrderByDirection, type ObjectRecord } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
@@ -114,6 +115,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
           .setFindOptions({
             select: columnsToSelect,
           })
+          .take(QUERY_MAX_RECORDS)
           .getMany()) as ObjectRecord[];
 
         return typeORMObjectRecordsParser.createConnection({

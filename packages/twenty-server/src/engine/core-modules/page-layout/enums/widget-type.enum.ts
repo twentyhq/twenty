@@ -3,4 +3,11 @@ export enum WidgetType {
   IFRAME = 'IFRAME',
   FIELDS = 'FIELDS',
   GRAPH = 'GRAPH',
+  TIMELINE = 'TIMELINE',
+  TASKS = 'TASKS',
+  NOTES = 'NOTES',
+  FILES = 'FILES',
+  EMAILS = 'EMAILS',
+  CALENDAR = 'CALENDAR',
+  RICH_TEXT = 'RICH_TEXT',
 }

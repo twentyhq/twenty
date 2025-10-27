@@ -13,7 +13,7 @@ declare module 'graphql' {
   export interface GraphQLErrorExtensions {
     exception?: {
       code?: string;
-      stacktrace?: ReadonlyArray<string>;
+      stackTrace?: ReadonlyArray<string>;
     };
   }
 }
@@ -31,6 +31,7 @@ export enum ErrorCode {
   CONFLICT = 'CONFLICT',
   TIMEOUT = 'TIMEOUT',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
+  METADATA_VALIDATION_FAILED = 'METADATA_VALIDATION_FAILED',
 }
 
 type RestrictedGraphQLErrorExtensions = {
@@ -122,8 +123,8 @@ export class SyntaxError extends BaseGraphQLError {
 }
 
 export class ValidationError extends BaseGraphQLError {
-  constructor(message: string) {
-    super(message, ErrorCode.GRAPHQL_VALIDATION_FAILED);
+  constructor(message: string, extensions?: BaseGraphQLError['extensions']) {
+    super(message, ErrorCode.GRAPHQL_VALIDATION_FAILED, extensions);
 
     Object.defineProperty(this, 'name', { value: 'ValidationError' });
   }

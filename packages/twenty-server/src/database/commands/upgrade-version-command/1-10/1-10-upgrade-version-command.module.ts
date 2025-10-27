@@ -1,43 +1,42 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-deduplicate-unique-fields.command';
-import { MigrateChannelSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-sync-stages.command';
-import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-workflow-step-filter-operand-value';
-import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-person-search-vector-with-phones.command';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AddWorkflowRunStopStatusesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-add-workflow-run-stop-statuses.command';
+import { CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-clean-orphaned-kanban-aggregate-operation-field-metadata-id.command';
+import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
+import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
+import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
-import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Workspace,
-      FieldMetadataEntity,
+      WorkspaceEntity,
       ObjectMetadataEntity,
+      FieldMetadataEntity,
       IndexMetadataEntity,
+      ViewEntity,
     ]),
-    IndexMetadataModule,
-    WorkspaceMigrationRunnerModule,
-    WorkspaceMigrationModule,
     WorkspaceSchemaManagerModule,
   ],
   providers: [
-    MigrateWorkflowStepFilterOperandValueCommand,
-    MigrateChannelSyncStagesCommand,
-    DeduplicateUniqueFieldsCommand,
-    RegeneratePersonSearchVectorWithPhonesCommand,
+    MigrateAttachmentAuthorToCreatedByCommand,
+    MigrateAttachmentTypeToFileCategoryCommand,
+    RegenerateSearchVectorsCommand,
+    AddWorkflowRunStopStatusesCommand,
+    CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
   ],
   exports: [
-    MigrateChannelSyncStagesCommand,
-    MigrateWorkflowStepFilterOperandValueCommand,
-    DeduplicateUniqueFieldsCommand,
-    RegeneratePersonSearchVectorWithPhonesCommand,
+    MigrateAttachmentAuthorToCreatedByCommand,
+    MigrateAttachmentTypeToFileCategoryCommand,
+    RegenerateSearchVectorsCommand,
+    AddWorkflowRunStopStatusesCommand,
+    CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
   ],
 })
 export class V1_10_UpgradeVersionCommandModule {}

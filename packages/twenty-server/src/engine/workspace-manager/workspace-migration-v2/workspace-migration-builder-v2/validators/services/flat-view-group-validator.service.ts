@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
@@ -108,14 +108,6 @@ export class FlatViewGroupValidatorService {
         message: t`View group to delete not found`,
         userFriendlyMessage: msg`View group to delete not found`,
       });
-    } else {
-      if (!isDefined(existingFlatViewGroup.deletedAt)) {
-        validationResult.errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`View group to delete has not been soft deleted`,
-          userFriendlyMessage: msg`View group to delete has not been soft deleted`,
-        });
-      }
     }
 
     return validationResult;

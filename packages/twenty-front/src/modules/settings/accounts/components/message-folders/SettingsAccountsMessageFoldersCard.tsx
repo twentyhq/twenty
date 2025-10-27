@@ -1,6 +1,7 @@
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
@@ -66,9 +67,16 @@ export const SettingsAccountsMessageFoldersCard = () => {
     objectNameSingular: CoreObjectNameSingular.MessageFolder,
   });
 
+  const { recordGqlFields } = useGenerateDepthRecordGqlFieldsFromObject({
+    objectNameSingular: CoreObjectNameSingular.MessageChannel,
+    depth: 1,
+    shouldOnlyLoadRelationIdentifiers: false,
+  });
+
   const { record: messageChannel } = useFindOneRecord<MessageChannel>({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
     objectRecordId: settingsAccountsSelectedMessageChannel?.id,
+    recordGqlFields,
   });
 
   const { messageFolders = [] } = messageChannel ?? {};

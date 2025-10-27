@@ -6,14 +6,14 @@ import { Repository } from 'typeorm';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger/dtos/create-cron-trigger.input';
 import { CronTriggerIdInput } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger-id.input';
 import { CronTriggerDTO } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger.dto';
 import { UpdateCronTriggerInput } from 'src/engine/metadata-modules/cron-trigger/dtos/update-cron-trigger.input';
-import { CronTrigger } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { cronTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/cron-trigger/utils/cron-trigger-graphql-api-exception-handler.util';
 
@@ -24,14 +24,14 @@ import { cronTriggerGraphQLApiExceptionHandler } from 'src/engine/metadata-modul
 export class CronTriggerResolver {
   constructor(
     private readonly cronTriggerV2Service: CronTriggerV2Service,
-    @InjectRepository(CronTrigger)
-    private readonly cronTriggerRepository: Repository<CronTrigger>,
+    @InjectRepository(CronTriggerEntity)
+    private readonly cronTriggerRepository: Repository<CronTriggerEntity>,
   ) {}
 
   @Query(() => CronTriggerDTO)
   async findOneCronTrigger(
     @Args('input') { id }: CronTriggerIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.cronTriggerRepository.findOneOrFail({
@@ -46,7 +46,9 @@ export class CronTriggerResolver {
   }
 
   @Query(() => [CronTriggerDTO])
-  async findManyCronTriggers(@AuthWorkspace() { id: workspaceId }: Workspace) {
+  async findManyCronTriggers(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
     try {
       return await this.cronTriggerRepository.find({
         where: { workspaceId },
@@ -59,7 +61,7 @@ export class CronTriggerResolver {
   @Mutation(() => CronTriggerDTO)
   async deleteOneCronTrigger(
     @Args('input') input: CronTriggerIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.cronTriggerV2Service.destroyOne({
@@ -75,7 +77,7 @@ export class CronTriggerResolver {
   async updateOneCronTrigger(
     @Args('input')
     input: UpdateCronTriggerInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.cronTriggerV2Service.updateOne(input, workspaceId);
@@ -88,7 +90,7 @@ export class CronTriggerResolver {
   async createOneCronTrigger(
     @Args('input')
     input: CreateCronTriggerInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.cronTriggerV2Service.createOne(input, workspaceId);

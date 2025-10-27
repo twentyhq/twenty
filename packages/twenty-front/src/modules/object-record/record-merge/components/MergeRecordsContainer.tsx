@@ -7,8 +7,10 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
-import { useMergeRecordsSettings } from '@/object-record/record-merge/hooks/useMergeRecordsSettings';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
+import { useMergePreview } from '@/object-record/record-merge/hooks/useMergePreview';
 import { MergeRecordsTabId } from '@/object-record/record-merge/types/MergeRecordsTabId';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useMergeRecordsContainerTabs } from '../hooks/useMergeRecordsContainerTabs';
 import { MergePreviewTab } from './MergePreviewTab';
 import { MergeRecordTab } from './MergeRecordTab';
@@ -37,41 +39,46 @@ const StyledContentContainer = styled.div`
 `;
 
 type MergeRecordsContainerProps = {
-  componentInstanceId: string;
   objectNameSingular: string;
 };
 
 export const MergeRecordsContainer = ({
-  componentInstanceId,
   objectNameSingular,
 }: MergeRecordsContainerProps) => {
-  const { selectedRecords } = useMergeRecordsSettings();
-
-  const activeTabId = useRecoilComponentValue(
-    activeTabIdComponentState,
-    componentInstanceId,
-  );
+  const { selectedRecords } = useMergePreview({
+    objectNameSingular,
+  });
 
   const { tabs } = useMergeRecordsContainerTabs(selectedRecords);
+
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    CommandMenuPageComponentInstanceContext,
+  );
+  const activeTabId = useRecoilComponentValue(
+    activeTabIdComponentState,
+    instanceId,
+  );
 
   return (
     <RightDrawerProvider value={{ isInRightDrawer: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
           <TabListComponentInstanceContext.Provider
-            value={{ instanceId: componentInstanceId }}
+            value={{ instanceId: instanceId }}
           >
             <StyledTabList
               tabs={tabs}
               behaveAsLinks={false}
-              componentInstanceId={componentInstanceId}
+              componentInstanceId={instanceId}
             />
           </TabListComponentInstanceContext.Provider>
           <StyledContentContainer>
             {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
               <MergePreviewTab objectNameSingular={objectNameSingular} />
             )}
-            {activeTabId === MergeRecordsTabId.SETTINGS && <MergeSettingsTab />}
+            {activeTabId === MergeRecordsTabId.SETTINGS && (
+              <MergeSettingsTab objectNameSingular={objectNameSingular} />
+            )}
             {selectedRecords.some((record) => record.id === activeTabId) && (
               <MergeRecordTab
                 objectNameSingular={objectNameSingular}

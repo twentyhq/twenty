@@ -58,6 +58,7 @@ const mockWorkspace = {
   },
   isTwoFactorAuthenticationEnforced: false,
   trashRetentionDays: 14,
+  routerModel: 'auto',
 };
 
 const createMockOptions = (): Options<any> => ({

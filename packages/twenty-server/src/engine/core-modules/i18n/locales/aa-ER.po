@@ -54,9 +54,20 @@ msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "crwdns6648:0{fieldName}crwdnd6648:0{fieldName}crwdne6648:0"
 
 #. js-lingui-id: ZkHTHm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
 msgstr "crwdns7122:0{fieldType}crwdne7122:0"
+
+#. js-lingui-id: LeIJhm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "{fieldType} fields cannot have a default value."
+msgstr "crwdns8540:0{fieldType}crwdne8540:0"
+
+#. js-lingui-id: iEZavm
+#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
+msgstr "crwdns8404:0{hostnameCount}crwdnd8404:0{domainName}crwdne8404:0"
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
@@ -186,13 +197,13 @@ msgid "Action Needed to Reset Password"
 msgstr "crwdns4971:0crwdne4971:0"
 
 #. js-lingui-id: 52fA3U
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
 msgstr "crwdns7256:0crwdne7256:0"
 
 #. js-lingui-id: 0N5kF6
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Active objects cannot be deleted"
 msgstr "crwdns7190:0crwdne7190:0"
 
@@ -251,12 +262,21 @@ msgstr "crwdns885:0crwdne885:0"
 msgid "An attachment"
 msgstr "crwdns889:0crwdne889:0"
 
+#. js-lingui-id: eW83iC
+#: src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception.ts
+msgid "An error occurred during messages import"
+msgstr "crwdns8626:0crwdne8626:0"
+
 #. js-lingui-id: XyOToQ
-#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "An error occurred."
 msgstr "crwdns6458:0crwdne6458:0"
+
+#. js-lingui-id: +MvnxO
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "An index must contain at least one field"
+msgstr "crwdns7802:0crwdne7802:0"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -274,6 +294,11 @@ msgstr "crwdns897:0crwdne897:0"
 msgid "Any field filter value"
 msgstr "crwdns6842:0crwdne6842:0"
 
+#. js-lingui-id: mU5fvk
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain already registered."
+msgstr "crwdns7706:0crwdne7706:0"
+
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain does not match email domain"
@@ -284,6 +309,11 @@ msgstr "crwdns6462:0crwdne6462:0"
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain has already been validated"
 msgstr "crwdns6464:0crwdne6464:0"
+
+#. js-lingui-id: naCW6Z
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "April"
+msgstr "crwdns8318:0crwdne8318:0"
 
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -320,15 +350,25 @@ msgstr "crwdns7354:0crwdne7354:0"
 msgid "Attachment"
 msgstr "crwdns917:0crwdne917:0"
 
-#. js-lingui-id: JAefBH
+#. js-lingui-id: dda+ze
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment author"
-msgstr "crwdns919:0crwdne919:0"
+msgid "Attachment author (deprecated - use createdBy)"
+msgstr "crwdns8632:0crwdne8632:0"
 
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
 msgstr "crwdns921:0crwdne921:0"
+
+#. js-lingui-id: wtcL/T
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment dashboard"
+msgstr "crwdns7676:0crwdne7676:0"
+
+#. js-lingui-id: u3pBxa
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment file category"
+msgstr "crwdns8634:0crwdne8634:0"
 
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -360,16 +400,23 @@ msgstr "crwdns931:0crwdne931:0"
 msgid "Attachment task"
 msgstr "crwdns933:0crwdne933:0"
 
-#. js-lingui-id: 4qqxMt
+#. js-lingui-id: ZXjjRz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment type"
-msgstr "crwdns935:0crwdne935:0"
+msgid "Attachment type (deprecated - use fileCategory)"
+msgstr "crwdns8638:0crwdne8638:0"
+
+#. js-lingui-id: tH6L3e
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment workflow"
+msgstr "crwdns7882:0crwdne7882:0"
 
 #. js-lingui-id: w/Sphq
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -391,15 +438,30 @@ msgstr "crwdns941:0crwdne941:0"
 msgid "Attachments linked to the contact."
 msgstr "crwdns943:0crwdne943:0"
 
+#. js-lingui-id: 2AEUIb
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Attachments linked to the dashboard"
+msgstr "crwdns7678:0crwdne7678:0"
+
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
 msgstr "crwdns945:0crwdne945:0"
 
+#. js-lingui-id: 83l3Yd
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Attachments linked to the workflow"
+msgstr "crwdns7884:0crwdne7884:0"
+
 #. js-lingui-id: fCbqr7
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments tied to the {label}"
 msgstr "crwdns947:0{label}crwdne947:0"
+
+#. js-lingui-id: DBHTm/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "August"
+msgstr "crwdns8320:0crwdne8320:0"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -411,6 +473,11 @@ msgstr "crwdns955:0crwdne955:0"
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "crwdns6466:0crwdne6466:0"
+
+#. js-lingui-id: Tsx+z2
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "Authentication is required to access this feature. Please sign in and try again."
+msgstr "crwdns8408:0crwdne8408:0"
 
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -554,6 +621,11 @@ msgstr "crwdns999:0crwdne999:0"
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
 msgstr "crwdns7224:0{connectFieldName}crwdnd7224:0{formattedConnectCondition}crwdne7224:0"
 
+#. js-lingui-id: 2oVE+z
+#: src/engine/guards/impersonate-permission.guard.ts
+msgid "Can't impersonate user via api key"
+msgstr "crwdns8410:0crwdne8410:0"
+
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
@@ -569,8 +641,13 @@ msgstr "crwdns6476:0crwdne6476:0"
 msgid "Cannot create workflow version with status other than draft"
 msgstr "crwdns6478:0crwdne6478:0"
 
+#. js-lingui-id: VPXcr5
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
+msgstr "crwdns8412:0crwdne8412:0"
+
 #. js-lingui-id: AQyr9X
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "crwdns6480:0crwdne6480:0"
@@ -589,11 +666,6 @@ msgstr "crwdns7182:0crwdne7182:0"
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "crwdns6484:0crwdne6484:0"
-
-#. js-lingui-id: UcdPY5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr "crwdns7356:0{invalidProperties}crwdne7356:0"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -740,13 +812,35 @@ msgstr "crwdns1045:0crwdne1045:0"
 msgid "Contact’s X/Twitter account"
 msgstr "crwdns1047:0crwdne1047:0"
 
+#. js-lingui-id: gdbojg
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
+msgstr "crwdns8414:0{fieldName}crwdne8414:0"
+
+#. js-lingui-id: LZf/L8
+#: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+msgid "Could not find flat entity in maps"
+msgstr "crwdns7716:0crwdne7716:0"
+
+#. js-lingui-id: jBrX/g
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Could not find index field related field metadata"
+msgstr "crwdns7804:0crwdne7804:0"
+
+#. js-lingui-id: HVajHk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Could not find index related object metadata"
+msgstr "crwdns7806:0crwdne7806:0"
+
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "crwdns1049:0crwdne1049:0"
@@ -775,13 +869,34 @@ msgstr "crwdns1053:0crwdne1053:0"
 msgid "Cron pattern '{pattern}' is invalid"
 msgstr "crwdns6488:0{pattern}crwdne6488:0"
 
+#. js-lingui-id: GuyjcQ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Cron trigger already exists"
+msgstr "crwdns8170:0crwdne8170:0"
+
+#. js-lingui-id: Ej90Yp
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Cron trigger not found"
+msgstr "crwdns8172:0crwdne8172:0"
+
+#. js-lingui-id: vz7B0E
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Cron trigger with same id already exists"
+msgstr "crwdns8174:0crwdne8174:0"
+
 #. js-lingui-id: Mikszu
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Custom Connection Parameters"
 msgstr "crwdns6388:0crwdne6388:0"
 
 #. js-lingui-id: 7p5kLi
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Dashboard"
 msgstr "crwdns7334:0crwdne7334:0"
 
@@ -789,6 +904,11 @@ msgstr "crwdns7334:0crwdne7334:0"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard page layout"
 msgstr "crwdns7336:0crwdne7336:0"
+
+#. js-lingui-id: FrOkwR
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard record Position"
+msgstr "crwdns7680:0crwdne7680:0"
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -800,6 +920,24 @@ msgstr "crwdns7338:0crwdne7338:0"
 msgid "Dashboards"
 msgstr "crwdns7340:0crwdne7340:0"
 
+#. js-lingui-id: K2CQHf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+msgid "Database event trigger already exists"
+msgstr "crwdns8176:0crwdne8176:0"
+
+#. js-lingui-id: iS6kjG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+msgid "Database event trigger not found"
+msgstr "crwdns8178:0crwdne8178:0"
+
+#. js-lingui-id: 0vtv+s
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+msgid "Database event trigger with same id already exists"
+msgstr "crwdns8180:0crwdne8180:0"
+
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
@@ -810,8 +948,14 @@ msgstr "crwdns1055:0crwdne1055:0"
 msgid "Date when the record was deleted"
 msgstr "crwdns1057:0crwdne1057:0"
 
+#. js-lingui-id: r6zgGo
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "December"
+msgstr "crwdns8322:0crwdne8322:0"
+
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "crwdns7358:0{defaultValue}crwdne7358:0"
 
@@ -822,11 +966,13 @@ msgstr "crwdns7262:0crwdne7262:0"
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value should be as quoted string"
 msgstr "crwdns7360:0crwdne7360:0"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default values must be unique"
 msgstr "crwdns7362:0crwdne7362:0"
 
@@ -870,6 +1016,21 @@ msgstr "crwdns4975:0crwdne4975:0"
 msgid "Display Value"
 msgstr "crwdns1069:0crwdne1069:0"
 
+#. js-lingui-id: IymH4t
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Domain already used for workspace custom domain"
+msgstr "crwdns7708:0crwdne7708:0"
+
+#. js-lingui-id: 2sIVDj
+#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+msgid "Domain is already registered"
+msgstr "crwdns8416:0crwdne8416:0"
+
+#. js-lingui-id: PfJswy
+#: src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service.ts
+msgid "Domain is already registered as public domain"
+msgstr "crwdns7710:0crwdne7710:0"
+
 #. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
@@ -882,6 +1043,7 @@ msgstr "crwdns1073:0crwdne1073:0"
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Duplicated option {field}"
 msgstr "crwdns6920:0{field}crwdne6920:0"
 
@@ -923,15 +1085,20 @@ msgstr "crwdns1077:0crwdne1077:0"
 msgid "End Date"
 msgstr "crwdns1079:0crwdne1079:0"
 
-#. js-lingui-id: hcogQc
-#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
-msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr "crwdns6930:0crwdne6930:0"
+#. js-lingui-id: EzGlkq
+#: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
+msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
+msgstr "crwdns7712:0crwdne7712:0"
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "crwdns1081:0crwdne1081:0"
+
+#. js-lingui-id: CPhvC+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event dashboard"
+msgstr "crwdns7682:0crwdne7682:0"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1048,6 +1215,21 @@ msgstr "crwdns6652:0{connectFieldName}crwdne6652:0"
 msgid "External ID"
 msgstr "crwdns7452:0crwdne7452:0"
 
+#. js-lingui-id: pUligB
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to delete jobs. Please try again later."
+msgstr "crwdns8670:0crwdne8670:0"
+
+#. js-lingui-id: HfhmrS
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to load queue jobs. Please try again later."
+msgstr "crwdns8672:0crwdne8672:0"
+
+#. js-lingui-id: SJEIIJ
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to retry jobs. Please try again later."
+msgstr "crwdns8674:0crwdne8674:0"
+
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
@@ -1057,6 +1239,11 @@ msgstr "crwdns1129:0crwdne1129:0"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite company"
 msgstr "crwdns1131:0crwdne1131:0"
+
+#. js-lingui-id: Aj026i
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "Favorite dashboard"
+msgstr "crwdns7684:0crwdne7684:0"
 
 #. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1130,6 +1317,7 @@ msgstr "crwdns1157:0crwdne1157:0"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
@@ -1149,6 +1337,11 @@ msgstr "crwdns1163:0crwdne1163:0"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Favorites linked to the contact"
 msgstr "crwdns1165:0crwdne1165:0"
+
+#. js-lingui-id: 5zuBdE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Favorites linked to the dashboard"
+msgstr "crwdns7686:0crwdne7686:0"
 
 #. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -1190,10 +1383,20 @@ msgstr "crwdns1181:0crwdne1181:0"
 msgid "Favorites tied to the {label}"
 msgstr "crwdns1183:0{label}crwdne1183:0"
 
+#. js-lingui-id: 4lgLew
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "February"
+msgstr "crwdns8324:0crwdne8324:0"
+
 #. js-lingui-id: vngnhF
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
 msgstr "crwdns7264:0crwdne7264:0"
+
+#. js-lingui-id: ugu505
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field cannot be indexed as it belongs to a different object"
+msgstr "crwdns7808:0crwdne7808:0"
 
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
@@ -1210,6 +1413,21 @@ msgstr "crwdns7210:0crwdne7210:0"
 msgid "Field declared as label identifier not found"
 msgstr "crwdns7212:0crwdne7212:0"
 
+#. js-lingui-id: qelyBB
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field does not belong to the indexed object"
+msgstr "crwdns7810:0crwdne7810:0"
+
+#. js-lingui-id: DXxcTd
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field ID is already used in another index"
+msgstr "crwdns7812:0crwdne7812:0"
+
+#. js-lingui-id: AgbRjM
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Field label identifier is required"
+msgstr "crwdns8300:0crwdne8300:0"
+
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -1218,15 +1436,27 @@ msgstr "crwdns7212:0crwdne7212:0"
 msgid "Field Metadata Id"
 msgstr "crwdns1185:0crwdne1185:0"
 
+#. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "Field metadata not found"
+msgstr "crwdns7698:0crwdne7698:0"
+
+#. js-lingui-id: uTPwH1
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Field metadata to delete not found"
+msgstr "crwdns8210:0crwdne8210:0"
+
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update not found"
 msgstr "crwdns7266:0crwdne7266:0"
-
-#. js-lingui-id: p3kNMz
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Field metadata to update object metadata not found"
-msgstr "crwdns7268:0crwdne7268:0"
 
 #. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1235,17 +1465,27 @@ msgid "Field metadata used for aggregate operation"
 msgstr "crwdns1187:0crwdne1187:0"
 
 #. js-lingui-id: prTOhK
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field name is not synced with field label"
 msgstr "crwdns7270:0crwdne7270:0"
 
+#. js-lingui-id: QXuG8C
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "Field permissions can only be used to restrict access, not to grant additional permissions."
+msgstr "crwdns8418:0crwdne8418:0"
+
+#. js-lingui-id: S+y2Wg
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field referenced in index does not exist"
+msgstr "crwdns7814:0crwdne7814:0"
+
 #. js-lingui-id: cK8ILP
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field to create related object not found"
 msgstr "crwdns7272:0crwdne7272:0"
 
 #. js-lingui-id: K6qzz4
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field to update not found"
 msgstr "crwdns7274:0crwdne7274:0"
 
@@ -1260,34 +1500,39 @@ msgid "Field Value"
 msgstr "crwdns1191:0crwdne1191:0"
 
 #. js-lingui-id: s3HtdT
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required"
 msgstr "crwdns7364:0crwdne7364:0"
 
 #. js-lingui-id: Sof2+k
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
 msgstr "crwdns7086:0crwdne7086:0"
 
 #. js-lingui-id: NTyTR5
-#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
 msgstr "crwdns7088:0crwdne7088:0"
 
 #. js-lingui-id: Ya6oU7
-#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
 msgstr "crwdns7090:0crwdne7090:0"
 
 #. js-lingui-id: DU4jcg
-#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
 msgstr "crwdns7092:0crwdne7092:0"
 
 #. js-lingui-id: snEXuU
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "crwdns7094:0crwdne7094:0"
+
+#. js-lingui-id: i+AQUz
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "File category"
+msgstr "crwdns8678:0crwdne8678:0"
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1300,7 +1545,7 @@ msgid "Folder name"
 msgstr "crwdns1195:0crwdne1195:0"
 
 #. js-lingui-id: eWmJYU
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Forbidden updated properties for relation field metadata"
 msgstr "crwdns7276:0crwdne7276:0"
 
@@ -1318,6 +1563,11 @@ msgstr "crwdns6504:0crwdne6504:0"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "crwdns6506:0crwdne6506:0"
+
+#. js-lingui-id: 39y5bn
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Friday"
+msgstr "crwdns8326:0crwdne8326:0"
 
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1388,8 +1638,56 @@ msgstr "crwdns1217:0crwdne1217:0"
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "If defined default value must contain at least one value"
 msgstr "crwdns7366:0crwdne7366:0"
+
+#. js-lingui-id: Kfy/ML
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index already exists"
+msgstr "crwdns7816:0crwdne7816:0"
+
+#. js-lingui-id: EwXumf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index field has an invalid reference"
+msgstr "crwdns7818:0crwdne7818:0"
+
+#. js-lingui-id: +hk7cY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index field ID already exists in another index"
+msgstr "crwdns7820:0crwdne7820:0"
+
+#. js-lingui-id: ITue4V
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index field references incorrect index metadata"
+msgstr "crwdns7822:0crwdne7822:0"
+
+#. js-lingui-id: K1hWwv
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index must have at least one field"
+msgstr "crwdns7824:0crwdne7824:0"
+
+#. js-lingui-id: Hl6cv2
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index related object not found"
+msgstr "crwdns7826:0crwdne7826:0"
+
+#. js-lingui-id: fY2zUQ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
+msgid "Index to delete not found"
+msgstr "crwdns7828:0crwdne7828:0"
+
+#. js-lingui-id: qgBN4Y
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index with same id already exists"
+msgstr "crwdns7830:0crwdne7830:0"
+
+#. js-lingui-id: a+k+8J
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index with same name already exists"
+msgstr "crwdns7832:0crwdne7832:0"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -1410,6 +1708,11 @@ msgstr "crwdns6774:0crwdne6774:0"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "crwdns6512:0{countryCode}crwdne6512:0"
+
+#. js-lingui-id: AMeEDO
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid credentials. Please check your username and password."
+msgstr "crwdns8420:0crwdne8420:0"
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1449,6 +1752,11 @@ msgstr "crwdns6524:0crwdne6524:0"
 msgid "Invalid morph relation input"
 msgstr "crwdns7368:0crwdne7368:0"
 
+#. js-lingui-id: VvhAS2
+#: src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util.ts
+msgid "Invalid object metadata input"
+msgstr "crwdns8422:0crwdne8422:0"
+
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
@@ -1475,12 +1783,12 @@ msgid "Invalid verification code. Please try again."
 msgstr "crwdns6806:0crwdne6806:0"
 
 #. js-lingui-id: 8xkULN
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data"
 msgstr "crwdns7370:0crwdne7370:0"
 
 #. js-lingui-id: I0OzaR
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data for view sort id: {id}"
 msgstr "crwdns7372:0{id}crwdne7372:0"
 
@@ -1530,6 +1838,11 @@ msgstr "crwdns1229:0crwdne1229:0"
 msgid "Is Synced"
 msgstr "crwdns7460:0crwdne7460:0"
 
+#. js-lingui-id: rjyWPb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "January"
+msgstr "crwdns8328:0crwdne8328:0"
+
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
@@ -1560,6 +1873,16 @@ msgstr "crwdns1239:0crwdne1239:0"
 msgid "Json value for event details"
 msgstr "crwdns1241:0crwdne1241:0"
 
+#. js-lingui-id: u4ex5r
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "July"
+msgstr "crwdns8330:0crwdne8330:0"
+
+#. js-lingui-id: zeEQd/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "June"
+msgstr "crwdns8332:0crwdne8332:0"
+
 #. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "kanbanfieldMetadataId"
@@ -1569,6 +1892,31 @@ msgstr "crwdns1243:0crwdne1243:0"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Key"
 msgstr "crwdns1245:0crwdne1245:0"
+
+#. js-lingui-id: ljUvzm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Label identifier field cannot be deactivated"
+msgstr "crwdns8680:0crwdne8680:0"
+
+#. js-lingui-id: ACUSmL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "Label identifier view field cannot be deleted"
+msgstr "crwdns8384:0crwdne8384:0"
+
+#. js-lingui-id: rI+dAx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+msgid "Label identifier view field has to be in the lowest position"
+msgstr "crwdns8386:0crwdne8386:0"
+
+#. js-lingui-id: PqTWJf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+msgid "Label identifier view field has to be visible"
+msgstr "crwdns8388:0crwdne8388:0"
 
 #. js-lingui-id: w8Rv8T
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
@@ -1671,6 +2019,21 @@ msgstr "crwdns1275:0crwdne1275:0"
 msgid "Logical operator for the filter group"
 msgstr "crwdns1277:0crwdne1277:0"
 
+#. js-lingui-id: hg6l4j
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "March"
+msgstr "crwdns8334:0crwdne8334:0"
+
+#. js-lingui-id: hw7Mwk
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr "crwdns7672:0{QUERY_MAX_RECORDS}crwdne7672:0"
+
+#. js-lingui-id: 3JzsDb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "May"
+msgstr "crwdns8336:0crwdne8336:0"
+
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1735,6 +2098,12 @@ msgstr "crwdns1297:0crwdne1297:0"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Folder"
 msgstr "crwdns1299:0crwdne1299:0"
+
+#. js-lingui-id: XCJIdB
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Message folder import policy"
+msgstr "crwdns8188:0crwdne8188:0"
 
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1829,6 +2198,11 @@ msgstr "crwdns1329:0crwdne1329:0"
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "crwdns6654:0{connectFieldName}crwdne6654:0"
 
+#. js-lingui-id: hty0d5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Monday"
+msgstr "crwdns8338:0crwdne8338:0"
+
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must have the same relation type"
@@ -1853,6 +2227,12 @@ msgstr "crwdns7282:0crwdne7282:0"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
 msgstr "crwdns7284:0crwdne7284:0"
+
+#. js-lingui-id: 6rLmLu
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
+msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
+msgstr "crwdns7674:0{conflictingFieldsValues}crwdne7674:0"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1885,6 +2265,11 @@ msgstr "crwdns7492:0{flatFieldMetadataName}crwdne7492:0"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
 msgstr "crwdns7494:0{flatFieldMetadataName}crwdne7494:0"
+
+#. js-lingui-id: Q2loDF
+#: src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service.ts
+msgid "Name \"{name}\" is not available."
+msgstr "crwdns8424:0{name}crwdne8424:0"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -1927,8 +2312,8 @@ msgid "Name should be in camelCase"
 msgstr "crwdns7164:0crwdne7164:0"
 
 #. js-lingui-id: Dr0xtb
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Names are not synced with labels"
 msgstr "crwdns7216:0crwdne7216:0"
 
@@ -1946,6 +2331,11 @@ msgstr "crwdns6542:0crwdne6542:0"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
 msgstr "crwdns6544:0crwdne6544:0"
+
+#. js-lingui-id: 2iURlq
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "No permissions are set for this role on the selected object. Please set object permissions first."
+msgstr "crwdns8426:0crwdne8426:0"
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1966,6 +2356,11 @@ msgstr "crwdns6550:0crwdne6550:0"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No trigger type provided"
 msgstr "crwdns6552:0crwdne6552:0"
+
+#. js-lingui-id: /BipSk
+#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+msgid "No valid authentication context found."
+msgstr "crwdns8428:0crwdne8428:0"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2060,6 +2455,16 @@ msgstr "crwdns1367:0crwdne1367:0"
 msgid "NoteTarget person"
 msgstr "crwdns1369:0crwdne1369:0"
 
+#. js-lingui-id: t9QlBd
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "November"
+msgstr "crwdns8340:0crwdne8340:0"
+
+#. js-lingui-id: bR2sEm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Number format"
+msgstr "crwdns7854:0crwdne7854:0"
+
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
@@ -2067,7 +2472,7 @@ msgstr "crwdns1371:0crwdne1371:0"
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "crwdns6554:0crwdne6554:0"
 
@@ -2086,18 +2491,19 @@ msgstr "crwdns7168:0crwdne7168:0"
 msgid "Object Metadata Id"
 msgstr "crwdns1377:0crwdne1377:0"
 
-#. js-lingui-id: lG0Qqm
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
-msgid "Object related to field to delete not found"
-msgstr "crwdns7290:0crwdne7290:0"
+#. js-lingui-id: xrblgA
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Object metadata not found"
+msgstr "crwdns7700:0crwdne7700:0"
 
 #. js-lingui-id: E8vJ0A
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to update not found"
 msgstr "crwdns7292:0crwdne7292:0"
 
 #. js-lingui-id: MnOwTp
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Object related to updated field does not have a label identifier"
 msgstr "crwdns7294:0crwdne7294:0"
 
@@ -2112,27 +2518,37 @@ msgid "Object targeted by the relation not found"
 msgstr "crwdns7298:0crwdne7298:0"
 
 #. js-lingui-id: bMeJkW
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to delete not found"
 msgstr "crwdns7218:0crwdne7218:0"
 
 #. js-lingui-id: pQ5dZU
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
 msgstr "crwdns7220:0crwdne7220:0"
 
 #. js-lingui-id: cdjRFZ
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object with same id already exists"
 msgstr "crwdns7228:0crwdne7228:0"
 
 #. js-lingui-id: 53pIyA
-#: src/engine/core-modules/view/exceptions/view.exception.ts
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
 msgstr "crwdns7096:0crwdne7096:0"
+
+#. js-lingui-id: dzQfDY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "October"
+msgstr "crwdns8342:0crwdne8342:0"
+
+#. js-lingui-id: eWQQpx
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
+msgstr "crwdns8430:0crwdne8430:0"
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2203,11 +2619,13 @@ msgstr "crwdns1405:0crwdne1405:0"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is invalid"
 msgstr "crwdns6922:0crwdne6922:0"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is required"
 msgstr "crwdns6924:0crwdne6924:0"
 
@@ -2340,6 +2758,27 @@ msgstr "crwdns1425:0crwdne1425:0"
 msgid "Phones"
 msgstr "crwdns1427:0crwdne1427:0"
 
+#. js-lingui-id: rxi3R2
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
+msgstr "crwdns8432:0crwdne8432:0"
+
+#. js-lingui-id: v0iiWr
+#: src/engine/core-modules/webhook/webhook.service.ts
+#: src/engine/core-modules/webhook/webhook.service.ts
+msgid "Please provide a valid HTTP or HTTPS URL."
+msgstr "crwdns8434:0crwdne8434:0"
+
+#. js-lingui-id: RDvKTq
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "Please provide connection details to configure your email account."
+msgstr "crwdns8436:0crwdne8436:0"
+
+#. js-lingui-id: 0ldKS0
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
+msgstr "crwdns8438:0crwdne8438:0"
+
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Point of Contact"
@@ -2359,6 +2798,7 @@ msgstr "crwdns1429:0crwdne1429:0"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2421,10 +2861,31 @@ msgstr "crwdns6576:0{number}crwdne6576:0"
 msgid "provider"
 msgstr "crwdns1445:0crwdne1445:0"
 
+#. js-lingui-id: OL88cI
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Public domain already registered"
+msgstr "crwdns7714:0crwdne7714:0"
+
+#. js-lingui-id: Capzni
+#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
+msgstr "crwdns8440:0crwdne8440:0"
+
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "crwdns1447:0crwdne1447:0"
+
+#. js-lingui-id: x93onj
+#: src/engine/metadata-modules/view-field/services/view-field.service.ts
+#: src/engine/metadata-modules/view-field/services/view-field.service.ts
+msgid "Record text must be in first position of the view."
+msgstr "crwdns8442:0crwdne8442:0"
+
+#. js-lingui-id: KGmwY/
+#: src/engine/metadata-modules/view-field/services/view-field.service.ts
+msgid "Record text must stay visible."
+msgstr "crwdns8444:0crwdne8444:0"
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2460,15 +2921,15 @@ msgid "Relations"
 msgstr "crwdns1457:0crwdne1457:0"
 
 #. js-lingui-id: PWdFkY
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Remote objects are not production ready yet"
 msgstr "crwdns7306:0crwdne7306:0"
 
 #. js-lingui-id: yVxtzR
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
 msgstr "crwdns7172:0crwdne7172:0"
 
@@ -2489,11 +2950,44 @@ msgstr "crwdns1459:0crwdne1459:0"
 msgid "Role"
 msgstr "crwdns1463:0crwdne1463:0"
 
+#. js-lingui-id: MFW30/
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route already exists"
+msgstr "crwdns8216:0crwdne8216:0"
+
+#. js-lingui-id: ldQZkA
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route not found"
+msgstr "crwdns8218:0crwdne8218:0"
+
+#. js-lingui-id: NCQS+K
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route path already exists"
+msgstr "crwdns8220:0crwdne8220:0"
+
+#. js-lingui-id: v5H7VS
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route with same id already exists"
+msgstr "crwdns8222:0crwdne8222:0"
+
+#. js-lingui-id: c10Yre
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route with same path already exists"
+msgstr "crwdns8224:0crwdne8224:0"
+
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Runs"
 msgstr "crwdns1465:0crwdne1465:0"
+
+#. js-lingui-id: +5kO8P
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Saturday"
+msgstr "crwdns8344:0crwdne8344:0"
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2506,6 +3000,46 @@ msgstr "crwdns1467:0crwdne1467:0"
 msgid "Search vector"
 msgstr "crwdns1469:0crwdne1469:0"
 
+#. js-lingui-id: hgvbYY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "September"
+msgstr "crwdns8346:0crwdne8346:0"
+
+#. js-lingui-id: F3+i2a
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+msgid "Serverless function already exists"
+msgstr "crwdns8142:0crwdne8142:0"
+
+#. js-lingui-id: MSgd2w
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Serverless function not found"
+msgstr "crwdns8144:0crwdne8144:0"
+
+#. js-lingui-id: jNhvmj
+#: src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util.ts
+msgid "Serverless function to update not found"
+msgstr "crwdns8146:0crwdne8146:0"
+
+#. js-lingui-id: zoBkIJ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+msgid "Serverless function with same id already exists"
+msgstr "crwdns8148:0crwdne8148:0"
+
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
@@ -2516,19 +3050,29 @@ msgstr "crwdns5985:0crwdne5985:0"
 msgid "Size"
 msgstr "crwdns1473:0crwdne1473:0"
 
+#. js-lingui-id: RyE+Of
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "Some of the information provided is invalid. Please check your input and try again."
+msgstr "crwdns8446:0crwdne8446:0"
+
+#. js-lingui-id: 01Sxb6
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
+msgstr "crwdns8448:0crwdne8448:0"
+
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "crwdns1475:0crwdne1475:0"
 
 #. js-lingui-id: dc5N0o
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Standard fields cannot be deleted"
 msgstr "crwdns7308:0crwdne7308:0"
 
 #. js-lingui-id: Ptv+nG
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
 msgstr "crwdns7194:0crwdne7194:0"
 
@@ -2569,7 +3113,7 @@ msgid "Statuses cannot be set manually."
 msgstr "crwdns6580:0crwdne6580:0"
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Step is not a form"
 msgstr "crwdns6582:0crwdne6582:0"
 
@@ -2589,6 +3133,11 @@ msgstr "crwdns5862:0crwdne5862:0"
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "crwdns1483:0crwdne1483:0"
+
+#. js-lingui-id: DBC3t5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Sunday"
+msgstr "crwdns8348:0crwdne8348:0"
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2760,6 +3309,11 @@ msgstr "crwdns1541:0crwdne1541:0"
 msgid "The account provider"
 msgstr "crwdns1543:0crwdne1543:0"
 
+#. js-lingui-id: eC8p5b
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "The API key does not have a valid role assigned. Please check your API key configuration."
+msgstr "crwdns8450:0crwdne8450:0"
+
 #. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Linkedin account"
@@ -2786,7 +3340,9 @@ msgstr "crwdns1551:0crwdne1551:0"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "crwdns1553:0crwdne1553:0"
@@ -2801,10 +3357,25 @@ msgstr "crwdns1555:0crwdne1555:0"
 msgid "The date the message was received"
 msgstr "crwdns1557:0crwdne1557:0"
 
+#. js-lingui-id: nCXfEw
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "The default role cannot be deleted as it is required for the workspace to function properly."
+msgstr "crwdns8452:0crwdne8452:0"
+
+#. js-lingui-id: 6BBrjb
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "The default role for this workspace could not be found. Please contact support for assistance."
+msgstr "crwdns8454:0crwdne8454:0"
+
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
 msgstr "crwdns1559:0crwdne1559:0"
+
+#. js-lingui-id: LdhPiK
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
+msgstr "crwdns8456:0crwdne8456:0"
 
 #. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -2821,10 +3392,34 @@ msgstr "crwdns6586:0crwdne6586:0"
 msgid "The name is not available"
 msgstr "crwdns7176:0crwdne7176:0"
 
+#. js-lingui-id: hx2IZ4
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
+msgstr "crwdns8458:0crwdne8458:0"
+
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "crwdns1563:0crwdne1563:0"
+
+#. js-lingui-id: Zi9X+u
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
+msgstr "crwdns8460:0crwdne8460:0"
+
+#. js-lingui-id: 5h4Nxe
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "The role you are trying to assign could not be found. It may have been deleted."
+msgstr "crwdns8462:0crwdne8462:0"
+
+#. js-lingui-id: HRcugS
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
+msgstr "crwdns8464:0crwdne8464:0"
 
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -2866,6 +3461,36 @@ msgstr "crwdns1571:0crwdne1571:0"
 msgid "The workflow version status"
 msgstr "crwdns1573:0crwdne1573:0"
 
+#. js-lingui-id: Kfwq7n
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "There was an issue with your connection settings. Please try again."
+msgstr "crwdns8466:0crwdne8466:0"
+
+#. js-lingui-id: Bm40Ow
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldName} is already taken. Please choose a different value."
+msgstr "crwdns8468:0{fieldName}crwdne8468:0"
+
+#. js-lingui-id: CYyoPc
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
+msgstr "crwdns8470:0{fieldName}crwdnd8470:0{duplicatedValues}crwdne8470:0"
+
+#. js-lingui-id: Izdz+Y
+#: src/engine/core-modules/api-key/api-key.service.ts
+msgid "This API Key has been revoked and can no longer be used."
+msgstr "crwdns8472:0crwdne8472:0"
+
+#. js-lingui-id: Jmzgho
+#: src/engine/core-modules/api-key/api-key.service.ts
+msgid "This API Key has expired. Please create a new one."
+msgstr "crwdns8474:0crwdne8474:0"
+
+#. js-lingui-id: r/Z8XK
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This combination of {fieldNames} already exists. Please use different values."
+msgstr "crwdns8476:0{fieldNames}crwdne8476:0"
+
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available as it is already used by another field."
@@ -2876,6 +3501,29 @@ msgstr "crwdns7466:0crwdne7466:0"
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available."
 msgstr "crwdns6588:0crwdne6588:0"
+
+#. js-lingui-id: eitC3W
+#: src/engine/workspace-datasource/workspace-datasource.service.ts
+msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
+msgstr "crwdns8478:0crwdne8478:0"
+
+#. js-lingui-id: TjUnO1
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This record already exists. Please check your data and try again."
+msgstr "crwdns8480:0crwdne8480:0"
+
+#. js-lingui-id: +L9yxk
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "This role cannot be assigned to users. Please select a different role."
+msgstr "crwdns8482:0crwdne8482:0"
+
+#. js-lingui-id: KoDdqN
+#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
+msgstr "crwdns8484:0crwdne8484:0"
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -2895,6 +3543,11 @@ msgstr "crwdns1577:0crwdne1577:0"
 msgid "Throttle Failure Count"
 msgstr "crwdns1579:0crwdne1579:0"
 
+#. js-lingui-id: kkDQ8m
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Thursday"
+msgstr "crwdns8350:0crwdne8350:0"
+
 #. js-lingui-id: n9nSNJ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time format"
@@ -2913,6 +3566,7 @@ msgstr "crwdns1583:0crwdne1583:0"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
@@ -2922,6 +3576,11 @@ msgstr "crwdns1585:0crwdne1585:0"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "crwdns1587:0crwdne1587:0"
+
+#. js-lingui-id: CNev+0
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Timeline activities linked to the dashboard"
+msgstr "crwdns7688:0crwdne7688:0"
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -2972,18 +3631,33 @@ msgstr "crwdns1603:0crwdne1603:0"
 msgid "Title"
 msgstr "crwdns1605:0crwdne1605:0"
 
+#. js-lingui-id: G3myU+
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Tuesday"
+msgstr "crwdns8352:0crwdne8352:0"
+
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "crwdns1607:0crwdne1607:0"
+
+#. js-lingui-id: UhRoLN
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Type (deprecated)"
+msgstr "crwdns8692:0crwdne8692:0"
 
 #. js-lingui-id: RBJNRI
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Unique field cannot have a default value"
 msgstr "crwdns7134:0crwdne7134:0"
+
+#. js-lingui-id: WWSSTx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
+msgstr "crwdns8542:0{fieldName}crwdnd8542:0{fieldType}crwdne8542:0"
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -3002,15 +3676,25 @@ msgid "Update DateTime"
 msgstr "crwdns1609:0crwdne1609:0"
 
 #. js-lingui-id: r5C2wB
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Updated field name is not synced with label"
 msgstr "crwdns7312:0crwdne7312:0"
+
+#. js-lingui-id: GkcfmO
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "User already exists"
+msgstr "crwdns8380:0crwdne8380:0"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "crwdns6660:0crwdne6660:0"
+
+#. js-lingui-id: Sl1ElS
+#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+msgid "User does not have permission."
+msgstr "crwdns8486:0crwdne8486:0"
 
 #. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3027,6 +3711,11 @@ msgstr "crwdns1613:0crwdne1613:0"
 msgid "User is not part of the workspace"
 msgstr "crwdns6592:0crwdne6592:0"
 
+#. js-lingui-id: g5Z6no
+#: src/engine/core-modules/admin-panel/admin-panel.service.ts
+msgid "User not found. Please check the email or ID."
+msgstr "crwdns8488:0crwdne8488:0"
+
 #. js-lingui-id: 4juE7s
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
@@ -3042,6 +3731,11 @@ msgstr "crwdns7074:0crwdne7074:0"
 msgid "User's preferred date format"
 msgstr "crwdns1617:0crwdne1617:0"
 
+#. js-lingui-id: PLfanm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred number format"
+msgstr "crwdns7856:0crwdne7856:0"
+
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
@@ -3052,10 +3746,10 @@ msgstr "crwdns6880:0crwdne6880:0"
 msgid "User's preferred time format"
 msgstr "crwdns1619:0crwdne1619:0"
 
-#. js-lingui-id: ckX/Ew
+#. js-lingui-id: xInMK/
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
-msgstr "crwdns7390:0{invalidObjects}crwdnd7390:0{invalidFields}crwdne7390:0"
+msgid "Validation failed for 0 object(s) and 0 field(s)"
+msgstr "crwdns7834:0crwdne7834:0"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3064,6 +3758,7 @@ msgstr "crwdns1621:0crwdne1621:0"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "crwdns6926:0{sanitizedValue}crwdne6926:0"
 
@@ -3098,15 +3793,35 @@ msgstr "crwdns1629:0crwdne1629:0"
 msgid "View"
 msgstr "crwdns1631:0crwdne1631:0"
 
+#. js-lingui-id: HhN1Bv
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View already exists"
+msgstr "crwdns7752:0crwdne7752:0"
+
 #. js-lingui-id: cZPDyy
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "crwdns1633:0crwdne1633:0"
 
+#. js-lingui-id: pTvQqf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field already exists"
+msgstr "crwdns7754:0crwdne7754:0"
+
 #. js-lingui-id: Xm6R6B
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "View field already exists."
 msgstr "crwdns7618:0crwdne7618:0"
+
+#. js-lingui-id: 7jUWQ+
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field metadata already exists"
+msgstr "crwdns7756:0crwdne7756:0"
+
+#. js-lingui-id: Yvf7WL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field metadata with id {flatViewFieldId} already exists"
+msgstr "crwdns7758:0{flatViewFieldId}crwdne7758:0"
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -3114,10 +3829,22 @@ msgstr "crwdns7618:0crwdne7618:0"
 msgid "View Field position"
 msgstr "crwdns1635:0crwdne1635:0"
 
+#. js-lingui-id: 7LMaUn
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field position cannot be lower than label identifier view field position"
+msgstr "crwdns8390:0crwdne8390:0"
+
 #. js-lingui-id: Ju6gri
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field related view"
 msgstr "crwdns1637:0crwdne1637:0"
+
+#. js-lingui-id: WZzm3R
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field related view object metadata not found"
+msgstr "crwdns8392:0crwdne8392:0"
 
 #. js-lingui-id: tvTr2y
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -3129,10 +3856,46 @@ msgstr "crwdns1639:0crwdne1639:0"
 msgid "View Field target field"
 msgstr "crwdns1641:0crwdne1641:0"
 
+#. js-lingui-id: XJlyZS
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to delete not found"
+msgstr "crwdns7718:0crwdne7718:0"
+
+#. js-lingui-id: DXyYuh
+#: src/engine/metadata-modules/flat-view-field/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to destroy not found"
+msgstr "crwdns7720:0crwdne7720:0"
+
+#. js-lingui-id: Fpy/K1
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+msgid "View field to update not found"
+msgstr "crwdns7722:0crwdne7722:0"
+
+#. js-lingui-id: AprfQL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to update parent view not found"
+msgstr "crwdns8394:0crwdne8394:0"
+
+#. js-lingui-id: sqzMKR
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to update parent view object not found"
+msgstr "crwdns8396:0crwdne8396:0"
+
 #. js-lingui-id: Gd/LzL
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field visibility"
 msgstr "crwdns1643:0crwdne1643:0"
+
+#. js-lingui-id: 89Wiy+
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field with same fieldmetadataId and viewId already exists"
+msgstr "crwdns7762:0crwdne7762:0"
 
 #. js-lingui-id: GUFYyq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3169,6 +3932,14 @@ msgstr "crwdns1653:0crwdne1653:0"
 msgid "View Filter Groups"
 msgstr "crwdns1655:0crwdne1655:0"
 
+#. js-lingui-id: 1KSqGE
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter not found"
+msgstr "crwdns8530:0crwdne8530:0"
+
 #. js-lingui-id: 4MG8+B
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter operand"
@@ -3184,10 +3955,31 @@ msgstr "crwdns1659:0crwdne1659:0"
 msgid "View Filter target field"
 msgstr "crwdns1661:0crwdne1661:0"
 
+#. js-lingui-id: 3l1ppY
+#: src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util.ts
+msgid "View filter to delete not found"
+msgstr "crwdns8532:0crwdne8532:0"
+
+#. js-lingui-id: 9gedIx
+#: src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util.ts
+msgid "View filter to destroy not found"
+msgstr "crwdns8534:0crwdne8534:0"
+
+#. js-lingui-id: GzthLy
+#: src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util.ts
+msgid "View filter to update not found"
+msgstr "crwdns8536:0crwdne8536:0"
+
 #. js-lingui-id: 3KzkxN
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter value"
 msgstr "crwdns1663:0crwdne1663:0"
+
+#. js-lingui-id: LnNgrI
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter with this id already exists"
+msgstr "crwdns8538:0crwdne8538:0"
 
 #. js-lingui-id: vj5JsR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3201,6 +3993,16 @@ msgstr "crwdns1665:0crwdne1665:0"
 msgid "View Group"
 msgstr "crwdns1667:0crwdne1667:0"
 
+#. js-lingui-id: MGbEFN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata already exists"
+msgstr "crwdns8544:0crwdne8544:0"
+
+#. js-lingui-id: lbyQO4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata with id {flatViewGroupId} already exists"
+msgstr "crwdns8546:0{flatViewGroupId}crwdne8546:0"
+
 #. js-lingui-id: uQ3c2q
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group related view"
@@ -3210,6 +4012,37 @@ msgstr "crwdns1669:0crwdne1669:0"
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group target field"
 msgstr "crwdns1671:0crwdne1671:0"
+
+#. js-lingui-id: JdAvYa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to delete not found"
+msgstr "crwdns8550:0crwdne8550:0"
+
+#. js-lingui-id: 34hWb7
+#: src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to destroy not found"
+msgstr "crwdns8552:0crwdne8552:0"
+
+#. js-lingui-id: UP/TXo
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
+msgid "View group to update not found"
+msgstr "crwdns8554:0crwdne8554:0"
+
+#. js-lingui-id: XbOhpY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent field not found"
+msgstr "crwdns8556:0crwdne8556:0"
+
+#. js-lingui-id: P0grPG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent view not found"
+msgstr "crwdns8560:0crwdne8560:0"
 
 #. js-lingui-id: b1Vc+l
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -3228,6 +4061,14 @@ msgstr "crwdns1675:0crwdne1675:0"
 msgid "View icon"
 msgstr "crwdns1677:0crwdne1677:0"
 
+#. js-lingui-id: M7KWZV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View kanban aggregate field metadata not found"
+msgstr "crwdns8694:0crwdne8694:0"
+
 #. js-lingui-id: cd/+ZD
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View Kanban column field"
@@ -3243,6 +4084,20 @@ msgstr "crwdns1681:0crwdne1681:0"
 msgid "View name"
 msgstr "crwdns1683:0crwdne1683:0"
 
+#. js-lingui-id: F4A9mL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View not found"
+msgstr "crwdns7704:0crwdne7704:0"
+
 #. js-lingui-id: rhO8zp
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View position"
@@ -3254,7 +4109,7 @@ msgid "View Sort"
 msgstr "crwdns1687:0crwdne1687:0"
 
 #. js-lingui-id: znNExx
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "View sort (id: {id}) not found"
 msgstr "crwdns7392:0{id}crwdne7392:0"
 
@@ -3264,7 +4119,7 @@ msgid "View Sort direction"
 msgstr "crwdns1689:0crwdne1689:0"
 
 #. js-lingui-id: 3zMs+f
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "View sort not found"
 msgstr "crwdns7394:0crwdne7394:0"
 
@@ -3290,10 +4145,30 @@ msgstr "crwdns1695:0crwdne1695:0"
 msgid "View target object"
 msgstr "crwdns1697:0crwdne1697:0"
 
+#. js-lingui-id: toB/08
+#: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
+msgid "View to delete not found"
+msgstr "crwdns7768:0crwdne7768:0"
+
+#. js-lingui-id: NnD3Ti
+#: src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
+msgid "View to destroy not found"
+msgstr "crwdns7770:0crwdne7770:0"
+
+#. js-lingui-id: 3+GbNY
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "View to update not found"
+msgstr "crwdns7772:0crwdne7772:0"
+
 #. js-lingui-id: bJAIqT
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"
 msgstr "crwdns1699:0crwdne1699:0"
+
+#. js-lingui-id: ZgRtC4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View with same id is already exists"
+msgstr "crwdns7766:0crwdne7766:0"
 
 #. js-lingui-id: aeqysn
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -3302,32 +4177,32 @@ msgid "ViewId"
 msgstr "crwdns7330:0crwdne7330:0"
 
 #. js-lingui-id: kpQRY2
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "ViewId is required"
 msgstr "crwdns7396:0crwdne7396:0"
 
 #. js-lingui-id: l88nXn
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
 msgstr "crwdns7098:0crwdne7098:0"
 
 #. js-lingui-id: 9XMTpT
-#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
 msgstr "crwdns7100:0crwdne7100:0"
 
 #. js-lingui-id: pCCxli
-#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
 msgstr "crwdns7102:0crwdne7102:0"
 
 #. js-lingui-id: 1X1RW5
-#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
 msgstr "crwdns7104:0crwdne7104:0"
 
 #. js-lingui-id: uGUFcy
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
 msgstr "crwdns7106:0crwdne7106:0"
 
@@ -3355,6 +4230,36 @@ msgstr "crwdns1705:0crwdne1705:0"
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "crwdns7056:0crwdne7056:0"
 
+#. js-lingui-id: B3CG/U
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't connect to your CalDAV server. Please check your server settings and try again."
+msgstr "crwdns8490:0crwdne8490:0"
+
+#. js-lingui-id: ax8unE
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't connect to your email server. Please check your server settings and try again."
+msgstr "crwdns8492:0crwdne8492:0"
+
+#. js-lingui-id: g4rOV3
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again."
+msgstr "crwdns8494:0crwdne8494:0"
+
+#. js-lingui-id: v8UNEA
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't log in to your email account. Please check your email address and password, then try again."
+msgstr "crwdns8496:0crwdne8496:0"
+
+#. js-lingui-id: YxBvFz
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
+msgstr "crwdns8498:0crwdne8498:0"
+
+#. js-lingui-id: VAcXNz
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Wednesday"
+msgstr "crwdns8354:0crwdne8354:0"
+
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
 msgid "Welcome to Twenty: Please Confirm Your Email"
@@ -3369,6 +4274,7 @@ msgstr "crwdns4981:0crwdne4981:0"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Workflow"
 msgstr "crwdns1717:0crwdne1717:0"
 
@@ -3404,6 +4310,11 @@ msgstr "crwdns1727:0crwdne1727:0"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run enqueued at"
 msgstr "crwdns7156:0crwdne7156:0"
+
+#. js-lingui-id: C5dusT
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "Workflow run is not running"
+msgstr "crwdns8698:0crwdne8698:0"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3513,6 +4424,11 @@ msgstr "crwdns1761:0crwdne1761:0"
 msgid "WorkflowVersion workflow"
 msgstr "crwdns1763:0crwdne1763:0"
 
+#. js-lingui-id: XsSVrR
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace creation is restricted to admins"
+msgstr "crwdns8294:0crwdne8294:0"
+
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
@@ -3554,37 +4470,37 @@ msgid "Workspace Members"
 msgstr "crwdns1773:0crwdne1773:0"
 
 #. js-lingui-id: bBr+RW
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required"
 msgstr "crwdns7398:0crwdne7398:0"
 
 #. js-lingui-id: kjLpTn
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
 msgstr "crwdns7108:0crwdne7108:0"
 
 #. js-lingui-id: zWj6VZ
-#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
 msgstr "crwdns7110:0crwdne7110:0"
 
 #. js-lingui-id: jQMXtD
-#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
 msgstr "crwdns7112:0crwdne7112:0"
 
 #. js-lingui-id: NAoJAX
-#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
 msgstr "crwdns7114:0crwdne7114:0"
 
 #. js-lingui-id: hU1QaN
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
 msgstr "crwdns7116:0crwdne7116:0"
 
 #. js-lingui-id: jtb/lI
-#: src/engine/core-modules/view/exceptions/view.exception.ts
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
 msgstr "crwdns7118:0crwdne7118:0"
 
@@ -3606,6 +4522,52 @@ msgstr "crwdns6602:0crwdne6602:0"
 msgid "X"
 msgstr "crwdns1777:0crwdne1777:0"
 
+#. js-lingui-id: 1SQnFB
+#: src/engine/metadata-modules/role/role.resolver.ts
+msgid "You cannot change your own role. Please ask another administrator to update your role."
+msgstr "crwdns8500:0crwdne8500:0"
+
+#. js-lingui-id: y5haJ4
+#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
+msgstr "crwdns8502:0crwdne8502:0"
+
+#. js-lingui-id: 8wovNr
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
+msgstr "crwdns8504:0crwdne8504:0"
+
+#. js-lingui-id: WUcQVb
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "You cannot set field permissions on system objects as they are managed by the platform."
+msgstr "crwdns8506:0crwdne8506:0"
+
+#. js-lingui-id: SI6USg
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "You cannot set permissions on system objects as they are managed by the platform."
+msgstr "crwdns8508:0crwdne8508:0"
+
+#. js-lingui-id: EFQeXU
+#: src/engine/guards/settings-permissions.guard.ts
+msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
+msgstr "crwdns8510:0crwdne8510:0"
+
+#. js-lingui-id: +2vVRB
+#: src/engine/guards/impersonate-permission.guard.ts
+msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
+msgstr "crwdns8512:0crwdne8512:0"
+
+#. js-lingui-id: k7P8yU
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "You do not have permission to manage security settings. Please contact your workspace administrator."
+msgstr "crwdns8514:0crwdne8514:0"
+
+#. js-lingui-id: svchJc
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "You do not have permission to manage workspace settings. Please contact your workspace administrator."
+msgstr "crwdns8516:0crwdne8516:0"
+
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
@@ -3616,10 +4578,22 @@ msgstr "crwdns6604:0crwdne6604:0"
 msgid "Your app version is out of date. Please refresh the page to continue."
 msgstr "crwdns6838:0crwdne6838:0"
 
+#. js-lingui-id: J5Vm4Q
+#: src/engine/core-modules/billing/billing.validate.ts
+msgid "Your billing subscription is corrupted. Please contact support."
+msgstr "crwdns8518:0crwdne8518:0"
+
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
 msgstr "crwdns4983:0crwdne4983:0"
+
+#. js-lingui-id: XxkUFT
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
+msgstr "crwdns8520:0crwdne8520:0"
 
 #. js-lingui-id: vPccnr
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -3630,3 +4604,8 @@ msgstr "crwdns1779:0crwdne1779:0"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "crwdns6606:0crwdne6606:0"
+
+#. js-lingui-id: ZukXiD
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
+msgstr "crwdns8522:0crwdne8522:0"

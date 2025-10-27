@@ -5,16 +5,16 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { type DeleteResult, type Repository } from 'typeorm';
 
-import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
@@ -32,17 +32,17 @@ jest.mock('@react-email/render', () => ({
 
 describe('ApprovedAccessDomainService', () => {
   let service: ApprovedAccessDomainService;
-  let approvedAccessDomainRepository: Repository<ApprovedAccessDomain>;
+  let approvedAccessDomainRepository: Repository<ApprovedAccessDomainEntity>;
   let emailService: EmailService;
   let twentyConfigService: TwentyConfigService;
-  let domainManagerService: DomainManagerService;
+  let workspaceDomainsService: WorkspaceDomainsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApprovedAccessDomainService,
         {
-          provide: getRepositoryToken(ApprovedAccessDomain),
+          provide: getRepositoryToken(ApprovedAccessDomainEntity),
           useValue: {
             delete: jest.fn(),
             findOneBy: jest.fn(),
@@ -63,7 +63,7 @@ describe('ApprovedAccessDomainService', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: WorkspaceDomainsService,
           useValue: {
             buildWorkspaceURL: jest.fn(),
           },
@@ -83,12 +83,13 @@ describe('ApprovedAccessDomainService', () => {
       ApprovedAccessDomainService,
     );
     approvedAccessDomainRepository = module.get(
-      getRepositoryToken(ApprovedAccessDomain),
+      getRepositoryToken(ApprovedAccessDomainEntity),
     );
     emailService = module.get<EmailService>(EmailService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
+    workspaceDomainsService = module.get<WorkspaceDomainsService>(
+      WorkspaceDomainsService,
+    );
   });
 
   describe('createApprovedAccessDomain', () => {
@@ -98,7 +99,7 @@ describe('ApprovedAccessDomainService', () => {
         id: 'workspace-id',
         customDomain: null,
         isCustomDomainEnabled: false,
-      } as Workspace;
+      } as WorkspaceEntity;
       const fromUser = {
         userEmail: 'user@custom-domain.com',
       } as WorkspaceMemberWorkspaceEntity;
@@ -112,7 +113,7 @@ describe('ApprovedAccessDomainService', () => {
       jest
         .spyOn(approvedAccessDomainRepository, 'save')
         .mockResolvedValue(
-          expectedApprovedAccessDomain as unknown as ApprovedAccessDomain,
+          expectedApprovedAccessDomain as unknown as ApprovedAccessDomainEntity,
         );
 
       jest
@@ -138,7 +139,7 @@ describe('ApprovedAccessDomainService', () => {
       await expect(
         service.createApprovedAccessDomain(
           'gmail.com',
-          { id: 'workspace-id' } as Workspace,
+          { id: 'workspace-id' } as WorkspaceEntity,
           {
             userEmail: 'user@gmail.com',
           } as WorkspaceMemberWorkspaceEntity,
@@ -156,12 +157,14 @@ describe('ApprovedAccessDomainService', () => {
 
   describe('deleteApprovedAccessDomain', () => {
     it('should delete an approved access domain successfully', async () => {
-      const workspace: Workspace = { id: 'workspace-id' } as Workspace;
+      const workspace: WorkspaceEntity = {
+        id: 'workspace-id',
+      } as WorkspaceEntity;
       const approvedAccessDomainId = 'approved-access-domain-id';
       const approvedAccessDomainEntity = {
         id: approvedAccessDomainId,
         workspaceId: workspace.id,
-      } as ApprovedAccessDomain;
+      } as ApprovedAccessDomainEntity;
 
       jest
         .spyOn(approvedAccessDomainRepository, 'findOneBy')
@@ -185,7 +188,9 @@ describe('ApprovedAccessDomainService', () => {
     });
 
     it('should throw an error if the approved access domain does not exist', async () => {
-      const workspace: Workspace = { id: 'workspace-id' } as Workspace;
+      const workspace: WorkspaceEntity = {
+        id: 'workspace-id',
+      } as WorkspaceEntity;
       const approvedAccessDomainId = 'approved-access-domain-id';
 
       jest
@@ -208,13 +213,13 @@ describe('ApprovedAccessDomainService', () => {
     it('should throw an exception if the approved access domain is already validated', async () => {
       const approvedAccessDomainId = 'approved-access-domain-id';
       const sender = {} as WorkspaceMemberWorkspaceEntity;
-      const workspace = {} as Workspace;
+      const workspace = {} as WorkspaceEntity;
       const email = 'validator@example.com';
 
       const approvedAccessDomain = {
         id: approvedAccessDomainId,
         isValidated: true,
-      } as ApprovedAccessDomain;
+      } as ApprovedAccessDomainEntity;
 
       jest
         .spyOn(approvedAccessDomainRepository, 'findOneBy')
@@ -238,13 +243,13 @@ describe('ApprovedAccessDomainService', () => {
     it('should throw an exception if the email does not match the approved access domain', async () => {
       const approvedAccessDomainId = 'approved-access-domain-id';
       const sender = {} as WorkspaceMemberWorkspaceEntity;
-      const workspace = {} as Workspace;
+      const workspace = {} as WorkspaceEntity;
       const email = 'validator@different.com';
       const approvedAccessDomain = {
         id: approvedAccessDomainId,
         isValidated: false,
         domain: 'example.com',
-      } as ApprovedAccessDomain;
+      } as ApprovedAccessDomainEntity;
 
       jest
         .spyOn(approvedAccessDomainRepository, 'findOneBy')
@@ -274,19 +279,19 @@ describe('ApprovedAccessDomainService', () => {
       const workspace = {
         displayName: 'Test Workspace',
         logo: '/logo.png',
-      } as Workspace;
+      } as WorkspaceEntity;
       const email = 'validator@custom-domain.com';
       const approvedAccessDomain = {
         isValidated: false,
         domain: 'custom-domain.com',
-      } as ApprovedAccessDomain;
+      } as ApprovedAccessDomainEntity;
 
       jest
         .spyOn(approvedAccessDomainRepository, 'findOneBy')
         .mockResolvedValue(approvedAccessDomain);
 
       jest
-        .spyOn(domainManagerService, 'buildWorkspaceURL')
+        .spyOn(workspaceDomainsService, 'buildWorkspaceURL')
         .mockReturnValue(new URL('https://sub.twenty.com'));
 
       jest
@@ -303,7 +308,7 @@ describe('ApprovedAccessDomainService', () => {
         approvedAccessDomain,
       );
 
-      expect(domainManagerService.buildWorkspaceURL).toHaveBeenCalledWith({
+      expect(workspaceDomainsService.buildWorkspaceURL).toHaveBeenCalledWith({
         workspace: workspace,
         pathname: getSettingsPath(SettingsPath.Domains),
         searchParams: { validationToken: expect.any(String) },
@@ -327,7 +332,7 @@ describe('ApprovedAccessDomainService', () => {
         id: approvedAccessDomainId,
         domain: 'example.com',
         isValidated: false,
-      } as ApprovedAccessDomain;
+      } as ApprovedAccessDomainEntity;
 
       jest
         .spyOn(approvedAccessDomainRepository, 'findOneBy')
@@ -378,7 +383,7 @@ describe('ApprovedAccessDomainService', () => {
         id: approvedAccessDomainId,
         domain: 'example.com',
         isValidated: false,
-      } as ApprovedAccessDomain;
+      } as ApprovedAccessDomainEntity;
 
       jest
         .spyOn(approvedAccessDomainRepository, 'findOneBy')
@@ -407,7 +412,7 @@ describe('ApprovedAccessDomainService', () => {
         id: approvedAccessDomainId,
         domain: 'example.com',
         isValidated: true,
-      } as ApprovedAccessDomain;
+      } as ApprovedAccessDomainEntity;
 
       jest
         .spyOn(approvedAccessDomainRepository, 'findOneBy')

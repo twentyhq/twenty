@@ -66,6 +66,20 @@ export class RestApiCoreController {
     res.status(201).send(result);
   }
 
+  //TODO: Refacto-common - Document this endpoint
+  @Get('*/groupBy')
+  async handleApiGroupBy(
+    @Req() request: AuthenticatedRequest,
+    @Res() res: Response,
+  ) {
+    this.logger.log(
+      `[REST API] Processing GROUP BY request to ${request.path} on workspace ${request.workspaceId}`,
+    );
+    const result = await this.restApiCoreService.groupBy(request);
+
+    res.status(200).send(result);
+  }
+
   @Get('*')
   async handleApiGet(
     @Req() request: AuthenticatedRequest,
@@ -88,6 +102,32 @@ export class RestApiCoreController {
       `[REST API] Processing DELETE request to ${request.path} on workspace ${request.workspaceId}`,
     );
     const result = await this.restApiCoreService.delete(request);
+
+    res.status(200).send(result);
+  }
+
+  @Patch('restore/*')
+  async handleApiRestore(
+    @Req() request: AuthenticatedRequest,
+    @Res() res: Response,
+  ) {
+    this.logger.log(
+      `[REST API] Processing RESTORE request to ${request.path} on workspace ${request.workspaceId}`,
+    );
+    const result = await this.restApiCoreService.restore(request);
+
+    res.status(200).send(result);
+  }
+
+  @Patch('*/merge')
+  async handleApiMerge(
+    @Req() request: AuthenticatedRequest,
+    @Res() res: Response,
+  ) {
+    this.logger.log(
+      `[REST API] Processing MERGE request to ${request.path} on workspace ${request.workspaceId}`,
+    );
+    const result = await this.restApiCoreService.mergeMany(request);
 
     res.status(200).send(result);
   }

@@ -108,15 +108,14 @@ export type AgentChatMessagePart = {
 
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
-  agentId: Scalars['UUID'];
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   title?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
-export type AgentHandoffDto = {
-  __typename?: 'AgentHandoffDTO';
+export type AgentHandoff = {
+  __typename?: 'AgentHandoff';
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   toAgent: Agent;
@@ -125,6 +124,18 @@ export type AgentHandoffDto = {
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
+};
+
+export type AggregateChartConfiguration = {
+  __typename?: 'AggregateChartConfiguration';
+  aggregateFieldMetadataId: Scalars['UUID'];
+  aggregateOperation: AggregateOperations;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
+  filter?: Maybe<Scalars['JSON']>;
+  format?: Maybe<Scalars['String']>;
+  graphType: GraphType;
+  label?: Maybe<Scalars['String']>;
 };
 
 export enum AggregateOperations {
@@ -204,11 +215,22 @@ export type AppTokenEdge = {
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
+  applicationVariables: Array<ApplicationVariable>;
   description: Scalars['String'];
   id: Scalars['UUID'];
   name: Scalars['String'];
   objects: Array<Object>;
   serverlessFunctions: Array<ServerlessFunction>;
+  version: Scalars['String'];
+};
+
+export type ApplicationVariable = {
+  __typename?: 'ApplicationVariable';
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  isSecret: Scalars['Boolean'];
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type ApprovedAccessDomain = {
@@ -245,13 +267,13 @@ export type AuthTokens = {
   tokens: AuthTokenPair;
 };
 
-export type AuthorizeApp = {
-  __typename?: 'AuthorizeApp';
+export type AuthorizeAppOutput = {
+  __typename?: 'AuthorizeAppOutput';
   redirectUrl: Scalars['String'];
 };
 
-export type AutocompleteResultDto = {
-  __typename?: 'AutocompleteResultDto';
+export type AutocompleteResult = {
+  __typename?: 'AutocompleteResult';
   placeId: Scalars['String'];
   text: Scalars['String'];
 };
@@ -291,7 +313,7 @@ export enum AxisNameDisplay {
 export type BarChartConfiguration = {
   __typename?: 'BarChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -320,7 +342,7 @@ export type Billing = {
   __typename?: 'Billing';
   billingUrl?: Maybe<Scalars['String']>;
   isBillingEnabled: Scalars['Boolean'];
-  trialPeriods: Array<BillingTrialPeriodDto>;
+  trialPeriods: Array<BillingTrialPeriod>;
 };
 
 export type BillingEndTrialPeriodOutput = {
@@ -337,7 +359,7 @@ export type BillingLicensedProduct = BillingProductDto & {
   images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
-  prices?: Maybe<Array<BillingPriceLicensedDto>>;
+  prices?: Maybe<Array<BillingPriceLicensed>>;
 };
 
 export type BillingMeteredProduct = BillingProductDto & {
@@ -346,7 +368,7 @@ export type BillingMeteredProduct = BillingProductDto & {
   images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
-  prices?: Maybe<Array<BillingPriceMeteredDto>>;
+  prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
 export type BillingMeteredProductUsageOutput = {
@@ -372,24 +394,24 @@ export type BillingPlanOutput = {
   planKey: BillingPlanKey;
 };
 
-export type BillingPriceLicensedDto = {
-  __typename?: 'BillingPriceLicensedDTO';
+export type BillingPriceLicensed = {
+  __typename?: 'BillingPriceLicensed';
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
   unitAmount: Scalars['Float'];
 };
 
-export type BillingPriceMeteredDto = {
-  __typename?: 'BillingPriceMeteredDTO';
+export type BillingPriceMetered = {
+  __typename?: 'BillingPriceMetered';
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
-  tiers: Array<BillingPriceTierDto>;
+  tiers: Array<BillingPriceTier>;
 };
 
-export type BillingPriceTierDto = {
-  __typename?: 'BillingPriceTierDTO';
+export type BillingPriceTier = {
+  __typename?: 'BillingPriceTier';
   flatAmount?: Maybe<Scalars['Float']>;
   unitAmount?: Maybe<Scalars['Float']>;
   upTo?: Maybe<Scalars['Float']>;
@@ -461,8 +483,8 @@ export type BillingSubscriptionSchedulePhaseItem = {
   quantity?: Maybe<Scalars['Float']>;
 };
 
-export type BillingTrialPeriodDto = {
-  __typename?: 'BillingTrialPeriodDTO';
+export type BillingTrialPeriod = {
+  __typename?: 'BillingTrialPeriod';
   duration: Scalars['Float'];
   isCreditCardRequired: Scalars['Boolean'];
 };
@@ -557,27 +579,27 @@ export enum ConfigVariableType {
 }
 
 export enum ConfigVariablesGroup {
-  AnalyticsConfig = 'AnalyticsConfig',
-  AwsSesSettings = 'AwsSesSettings',
-  BillingConfig = 'BillingConfig',
-  CaptchaConfig = 'CaptchaConfig',
-  CloudflareConfig = 'CloudflareConfig',
-  EmailSettings = 'EmailSettings',
-  ExceptionHandler = 'ExceptionHandler',
-  GoogleAuth = 'GoogleAuth',
+  ANALYTICS_CONFIG = 'ANALYTICS_CONFIG',
+  AWS_SES_SETTINGS = 'AWS_SES_SETTINGS',
+  BILLING_CONFIG = 'BILLING_CONFIG',
+  CAPTCHA_CONFIG = 'CAPTCHA_CONFIG',
+  CLOUDFLARE_CONFIG = 'CLOUDFLARE_CONFIG',
+  EMAIL_SETTINGS = 'EMAIL_SETTINGS',
+  EXCEPTION_HANDLER = 'EXCEPTION_HANDLER',
+  GOOGLE_AUTH = 'GOOGLE_AUTH',
   LLM = 'LLM',
-  Logging = 'Logging',
-  Metering = 'Metering',
-  MicrosoftAuth = 'MicrosoftAuth',
-  Other = 'Other',
-  RateLimiting = 'RateLimiting',
+  LOGGING = 'LOGGING',
+  METERING = 'METERING',
+  MICROSOFT_AUTH = 'MICROSOFT_AUTH',
+  OTHER = 'OTHER',
+  RATE_LIMITING = 'RATE_LIMITING',
+  SERVERLESS_CONFIG = 'SERVERLESS_CONFIG',
+  SERVER_CONFIG = 'SERVER_CONFIG',
   SSL = 'SSL',
-  ServerConfig = 'ServerConfig',
-  ServerlessConfig = 'ServerlessConfig',
-  StorageConfig = 'StorageConfig',
-  SupportChatConfig = 'SupportChatConfig',
-  TokensDuration = 'TokensDuration',
-  TwoFactorAuthentication = 'TwoFactorAuthentication'
+  STORAGE_CONFIG = 'STORAGE_CONFIG',
+  SUPPORT_CHAT_CONFIG = 'SUPPORT_CHAT_CONFIG',
+  TOKENS_DURATION = 'TOKENS_DURATION',
+  TWO_FACTOR_AUTHENTICATION = 'TWO_FACTOR_AUTHENTICATION'
 }
 
 export type ConfigVariablesGroupData = {
@@ -717,10 +739,6 @@ export type CoreViewSort = {
   workspaceId: Scalars['UUID'];
 };
 
-export type CreateAgentChatThreadInput = {
-  agentId: Scalars['UUID'];
-};
-
 export type CreateAgentHandoffInput = {
   description?: InputMaybe<Scalars['String']>;
   fromAgentId: Scalars['UUID'];
@@ -739,7 +757,7 @@ export type CreateAgentInput = {
   roleId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type CreateApiKeyDto = {
+export type CreateApiKeyInput = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
@@ -908,7 +926,7 @@ export type CreateViewSortInput = {
   viewId: Scalars['UUID'];
 };
 
-export type CreateWebhookDto = {
+export type CreateWebhookInput = {
   description?: InputMaybe<Scalars['String']>;
   operations: Array<Scalars['String']>;
   secret?: InputMaybe<Scalars['String']>;
@@ -1003,6 +1021,12 @@ export type DeleteApprovedAccessDomainInput = {
   id: Scalars['UUID'];
 };
 
+export type DeleteJobsResponse = {
+  __typename?: 'DeleteJobsResponse';
+  deletedCount: Scalars['Int'];
+  results: Array<JobOperationResult>;
+};
+
 export type DeleteOneFieldInput = {
   /** The id of the field to delete. */
   id: Scalars['UUID'];
@@ -1043,7 +1067,7 @@ export type DeleteViewGroupInput = {
   id: Scalars['UUID'];
 };
 
-export type DeleteWebhookDto = {
+export type DeleteWebhookInput = {
   id: Scalars['UUID'];
 };
 
@@ -1127,8 +1151,8 @@ export type EmailAccountConnectionParameters = {
   SMTP?: InputMaybe<ConnectionParameters>;
 };
 
-export type EmailPasswordResetLink = {
-  __typename?: 'EmailPasswordResetLink';
+export type EmailPasswordResetLinkOutput = {
+  __typename?: 'EmailPasswordResetLinkOutput';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
@@ -1165,23 +1189,6 @@ export type ExecuteServerlessFunctionInput = {
   version?: Scalars['String'];
 };
 
-export enum ExtendedAggregateOperations {
-  AVG = 'AVG',
-  COUNT = 'COUNT',
-  COUNT_EMPTY = 'COUNT_EMPTY',
-  COUNT_FALSE = 'COUNT_FALSE',
-  COUNT_NOT_EMPTY = 'COUNT_NOT_EMPTY',
-  COUNT_TRUE = 'COUNT_TRUE',
-  COUNT_UNIQUE_VALUES = 'COUNT_UNIQUE_VALUES',
-  EARLIEST = 'EARLIEST',
-  LATEST = 'LATEST',
-  MAX = 'MAX',
-  MIN = 'MIN',
-  PERCENTAGE_EMPTY = 'PERCENTAGE_EMPTY',
-  PERCENTAGE_NOT_EMPTY = 'PERCENTAGE_NOT_EMPTY',
-  SUM = 'SUM'
-}
-
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   id: Scalars['UUID'];
@@ -1206,7 +1213,6 @@ export enum FeatureFlagKey {
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
-  IS_GROUP_BY_ENABLED = 'IS_GROUP_BY_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
@@ -1214,10 +1220,11 @@ export enum FeatureFlagKey {
   IS_PAGE_LAYOUT_ENABLED = 'IS_PAGE_LAYOUT_ENABLED',
   IS_POSTGRESQL_INTEGRATION_ENABLED = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
+  IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
   IS_RELATION_CONNECT_ENABLED = 'IS_RELATION_CONNECT_ENABLED',
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
-  IS_WORKFLOW_ITERATOR_ENABLED = 'IS_WORKFLOW_ITERATOR_ENABLED',
+  IS_WORKFLOW_RUN_STOPPAGE_ENABLED = 'IS_WORKFLOW_RUN_STOPPAGE_ENABLED',
   IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
 }
 
@@ -1364,7 +1371,7 @@ export type FullName = {
 export type GaugeChartConfiguration = {
   __typename?: 'GaugeChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
@@ -1372,7 +1379,7 @@ export type GaugeChartConfiguration = {
   graphType: GraphType;
 };
 
-export type GetApiKeyDto = {
+export type GetApiKeyInput = {
   id: Scalars['UUID'];
 };
 
@@ -1401,7 +1408,7 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String'];
 };
 
-export type GetWebhookDto = {
+export type GetWebhookInput = {
   id: Scalars['UUID'];
 };
 
@@ -1415,10 +1422,10 @@ export enum GraphOrderBy {
 
 /** Type of graph widget */
 export enum GraphType {
+  AGGREGATE = 'AGGREGATE',
   GAUGE = 'GAUGE',
   HORIZONTAL_BAR = 'HORIZONTAL_BAR',
   LINE = 'LINE',
-  NUMBER = 'NUMBER',
   PIE = 'PIE',
   VERTICAL_BAR = 'VERTICAL_BAR'
 }
@@ -1584,16 +1591,34 @@ export type InitiateTwoFactorAuthenticationProvisioningOutput = {
   uri: Scalars['String'];
 };
 
-export type InvalidatePassword = {
-  __typename?: 'InvalidatePassword';
+export type InvalidatePasswordOutput = {
+  __typename?: 'InvalidatePasswordOutput';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
 
+export type JobOperationResult = {
+  __typename?: 'JobOperationResult';
+  error?: Maybe<Scalars['String']>;
+  jobId: Scalars['String'];
+  success: Scalars['Boolean'];
+};
+
+/** Job state in the queue */
+export enum JobState {
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+  DELAYED = 'DELAYED',
+  FAILED = 'FAILED',
+  PRIORITIZED = 'PRIORITIZED',
+  WAITING = 'WAITING',
+  WAITING_CHILDREN = 'WAITING_CHILDREN'
+}
+
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -1624,14 +1649,14 @@ export type LinksMetadata = {
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
-export type LocationDto = {
-  __typename?: 'LocationDto';
+export type Location = {
+  __typename?: 'Location';
   lat?: Maybe<Scalars['Float']>;
   lng?: Maybe<Scalars['Float']>;
 };
 
-export type LoginToken = {
-  __typename?: 'LoginToken';
+export type LoginTokenOutput = {
+  __typename?: 'LoginTokenOutput';
   loginToken: AuthToken;
 };
 
@@ -1655,7 +1680,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
-  authorizeApp: AuthorizeApp;
+  authorizeApp: AuthorizeAppOutput;
   cancelSwitchBillingInterval: BillingUpdateOutput;
   cancelSwitchBillingPlan: BillingUpdateOutput;
   cancelSwitchMeteredPrice: BillingUpdateOutput;
@@ -1663,10 +1688,10 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
-  createAgentChatThread: AgentChatThread;
   createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createChatThread: AgentChatThread;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
   createCoreViewFilter: CoreViewFilter;
@@ -1710,6 +1735,7 @@ export type Mutation = {
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
+  deleteJobs: DeleteJobsResponse;
   deleteOneAgent: Agent;
   deleteOneCronTrigger: CronTrigger;
   deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -1741,16 +1767,16 @@ export type Mutation = {
   disablePostgresProxy: PostgresCredentials;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   editSSOIdentityProvider: EditSsoOutput;
-  emailPasswordResetLink: EmailPasswordResetLink;
+  emailPasswordResetLink: EmailPasswordResetLinkOutput;
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
-  generateTransientToken: TransientToken;
+  generateTransientToken: TransientTokenOutput;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
-  getLoginTokenFromCredentials: LoginToken;
+  getLoginTokenFromCredentials: LoginTokenOutput;
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
   getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
@@ -1765,8 +1791,9 @@ export type Mutation = {
   restorePageLayout: PageLayout;
   restorePageLayoutTab: PageLayoutTab;
   restorePageLayoutWidget: PageLayoutWidget;
+  retryJobs: RetryJobsResponse;
   revokeApiKey?: Maybe<ApiKey>;
-  runWorkflowVersion: WorkflowRun;
+  runWorkflowVersion: RunWorkflowVersionOutput;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
   setMeteredSubscriptionPrice: BillingUpdateOutput;
@@ -1777,6 +1804,7 @@ export type Mutation = {
   skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   startChannelSync: ChannelSyncSuccess;
+  stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean'];
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
@@ -1792,6 +1820,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
+  updateOneApplicationVariable: Scalars['Boolean'];
   updateOneCronTrigger: CronTrigger;
   updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
@@ -1803,7 +1832,7 @@ export type Mutation = {
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
-  updatePasswordViaResetToken: InvalidatePassword;
+  updatePasswordViaResetToken: InvalidatePasswordOutput;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
@@ -1811,10 +1840,10 @@ export type Mutation = {
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
   updateWorkspaceMemberRole: WorkspaceMember;
-  uploadFile: SignedFileDto;
-  uploadImage: SignedFileDto;
-  uploadProfilePicture: SignedFileDto;
-  uploadWorkspaceLogo: SignedFileDto;
+  uploadFile: SignedFile;
+  uploadImage: SignedFile;
+  uploadProfilePicture: SignedFile;
+  uploadWorkspaceLogo: SignedFile;
   upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<PermissionFlag>;
@@ -1872,18 +1901,13 @@ export type MutationComputeStepOutputSchemaArgs = {
 };
 
 
-export type MutationCreateAgentChatThreadArgs = {
-  input: CreateAgentChatThreadInput;
-};
-
-
 export type MutationCreateAgentHandoffArgs = {
   input: CreateAgentHandoffInput;
 };
 
 
 export type MutationCreateApiKeyArgs = {
-  input: CreateApiKeyDto;
+  input: CreateApiKeyInput;
 };
 
 
@@ -2024,7 +2048,7 @@ export type MutationCreateSamlIdentityProviderArgs = {
 
 
 export type MutationCreateWebhookArgs = {
-  input: CreateWebhookDto;
+  input: CreateWebhookInput;
 };
 
 
@@ -2095,6 +2119,12 @@ export type MutationDeleteEmailingDomainArgs = {
 
 export type MutationDeleteFileArgs = {
   fileId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteJobsArgs = {
+  jobIds: Array<Scalars['String']>;
+  queueName: Scalars['String'];
 };
 
 
@@ -2169,7 +2199,7 @@ export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
 
 
 export type MutationDeleteWebhookArgs = {
-  input: DeleteWebhookDto;
+  input: DeleteWebhookInput;
 };
 
 
@@ -2362,8 +2392,14 @@ export type MutationRestorePageLayoutWidgetArgs = {
 };
 
 
+export type MutationRetryJobsArgs = {
+  jobIds: Array<Scalars['String']>;
+  queueName: Scalars['String'];
+};
+
+
 export type MutationRevokeApiKeyArgs = {
-  input: RevokeApiKeyDto;
+  input: RevokeApiKeyInput;
 };
 
 
@@ -2425,6 +2461,11 @@ export type MutationStartChannelSyncArgs = {
 };
 
 
+export type MutationStopWorkflowRunArgs = {
+  workflowRunId: Scalars['UUID'];
+};
+
+
 export type MutationSubmitFormStepArgs = {
   input: SubmitFormStepInput;
 };
@@ -2446,7 +2487,7 @@ export type MutationTrackAnalyticsArgs = {
 
 
 export type MutationUpdateApiKeyArgs = {
-  input: UpdateApiKeyDto;
+  input: UpdateApiKeyInput;
 };
 
 
@@ -2496,6 +2537,13 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
+};
+
+
+export type MutationUpdateOneApplicationVariableArgs = {
+  applicationId: Scalars['UUID'];
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 
@@ -2565,7 +2613,7 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 
 
 export type MutationUpdateWebhookArgs = {
-  input: UpdateWebhookDto;
+  input: UpdateWebhookInput;
 };
 
 
@@ -2662,18 +2710,6 @@ export type NativeModelCapabilities = {
   __typename?: 'NativeModelCapabilities';
   twitterSearch?: Maybe<Scalars['Boolean']>;
   webSearch?: Maybe<Scalars['Boolean']>;
-};
-
-export type NumberChartConfiguration = {
-  __typename?: 'NumberChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
-  description?: Maybe<Scalars['String']>;
-  displayDataLabel?: Maybe<Scalars['Boolean']>;
-  filter?: Maybe<Scalars['JSON']>;
-  format?: Maybe<Scalars['String']>;
-  graphType: GraphType;
-  label?: Maybe<Scalars['String']>;
 };
 
 export type Object = {
@@ -2799,8 +2835,8 @@ export type ObjectStandardOverrides = {
   translations?: Maybe<Scalars['JSON']>;
 };
 
-export type OnDbEventDto = {
-  __typename?: 'OnDbEventDTO';
+export type OnDbEvent = {
+  __typename?: 'OnDbEvent';
   action: DatabaseEventAction;
   eventDate: Scalars['DateTime'];
   objectNameSingular: Scalars['String'];
@@ -2912,7 +2948,7 @@ export enum PermissionFlagType {
 export type PieChartConfiguration = {
   __typename?: 'PieChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
@@ -2923,11 +2959,11 @@ export type PieChartConfiguration = {
   orderBy?: Maybe<GraphOrderBy>;
 };
 
-export type PlaceDetailsResultDto = {
-  __typename?: 'PlaceDetailsResultDto';
+export type PlaceDetailsResult = {
+  __typename?: 'PlaceDetailsResult';
   city?: Maybe<Scalars['String']>;
   country?: Maybe<Scalars['String']>;
-  location?: Maybe<LocationDto>;
+  location?: Maybe<Location>;
   postcode?: Maybe<Scalars['String']>;
   state?: Maybe<Scalars['String']>;
 };
@@ -2977,20 +3013,20 @@ export type PublishServerlessFunctionInput = {
 
 export type Query = {
   __typename?: 'Query';
-  agentChatMessages: Array<AgentChatMessage>;
-  agentChatThread: AgentChatThread;
-  agentChatThreads: Array<AgentChatThread>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
+  chatMessages: Array<AgentChatMessage>;
+  chatThread: AgentChatThread;
+  chatThreads: Array<AgentChatThread>;
   checkUserExists: CheckUserExistOutput;
-  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
+  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
   findAgentHandoffTargets: Array<Agent>;
-  findAgentHandoffs: Array<AgentHandoffDto>;
+  findAgentHandoffs: Array<AgentHandoff>;
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
   findManyCronTriggers: Array<CronTrigger>;
@@ -3006,9 +3042,9 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
-  getAddressDetails: PlaceDetailsResultDto;
+  getAddressDetails: PlaceDetailsResult;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
-  getAutoCompleteAddress: Array<AutocompleteResultDto>;
+  getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
@@ -3036,6 +3072,7 @@ export type Query = {
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
+  getQueueJobs: QueueJobsResponse;
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
@@ -3053,35 +3090,30 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   search: SearchResultConnection;
-  validatePasswordResetToken: ValidatePasswordResetToken;
+  validatePasswordResetToken: ValidatePasswordResetTokenOutput;
   versionInfo: VersionInfo;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
 };
 
 
-export type QueryAgentChatMessagesArgs = {
-  threadId: Scalars['UUID'];
-};
-
-
-export type QueryAgentChatThreadArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type QueryAgentChatThreadsArgs = {
-  agentId: Scalars['UUID'];
-};
-
-
 export type QueryApiKeyArgs = {
-  input: GetApiKeyDto;
+  input: GetApiKeyInput;
 };
 
 
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryChatMessagesArgs = {
+  threadId: Scalars['UUID'];
+};
+
+
+export type QueryChatThreadArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -3270,6 +3302,14 @@ export type QueryGetPublicWorkspaceDataByDomainArgs = {
 };
 
 
+export type QueryGetQueueJobsArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  queueName: Scalars['String'];
+  state: JobState;
+};
+
+
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
@@ -3339,7 +3379,32 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 
 export type QueryWebhookArgs = {
-  input: GetWebhookDto;
+  input: GetWebhookInput;
+};
+
+export type QueueJob = {
+  __typename?: 'QueueJob';
+  attemptsMade: Scalars['Float'];
+  data?: Maybe<Scalars['JSON']>;
+  failedReason?: Maybe<Scalars['String']>;
+  finishedOn?: Maybe<Scalars['Float']>;
+  id: Scalars['String'];
+  logs?: Maybe<Array<Scalars['String']>>;
+  name: Scalars['String'];
+  processedOn?: Maybe<Scalars['Float']>;
+  returnValue?: Maybe<Scalars['JSON']>;
+  stackTrace?: Maybe<Array<Scalars['String']>>;
+  state: JobState;
+  timestamp?: Maybe<Scalars['Float']>;
+};
+
+export type QueueJobsResponse = {
+  __typename?: 'QueueJobsResponse';
+  count: Scalars['Float'];
+  hasMore: Scalars['Boolean'];
+  jobs: Array<QueueJob>;
+  retentionConfig: QueueRetentionConfig;
+  totalCount: Scalars['Float'];
 };
 
 export type QueueMetricsData = {
@@ -3370,6 +3435,14 @@ export enum QueueMetricsTimeRange {
   SevenDays = 'SevenDays',
   TwelveHours = 'TwelveHours'
 }
+
+export type QueueRetentionConfig = {
+  __typename?: 'QueueRetentionConfig';
+  completedMaxAge: Scalars['Float'];
+  completedMaxCount: Scalars['Float'];
+  failedMaxAge: Scalars['Float'];
+  failedMaxCount: Scalars['Float'];
+};
 
 export type Relation = {
   __typename?: 'Relation';
@@ -3424,7 +3497,13 @@ export type ResendEmailVerificationTokenOutput = {
   success: Scalars['Boolean'];
 };
 
-export type RevokeApiKeyDto = {
+export type RetryJobsResponse = {
+  __typename?: 'RetryJobsResponse';
+  results: Array<JobOperationResult>;
+  retriedCount: Scalars['Int'];
+};
+
+export type RevokeApiKeyInput = {
   id: Scalars['UUID'];
 };
 
@@ -3474,6 +3553,11 @@ export type RunWorkflowVersionInput = {
   workflowRunId?: InputMaybe<Scalars['UUID']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['UUID'];
+};
+
+export type RunWorkflowVersionOutput = {
+  __typename?: 'RunWorkflowVersionOutput';
+  workflowRunId: Scalars['UUID'];
 };
 
 export type SsoConnection = {
@@ -3624,8 +3708,8 @@ export type SignUpOutput = {
   workspace: WorkspaceUrlsAndId;
 };
 
-export type SignedFileDto = {
-  __typename?: 'SignedFileDTO';
+export type SignedFile = {
+  __typename?: 'SignedFile';
   path: Scalars['String'];
   token: Scalars['String'];
 };
@@ -3649,7 +3733,7 @@ export type SubmitFormStepInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  onDbEvent: OnDbEventDto;
+  onDbEvent: OnDbEvent;
 };
 
 
@@ -3760,8 +3844,8 @@ export type TimelineThreadsWithTotal = {
   totalNumberOfThreads: Scalars['Int'];
 };
 
-export type TransientToken = {
-  __typename?: 'TransientToken';
+export type TransientTokenOutput = {
+  __typename?: 'TransientTokenOutput';
   transientToken: AuthToken;
 };
 
@@ -3813,7 +3897,7 @@ export type UpdateAgentInput = {
   roleId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type UpdateApiKeyDto = {
+export type UpdateApiKeyInput = {
   expiresAt?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
@@ -4055,7 +4139,7 @@ export type UpdateViewSortInput = {
   viewId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type UpdateWebhookDto = {
+export type UpdateWebhookInput = {
   description?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   operations?: InputMaybe<Array<Scalars['String']>>;
@@ -4096,6 +4180,7 @@ export type UpdateWorkspaceInput = {
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
   logo?: InputMaybe<Scalars['String']>;
+  routerModel?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
 };
@@ -4193,8 +4278,8 @@ export type ValidateApprovedAccessDomainInput = {
   validationToken: Scalars['String'];
 };
 
-export type ValidatePasswordResetToken = {
-  __typename?: 'ValidatePasswordResetToken';
+export type ValidatePasswordResetTokenOutput = {
+  __typename?: 'ValidatePasswordResetTokenOutput';
   email: Scalars['String'];
   id: Scalars['UUID'];
 };
@@ -4283,12 +4368,19 @@ export type Webhook = {
   workspaceId: Scalars['UUID'];
 };
 
-export type WidgetConfiguration = BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | NumberChartConfiguration | PieChartConfiguration;
+export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | GaugeChartConfiguration | IframeConfiguration | LineChartConfiguration | PieChartConfiguration;
 
 export enum WidgetType {
+  CALENDAR = 'CALENDAR',
+  EMAILS = 'EMAILS',
   FIELDS = 'FIELDS',
+  FILES = 'FILES',
   GRAPH = 'GRAPH',
   IFRAME = 'IFRAME',
+  NOTES = 'NOTES',
+  RICH_TEXT = 'RICH_TEXT',
+  TASKS = 'TASKS',
+  TIMELINE = 'TIMELINE',
   VIEW = 'VIEW'
 }
 
@@ -4311,14 +4403,43 @@ export type WorkflowAction = {
   nextStepIds?: Maybe<Array<Scalars['UUID']>>;
   position?: Maybe<WorkflowStepPosition>;
   settings: Scalars['JSON'];
-  type: Scalars['String'];
+  type: WorkflowActionType;
   valid: Scalars['Boolean'];
 };
 
+export enum WorkflowActionType {
+  AI_AGENT = 'AI_AGENT',
+  CODE = 'CODE',
+  CREATE_RECORD = 'CREATE_RECORD',
+  DELAY = 'DELAY',
+  DELETE_RECORD = 'DELETE_RECORD',
+  EMPTY = 'EMPTY',
+  FILTER = 'FILTER',
+  FIND_RECORDS = 'FIND_RECORDS',
+  FORM = 'FORM',
+  HTTP_REQUEST = 'HTTP_REQUEST',
+  ITERATOR = 'ITERATOR',
+  SEND_EMAIL = 'SEND_EMAIL',
+  UPDATE_RECORD = 'UPDATE_RECORD',
+  UPSERT_RECORD = 'UPSERT_RECORD'
+}
+
 export type WorkflowRun = {
   __typename?: 'WorkflowRun';
-  workflowRunId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  status: WorkflowRunStatusEnum;
 };
+
+/** Status of the workflow run */
+export enum WorkflowRunStatusEnum {
+  COMPLETED = 'COMPLETED',
+  ENQUEUED = 'ENQUEUED',
+  FAILED = 'FAILED',
+  NOT_STARTED = 'NOT_STARTED',
+  RUNNING = 'RUNNING',
+  STOPPED = 'STOPPED',
+  STOPPING = 'STOPPING'
+}
 
 export type WorkflowStepPosition = {
   __typename?: 'WorkflowStepPosition';
@@ -4366,7 +4487,6 @@ export type Workspace = {
   customDomain?: Maybe<Scalars['String']>;
   databaseSchema: Scalars['String'];
   databaseUrl: Scalars['String'];
-  defaultAgent?: Maybe<Agent>;
   defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
@@ -4382,6 +4502,7 @@ export type Workspace = {
   isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
+  routerModel: Scalars['String'];
   subdomain: Scalars['String'];
   trashRetentionDays: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
@@ -4431,8 +4552,8 @@ export type WorkspaceInvitation = {
   id: Scalars['UUID'];
 };
 
-export type WorkspaceInviteHashValid = {
-  __typename?: 'WorkspaceInviteHashValid';
+export type WorkspaceInviteHashValidOutput = {
+  __typename?: 'WorkspaceInviteHashValidOutput';
   isValid: Scalars['Boolean'];
 };
 
@@ -4507,7 +4628,7 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
-export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel?: boolean | null, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupBySubFieldName?: string | null, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | null };
+export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'AggregateChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, description?: string | null, filter?: any | null } | { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | null };
 
 export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
   id: Scalars['String'];
@@ -4515,14 +4636,14 @@ export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'NumberChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, displayDataLabel?: boolean | null, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: ExtendedAggregateOperations, groupBySubFieldName?: string | null, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | null }> | null }> | null } };
+export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, configuration?: { __typename?: 'AggregateChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, description?: string | null, filter?: any | null } | { __typename?: 'BarChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null } | { __typename?: 'GaugeChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'IframeConfiguration', url: string } | { __typename?: 'LineChartConfiguration', graphType: GraphType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisOrderBy?: GraphOrderBy | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null } | { __typename?: 'PieChartConfiguration', graphType: GraphType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, orderBy?: GraphOrderBy | null, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null } | null }> | null }> | null } };
 
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;
 }>;
 
 
-export type OnDbEventSubscription = { __typename?: 'Subscription', onDbEvent: { __typename?: 'OnDbEventDTO', eventDate: string, action: DatabaseEventAction, objectNameSingular: string, updatedFields?: Array<string> | null, record: any } };
+export type OnDbEventSubscription = { __typename?: 'Subscription', onDbEvent: { __typename?: 'OnDbEvent', eventDate: string, action: DatabaseEventAction, objectNameSingular: string, updatedFields?: Array<string> | null, record: any } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
 
@@ -4863,7 +4984,7 @@ export const PageLayoutWidgetFragmentFragmentDoc = gql`
       description
       filter
     }
-    ... on NumberChartConfiguration {
+    ... on AggregateChartConfiguration {
       graphType
       aggregateFieldMetadataId
       aggregateOperation

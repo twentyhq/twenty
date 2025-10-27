@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
@@ -118,6 +118,10 @@ export class FlatViewFieldValidatorService {
   public validateFlatViewFieldDeletion({
     flatEntityToValidate: { id: viewFieldIdToDelete },
     optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
+    dependencyOptimisticFlatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<FlatViewField> {
@@ -138,14 +142,37 @@ export class FlatViewFieldValidatorService {
         message: t`View field to delete not found`,
         userFriendlyMessage: msg`View field to delete not found`,
       });
-    } else {
-      if (!isDefined(existingFlatViewField.deletedAt)) {
-        validationResult.errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`View field to delete has not been soft deleted`,
-          userFriendlyMessage: msg`View field to delete has not been soft deleted`,
-        });
-      }
+
+      return validationResult;
+    }
+
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: existingFlatViewField.fieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(flatFieldMetadata)) {
+      return validationResult;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatFieldMetadata.objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      return validationResult;
+    }
+
+    if (
+      flatObjectMetadata.labelIdentifierFieldMetadataId ===
+      existingFlatViewField.fieldMetadataId
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Label identifier view field cannot be deleted`,
+        userFriendlyMessage: msg`Label identifier view field cannot be deleted`,
+      });
     }
 
     return validationResult;

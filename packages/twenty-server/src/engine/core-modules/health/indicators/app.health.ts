@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { HealthStateManager } from 'src/engine/core-modules/health/utils/health-state-manager.util';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 
 @Injectable()
@@ -17,8 +17,8 @@ export class AppHealthIndicator {
 
   constructor(
     private readonly healthIndicatorService: HealthIndicatorService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
 

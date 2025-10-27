@@ -30,7 +30,7 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [CommandMenuPages.ViewCalendarEvent, <CommandMenuCalendarEventPage />],
   [CommandMenuPages.EditRichText, <CommandMenuEditRichTextPage />],
   [
-    CommandMenuPages.WorkflowStepSelectTriggerType,
+    CommandMenuPages.WorkflowTriggerSelectType,
     <CommandMenuWorkflowSelectTriggerType />,
   ],
   [CommandMenuPages.WorkflowStepCreate, <CommandMenuWorkflowCreateStep />],

@@ -60,22 +60,6 @@ export class UpsertTimelineActivityFromInternalEvent {
       }
     }
 
-    const formattedEvents = workspaceEventBatch.events.map((event) => {
-      if ('diff' in event.properties && event.properties.diff) {
-        return {
-          ...event,
-          properties: {
-            diff: event.properties.diff,
-          },
-        };
-      }
-
-      return event;
-    });
-
-    await this.timelineActivityService.upsertEvents({
-      ...workspaceEventBatch,
-      events: formattedEvents,
-    });
+    await this.timelineActivityService.upsertEvents(workspaceEventBatch);
   }
 }

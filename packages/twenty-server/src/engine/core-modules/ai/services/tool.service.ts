@@ -6,17 +6,19 @@ import { CreateRecordService } from 'src/engine/core-modules/record-crud/service
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
-import {
-  generateBulkDeleteToolSchema,
-  generateFindOneToolSchema,
-  generateFindToolSchema,
-  generateSoftDeleteToolSchema,
-  getRecordInputSchema,
-} from 'src/engine/metadata-modules/agent/utils/agent-tool-schema.utils';
+import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
+import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
+import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
+import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
+import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
+import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
 import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 
 @Injectable()
 export class ToolService {
@@ -30,7 +32,11 @@ export class ToolService {
     private readonly findRecordsService: FindRecordsService,
   ) {}
 
-  async listTools(roleId: string, workspaceId: string): Promise<ToolSet> {
+  async listTools(
+    rolePermissionConfig: RolePermissionConfig,
+    workspaceId: string,
+    actorContext?: ActorMetadata,
+  ): Promise<ToolSet> {
     const tools: ToolSet = {};
 
     const { data: rolesPermissions } =
@@ -38,7 +44,29 @@ export class ToolService {
         workspaceId,
       });
 
-    const objectPermissions = rolesPermissions[roleId];
+    let objectPermissions;
+
+    if ('unionOf' in rolePermissionConfig) {
+      if (rolePermissionConfig.unionOf.length === 1) {
+        objectPermissions = rolesPermissions[rolePermissionConfig.unionOf[0]];
+      } else {
+        // TODO: Implement union logic for multiple roles
+        throw new Error(
+          'Union permission logic for multiple roles not yet implemented',
+        );
+      }
+    } else if ('intersectionOf' in rolePermissionConfig) {
+      const allRolePermissions = rolePermissionConfig.intersectionOf.map(
+        (roleId: string) => rolesPermissions[roleId],
+      );
+
+      objectPermissions =
+        allRolePermissions.length === 1
+          ? allRolePermissions[0]
+          : computePermissionIntersection(allRolePermissions);
+    } else {
+      return tools;
+    }
 
     const allObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
@@ -60,80 +88,99 @@ export class ToolService {
         return;
       }
 
-      if (objectPermission.canUpdate) {
+      const restrictedFields = objectPermission.restrictedFields;
+
+      if (objectPermission.canUpdateObjectRecords) {
         tools[`create_${objectMetadata.nameSingular}`] = {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
-          inputSchema: getRecordInputSchema(objectMetadata),
+          inputSchema: generateCreateRecordInputSchema(
+            objectMetadata,
+            restrictedFields,
+          ),
           execute: async (parameters) => {
             return this.createRecordService.execute({
               objectName: objectMetadata.nameSingular,
               objectRecord: parameters.input,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
+              createdBy: actorContext,
             });
           },
         };
 
         tools[`update_${objectMetadata.nameSingular}`] = {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
-          inputSchema: getRecordInputSchema(objectMetadata),
+          inputSchema: generateUpdateRecordInputSchema(
+            objectMetadata,
+            restrictedFields,
+          ),
           execute: async (parameters) => {
-            const { id, ...objectRecord } = parameters.input;
+            const { id, ...allFields } = parameters.input;
+
+            const objectRecord = Object.fromEntries(
+              Object.entries(allFields).filter(
+                ([, value]) => value !== undefined,
+              ),
+            );
 
             return this.updateRecordService.execute({
               objectName: objectMetadata.nameSingular,
               objectRecordId: id,
               objectRecord,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
             });
           },
         };
       }
 
-      if (objectPermission.canRead) {
+      if (objectPermission.canReadObjectRecords) {
         tools[`find_${objectMetadata.nameSingular}`] = {
-          description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination. Returns an array of matching records with their full data.`,
-          inputSchema: generateFindToolSchema(objectMetadata),
+          description: `Search for ${objectMetadata.labelSingular} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Returns an array of matching records with their full data.`,
+          inputSchema: generateFindToolInputSchema(
+            objectMetadata,
+            restrictedFields,
+          ),
           execute: async (parameters) => {
-            const { limit, offset, ...filter } = parameters.input;
+            const { limit, offset, orderBy, ...filter } = parameters.input;
 
             return this.findRecordsService.execute({
               objectName: objectMetadata.nameSingular,
               filter,
+              orderBy,
               limit,
               offset,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
             });
           },
         };
 
         tools[`find_one_${objectMetadata.nameSingular}`] = {
           description: `Retrieve a single ${objectMetadata.labelSingular} record by its unique ID. Use this when you know the exact record ID and need the complete record data. Returns the full record or an error if not found.`,
-          inputSchema: generateFindOneToolSchema(),
+          inputSchema: FindOneToolInputSchema,
           execute: async (parameters) => {
             return this.findRecordsService.execute({
               objectName: objectMetadata.nameSingular,
               filter: { id: { eq: parameters.input.id } },
               limit: 1,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
             });
           },
         };
       }
 
-      if (objectPermission.canSoftDelete) {
+      if (objectPermission.canSoftDeleteObjectRecords) {
         tools[`soft_delete_${objectMetadata.nameSingular}`] = {
           description: `Soft delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record remains in the database but is hidden from normal queries. This is reversible and preserves all data. Use this for temporary removal.`,
-          inputSchema: generateSoftDeleteToolSchema(),
+          inputSchema: SoftDeleteToolInputSchema,
           execute: async (parameters) => {
             return this.deleteRecordService.execute({
               objectName: objectMetadata.nameSingular,
               objectRecordId: parameters.input.id,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
               soft: true,
             });
           },
@@ -141,13 +188,13 @@ export class ToolService {
 
         tools[`soft_delete_many_${objectMetadata.nameSingular}`] = {
           description: `Soft delete multiple ${objectMetadata.labelSingular} records at once by providing an array of record IDs. All records are marked as deleted but remain in the database. This is efficient for bulk operations and preserves all data.`,
-          inputSchema: generateBulkDeleteToolSchema(),
+          inputSchema: BulkDeleteToolInputSchema,
           execute: async (parameters) => {
             return this.softDeleteManyRecords(
               objectMetadata.nameSingular,
               parameters.input,
               workspaceId,
-              roleId,
+              rolePermissionConfig,
             );
           },
         };
@@ -161,14 +208,14 @@ export class ToolService {
     objectName: string,
     parameters: Record<string, unknown>,
     workspaceId: string,
-    roleId: string,
+    rolePermissionConfig: RolePermissionConfig,
   ) {
     try {
       const repository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
           objectName,
-          { roleId },
+          rolePermissionConfig,
         );
 
       const { filter } = parameters;
