@@ -23,7 +23,7 @@ export const formatResultWithGroupByDimensionValues = async ({
   groupsResult: Record<string, unknown>[];
   groupByDefinitions: GroupByDefinition[];
   aggregateFieldNames: string[];
-  processRecord: (record: ObjectRecord) => Promise<ObjectRecord>;
+  processRecord?: (record: ObjectRecord) => Promise<ObjectRecord>;
   recordsResult?: Array<Record<string, unknown>>;
   objectMetadataItemWithFieldMaps?: ObjectMetadataItemWithFieldMaps;
   objectMetadataMaps?: ObjectMetadataMaps;
@@ -38,6 +38,12 @@ export const formatResultWithGroupByDimensionValues = async ({
       !isDefined(objectMetadataMaps)
     ) {
       throw new Error('Metadata are required to format result');
+    }
+
+    if (!isDefined(processRecord)) {
+      throw new Error(
+        'Process record is required to format results including records',
+      );
     }
 
     for (const entry of recordsResult) {
