@@ -1263,6 +1263,26 @@ export class ConfigVariables {
   GOOGLE_MAP_API_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    isSensitive: true,
+    description: 'Mintlify API key for documentation search',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MINTLIFY_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    isSensitive: true,
+    description: 'Mintlify subdomain for documentation search',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MINTLIFY_SUBDOMAIN: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description: 'AWS region',
     type: ConfigVariableType.STRING,
