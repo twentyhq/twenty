@@ -34,7 +34,12 @@ export const useLineChartData = ({
   const dataMap = Object.fromEntries(data.map((series) => [series.id, series]));
   const enrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
     return data.map((series, index) => {
-      const colorScheme = getColorScheme(colorRegistry, series.color, index);
+      const colorScheme = getColorScheme({
+        registry: colorRegistry,
+        colorName: series.color,
+        fallbackIndex: index,
+        totalGroups: data.length,
+      });
       const shouldEnableArea = series.enableArea ?? enableArea;
       const gradientId = `lineGradient-${id}-${instanceId}-${series.id}-${index}`;
 

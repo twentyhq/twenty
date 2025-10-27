@@ -1,12 +1,12 @@
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
-import { useMemo } from 'react';
 import { calculatePieChartAngles } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/calculatePieChartAngles';
 import { calculatePieChartPercentage } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/calculatePieChartPercentage';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { type DatumId } from '@nivo/pie';
+import { useMemo } from 'react';
 
 type UsePieChartDataProps = {
   data: PieChartDataItem[];
@@ -26,7 +26,13 @@ export const usePieChartData = ({
 
     let cumulativeAngle = 0;
     return data.map((item, index) => {
-      const colorScheme = getColorScheme(colorRegistry, item.color, index);
+      const colorScheme = getColorScheme({
+        registry: colorRegistry,
+        colorName: item.color,
+        fallbackIndex: index,
+        totalGroups: data.length,
+      });
+
       const isHovered = hoveredSliceId === item.id;
       const gradientId = `${colorScheme.name}Gradient-${id}-${index}`;
       const percentage = calculatePieChartPercentage(item.value, totalValue);
