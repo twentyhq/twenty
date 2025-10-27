@@ -61,7 +61,7 @@ export const buildColumnsToSelect = ({
     fieldsToSelect[columnName] = true;
   }
 
-  const { id, ...fieldsToSelectWithoutId } = fieldsToSelect;
+  const { id: _, ...fieldsToSelectWithoutId } = fieldsToSelect;
 
   return fieldsToSelectWithoutId;
 };

@@ -14,9 +14,12 @@ export class RedisFieldSqlFactory {
     },
   ) {
     const joinOn = `"${options.cteName}"."${options.idColumnName}"::uuid = ${tableAlias}.id::uuid`;
-    const selectExpr = `to_timestamp("${options.cteName}"."${options.valueColumnName}" / 1000)::timestamptz`;
+    const selectExpr = `"${options.cteName}"."${options.valueColumnName}"`;
     const values = entries
-      .map(({ id, score }) => `('${id}', ${Number(score) || 0})`)
+      .map(
+        ({ id, score }) =>
+          `('${id}', to_timestamp(${Number(score) || 0} / 1000)::timestamptz)`,
+      )
       .join(', ');
 
     return {

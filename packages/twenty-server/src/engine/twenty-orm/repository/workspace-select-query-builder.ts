@@ -7,8 +7,9 @@ import {
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { type QueryBuilderCteOptions } from 'typeorm/query-builder/QueryBuilderCte';
-import { isDefined } from 'twenty-shared/utils';
 import { DriverUtils } from 'typeorm/driver/DriverUtils';
+import { isDefined } from 'twenty-shared/utils';
+import { type SelectQuery } from 'typeorm/query-builder/SelectQuery';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -135,6 +136,10 @@ export class WorkspaceSelectQueryBuilder<
             (s) => s.selection === columnName || s.aliasName === columnName,
           );
 
+          if (columnName.startsWith(EXTERNAL_STORAGE_ALIAS)) {
+            return this.escape(columnName) + ' ' + orderValue;
+          }
+
           if (
             selection &&
             !selection.aliasName &&
@@ -162,12 +167,6 @@ export class WorkspaceSelectQueryBuilder<
                 return this.escape(orderAlias) + ' ' + orderValue;
               }
             }
-          }
-
-          // add this condition to use alias when it's possible
-          // For external_ field it's necessary to use alias
-          if (selection && selection.aliasName) {
-            return this.escape(selection.aliasName) + ' ' + orderValue;
           }
 
           return columnName + ' ' + orderValue;
@@ -249,9 +248,10 @@ export class WorkspaceSelectQueryBuilder<
 
         for (const [key, value] of Object.entries(rawRow)) {
           if (key === pkName) continue;
-          if (key.startsWith(EXTERNAL_STORAGE_ALIAS)) {
-            // @ts-expect-error - TS2339: Property 'external_' does not exist on type 'T'.
-            entity[key.replace(EXTERNAL_STORAGE_ALIAS, '')] = value;
+          if (isDefined(entity) && key.startsWith(EXTERNAL_STORAGE_ALIAS)) {
+            entity[
+              key.replace(EXTERNAL_STORAGE_ALIAS, '') as keyof typeof entity
+            ] = value;
           }
         }
       }
@@ -434,21 +434,30 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   override setFindOptions(findOptions: FindManyOptions<T>) {
-    if (!findOptions.select) {
-      const mainAlias = this.expressionMap.mainAlias;
+    const previousSelects = this.expressionMap.selects.map((s) => ({ ...s }));
 
-      if (mainAlias) {
-        mainAlias.metadata.columns.forEach((column) => {
-          this.addSelect(`${this.alias}.${column.propertyName}`);
-        });
-      }
-    } else {
-      Object.entries(findOptions.select).forEach(([key, value]) => {
-        if (value === true) {
-          this.addSelect(`${this.alias}.${key}`);
-        }
-      });
+    const previousParams = { ...this.getParameters() };
+
+    if (!findOptions.select) {
+      return super.setFindOptions(findOptions);
     }
+
+    super.setFindOptions(findOptions);
+
+    const dedupeFn = (s: SelectQuery) => `${s.selection}||${s.aliasName ?? ''}`;
+
+    const existingKeys = new Set(this.expressionMap.selects.map(dedupeFn));
+
+    for (const sel of previousSelects) {
+      const key = dedupeFn(sel);
+
+      if (!existingKeys.has(dedupeFn(sel))) {
+        this.addSelect(sel.selection, sel.aliasName);
+        existingKeys.add(key);
+      }
+    }
+
+    this.setParameters({ ...previousParams, ...this.getParameters() });
 
     return this;
   }

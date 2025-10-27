@@ -1,4 +1,4 @@
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type WhereExpressionBuilder } from 'typeorm';
 
 import {
@@ -61,11 +61,17 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
+    const selector =
+      isDefined(fieldMetadata.storage) && fieldMetadata.storage !== 'postgres'
+        ? `${fieldMetadata.name}`
+        : undefined;
+
     const { sql, params } = computeWhereConditionParts({
       operator,
       objectNameSingular,
       key,
       value,
+      selector,
     });
 
     if (isFirst) {

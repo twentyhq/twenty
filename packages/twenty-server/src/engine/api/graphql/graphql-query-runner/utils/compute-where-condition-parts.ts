@@ -16,84 +16,88 @@ export const computeWhereConditionParts = ({
   objectNameSingular,
   key,
   value,
+  selector,
 }: {
   operator: string;
   objectNameSingular: string;
   key: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
+  selector?: string; // Optional fully-qualified or aliased column identifier (quoted without dot)
 }): WhereConditionParts => {
   const uuid = Math.random().toString(36).slice(2, 7);
+
+  const base = selector ? `"${selector}"` : `"${objectNameSingular}"."${key}"`;
 
   switch (operator) {
     case 'isEmptyArray':
       return {
-        sql: `"${objectNameSingular}"."${key}" = '{}'`,
+        sql: `${base} = '{}'`,
         params: {},
       };
     case 'eq':
       return {
-        sql: `"${objectNameSingular}"."${key}" = :${key}${uuid}`,
+        sql: `${base} = :${key}${uuid}`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'neq':
       return {
-        sql: `"${objectNameSingular}"."${key}" != :${key}${uuid}`,
+        sql: `${base} != :${key}${uuid}`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'gt':
       return {
-        sql: `"${objectNameSingular}"."${key}" > :${key}${uuid}`,
+        sql: `${base} > :${key}${uuid}`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'gte':
       return {
-        sql: `"${objectNameSingular}"."${key}" >= :${key}${uuid}`,
+        sql: `${base} >= :${key}${uuid}`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'lt':
       return {
-        sql: `"${objectNameSingular}"."${key}" < :${key}${uuid}`,
+        sql: `${base} < :${key}${uuid}`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'lte':
       return {
-        sql: `"${objectNameSingular}"."${key}" <= :${key}${uuid}`,
+        sql: `${base} <= :${key}${uuid}`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'in':
       return {
-        sql: `"${objectNameSingular}"."${key}" IN (:...${key}${uuid})`,
+        sql: `${base} IN (:...${key}${uuid})`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'is':
       return {
-        sql: `"${objectNameSingular}"."${key}" IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
+        sql: `${base} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,
         params: {},
       };
     case 'like':
       return {
-        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
+        sql: `${base}::text LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'ilike':
       return {
-        sql: `"${objectNameSingular}"."${key}"::text ILIKE :${key}${uuid}`,
+        sql: `${base}::text ILIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'startsWith':
       return {
-        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
+        sql: `${base}::text LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'endsWith':
       return {
-        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
+        sql: `${base}::text LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'contains':
       return {
-        sql: `"${objectNameSingular}"."${key}" @> ARRAY[:...${key}${uuid}]`,
+        sql: `${base} @> ARRAY[:...${key}${uuid}]`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'search': {
@@ -101,8 +105,8 @@ export const computeWhereConditionParts = ({
 
       return {
         sql: `(
-          "${objectNameSingular}"."${key}" @@ to_tsquery('simple', public.unaccent_immutable(:${key}${uuid}Ts)) OR
-          public.unaccent_immutable("${objectNameSingular}"."${key}"::text) ILIKE public.unaccent_immutable(:${key}${uuid}Like)
+          ${base} @@ to_tsquery('simple', public.unaccent_immutable(:${key}${uuid}Ts)) OR
+          public.unaccent_immutable(${base}::text) ILIKE public.unaccent_immutable(:${key}${uuid}Like)
         )`,
         params: {
           [`${key}${uuid}Ts`]: tsQuery,
@@ -112,17 +116,17 @@ export const computeWhereConditionParts = ({
     }
     case 'notContains':
       return {
-        sql: `NOT ("${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[])`,
+        sql: `NOT (${base}::text[] && ARRAY[:...${key}${uuid}]::text[])`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'containsAny':
       return {
-        sql: `"${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[]`,
+        sql: `${base}::text[] && ARRAY[:...${key}${uuid}]::text[]`,
         params: { [`${key}${uuid}`]: value },
       };
     case 'containsIlike':
       return {
-        sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
+        sql: `EXISTS (SELECT 1 FROM unnest(${base}) AS elem WHERE elem ILIKE :${key}${uuid})`,
         params: { [`${key}${uuid}`]: value },
       };
     default:

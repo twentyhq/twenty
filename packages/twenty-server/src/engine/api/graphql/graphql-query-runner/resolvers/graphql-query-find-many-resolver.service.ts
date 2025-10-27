@@ -151,11 +151,10 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       queryBuilder.skip(executionArgs.args.offset);
     }
 
-    queryBuilder.setFindOptions({
-      select: columnsToSelect,
-    });
-
     const objectRecords = (await queryBuilder
+      .setFindOptions({
+        select: columnsToSelect,
+      })
       .take(limit + 1)
       .getMany()) as ObjectRecord[];
 

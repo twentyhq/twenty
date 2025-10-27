@@ -45,6 +45,7 @@ export type FieldMetadataRelationSettings = {
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
 };
+
 export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
 };
