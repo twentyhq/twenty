@@ -40,6 +40,8 @@ describe('basic group-by with records', () => {
   const testOpportunityId4 = randomUUID();
   const testCompanyId1 = randomUUID();
   const testCompanyId2 = randomUUID();
+  const COMPANY_1_EMPLOYEES = 10;
+  const COMPANY_2_EMPLOYEES = 20;
 
   beforeAll(async () => {
     //   Create test companies
@@ -50,7 +52,8 @@ describe('basic group-by with records', () => {
         data: {
           id: testCompanyId1,
           name: 'Company 1',
-          employees: 10,
+          employees: COMPANY_1_EMPLOYEES,
+          createdAt: '2020-02-05T08:00:00.000Z',
         },
       }),
     );
@@ -62,7 +65,8 @@ describe('basic group-by with records', () => {
         data: {
           id: testCompanyId2,
           name: 'Company 2',
-          employees: 20,
+          employees: COMPANY_2_EMPLOYEES,
+          createdAt: '2020-02-05T08:00:00.000Z',
         },
       }),
     );
@@ -182,6 +186,10 @@ describe('basic group-by with records', () => {
                 amount {
                   amountMicros
                 }
+                company {
+                  id
+                  employees
+                }
               }
             }
           }
@@ -243,14 +251,23 @@ describe('basic group-by with records', () => {
     expect(thursdayNewGroup).toBeDefined();
     expect(thursdayNewGroup.edges).toHaveLength(2);
     expect(thursdayNewGroup.sumAmountAmountMicros).toBe(5000000000000);
-    for (const edge of thursdayNewGroup.edges) {
-      expect(edge.node.stage).toBe('NEW');
-      expect(edge.node.name).toBeDefined();
-      expect(
-        edge.node.name === 'Opportunity 2' ||
-          edge.node.name === 'Opportunity 3',
-      ).toBe(true);
-    }
+    const opportunity2Edge = thursdayNewGroup.edges.find(
+      (edge: any) => edge.node.name === 'Opportunity 2',
+    ).node;
+    const opportunity3Edge = thursdayNewGroup.edges.find(
+      (edge: any) => edge.node.name === 'Opportunity 3',
+    ).node;
+
+    expect(opportunity2Edge.amount.amountMicros).toBe(2000000000000);
+    expect(opportunity2Edge.stage).toBe('NEW');
+    expect(opportunity2Edge.name).toBe('Opportunity 2');
+    expect(opportunity2Edge.company.id).toBe(testCompanyId1);
+    expect(opportunity2Edge.company.employees).toBe(COMPANY_1_EMPLOYEES);
+    expect(opportunity3Edge.amount.amountMicros).toBe(3000000000000);
+    expect(opportunity3Edge.stage).toBe('NEW');
+    expect(opportunity3Edge.name).toBe('Opportunity 3');
+    expect(opportunity3Edge.company.id).toBe(testCompanyId2);
+    expect(opportunity3Edge.company.employees).toBe(COMPANY_2_EMPLOYEES);
 
     const thursdayScreeningGroup = groups.find(
       (group: any) =>
@@ -260,11 +277,13 @@ describe('basic group-by with records', () => {
 
     expect(thursdayScreeningGroup).toBeDefined();
     expect(thursdayScreeningGroup.edges).toHaveLength(1);
-    expect(thursdayScreeningGroup.edges[0].node.amount.amountMicros).toBe(
-      4000000000000,
-    );
-    expect(thursdayScreeningGroup.edges[0].node.stage).toBe('SCREENING');
-    expect(thursdayScreeningGroup.edges[0].node.name).toBe('Opportunity 4');
+    const opportunity4Edge = thursdayScreeningGroup.edges[0].node;
+
+    expect(opportunity4Edge.amount.amountMicros).toBe(4000000000000);
+    expect(opportunity4Edge.stage).toBe('SCREENING');
+    expect(opportunity4Edge.name).toBe('Opportunity 4');
+    expect(opportunity4Edge.company.id).toBe(testCompanyId2);
+    expect(opportunity4Edge.company.employees).toBe(COMPANY_2_EMPLOYEES);
     expect(thursdayScreeningGroup.sumAmountAmountMicros).toBe(4000000000000);
   });
 
@@ -348,5 +367,94 @@ describe('basic group-by with records', () => {
     expect(thursdayNewGroup.groupByDimensionValues).toContain('NEW');
     expect(thursdayNewGroup.groupByDimensionValues).toContain('Thursday');
     expect(thursdayNewGroup.edges).toHaveLength(2);
+  });
+
+  it('groups companies by employees with relations', async () => {
+    const response = await makeGraphqlAPIRequest({
+      query: gql`
+        query CompaniesGroupBy(
+          $groupBy: [CompanyGroupByInput!]
+          $filter: CompanyFilterInput
+        ) {
+          companiesGroupBy(groupBy: $groupBy, filter: $filter) {
+            groupByDimensionValues
+            __typename
+            edges {
+              node {
+                name
+                opportunities {
+                  edges {
+                    node {
+                      name
+                      stage
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        groupBy: [
+          {
+            employees: true,
+          },
+        ],
+        filter: FILTER_2020,
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data).toBeDefined();
+
+    const groups = response.body.data.companiesGroupBy;
+
+    expect(groups).toHaveLength(2);
+    const company1Group = groups.find((group: any) =>
+      group.groupByDimensionValues.includes(COMPANY_1_EMPLOYEES),
+    );
+
+    expect(company1Group).toBeDefined();
+    expect(company1Group.edges).toHaveLength(1);
+    expect(company1Group.edges[0].node.name).toBe('Company 1');
+    expect(company1Group.edges[0].node.opportunities.edges).toHaveLength(2);
+    const opportunity1Edge =
+      company1Group.edges[0].node.opportunities.edges.find(
+        (edge: any) => edge.node.name === 'Opportunity 1',
+      ).node;
+
+    expect(opportunity1Edge.name).toBe('Opportunity 1');
+    expect(opportunity1Edge.stage).toBe('NEW');
+    const opportunity2Edge =
+      company1Group.edges[0].node.opportunities.edges.find(
+        (edge: any) => edge.node.name === 'Opportunity 2',
+      ).node;
+
+    expect(opportunity2Edge.name).toBe('Opportunity 2');
+    expect(opportunity2Edge.stage).toBe('NEW');
+
+    const company2Group = groups.find((group: any) =>
+      group.groupByDimensionValues.includes(COMPANY_2_EMPLOYEES),
+    );
+
+    expect(company2Group).toBeDefined();
+    expect(company2Group.edges).toHaveLength(1);
+    expect(company2Group.edges[0].node.name).toBe('Company 2');
+    expect(company2Group.edges[0].node.opportunities.edges).toHaveLength(2);
+    const opportunity3Edge =
+      company2Group.edges[0].node.opportunities.edges.find(
+        (edge: any) => edge.node.name === 'Opportunity 3',
+      ).node;
+
+    expect(opportunity3Edge.name).toBe('Opportunity 3');
+    expect(opportunity3Edge.stage).toBe('NEW');
+    const opportunity4Edge =
+      company2Group.edges[0].node.opportunities.edges.find(
+        (edge: any) => edge.node.name === 'Opportunity 4',
+      ).node;
+
+    expect(opportunity4Edge.name).toBe('Opportunity 4');
+    expect(opportunity4Edge.stage).toBe('SCREENING');
   });
 });
