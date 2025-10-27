@@ -57,18 +57,15 @@ describe('Core REST API Find One endpoint', () => {
       });
   });
 
-  it('should return 400 error when trying to retrieve a non-existing person', async () => {
-    await makeRestAPIRequest({
+  it('should return 404 error when trying to retrieve a non-existing person', async () => {
+    const response = await makeRestAPIRequest({
       method: 'get',
       path: `/people/${NOT_EXISTING_TEST_PERSON_ID}`,
-    })
-      //TODO : Refacto-common - This should be a 404
-      .expect(400)
-      .expect((res) => {
-        expect(res.body.messages[0]).toContain('Record not found');
-        //TODO : Refacto-common - This should be a NotFoundException
-        expect(res.body.error).toBe('BadRequestException');
-      });
+    });
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('NotFoundException');
+    expect(response.body.messages[0]).toBe('Record not found');
   });
 
   it('should return 400 error when trying to retrieve with malformed uuid', async () => {
