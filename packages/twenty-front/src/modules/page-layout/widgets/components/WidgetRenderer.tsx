@@ -71,16 +71,16 @@ export const WidgetRenderer = ({
         context={context}
         hasAccess={hasAccess}
         isEditing={isEditing}
-      />
-      <WidgetCardContent context={context}>
-        {!hasAccess ? (
+        showForbiddenDisplay={!hasAccess}
+        forbiddenDisplay={
           <PageLayoutWidgetForbiddenDisplay
             widgetId={widget.id}
             restriction={restriction}
           />
-        ) : (
-          <WidgetContentRenderer widget={widget} />
-        )}
+        }
+      />
+      <WidgetCardContent context={context}>
+        {hasAccess ? <WidgetContentRenderer widget={widget} /> : null}
       </WidgetCardContent>
     </WidgetCard>
   );

@@ -158,7 +158,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
               ) : undefined
             }
             resizeHandles={['se']}
-            onDrag={(layout, oldItem, newItem) => {
+            onDragStart={(layout, oldItem, newItem) => {
               setDraggingWidgetId(newItem.i);
             }}
             onDragStop={() => {

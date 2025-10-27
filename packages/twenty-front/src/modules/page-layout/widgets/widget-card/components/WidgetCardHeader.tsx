@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { type ReactNode } from 'react';
 import { IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
@@ -16,6 +17,8 @@ export type WidgetCardHeaderProps = {
   isEditing?: boolean;
   isDragging?: boolean;
   isHovered?: boolean;
+  showForbiddenDisplay?: boolean;
+  forbiddenDisplay?: ReactNode;
   className?: string;
 };
 
@@ -39,13 +42,17 @@ const StyledTitle = styled.span`
   user-select: none;
 `;
 
+const StyledButtonContainer = styled.div`
+  display: none;
+`;
 export const WidgetCardHeader = ({
   isEmpty = false,
   isInEditMode = false,
   title,
   onRemove,
   hasAccess = true,
-
+  showForbiddenDisplay = false,
+  forbiddenDisplay,
   className,
 }: WidgetCardHeaderProps) => {
   return (
@@ -61,17 +68,16 @@ export const WidgetCardHeader = ({
         />
       )}
       <StyledTitle>{isEmpty ? t`Add Widget` : title}</StyledTitle>
-      {/* TODO: forbidden display would appear before the delete button -- ie
-      //remove it from the rendere and have uit in header
-      //  TODO: show remove
-      button only on card hover */}
+      {showForbiddenDisplay && forbiddenDisplay}
       {!isEmpty && isInEditMode && onRemove && (
-        <IconButton
-          onClick={onRemove}
-          Icon={IconTrash}
-          variant="tertiary"
-          size="small"
-        />
+        <StyledButtonContainer className="widget-card-remove-button">
+          <IconButton
+            onClick={onRemove}
+            Icon={IconTrash}
+            variant="tertiary"
+            size="small"
+          />
+        </StyledButtonContainer>
       )}
     </StyledWidgetCardHeader>
   );
