@@ -111,7 +111,10 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
 
       const { records, aggregatedValues, pageInfo } =
         await this.commonFindManyQueryRunnerService.execute(
-          { ...parsedArgs, selectedFields },
+          {
+            ...parsedArgs,
+            selectedFields: { ...selectedFields, totalCount: true },
+          },
           {
             authContext,
             objectMetadataMaps,
