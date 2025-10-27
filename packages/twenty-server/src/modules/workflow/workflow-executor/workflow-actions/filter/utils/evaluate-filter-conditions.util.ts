@@ -263,6 +263,10 @@ function evaluateRelationFilter(filter: ResolvedFilter): boolean {
       return leftValue === rightValue;
     case ViewFilterOperand.IS_NOT:
       return leftValue !== rightValue;
+    case ViewFilterOperand.IS_EMPTY:
+      return !isNonEmptyString(leftValue);
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isNonEmptyString(leftValue);
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for relation filter`,
