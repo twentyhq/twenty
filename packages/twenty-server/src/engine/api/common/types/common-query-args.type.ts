@@ -66,6 +66,8 @@ export interface GroupByQueryArgs {
   orderBy?: OrderByWithGroupBy;
   groupBy: ObjectRecordGroupBy;
   viewId?: string;
+  includeRecords?: boolean;
+  selectedFields: CommonSelectedFields;
 }
 export interface DestroyOneQueryArgs {
   id: string;

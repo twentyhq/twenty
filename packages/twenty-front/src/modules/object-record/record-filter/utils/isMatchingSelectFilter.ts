@@ -21,6 +21,9 @@ export const isMatchingSelectFilter = ({
     case selectFilter.eq !== undefined: {
       return value === selectFilter.eq;
     }
+    case selectFilter.neq !== undefined: {
+      return value !== selectFilter.neq;
+    }
     default: {
       throw new Error(
         `Unexpected value for select filter : ${JSON.stringify(selectFilter)}`,

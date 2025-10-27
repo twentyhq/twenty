@@ -1,6 +1,9 @@
-import { z } from 'zod';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type RestrictedFieldsPermissions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import {
   type FieldMetadataSettings,
@@ -74,6 +77,7 @@ const getFieldZodType = (field: FieldMetadataEntity): z.ZodTypeAny => {
 export const generateRecordPropertiesZodSchema = (
   objectMetadata: ObjectMetadataEntity,
   forResponse = false,
+  restrictedFields?: RestrictedFieldsPermissions,
 ): z.ZodObject<Record<string, z.ZodTypeAny>> => {
   const shape: Record<string, z.ZodTypeAny> = {};
 
@@ -82,6 +86,10 @@ export const generateRecordPropertiesZodSchema = (
       !isFieldAvailable(field, forResponse) ||
       field.type === FieldMetadataType.TS_VECTOR
     ) {
+      return;
+    }
+
+    if (restrictedFields?.[field.id]?.canUpdate === false) {
       return;
     }
 

@@ -12,6 +12,8 @@ import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { authGraphqlApiExceptionHandler } from 'src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util';
 import { RecordTransformerException } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 import { recordTransformerGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-transformer/utils/record-transformer-graphql-api-exception-handler.util';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
+import { throttlerToGraphqlApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-graphql-api-exception-handler.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
 import { TwentyORMException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -42,6 +44,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return authGraphqlApiExceptionHandler(error);
     case error instanceof ApiKeyException:
       return apiKeyGraphqlApiExceptionHandler(error);
+    case error instanceof ThrottlerException:
+      return throttlerToGraphqlApiExceptionHandler(error);
     default:
       throw error;
   }

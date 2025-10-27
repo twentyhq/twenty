@@ -122,15 +122,7 @@ export class RestApiCoreService {
   }
 
   async groupBy(request: AuthenticatedRequest) {
-    const isCommonApiEnabled = await this.isCommonApiEnabled(request);
-
-    if (isCommonApiEnabled) {
-      return await this.restApiGroupByHandler.handle(request);
-    } else {
-      throw new BadRequestException(
-        'Activate feature flag to use GroupBy in the REST API',
-      );
-    }
+    return await this.restApiGroupByHandler.handle(request);
   }
 
   async delete(request: AuthenticatedRequest) {

@@ -67,18 +67,13 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
         }
 
         const standardFolder = getStandardFolderByRegex(folder.displayName);
-
-        if (this.shouldExcludeFolder(standardFolder)) {
-          continue;
-        }
-
-        const isInbox = this.isInboxFolder(standardFolder);
         const isSentFolder = this.isSentFolder(standardFolder);
+        const isSynced = this.shouldSyncByDefault(standardFolder);
 
         folderInfos.push({
           externalId: folder.id,
           name: folder.displayName,
-          isSynced: isInbox || isSentFolder,
+          isSynced,
           isSentFolder,
         });
       }
@@ -98,19 +93,19 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
     }
   }
 
-  private isInboxFolder(standardFolder: StandardFolder | null): boolean {
-    return standardFolder === StandardFolder.INBOX;
-  }
-
   private isSentFolder(standardFolder: StandardFolder | null): boolean {
     return standardFolder === StandardFolder.SENT;
   }
 
-  private shouldExcludeFolder(standardFolder: StandardFolder | null): boolean {
-    return (
-      standardFolder !== null &&
-      standardFolder !== StandardFolder.SENT &&
-      standardFolder !== StandardFolder.INBOX
-    );
+  private shouldSyncByDefault(standardFolder: StandardFolder | null): boolean {
+    if (
+      standardFolder === StandardFolder.JUNK ||
+      standardFolder === StandardFolder.DRAFTS ||
+      standardFolder === StandardFolder.TRASH
+    ) {
+      return false;
+    }
+
+    return true;
   }
 }

@@ -9,4 +9,5 @@ export enum WidgetType {
   FILES = 'FILES',
   EMAILS = 'EMAILS',
   CALENDAR = 'CALENDAR',
+  RICH_TEXT = 'RICH_TEXT',
 }

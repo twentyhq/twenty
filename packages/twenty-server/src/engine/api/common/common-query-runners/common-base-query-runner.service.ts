@@ -31,6 +31,8 @@ import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-q
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
@@ -71,6 +73,10 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   @Inject()
   protected readonly commonResultGettersService: CommonResultGettersService;
+  @Inject()
+  protected readonly throttlerService: ThrottlerService;
+  @Inject()
+  protected readonly twentyConfigService: TwentyConfigService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -108,6 +114,8 @@ export abstract class CommonBaseQueryRunnerService<
       this.operationName,
       commonQueryParser,
     );
+
+    await this.throttleQueryExecution(authContext.workspace.id);
 
     const extendedQueryRunnerContext =
       await this.prepareExtendedQueryRunnerContext(
@@ -321,5 +329,37 @@ export abstract class CommonBaseQueryRunnerService<
       rolePermissionConfig,
       repository,
     };
+  }
+
+  private async throttleQueryExecution(workspaceId: string) {
+    const shortConfig = {
+      key: `api:throttler:${workspaceId}-short-limit`,
+      maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_SHORT_LIMIT'),
+      timeWindow: this.twentyConfigService.get(
+        'API_RATE_LIMITING_SHORT_TTL_IN_MS',
+      ),
+    };
+
+    const longConfig = {
+      key: `api:throttler:${workspaceId}-long-limit`,
+      maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
+      timeWindow: this.twentyConfigService.get(
+        'API_RATE_LIMITING_LONG_TTL_IN_MS',
+      ),
+    };
+
+    await this.throttlerService.tokenBucketThrottle(
+      shortConfig.key,
+      1,
+      shortConfig.maxTokens,
+      shortConfig.timeWindow,
+    );
+
+    await this.throttlerService.tokenBucketThrottle(
+      longConfig.key,
+      1,
+      longConfig.maxTokens,
+      longConfig.timeWindow,
+    );
   }
 }
