@@ -1,3 +1,4 @@
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
 import { CancelDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/CancelDashboardSingleRecordAction';
 import { EditDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/EditDashboardSingleRecordAction';
 import { SaveDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/SaveDashboardSingleRecordAction';
@@ -66,6 +67,7 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     },
   },
   actionKeys: [
+    NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
     SingleRecordActionKeys.ADD_TO_FAVORITES,
     SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     SingleRecordActionKeys.DELETE,
@@ -76,34 +78,38 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
   ],
   propertiesToOverwrite: {
-    [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
-      position: 3,
+    [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
+      position: 0,
+      label: msg`Create new dashboard`,
     },
-    [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
+    [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
       position: 4,
     },
-    [SingleRecordActionKeys.DELETE]: {
+    [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       position: 5,
+    },
+    [SingleRecordActionKeys.DELETE]: {
+      position: 6,
       label: msg`Delete dashboard`,
     },
     [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
-      position: 6,
+      position: 7,
       label: msg`Export dashboard`,
     },
     [SingleRecordActionKeys.DESTROY]: {
-      position: 7,
+      position: 8,
       label: msg`Permanently destroy dashboard`,
     },
     [SingleRecordActionKeys.RESTORE]: {
-      position: 8,
+      position: 9,
       label: msg`Restore dashboard`,
     },
     [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-      position: 9,
+      position: 10,
       label: msg`Navigate to previous dashboard`,
     },
     [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
-      position: 10,
+      position: 11,
       label: msg`Navigate to next dashboard`,
     },
   },
