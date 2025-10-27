@@ -11,6 +11,7 @@ import {
   variables,
 } from '../__mocks__/useDeleteOneObjectMetadataItem';
 
+import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { FIND_ALL_CORE_VIEWS } from '@/views/graphql/queries/findAllCoreViews';
 import { mockedUserData } from '~/testing/mock-data/users';
@@ -19,7 +20,6 @@ import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
 } from '../__mocks__/useFindManyObjectMetadataItems';
-import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util.test';
 
 const mocks = [
   {

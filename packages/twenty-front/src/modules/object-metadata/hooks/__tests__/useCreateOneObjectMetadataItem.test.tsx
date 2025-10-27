@@ -10,7 +10,7 @@ import {
   variables,
 } from '../__mocks__/useCreateOneObjectMetadataItem';
 
-import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util.test';
+import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedUserData } from '~/testing/mock-data/users';
 import {
