@@ -114,6 +114,6 @@ describe('Core REST API Update One endpoint', () => {
 
     expect(response.status).toBe(404);
     expect(response.body.error).toBe('NotFoundException');
-    expect(response.body.message).toBe('Record not found');
+    expect(response.body.messages[0]).toBe('Record not found');
   });
 });

@@ -58,7 +58,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       objectMetadataMaps,
     });
 
-    if (isDefined(args.ids)) {
+    if (isDefined(args.ids) && args.ids.length > 0) {
       objectRecords = (await existingRecordsQueryBuilder
         .where({ id: In(args.ids) })
         .setFindOptions({

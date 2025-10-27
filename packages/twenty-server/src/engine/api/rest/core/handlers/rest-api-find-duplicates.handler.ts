@@ -11,6 +11,7 @@ import {
 } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { CommonFindDuplicatesQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-duplicates-query-runner.service';
+import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
@@ -75,9 +76,7 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
   ) {
     return {
       data: duplicateConnections.map((connection) => ({
-        data: {
-          [`${objectNameSingular}Duplicates`]: connection.records,
-        },
+        [`${objectNameSingular}Duplicates`]: connection.records,
         totalCount: connection.totalCount,
         pageInfo: {
           hasNextPage: connection.hasNextPage,
