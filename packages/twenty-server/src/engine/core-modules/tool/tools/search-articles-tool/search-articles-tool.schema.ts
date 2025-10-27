@@ -14,3 +14,5 @@ export const SearchArticlesToolParametersZodSchema = z.object({
     ),
   input: SearchArticlesInputZodSchema,
 });
+
+export type SearchArticlesInput = z.infer<typeof SearchArticlesInputZodSchema>;
