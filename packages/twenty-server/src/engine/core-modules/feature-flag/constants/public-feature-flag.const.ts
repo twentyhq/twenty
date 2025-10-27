@@ -39,6 +39,15 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       imagePath: 'https://twenty.com/images/lab/is-calendar-view-enabled.png',
     },
   },
+  {
+    key: FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
+    metadata: {
+      label: 'Morph Relations',
+      description:
+        'Create polymorphic relationships that can link to multiple object types',
+      imagePath: 'https://twenty.com/images/lab/is-morph-relation-enabled.png',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {
