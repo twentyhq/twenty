@@ -95,7 +95,7 @@ export const TwoConnectedAccounts: Story = {
                       connectedAccountId:
                         '20202020-954c-4d76-9a87-e5f072d4b7ef',
                       contactAutoCreationPolicy: 'SENT',
-                      syncStage: 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+                      syncStage: 'CALENDAR_EVENT_LIST_FETCH_PENDING',
                       type: 'email',
                       isContactAutoCreationEnabled: true,
                       syncCursor: '1562764',

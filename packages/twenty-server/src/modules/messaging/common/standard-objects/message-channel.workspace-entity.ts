@@ -32,8 +32,6 @@ export enum MessageChannelSyncStatus {
 
 export enum MessageChannelSyncStage {
   PENDING_CONFIGURATION = 'PENDING_CONFIGURATION',
-  FULL_MESSAGE_LIST_FETCH_PENDING = 'FULL_MESSAGE_LIST_FETCH_PENDING', // WILL BE DEPRECATED
-  PARTIAL_MESSAGE_LIST_FETCH_PENDING = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING', // DEPRECATED
   MESSAGE_LIST_FETCH_PENDING = 'MESSAGE_LIST_FETCH_PENDING',
   MESSAGE_LIST_FETCH_SCHEDULED = 'MESSAGE_LIST_FETCH_SCHEDULED',
   MESSAGE_LIST_FETCH_ONGOING = 'MESSAGE_LIST_FETCH_ONGOING',
@@ -420,21 +418,9 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'red',
       },
       {
-        value: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING, // WILL BE DEPRECATED
-        label: 'Full messages list fetch pending',
-        position: 7,
-        color: 'blue',
-      },
-      {
-        value: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING, // DEPRECATED
-        label: 'Partial messages list fetch pending',
-        position: 8,
-        color: 'blue',
-      },
-      {
         value: MessageChannelSyncStage.PENDING_CONFIGURATION,
         label: 'Pending configuration',
-        position: 9,
+        position: 7,
         color: 'gray',
       },
     ],
