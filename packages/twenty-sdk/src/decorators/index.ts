@@ -4,3 +4,4 @@ export { CronTrigger } from '@/decorators/cron-trigger.decorator';
 export { DatabaseEventTrigger } from '@/decorators/database-event-trigger.decorator';
 export { RouteTrigger } from '@/decorators/route-trigger.decorator';
 export { ApplicationVariable } from '@/decorators/application-variable.decorator';
+export { Application } from '@/decorators/application.decorator';
