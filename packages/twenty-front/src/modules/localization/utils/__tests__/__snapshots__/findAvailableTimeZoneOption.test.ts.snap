@@ -1,8 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`findAvailableTimeZoneOption should find the matching available IANA time zone select option from a given IANA time zone 1`] = `
-{
-  "label": "(GMT+01:00) Central European Standard Time - Paris",
-  "value": "Europe/Paris",
-}
-`;
