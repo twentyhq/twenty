@@ -102,8 +102,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      redis:
-        condition: service_healthy
       server:
         condition: service_healthy
     restart: always
