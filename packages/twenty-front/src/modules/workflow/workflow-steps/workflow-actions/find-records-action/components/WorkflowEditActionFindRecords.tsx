@@ -45,7 +45,7 @@ type WorkflowEditActionFindRecordsProps = {
 type FindRecordsFormData = {
   objectNameSingular: string;
   filter?: FindRecordsActionFilter;
-  sort?: FindRecordsActionSort;
+  orderBy?: FindRecordsActionOrderBy;
   limit?: number;
 };
 
@@ -55,9 +55,9 @@ export type FindRecordsActionFilter = {
   gqlOperationFilter?: JsonValue;
 };
 
-export type FindRecordsActionSort = {
-  sorts?: RecordSort[];
-  orderBy?: JsonValue;
+export type FindRecordsActionOrderBy = {
+  recordSorts?: RecordSort[];
+  gqlOperationOrderBy?: JsonValue;
 };
 
 export const WorkflowEditActionFindRecords = ({
@@ -81,7 +81,7 @@ export const WorkflowEditActionFindRecords = ({
     objectNameSingular: action.settings.input.objectName,
     limit: action.settings.input.limit,
     filter: action.settings.input.filter as FindRecordsActionFilter,
-    sort: action.settings.input.sort as FindRecordsActionSort,
+    orderBy: action.settings.input.orderBy as FindRecordsActionOrderBy,
   });
   const isFormDisabled = actionOptions.readonly ?? false;
   const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
@@ -115,7 +115,7 @@ export const WorkflowEditActionFindRecords = ({
         objectNameSingular: updatedObjectName,
         limit: updatedLimit,
         filter: updatedFilter,
-        sort: updatedSort,
+        orderBy: updatedOrderBy,
       } = formData;
 
       actionOptions.onActionUpdate({
@@ -126,7 +126,7 @@ export const WorkflowEditActionFindRecords = ({
             objectName: updatedObjectName,
             limit: updatedLimit ?? 1,
             filter: updatedFilter,
-            sort: updatedSort as Record<string, any[]> | undefined,
+            orderBy: updatedOrderBy as Record<string, any[]> | undefined,
           },
         },
       });
@@ -246,23 +246,23 @@ export const WorkflowEditActionFindRecords = ({
             <div>
               <InputLabel>{t`Sort`}</InputLabel>
               <WorkflowFindRecordsSorts
-                sorts={formData.sort?.sorts ?? []}
+                recordSorts={formData.orderBy?.recordSorts ?? []}
                 objectMetadataItem={selectedObjectMetadataItem}
                 onChange={(sorts: RecordSort[]) => {
                   if (isFormDisabled === true) {
                     return;
                   }
 
-                  const orderBy =
+                  const gqlOperationOrderBy =
                     sorts.length > 0
                       ? turnSortsIntoOrderBy(selectedObjectMetadataItem, sorts)
                       : undefined;
 
                   const newFormData: FindRecordsFormData = {
                     ...formData,
-                    sort: {
-                      sorts,
-                      orderBy,
+                    orderBy: {
+                      recordSorts: sorts,
+                      gqlOperationOrderBy,
                     },
                   };
 

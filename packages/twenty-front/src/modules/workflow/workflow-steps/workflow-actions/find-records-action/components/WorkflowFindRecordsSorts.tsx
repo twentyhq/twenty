@@ -26,14 +26,14 @@ const StyledAddButtonContainer = styled.div`
 `;
 
 type WorkflowFindRecordsSortsProps = {
-  sorts: RecordSort[];
-  onChange: (sorts: RecordSort[]) => void;
+  recordSorts: RecordSort[];
+  onChange: (recordSorts: RecordSort[]) => void;
   objectMetadataItem: ObjectMetadataItem;
   readonly: boolean;
 };
 
 export const WorkflowFindRecordsSorts = ({
-  sorts,
+  recordSorts,
   onChange,
   objectMetadataItem,
   readonly,
@@ -71,7 +71,7 @@ export const WorkflowFindRecordsSorts = ({
       direction: ViewSortDirection.ASC,
     };
 
-    onChange([...sorts, newSort]);
+    onChange([...recordSorts, newSort]);
   };
 
   const handleRemoveSort = (sortId: string) => {
@@ -79,7 +79,7 @@ export const WorkflowFindRecordsSorts = ({
       return;
     }
 
-    onChange(sorts.filter((sort) => sort.id !== sortId));
+    onChange(recordSorts.filter((sort) => sort.id !== sortId));
   };
 
   const handleFieldChange = (sortId: string, fieldMetadataId: string) => {
@@ -88,7 +88,7 @@ export const WorkflowFindRecordsSorts = ({
     }
 
     onChange(
-      sorts.map((sort) =>
+      recordSorts.map((sort) =>
         sort.id === sortId ? { ...sort, fieldMetadataId } : sort,
       ),
     );
@@ -103,13 +103,15 @@ export const WorkflowFindRecordsSorts = ({
     }
 
     onChange(
-      sorts.map((sort) => (sort.id === sortId ? { ...sort, direction } : sort)),
+      recordSorts.map((sort) =>
+        sort.id === sortId ? { ...sort, direction } : sort,
+      ),
     );
   };
 
   return (
     <StyledContainer>
-      {sorts.map((sort) => {
+      {recordSorts.map((sort) => {
         return (
           <StyledSortItemContainer key={sort.id}>
             <Select
