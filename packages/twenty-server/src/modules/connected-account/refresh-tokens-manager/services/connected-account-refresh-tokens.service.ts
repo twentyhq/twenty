@@ -4,6 +4,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import { isAccessTokenExpiredOrInvalid } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/is-access-token-expired-or-invalid.util';
 import {
@@ -25,6 +26,7 @@ export class ConnectedAccountRefreshTokensService {
   );
 
   constructor(
+    private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
@@ -87,7 +89,7 @@ export class ConnectedAccountRefreshTokensService {
   ): Promise<boolean> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE: {
-        // Google's OAuth2Client handles token auto-refresh internally, no need to check token validity
+        // Google's access tokens are opaque and needs network calls to check if they are valid we default to true for now
         return true;
       }
       case ConnectedAccountProvider.MICROSOFT: {
@@ -113,10 +115,9 @@ export class ConnectedAccountRefreshTokensService {
     try {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:
-          return {
-            accessToken: '',
+          return await this.googleAPIRefreshAccessTokenService.refreshTokens(
             refreshToken,
-          };
+          );
         case ConnectedAccountProvider.MICROSOFT:
           return await this.microsoftAPIRefreshAccessTokenService.refreshTokens(
             refreshToken,
