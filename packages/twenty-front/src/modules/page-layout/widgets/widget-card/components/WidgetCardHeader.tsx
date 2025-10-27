@@ -4,8 +4,8 @@ import { type ReactNode } from 'react';
 import { IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
+import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetGrip } from '../../components/WidgetGrip';
 
 export type WidgetCardHeaderProps = {
   isInEditMode: boolean;

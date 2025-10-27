@@ -47,10 +47,8 @@ const StyledWidgetCard = styled.div<{
           gap: ${theme.spacing(2)};
 
           ${
-            isPageLayoutInEditMode &&
-            !isDragging &&
-            !isEditing &&
-            `
+            isPageLayoutInEditMode && !isDragging && !isEditing
+              ? `
             &:hover {
               cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
               border: 1px solid ${theme.border.color.strong};
@@ -60,20 +58,21 @@ const StyledWidgetCard = styled.div<{
               }
             }
           `
+              : ''
           }
 
           ${
-            isEditing &&
-            !isDragging &&
-            `
-            border: 1px solid ${theme.color.blue};
+            isEditing && !isDragging
+              ? `
+            border: 1px solid ${theme.color.blue} !important;
           `
+              : ''
           }
 
           ${
-            isDragging &&
-            `
-            border: 1px solid ${theme.color.blue};
+            isDragging
+              ? `
+            border: 1px solid ${theme.color.blue} !important;
             background: linear-gradient(
               0deg,
               ${theme.background.transparent.lighter} 0%,
@@ -81,6 +80,7 @@ const StyledWidgetCard = styled.div<{
             ),
             ${theme.background.secondary};
           `
+              : ''
           }
         `;
 
@@ -90,12 +90,11 @@ const StyledWidgetCard = styled.div<{
           gap: ${theme.spacing(2)};
           border: 1px solid transparent;
           border-radius: ${theme.border.radius.md};
+          background: ${theme.background.primary};
 
           ${
-            isPageLayoutInEditMode &&
-            !isDragging &&
-            !isEditing &&
-            `
+            isPageLayoutInEditMode && !isDragging && !isEditing
+              ? `
             &:hover {
               cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
               border: 1px solid ${theme.border.color.strong};
@@ -105,20 +104,21 @@ const StyledWidgetCard = styled.div<{
               }
             }
           `
+              : ''
           }
 
           ${
-            isEditing &&
-            !isDragging &&
-            `
-            border: 1px solid ${theme.color.blue};
+            isEditing && !isDragging
+              ? `
+            border: 1px solid ${theme.color.blue} !important;
           `
+              : ''
           }
 
           ${
-            isDragging &&
-            `
-            border: 1px solid ${theme.color.blue};
+            isDragging
+              ? `
+            border: 1px solid ${theme.color.blue} !important;
             background: linear-gradient(
               0deg,
               ${theme.background.transparent.lighter} 0%,
@@ -126,6 +126,7 @@ const StyledWidgetCard = styled.div<{
             ),
             ${theme.background.secondary};
           `
+              : ''
           }
         `;
 
