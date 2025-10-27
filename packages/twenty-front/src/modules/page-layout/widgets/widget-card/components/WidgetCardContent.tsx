@@ -5,12 +5,12 @@ import { type WidgetCardContext } from '../types/WidgetCardContext';
 
 export type WidgetCardContentProps = {
   children?: ReactNode;
-  context?: WidgetCardContext;
+  widgetCardContext?: WidgetCardContext;
   className?: string;
 };
 
 const StyledWidgetCardContent = styled.div<{
-  context?: WidgetCardContext;
+  widgetCardContext?: WidgetCardContext;
 }>`
   align-items: center;
   display: flex;
@@ -18,17 +18,14 @@ const StyledWidgetCardContent = styled.div<{
   width: 100%;
   justify-content: center;
   box-sizing: border-box;
+  padding: ${({ theme }) => theme.spacing(2)};
 
-  ${({ theme, context }) => {
-    switch (context) {
-      case 'dashboard':
-        return '';
-
+  ${({ theme, widgetCardContext }) => {
+    switch (widgetCardContext) {
       case 'recordPage':
         return `
           border: 1px solid ${theme.border.color.medium};
           border-radius: ${theme.border.radius.md};
-          padding: ${theme.spacing(2)};
         `;
 
       default:
@@ -39,11 +36,14 @@ const StyledWidgetCardContent = styled.div<{
 
 export const WidgetCardContent = ({
   children,
-  context = 'dashboard',
+  widgetCardContext = 'dashboard',
   className,
 }: WidgetCardContentProps) => {
   return (
-    <StyledWidgetCardContent context={context} className={className}>
+    <StyledWidgetCardContent
+      widgetCardContext={widgetCardContext}
+      className={className}
+    >
       {children}
     </StyledWidgetCardContent>
   );

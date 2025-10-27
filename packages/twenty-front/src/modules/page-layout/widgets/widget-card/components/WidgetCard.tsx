@@ -8,7 +8,7 @@ import { type WidgetCardContext } from '../types/WidgetCardContext';
 
 export type WidgetCardProps = {
   children?: ReactNode;
-  context?: WidgetCardContext;
+  widgetCardContext?: WidgetCardContext;
   onClick?: () => void;
   isEditing?: boolean;
   isDragging?: boolean;
@@ -17,7 +17,7 @@ export type WidgetCardProps = {
 
 const StyledWidgetCard = styled.div<{
   onClick?: () => void;
-  context?: WidgetCardContext;
+  widgetCardContext?: WidgetCardContext;
   isPageLayoutInEditMode?: boolean;
   isEditing?: boolean;
   isDragging?: boolean;
@@ -31,13 +31,13 @@ const StyledWidgetCard = styled.div<{
 
   ${({
     theme,
-    context,
+    widgetCardContext,
     isPageLayoutInEditMode,
     isEditing,
     isDragging,
     onClick,
   }) => {
-    switch (context) {
+    switch (widgetCardContext) {
       case 'dashboard':
         return `
           background: ${theme.background.secondary};
@@ -47,8 +47,10 @@ const StyledWidgetCard = styled.div<{
           gap: ${theme.spacing(2)};
 
           ${
-            isPageLayoutInEditMode && !isDragging && !isEditing
-              ? `
+            isPageLayoutInEditMode &&
+            !isDragging &&
+            !isEditing &&
+            `
             &:hover {
               cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
               border: 1px solid ${theme.border.color.strong};
@@ -58,20 +60,19 @@ const StyledWidgetCard = styled.div<{
               }
             }
           `
-              : ''
           }
 
           ${
-            isEditing && !isDragging
-              ? `
+            isEditing &&
+            !isDragging &&
+            `
             border: 1px solid ${theme.color.blue};
           `
-              : ''
           }
 
           ${
-            isDragging
-              ? `
+            isDragging &&
+            `
             border: 1px solid ${theme.color.blue};
             background: linear-gradient(
               0deg,
@@ -80,7 +81,6 @@ const StyledWidgetCard = styled.div<{
             ),
             ${theme.background.secondary};
           `
-              : ''
           }
         `;
 
@@ -92,8 +92,10 @@ const StyledWidgetCard = styled.div<{
           border-radius: ${theme.border.radius.md};
 
           ${
-            isPageLayoutInEditMode && !isDragging && !isEditing
-              ? `
+            isPageLayoutInEditMode &&
+            !isDragging &&
+            !isEditing &&
+            `
             &:hover {
               cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
               border: 1px solid ${theme.border.color.strong};
@@ -103,20 +105,19 @@ const StyledWidgetCard = styled.div<{
               }
             }
           `
-              : ''
           }
 
           ${
-            isEditing && !isDragging
-              ? `
+            isEditing &&
+            !isDragging &&
+            `
             border: 1px solid ${theme.color.blue};
           `
-              : ''
           }
 
           ${
-            isDragging
-              ? `
+            isDragging &&
+            `
             border: 1px solid ${theme.color.blue};
             background: linear-gradient(
               0deg,
@@ -125,7 +126,6 @@ const StyledWidgetCard = styled.div<{
             ),
             ${theme.background.secondary};
           `
-              : ''
           }
         `;
 
@@ -137,7 +137,7 @@ const StyledWidgetCard = styled.div<{
 
 export const WidgetCard = ({
   children,
-  context = 'dashboard',
+  widgetCardContext = 'dashboard',
   onClick,
   isEditing = false,
   isDragging = false,
@@ -150,7 +150,7 @@ export const WidgetCard = ({
   return (
     <StyledWidgetCard
       onClick={onClick}
-      context={context}
+      widgetCardContext={widgetCardContext}
       isPageLayoutInEditMode={isPageLayoutInEditMode}
       isEditing={isEditing}
       isDragging={isDragging}

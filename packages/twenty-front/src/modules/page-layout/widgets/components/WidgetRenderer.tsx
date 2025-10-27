@@ -16,12 +16,12 @@ import { type PageLayoutWidget } from '~/generated/graphql';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
-  context?: WidgetCardContext;
+  widgetCardContext?: WidgetCardContext;
 };
 
 export const WidgetRenderer = ({
   widget,
-  context = 'dashboard',
+  widgetCardContext = 'dashboard',
 }: WidgetRendererProps) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
@@ -60,27 +60,24 @@ export const WidgetRenderer = ({
     <WidgetCard
       onClick={isPageLayoutInEditMode ? handleClick : undefined}
       isDragging={isDragging}
-      context={context}
+      widgetCardContext={widgetCardContext}
       isEditing={isEditing}
     >
       <WidgetCardHeader
         isInEditMode={isPageLayoutInEditMode}
         title={widget.title}
         onRemove={handleRemove}
-        isDragging={isDragging}
-        context={context}
-        hasAccess={hasAccess}
-        isEditing={isEditing}
-        showForbiddenDisplay={!hasAccess}
         forbiddenDisplay={
-          <PageLayoutWidgetForbiddenDisplay
-            widgetId={widget.id}
-            restriction={restriction}
-          />
+          !hasAccess && (
+            <PageLayoutWidgetForbiddenDisplay
+              widgetId={widget.id}
+              restriction={restriction}
+            />
+          )
         }
       />
-      <WidgetCardContent context={context}>
-        {hasAccess ? <WidgetContentRenderer widget={widget} /> : null}
+      <WidgetCardContent widgetCardContext={widgetCardContext}>
+        {hasAccess && <WidgetContentRenderer widget={widget} />}
       </WidgetCardContent>
     </WidgetCard>
   );

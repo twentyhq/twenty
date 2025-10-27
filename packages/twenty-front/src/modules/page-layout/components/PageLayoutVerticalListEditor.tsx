@@ -67,7 +67,10 @@ export const PageLayoutVerticalListEditor = ({
                   >
                     {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                     <div {...provided.dragHandleProps}>
-                      <WidgetRenderer widget={widget} context="recordPage" />
+                      <WidgetRenderer
+                        widget={widget}
+                        widgetCardContext="recordPage"
+                      />
                     </div>
                   </StyledDraggableWrapper>
                 )}

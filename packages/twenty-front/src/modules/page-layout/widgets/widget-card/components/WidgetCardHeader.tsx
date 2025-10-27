@@ -4,29 +4,19 @@ import { type ReactNode } from 'react';
 import { IconTrash } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
+import { isDefined } from 'twenty-shared/utils';
 import { WidgetGrip } from '../../components/WidgetGrip';
-import { type WidgetCardContext } from '../types/WidgetCardContext';
 
 export type WidgetCardHeaderProps = {
   isInEditMode: boolean;
   isEmpty?: boolean;
   title: string;
   onRemove?: (e?: React.MouseEvent) => void;
-  context?: WidgetCardContext;
-  hasAccess?: boolean;
-  isEditing?: boolean;
-  isDragging?: boolean;
-  isHovered?: boolean;
-  showForbiddenDisplay?: boolean;
   forbiddenDisplay?: ReactNode;
   className?: string;
 };
 
-const StyledWidgetCardHeader = styled.div<{
-  context?: WidgetCardContext;
-  isInEditMode?: boolean;
-  hasAccess?: boolean;
-}>`
+const StyledWidgetCardHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -38,11 +28,12 @@ const StyledTitle = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   flex: 1;
   font-size: ${({ theme }) => theme.font.size.sm};
+  padding-inline: ${({ theme }) => theme.spacing(1)};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   user-select: none;
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledIconButton = styled(IconButton)`
   display: none;
 `;
 
@@ -51,17 +42,11 @@ export const WidgetCardHeader = ({
   isInEditMode = false,
   title,
   onRemove,
-  hasAccess = true,
-  showForbiddenDisplay = false,
   forbiddenDisplay,
   className,
 }: WidgetCardHeaderProps) => {
   return (
-    <StyledWidgetCardHeader
-      isInEditMode={isInEditMode}
-      hasAccess={hasAccess}
-      className={className}
-    >
+    <StyledWidgetCardHeader className={className}>
       {!isEmpty && isInEditMode && (
         <WidgetGrip
           className="drag-handle"
@@ -69,16 +54,15 @@ export const WidgetCardHeader = ({
         />
       )}
       <StyledTitle>{isEmpty ? t`Add Widget` : title}</StyledTitle>
-      {showForbiddenDisplay && forbiddenDisplay}
+      {isDefined(forbiddenDisplay) && forbiddenDisplay}
       {!isEmpty && isInEditMode && onRemove && (
-        <StyledButtonContainer className="widget-card-remove-button">
-          <IconButton
-            onClick={onRemove}
-            Icon={IconTrash}
-            variant="tertiary"
-            size="small"
-          />
-        </StyledButtonContainer>
+        <StyledIconButton
+          onClick={onRemove}
+          Icon={IconTrash}
+          variant="tertiary"
+          size="small"
+          className="widget-card-remove-button"
+        />
       )}
     </StyledWidgetCardHeader>
   );
