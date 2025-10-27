@@ -1,5 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
+import {
+  type ObjectRecord,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
@@ -8,21 +11,23 @@ import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-module
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
-export const formatResultWithGroupByDimensionValues = ({
+export const formatResultWithGroupByDimensionValues = async ({
   groupsResult,
   groupByDefinitions,
   aggregateFieldNames,
   recordsResult,
   objectMetadataItemWithFieldMaps,
   objectMetadataMaps,
+  processRecord,
 }: {
   groupsResult: Record<string, unknown>[];
   groupByDefinitions: GroupByDefinition[];
   aggregateFieldNames: string[];
+  processRecord?: (record: ObjectRecord) => Promise<ObjectRecord>;
   recordsResult?: Array<Record<string, unknown>>;
   objectMetadataItemWithFieldMaps?: ObjectMetadataItemWithFieldMaps;
   objectMetadataMaps?: ObjectMetadataMaps;
-}): CommonGroupByOutputItem[] => {
+}): Promise<CommonGroupByOutputItem[]> => {
   const formattedResult: CommonGroupByOutputItem[] = [];
 
   const recordsByGroupKey = new Map<string, Array<Record<string, unknown>>>();
@@ -35,21 +40,30 @@ export const formatResultWithGroupByDimensionValues = ({
       throw new Error('Metadata are required to format result');
     }
 
-    recordsResult.forEach((entry) => {
+    if (!isDefined(processRecord)) {
+      throw new Error(
+        'Process record is required to format results including records',
+      );
+    }
+
+    for (const entry of recordsResult) {
       const groupKey = createGroupKey(entry, groupByDefinitions);
 
-      const records: Record<string, unknown>[] = (
-        (entry.records as Array<Record<string, unknown>>) ?? []
-      ).map((record) => {
-        return formatResult(
-          record,
-          objectMetadataItemWithFieldMaps,
-          objectMetadataMaps,
-        );
-      });
+      const records = await Promise.all(
+        ((entry.records as Array<Record<string, unknown>>) ?? []).map(
+          async (record) =>
+            await processRecord(
+              formatResult(
+                record,
+                objectMetadataItemWithFieldMaps,
+                objectMetadataMaps,
+              ),
+            ),
+        ),
+      );
 
       recordsByGroupKey.set(groupKey, records);
-    });
+    }
   }
 
   groupsResult.forEach((group) => {
