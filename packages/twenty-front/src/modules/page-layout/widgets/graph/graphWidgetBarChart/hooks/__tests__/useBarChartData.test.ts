@@ -69,12 +69,18 @@ describe('useBarChartData', () => {
     expect(result.current.barConfigs[0]).toMatchObject({
       key: 'sales',
       indexValue: 'Jan',
-      colorScheme: mockColorRegistry.green,
+      colorScheme: {
+        name: 'green',
+        gradient: mockColorRegistry.green.gradient,
+      },
     });
     expect(result.current.barConfigs[1]).toMatchObject({
       key: 'costs',
       indexValue: 'Jan',
-      colorScheme: mockColorRegistry.purple,
+      colorScheme: {
+        name: 'purple',
+        gradient: mockColorRegistry.purple.gradient,
+      },
     });
   });
 
@@ -89,18 +95,25 @@ describe('useBarChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedKeys).toEqual([
-      {
-        key: 'sales',
-        colorScheme: mockColorRegistry.green,
-        label: 'Sales',
+    expect(result.current.enrichedKeys).toHaveLength(2);
+    expect(result.current.enrichedKeys[0]).toMatchObject({
+      key: 'sales',
+      label: 'Sales',
+      colorScheme: {
+        name: 'green',
+        gradient: mockColorRegistry.green.gradient,
       },
-      {
-        key: 'costs',
-        colorScheme: mockColorRegistry.purple,
-        label: 'Costs',
+    });
+    expect(result.current.enrichedKeys[0].colorScheme.solid).toBeDefined();
+    expect(result.current.enrichedKeys[1]).toMatchObject({
+      key: 'costs',
+      label: 'Costs',
+      colorScheme: {
+        name: 'purple',
+        gradient: mockColorRegistry.purple.gradient,
       },
-    ]);
+    });
+    expect(result.current.enrichedKeys[1].colorScheme.solid).toBeDefined();
   });
 
   it('should use series labels when series config is not provided', () => {
