@@ -102,6 +102,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
       server:
         condition: service_healthy
     restart: always
@@ -125,6 +127,11 @@ services:
     image: redis
     restart: always
     command: ["--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   db-data:
