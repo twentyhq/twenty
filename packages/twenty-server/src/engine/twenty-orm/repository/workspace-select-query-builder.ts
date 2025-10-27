@@ -117,6 +117,63 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
+  override createOrderByExpression() {
+    const orderBys = this.expressionMap.allOrderBys;
+
+    if (Object.keys(orderBys).length === 0) return '';
+
+    const orderBysSql =
+      ' ORDER BY ' +
+      Object.keys(orderBys)
+        .map((columnName) => {
+          const orderValue =
+            typeof orderBys[columnName] === 'string'
+              ? orderBys[columnName]
+              : orderBys[columnName].order + ' ' + orderBys[columnName].nulls;
+          const selection = this.expressionMap.selects.find(
+            (s) => s.selection === columnName || s.aliasName === columnName,
+          );
+
+          if (
+            selection &&
+            !selection.aliasName &&
+            columnName.indexOf('.') !== -1
+          ) {
+            const criteriaParts = columnName.split('.');
+            const aliasName = criteriaParts[0];
+            const propertyPath = criteriaParts.slice(1).join('.');
+            const alias = this.expressionMap.aliases.find(
+              (alias) => alias.name === aliasName,
+            );
+
+            if (alias) {
+              const column =
+                alias.metadata.findColumnWithPropertyPath(propertyPath);
+
+              if (column) {
+                const orderAlias = DriverUtils.buildAlias(
+                  this.connection.driver,
+                  undefined,
+                  aliasName,
+                  column.databaseName,
+                );
+
+                return this.escape(orderAlias) + ' ' + orderValue;
+              }
+            }
+          }
+
+          if (selection && selection.aliasName) {
+            return selection.aliasName + ' ' + orderValue;
+          }
+
+          return columnName + ' ' + orderValue;
+        })
+        .join(', ');
+
+    return orderBysSql;
+  }
+
   override clone(): this {
     const clonedQueryBuilder = super.clone();
 
