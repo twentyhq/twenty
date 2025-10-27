@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
+import { ObjectRecord } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
+import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
@@ -15,12 +17,15 @@ import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/works
 
 const GROUPS_LIMIT = 50;
 const RECORDS_PER_GROUP_LIMIT = 10;
+const RELATIONS_PER_RECORD_LIMIT = 5;
 const SUB_QUERY_PREFIX = 'sub_query_';
 
 @Injectable()
 export class GroupByWithRecordsService {
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
+  @Inject()
+  protected readonly commonResultGettersService: CommonResultGettersService;
   constructor() {}
 
   public async resolveWithRecords({
@@ -78,7 +83,7 @@ export class GroupByWithRecordsService {
         parentObjectRecordsAggregatedValues: {},
         relations: selectedFieldsResult.relations,
         aggregate: selectedFieldsResult.aggregate,
-        limit: 5,
+        limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
         workspaceDataSource,
         rolePermissionConfig,
@@ -86,13 +91,20 @@ export class GroupByWithRecordsService {
       });
     }
 
-    return formatResultWithGroupByDimensionValues({
+    return await formatResultWithGroupByDimensionValues({
       groupsResult,
       recordsResult,
       groupByDefinitions,
       aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      processRecord: (record: ObjectRecord) =>
+        this.commonResultGettersService.processRecord(
+          record,
+          objectMetadataItemWithFieldMaps.id,
+          objectMetadataMaps,
+          authContext.workspace.id,
+        ),
     });
   }
 
