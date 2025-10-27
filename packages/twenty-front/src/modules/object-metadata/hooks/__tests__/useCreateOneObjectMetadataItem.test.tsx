@@ -92,7 +92,7 @@ describe('useCreateOneObjectMetadataItem', () => {
         nameSingular: 'viewFilter',
       });
       jestExpectSuccessfulMetadataRequestResult(res);
-      expect(res.response).toEqual({ createOneObject: responseData });
+      expect(res.response).toEqual({ data: { createOneObject: responseData } });
     });
   });
 });
