@@ -1,0 +1,37 @@
+{
+  "name": "Twenty Documentation",
+  "logo": {
+    "light": "/logo.svg",
+    "dark": "/logo.svg"
+  },
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#5E5ADB",
+    "light": "#B3B1FF",
+    "dark": "#5E5ADB"
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/twentyhq/twenty"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "getting-started/what-is-twenty",
+        "getting-started/create-workspace"
+      ]
+    },
+    {
+      "group": "Developers",
+      "pages": ["developers/local-setup"]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/twentyhq/twenty",
+    "twitter": "https://twitter.com/twentycrm",
+    "discord": "https://discord.gg/cx5n4Jzs57"
+  }
+}
