@@ -23,7 +23,7 @@ const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
 
   box-shadow: ${({ theme }) => theme.boxShadow.light};
-  color: ${({ theme }) => theme.grayScale.gray0};
+  color: ${({ theme }) => theme.grayScale.gray1};
 
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};

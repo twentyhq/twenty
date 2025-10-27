@@ -1,6 +1,5 @@
-import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
-import { GRAY_SCALE } from 'twenty-ui/theme';
+import { useInView } from 'react-intersection-observer';
 
 type CustomResolverFetchMoreLoaderProps = {
   loading: boolean;
@@ -10,7 +9,7 @@ type CustomResolverFetchMoreLoaderProps = {
 const StyledText = styled.div`
   align-items: center;
   box-shadow: none;
-  color: ${GRAY_SCALE.gray40};
+  color: ${({ theme }) => theme.grayScale.gray9};
   display: flex;
   height: 32px;
   margin-left: ${({ theme }) => theme.spacing(8)};

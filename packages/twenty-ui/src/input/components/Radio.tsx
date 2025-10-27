@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
+import { RGBA } from '@ui/theme';
 import { motion } from 'framer-motion';
 import * as React from 'react';
-import { RGBA } from '@ui/theme';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {
@@ -64,7 +64,7 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
     background-color: ${({ theme }) => theme.color.blue};
     border: none;
     &::after {
-      background-color: ${({ theme }) => theme.grayScale.gray0};
+      background-color: ${({ theme }) => theme.grayScale.gray1};
       border-radius: 50%;
       content: '';
       height: ${({ 'radio-size': radioSize }) =>

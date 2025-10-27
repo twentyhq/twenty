@@ -1,5 +1,6 @@
 import { ADAPTIVE_COLORS_LIGHT } from '@ui/theme/constants/AdaptiveColorsLight';
 import { BLUR_LIGHT } from '@ui/theme/constants/BlurLight';
+import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
 import { ILLUSTRATION_ICON_LIGHT } from '@ui/theme/constants/IllustrationIconLight';
 import { SNACK_BAR_LIGHT } from '@ui/theme/constants/SnackBarLight';
 import { ACCENT_LIGHT } from './AccentLight';
@@ -26,5 +27,6 @@ export const THEME_LIGHT = {
     code: CODE_LIGHT,
     IllustrationIcon: ILLUSTRATION_ICON_LIGHT,
     adaptiveColors: ADAPTIVE_COLORS_LIGHT,
+    grayScale: GRAY_SCALE_LIGHT,
   },
 };

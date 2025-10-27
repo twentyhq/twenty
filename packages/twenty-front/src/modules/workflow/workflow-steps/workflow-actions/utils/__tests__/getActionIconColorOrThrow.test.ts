@@ -1,6 +1,6 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { type Theme } from '@emotion/react';
-import { COLOR, GRAY_SCALE } from 'twenty-ui/theme';
+import { COLOR, GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { getActionIconColorOrThrow } from '../getActionIconColorOrThrow';
 
 const mockTheme: Theme = {
@@ -11,7 +11,7 @@ const mockTheme: Theme = {
   },
   font: {
     color: {
-      tertiary: GRAY_SCALE.gray40,
+      tertiary: GRAY_SCALE_LIGHT.gray9,
     },
   },
 } as Theme;
@@ -99,7 +99,7 @@ describe('getActionIconColorOrThrow', () => {
         },
         font: {
           color: {
-            tertiary: GRAY_SCALE.gray50,
+            tertiary: GRAY_SCALE_LIGHT.gray11,
           },
         },
       } as Theme;
@@ -130,7 +130,7 @@ describe('getActionIconColorOrThrow', () => {
           theme: customTheme,
           actionType: 'CREATE_RECORD',
         }),
-      ).toBe(GRAY_SCALE.gray50);
+      ).toBe(GRAY_SCALE_LIGHT.gray11);
     });
   });
 
@@ -237,7 +237,7 @@ describe('getActionIconColorOrThrow', () => {
         },
         font: {
           color: {
-            tertiary: GRAY_SCALE.gray50,
+            tertiary: GRAY_SCALE_LIGHT.gray11,
           },
         },
       } as Theme;
@@ -262,7 +262,7 @@ describe('getActionIconColorOrThrow', () => {
           theme: customTheme,
           actionType: 'CREATE_RECORD',
         }),
-      ).toBe(GRAY_SCALE.gray50);
+      ).toBe(GRAY_SCALE_LIGHT.gray11);
     });
 
     it('should return undefined when red color is missing for SEND_EMAIL action', () => {
@@ -273,7 +273,7 @@ describe('getActionIconColorOrThrow', () => {
         },
         font: {
           color: {
-            tertiary: GRAY_SCALE.gray40,
+            tertiary: GRAY_SCALE_LIGHT.gray9,
           },
         },
       } as Theme;

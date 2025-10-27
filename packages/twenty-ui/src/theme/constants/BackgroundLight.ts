@@ -1,17 +1,17 @@
-import * as RadixColors from '@radix-ui/colors';
 import LightNoise from '@assets/themes/light-noise.png';
+import * as RadixColors from '@radix-ui/colors';
 
 import { COLOR } from './Colors';
-import { GRAY_SCALE } from './GrayScale';
+import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 
 export const BACKGROUND_LIGHT = {
   noisy: `url(${LightNoise.toString()});`,
-  primary: GRAY_SCALE.gray0,
-  secondary: GRAY_SCALE.gray10,
-  tertiary: GRAY_SCALE.gray15,
-  quaternary: GRAY_SCALE.gray20,
-  invertedPrimary: GRAY_SCALE.gray60,
-  invertedSecondary: GRAY_SCALE.gray50,
+  primary: GRAY_SCALE_LIGHT.gray1,
+  secondary: GRAY_SCALE_LIGHT.gray2,
+  tertiary: GRAY_SCALE_LIGHT.gray4,
+  quaternary: GRAY_SCALE_LIGHT.gray5,
+  invertedPrimary: GRAY_SCALE_LIGHT.gray12,
+  invertedSecondary: GRAY_SCALE_LIGHT.gray11,
   danger: COLOR.red10,
   transparent: {
     primary: RadixColors.grayA.grayA6,
@@ -29,6 +29,6 @@ export const BACKGROUND_LIGHT = {
   overlayTertiary: RadixColors.blackA.blackA4,
   radialGradient: `radial-gradient(50% 62.62% at 50% 0%, ${RadixColors.gray.gray9} 0%, ${RadixColors.gray.gray10} 100%)`,
   radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, ${RadixColors.gray.gray10} 0%, ${RadixColors.gray.gray11} 100%)`,
-  primaryInverted: GRAY_SCALE.gray60,
-  primaryInvertedHover: GRAY_SCALE.gray55,
+  primaryInverted: GRAY_SCALE_LIGHT.gray12,
+  primaryInvertedHover: GRAY_SCALE_LIGHT.gray11,
 };

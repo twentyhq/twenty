@@ -70,7 +70,7 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.accent.tertiary}`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: ${theme.grayScale.gray1};
               opacity: ${disabled ? 0.24 : 1};
 
               ${disabled
@@ -96,7 +96,7 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.color.red10}`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: ${theme.grayScale.gray1};
               opacity: ${disabled ? 0.24 : 1};
 
               ${disabled

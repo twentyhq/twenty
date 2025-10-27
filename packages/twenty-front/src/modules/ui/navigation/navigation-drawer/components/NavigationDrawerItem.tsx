@@ -161,7 +161,7 @@ const StyledItemCount = styled.span`
   align-items: center;
   background-color: ${({ theme }) => theme.color.blue};
   border-radius: ${({ theme }) => theme.border.radius.rounded};
-  color: ${({ theme }) => theme.grayScale.gray0};
+  color: ${({ theme }) => theme.grayScale.gray1};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};

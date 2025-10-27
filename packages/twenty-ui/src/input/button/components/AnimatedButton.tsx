@@ -92,7 +92,7 @@ const StyledButton = styled.button<
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              color: ${!inverted ? theme.grayScale.gray0 : theme.color.blue};
+              color: ${!inverted ? theme.grayScale.gray1 : theme.color.blue};
               ${disabled
                 ? ''
                 : css`
@@ -160,10 +160,10 @@ const StyledButton = styled.button<
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray0
+                    ? theme.grayScale.gray1
                     : theme.background.transparent.primary
                   : focus
-                    ? theme.grayScale.gray0
+                    ? theme.grayScale.gray1
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
@@ -206,10 +206,10 @@ const StyledButton = styled.button<
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray0
+                    ? theme.grayScale.gray1
                     : theme.background.transparent.primary
                   : focus
-                    ? theme.grayScale.gray0
+                    ? theme.grayScale.gray1
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
@@ -252,10 +252,10 @@ const StyledButton = styled.button<
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray0
+                    ? theme.grayScale.gray1
                     : theme.background.transparent.primary
                   : focus
-                    ? theme.grayScale.gray0
+                    ? theme.grayScale.gray1
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus

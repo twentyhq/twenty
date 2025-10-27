@@ -1,5 +1,5 @@
 import * as RadixColors from '@radix-ui/colors';
-import { GRAY_SCALE } from './GrayScale';
+import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 
 export const SECONDARY_COLORS = {
   yellow80: RadixColors.yellow.yellow11,
@@ -83,15 +83,15 @@ export const SECONDARY_COLORS = {
   orange20: RadixColors.orange.orange3,
   orange10: RadixColors.orange.orange2,
 
-  gray80: GRAY_SCALE.gray70,
-  gray70: GRAY_SCALE.gray65,
-  gray60: GRAY_SCALE.gray55,
-  gray50: GRAY_SCALE.gray40,
-  gray40: GRAY_SCALE.gray25,
-  gray35: GRAY_SCALE.gray35,
-  gray30: GRAY_SCALE.gray20,
-  gray20: GRAY_SCALE.gray15,
-  gray10: GRAY_SCALE.gray10,
+  gray80: GRAY_SCALE_LIGHT.gray12,
+  gray70: GRAY_SCALE_LIGHT.gray11,
+  gray60: GRAY_SCALE_LIGHT.gray10,
+  gray50: GRAY_SCALE_LIGHT.gray9,
+  gray40: GRAY_SCALE_LIGHT.gray6,
+  gray35: GRAY_SCALE_LIGHT.gray8,
+  gray30: GRAY_SCALE_LIGHT.gray5,
+  gray20: GRAY_SCALE_LIGHT.gray4,
+  gray10: GRAY_SCALE_LIGHT.gray2,
 
   blueAccent90: RadixColors.blue.blue12,
   blueAccent85: RadixColors.blue.blue11,

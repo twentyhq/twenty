@@ -1,5 +1,5 @@
 import * as RadixColors from '@radix-ui/colors';
-import { GRAY_SCALE } from './GrayScale';
+import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 
 export const MAIN_COLORS = {
   green: RadixColors.green.green9,
@@ -11,5 +11,5 @@ export const MAIN_COLORS = {
   red: RadixColors.red.red9,
   orange: RadixColors.orange.orange9,
   yellow: RadixColors.yellow.yellow9,
-  gray: GRAY_SCALE.gray30,
+  gray: GRAY_SCALE_LIGHT.gray7,
 };
