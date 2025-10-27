@@ -35,7 +35,14 @@ import {
 } from '@/utils/filter';
 
 import { resolveDateViewFilterValue } from '@/utils/filter/utils/resolveDateViewFilterValue';
-import { endOfDay, format, roundToNearestMinutes, startOfDay } from 'date-fns';
+import {
+  endOfDay,
+  endOfMinute,
+  format,
+  roundToNearestMinutes,
+  startOfDay,
+  startOfMinute,
+} from 'date-fns';
 import { z } from 'zod';
 
 import { DATE_TYPE_FORMAT } from '@/constants';
@@ -323,12 +330,12 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             and: [
               {
                 [correspondingFieldMetadataItem.name]: {
-                  lte: endOfDay(date).toISOString(),
+                  lte: endOfMinute(date).toISOString(),
                 } as DateTimeFilter,
               },
               {
                 [correspondingFieldMetadataItem.name]: {
-                  gte: startOfDay(date).toISOString(),
+                  gte: startOfMinute(date).toISOString(),
                 } as DateTimeFilter,
               },
             ],

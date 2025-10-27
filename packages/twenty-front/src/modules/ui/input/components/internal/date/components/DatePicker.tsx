@@ -418,10 +418,6 @@ export const DatePicker = ({
 
   const highlightedDates = getHighlightedDates();
 
-  console.log({
-    localDate,
-  });
-
   const hasDate = date !== null;
 
   const selectedDates = isRelative ? highlightedDates : hasDate ? [] : [];
