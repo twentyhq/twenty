@@ -3,7 +3,7 @@
 exports[`failing createOne unique field metadata should fail for composite type without unique subfields (FULL_NAME) 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -58,7 +58,7 @@ exports[`failing createOne unique field metadata should fail for composite type 
 exports[`failing createOne unique field metadata should fail when field has custom default value 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],

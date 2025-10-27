@@ -1,39 +1,45 @@
+import { Inject, Injectable } from '@nestjs/common';
+
 import { isDefined } from 'class-validator';
+import { ObjectRecord } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
+import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
+import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 const GROUPS_LIMIT = 50;
 const RECORDS_PER_GROUP_LIMIT = 10;
+const RELATIONS_PER_RECORD_LIMIT = 5;
 const SUB_QUERY_PREFIX = 'sub_query_';
 
+@Injectable()
 export class GroupByWithRecordsService {
+  @Inject()
+  protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
+  @Inject()
+  protected readonly commonResultGettersService: CommonResultGettersService;
   constructor() {}
 
   public async resolveWithRecords({
     queryBuilderWithGroupBy,
     queryBuilderWithFiltersAndWithoutGroupBy,
     groupByDefinitions,
-    objectMetadataItemWithFieldMaps,
     selectedFieldsResult,
-    objectMetadataMaps,
-    repository,
+    queryRunnerContext,
   }: {
     queryBuilderWithGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
-    objectMetadataMaps: ObjectMetadataMaps;
-    repository: WorkspaceRepository<ObjectLiteral>;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<CommonGroupByOutputItem[]> {
     const groupsResult = await queryBuilderWithGroupBy
       .limit(GROUPS_LIMIT)
@@ -42,6 +48,15 @@ export class GroupByWithRecordsService {
     if (groupsResult.length === 0) {
       return [];
     }
+
+    const {
+      authContext,
+      workspaceDataSource,
+      rolePermissionConfig,
+      objectMetadataMaps,
+      objectMetadataItemWithFieldMaps,
+      repository,
+    } = queryRunnerContext;
 
     const columnsToSelect = buildColumnsToSelect({
       select: selectedFieldsResult.select,
@@ -60,13 +75,36 @@ export class GroupByWithRecordsService {
 
     const recordsResult = await queryBuilderWithPartitionBy.getRawMany();
 
-    return formatResultWithGroupByDimensionValues({
+    if (isDefined(selectedFieldsResult.relations)) {
+      await this.processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: recordsResult.flatMap((group) => group.records),
+        parentObjectRecordsAggregatedValues: {},
+        relations: selectedFieldsResult.relations,
+        aggregate: selectedFieldsResult.aggregate,
+        limit: RELATIONS_PER_RECORD_LIMIT,
+        authContext,
+        workspaceDataSource,
+        rolePermissionConfig,
+        selectedFields: selectedFieldsResult.select,
+      });
+    }
+
+    return await formatResultWithGroupByDimensionValues({
       groupsResult,
       recordsResult,
       groupByDefinitions,
       aggregateFieldNames: Object.keys(selectedFieldsResult.aggregate),
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+      processRecord: (record: ObjectRecord) =>
+        this.commonResultGettersService.processRecord(
+          record,
+          objectMetadataItemWithFieldMaps.id,
+          objectMetadataMaps,
+          authContext.workspace.id,
+        ),
     });
   }
 
