@@ -80,11 +80,11 @@ export const useDefaultHomePagePath = () => {
           ? getActiveObjectMetadataItemMatchingId(
               lastVisitedObjectMetadataItemId,
             )
-          : null;
+          : undefined;
 
         if (isDefined(lastVisitedObjectMetadataItem)) {
           return {
-            view: getFirstView(lastVisitedObjectMetadataItemId!),
+            view: getFirstView(lastVisitedObjectMetadataItemId),
             objectMetadataItem: lastVisitedObjectMetadataItem,
           };
         }
