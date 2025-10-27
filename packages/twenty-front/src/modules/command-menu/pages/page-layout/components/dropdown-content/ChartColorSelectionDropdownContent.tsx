@@ -117,27 +117,29 @@ export const ChartColorSelectionDropdownContent = () => {
           />
         </SelectableList>
       </DropdownMenuItemsContainer>
-      {regularColorOptions.length > 0 && <DropdownMenuSeparator />}
       {regularColorOptions.length > 0 && (
-        <DropdownMenuItemsContainer>
-          <SelectableList
-            selectableListInstanceId={dropdownId}
-            focusId={dropdownId}
-            selectableItemIdArray={filteredColorOptions.map(
-              (colorOption) => colorOption.id,
-            )}
-          >
-            {regularColorOptions.map((colorOption) => (
-              <ChartColorGradientOption
-                key={colorOption.id}
-                colorOption={colorOption}
-                selectedItemId={selectedItemId}
-                currentColor={currentColor}
-                onSelectColor={handleSelectColor}
-              />
-            ))}
-          </SelectableList>
-        </DropdownMenuItemsContainer>
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer>
+            <SelectableList
+              selectableListInstanceId={dropdownId}
+              focusId={dropdownId}
+              selectableItemIdArray={filteredColorOptions.map(
+                (colorOption) => colorOption.id,
+              )}
+            >
+              {regularColorOptions.map((colorOption) => (
+                <ChartColorGradientOption
+                  key={colorOption.id}
+                  colorOption={colorOption}
+                  selectedItemId={selectedItemId}
+                  currentColor={currentColor}
+                  onSelectColor={handleSelectColor}
+                />
+              ))}
+            </SelectableList>
+          </DropdownMenuItemsContainer>
+        </>
       )}
     </>
   );
