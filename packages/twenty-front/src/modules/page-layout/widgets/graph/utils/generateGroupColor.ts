@@ -14,7 +14,7 @@ export const generateGroupColor = ({
   totalGroups: number;
 }): string => {
   if (totalGroups <= 1) {
-    return colorScheme.adaptiveColor4;
+    return colorScheme.solid;
   }
 
   const effectiveGroupIndex = groupIndex % GRAPH_MAXIMUM_NUMBER_OF_GROUP_COLORS;
@@ -28,5 +28,5 @@ export const generateGroupColor = ({
     GRAPH_GROUP_COLOR_MINIMUM_ALPHA +
     (1 - GRAPH_GROUP_COLOR_MINIMUM_ALPHA) * ratio;
 
-  return RGBA(colorScheme.adaptiveColor4, alpha);
+  return RGBA(colorScheme.solid, alpha);
 };

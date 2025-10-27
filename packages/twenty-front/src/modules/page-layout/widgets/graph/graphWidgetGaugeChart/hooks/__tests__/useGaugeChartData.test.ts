@@ -12,10 +12,6 @@ describe('useGaugeChartData', () => {
         hover: ['blue3', 'blue4'],
       },
       solid: 'blueSolid',
-      adaptiveColor1: 'blue1',
-      adaptiveColor2: 'blue2',
-      adaptiveColor3: 'blue3',
-      adaptiveColor4: 'blue4',
     },
     green: {
       name: 'green',
@@ -24,10 +20,6 @@ describe('useGaugeChartData', () => {
         hover: ['green3', 'green4'],
       },
       solid: 'greenSolid',
-      adaptiveColor1: 'green1',
-      adaptiveColor2: 'green2',
-      adaptiveColor3: 'green3',
-      adaptiveColor4: 'green4',
     },
   };
 
