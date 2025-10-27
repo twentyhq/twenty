@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
-import { IconTrash } from 'twenty-ui/display';
+import { IconTrash, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
@@ -24,13 +24,14 @@ const StyledWidgetCardHeader = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledTitle = styled.span`
+const StyledTitleContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   flex: 1;
   font-size: ${({ theme }) => theme.font.size.sm};
   padding-inline: ${({ theme }) => theme.spacing(1)};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   user-select: none;
+  overflow: hidden;
 `;
 
 const StyledIconButton = styled(IconButton)`
@@ -53,7 +54,9 @@ export const WidgetCardHeader = ({
           onClick={(e) => e.stopPropagation()}
         />
       )}
-      <StyledTitle>{isEmpty ? t`Add Widget` : title}</StyledTitle>
+      <StyledTitleContainer>
+        <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
+      </StyledTitleContainer>
       {isDefined(forbiddenDisplay) && forbiddenDisplay}
       {!isEmpty && isInEditMode && onRemove && (
         <StyledIconButton
