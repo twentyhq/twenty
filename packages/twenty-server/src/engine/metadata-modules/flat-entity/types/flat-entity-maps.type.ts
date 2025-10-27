@@ -5,3 +5,9 @@ export type FlatEntityMaps<T extends FlatEntity> = {
   idByUniversalIdentifier: Partial<Record<string, string>>;
   universalIdentifiersByApplicationId: Partial<Record<string, string[]>>;
 };
+
+export type FlatEntityMapsV2<T extends FlatEntity> = {
+  byUniversalIdentifier: Partial<Record<string, T>>;
+  idByUniversalIdentifier: Partial<Record<string, string>>;
+  universalIdentifiersByApplicationId: Partial<Record<string, string[]>>;
+};

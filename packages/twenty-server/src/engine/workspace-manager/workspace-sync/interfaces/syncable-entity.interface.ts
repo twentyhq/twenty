@@ -9,8 +9,8 @@ export abstract class SyncableEntity {
   @Column({ nullable: true, type: 'uuid' })
   universalIdentifier: string | null;
 
-  @Column({ nullable: true, type: 'uuid' })
-  applicationId: string | null;
+  @Column({ type: 'uuid' })
+  applicationId: string;
 
   @ManyToOne('ApplicationEntity', {
     onDelete: 'CASCADE',
