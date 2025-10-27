@@ -72,5 +72,6 @@ export const getPaginationInfo = (
   return {
     hasNextPage: isForwardPagination && hasMoreRecords,
     hasPreviousPage: !isForwardPagination && hasMoreRecords,
+    hasMoreRecords,
   };
 };
