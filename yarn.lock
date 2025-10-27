@@ -9199,6 +9199,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lingui/core@npm:^5.5.1":
+  version: 5.5.1
+  resolution: "@lingui/core@npm:5.5.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.20.13"
+    "@lingui/message-utils": "npm:5.5.1"
+  peerDependencies:
+    "@lingui/babel-plugin-lingui-macro": 5.5.1
+    babel-plugin-macros: 2 || 3
+  peerDependenciesMeta:
+    "@lingui/babel-plugin-lingui-macro":
+      optional: true
+    babel-plugin-macros:
+      optional: true
+  checksum: 10c0/8d416fbefb63beec51e6e293f7143089db3a9910095482502099afd82ce873d20cefd69ecc489617da6f85e94ac1583c53825a906be8146db041c6b430b37b37
+  languageName: node
+  linkType: hard
+
 "@lingui/detect-locale@npm:^5.2.0":
   version: 5.2.0
   resolution: "@lingui/detect-locale@npm:5.2.0"
@@ -9215,6 +9233,16 @@ __metadata:
     date-fns: "npm:^3.6.0"
     pofile: "npm:^1.1.4"
   checksum: 10c0/a2c46399e6fb46e75f84e1c30b2642a6fc4c18090efed9f3d28b0f5bad529dd0e86a548987bf92e294248e12fdf29741c0c694f59db2037c2f02458a5521c56f
+  languageName: node
+  linkType: hard
+
+"@lingui/message-utils@npm:5.5.1":
+  version: 5.5.1
+  resolution: "@lingui/message-utils@npm:5.5.1"
+  dependencies:
+    "@messageformat/parser": "npm:^5.0.0"
+    js-sha256: "npm:^0.10.1"
+  checksum: 10c0/4049edf098d163a2f5eba2e3c00c6a7d3fd313fb3c9c382d34688bcf9391c0f123103d327d66aa694e78abd41b11fdb35034a5289a59222e1ae027bbc05cfb8a
   languageName: node
   linkType: hard
 
@@ -52846,6 +52874,7 @@ __metadata:
   resolution: "twenty-shared@workspace:packages/twenty-shared"
   dependencies:
     "@babel/preset-env": "npm:^7.26.9"
+    "@lingui/core": "npm:^5.5.1"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/babel__preset-env": "npm:^7"
