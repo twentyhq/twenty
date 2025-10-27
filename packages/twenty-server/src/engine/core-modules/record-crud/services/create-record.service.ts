@@ -8,6 +8,7 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { type CreateRecordParams } from 'src/engine/core-modules/record-crud/types/create-record-params.type';
+import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/record-crud/utils/get-selected-columns-from-restricted-fields.util';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -83,14 +84,28 @@ export class CreateRecordService {
           objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
         });
 
-      const insertResult = await repository.insert({
-        ...transformedObjectRecord,
-        position,
-        createdBy: params.createdBy ?? {
-          source: FieldActorSource.WORKFLOW,
-          name: 'Workflow',
+      const restrictedFields =
+        repository.objectRecordsPermissions?.[
+          objectMetadataItemWithFieldsMaps.id
+        ]?.restrictedFields;
+
+      const selectedColumns = getSelectedColumnsFromRestrictedFields(
+        restrictedFields,
+        objectMetadataItemWithFieldsMaps,
+      );
+
+      const insertResult = await repository.insert(
+        {
+          ...transformedObjectRecord,
+          position,
+          createdBy: params.createdBy ?? {
+            source: FieldActorSource.WORKFLOW,
+            name: 'Workflow',
+          },
         },
-      });
+        undefined,
+        selectedColumns,
+      );
 
       const [createdRecord] = insertResult.generatedMaps;
 

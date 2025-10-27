@@ -1,15 +1,10 @@
-import { DEFAULT_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
+import { DEFAULT_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultRecordPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
-/**
- * Default mock PageLayout used when pageLayoutId equals DEFAULT_PAGE_LAYOUT_ID.
- * This combines base record layout tabs (fields, timeline, tasks, notes, files)
- * with company-specific tabs (emails, calendar).
- */
-export const DEFAULT_PAGE_LAYOUT: PageLayout = {
+export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
   __typename: 'PageLayout',
-  id: DEFAULT_PAGE_LAYOUT_ID,
+  id: DEFAULT_RECORD_PAGE_LAYOUT_ID,
   name: 'Default Record Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
@@ -17,7 +12,6 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
   updatedAt: new Date().toISOString(),
   deletedAt: null,
   tabs: [
-    // Fields tab (position 100)
     {
       __typename: 'PageLayoutTab',
       id: 'default-tab-fields',
@@ -25,7 +19,7 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
       position: 100,
       layoutMode: 'vertical-list',
       selfDisplayMode: 'pinned-left',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
@@ -51,14 +45,13 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Timeline tab (position 200)
     {
       __typename: 'PageLayoutTab',
       id: 'default-tab-timeline',
       title: 'Timeline',
       position: 200,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
@@ -84,14 +77,13 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Tasks tab (position 300)
     {
       __typename: 'PageLayoutTab',
       id: 'default-tab-tasks',
       title: 'Tasks',
       position: 300,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
@@ -115,35 +107,15 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
           updatedAt: new Date().toISOString(),
           deletedAt: null,
         },
-        {
-          __typename: 'PageLayoutWidget',
-          id: 'default-widget-tasks-2',
-          pageLayoutTabId: 'default-tab-tasks',
-          title: 'Tasks',
-          type: WidgetType.TASKS,
-          objectMetadataId: null,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 0,
-            rowSpan: 6,
-            columnSpan: 12,
-          },
-          configuration: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null,
-        },
       ],
     },
-    // Notes tab (position 400)
     {
       __typename: 'PageLayoutTab',
       id: 'default-tab-notes',
       title: 'Notes',
       position: 400,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
@@ -169,14 +141,13 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Files tab (position 500)
     {
       __typename: 'PageLayoutTab',
       id: 'default-tab-files',
       title: 'Files',
       position: 500,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
@@ -202,14 +173,13 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Emails tab (position 600) - Company specific
     {
       __typename: 'PageLayoutTab',
       id: 'default-tab-emails',
       title: 'Emails',
       position: 600,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,
@@ -235,14 +205,13 @@ export const DEFAULT_PAGE_LAYOUT: PageLayout = {
         },
       ],
     },
-    // Calendar tab (position 700) - Company specific
     {
       __typename: 'PageLayoutTab',
       id: 'default-tab-calendar',
       title: 'Calendar',
       position: 700,
       layoutMode: 'vertical-list',
-      pageLayoutId: DEFAULT_PAGE_LAYOUT_ID,
+      pageLayoutId: DEFAULT_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       deletedAt: null,

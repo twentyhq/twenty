@@ -1,15 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { WorkspaceMigrationV2ExceptionCode } from 'twenty-shared/metadata';
+
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-build-orchestrator.service';
 import {
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/services/workspace-migration-runner-v2.service';
-import {
-  WorkspaceMigrationV2Exception,
-  WorkspaceMigrationV2ExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration.exception';
+import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
 
 @Injectable()
 export class WorkspaceMigrationValidateBuildAndRunService {

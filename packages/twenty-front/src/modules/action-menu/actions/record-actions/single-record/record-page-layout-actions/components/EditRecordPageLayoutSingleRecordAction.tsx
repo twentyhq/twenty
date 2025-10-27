@@ -3,7 +3,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { DEFAULT_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultPageLayoutId';
+import { DEFAULT_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultRecordPageLayoutId';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { useRecoilValue } from 'recoil';
 
@@ -14,11 +14,9 @@ export const EditRecordPageLayoutSingleRecordAction = () => {
 
   const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
-  // For COMPANY objects, use DEFAULT_PAGE_LAYOUT_ID
-  // For other objects, use the record's pageLayoutId (when backend is ready)
   const pageLayoutId =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
-      ? DEFAULT_PAGE_LAYOUT_ID
+      ? DEFAULT_RECORD_PAGE_LAYOUT_ID
       : selectedRecord?.pageLayoutId;
 
   const { setIsPageLayoutInEditMode } =

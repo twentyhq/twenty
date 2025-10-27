@@ -3,7 +3,7 @@
 exports[`Object metadata creation should fail v2 when labelPlural contains only whitespace 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -616,7 +616,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
 exports[`Object metadata creation should fail v2 when labelPlural exceeds maximum length 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -1229,7 +1229,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
 exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -1842,7 +1842,7 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
 exports[`Object metadata creation should fail v2 when labelSingular contains only whitespace 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -2455,7 +2455,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
 exports[`Object metadata creation should fail v2 when labelSingular exceeds maximum length 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -3068,7 +3068,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
 exports[`Object metadata creation should fail v2 when labelSingular is empty 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -3681,7 +3681,7 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
 exports[`Object metadata creation should fail v2 when labels are identical 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -4295,7 +4295,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
 exports[`Object metadata creation should fail v2 when labels with whitespaces result to be identical 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -4909,7 +4909,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
 exports[`Object metadata creation should fail v2 when name exceeds maximum length 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -5552,7 +5552,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
 exports[`Object metadata creation should fail v2 when namePlural has invalid characters 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -6165,7 +6165,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
 exports[`Object metadata creation should fail v2 when namePlural is a reserved keyword 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -6778,7 +6778,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
 exports[`Object metadata creation should fail v2 when namePlural is an empty string 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -7396,7 +7396,7 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
 exports[`Object metadata creation should fail v2 when namePlural is not camelCased 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -8014,7 +8014,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
 exports[`Object metadata creation should fail v2 when nameSingular contains only one char and whitespaces 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -8692,7 +8692,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
 exports[`Object metadata creation should fail v2 when nameSingular contains only whitespaces 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -9370,7 +9370,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
 exports[`Object metadata creation should fail v2 when nameSingular has invalid characters 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -10013,7 +10013,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
 exports[`Object metadata creation should fail v2 when nameSingular is a reserved keyword 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -10656,7 +10656,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
 exports[`Object metadata creation should fail v2 when nameSingular is an empty string 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -11334,7 +11334,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is an empty s
 exports[`Object metadata creation should fail v2 when nameSingular is not camelCased 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -12012,7 +12012,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
 exports[`Object metadata creation should fail v2 when names are identical 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -12626,7 +12626,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
 exports[`Object metadata creation should fail v2 when names with whitespaces result to be identical 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],

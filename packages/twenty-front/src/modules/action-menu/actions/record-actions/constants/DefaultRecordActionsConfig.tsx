@@ -1,8 +1,8 @@
 import { ActionLink } from '@/action-menu/actions/components/ActionLink';
-import { ActionOpenSidePanelPage } from '@/action-menu/actions/components/ActionOpenSidePanelPage';
 import { DeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DeleteMultipleRecordsAction';
 import { DestroyMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/DestroyMultipleRecordsAction';
 import { ExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/ExportMultipleRecordsAction';
+import { MergeMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/MergeMultipleRecordsAction';
 import { RestoreMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction';
 import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { CreateNewTableRecordNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/components/CreateNewTableRecordNoSelectionRecordAction';
@@ -25,7 +25,6 @@ import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { BACKEND_BATCH_REQUEST_MAX_COUNT } from '@/object-record/constants/BackendBatchRequestMaxCount';
@@ -199,13 +198,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       Boolean(objectPermissions.canDestroyObjectRecords) &&
       numberOfSelectedRecords <= MUTATION_MAX_MERGE_RECORDS,
     availableOn: [ActionViewType.INDEX_PAGE_BULK_SELECTION],
-    component: (
-      <ActionOpenSidePanelPage
-        page={CommandMenuPages.MergeRecords}
-        pageTitle={msg`Merge records`}
-        pageIcon={IconArrowMerge}
-      />
-    ),
+    component: <MergeMultipleRecordsAction />,
   },
   [MultipleRecordsActionKeys.EXPORT]: {
     type: ActionType.Standard,

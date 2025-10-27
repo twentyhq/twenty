@@ -833,6 +833,7 @@ msgstr "AI"
 
 #. js-lingui-id: kNfr85
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "AI Model"
 msgstr "AI модел"
 
@@ -2448,7 +2449,7 @@ msgstr "Чешки"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -2730,7 +2731,7 @@ msgid "Delete account and all the associated data"
 msgstr "Обриши налог и све асоциране податке"
 
 #. js-lingui-id: YMNj8z
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
 msgid "Delete Agent"
@@ -2788,7 +2789,7 @@ msgid "Delete Role Permanently"
 msgstr "Трајно избришите улогу"
 
 #. js-lingui-id: DgHnjS
-#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Delete this agent"
 msgstr "Обришите овог агента"
 
@@ -3008,15 +3009,15 @@ msgstr "Домејни морају бити краћи од 256 каракте�
 msgid "Don’t auto-create contacts."
 msgstr "Не аутоматски креирајте контакте."
 
-#. js-lingui-id: cx0Ws8
+#. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t create contacts from/to Gmail, Outlook emails"
-msgstr "Не креирајте контакте од/до Gmail, Outlook имејлова"
+msgid "Don't create contacts from/to Gmail, Outlook emails"
+msgstr ""
 
-#. js-lingui-id: 3qDEYI
+#. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don’t sync emails from team@ support@ noreply@..."
-msgstr "Не синхронизујте имејлове од team@ support@ noreply@..."
+msgid "Don't sync emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: bd+DPX
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -3383,6 +3384,7 @@ msgstr "Унесите вредност за чување у базу подат
 
 #. js-lingui-id: P/e64M
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter agent name*"
 msgstr "Унесите име агента*"
 
@@ -3436,6 +3438,7 @@ msgstr "Унесите информације за подешавање везе
 
 #. js-lingui-id: 3EF9HN
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter the system prompt that defines this agent's behavior and capabilities"
 msgstr "Унесите системски упит који дефинише понашање и могућности овог агента"
 
@@ -3987,6 +3990,11 @@ msgstr "пети"
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fifth"
 msgstr "Пети"
+
+#. js-lingui-id: sWmIx3
+#: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
+msgid "File \"{fileName}\" exceeds {maxUploadSize}"
+msgstr ""
 
 #. js-lingui-id: o7J4JM
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -5261,7 +5269,6 @@ msgstr "Преглед спајања"
 #. js-lingui-id: Cmeamd
 #: src/modules/command-menu/hooks/useOpenMergeRecordsPageInCommandMenu.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Merge records"
 msgstr "Споји записе"
 
@@ -5817,6 +5824,7 @@ msgstr "Нема доступних података о метрикама"
 
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "Нема доступних модела. Молимо вас, конфигуришите AI моделе у подешавањима вашег радног простора."
 
@@ -5899,7 +5907,7 @@ msgid "No workflow versions yet"
 msgstr "Још нема верзија радног процеса"
 
 #. js-lingui-id: EdQY6l
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
@@ -6146,6 +6154,11 @@ msgstr "само на {remainingDays} и {lastDay}"
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
 msgid "Only the timestamp & participants will be shared with your team."
 msgstr "Само временска ознака & учесници ће бити подељени са вашим тимом."
+
+#. js-lingui-id: 1TNIig
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "Open"
+msgstr ""
 
 #. js-lingui-id: 69b7aE
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
@@ -6885,7 +6898,8 @@ msgstr "Опозвано за овај објекат"
 #. js-lingui-id: GDvlUT
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Role"
 msgstr "Улога"
@@ -6900,6 +6914,11 @@ msgstr "Назив улоге"
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Role name cannot be empty"
 msgstr "Назив улоге не може бити празан"
+
+#. js-lingui-id: khTver
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "Role Permissions"
+msgstr ""
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7472,6 +7491,7 @@ msgstr "Подешавање ваше базе података..."
 
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -7933,6 +7953,7 @@ msgstr "Систем"
 
 #. js-lingui-id: FHPe8O
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "System Prompt"
 msgstr "Системски упит"
 
@@ -8033,6 +8054,11 @@ msgstr "Текст копиран у клипборд"
 #: src/modules/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "Текстуални уређивач"
+
+#. js-lingui-id: 5Vj6n9
+#: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
+msgid "The agent can perform all actions defined by the following role."
+msgstr ""
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -8979,6 +9005,7 @@ msgstr "Напишите опис"
 
 #. js-lingui-id: 7QXVrh
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Write a description for this agent"
 msgstr "Напишите опис за овог агента"
 

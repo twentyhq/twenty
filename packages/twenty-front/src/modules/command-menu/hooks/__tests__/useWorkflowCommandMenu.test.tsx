@@ -6,7 +6,7 @@ import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
 import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -68,8 +68,8 @@ const renderHooks = () => {
         openWorkflowViewStepInCommandMenu,
       } = useWorkflowCommandMenu();
       const commandMenuPage = useRecoilValue(commandMenuPageState);
-      const commandMenuNavigationMorphItemByPage = useRecoilValue(
-        commandMenuNavigationMorphItemByPageState,
+      const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+        commandMenuNavigationMorphItemsByPageState,
       );
 
       const viewableRecordId = useRecoilComponentValue(
@@ -116,7 +116,7 @@ const renderHooks = () => {
         workflowVersionId,
         viewableRecordId,
         commandMenuPage,
-        commandMenuNavigationMorphItemByPage,
+        commandMenuNavigationMorphItemsByPage,
         viewableRecordNameSingular,
         currentObjectMetadataItemId,
         targetedRecordsRule,

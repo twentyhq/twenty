@@ -85,6 +85,7 @@ export { safeParseRelativeDateFilterValue } from './safeParseRelativeDateFilterV
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';
+export { uncapitalize } from './strings/uncapitalize';
 export type {
   TipTapMarkType,
   TipTapNodeType,
