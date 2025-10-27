@@ -46,6 +46,10 @@ const StyledGridContainer = styled.div`
   .react-grid-item:not(.react-draggable-dragging) {
     user-select: auto;
   }
+
+  .react-grid-item:hover .widget-card-resize-handle {
+    display: block !important;
+  }
 `;
 
 type ExtendedResponsiveProps = ResponsiveProps & {
@@ -158,7 +162,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
               ) : undefined
             }
             resizeHandles={['se']}
-            onDragStart={(layout, oldItem, newItem) => {
+            onDragStart={(_layout, _oldItem, newItem) => {
               setDraggingWidgetId(newItem.i);
             }}
             onDragStop={() => {
