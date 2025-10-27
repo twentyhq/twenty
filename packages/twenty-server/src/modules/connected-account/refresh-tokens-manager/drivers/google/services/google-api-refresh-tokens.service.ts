@@ -10,11 +10,6 @@ import {
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { type ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
-export type GoogleTokens = {
-  accessToken: string;
-  refreshToken: string;
-};
-
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
