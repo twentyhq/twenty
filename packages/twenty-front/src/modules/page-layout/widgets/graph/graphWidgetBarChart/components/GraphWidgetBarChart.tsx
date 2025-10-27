@@ -1,7 +1,7 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
-import { BarChartEndLines } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartEndLines';
+import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
@@ -19,8 +19,8 @@ import {
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ResponsiveBar, type BarCustomLayerProps } from '@nivo/bar';
-import { useId, useRef, useState } from 'react';
+import { ResponsiveBar } from '@nivo/bar';
+import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const LEGEND_THRESHOLD = 10;
@@ -76,7 +76,6 @@ export const GraphWidgetBarChart = ({
   customFormatter,
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
-  const instanceId = useId();
   const colorRegistry = createGraphColorRegistry(theme);
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
@@ -98,17 +97,13 @@ export const GraphWidgetBarChart = ({
 
   const chartTheme = useBarChartTheme();
 
-  const { barConfigs, enrichedKeys, enrichedKeysMap, defs } = useBarChartData({
+  const { barConfigs, enrichedKeys } = useBarChartData({
     data,
     indexBy,
     keys,
     series,
     colorRegistry,
-    id,
-    instanceId,
     seriesLabels,
-    hoveredBar,
-    layout,
   });
 
   const { renderTooltip: getTooltipData } = useBarChartTooltip({
@@ -152,22 +147,27 @@ export const GraphWidgetBarChart = ({
     );
   };
 
-  const barEndLinesLayer = (props: BarCustomLayerProps<BarChartDataItem>) => {
-    return (
-      <BarChartEndLines
-        bars={props.bars}
-        enrichedKeysMap={enrichedKeysMap}
+  const BarItemWithContext = useMemo(
+    () => (props: any) => (
+      <CustomBarItem
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...props}
+        keys={keys}
+        groupMode={groupMode}
+        data={data}
+        indexBy={indexBy}
         layout={layout}
       />
-    );
-  };
+    ),
+    [keys, groupMode, data, indexBy, layout],
+  );
 
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
         ref={containerRef}
         $isClickable={hasClickableItems}
-        $cursorSelector='svg g[transform] rect[fill^="url(#gradient-"]'
+        $cursorSelector="svg g[transform] rect[fill]"
       >
         <NodeDimensionEffect
           elementRef={containerRef}
@@ -177,6 +177,7 @@ export const GraphWidgetBarChart = ({
           }}
         />
         <ResponsiveBar
+          barComponent={BarItemWithContext}
           data={data}
           keys={keys}
           indexBy={indexBy}
@@ -192,15 +193,7 @@ export const GraphWidgetBarChart = ({
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
-          defs={defs}
-          layers={[
-            'grid',
-            'axes',
-            'bars',
-            barEndLinesLayer,
-            'markers',
-            'legends',
-          ]}
+          layers={['grid', 'axes', 'bars', 'markers', 'legends']}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}
@@ -226,6 +219,7 @@ export const GraphWidgetBarChart = ({
           }}
           onMouseLeave={() => setHoveredBar(null)}
           theme={chartTheme}
+          borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
       <GraphWidgetLegend
