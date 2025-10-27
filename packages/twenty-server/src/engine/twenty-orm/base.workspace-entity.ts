@@ -65,4 +65,20 @@ export abstract class BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsFieldUIReadOnly()
   deletedAt: string | null;
+
+  @WorkspaceField({
+    standardId: BASE_OBJECT_STANDARD_FIELD_IDS.lastViewedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: msg`Last view at`,
+    description: msg`Last view at`,
+    icon: 'IconCalendar',
+    defaultValue: null,
+    settings: {
+      displayFormat: DateDisplayFormat.RELATIVE,
+    },
+    storage: 'redis',
+  })
+  @WorkspaceIsFieldUIReadOnly()
+  @WorkspaceIsNullable()
+  lastViewedAt: string | null;
 }

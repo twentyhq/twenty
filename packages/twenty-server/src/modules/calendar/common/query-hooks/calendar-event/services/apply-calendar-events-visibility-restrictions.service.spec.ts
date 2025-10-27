@@ -20,6 +20,7 @@ const createMockCalendarEvent = (
   isFullDay: false,
   startsAt: '2024-03-20T10:00:00Z',
   endsAt: '2024-03-20T11:00:00Z',
+  lastViewedAt: null,
   location: '',
   conferenceLink: {
     primaryLinkLabel: '',

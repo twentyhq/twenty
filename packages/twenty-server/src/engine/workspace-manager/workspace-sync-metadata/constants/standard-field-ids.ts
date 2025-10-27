@@ -49,6 +49,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
 
 export const BASE_OBJECT_STANDARD_FIELD_IDS = {
   id: '20202020-eda0-4cee-9577-3eb357e3c22b',
+  lastViewedAt: '20202020-0119-41db-bebd-854ddb42def7',
   createdAt: '20202020-66ac-4502-9975-e4d959c50311',
   updatedAt: '20202020-d767-4622-bdcf-d8a084834d86',
   deletedAt: '20202020-b9a7-48d8-8387-b9a3090a50ec',
@@ -139,7 +140,6 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
-  lastViewedAt: '20202020-0119-41db-bebd-854ddb42def7',
 } as const;
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {

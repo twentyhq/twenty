@@ -4,7 +4,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -292,20 +291,4 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
-
-  @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.lastViewedAt,
-    type: FieldMetadataType.DATE_TIME,
-    label: msg`Last view at`,
-    description: msg`Last view at`,
-    icon: 'IconCalendar',
-    defaultValue: null,
-    settings: {
-      displayFormat: DateDisplayFormat.RELATIVE,
-    },
-    storage: 'redis',
-  })
-  @WorkspaceIsFieldUIReadOnly()
-  @WorkspaceIsNullable()
-  lastViewedAt: string | null;
 }

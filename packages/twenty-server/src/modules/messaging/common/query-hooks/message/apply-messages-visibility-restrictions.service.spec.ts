@@ -25,6 +25,7 @@ const createMockMessage = (
   deletedAt: null,
   createdAt: '2024-03-20T09:00:00Z',
   updatedAt: '2024-03-20T09:00:00Z',
+  lastViewedAt: null,
 });
 
 describe('ApplyMessagesVisibilityRestrictionsService', () => {

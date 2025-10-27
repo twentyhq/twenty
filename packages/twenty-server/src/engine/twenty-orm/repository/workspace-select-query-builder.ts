@@ -167,7 +167,7 @@ export class WorkspaceSelectQueryBuilder<
           // add this condition to use alias when it's possible
           // For external_ field it's necessary to use alias
           if (selection && selection.aliasName) {
-            return selection.aliasName + ' ' + orderValue;
+            return this.escape(selection.aliasName) + ' ' + orderValue;
           }
 
           return columnName + ' ' + orderValue;
