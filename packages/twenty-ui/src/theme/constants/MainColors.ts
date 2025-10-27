@@ -1,15 +1,15 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
+import * as RadixColors from '@radix-ui/colors';
 import { GRAY_SCALE } from './GrayScale';
 
 export const MAIN_COLORS = {
-  green: '#55ef3c',
-  turquoise: '#15de8f',
-  sky: '#00e0ff',
-  blue: '#1961ed',
-  purple: '#915ffd',
-  pink: '#f54bd0',
-  red: '#f83e3e',
-  orange: '#ff7222',
-  yellow: '#ffd338',
+  green: RadixColors.green.green9,
+  turquoise: RadixColors.teal.teal9,
+  sky: RadixColors.sky.sky9,
+  blue: RadixColors.blue.blue9,
+  purple: RadixColors.violet.violet9,
+  pink: RadixColors.pink.pink9,
+  red: RadixColors.red.red9,
+  orange: RadixColors.orange.orange9,
+  yellow: RadixColors.yellow.yellow9,
   gray: GRAY_SCALE.gray30,
 };

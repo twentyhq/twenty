@@ -1,9 +1,8 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
+import * as RadixColors from '@radix-ui/colors';
 import LightNoise from '@assets/themes/light-noise.png';
 
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
-import { RGBA } from './Rgba';
 
 export const BACKGROUND_LIGHT = {
   noisy: `url(${LightNoise.toString()});`,
@@ -15,21 +14,21 @@ export const BACKGROUND_LIGHT = {
   invertedSecondary: GRAY_SCALE.gray50,
   danger: COLOR.red10,
   transparent: {
-    primary: RGBA(GRAY_SCALE.gray0, 0.5),
-    secondary: RGBA(GRAY_SCALE.gray10, 0.5),
-    strong: RGBA(GRAY_SCALE.gray100, 0.16),
-    medium: RGBA(GRAY_SCALE.gray100, 0.08),
-    light: RGBA(GRAY_SCALE.gray100, 0.04),
-    lighter: RGBA(GRAY_SCALE.gray100, 0.02),
-    danger: RGBA(COLOR.red, 0.08),
-    blue: RGBA(COLOR.blue, 0.08),
-    orange: RGBA(COLOR.orange, 0.08),
+    primary: RadixColors.grayA.grayA6,
+    secondary: RadixColors.grayA.grayA4,
+    strong: RadixColors.grayA.grayA11,
+    medium: RadixColors.grayA.grayA8,
+    light: RadixColors.grayA.grayA4,
+    lighter: RadixColors.grayA.grayA2,
+    danger: RadixColors.redA.redA3,
+    blue: RadixColors.blueA.blueA3,
+    orange: RadixColors.orangeA.orangeA3,
   },
-  overlayPrimary: RGBA(GRAY_SCALE.gray80, 0.8),
-  overlaySecondary: RGBA(GRAY_SCALE.gray80, 0.4),
-  overlayTertiary: RGBA(GRAY_SCALE.gray80, 0.08),
-  radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${GRAY_SCALE.gray60} 100%)`,
-  radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, #505050 0%, ${GRAY_SCALE.gray60} 100%)`,
+  overlayPrimary: RadixColors.blackA.blackA11,
+  overlaySecondary: RadixColors.blackA.blackA9,
+  overlayTertiary: RadixColors.blackA.blackA4,
+  radialGradient: `radial-gradient(50% 62.62% at 50% 0%, ${RadixColors.gray.gray9} 0%, ${RadixColors.gray.gray10} 100%)`,
+  radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, ${RadixColors.gray.gray10} 0%, ${RadixColors.gray.gray11} 100%)`,
   primaryInverted: GRAY_SCALE.gray60,
   primaryInvertedHover: GRAY_SCALE.gray55,
 };
