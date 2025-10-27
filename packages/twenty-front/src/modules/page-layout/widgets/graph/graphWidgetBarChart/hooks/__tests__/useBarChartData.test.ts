@@ -17,6 +17,10 @@ describe('useBarChartData', () => {
         hover: ['green3', 'green4'],
       },
       solid: 'greenSolid',
+      adaptiveColor1: 'green1',
+      adaptiveColor2: 'green2',
+      adaptiveColor3: 'green3',
+      adaptiveColor4: 'green4',
     },
     purple: {
       name: 'purple',
@@ -25,6 +29,10 @@ describe('useBarChartData', () => {
         hover: ['purple3', 'purple4'],
       },
       solid: 'purpleSolid',
+      adaptiveColor1: 'purple1',
+      adaptiveColor2: 'purple2',
+      adaptiveColor3: 'purple3',
+      adaptiveColor4: 'purple4',
     },
   };
 

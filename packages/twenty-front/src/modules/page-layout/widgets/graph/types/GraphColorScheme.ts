@@ -5,4 +5,8 @@ export type GraphColorScheme = {
     hover: [string, string];
   };
   solid: string;
+  adaptiveColor1: string;
+  adaptiveColor2: string;
+  adaptiveColor3: string;
+  adaptiveColor4: string;
 };

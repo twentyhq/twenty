@@ -1,9 +1,11 @@
+import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { MAIN_COLORS, type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui/theme';
 
 type ChartColorGradientOptionProps = {
   colorOption: {
@@ -31,17 +33,19 @@ export const ChartColorGradientOption = ({
   onSelectColor,
 }: ChartColorGradientOptionProps) => {
   const colorName = colorOption.colorName as ThemeColor;
+  const theme = useTheme();
+  const colorRegistry = createGraphColorRegistry(theme);
 
   const colorSamples = (
     <StyledColorSamplesContainer>
       {Array.from({ length: COLOR_GROUP_COUNT }).map((_, index) => {
-        const baseColor = MAIN_COLORS[colorName];
+        const colorScheme = colorRegistry[colorName];
         const reversedIndex = COLOR_GROUP_COUNT - 1 - index;
-        const groupColor = generateGroupColor(
-          baseColor,
-          reversedIndex,
-          COLOR_GROUP_COUNT,
-        );
+        const groupColor = generateGroupColor({
+          colorScheme,
+          groupIndex: reversedIndex,
+          totalGroups: COLOR_GROUP_COUNT,
+        });
         return <ColorSample key={index} color={groupColor} />;
       })}
     </StyledColorSamplesContainer>

@@ -17,6 +17,10 @@ describe('usePieChartData', () => {
         hover: ['red3', 'red4'],
       },
       solid: 'redSolid',
+      adaptiveColor1: 'red1',
+      adaptiveColor2: 'red2',
+      adaptiveColor3: 'red3',
+      adaptiveColor4: 'red4',
     },
     blue: {
       name: 'blue',
@@ -25,6 +29,10 @@ describe('usePieChartData', () => {
         hover: ['blue3', 'blue4'],
       },
       solid: 'blueSolid',
+      adaptiveColor1: 'blue1',
+      adaptiveColor2: 'blue2',
+      adaptiveColor3: 'blue3',
+      adaptiveColor4: 'blue4',
     },
   };
 
