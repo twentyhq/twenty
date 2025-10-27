@@ -30,7 +30,20 @@
       },
       "configurations": {
         "production": {
-          "command": "plasmo build --build-path=dist"
+          "command": "plasmo build --build-path=dist --zip"
+        }
+      }
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "plasmo package --build-path=dist",
+        "cwd": "packages/twenty-browser-extension",
+        "color": true
+      },
+      "configurations": {
+        "production": {
+          "command": "plasmo package --build-path=dist"
         }
       }
     }
