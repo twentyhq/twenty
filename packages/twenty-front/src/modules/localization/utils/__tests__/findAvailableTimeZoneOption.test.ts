@@ -5,11 +5,13 @@ import { findAvailableTimeZoneOption } from '@/localization/utils/findAvailableT
 describe('findAvailableTimeZoneOption', () => {
   it('should find the matching available IANA time zone select option from a given IANA time zone', () => {
     const ianaTimeZone = 'Europe/Paris';
-    const value = 'Europe/Paris';
-    const label = '(GMT+02:00) Central European Summer Time - Paris';
+    const expectedValue = 'Europe/Paris';
 
     const option = findAvailableTimeZoneOption(ianaTimeZone);
 
-    expect(option).toEqual({ value, label });
+    expect(option).toBeDefined();
+    expect(option?.value).toBe(expectedValue);
+    expect(option?.label).toMatch(/^\(GMT[+-]\d{2}:\d{2}\) .*- Paris$/);
+    expect(option?.label).toMatch(/Central European/);
   });
 });
