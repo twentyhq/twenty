@@ -38,8 +38,7 @@ export class CalendarChannelSyncStatusService {
       );
 
     await calendarChannelRepository.update(calendarChannelIds, {
-      syncStage:
-        CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+      syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
     });
   }
 
@@ -149,8 +148,7 @@ export class CalendarChannelSyncStatusService {
       );
 
     await calendarChannelRepository.update(calendarChannelIds, {
-      syncStage:
-        CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+      syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
       syncStatus: CalendarChannelSyncStatus.ACTIVE,
       throttleFailureCount: 0,
       syncStageStartedAt: null,
