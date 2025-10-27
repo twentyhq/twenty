@@ -8,6 +8,7 @@ import {
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { type QueryBuilderCteOptions } from 'typeorm/query-builder/QueryBuilderCte';
 import { isDefined } from 'twenty-shared/utils';
+import { DriverUtils } from 'typeorm/driver/DriverUtils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
