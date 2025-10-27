@@ -108,6 +108,7 @@ export const getStepFilterOperands = ({
       }
     }
     case 'NUMBER':
+    case 'number':
       return FILTER_OPERANDS_MAP.NUMBER;
     case 'RAW_JSON':
       return FILTER_OPERANDS_MAP.RAW_JSON;
@@ -123,8 +124,10 @@ export const getStepFilterOperands = ({
     case 'SELECT':
       return FILTER_OPERANDS_MAP.SELECT;
     case 'ARRAY':
+    case 'array':
       return FILTER_OPERANDS_MAP.ARRAY;
     case 'BOOLEAN':
+    case 'boolean':
       return FILTER_OPERANDS_MAP.BOOLEAN;
     case 'UUID':
       return FILTER_OPERANDS_MAP.UUID;
