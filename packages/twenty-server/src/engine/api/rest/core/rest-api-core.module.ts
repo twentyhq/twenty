@@ -18,14 +18,13 @@ import { RestApiRestoreManyHandler } from 'src/engine/api/rest/core/handlers/res
 import { RestApiRestoreOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-restore-one.handler';
 import { RestApiUpdateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-many.handler';
 import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
-import { CoreQueryBuilderModule } from 'src/engine/api/rest/core/query-builder/core-query-builder.module';
-import { coreQueryBuilderFactories } from 'src/engine/api/rest/core/query-builder/factories/factories';
 import { restToCommonArgsHandlers } from 'src/engine/api/rest/core/rest-to-common-args-handlers/rest-to-common-args-handlers';
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -55,7 +54,6 @@ const restApiCoreResolvers = [
 
 @Module({
   imports: [
-    CoreQueryBuilderModule,
     WorkspaceCacheStorageModule,
     AuthModule,
     ApiKeyModule,
@@ -68,12 +66,12 @@ const restApiCoreResolvers = [
     ActorModule,
     FeatureFlagModule,
     CoreCommonApiModule,
+    WorkspaceDomainsModule,
   ],
   controllers: [RestApiCoreController],
   providers: [
     RestApiService,
     RestApiCoreService,
-    ...coreQueryBuilderFactories,
     ...restApiCoreResolvers,
     ...restToCommonArgsHandlers,
   ],
