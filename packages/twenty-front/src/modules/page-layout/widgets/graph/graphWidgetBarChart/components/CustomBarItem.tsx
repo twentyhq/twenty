@@ -146,7 +146,9 @@ export const CustomBarItem = <D extends BarDatum>({
     <animated.g transform={transform}>
       {isTopBar && (
         <defs>
-          <clipPath id={`round-corner-${label}`}>
+          <clipPath
+            id={`round-corner-${barData.id}-${barData.indexValue}-${label}`}
+          >
             <animated.rect
               x={isHorizontal ? -borderRadius : 0}
               y={0}
@@ -165,7 +167,11 @@ export const CustomBarItem = <D extends BarDatum>({
 
       <StyledBarRect
         $isInteractive={isInteractive}
-        clipPath={isTopBar ? `url(#round-corner-${label})` : undefined}
+        clipPath={
+          isTopBar
+            ? `url(#round-corner-${barData.id}-${barData.indexValue}-${label})`
+            : undefined
+        }
         width={to(width, (value) => Math.max(value, 0))}
         height={to(height, (value) => Math.max(value, 0))}
         fill={color}

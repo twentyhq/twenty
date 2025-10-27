@@ -16,12 +16,12 @@ export const getColorScheme = ({
   fallbackIndex?: number;
   totalGroups?: number;
 }): GraphColorScheme => {
-  if (
-    !isDefined(colorName) ||
-    !isDefined(registry[colorName]) ||
-    !isDefined(totalGroups)
-  ) {
+  if (!isDefined(colorName) || !isDefined(registry[colorName])) {
     return getColorSchemeByIndex(registry, fallbackIndex ?? 0);
+  }
+
+  if (!isDefined(totalGroups)) {
+    return registry[colorName];
   }
 
   return {
