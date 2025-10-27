@@ -92,7 +92,7 @@ export class WorkspaceSelectQueryBuilder<
 
               this.addSelect(
                 parts.selectExpr,
-                `${EXTERNAL_STORAGE_ALIAS}${field.name}`,
+                `${EXTERNAL_STORAGE_ALIAS}_${this.alias}_${field.name}`,
               );
             }
           }
@@ -132,6 +132,7 @@ export class WorkspaceSelectQueryBuilder<
             typeof orderBys[columnName] === 'string'
               ? orderBys[columnName]
               : orderBys[columnName].order + ' ' + orderBys[columnName].nulls;
+
           const selection = this.expressionMap.selects.find(
             (s) => s.selection === columnName || s.aliasName === columnName,
           );
@@ -250,7 +251,10 @@ export class WorkspaceSelectQueryBuilder<
           if (key === pkName) continue;
           if (isDefined(entity) && key.startsWith(EXTERNAL_STORAGE_ALIAS)) {
             entity[
-              key.replace(EXTERNAL_STORAGE_ALIAS, '') as keyof typeof entity
+              key.replace(
+                `${EXTERNAL_STORAGE_ALIAS}_${mainAliasTarget}_`,
+                '',
+              ) as keyof typeof entity
             ] = value;
           }
         }

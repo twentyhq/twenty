@@ -85,7 +85,7 @@ export class GraphqlQueryOrderFieldParser {
               fieldMetadata.storage !== 'postgres';
 
             const selector = isExternal
-              ? `${EXTERNAL_STORAGE_ALIAS}${fieldMetadata.name}`
+              ? `${EXTERNAL_STORAGE_ALIAS}_${objectNameSingular}_${fieldMetadata.name}` // alias
               : `${objectNameSingular}.${fieldMetadata.name}`;
 
             acc[`${selector}${orderByCasting}`] =
