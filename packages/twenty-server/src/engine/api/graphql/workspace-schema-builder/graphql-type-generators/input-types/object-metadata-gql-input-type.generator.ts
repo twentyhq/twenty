@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ObjectMetadataCreateGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/create-input/object-metadata-create-gql-input-type.generator';
 import { ObjectMetadataFilterGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/filter-input/object-metadata-filter-gql-input-type.generator';
 import { ObjectMetadataGroupByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/group-by-input/object-metadata-group-by-gql-input-type.generator';
+import { ObjectMetadataOrderByForRecordsWithGroupByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-for-records-with-group-by-gql-input-type.generator';
 import { ObjectMetadataOrderByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-gql-input-type.generator';
 import { ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-with-group-by-gql-input-type.generator';
 import { ObjectMetadataUpdateGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/update-input/object-metadata-update-gql-input-type.generator';
@@ -16,6 +17,7 @@ export class ObjectMetadataGqlInputTypeGenerator {
     private readonly objectMetadataFilterGqlInputTypeGenerator: ObjectMetadataFilterGqlInputTypeGenerator,
     private readonly objectMetadataOrderByGqlInputTypeGenerator: ObjectMetadataOrderByGqlInputTypeGenerator,
     private readonly objectMetadataOrderByWithGroupByGqlInputTypeGenerator: ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator,
+    private readonly objectMetadataOrderByForRecordsWithGroupByGqlInputTypeGenerator: ObjectMetadataOrderByForRecordsWithGroupByGqlInputTypeGenerator,
     private readonly objectMetadataGroupByGqlInputTypeGenerator: ObjectMetadataGroupByGqlInputTypeGenerator,
   ) {}
 
@@ -35,6 +37,11 @@ export class ObjectMetadataGqlInputTypeGenerator {
     this.objectMetadataOrderByWithGroupByGqlInputTypeGenerator.buildAndStore({
       objectMetadata,
     });
+    this.objectMetadataOrderByForRecordsWithGroupByGqlInputTypeGenerator.buildAndStore(
+      {
+        objectMetadata,
+      },
+    );
     this.objectMetadataGroupByGqlInputTypeGenerator.buildAndStore(
       objectMetadata,
     );

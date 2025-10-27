@@ -7,6 +7,7 @@ import { parseAggregateFieldsRestRequest } from 'src/engine/api/rest/input-reque
 import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-rest-request.util';
 import { parseGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/group-by-parser-utils/parse-group-by-rest-request.util';
 import { parseIncludeRecordsSampleRestRequest } from 'src/engine/api/rest/input-request-parsers/group-by-with-records/parse-include-records-sample-rest-request.util';
+import { parseOrderByForRecordsWithGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/order-by-with-group-by-parser-utils/parse-order-by-for-records-rest-request.util';
 import { parseOrderByWithGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/order-by-with-group-by-parser-utils/parse-order-by-with-group-by-rest-request.util';
 import { parseViewIdRestRequest } from 'src/engine/api/rest/input-request-parsers/view-id-parser-utils/parse-view-id-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
@@ -59,6 +60,8 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
       await this.buildCommonOptions(request);
 
     const orderByWithGroupBy = parseOrderByWithGroupByRestRequest(request);
+    const orderByForRecordsWithGroupBy =
+      parseOrderByForRecordsWithGroupByRestRequest(request);
     const filter = parseFilterRestRequest(request);
     const viewId = parseViewIdRestRequest(request);
     const groupBy = parseGroupByRestRequest(request);
@@ -83,6 +86,7 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
       objectMetadataMaps,
       filter,
       orderBy: orderByWithGroupBy,
+      orderByForRecords: orderByForRecordsWithGroupBy,
       viewId,
       groupBy,
       selectedFields,
