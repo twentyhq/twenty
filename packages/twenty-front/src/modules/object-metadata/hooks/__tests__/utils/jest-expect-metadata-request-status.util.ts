@@ -1,3 +1,5 @@
+import { expect } from '@jest/globals';
+
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { type SuccessfulMetadataRequestResult } from '@/object-metadata/types/SuccessfulMetadataRequestResult.type';
 
