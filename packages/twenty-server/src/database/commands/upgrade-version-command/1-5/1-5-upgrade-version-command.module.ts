@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AddPositionsToWorkflowVersionsAndWorkflowRunsCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-add-positions-to-workflow-versions-and-workflow-runs.command';
-import { MigrateViewsToCoreCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-migrate-views-to-core.command';
 import { RemoveFavoriteViewRelationCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-remove-favorite-view-relation.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -25,12 +24,10 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
   providers: [
     RemoveFavoriteViewRelationCommand,
     AddPositionsToWorkflowVersionsAndWorkflowRunsCommand,
-    MigrateViewsToCoreCommand,
   ],
   exports: [
     RemoveFavoriteViewRelationCommand,
     AddPositionsToWorkflowVersionsAndWorkflowRunsCommand,
-    MigrateViewsToCoreCommand,
   ],
 })
 export class V1_5_UpgradeVersionCommandModule {}

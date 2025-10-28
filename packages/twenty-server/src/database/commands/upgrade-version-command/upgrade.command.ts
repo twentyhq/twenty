@@ -30,7 +30,6 @@ import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-ve
 import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
 import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-update-timestamp-column-type-in-workspace-schema.command';
 import { AddPositionsToWorkflowVersionsAndWorkflowRunsCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-add-positions-to-workflow-versions-and-workflow-runs.command';
-import { MigrateViewsToCoreCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-migrate-views-to-core.command';
 import { RemoveFavoriteViewRelationCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-remove-favorite-view-relation.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
@@ -86,7 +85,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.5 Commands
     protected readonly removeFavoriteViewRelationCommand: RemoveFavoriteViewRelationCommand,
     protected readonly addPositionsToWorkflowVersionsAndWorkflowRunsCommand: AddPositionsToWorkflowVersionsAndWorkflowRunsCommand,
-    protected readonly migrateViewsToCoreCommand: MigrateViewsToCoreCommand,
 
     // 1.6 Commands
     protected readonly fixLabelIdentifierPositionAndVisibilityCommand: FixLabelIdentifierPositionAndVisibilityCommand,
@@ -181,7 +179,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_150: VersionCommands = {
       beforeSyncMetadata: [
-        this.migrateViewsToCoreCommand,
         this.removeFavoriteViewRelationCommand,
         this.addPositionsToWorkflowVersionsAndWorkflowRunsCommand,
       ],
