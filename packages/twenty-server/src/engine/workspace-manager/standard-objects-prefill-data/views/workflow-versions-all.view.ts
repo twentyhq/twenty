@@ -1,12 +1,12 @@
 import { msg } from '@lingui/core/macro';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   WORKFLOW_VERSION_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 export const workflowVersionsAllView = (
   objectMetadataItems: ObjectMetadataEntity[],

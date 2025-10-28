@@ -14,7 +14,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
@@ -230,7 +230,7 @@ export class AgentExecutionService implements AgentExecutionContext {
             );
 
             const selectOptions = hasRestrictedFields
-              ? getAllSelectableFields({
+              ? getAllSelectableColumnNames({
                   restrictedFields,
                   objectMetadata: { objectMetadataMapItem },
                 })
