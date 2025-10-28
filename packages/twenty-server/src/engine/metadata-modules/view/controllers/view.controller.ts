@@ -147,7 +147,10 @@ export class ViewController {
     let updatedView: ViewDTO;
     if (isWorkspaceMigrationV2Enabled) {
       updatedView = await this.viewV2Service.updateOne({
-        updateViewInput: input,
+        updateViewInput: {
+          ...input,
+          id,
+        },
         workspaceId: workspace.id,
       });
     } else {

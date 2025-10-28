@@ -1,4 +1,3 @@
-import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -12,10 +11,7 @@ import {
   deleteTestViewWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import {
-  assertViewStructure,
-  cleanupViewRecords,
-} from 'test/integration/utils/view-test.util';
+import { assertViewStructure } from 'test/integration/utils/view-test.util';
 
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
@@ -55,14 +51,6 @@ describe('View REST API', () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
-  });
-
-  beforeEach(async () => {
-    await cleanupViewRecords();
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
   });
 
   describe('GET /metadata/views', () => {
@@ -175,7 +163,7 @@ describe('View REST API', () => {
     it('should return empty object for non-existent view', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/views/${TEST_NOT_EXISTING_VIEW_ID}`,
+        path: `/metadata/views/20202020-b7a4-4f8e-9c1d-2e3f4a5b6c7d`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
@@ -231,7 +219,7 @@ describe('View REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'patch',
-        path: `/metadata/views/${TEST_NOT_EXISTING_VIEW_ID}`,
+        path: `/metadata/views/20202020-b7a4-4f8e-9c1d-2e3f4a5b6c7d`,
         body: updateData,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
@@ -275,7 +263,7 @@ describe('View REST API', () => {
     it('should return 404 error when deleting non-existent view', async () => {
       const response = await makeRestAPIRequest({
         method: 'delete',
-        path: `/metadata/views/${TEST_NOT_EXISTING_VIEW_ID}`,
+        path: `/metadata/views/20202020-b7a4-4f8e-9c1d-2e3f4a5b6c7d`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
