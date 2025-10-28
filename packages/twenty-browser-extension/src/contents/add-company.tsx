@@ -5,7 +5,7 @@ import type {
   PlasmoGetStyle,
   PlasmoMountShadowHost
 } from 'plasmo';
-import { Button } from '~ui/components/Button';
+import { Button } from '~ui/components/button';
 import { withTheme } from '~utils/emotion-cache';
 
 export const config: PlasmoCSConfig = {
