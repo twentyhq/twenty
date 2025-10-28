@@ -27,11 +27,11 @@ describe('View REST API', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
+        nameSingular: 'testViewObject',
+        namePlural: 'testViewObjects',
+        labelSingular: 'Test View Object',
+        labelPlural: 'Test View Objects',
+        icon: 'IconView',
       },
     });
 

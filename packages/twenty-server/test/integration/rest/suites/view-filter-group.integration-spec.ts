@@ -35,11 +35,11 @@ describe('View Filter Group REST API', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
+        nameSingular: 'testViewFilterGroupObject',
+        namePlural: 'testViewFilterGroupObjects',
+        labelSingular: 'Test View Filter Group Object',
+        labelPlural: 'Test View Filter Group Objects',
+        icon: 'IconFilterGroup',
       },
     });
 
