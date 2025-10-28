@@ -14,6 +14,7 @@ import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
+import { useEffect } from 'react';
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -93,10 +94,17 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         orderBy,
       },
       fetchPolicy,
-      onCompleted: handleFindManyRecordsCompleted,
-      onError: handleFindManyRecordsError,
       client: apolloCoreClient,
     });
+
+  useEffect(() => {
+    if (isDefined(data)) {
+      handleFindManyRecordsCompleted(data);
+    }
+    if (isDefined(error)) {
+      handleFindManyRecordsError(error);
+    }
+  }, [data, error, handleFindManyRecordsCompleted, handleFindManyRecordsError]);
 
   const { fetchMoreRecordsLazy } = useLazyFetchMoreRecordsWithPagination<T>({
     objectNameSingular,
