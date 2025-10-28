@@ -157,6 +157,12 @@ export const CustomBarItem = <D extends BarDatum>({
 
   const isHorizontal = layout === 'horizontal';
 
+  const clipPathId = useMemo(() => {
+    return `round-corner-${chartId ?? 'chart'}-${barData.index}-${String(
+      barData.id,
+    )}`;
+  }, [chartId, barData.index, barData.id]);
+
   const clipPathX = useMemo(() => {
     if (!isHorizontal) return 0;
     return isNegativeValue ? 0 : -borderRadius;
@@ -171,12 +177,22 @@ export const CustomBarItem = <D extends BarDatum>({
     <animated.g transform={transform}>
       {shouldRoundFreeEnd && (
         <defs>
-          <clipPath id={`round-corner-${chartId}-${barData.index}`}>
+          <clipPath id={clipPathId}>
             <animated.rect
               x={clipPathX}
               y={clipPathY}
-              rx={borderRadius}
-              ry={borderRadius}
+              rx={to(width, (value) =>
+                Math.min(
+                  borderRadius,
+                  Math.max(value + (isHorizontal ? borderRadius : 0), 0) / 2,
+                ),
+              )}
+              ry={to(height, (value) =>
+                Math.min(
+                  borderRadius,
+                  Math.max(value + (isHorizontal ? 0 : borderRadius), 0) / 2,
+                ),
+              )}
               width={to(width, (value) =>
                 Math.max(value + (isHorizontal ? borderRadius : 0), 0),
               )}
@@ -190,11 +206,7 @@ export const CustomBarItem = <D extends BarDatum>({
 
       <StyledBarRect
         $isInteractive={isInteractive}
-        clipPath={
-          shouldRoundFreeEnd
-            ? `url(#round-corner-${chartId}-${barData.index})`
-            : undefined
-        }
+        clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
         width={to(width, (value) => Math.max(value, 0))}
         height={to(height, (value) => Math.max(value, 0))}
         fill={color}
