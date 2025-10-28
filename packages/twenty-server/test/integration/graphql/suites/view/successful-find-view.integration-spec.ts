@@ -1,4 +1,3 @@
-import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import {
   VIEW_FIELD_GQL_FIELDS,
   VIEW_FILTER_GQL_FIELDS,
@@ -11,6 +10,8 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { findCoreViews } from 'test/integration/metadata/suites/view/utils/find-core-views.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 
 describe('successful find view with all sub-relations (e2e)', () => {
   let companyObjectMetadataId: string;
@@ -65,6 +66,7 @@ describe('successful find view with all sub-relations (e2e)', () => {
       const testView = viewsData.getCoreViews.find(
         (view) => view.key === ViewKey.INDEX,
       );
+
       jestExpectToBeDefined(testView);
 
       expect(testView).toMatchSnapshot(
