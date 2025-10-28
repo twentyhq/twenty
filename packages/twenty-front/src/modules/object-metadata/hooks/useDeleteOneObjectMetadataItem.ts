@@ -1,39 +1,60 @@
-import { useMutation } from '@apollo/client';
+import { useDeleteOneObjectMetadataItemMutation } from '~/generated-metadata/graphql';
 
-import {
-  type DeleteOneObjectMetadataItemMutation,
-  type DeleteOneObjectMetadataItemMutationVariables,
-} from '~/generated-metadata/graphql';
-
-import { DELETE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
-
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 
 export const useDeleteOneObjectMetadataItem = () => {
-  const [mutate] = useMutation<
-    DeleteOneObjectMetadataItemMutation,
-    DeleteOneObjectMetadataItemMutationVariables
-  >(DELETE_ONE_OBJECT_METADATA_ITEM);
+  const [deleteOneObjectMetadataItemMutation] =
+    useDeleteOneObjectMetadataItemMutation();
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
 
   const { refreshAllCoreViews } = useRefreshAllCoreViews();
 
+  const { handleMetadataError } = useMetadataErrorHandler();
+  const { enqueueErrorSnackBar } = useSnackBar();
+
   const deleteOneObjectMetadataItem = async (
-    idToDelete: DeleteOneObjectMetadataItemMutationVariables['idToDelete'],
-  ) => {
-    const result = await mutate({
-      variables: {
-        idToDelete,
-      },
-    });
+    idToDelete: string,
+  ): Promise<
+    MetadataRequestResult<
+      Awaited<ReturnType<typeof deleteOneObjectMetadataItemMutation>>
+    >
+  > => {
+    try {
+      const response = await deleteOneObjectMetadataItemMutation({
+        variables: {
+          idToDelete,
+        },
+      });
 
-    await refreshObjectMetadataItems();
-    await refreshAllCoreViews();
+      await refreshObjectMetadataItems();
+      await refreshAllCoreViews();
 
-    return result;
+      return {
+        status: 'successful',
+        response,
+      };
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        handleMetadataError(error, {
+          primaryMetadataName: 'objectMetadata',
+        });
+      } else {
+        enqueueErrorSnackBar({ message: t`An error occurred.` });
+      }
+
+      return {
+        status: 'failed',
+        error,
+      };
+    }
   };
 
   return {

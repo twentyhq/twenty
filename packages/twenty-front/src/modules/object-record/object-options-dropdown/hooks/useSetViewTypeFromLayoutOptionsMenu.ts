@@ -4,7 +4,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
+import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -28,7 +28,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
-  const { createViewGroupRecords } = usePersistViewGroupRecords();
+  const { createViewGroups } = usePersistViewGroupRecords();
 
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
@@ -58,7 +58,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         fieldMetadataId: randomFieldForKanban,
       } satisfies ViewGroup);
 
-      await createViewGroupRecords(
+      await createViewGroups(
         viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
           input: {
             ...viewGroup,
@@ -69,7 +69,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
       return viewGroupsToCreate;
     },
-    [objectMetadataItem, createViewGroupRecords],
+    [objectMetadataItem, createViewGroups],
   );
 
   const setAndPersistViewType = useRecoilCallback(
