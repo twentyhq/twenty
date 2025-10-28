@@ -137,19 +137,19 @@ export const CustomBarItem = <D extends BarDatum>({
     }
 
     if (isNegativeValue) {
-      const keysBelowCurrentKey = keys.slice(0, currentKeyIndex);
-      const hasBarBelow = keysBelowCurrentKey.some((key) => {
+      const keysAfterCurrentKey = keys.slice(currentKeyIndex + 1);
+      const hasNegativeBarAfter = keysAfterCurrentKey.some((key) => {
         const value = dataPoint[key];
         return isNumber(value) && value < 0;
       });
-      return !hasBarBelow;
+      return !hasNegativeBarAfter;
     } else {
-      const keysAboveCurrentKey = keys.slice(currentKeyIndex + 1);
-      const hasBarAbove = keysAboveCurrentKey.some((key) => {
+      const keysAfterCurrentKey = keys.slice(currentKeyIndex + 1);
+      const hasPositiveBarAfter = keysAfterCurrentKey.some((key) => {
         const value = dataPoint[key];
         return isNumber(value) && value > 0;
       });
-      return !hasBarAbove;
+      return !hasPositiveBarAfter;
     }
   }, [groupMode, keys, barData, chartData, indexBy, isNegativeValue]);
 
