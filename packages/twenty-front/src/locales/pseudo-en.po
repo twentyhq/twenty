@@ -693,6 +693,7 @@ msgid "Add view"
 msgstr ""
 
 #. js-lingui-id: iRpDWj
+#: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
