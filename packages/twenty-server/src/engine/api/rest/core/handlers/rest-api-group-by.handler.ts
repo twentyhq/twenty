@@ -33,6 +33,7 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         objectMetadataMaps,
         objectMetadataItemWithFieldMaps,
         includeRecords,
+        orderByForRecords,
       } = await this.parseRequestArgs(request);
 
       return await this.commonGroupByQueryRunnerService.execute(
@@ -43,6 +44,7 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
           groupBy,
           selectedFields,
           includeRecords,
+          orderByForRecords,
         },
         {
           authContext,
