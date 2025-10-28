@@ -24,16 +24,16 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () => {
 };
 
 export const mountShadowHost: PlasmoMountShadowHost = ({
-    shadowHost,
-    anchor,
-    mountState
-  }) => {
-    anchor?.element.appendChild(shadowHost);
-    mountState?.observer?.disconnect();
-  }
-const StyledContainer = styled.div`
-    margin: ${({theme}) => `${theme.spacing(1)} ${0} ${0} ${theme.spacing(2)}`};
+  shadowHost,
+  anchor,
+  mountState
+}) => {
+  anchor?.element.appendChild(shadowHost);
+  mountState?.observer?.disconnect();
+}
 
+const StyledContainer = styled.div`
+  margin: ${({theme}) => `${theme.spacing(1)} ${0} ${0} ${theme.spacing(2)}`};
 `;
 
 const AddCompany = () => {
