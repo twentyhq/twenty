@@ -16677,6 +16677,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@plasmohq/storage@npm:^1.15.0":
+  version: 1.15.0
+  resolution: "@plasmohq/storage@npm:1.15.0"
+  dependencies:
+    pify: "npm:6.1.0"
+  peerDependencies:
+    react: ^16.8.6 || ^17 || ^18 || ^19.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 10c0/58a1ef99b815e7855f995d99421ebecdfc1106995d97156883a9ad8d7ccff7e2746fdae6ff46b9966c8e16ddd1eda528dad99d34f338df6a700e2aedbf59dc72
+  languageName: node
+  linkType: hard
+
 "@playwright/test@npm:^1.46.0, @playwright/test@npm:^1.51.0":
   version: 1.51.0
   resolution: "@playwright/test@npm:1.51.0"
@@ -49596,6 +49610,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pify@npm:6.1.0":
+  version: 6.1.0
+  resolution: "pify@npm:6.1.0"
+  checksum: 10c0/5744905e271d821ce1c96a615aecc857bfc0154a2f55cfd773e0a27478c1e1457dd69c932f2196cfa0d298cc4a2847edaf42b1ba600b95022ba5225c079443a6
+  languageName: node
+  linkType: hard
+
 "pify@npm:^2.2.0, pify@npm:^2.3.0":
   version: 2.3.0
   resolution: "pify@npm:2.3.0"
@@ -56370,6 +56391,7 @@ __metadata:
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@plasmohq/messaging": "npm:^0.7.2"
+    "@plasmohq/storage": "npm:^1.15.0"
     "@types/chrome": "npm:^0.1.24"
     "@types/node": "npm:20.11.5"
     "@types/react": "npm:^18.2.39"

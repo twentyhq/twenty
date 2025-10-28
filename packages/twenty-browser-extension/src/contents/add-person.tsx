@@ -22,11 +22,24 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () => {
   return { element: element, insertPosition: 'beforeend', watch: true };
 };
 
+const extractFirstAndLastName = (fullName: string) => {
+  const spaceIndex = fullName.lastIndexOf(' ');
+  const firstName = fullName.substring(0, spaceIndex);
+  const lastName = fullName.substring(spaceIndex + 1);
+  return { firstName, lastName };
+};
+
+const personNameElement = document.querySelector('h1');
+const personName = personNameElement ? personNameElement.textContent : '';
+const {firstName, lastName} = extractFirstAndLastName(personName);
+
+console.log({firstName, lastName})
+
 const AddPerson = () => {
 
   const handleClick = async () => {
     await sendToBackground({
-      name: "open-side-panel"
+      name: "open-side-panel",
     });
   };
 
