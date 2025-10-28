@@ -67,7 +67,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const toolOutput = await this.findRecordsService.execute({
       objectName: workflowActionInput.objectName,
       filter: workflowActionInput.filter?.gqlOperationFilter,
-      orderBy: workflowActionInput.orderBy,
+      orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
       limit: workflowActionInput.limit,
       workspaceId,
       rolePermissionConfig: executionContext.rolePermissionConfig,
