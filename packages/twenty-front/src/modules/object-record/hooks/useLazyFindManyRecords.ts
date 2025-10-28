@@ -126,7 +126,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         const result = await findManyRecords();
         if (isDefined(result?.error)) {
           handleFindManyRecordsError(result.error);
-          return { error: result.error };
         }
 
         if (isDefined(result?.data)) {
