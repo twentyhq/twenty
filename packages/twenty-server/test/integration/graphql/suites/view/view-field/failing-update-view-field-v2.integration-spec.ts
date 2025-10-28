@@ -12,7 +12,7 @@ import {
 
 import { type UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 
-const TEST_NOT_EXISTING_VIEW_FIELD_ID = '20202020-0000-0000-0000-000000000001';
+const TEST_NOT_EXISTING_VIEW_FIELD_ID = '20202020-0000-4000-8000-000000000001';
 
 describe('View Field Resolver - Failing Update Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;

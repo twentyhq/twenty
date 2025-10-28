@@ -30,7 +30,7 @@ import {
   ViewFieldExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 
-const TEST_NOT_EXISTING_VIEW_FIELD_ID = '20202020-0000-0000-0000-000000000001';
+const TEST_NOT_EXISTING_VIEW_FIELD_ID = '20202020-0000-4000-8000-000000000001';
 
 describe('View Field Resolver', () => {
   let testViewId: string;

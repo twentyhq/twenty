@@ -28,7 +28,7 @@ import {
   ViewSortExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 
-const TEST_NOT_EXISTING_VIEW_SORT_ID = '20202020-0000-0000-0000-000000000004';
+const TEST_NOT_EXISTING_VIEW_SORT_ID = '20202020-0000-4000-8000-000000000004';
 
 describe('View Sort Resolver', () => {
   let testViewId: string;
