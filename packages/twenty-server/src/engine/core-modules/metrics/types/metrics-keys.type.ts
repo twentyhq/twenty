@@ -28,4 +28,5 @@ export enum MetricsKeys {
   AppVersionMismatch = 'app-version/mismatch',
   CronJobDeletedWorkspace = 'cron-job/deleted-workspace',
   JobWebhookCallCompleted = 'job/webhook-call-completed',
+  SignUpSuccess = 'sign-up/success',
 }

@@ -9,7 +9,7 @@ type GetAllSelectableFieldsArgs = {
   objectMetadata: { objectMetadataMapItem: ObjectMetadataItemWithFieldMaps };
 };
 
-export const getAllSelectableFields = ({
+export const getAllSelectableColumnNames = ({
   restrictedFields,
   objectMetadata,
 }: GetAllSelectableFieldsArgs) => {
