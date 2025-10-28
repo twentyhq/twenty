@@ -21,7 +21,8 @@ import type { Sources } from 'src/engine/core-modules/file-storage/types/source.
 class UpdateServerlessFunctionInputUpdates {
   @IsString()
   @Field()
-  name: string;
+  @IsOptional()
+  name?: string;
 
   @IsString()
   @Field({ nullable: true })
@@ -38,6 +39,16 @@ class UpdateServerlessFunctionInputUpdates {
   @Field(() => graphqlTypeJson)
   @IsObject()
   code: Sources;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  handlerName?: string;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  handlerPath?: string;
 }
 
 @InputType()

@@ -40,7 +40,7 @@ import {
   ServerlessFunctionManifest,
   Sources,
 } from '../types/config.types';
-import { posix, relative, sep, resolve } from 'path';
+import { posix, relative, sep, resolve, join } from 'path';
 import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
 import { findPathFile } from '../utils/find-path-file';
 
@@ -52,9 +52,12 @@ type JSONValue =
   | JSONValue[]
   | { [k: string]: JSONValue };
 
-const getProgramFromTsconfig = (tsconfigPath = 'tsconfig.json') => {
-  const basePath = process.cwd();
-  const configFile = readConfigFile(tsconfigPath, sys.readFile);
+const getProgramFromTsconfig = (
+  appPath?: string,
+  tsconfigPath = 'tsconfig.json',
+) => {
+  const basePath = appPath ?? process.cwd();
+  const configFile = readConfigFile(join(basePath, tsconfigPath), sys.readFile);
   if (configFile.error)
     throw new Error(
       formatDiagnosticsWithColorAndContext([configFile.error], {
@@ -366,7 +369,7 @@ const loadFolderContentIntoJson = async (
   const baseAbs = resolve(sourcePath);
 
   // Build the program from tsconfig (uses your getProgramFromTsconfig)
-  const program: Program = getProgramFromTsconfig(tsconfigPath);
+  const program: Program = getProgramFromTsconfig(baseAbs, tsconfigPath);
 
   // Iterate only files the TS program knows about.
   for (const sf of program.getSourceFiles()) {
@@ -431,12 +434,14 @@ export const extractTwentyAppConfig = (program: Program): Application => {
   throw new Error('Could not find default exported ApplicationConfig');
 };
 
-export const loadManifest = async (): Promise<{
+export const loadManifest = async (
+  path?: string,
+): Promise<{
   packageJson: PackageJson;
   yarnLock: string;
   manifest: AppManifest;
 }> => {
-  const appPath = process.cwd();
+  const appPath = path ?? process.cwd();
 
   const packageJson = await parseJsoncFile(
     await findPathFile(appPath, 'package.json'),
@@ -446,7 +451,7 @@ export const loadManifest = async (): Promise<{
     await findPathFile(appPath, 'yarn.lock'),
   );
 
-  const program = getProgramFromTsconfig('tsconfig.json');
+  const program = getProgramFromTsconfig(appPath, 'tsconfig.json');
 
   validateProgram(program);
 
@@ -456,7 +461,7 @@ export const loadManifest = async (): Promise<{
 
   const application = extractTwentyAppConfig(program);
 
-  const sources = await loadFolderContentIntoJson();
+  const sources = await loadFolderContentIntoJson(appPath);
 
   return {
     packageJson,

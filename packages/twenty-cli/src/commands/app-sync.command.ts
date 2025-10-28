@@ -16,7 +16,7 @@ export class AppSyncCommand {
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
 
-      const { manifest, packageJson, yarnLock } = await loadManifest();
+      const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
 
       const result = await this.apiService.syncApplication({
         manifest,

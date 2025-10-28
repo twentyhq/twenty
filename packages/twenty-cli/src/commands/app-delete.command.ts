@@ -25,9 +25,11 @@ export class AppDeleteCommand {
         process.exit(1);
       }
 
-      const { packageJson } = await loadManifest();
+      const { manifest } = await loadManifest(appPath);
 
-      const result = await this.apiService.deleteApplication(packageJson);
+      const result = await this.apiService.deleteApplication(
+        manifest.application.universalIdentifier,
+      );
 
       if (!result.success) {
         console.error(chalk.red('❌ Deletion failed:'), result.error);

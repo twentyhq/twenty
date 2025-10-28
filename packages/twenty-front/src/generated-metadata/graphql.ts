@@ -2131,7 +2131,7 @@ export type MutationDeactivateWorkflowVersionArgs = {
 
 
 export type MutationDeleteApplicationArgs = {
-  packageJson: Scalars['JSON'];
+  universalIdentifier: Scalars['String'];
 };
 
 
@@ -4224,6 +4224,8 @@ export type UpdateServerlessFunctionInput = {
 export type UpdateServerlessFunctionInputUpdates = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
+  handlerName?: InputMaybe<Scalars['String']>;
+  handlerPath?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };

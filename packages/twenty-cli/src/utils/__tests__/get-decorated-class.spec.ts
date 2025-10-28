@@ -1,4 +1,4 @@
-import { getObjectMetadataDecoratedClass } from 'packages/twenty-cli/src/utils/get-object-metadata-decorated-class';
+import { getObjectMetadataDecoratedClass } from '../../utils/get-object-metadata-decorated-class';
 
 describe('getDecoratedClass', () => {
   it('should return properly formatted class', () => {

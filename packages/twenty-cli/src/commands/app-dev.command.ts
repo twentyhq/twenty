@@ -7,15 +7,18 @@ import { loadManifest } from '../utils/load-manifest';
 export class AppDevCommand {
   private apiService = new ApiService();
 
-  async execute(options: { debounce: string }): Promise<void> {
+  async execute(options: {
+    appPath?: string;
+    debounce: string;
+  }): Promise<void> {
     try {
-      const appPath = CURRENT_EXECUTION_DIRECTORY;
+      const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
       const debounceMs = parseInt(options.debounce, 10);
 
       this.logStartupInfo(appPath, debounceMs);
 
-      const { manifest, packageJson, yarnLock } = await loadManifest();
+      const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
 
       await this.apiService.syncApplication({
         manifest,
@@ -61,7 +64,7 @@ export class AppDevCommand {
       timeout = setTimeout(async () => {
         console.log(chalk.blue('🔄 Changes detected, syncing...'));
 
-        const { manifest, packageJson, yarnLock } = await loadManifest();
+        const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
 
         await this.apiService.syncApplication({
           manifest,
