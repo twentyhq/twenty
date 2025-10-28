@@ -42,7 +42,12 @@ export const WidgetPlaceholder = () => {
   };
 
   return (
-    <WidgetCard onClick={handleClick}>
+    <WidgetCard
+      onClick={handleClick}
+      widgetCardContext="dashboard"
+      isEditing={false}
+      isDragging={false}
+    >
       <WidgetCardHeader
         isInEditMode={isPageLayoutInEditMode}
         title={t`Add Widget`}

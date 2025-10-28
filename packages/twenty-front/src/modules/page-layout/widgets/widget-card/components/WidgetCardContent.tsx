@@ -1,16 +1,18 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type WidgetCardContext } from '../types/WidgetCardContext';
 
 export type WidgetCardContentProps = {
   children?: ReactNode;
-  widgetCardContext?: WidgetCardContext;
+  widgetCardContext: WidgetCardContext;
   className?: string;
 };
 
 const StyledWidgetCardContent = styled.div<{
-  widgetCardContext?: WidgetCardContext;
+  widgetCardContext: WidgetCardContext;
 }>`
   align-items: center;
   display: flex;
@@ -23,20 +25,23 @@ const StyledWidgetCardContent = styled.div<{
   ${({ theme, widgetCardContext }) => {
     switch (widgetCardContext) {
       case 'recordPage':
-        return `
+        return css`
           border: 1px solid ${theme.border.color.medium};
           border-radius: ${theme.border.radius.md};
         `;
 
-      default:
+      case 'dashboard':
         return '';
+
+      default:
+        return assertUnreachable(widgetCardContext);
     }
   }}
 `;
 
 export const WidgetCardContent = ({
   children,
-  widgetCardContext = 'dashboard',
+  widgetCardContext,
   className,
 }: WidgetCardContentProps) => {
   return (

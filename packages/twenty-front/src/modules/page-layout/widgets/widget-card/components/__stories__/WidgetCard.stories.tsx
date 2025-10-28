@@ -71,9 +71,15 @@ export const Default: Story = {
   },
   args: {
     widgetCardContext: 'dashboard',
+    isEditing: false,
+    isDragging: false,
   },
   render: (args) => (
-    <WidgetCard widgetCardContext={args.widgetCardContext}>
+    <WidgetCard
+      widgetCardContext={args.widgetCardContext}
+      isEditing={args.isEditing}
+      isDragging={args.isDragging}
+    >
       <WidgetCardHeader
         isInEditMode={true}
         onRemove={() => {}}
@@ -164,8 +170,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
         <EditModeWrapper isInEditMode={!isReadMode}>
           <WidgetCard
             className={args.className}
-            isDragging={args.isDragging}
-            isEditing={args.isEditing}
+            isDragging={args.isDragging ?? false}
+            isEditing={args.isEditing ?? false}
             widgetCardContext={widgetCardContext}
           >
             <WidgetCardHeader
