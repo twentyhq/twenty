@@ -34,16 +34,13 @@ import {
 } from 'typescript';
 import {
   AppManifest,
-  CronTrigger,
-  DatabaseEventTrigger,
+  Application,
   ObjectManifest,
   PackageJson,
-  RouteTrigger,
   ServerlessFunctionManifest,
   Sources,
 } from '../types/config.types';
 import { posix, relative, sep, resolve } from 'path';
-import type { ApplicationConfig } from 'twenty-sdk';
 import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
 import { findPathFile } from '../utils/find-path-file';
 
@@ -395,12 +392,12 @@ const loadFolderContentIntoJson = async (
   return sources;
 };
 
-export const extractTwentyAppConfig = (program: Program): ApplicationConfig => {
+export const extractTwentyAppConfig = (program: Program): Application => {
   for (const sf of program.getSourceFiles()) {
     if (sf.isDeclarationFile || !sf.fileName.endsWith('application.config.ts'))
       continue;
 
-    let found: ApplicationConfig | undefined;
+    let found: Application | undefined;
 
     const visit = (node: any): void => {
       // Look for "export default twentyAppConfig"
@@ -416,7 +413,7 @@ export const extractTwentyAppConfig = (program: Program): ApplicationConfig => {
                   decl.initializer &&
                   isObjectLiteralExpression(decl.initializer)
                 ) {
-                  found = exprToValue(decl.initializer) as ApplicationConfig;
+                  found = exprToValue(decl.initializer) as Application;
                 }
               }
             }

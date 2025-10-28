@@ -24,5 +24,5 @@ export type ServerlessFunctionConfig = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
-  triggers: ServerlessFunctionTrigger[];
+  triggers?: ServerlessFunctionTrigger[];
 };

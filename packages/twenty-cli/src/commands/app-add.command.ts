@@ -5,11 +5,10 @@ import inquirer from 'inquirer';
 import path from 'path';
 import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
 import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
 import { getObjectMetadataDecoratedClass } from '../utils/get-object-metadata-decorated-class';
-import { getServerlessFunctionDecoratedClass } from '../utils/get-serverless-function-decorated-class';
+import { getServerlessFunctionBaseFile } from '../utils/get-serverless-function-base-file';
 
 const ROOT_FOLDER = 'src';
 
@@ -19,19 +18,6 @@ export enum SyncableEntity {
   SERVERLESS_FUNCTION = 'serverlessFunction',
 }
 
-const getFolderName = (entity: SyncableEntity) => {
-  switch (entity) {
-    case SyncableEntity.AGENT:
-      return 'agents';
-    case SyncableEntity.OBJECT:
-      return 'objects';
-    case SyncableEntity.SERVERLESS_FUNCTION:
-      return 'serverlessFunctions';
-    default:
-      throw new Error(`Unknown entity type: ${entity}`);
-  }
-};
-
 export const isSyncableEntity = (value: string): value is SyncableEntity => {
   return Object.values(SyncableEntity).includes(value as SyncableEntity);
 };
@@ -39,16 +25,11 @@ export const isSyncableEntity = (value: string): value is SyncableEntity => {
 export class AppAddCommand {
   async execute(entityType?: SyncableEntity): Promise<void> {
     try {
-      const appPath = CURRENT_EXECUTION_DIRECTORY + '/' + ROOT_FOLDER;
+      const appPath = path.join(CURRENT_EXECUTION_DIRECTORY, ROOT_FOLDER);
+
+      await fs.ensureDir(appPath);
 
       const entity = entityType ?? (await this.getEntity());
-
-      const appExists = await fs.pathExists(appPath);
-
-      if (!appExists) {
-        console.error(chalk.red('App does not exist'));
-        process.exit(1);
-      }
 
       const entityName = await this.getEntityName(entity);
 
@@ -71,17 +52,11 @@ export class AppAddCommand {
       }
 
       if (entity === SyncableEntity.SERVERLESS_FUNCTION) {
-        delete entityData['standardId'];
-        delete entityData['$schema'];
-
         const objectFileName = `${camelcase(entityName)}.ts`;
 
-        const decoratedServerlessFunction = getServerlessFunctionDecoratedClass(
-          {
-            data: entityData,
-            name: entityName,
-          },
-        );
+        const decoratedServerlessFunction = getServerlessFunctionBaseFile({
+          name: entityName,
+        });
 
         await fs.writeFile(
           path.join(appPath, objectFileName),
@@ -90,19 +65,6 @@ export class AppAddCommand {
 
         return;
       }
-
-      const folderName = getFolderName(entity);
-
-      const entitiesDir = path.join(appPath, folderName, entityName);
-
-      await fs.ensureDir(entitiesDir);
-
-      await writeJsoncFile(
-        path.join(entitiesDir, `${entity}.manifest.jsonc`),
-        entityData,
-      );
-
-      await this.addEntityInitFiles(entity, entitiesDir);
     } catch (error) {
       console.error(
         chalk.red(`Add new entity failed:`),

@@ -25,7 +25,7 @@ type ApplicationVariable = {
   isSecret?: boolean;
 };
 
-type Application = {
+export type Application = {
   universalIdentifier: string;
   displayName?: string;
   description?: string;

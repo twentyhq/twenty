@@ -7,7 +7,7 @@ describe('getDecoratedClass', () => {
       name: 'MyNewObject',
     });
 
-    const expectedResult = `import { ObjectMetadata } from 'twenty-sdk';
+    const expectedResult = `import { ObjectMetadata } from 'twenty-sdk/application';
 
 @ObjectMetadata({
   nameSingular: 'Name',

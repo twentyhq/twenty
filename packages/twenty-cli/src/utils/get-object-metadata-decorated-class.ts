@@ -15,7 +15,7 @@ export const getObjectMetadataDecoratedClass = ({
 
   const className = camelCaseName[0].toUpperCase() + camelCaseName.slice(1);
 
-  return `import { ObjectMetadata } from 'twenty-sdk';
+  return `import { ObjectMetadata } from 'twenty-sdk/application';
 
 @ObjectMetadata({
 ${decoratorOptions}

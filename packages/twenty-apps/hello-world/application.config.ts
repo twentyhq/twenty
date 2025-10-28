@@ -1,6 +1,6 @@
 import { type ApplicationConfig } from 'twenty-sdk/application';
 
-const applicationConfig: ApplicationConfig = {
+const config: ApplicationConfig = {
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'Hello World',
   description: 'A simple hello world app',
@@ -14,4 +14,4 @@ const applicationConfig: ApplicationConfig = {
   },
 };
 
-export default applicationConfig;
+export default config;

@@ -4,7 +4,7 @@
     "sourceMap": true,
     "declaration": true,
     "outDir": "./dist",
-    "rootDir": "src",
+    "rootDir": ".",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -17,9 +17,6 @@
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "src/**/*",
-  ],
   "exclude": [
     "node_modules",
     "dist",
