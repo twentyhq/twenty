@@ -1,5 +1,6 @@
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import {
   type SettingsDataModelObjectAboutFormValues,
@@ -14,7 +15,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { ZodError } from 'zod';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -149,7 +149,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     <FormProvider {...formConfig}>
       <SettingsDataModelObjectAboutForm
         onNewDirtyField={() => formConfig.handleSubmit(handleSave)()}
-        disableEdition={!objectMetadataItem.isCustom || readonly}
+        disableEdition={readonly}
         objectMetadataItem={objectMetadataItem}
       />
     </FormProvider>
