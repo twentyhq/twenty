@@ -8,9 +8,11 @@ import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import {
   H2Title,
+  IconApps,
   IconCode,
   IconHierarchy,
   IconKey,
+  IconLayoutSidebarRightCollapse,
   IconLockOpen,
   IconSettings,
   IconSettingsAutomation,
@@ -95,6 +97,18 @@ export const SettingsRolePermissionsSettingsSection = ({
         name: t`Impersonate`,
         description: t`Impersonate workspace users`,
         Icon: IconSpy,
+      },
+      {
+        key: PermissionFlagType.APPLICATIONS,
+        name: t`Applications`,
+        description: t`Install and manage applications`,
+        Icon: IconApps,
+      },
+      {
+        key: PermissionFlagType.LAYOUTS,
+        name: t`Layouts`,
+        description: t`Customize page layouts and UI structure`,
+        Icon: IconLayoutSidebarRightCollapse,
       },
     ];
 

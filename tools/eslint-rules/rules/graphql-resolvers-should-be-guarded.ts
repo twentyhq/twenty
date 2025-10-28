@@ -12,11 +12,14 @@ export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition)
     ['Query', 'Mutation', 'Subscription']
   );
 
-  const hasAuthGuards = typedTokenHelpers.nodeHasAuthGuards(node);
+  const isMutation = typedTokenHelpers.nodeHasDecoratorsNamed(node, ['Mutation']);
 
-  function findClassDeclaration(
+  const hasAuthGuards = typedTokenHelpers.nodeHasAuthGuards(node);
+  const hasPermissionsGuard = typedTokenHelpers.nodeHasPermissionsGuard(node);
+
+  const findClassDeclaration = (
     node: TSESTree.Node
-  ): TSESTree.ClassDeclaration | null {
+  ): TSESTree.ClassDeclaration | null => {
     if (node.type === TSESTree.AST_NODE_TYPES.ClassDeclaration) {
       return node;
     }
@@ -32,11 +35,21 @@ export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition)
     ? typedTokenHelpers.nodeHasAuthGuards(classNode)
     : false;
 
-  return (
-    hasGraphQLResolverDecorator &&
-    !hasAuthGuards &&
-    !hasAuthGuardsOnResolver
-  );
+  const hasPermissionsGuardOnResolver = classNode
+    ? typedTokenHelpers.nodeHasPermissionsGuard(classNode)
+    : false;
+
+  // Basic requirement: all resolvers need auth guards
+  const missingAuthGuard = hasGraphQLResolverDecorator &&
+                           !hasAuthGuards &&
+                           !hasAuthGuardsOnResolver;
+
+  // Additional requirement: mutations need permission guards
+  const missingPermissionGuard = isMutation &&
+                                  !hasPermissionsGuard &&
+                                  !hasPermissionsGuardOnResolver;
+
+  return missingAuthGuard || missingPermissionGuard;
 };
 
 export const rule = createRule<[], 'graphqlResolversShouldBeGuarded'>({
@@ -44,20 +57,20 @@ export const rule = createRule<[], 'graphqlResolversShouldBeGuarded'>({
   meta: {
     docs: {
       description:
-        'GraphQL root resolvers (Query, Mutation, Subscription) should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpointGuard) to maintain our security model.',
+        'GraphQL root resolvers (Query, Mutation, Subscription) should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpointGuard) to maintain our security model. Mutations also require permission guards (SettingsPermissionsGuard or CustomPermissionGuard).',
     },
     messages: {
       graphqlResolversShouldBeGuarded:
-        'All GraphQL root resolver methods (@Query, @Mutation, @Subscription) should have @UseGuards(UserAuthGuard), @UseGuards(WorkspaceAuthGuard), or @UseGuards(PublicEndpointGuard) decorators, or one decorating the root of the Resolver class.',
+        'All GraphQL resolvers must have authentication guards (@UseGuards(UserAuthGuard/WorkspaceAuthGuard)). Mutations also require permission guards (@UseGuards(..., SettingsPermissionsGuard(PermissionFlagType.XXX)), CustomPermissionGuard for custom logic, or NoPermissionGuard for special cases like onboarding).',
     },
     schema: [],
     hasSuggestions: false,
     type: 'suggestion',
   },
   defaultOptions: [],
-  create(context) {
+  create: (context) => {
     return {
-      MethodDefinition(node: TSESTree.MethodDefinition): void {
+      MethodDefinition: (node: TSESTree.MethodDefinition): void => {
         if (graphqlResolversShouldBeGuarded(node)) {
           context.report({
             node: node,
@@ -67,4 +80,4 @@ export const rule = createRule<[], 'graphqlResolversShouldBeGuarded'>({
       },
     };
   },
-}); 
+});

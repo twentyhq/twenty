@@ -9,9 +9,12 @@ import { useRecoilState } from 'recoil';
 
 import {
   H2Title,
+  IconDownload,
   IconFileExport,
   IconFileImport,
+  IconFileUpload,
   IconMail,
+  IconSparkles,
   IconTool,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
@@ -44,6 +47,27 @@ export const SettingsRolePermissionsToolSection = ({
   );
 
   const toolPermissionsConfig: SettingsRolePermissionsSettingPermission[] = [
+    {
+      key: PermissionFlagType.AI,
+      name: t`AI`,
+      description: t`Access AI features and agents`,
+      Icon: IconSparkles,
+      isToolPermission: true,
+    },
+    {
+      key: PermissionFlagType.UPLOAD_FILE,
+      name: t`Upload Files`,
+      description: t`Allow uploading files and attachments`,
+      Icon: IconFileUpload,
+      isToolPermission: true,
+    },
+    {
+      key: PermissionFlagType.DOWNLOAD_FILE,
+      name: t`Download Files`,
+      description: t`Allow downloading files and attachments`,
+      Icon: IconDownload,
+      isToolPermission: true,
+    },
     {
       key: PermissionFlagType.SEND_EMAIL_TOOL,
       name: t`Send Email`,

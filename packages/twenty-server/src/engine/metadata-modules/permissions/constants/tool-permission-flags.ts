@@ -1,4 +1,7 @@
 export const TOOL_PERMISSION_FLAGS = [
+  'AI',
+  'UPLOAD_FILE',
+  'DOWNLOAD_FILE',
   'SEND_EMAIL_TOOL',
   'IMPORT_CSV',
   'EXPORT_CSV',
