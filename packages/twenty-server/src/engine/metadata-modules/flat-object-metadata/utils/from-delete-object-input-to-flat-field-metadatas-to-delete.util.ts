@@ -59,7 +59,11 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
     });
   const flatFieldMetadatasToDelete = objectFlatFieldMetadatas.flatMap(
     (flatFieldMetadata) => {
-      if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+      if (
+        isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
+        flatFieldMetadata.relationTargetObjectMetadataId !==
+          objectMetadataToDeleteId
+      ) {
         const relationTargetFlatFieldMetadata =
           findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
             flatFieldMetadata,

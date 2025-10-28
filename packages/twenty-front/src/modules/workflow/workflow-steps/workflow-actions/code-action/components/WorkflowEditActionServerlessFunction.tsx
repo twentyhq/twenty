@@ -1,7 +1,6 @@
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
-import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
@@ -39,6 +38,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
+import { usePersistServerlessFunction } from '@/settings/serverless-functions/hooks/usePersistServerlessFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
@@ -105,8 +105,7 @@ export const WorkflowEditActionServerlessFunction = ({
     activeTabIdComponentState,
     WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { updateOneServerlessFunction } =
-    useUpdateOneServerlessFunction(serverlessFunctionId);
+  const { updateServerlessFunction } = usePersistServerlessFunction();
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
@@ -149,10 +148,15 @@ export const WorkflowEditActionServerlessFunction = ({
   });
 
   const handleSave = useDebouncedCallback(async () => {
-    await updateOneServerlessFunction({
-      name: formValues.name,
-      description: formValues.description,
-      code: formValues.code,
+    await updateServerlessFunction({
+      input: {
+        id: serverlessFunctionId,
+        update: {
+          name: formValues.name,
+          description: formValues.description,
+          code: formValues.code,
+        },
+      },
     });
   }, 500);
 

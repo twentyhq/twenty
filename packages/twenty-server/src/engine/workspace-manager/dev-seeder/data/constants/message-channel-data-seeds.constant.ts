@@ -59,7 +59,7 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     handle: 'tim@apple.dev',
     isSyncEnabled: true,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-    syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+    syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
   },
   {
     id: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
@@ -72,7 +72,7 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     handle: 'jony.ive@apple.dev',
     isSyncEnabled: true,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-    syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+    syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
   },
   {
     id: MESSAGE_CHANNEL_DATA_SEED_IDS.PHIL,
@@ -85,7 +85,7 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     handle: 'phil.schiler@apple.dev',
     isSyncEnabled: true,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-    syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+    syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
   },
   {
     id: MESSAGE_CHANNEL_DATA_SEED_IDS.SUPPORT,
@@ -98,7 +98,7 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     handle: 'support@apple.dev',
     isSyncEnabled: true,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-    syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+    syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
   },
   {
     id: MESSAGE_CHANNEL_DATA_SEED_IDS.SALES,
@@ -111,6 +111,6 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     handle: 'sales@apple.dev',
     isSyncEnabled: true,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-    syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+    syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
   },
 ];

@@ -44,7 +44,7 @@ export class ConnectedAccountRefreshTokensService {
       );
     }
 
-    const isAccessTokenValid = await this.checkAccessTokenValidity(
+    const isAccessTokenValid = await this.isAccessTokenStillValid(
       connectedAccount,
       accessToken,
     );
@@ -83,14 +83,14 @@ export class ConnectedAccountRefreshTokensService {
     return connectedAccountTokens;
   }
 
-  async checkAccessTokenValidity(
+  async isAccessTokenStillValid(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     accessToken: string,
   ): Promise<boolean> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE: {
-        // Google's access tokens are opaque and needs network calls to check if they are valid we default to true for now
-        return true;
+        // Google's access tokens are opaque and needs network calls to check if they are valid we default to false for now
+        return false;
       }
       case ConnectedAccountProvider.MICROSOFT: {
         const isExpired = isAccessTokenExpiredOrInvalid(accessToken);
