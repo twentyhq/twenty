@@ -79,13 +79,17 @@ export const validateFlatFieldMetadataNameAvailability = ({
       }
 
       const targetFlatFieldMetadata =
-        remainingFlatEntityMapsToValidate?.byId[
-          existingFlatFieldMetadata.relationTargetFieldMetadataId
-        ] ??
-        findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: existingFlatFieldMetadata.relationTargetFieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
+        flatFieldMetadata.id ===
+        existingFlatFieldMetadata.relationTargetFieldMetadataId
+          ? flatFieldMetadata
+          : (remainingFlatEntityMapsToValidate?.byId[
+              existingFlatFieldMetadata.relationTargetFieldMetadataId
+            ] ??
+            findFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityId:
+                existingFlatFieldMetadata.relationTargetFieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            }));
 
       if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
         return false;

@@ -3,7 +3,7 @@
 exports[`View Field Resolver - Failing Create Operation - v2 Should fail to create a conflicting view field on view and field metadata 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -59,7 +59,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
 exports[`View Field Resolver - Failing Create Operation - v2 should fail to create view field when non-existent field metadata 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -115,7 +115,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
 exports[`View Field Resolver - Failing Create Operation - v2 should fail to create view field when non-existent view metadata 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
