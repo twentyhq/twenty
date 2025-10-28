@@ -46,7 +46,7 @@ describe('validateWidgetGridPosition', () => {
       ).not.toThrow();
     });
 
-    it('should not throw for widget spanning to grid edge', () => {
+    it('should not throw for widget spanning to column grid edge', () => {
       expect(() =>
         validateWidgetGridPosition(
           {
@@ -59,18 +59,23 @@ describe('validateWidgetGridPosition', () => {
         ),
       ).not.toThrow();
     });
+
+    it('should not throw for widget spanning to row grid edge', () => {
+      expect(() =>
+        validateWidgetGridPosition(
+          {
+            row: WIDGET_GRID_MAX_ROWS - 5,
+            column: 0,
+            rowSpan: 5,
+            columnSpan: 6,
+          },
+          'Test Widget',
+        ),
+      ).not.toThrow();
+    });
   });
 
   describe('Invalid row positions', () => {
-    it('should throw for negative row', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          { ...validGridPosition, row: -1 },
-          'Test Widget',
-        ),
-      ).toThrow(PageLayoutWidgetException);
-    });
-
     it('should throw for row exceeding max rows', () => {
       expect(() =>
         validateWidgetGridPosition(
@@ -80,26 +85,36 @@ describe('validateWidgetGridPosition', () => {
       ).toThrow(PageLayoutWidgetException);
     });
 
-    it('should include widget title in error message for negative row', () => {
+    it('should throw when widget extends beyond grid height', () => {
       expect(() =>
         validateWidgetGridPosition(
-          { ...validGridPosition, row: -1 },
-          'My Custom Widget',
+          {
+            row: WIDGET_GRID_MAX_ROWS - 2,
+            column: 0,
+            rowSpan: 5,
+            columnSpan: 6,
+          },
+          'Test Widget',
         ),
-      ).toThrow(/My Custom Widget/);
+      ).toThrow(/extends beyond grid height/);
     });
-  });
 
-  describe('Invalid column positions', () => {
-    it('should throw for negative column', () => {
+    it('should throw when widget at row 99 has rowSpan 2', () => {
       expect(() =>
         validateWidgetGridPosition(
-          { ...validGridPosition, column: -1 },
+          {
+            row: 99,
+            column: 0,
+            rowSpan: 2,
+            columnSpan: 6,
+          },
           'Test Widget',
         ),
       ).toThrow(PageLayoutWidgetException);
     });
+  });
 
+  describe('Invalid column positions', () => {
     it('should throw for column exceeding max columns', () => {
       expect(() =>
         validateWidgetGridPosition(
@@ -124,44 +139,6 @@ describe('validateWidgetGridPosition', () => {
     });
   });
 
-  describe('Invalid span values', () => {
-    it('should throw for zero rowSpan', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          { ...validGridPosition, rowSpan: 0 },
-          'Test Widget',
-        ),
-      ).toThrow(PageLayoutWidgetException);
-    });
-
-    it('should throw for negative rowSpan', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          { ...validGridPosition, rowSpan: -1 },
-          'Test Widget',
-        ),
-      ).toThrow(PageLayoutWidgetException);
-    });
-
-    it('should throw for zero columnSpan', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          { ...validGridPosition, columnSpan: 0 },
-          'Test Widget',
-        ),
-      ).toThrow(PageLayoutWidgetException);
-    });
-
-    it('should throw for negative columnSpan', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          { ...validGridPosition, columnSpan: -1 },
-          'Test Widget',
-        ),
-      ).toThrow(PageLayoutWidgetException);
-    });
-  });
-
   describe('Widget extending beyond grid', () => {
     it('should throw when widget extends beyond grid width', () => {
       expect(() =>
@@ -174,7 +151,7 @@ describe('validateWidgetGridPosition', () => {
           },
           'Test Widget',
         ),
-      ).toThrow(/extends beyond grid/);
+      ).toThrow(/extends beyond grid width/);
     });
 
     it('should throw when widget at column 11 has columnSpan 2', () => {
@@ -202,29 +179,25 @@ describe('validateWidgetGridPosition', () => {
           },
           'Test Widget',
         ),
-      ).toThrow(/extends beyond grid/);
+      ).toThrow(/extends beyond grid width/);
+    });
+
+    it('should throw when widget extends beyond grid height', () => {
+      expect(() =>
+        validateWidgetGridPosition(
+          {
+            row: 95,
+            column: 0,
+            rowSpan: 10,
+            columnSpan: 6,
+          },
+          'Test Widget',
+        ),
+      ).toThrow(/extends beyond grid height/);
     });
   });
 
   describe('Error messages', () => {
-    it('should include row and column values in error for negative positions', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          { row: -5, column: -3, rowSpan: 1, columnSpan: 1 },
-          'Test Widget',
-        ),
-      ).toThrow(/row=-5.*column=-3/);
-    });
-
-    it('should include span values in error for invalid spans', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          { row: 0, column: 0, rowSpan: -2, columnSpan: 0 },
-          'Test Widget',
-        ),
-      ).toThrow(/rowSpan=-2.*columnSpan=0/);
-    });
-
     it('should include max columns value in error', () => {
       expect(() =>
         validateWidgetGridPosition(
@@ -239,7 +212,7 @@ describe('validateWidgetGridPosition', () => {
       ).toThrow(new RegExp(WIDGET_GRID_MAX_COLUMNS.toString()));
     });
 
-    it('should include max rows value in error', () => {
+    it('should include max rows value in error for row start', () => {
       expect(() =>
         validateWidgetGridPosition(
           {
@@ -251,6 +224,34 @@ describe('validateWidgetGridPosition', () => {
           'Test Widget',
         ),
       ).toThrow(new RegExp(WIDGET_GRID_MAX_ROWS.toString()));
+    });
+
+    it('should include max rows value in error for row extension', () => {
+      expect(() =>
+        validateWidgetGridPosition(
+          {
+            row: 95,
+            column: 0,
+            rowSpan: 10,
+            columnSpan: 6,
+          },
+          'Test Widget',
+        ),
+      ).toThrow(new RegExp(WIDGET_GRID_MAX_ROWS.toString()));
+    });
+
+    it('should include widget title in error message', () => {
+      expect(() =>
+        validateWidgetGridPosition(
+          {
+            row: WIDGET_GRID_MAX_ROWS,
+            column: 0,
+            rowSpan: 1,
+            columnSpan: 1,
+          },
+          'My Custom Widget',
+        ),
+      ).toThrow(/My Custom Widget/);
     });
   });
 });

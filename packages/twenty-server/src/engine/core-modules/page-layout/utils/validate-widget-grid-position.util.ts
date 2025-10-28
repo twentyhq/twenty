@@ -20,30 +20,6 @@ export const validateWidgetGridPosition = (
 ): void => {
   const { row, column, rowSpan, columnSpan } = gridPosition;
 
-  if (row < 0 || column < 0) {
-    throw new PageLayoutWidgetException(
-      generatePageLayoutWidgetExceptionMessage(
-        PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
-        widgetTitle,
-        undefined,
-        `row and column must be non-negative (got row=${row}, column=${column})`,
-      ),
-      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-    );
-  }
-
-  if (rowSpan <= 0 || columnSpan <= 0) {
-    throw new PageLayoutWidgetException(
-      generatePageLayoutWidgetExceptionMessage(
-        PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
-        widgetTitle,
-        undefined,
-        `rowSpan and columnSpan must be positive (got rowSpan=${rowSpan}, columnSpan=${columnSpan})`,
-      ),
-      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-    );
-  }
-
   if (column >= WIDGET_GRID_MAX_COLUMNS) {
     throw new PageLayoutWidgetException(
       generatePageLayoutWidgetExceptionMessage(
@@ -62,7 +38,7 @@ export const validateWidgetGridPosition = (
         PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
         widgetTitle,
         undefined,
-        `widget extends beyond grid (column ${column} + columnSpan ${columnSpan} > ${WIDGET_GRID_MAX_COLUMNS})`,
+        `widget extends beyond grid width (column ${column} + columnSpan ${columnSpan} > ${WIDGET_GRID_MAX_COLUMNS})`,
       ),
       PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
     );
@@ -75,6 +51,18 @@ export const validateWidgetGridPosition = (
         widgetTitle,
         undefined,
         `row ${row} exceeds maximum allowed rows (${WIDGET_GRID_MAX_ROWS})`,
+      ),
+      PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+    );
+  }
+
+  if (row + rowSpan > WIDGET_GRID_MAX_ROWS) {
+    throw new PageLayoutWidgetException(
+      generatePageLayoutWidgetExceptionMessage(
+        PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
+        widgetTitle,
+        undefined,
+        `widget extends beyond grid height (row ${row} + rowSpan ${rowSpan} > ${WIDGET_GRID_MAX_ROWS})`,
       ),
       PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
     );
