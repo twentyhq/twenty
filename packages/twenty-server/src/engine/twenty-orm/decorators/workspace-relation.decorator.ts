@@ -19,6 +19,8 @@ interface WorkspaceRelationBaseOptions<TClass> {
   inverseSideTarget: () => ObjectType<TClass>;
   inverseSideFieldKey?: keyof TClass;
   onDelete?: RelationOnDeleteAction;
+  isMorphRelation?: boolean;
+  morphId?: string;
 }
 
 interface WorkspaceOtherRelationOptions<TClass>
@@ -97,6 +99,8 @@ export function WorkspaceRelation<TClass extends object>(
       isSystem,
       isUIReadOnly,
       gate,
+      isMorphRelation: options.isMorphRelation ?? false,
+      morphId: options.morphId,
       isLabelSyncedWithName,
     });
   };
