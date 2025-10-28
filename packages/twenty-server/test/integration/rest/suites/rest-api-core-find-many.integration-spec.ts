@@ -262,7 +262,6 @@ describe('Core REST API Find Many endpoint', () => {
     const descResponseWithPagination =
       descResponseWithPaginationResponse.body.data.people;
 
-    //TODODO - error to check
     expect(descResponseWithPagination.length).toEqual(2);
     expect(descResponseWithPagination[0].position).toEqual(lastPosition - 1);
   });
