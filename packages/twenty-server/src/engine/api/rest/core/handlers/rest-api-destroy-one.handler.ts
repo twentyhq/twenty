@@ -9,7 +9,7 @@ import { CommonDestroyOneQueryRunnerService } from 'src/engine/api/common/common
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 
 @Injectable()
 export class RestApiDestroyOneHandler extends RestApiBaseHandler {
@@ -73,7 +73,7 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
     const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
-    const selectOptions = getAllSelectableFields({
+    const selectOptions = getAllSelectableColumnNames({
       restrictedFields,
       objectMetadata,
     });
