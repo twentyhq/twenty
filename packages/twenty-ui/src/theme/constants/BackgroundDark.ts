@@ -1,6 +1,7 @@
 import DarkNoise from '@assets/themes/dark-noise.jpg';
 import * as RadixColors from '@radix-ui/colors';
 
+import { RGBA } from '@ui/theme/constants/Rgba';
 import { COLOR } from './Colors';
 import { GRAY_SCALE_DARK } from './GrayScaleDark';
 import { GRAY_SCALE_DARK_ALPHA } from './GrayScaleDarkAlpha';
@@ -15,8 +16,8 @@ export const BACKGROUND_DARK = {
   invertedSecondary: GRAY_SCALE_DARK.gray11,
   danger: COLOR.red80,
   transparent: {
-    primary: GRAY_SCALE_DARK_ALPHA.gray6,
-    secondary: GRAY_SCALE_DARK_ALPHA.gray4,
+    primary: RGBA(GRAY_SCALE_DARK.gray1, 0.5),
+    secondary: RGBA(GRAY_SCALE_DARK.gray2, 0.5),
     strong: GRAY_SCALE_DARK_ALPHA.gray7,
     medium: GRAY_SCALE_DARK_ALPHA.gray5,
     light: GRAY_SCALE_DARK_ALPHA.gray2,
