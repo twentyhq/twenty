@@ -1,9 +1,9 @@
-import * as RadixColors from '@radix-ui/colors';
+import { GRAY_SCALE_LIGHT_ALPHA } from '@ui/theme/constants/GrayScaleLightAlpha';
 
 export const BOX_SHADOW_LIGHT = {
-  color: RadixColors.blackA.blackA4,
-  light: `0px 2px 4px 0px ${RadixColors.blackA.blackA4}, 0px 0px 4px 0px ${RadixColors.blackA.blackA8}`,
-  strong: `2px 4px 16px 0px ${RadixColors.blackA.blackA11}, 0px 2px 4px 0px ${RadixColors.blackA.blackA4}`,
-  underline: `0px 1px 0px 0px ${RadixColors.blackA.blackA12}`,
-  superHeavy: `0px 0px 8px 0px ${RadixColors.blackA.blackA11}, 0px 8px 64px -16px ${RadixColors.blackA.blackA12}, 0px 24px 56px -16px ${RadixColors.blackA.blackA8}`,
+  color: GRAY_SCALE_LIGHT_ALPHA.gray2,
+  light: `0px 2px 4px 0px ${GRAY_SCALE_LIGHT_ALPHA.gray2}, 0px 0px 4px 0px ${GRAY_SCALE_LIGHT_ALPHA.gray5}`,
+  strong: `2px 4px 16px 0px ${GRAY_SCALE_LIGHT_ALPHA.gray7}, 0px 2px 4px 0px ${GRAY_SCALE_LIGHT_ALPHA.gray5}`,
+  underline: `0px 1px 0px 0px ${GRAY_SCALE_LIGHT_ALPHA.gray9}`,
+  superHeavy: `0px 0px 8px 0px ${GRAY_SCALE_LIGHT_ALPHA.gray7}, 0px 8px 64px -16px ${GRAY_SCALE_LIGHT_ALPHA.gray10}, 0px 24px 56px -16px ${GRAY_SCALE_LIGHT_ALPHA.gray5}`,
 };
