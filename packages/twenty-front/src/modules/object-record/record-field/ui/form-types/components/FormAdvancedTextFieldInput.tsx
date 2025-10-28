@@ -140,6 +140,7 @@ export const FormAdvancedTextFieldInput = ({
       },
       onImageUpload,
       onImageUploadError,
+      enableSlashCommand: true,
     },
     [isFullScreen],
   );
