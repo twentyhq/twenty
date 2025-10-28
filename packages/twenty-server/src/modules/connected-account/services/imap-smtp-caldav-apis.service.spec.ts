@@ -124,7 +124,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         handle: 'test@example.com',
         isSyncEnabled: true,
         syncStatus: MessageChannelSyncStatus.ONGOING,
-        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         syncCursor: '',
         syncStageStartedAt: null,
       };
@@ -154,7 +154,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           handle: 'test@example.com',
           isSyncEnabled: true,
           syncStatus: MessageChannelSyncStatus.ONGOING,
-          syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
           syncCursor: '',
           syncStageStartedAt: null,
         },
@@ -254,7 +254,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         handle: 'test@example.com',
         isSyncEnabled: true,
         syncStatus: MessageChannelSyncStatus.ONGOING,
-        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
       };
 
       mockMessageChannelRepository.save.mockResolvedValue(
@@ -363,7 +363,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         handle: 'test@example.com',
         isSyncEnabled: true,
         syncStatus: MessageChannelSyncStatus.ONGOING,
-        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
       };
 
       mockMessageChannelRepository.save.mockResolvedValue(
@@ -422,7 +422,7 @@ describe('ImapSmtpCalDavAPIService', () => {
         handle: 'test@example.com',
         isSyncEnabled: true,
         syncStatus: MessageChannelSyncStatus.ONGOING,
-        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
       };
 
       const expectedCalendarChannel = {

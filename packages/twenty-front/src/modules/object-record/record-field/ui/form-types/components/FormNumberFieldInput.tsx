@@ -33,6 +33,16 @@ type FormNumberFieldInputProps = {
   onError?: (error: string | undefined) => void;
 };
 
+type FormNumberFieldInputValue =
+  | {
+      type: 'static';
+      value: string;
+    }
+  | {
+      type: 'variable';
+      value: string;
+    };
+
 export const FormNumberFieldInput = ({
   label,
   placeholder,
@@ -50,26 +60,17 @@ export const FormNumberFieldInput = ({
     undefined,
   );
 
-  const [draftValue, setDraftValue] = useState<
-    | {
-        type: 'static';
-        value: string;
+  const draftValue: FormNumberFieldInputValue = isStandaloneVariableString(
+    defaultValue,
+  )
+    ? {
+        type: 'variable',
+        value: defaultValue,
       }
-    | {
-        type: 'variable';
-        value: string;
-      }
-  >(
-    isStandaloneVariableString(defaultValue)
-      ? {
-          type: 'variable',
-          value: defaultValue,
-        }
-      : {
-          type: 'static',
-          value: isDefined(defaultValue) ? String(defaultValue) : '',
-        },
-  );
+    : {
+        type: 'static',
+        value: isDefined(defaultValue) ? String(defaultValue) : '',
+      };
 
   const persistNumber = (newValue: string) => {
     if (!canBeCastAsNumberOrNull(newValue)) {
@@ -87,29 +88,14 @@ export const FormNumberFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
-    setDraftValue({
-      type: 'static',
-      value: newText,
-    });
-
     persistNumber(newText.trim());
   };
 
   const handleUnlinkVariable = () => {
-    setDraftValue({
-      type: 'static',
-      value: '',
-    });
-
     onChange(null);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
-    setDraftValue({
-      type: 'variable',
-      value: variableName,
-    });
-
     onChange(variableName);
   };
 

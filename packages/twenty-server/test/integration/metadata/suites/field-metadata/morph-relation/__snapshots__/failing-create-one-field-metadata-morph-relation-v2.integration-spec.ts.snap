@@ -3,7 +3,7 @@
 exports[`failing createOne FieldMetadataService morph relation fields v2 Morh relation collision tests suite it should fail to create a already existing morph relation with samefield 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -108,7 +108,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
 exports[`failing createOne FieldMetadataService morph relation fields v2 Morh relation collision tests suite it should fail to create a field with name than result in existing morph relation field join column 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -165,7 +165,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field on source object itself 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -216,7 +216,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field that has several references to same object 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -267,7 +267,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field when targetFieldLabel contains only whitespace 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -346,7 +346,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field when targetFieldLabel exceeds maximum length 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -419,7 +419,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field when targetFieldLabel has a first degree conflicts with an existing field on target object metadata id 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -492,7 +492,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field when targetFieldLabel is empty 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -571,7 +571,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field when targetObjectMetadataId is unknown 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -630,7 +630,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field when type is a wrong value 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -689,7 +689,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field when type is not provided 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -747,7 +747,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field with empty morphRelationCreationPayload 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -798,7 +798,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field with malformed morphRelationCreationPayload occurrence 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -849,7 +849,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field with many relation types 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -900,7 +900,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field with not an array morphRelationCreationPayload 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -954,7 +954,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field with null morphRelationCreationPayload 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -1006,7 +1006,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field with undefined morphRelationCreationPayload 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],

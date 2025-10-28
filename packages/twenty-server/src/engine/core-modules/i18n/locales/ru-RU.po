@@ -18,36 +18,6 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
 "X-Crowdin-File-ID: 31\n"
 
-#. js-lingui-id: Qyrd7v
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "(System) View Fields"
-msgstr "(Система) Просмотреть поля"
-
-#. js-lingui-id: 9Y3fTB
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "(System) View Filter Groups"
-msgstr "(Система) Просмотреть группы фильтров"
-
-#. js-lingui-id: TB2jLV
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "(System) View Filters"
-msgstr "(Система) Просмотреть фильтры"
-
-#. js-lingui-id: Y7M7Ro
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "(System) View Groups"
-msgstr "(Система) Просмотреть группы"
-
-#. js-lingui-id: 9vliLw
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "(System) View Sorts"
-msgstr "(Система) Просмотреть сортировки"
-
-#. js-lingui-id: 5B59WE
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "(System) Views"
-msgstr "(Система) Представления"
-
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
@@ -227,12 +197,6 @@ msgstr "Адрес компании"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Адрес компании - устарел в пользу нового поля адреса"
 
-#. js-lingui-id: ZfVqbP
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Aggregate operation"
-msgstr "Агрегирующая операция"
-
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
@@ -287,12 +251,6 @@ msgstr "Возможность"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Ежегодный повторяющийся доход: Фактический или предполагаемый годовой доход компании"
-
-#. js-lingui-id: 6wr+2Z
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Any field filter value"
-msgstr "Любое значение фильтра поля"
 
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -703,11 +661,6 @@ msgstr "Дата Закрытия"
 msgid "Color Scheme"
 msgstr "Цветовая Схема"
 
-#. js-lingui-id: 07OSD1
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Compact View"
-msgstr "Компактный Вид"
-
 #. js-lingui-id: s2QZS6
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Companies"
@@ -986,11 +939,6 @@ msgstr "Значения по умолчанию должны быть уник�
 msgid "Deleted at"
 msgstr "Удаленно"
 
-#. js-lingui-id: U1bSSI
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Describes if the view is in compact mode"
-msgstr "Описывает, находится ли представление в компактном режиме"
-
 #. js-lingui-id: Nu4oKW
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -998,7 +946,6 @@ msgid "Description"
 msgstr "Описание"
 
 #. js-lingui-id: MRB7nI
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "Направление"
@@ -1010,16 +957,6 @@ msgstr "Направление"
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Display Name"
 msgstr "Отображаемое имя"
-
-#. js-lingui-id: y7HJTU
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Display the records in a side panel or in a record page"
-msgstr "Отобразить записи в боковой панели или на странице записи"
-
-#. js-lingui-id: 0H/D9K
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Display Value"
-msgstr "Отображаемое значение"
 
 #. js-lingui-id: IymH4t
 #: src/engine/core-modules/public-domain/public-domain.service.ts
@@ -1433,14 +1370,6 @@ msgstr "Идентификатор поля уже используется в �
 msgid "Field label identifier is required"
 msgstr "Требуется идентификатор метки поля"
 
-#. js-lingui-id: nSFFML
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Field Metadata Id"
-msgstr "Идентификатор метаданных поля"
-
 #. js-lingui-id: MPt365
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -1462,12 +1391,6 @@ msgstr "Метадата для удаления поля не найдена"
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update not found"
 msgstr "Метадата для обновления поля не найдена"
-
-#. js-lingui-id: g+t8w9
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Field metadata used for aggregate operation"
-msgstr "Метаданные поля, используемые для агрегирования операции"
 
 #. js-lingui-id: prTOhK
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -1498,11 +1421,6 @@ msgstr "Поле для обновления не найдено"
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
 msgid "Field used for full-text search"
 msgstr "Поле, используемое для полнотекстового поиска"
-
-#. js-lingui-id: zuDgzc
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "Field Value"
-msgstr "Значение поля"
 
 #. js-lingui-id: s3HtdT
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
@@ -1579,11 +1497,6 @@ msgstr "Пятница"
 msgid "Full path"
 msgstr "Полный путь"
 
-#. js-lingui-id: UzpVUy
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "Group by this field value"
-msgstr "Группировать по значению этого поля"
-
 #. js-lingui-id: TkE8dW
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "handle"
@@ -1619,11 +1532,6 @@ msgstr "Идентификатор заголовочного сообщения
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "iCal UID"
 msgstr "UID iCal"
-
-#. js-lingui-id: wwu18a
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Icon"
-msgstr "Иконка"
 
 #. js-lingui-id: CiyiKN
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -1888,16 +1796,6 @@ msgstr "Июль"
 msgid "June"
 msgstr "Июнь"
 
-#. js-lingui-id: qmarO2
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "kanbanfieldMetadataId"
-msgstr "kanbanfieldMetadataId"
-
-#. js-lingui-id: 7sMeHQ
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Key"
-msgstr "Ключ"
-
 #. js-lingui-id: ljUvzm
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Label identifier field cannot be deactivated"
@@ -2013,16 +1911,6 @@ msgstr "Список возможностей, в которых эта личн
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Location"
 msgstr "Местоположение"
-
-#. js-lingui-id: y+q8Lv
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Logical Operator"
-msgstr "Логический оператор"
-
-#. js-lingui-id: 6kQXsS
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Logical operator for the filter group"
-msgstr "Логический оператор для группы фильтров"
 
 #. js-lingui-id: hg6l4j
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2249,7 +2137,6 @@ msgstr "Найдено несколько записей с одинаковым
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2496,11 +2383,6 @@ msgstr "Метка объекта слишком длинная"
 msgid "Object label is too short"
 msgstr "Метка объекта слишком короткая"
 
-#. js-lingui-id: T/nPf5
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Object Metadata Id"
-msgstr "Идентификатор метаданных объекта"
-
 #. js-lingui-id: xrblgA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -2559,16 +2441,6 @@ msgstr "Октябрь"
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
 msgstr "Один или несколько объектов, для которых вы пытаетесь установить разрешения, не обнаружены. Возможно, они были удалены."
-
-#. js-lingui-id: r/A6pA
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Open Record In"
-msgstr "Открыть запись в"
-
-#. js-lingui-id: Fzfj4N
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Operand"
-msgstr "Операнд"
 
 #. js-lingui-id: 4MyDFl
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2697,12 +2569,6 @@ msgstr "Требуется значение опции"
 msgid "Option value must be a string of at least one character"
 msgstr "Значение опции должно быть строкой из хотя бы одного символа"
 
-#. js-lingui-id: eLggyd
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Optional aggregate operation"
-msgstr "Необязательная агрегатная операция"
-
 #. js-lingui-id: EabrTR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
@@ -2712,16 +2578,6 @@ msgstr "Для полей типа перечисление требуются �
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "ID компоновки страницы"
-
-#. js-lingui-id: pDUbN1
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Parent View Filter Group"
-msgstr "Родительская группа фильтра представления"
-
-#. js-lingui-id: YKSmIP
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Parent View Filter Group Id"
-msgstr "Идентификатор родительской группы фильтра представления"
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -2819,9 +2675,6 @@ msgstr "\\"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2833,22 +2686,6 @@ msgstr "\\"
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
-msgstr "\\"
-
-#. js-lingui-id: HH1bMC
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Position in the parent view filter group"
-msgstr "\\"
-
-#. js-lingui-id: CvOSME
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Position in the view filter group"
-msgstr "\\"
-
-#. js-lingui-id: h8PGuF
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Position in view filter group"
 msgstr "\\"
 
 #. js-lingui-id: TTHIbk
@@ -3075,11 +2912,6 @@ msgstr "Функция без сервера с таким же идентифи
 msgid "Settings"
 msgstr "Настройки"
 
-#. js-lingui-id: Cj2Gtd
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Size"
-msgstr "\\"
-
 #. js-lingui-id: RyE+Of
 #: src/engine/metadata-modules/role/role.service.ts
 msgid "Some of the information provided is invalid. Please check your input and try again."
@@ -3151,12 +2983,6 @@ msgstr "Шаг не является формой"
 #: src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils.ts
 msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
 msgstr "Строка \"{name}\" недействительна: должна начинаться с маленькой буквы и содержать только цифры и буквы"
-
-#. js-lingui-id: g4jxXh
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Sub field name"
-msgstr "Имя подполе"
 
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
@@ -3677,7 +3503,6 @@ msgid "Tuesday"
 msgstr "Вторник"
 
 #. js-lingui-id: +zy2Nq
-#: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Type"
 msgstr "Тип"
@@ -3791,11 +3616,6 @@ msgstr "Предпочитаемый пользователем формат в�
 msgid "Validation failed for 0 object(s) and 0 field(s)"
 msgstr "Проверка не пройдена для 0 объекта(ов) и 0 поля(ей)"
 
-#. js-lingui-id: wMHvYH
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Value"
-msgstr "Значение"
-
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
@@ -3822,26 +3642,10 @@ msgstr "Триггер версии"
 msgid "Versions"
 msgstr "Версии"
 
-#. js-lingui-id: jpctdh
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View"
-msgstr "Представление"
-
 #. js-lingui-id: HhN1Bv
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View already exists"
 msgstr "Представление уже существует"
-
-#. js-lingui-id: cZPDyy
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field"
-msgstr "Поле представления"
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -3863,38 +3667,17 @@ msgstr "Метаданные поля представления уже суще
 msgid "View field metadata with id {flatViewFieldId} already exists"
 msgstr "Метаданные поля представления с идентификатором {flatViewFieldId} уже существуют"
 
-#. js-lingui-id: 6jpoH4
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field position"
-msgstr "Позиция поля представления"
-
 #. js-lingui-id: 7LMaUn
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field position cannot be lower than label identifier view field position"
 msgstr "Позиция поля представления не может быть ниже позиции поля представления идентификатора метки"
 
-#. js-lingui-id: Ju6gri
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field related view"
-msgstr "Представление связанного поля"
-
 #. js-lingui-id: WZzm3R
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field related view object metadata not found"
 msgstr "Метадата связанного объекта поля представления не найдена"
-
-#. js-lingui-id: tvTr2y
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field size"
-msgstr "Размер поля представления"
-
-#. js-lingui-id: BkII8t
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field target field"
-msgstr "Целевое поле представления"
 
 #. js-lingui-id: XJlyZS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
@@ -3927,50 +3710,10 @@ msgstr "Поле представления для обновления роди
 msgid "View field to update parent view object not found"
 msgstr "Поле представления для обновления родительского объекта не найдено"
 
-#. js-lingui-id: Gd/LzL
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field visibility"
-msgstr "Видимость поля представления"
-
 #. js-lingui-id: 89Wiy+
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field with same fieldmetadataId and viewId already exists"
 msgstr "Поле с тем же fieldmetadataId и viewId уже существует"
-
-#. js-lingui-id: GUFYyq
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Fields"
-msgstr "Поля представления"
-
-#. js-lingui-id: JRtI7Y
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter"
-msgstr "Фильтр представления"
-
-#. js-lingui-id: L2gQ5q
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter Display Value"
-msgstr "Отображаемое значение фильтра представления"
-
-#. js-lingui-id: l9/6pD
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "View Filter Group"
-msgstr "Группа фильтров представления"
-
-#. js-lingui-id: Mbosm8
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter Group Id"
-msgstr "Идентификатор группы фильтров представления"
-
-#. js-lingui-id: /aP3iG
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "View Filter Groups"
-msgstr "Группы фильтров представления"
 
 #. js-lingui-id: 1KSqGE
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
@@ -3979,21 +3722,6 @@ msgstr "Группы фильтров представления"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter not found"
 msgstr "Фильтр представления не найден"
-
-#. js-lingui-id: 4MG8+B
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter operand"
-msgstr "Операнд фильтра представления"
-
-#. js-lingui-id: OrUkUF
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter related view"
-msgstr "Представление связанного фильтра"
-
-#. js-lingui-id: TyXOtD
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter target field"
-msgstr "Целевое поле фильтра представления"
 
 #. js-lingui-id: 3l1ppY
 #: src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util.ts
@@ -4010,28 +3738,11 @@ msgstr "Фильтр представления для удаления не н�
 msgid "View filter to update not found"
 msgstr "Фильтр представления для обновления не найден"
 
-#. js-lingui-id: 3KzkxN
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter value"
-msgstr "Значение фильтра представления"
-
 #. js-lingui-id: LnNgrI
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 msgid "View filter with this id already exists"
 msgstr "Фильтр представления с таким идентификатором уже существует"
-
-#. js-lingui-id: vj5JsR
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filters"
-msgstr "Фильтры представления"
-
-#. js-lingui-id: ziEP12
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Group"
-msgstr "Группа представления"
 
 #. js-lingui-id: MGbEFN
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -4042,16 +3753,6 @@ msgstr "Метаданные группы представлений уже су
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group metadata with id {flatViewGroupId} already exists"
 msgstr "Метаданные группы представлений с идентификатором {flatViewGroupId} уже существуют"
-
-#. js-lingui-id: uQ3c2q
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Group related view"
-msgstr "Представление связанной группы"
-
-#. js-lingui-id: EFlLpQ
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Group target field"
-msgstr "Целевое поле группы представления"
 
 #. js-lingui-id: JdAvYa
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
@@ -4084,23 +3785,6 @@ msgstr "Группа представлений для обновления ро
 msgid "View group to update parent view not found"
 msgstr "Группа представлений для обновления родительского представления не найдена"
 
-#. js-lingui-id: b1Vc+l
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Group visibility"
-msgstr "Видимость группы представления"
-
-#. js-lingui-id: V4nZs/
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Groups"
-msgstr "Группы представления"
-
-#. js-lingui-id: qXlovu
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View icon"
-msgstr "Иконка представления"
-
 #. js-lingui-id: M7KWZV
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -4108,21 +3792,6 @@ msgstr "Иконка представления"
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View kanban aggregate field metadata not found"
 msgstr "Метаданные агрегированного поля канбан не найдены"
-
-#. js-lingui-id: cd/+ZD
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View Kanban column field"
-msgstr "Поле колонки канбан представления"
-
-#. js-lingui-id: vdfZ+A
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View key"
-msgstr "Ключ представления"
-
-#. js-lingui-id: oOljSE
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View name"
-msgstr "Наименование представления"
 
 #. js-lingui-id: F4A9mL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -4138,52 +3807,15 @@ msgstr "Наименование представления"
 msgid "View not found"
 msgstr "Представление не найдено"
 
-#. js-lingui-id: rhO8zp
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View position"
-msgstr "Позиция представления"
-
-#. js-lingui-id: EUjpwJ
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sort"
-msgstr "Сортировка представления"
-
 #. js-lingui-id: znNExx
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "View sort (id: {id}) not found"
 msgstr "Сортировка представления (id: {id}) не найдена"
 
-#. js-lingui-id: 6ZUale
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sort direction"
-msgstr "Направление сортировки представления"
-
 #. js-lingui-id: 3zMs+f
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "View sort not found"
 msgstr "Сортировка представления не найдена"
-
-#. js-lingui-id: /rCPqN
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sort related view"
-msgstr "Представление связанной сортировки"
-
-#. js-lingui-id: +du2wy
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sort target field"
-msgstr "Целевое поле сортировки представления"
-
-#. js-lingui-id: UsdY3K
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sorts"
-msgstr "Сортировки представления"
-
-#. js-lingui-id: clWwIZ
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View target object"
-msgstr "Целевой объект представления"
 
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
@@ -4199,11 +3831,6 @@ msgstr "Представление для уничтожения не найде
 #: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "View to update not found"
 msgstr "Представление для обновления не найдено"
-
-#. js-lingui-id: bJAIqT
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View type"
-msgstr "Тип представления"
 
 #. js-lingui-id: ZgRtC4
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
@@ -4246,11 +3873,6 @@ msgstr "ViewId требуется для создания группы отоб�
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId требуется для создания сортировки отображения."
 
-#. js-lingui-id: 1I6UoR
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Views"
-msgstr "Представления"
-
 #. js-lingui-id: 2q/Q7x
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -4258,12 +3880,6 @@ msgstr "Представления"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Visibility"
 msgstr "Видимость"
-
-#. js-lingui-id: oh8+os
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Visible"
-msgstr "Видимый"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts

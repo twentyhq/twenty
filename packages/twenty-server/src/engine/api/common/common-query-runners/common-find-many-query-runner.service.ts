@@ -140,10 +140,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       isForwardPagination,
     );
 
-    if (objectRecords.length > limit) {
-      objectRecords.pop();
-    }
-
     if (!isForwardPagination) {
       objectRecords.reverse();
     }
