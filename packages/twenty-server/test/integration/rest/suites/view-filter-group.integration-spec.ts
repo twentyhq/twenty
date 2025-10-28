@@ -13,13 +13,10 @@ import {
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
   createTestViewFilterGroupWithRestApi,
-  createTestViewWithRestApi,
-  deleteTestViewFilterGroupWithRestApi,
+  deleteTestViewFilterGroupWithRestApi
 } from 'test/integration/rest/utils/view-rest-api.util';
-import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import {
-  assertViewFilterGroupStructure,
-  cleanupViewRecords,
+  assertViewFilterGroupStructure
 } from 'test/integration/utils/view-test.util';
 
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
@@ -62,19 +59,6 @@ describe('View Filter Group REST API', () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
-  });
-
-  beforeEach(async () => {
-    await cleanupViewRecords();
-
-    await createTestViewWithRestApi({
-      name: generateRecordName('Test View for Filter Groups'),
-      objectMetadataId: testObjectMetadataId,
-    });
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
   });
 
   describe('GET /metadata/viewFilterGroups', () => {

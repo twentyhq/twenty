@@ -7,7 +7,6 @@ import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/c
 import { deleteOneCoreView } from 'test/integration/metadata/suites/view/utils/delete-one-core-view.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
-import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 
 describe('Destroy core view', () => {
   let testObjectMetadataId: string;
@@ -45,11 +44,6 @@ describe('Destroy core view', () => {
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupViewRecords();
-  });
-
-  beforeEach(async () => {
-    await cleanupViewRecords();
   });
 
   it.only('should destroy an existing view', async () => {

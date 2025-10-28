@@ -14,13 +14,9 @@ import {
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
   createTestViewFieldWithRestApi,
-  createTestViewWithRestApi,
-  deleteTestViewFieldWithRestApi,
+  deleteTestViewFieldWithRestApi
 } from 'test/integration/rest/utils/view-rest-api.util';
-import {
-  assertViewFieldStructure,
-  cleanupViewRecords,
-} from 'test/integration/utils/view-test.util';
+import { assertViewFieldStructure } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
@@ -92,18 +88,21 @@ describe('View Field REST API', () => {
     });
   });
 
-  beforeEach(async () => {
-    await cleanupViewRecords();
+  // beforeEach(async () => {
+  //   const view = await createTestViewWithRestApi({
+  //     name: 'Test View for Fields',
+  //     objectMetadataId: testObjectMetadataId,
+  //   });
 
-    await createTestViewWithRestApi({
-      name: 'Test View for Fields',
-      objectMetadataId: testObjectMetadataId,
-    });
-  });
+  //   testViewId = view.id;
+  // });
 
-  afterAll(async () => {
-    await cleanupViewRecords();
-  });
+  // afterEach(async () => {
+  //   await destroyOneCoreView({
+  //     viewId: testViewId,
+  //     expectToFail: false,
+  //   });
+  // });
 
   describe('GET /metadata/viewFields', () => {
     it('should return empty array when no view fields exist', async () => {

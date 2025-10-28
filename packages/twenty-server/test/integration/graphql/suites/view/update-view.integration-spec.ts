@@ -5,7 +5,6 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { updateOneCoreView } from 'test/integration/metadata/suites/view/utils/update-one-core-view.util';
-import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
@@ -45,11 +44,6 @@ describe('Update core view', () => {
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupViewRecords();
-  });
-
-  beforeEach(async () => {
-    await cleanupViewRecords();
   });
 
   it('should update an existing view', async () => {
