@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewFilterGroupController } from 'src/engine/metadata-modules/view-filter-group/controllers/view-filter-group.controller';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterGroupResolver } from 'src/engine/metadata-modules/view-filter-group/resolvers/view-filter-group.resolver';
@@ -10,6 +11,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 @Module({
   imports: [
     TypeOrmModule.forFeature([ViewFilterGroupEntity]),
+    PermissionsModule,
     WorkspaceCacheStorageModule,
   ],
   controllers: [ViewFilterGroupController],

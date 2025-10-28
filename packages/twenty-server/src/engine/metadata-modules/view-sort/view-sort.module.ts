@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewSortController } from 'src/engine/metadata-modules/view-sort/controllers/view-sort.controller';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewSortResolver } from 'src/engine/metadata-modules/view-sort/resolvers/view-sort.resolver';
@@ -10,6 +11,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 @Module({
   imports: [
     TypeOrmModule.forFeature([ViewSortEntity]),
+    PermissionsModule,
     WorkspaceCacheStorageModule,
   ],
   controllers: [ViewSortController],

@@ -5,7 +5,9 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
@@ -47,6 +49,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async createCoreViewFilter(
     @Args('input') createViewFilterInput: CreateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -71,6 +74,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async updateCoreViewFilter(
     @Args('input') updateViewFilterInput: UpdateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -96,6 +100,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async deleteCoreViewFilter(
     @Args('input') deleteViewFilterInput: DeleteViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -122,6 +127,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async destroyCoreViewFilter(
     @Args('input') destroyViewFilterInput: DestroyViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

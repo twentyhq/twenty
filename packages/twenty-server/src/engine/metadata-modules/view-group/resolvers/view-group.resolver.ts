@@ -5,7 +5,9 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
 import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/delete-view-group.input';
 import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
@@ -47,6 +49,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async createCoreViewGroup(
     @Args('input') createViewGroupInput: CreateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -71,6 +74,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async updateCoreViewGroup(
     @Args('input') updateViewGroupInput: UpdateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -96,6 +100,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async deleteCoreViewGroup(
     @Args('input') deleteViewGroupInput: DeleteViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -122,6 +127,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async destroyCoreViewGroup(
     @Args('input') destroyViewGroupInput: DestroyViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

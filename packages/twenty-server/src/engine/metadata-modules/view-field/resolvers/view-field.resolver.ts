@@ -5,7 +5,9 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
@@ -43,6 +45,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async updateCoreViewField(
     @Args('input') updateViewFieldInput: UpdateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -68,6 +71,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async createCoreViewField(
     @Args('input') createViewFieldInput: CreateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -92,6 +96,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async deleteCoreViewField(
     @Args('input') deleteViewFieldInput: DeleteViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -117,6 +122,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async destroyCoreViewField(
     @Args('input') destroyViewFieldInput: DestroyViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

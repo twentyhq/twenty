@@ -19,8 +19,10 @@ import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-contex
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -124,6 +126,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async createCoreView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -148,6 +151,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async updateCoreView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
@@ -170,6 +174,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async deleteCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -195,6 +200,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
   async destroyCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

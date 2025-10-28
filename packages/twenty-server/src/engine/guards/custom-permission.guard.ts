@@ -1,7 +1,7 @@
 import {
-    type CanActivate,
-    type ExecutionContext,
-    Injectable,
+  type CanActivate,
+  type ExecutionContext,
+  Injectable,
 } from '@nestjs/common';
 
 // Guard that explicitly marks an endpoint as having custom permission logic

@@ -10,6 +10,7 @@ import {
   H2Title,
   IconApps,
   IconCode,
+  IconCreditCard,
   IconHierarchy,
   IconKey,
   IconLayoutSidebarRightCollapse,
@@ -17,6 +18,7 @@ import {
   IconSettings,
   IconSettingsAutomation,
   IconSpy,
+  IconTable,
   IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
@@ -109,6 +111,18 @@ export const SettingsRolePermissionsSettingsSection = ({
         name: t`Layouts`,
         description: t`Customize page layouts and UI structure`,
         Icon: IconLayoutSidebarRightCollapse,
+      },
+      {
+        key: PermissionFlagType.MANAGE_VIEWS,
+        name: t`Manage Views`,
+        description: t`Create, edit, and delete views and view configurations`,
+        Icon: IconTable,
+      },
+      {
+        key: PermissionFlagType.BILLING,
+        name: t`Billing`,
+        description: t`Manage billing and subscriptions`,
+        Icon: IconCreditCard,
       },
     ];
 
