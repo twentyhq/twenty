@@ -4,7 +4,7 @@ import isEmpty from 'lodash.isempty';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
@@ -43,6 +43,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
       commonQueryParser,
+      authContext,
+      workspaceDataSource,
+      rolePermissionConfig,
     } = queryRunnerContext;
 
     const existingRecordsQueryBuilder = repository.createQueryBuilder(
@@ -126,6 +129,26 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           };
         }),
       );
+
+    if (isDefined(args.selectedFieldsResult.relations)) {
+      await this.processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: findDuplicatesOutput.flatMap(
+          (item) => item.records,
+        ),
+        parentObjectRecordsAggregatedValues: {},
+        relations: args.selectedFieldsResult.relations as Record<
+          string,
+          FindOptionsRelations<ObjectLiteral>
+        >,
+        limit: QUERY_MAX_RECORDS,
+        authContext,
+        workspaceDataSource,
+        rolePermissionConfig,
+        selectedFields: args.selectedFieldsResult.select,
+      });
+    }
 
     return findDuplicatesOutput;
   }
