@@ -7,6 +7,7 @@ import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate'
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { getDateTimeMask } from '@/ui/input/components/internal/date/utils/getDateTimeMask';
 
+import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { useParseDateTimeInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateTimeInputStringToJSDate';
 import { useParseJSDateToIMaskDateTimeInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateTimeInputString';
 import { useTurnReactDatePickerShiftedDateBackIntoPointInTime } from '@/ui/input/components/internal/date/hooks/useTurnReactDatePickerShiftedDateBackIntoPointInTime';
@@ -28,10 +29,10 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   border: none;
   color: ${({ theme }) => theme.font.color.primary};
   outline: none;
-  padding: 4px 8px 4px 8px;
+  padding-left: ${({ theme }) => theme.spacing(2)};
   font-weight: 500;
   font-size: ${({ theme }) => theme.font.size.md};
-  width: 100%;
+  width: 105px;
 `;
 
 type DateTimePickerInputProps = {
@@ -106,6 +107,7 @@ export const DateTimePickerInput = ({
   return (
     <StyledInputContainer>
       <StyledInput type="text" ref={ref as any} />
+      <TimeZoneAbbreviation date={internalDate ?? new Date()} />
     </StyledInputContainer>
   );
 };

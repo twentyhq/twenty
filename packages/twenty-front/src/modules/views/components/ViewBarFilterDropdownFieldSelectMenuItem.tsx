@@ -32,6 +32,8 @@ export const ViewBarFilterDropdownFieldSelectMenuItem = ({
   const handleClick = () => {
     resetSelectedItem();
 
+    console.log('click');
+
     initializeFilterOnFieldMetataItemFromViewBarFilterDropdown(
       fieldMetadataItemToSelect,
     );

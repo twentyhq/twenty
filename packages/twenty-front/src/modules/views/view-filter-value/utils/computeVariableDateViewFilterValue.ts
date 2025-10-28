@@ -1,20 +1,29 @@
-import {
-  type VariableDateViewFilterValueDirection,
-  type VariableDateViewFilterValueUnit,
-} from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type RelativeDateFilter } from 'twenty-shared/utils';
 
 export const computeVariableDateViewFilterValue = (
-  direction: VariableDateViewFilterValueDirection,
-  amount: number | undefined,
-  unit: VariableDateViewFilterValueUnit,
+  relativeDateFilter: RelativeDateFilter,
 ) => {
-  if (direction === 'THIS') {
-    return `THIS_1_${unit}`;
-  } else if (amount === undefined || amount <= 0) {
+  let relativeFilterValue = `${relativeDateFilter.direction}_${relativeDateFilter.amount?.toString() ?? '1'}_${relativeDateFilter.unit}`;
+
+  if (relativeDateFilter.direction === 'THIS') {
+    relativeFilterValue = `THIS_1_${relativeDateFilter.unit}`;
+  } else if (
+    relativeDateFilter.amount === undefined ||
+    relativeDateFilter.amount <= 0
+  ) {
     throw new Error(
       'Amount must be defined and greater than 0 for relative date filters',
     );
   }
 
-  return `${direction}_${amount.toString()}_${unit}`;
+  if (isNonEmptyString(relativeDateFilter.timezone)) {
+    relativeFilterValue = `${relativeFilterValue}_${relativeDateFilter.timezone}`;
+
+    if (isNonEmptyString(relativeDateFilter.referenceDayAsString)) {
+      relativeFilterValue = `${relativeFilterValue}_${relativeDateFilter.referenceDayAsString}`;
+    }
+  }
+
+  return relativeFilterValue;
 };

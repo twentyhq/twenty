@@ -180,7 +180,9 @@ export const formatToHumanReadableDate = (date: Date | string) => {
   return i18n.date(parsedJSDate, { dateStyle: 'medium' });
 };
 
-export const getDateTimeFormatString = (dateFormat: DateFormat): string => {
+export const getDateTimeFormatStringFoDatePickerInputMask = (
+  dateFormat: DateFormat,
+): string => {
   switch (dateFormat) {
     case DateFormat.DAY_FIRST:
       return `dd/MM/yyyy HH:mm`;
@@ -192,7 +194,9 @@ export const getDateTimeFormatString = (dateFormat: DateFormat): string => {
   }
 };
 
-export const getDateFormatString = (dateFormat: DateFormat): string => {
+export const getDateFormatStringForDatePickerInputMask = (
+  dateFormat: DateFormat,
+): string => {
   switch (dateFormat) {
     case DateFormat.DAY_FIRST:
       return `dd/MM/yyyy`;

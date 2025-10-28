@@ -1,12 +1,12 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { isValid, parse } from 'date-fns';
-import { getDateTimeFormatString } from '~/utils/date-utils';
+import { getDateTimeFormatStringFoDatePickerInputMask } from '~/utils/date-utils';
 
 export const useParseDateTimeInputStringToJSDate = () => {
   const { dateFormat } = useDateTimeFormat();
 
   const parseDateTimeInputStringToJSDate = (dateAsString: string) => {
-    const parsingFormat = getDateTimeFormatString(dateFormat);
+    const parsingFormat = getDateTimeFormatStringFoDatePickerInputMask(dateFormat);
     const referenceDate = new Date();
 
     const parsedDate = parse(dateAsString, parsingFormat, referenceDate);

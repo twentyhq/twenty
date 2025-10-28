@@ -64,9 +64,7 @@ export const DatePickerHeader = ({
 
   return (
     <>
-      {!hideInput && (
-        <DatePickerInput date={date} onChange={onChange} />
-      )}
+      {!hideInput && <DatePickerInput date={date} onChange={onChange} />}
       <StyledCustomDatePickerHeader>
         <ClickOutsideListenerContext.Provider
           value={{

@@ -2,7 +2,7 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { isDefined } from 'twenty-shared/utils';
-import { getDateTimeFormatString } from '~/utils/date-utils';
+import { getDateTimeFormatStringFoDatePickerInputMask } from '~/utils/date-utils';
 
 type ParseDateTimeToStringArgs = {
   date: Date;
@@ -15,7 +15,7 @@ export const parseDateTimeToString = ({
   userTimezone,
   dateFormat = DateFormat.MONTH_FIRST,
 }: ParseDateTimeToStringArgs) => {
-  const parsingFormat = getDateTimeFormatString(dateFormat);
+  const parsingFormat = getDateTimeFormatStringFoDatePickerInputMask(dateFormat);
 
   if (isDefined(userTimezone)) {
     return formatInTimeZone(date, userTimezone, parsingFormat);

@@ -14,6 +14,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+
 import { useRecoilCallback } from 'recoil';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -94,6 +95,10 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
               duplicateFilterInCurrentRecordFilters,
             );
 
+            console.log({
+              filterIsAlreadyInCurrentRecordFilters,
+            });
+
             if (filterIsAlreadyInCurrentRecordFilters) {
               set(
                 objectFilterDropdownCurrentRecordFilterCallbackState,
@@ -106,6 +111,10 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
               );
             } else {
               set(selectedOperandInDropdownCallbackState, defaultOperand);
+
+              console.log({
+                filterType,
+              });
 
               if (filterType === 'DATE' || filterType === 'DATE_TIME') {
                 const { displayValue, value } = getInitialFilterValue(
@@ -142,6 +151,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
           objectFilterDropdownCurrentRecordFilterCallbackState,
           selectedOperandInDropdownCallbackState,
           upsertObjectFilterDropdownCurrentFilter,
+          getInitialFilterValue,
         ],
       );
 

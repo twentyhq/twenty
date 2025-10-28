@@ -1,16 +1,15 @@
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/format-preferences/getDateFormatFromWorkspaceDateFormat';
+import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/format-preferences/getTimeFormatFromWorkspaceTimeFormat';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useUserDateFormat } from '@/ui/input/components/internal/date/hooks/useUserDateFormat';
+import { useUserTimeFormat } from '@/ui/input/components/internal/date/hooks/useUserTimeFormat';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { TZDate } from '@date-fns/tz';
+import { isNonEmptyString } from '@sniptt/guards';
 import { format } from 'date-fns';
 import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
 import { type FilterableAndTSVectorFieldType } from 'twenty-shared/types';
-import {
-  getDateFormatString,
-  getDateTimeFormatString,
-} from '~/utils/date-utils';
 
 const activeDatePickerOperands = [
   RecordFilterOperand.IS_BEFORE,
@@ -19,31 +18,51 @@ const activeDatePickerOperands = [
 ];
 
 export const useGetInitialFilterValue = () => {
-  const { userTimezone } = useUserTimezone();
+  const {
+    userTimezone,
+    isSystemTimezone,
+    getTimezoneAbbreviationForPointInTime,
+  } = useUserTimezone();
   const { userDateFormat } = useUserDateFormat();
+  const { userTimeFormat } = useUserTimeFormat();
 
   const getInitialFilterValue = (
     newType: FilterableAndTSVectorFieldType,
     newOperand: RecordFilterOperand,
+    alreadyExistingISODate?: string,
   ): Pick<RecordFilter, 'value' | 'displayValue'> | Record<string, never> => {
+    console.log({
+      newType,
+      alreadyExistingISODate,
+    });
     switch (newType) {
       case 'DATE': {
         if (activeDatePickerOperands.includes(newOperand)) {
-          const now = new Date();
+          const referenceDate = isNonEmptyString(alreadyExistingISODate)
+            ? new Date(alreadyExistingISODate)
+            : new Date();
 
           const shiftedDate = new TZDate(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate(),
+            referenceDate.getFullYear(),
+            referenceDate.getMonth(),
+            referenceDate.getDate(),
             userTimezone,
           );
 
-          const dateFormatString = getDateFormatString(
-            getDateFormatFromWorkspaceDateFormat(userDateFormat),
-          );
+          const dateFormatString =
+            getDateFormatFromWorkspaceDateFormat(userDateFormat);
+
+          shiftedDate.setSeconds(0);
+          shiftedDate.setMilliseconds(0);
 
           const value = format(shiftedDate, DATE_TYPE_FORMAT);
           const displayValue = format(shiftedDate, dateFormatString);
+
+          console.log({
+            shiftedDate,
+            value,
+            displayValue,
+          });
 
           return { value, displayValue };
         }
@@ -52,23 +71,44 @@ export const useGetInitialFilterValue = () => {
       }
       case 'DATE_TIME': {
         if (activeDatePickerOperands.includes(newOperand)) {
-          const now = new Date();
+          const referenceDate = isNonEmptyString(alreadyExistingISODate)
+            ? new Date(alreadyExistingISODate)
+            : new Date();
 
           const shiftedDate = new TZDate(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate(),
-            now.getHours(),
-            now.getMinutes(),
+            referenceDate.getFullYear(),
+            referenceDate.getMonth(),
+            referenceDate.getDate(),
+            referenceDate.getHours(),
+            referenceDate.getMinutes(),
             userTimezone,
           );
 
-          const dateTimeFormatString = getDateTimeFormatString(
-            getDateFormatFromWorkspaceDateFormat(userDateFormat),
-          );
+          shiftedDate.setSeconds(0);
+          shiftedDate.setMilliseconds(0);
 
-          const value = now.toISOString();
-          const displayValue = format(shiftedDate, dateTimeFormatString);
+          const dateFormatString =
+            getDateFormatFromWorkspaceDateFormat(userDateFormat);
+
+          const timeFormatString =
+            getTimeFormatFromWorkspaceTimeFormat(userTimeFormat);
+
+          const formatToUse = `${dateFormatString} ${timeFormatString}`;
+
+          const timezoneSuffix = !isSystemTimezone
+            ? ` (${getTimezoneAbbreviationForPointInTime(shiftedDate)})`
+            : '';
+
+          const value = shiftedDate.toISOString();
+          const displayValue = `${format(shiftedDate, formatToUse)}${timezoneSuffix}`;
+
+          console.log({
+            isSystemTimezone,
+            timezoneSuffix,
+            shiftedDate,
+            value,
+            displayValue,
+          });
 
           return { value, displayValue };
         }

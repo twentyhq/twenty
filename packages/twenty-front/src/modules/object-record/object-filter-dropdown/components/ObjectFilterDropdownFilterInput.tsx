@@ -9,6 +9,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
+import { ObjectFilterDropdownDateTimeInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownDateTimeInput';
 import { ObjectFilterDropdownInnerSelectOperandDropdown } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { ObjectFilterDropdownVectorSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownVectorSearchInput';
@@ -78,12 +79,20 @@ export const ObjectFilterDropdownFilterInput = ({
         <ObjectFilterDropdownInnerSelectOperandDropdown />
       </>
     );
-  } else if (isDateFilter) {
+  } else if (filterType === 'DATE') {
     return (
       <>
         <ObjectFilterDropdownInnerSelectOperandDropdown />
         <DropdownMenuSeparator />
         <ObjectFilterDropdownDateInput />
+      </>
+    );
+  } else if (filterType === 'DATE_TIME') {
+    return (
+      <>
+        <ObjectFilterDropdownInnerSelectOperandDropdown />
+        <DropdownMenuSeparator />
+        <ObjectFilterDropdownDateTimeInput />
       </>
     );
   } else {

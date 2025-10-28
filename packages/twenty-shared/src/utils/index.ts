@@ -54,6 +54,7 @@ export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
 export type {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
+  RelativeDateFilter,
   ResolvedDateViewFilterValue,
 } from './filter/utils/resolveDateViewFilterValue';
 export {

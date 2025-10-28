@@ -1,4 +1,5 @@
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
+import { useGetNowInUserTimezoneForRelativeFilter } from '@/object-record/object-filter-dropdown/hooks/useGetNowInUserTimezoneForRelativeFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
@@ -9,12 +10,12 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
 import { useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import {
-  ViewFilterOperand,
-  type VariableDateViewFilterValueDirection,
-  type VariableDateViewFilterValueUnit,
-} from 'twenty-shared/types';
-import { isDefined, resolveDateViewFilterValue } from 'twenty-shared/utils';
+  isDefined,
+  type RelativeDateFilter,
+  resolveDateViewFilterValue,
+} from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
@@ -42,6 +43,9 @@ export const ObjectFilterDropdownDateTimeInput = () => {
   const initialFilterValue = isDefined(objectFilterDropdownCurrentRecordFilter)
     ? resolveDateViewFilterValue(objectFilterDropdownCurrentRecordFilter)
     : null;
+
+  const { getNowInUserTimezoneForRelativeFilter } =
+    useGetNowInUserTimezoneForRelativeFilter();
 
   const [internalDate, setInternalDate] = useState<Date | null>(
     initialFilterValue instanceof Date ? initialFilterValue : null,
@@ -80,19 +84,20 @@ export const ObjectFilterDropdownDateTimeInput = () => {
   };
 
   const handleRelativeDateChange = (
-    relativeDate: {
-      direction: VariableDateViewFilterValueDirection;
-      amount?: number;
-      unit: VariableDateViewFilterValueUnit;
-    } | null,
+    relativeDate: RelativeDateFilter | null,
   ) => {
+    const { dayAsStringInUserTimezone } =
+      getNowInUserTimezoneForRelativeFilter();
+
     const newFilterValue = relativeDate
-      ? computeVariableDateViewFilterValue(
-          relativeDate.direction,
-          relativeDate.amount,
-          relativeDate.unit,
-        )
+      ? computeVariableDateViewFilterValue({
+          ...relativeDate,
+          timezone: timeZone,
+          referenceDayAsString: dayAsStringInUserTimezone,
+        })
       : '';
+
+    console.log({ newFilterValue });
 
     const newDisplayValue = relativeDate
       ? getRelativeDateDisplayValue(relativeDate)

@@ -305,6 +305,11 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             throw new Error('Failed to resolve default date range');
           }
 
+          console.log({
+            dateRange,
+            defaultDateRange,
+          });
+
           const { start, end } = dateRange ?? defaultDateRange;
 
           return {
