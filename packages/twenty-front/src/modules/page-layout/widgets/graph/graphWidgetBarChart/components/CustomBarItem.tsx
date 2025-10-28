@@ -138,40 +138,34 @@ export const CustomBarItem = <D extends BarDatum>({
       return true;
     }
 
-    if (isNegativeValue) {
-      const keysAfterCurrentKey = keys.slice(currentKeyIndex + 1);
-      const hasNegativeBarAfter = keysAfterCurrentKey.some((key) => {
-        const value = dataPoint[key];
-        return isNumber(value) && value < 0;
-      });
-      return !hasNegativeBarAfter;
-    } else {
-      const keysAfterCurrentKey = keys.slice(currentKeyIndex + 1);
-      const hasPositiveBarAfter = keysAfterCurrentKey.some((key) => {
-        const value = dataPoint[key];
-        return isNumber(value) && value > 0;
-      });
-      return !hasPositiveBarAfter;
-    }
+    const keysAfterCurrentKey = keys.slice(currentKeyIndex + 1);
+    const hasSameSignBarAfter = keysAfterCurrentKey.some((key) => {
+      const value = dataPoint[key];
+      return isNumber(value) && (isNegativeValue ? value < 0 : value > 0);
+    });
+    return !hasSameSignBarAfter;
   }, [groupMode, keys, barData, chartData, indexBy, isNegativeValue]);
 
   const isHorizontal = layout === 'horizontal';
 
-  const clipPathId = useMemo(() => {
-    return `round-corner-${chartId ?? 'chart'}-${barData.index}-${String(
-      barData.id,
-    )}`;
-  }, [chartId, barData.index, barData.id]);
+  const clipPathId = `round-corner-${chartId ?? 'chart'}-${barData.index}-${String(
+    barData.id,
+  )}`;
 
-  const clipPathX = useMemo(() => {
-    if (!isHorizontal) return 0;
-    return isNegativeValue ? 0 : -borderRadius;
-  }, [isHorizontal, isNegativeValue, borderRadius]);
+  const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
 
-  const clipPathY = useMemo(() => {
-    if (isHorizontal) return 0;
-    return isNegativeValue ? -borderRadius : 0;
-  }, [isHorizontal, isNegativeValue, borderRadius]);
+  const clipPathY = isHorizontal ? 0 : isNegativeValue ? -borderRadius : 0;
+
+  const widthWithOffset = (v: number) =>
+    Math.max(v + (isHorizontal ? borderRadius : 0), 0);
+  const heightWithOffset = (v: number) =>
+    Math.max(v + (isHorizontal ? 0 : borderRadius), 0);
+  const clampRadius = (v: number) => Math.min(borderRadius, v / 2);
+
+  const clipRectWidth = to(width, (v) => widthWithOffset(v));
+  const clipRectHeight = to(height, (v) => heightWithOffset(v));
+  const clipRx = to(width, (v) => clampRadius(widthWithOffset(v)));
+  const clipRy = to(height, (v) => clampRadius(heightWithOffset(v)));
 
   return (
     <animated.g transform={transform}>
@@ -181,24 +175,10 @@ export const CustomBarItem = <D extends BarDatum>({
             <animated.rect
               x={clipPathX}
               y={clipPathY}
-              rx={to(width, (value) =>
-                Math.min(
-                  borderRadius,
-                  Math.max(value + (isHorizontal ? borderRadius : 0), 0) / 2,
-                ),
-              )}
-              ry={to(height, (value) =>
-                Math.min(
-                  borderRadius,
-                  Math.max(value + (isHorizontal ? 0 : borderRadius), 0) / 2,
-                ),
-              )}
-              width={to(width, (value) =>
-                Math.max(value + (isHorizontal ? borderRadius : 0), 0),
-              )}
-              height={to(height, (value) =>
-                Math.max(value + (isHorizontal ? 0 : borderRadius), 0),
-              )}
+              rx={clipRx}
+              ry={clipRy}
+              width={clipRectWidth}
+              height={clipRectHeight}
             />
           </clipPath>
         </defs>

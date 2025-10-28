@@ -5,7 +5,6 @@ type ValueRange = {
   max: number;
 };
 
-// Computes stacked range by summing positive and negative contributions per index.
 export const calculateStackedBarChartValueRange = (
   data: BarChartDataItem[],
   keys: string[],
@@ -21,7 +20,7 @@ export const calculateStackedBarChartValueRange = (
       const value = Number(item[key] ?? 0);
       if (!Number.isNaN(value)) {
         if (value >= 0) positiveSum += value;
-        else negativeSum += value; // value is negative
+        else negativeSum += value;
       }
     }
 
@@ -34,4 +33,3 @@ export const calculateStackedBarChartValueRange = (
 
   return { min, max };
 };
-
