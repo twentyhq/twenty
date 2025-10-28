@@ -27,7 +27,7 @@ export const prefillRecord = <T extends ObjectRecord>({
           fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
         ) {
           const joinColumnValue =
-            input[fieldMetadataItem.settings?.joinColumnName];
+            input[fieldMetadataItem.settings?.joinColumnName] ?? null;
           throwIfInputRelationDataIsInconsistent(input, fieldMetadataItem);
 
           return [

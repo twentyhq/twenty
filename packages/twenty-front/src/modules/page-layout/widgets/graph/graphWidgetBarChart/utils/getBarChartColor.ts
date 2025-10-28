@@ -14,5 +14,5 @@ export const getBarChartColor = (
   if (!isDefined(bar)) {
     return theme.border.color.light;
   }
-  return `url(#${bar.gradientId})`;
+  return bar.colorScheme.solid;
 };

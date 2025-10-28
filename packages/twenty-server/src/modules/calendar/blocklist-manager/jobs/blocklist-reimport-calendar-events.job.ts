@@ -49,7 +49,7 @@ export class BlocklistReimportCalendarEventsJob {
             accountOwnerId: workspaceMemberId,
           },
           syncStage: Not(
-            CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+            CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
           ),
         },
       });

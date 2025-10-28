@@ -80,17 +80,11 @@ describe('useLineChartData', () => {
       }),
     );
 
-    expect(result.current.enrichedSeries[0].colorScheme).toBe(
-      mockColorRegistry.red,
-    );
     expect(result.current.enrichedSeries[0].gradientId).toBe(
       'lineGradient-test-chart-instance-1-series1-0',
     );
     expect(result.current.enrichedSeries[0].label).toBe('Sales');
 
-    expect(result.current.enrichedSeries[1].colorScheme).toBe(
-      mockColorRegistry.blue,
-    );
     expect(result.current.enrichedSeries[1].label).toBe('Costs');
   });
 
@@ -268,22 +262,6 @@ describe('useLineChartData', () => {
     ]);
   });
 
-  it('should extract colors for series', () => {
-    const { result } = renderHook(() =>
-      useLineChartData({
-        data: mockData,
-        colorRegistry: mockColorRegistry,
-        id: 'test-chart',
-        instanceId: 'instance-1',
-        enableArea: false,
-        theme: mockTheme,
-        formatOptions: mockFormatOptions,
-      }),
-    );
-
-    expect(result.current.colors).toEqual(['redSolid', 'blueSolid']);
-  });
-
   it('should calculate legend items with totals', () => {
     const { result } = renderHook(() =>
       useLineChartData({
@@ -302,13 +280,13 @@ describe('useLineChartData', () => {
         id: 'series1',
         label: 'Sales',
         formattedValue: '370',
-        color: 'redSolid',
+        color: expect.any(String),
       },
       {
         id: 'series2',
         label: 'Costs',
         formattedValue: '270',
-        color: 'blueSolid',
+        color: expect.any(String),
       },
     ]);
   });

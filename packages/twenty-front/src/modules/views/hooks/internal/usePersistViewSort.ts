@@ -16,7 +16,7 @@ export const usePersistViewSortRecords = () => {
   const { triggerViewSortOptimisticEffect } =
     useTriggerViewSortOptimisticEffect();
 
-  const createCoreViewSortRecords = useCallback(
+  const createViewSorts = useCallback(
     (
       viewSortsToCreate: CoreViewSortEssential[],
       view: Pick<GraphQLView, 'id'>,
@@ -49,7 +49,7 @@ export const usePersistViewSortRecords = () => {
     [apolloClient, triggerViewSortOptimisticEffect],
   );
 
-  const updateCoreViewSortRecords = useCallback(
+  const updateViewSorts = useCallback(
     (viewSortsToUpdate: CoreViewSortEssential[]) => {
       if (!viewSortsToUpdate.length) return;
       return Promise.all(
@@ -77,7 +77,7 @@ export const usePersistViewSortRecords = () => {
     [apolloClient, triggerViewSortOptimisticEffect],
   );
 
-  const deleteCoreViewSortRecords = useCallback(
+  const deleteViewSorts = useCallback(
     (viewSortsToDelete: Pick<CoreViewSortEssential, 'id' | 'viewId'>[]) => {
       if (!viewSortsToDelete.length) return;
       return Promise.all(
@@ -100,8 +100,8 @@ export const usePersistViewSortRecords = () => {
   );
 
   return {
-    createViewSortRecords: createCoreViewSortRecords,
-    updateViewSortRecords: updateCoreViewSortRecords,
-    deleteViewSortRecords: deleteCoreViewSortRecords,
+    createViewSorts,
+    updateViewSorts,
+    deleteViewSorts,
   };
 };
