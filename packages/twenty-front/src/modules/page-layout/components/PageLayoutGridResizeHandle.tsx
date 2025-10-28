@@ -18,6 +18,7 @@ const StyledIcon = styled(IconRadiusBottomRight)`
   position: absolute;
   right: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme }) => theme.border.color.strong};
+  display: none;
 
   :hover {
     color: ${({ theme }) => theme.font.color.tertiary};
@@ -49,7 +50,11 @@ export const PageLayoutGridResizeHandle = forwardRef<
       className={className}
       style={style}
     >
-      <StyledIcon size={theme.spacing(4)} stroke={theme.spacing(1)} />
+      <StyledIcon
+        size={theme.spacing(4)}
+        stroke={theme.spacing(1)}
+        className="widget-card-resize-handle"
+      />
     </div>
   );
 });
