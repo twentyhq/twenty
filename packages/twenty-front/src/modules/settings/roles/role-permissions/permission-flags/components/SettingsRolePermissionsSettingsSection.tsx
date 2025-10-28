@@ -17,6 +17,7 @@ import {
   IconLockOpen,
   IconSettings,
   IconSettingsAutomation,
+  IconSparkles,
   IconSpy,
   IconTable,
   IconUsers,
@@ -123,6 +124,12 @@ export const SettingsRolePermissionsSettingsSection = ({
         name: t`Billing`,
         description: t`Manage billing and subscriptions`,
         Icon: IconCreditCard,
+      },
+      {
+        key: PermissionFlagType.AI_SETTINGS,
+        name: t`AI Settings`,
+        description: t`Create and configure AI agents`,
+        Icon: IconSparkles,
       },
     ];
 

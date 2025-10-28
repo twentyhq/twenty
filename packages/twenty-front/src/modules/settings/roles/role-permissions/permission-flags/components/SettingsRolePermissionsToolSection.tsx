@@ -50,7 +50,7 @@ export const SettingsRolePermissionsToolSection = ({
     {
       key: PermissionFlagType.AI,
       name: t`AI`,
-      description: t`Access AI features and agents`,
+      description: t`Chat with AI agents and use AI features`,
       Icon: IconSparkles,
       isToolPermission: true,
     },

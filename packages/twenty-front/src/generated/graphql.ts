@@ -2933,6 +2933,7 @@ export type PermissionFlag = {
 export enum PermissionFlagType {
   ADMIN_PANEL = 'ADMIN_PANEL',
   AI = 'AI',
+  AI_SETTINGS = 'AI_SETTINGS',
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
   APPLICATIONS = 'APPLICATIONS',
   BILLING = 'BILLING',

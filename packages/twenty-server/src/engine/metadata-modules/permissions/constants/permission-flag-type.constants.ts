@@ -12,6 +12,7 @@ export enum PermissionFlagType {
   LAYOUTS = 'LAYOUTS',
   MANAGE_VIEWS = 'MANAGE_VIEWS',
   BILLING = 'BILLING',
+  AI_SETTINGS = 'AI_SETTINGS',
 
   // Tool permissions
   AI = 'AI',
@@ -20,4 +21,5 @@ export enum PermissionFlagType {
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
   IMPORT_CSV = 'IMPORT_CSV',
   EXPORT_CSV = 'EXPORT_CSV',
+  MANAGE_CONNECTED_ACCOUNTS = 'MANAGE_CONNECTED_ACCOUNTS',
 }
