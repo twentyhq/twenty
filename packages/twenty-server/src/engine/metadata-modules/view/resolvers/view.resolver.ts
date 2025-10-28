@@ -126,7 +126,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async createCoreView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -151,7 +151,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async updateCoreView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
@@ -174,7 +174,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async deleteCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -200,7 +200,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async destroyCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -372,10 +372,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       return;
     }
 
-    // System fields that don't need permission checks
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
 
-    // Get fields being updated (excluding system fields)
     const fieldsBeingUpdated = Object.keys(payload).filter(
       (field) => !systemFields.has(field),
     );
@@ -388,7 +386,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       throw new Error('Missing userWorkspaceId in authContext');
     }
 
-    // Group fields by required permission
     const fieldsByPermission = new Map<PermissionFlagType, string[]>();
 
     for (const field of fieldsBeingUpdated) {

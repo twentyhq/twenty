@@ -42,7 +42,7 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async createCoreViewSort(
     @Args('input') input: CreateViewSortInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -54,7 +54,7 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async updateCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewSortInput,
@@ -64,7 +64,7 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async deleteCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -75,7 +75,7 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async destroyCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

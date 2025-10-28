@@ -20,9 +20,7 @@ export class ChannelSyncResolver {
   constructor(private readonly channelSyncService: ChannelSyncService) {}
 
   @Mutation(() => ChannelSyncSuccessDTO)
-  @UseGuards(
-    SettingsPermissionsGuard(PermissionFlagType.MANAGE_CONNECTED_ACCOUNTS),
-  )
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
   async startChannelSync(
     @Args('connectedAccountId', { type: () => UUIDScalarType })
     connectedAccountId: string,

@@ -45,7 +45,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async updateCoreViewField(
     @Args('input') updateViewFieldInput: UpdateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -71,7 +71,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async createCoreViewField(
     @Args('input') createViewFieldInput: CreateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -96,7 +96,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async deleteCoreViewField(
     @Args('input') deleteViewFieldInput: DeleteViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -122,7 +122,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async destroyCoreViewField(
     @Args('input') destroyViewFieldInput: DestroyViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

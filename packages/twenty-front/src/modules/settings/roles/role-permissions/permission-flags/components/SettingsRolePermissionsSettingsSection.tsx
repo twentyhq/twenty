@@ -3,8 +3,10 @@ import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/rol
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   H2Title,
@@ -19,11 +21,13 @@ import {
   IconSettingsAutomation,
   IconSparkles,
   IconSpy,
-  IconTable,
   IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -51,8 +55,13 @@ export const SettingsRolePermissionsSettingsSection = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const settingsPermissionsConfig: SettingsRolePermissionsSettingPermission[] =
-    [
+  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isApplicationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APPLICATION_ENABLED,
+  );
+
+  const settingsPermissionsConfig = useMemo(() => {
+    const allPermissions: SettingsRolePermissionsSettingPermission[] = [
       {
         key: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
         name: t`API Keys & Webhooks`,
@@ -80,7 +89,7 @@ export const SettingsRolePermissionsSettingsSection = ({
       {
         key: PermissionFlagType.DATA_MODEL,
         name: t`Data Model`,
-        description: t`Edit CRM data structure and fields`,
+        description: t`Edit data structure and fields`,
         Icon: IconHierarchy,
       },
       {
@@ -114,12 +123,6 @@ export const SettingsRolePermissionsSettingsSection = ({
         Icon: IconLayoutSidebarRightCollapse,
       },
       {
-        key: PermissionFlagType.MANAGE_VIEWS,
-        name: t`Manage Views`,
-        description: t`Create, edit, and delete views and view configurations`,
-        Icon: IconTable,
-      },
-      {
         key: PermissionFlagType.BILLING,
         name: t`Billing`,
         description: t`Manage billing and subscriptions`,
@@ -127,11 +130,25 @@ export const SettingsRolePermissionsSettingsSection = ({
       },
       {
         key: PermissionFlagType.AI_SETTINGS,
-        name: t`AI Settings`,
+        name: t`AI`,
         description: t`Create and configure AI agents`,
         Icon: IconSparkles,
       },
     ];
+
+    return allPermissions.filter((permission) => {
+      if (permission.key === PermissionFlagType.AI_SETTINGS && !isAIEnabled) {
+        return false;
+      }
+      if (
+        permission.key === PermissionFlagType.APPLICATIONS &&
+        !isApplicationEnabled
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [isAIEnabled, isApplicationEnabled]);
 
   return (
     <Section>

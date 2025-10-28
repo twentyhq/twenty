@@ -3,22 +3,29 @@ import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/rol
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
 import {
   H2Title,
+  IconAt,
   IconDownload,
   IconFileExport,
   IconFileImport,
   IconFileUpload,
   IconMail,
   IconSparkles,
+  IconTable,
   IconTool,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -46,50 +53,75 @@ export const SettingsRolePermissionsToolSection = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const toolPermissionsConfig: SettingsRolePermissionsSettingPermission[] = [
-    {
-      key: PermissionFlagType.AI,
-      name: t`AI`,
-      description: t`Chat with AI agents and use AI features`,
-      Icon: IconSparkles,
-      isToolPermission: true,
-    },
-    {
-      key: PermissionFlagType.UPLOAD_FILE,
-      name: t`Upload Files`,
-      description: t`Allow uploading files and attachments`,
-      Icon: IconFileUpload,
-      isToolPermission: true,
-    },
-    {
-      key: PermissionFlagType.DOWNLOAD_FILE,
-      name: t`Download Files`,
-      description: t`Allow downloading files and attachments`,
-      Icon: IconDownload,
-      isToolPermission: true,
-    },
-    {
-      key: PermissionFlagType.SEND_EMAIL_TOOL,
-      name: t`Send Email`,
-      description: t`Allow sending emails using connected accounts`,
-      Icon: IconMail,
-      isToolPermission: true,
-    },
-    {
-      key: PermissionFlagType.IMPORT_CSV,
-      name: t`Import CSV`,
-      description: t`Allow importing data from CSV files`,
-      Icon: IconFileImport,
-      isToolPermission: true,
-    },
-    {
-      key: PermissionFlagType.EXPORT_CSV,
-      name: t`Export CSV`,
-      description: t`Allow exporting data to CSV files`,
-      Icon: IconFileExport,
-      isToolPermission: true,
-    },
-  ];
+  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+
+  const toolPermissionsConfig = useMemo(() => {
+    const allPermissions: SettingsRolePermissionsSettingPermission[] = [
+      {
+        key: PermissionFlagType.AI,
+        name: t`Ask AI`,
+        description: t`Chat with AI agents and use AI features`,
+        Icon: IconSparkles,
+        isToolPermission: true,
+      },
+      {
+        key: PermissionFlagType.UPLOAD_FILE,
+        name: t`Upload Files`,
+        description: t`Allow uploading files and attachments`,
+        Icon: IconFileUpload,
+        isToolPermission: true,
+      },
+      {
+        key: PermissionFlagType.DOWNLOAD_FILE,
+        name: t`Download Files`,
+        description: t`Allow downloading files and attachments`,
+        Icon: IconDownload,
+        isToolPermission: true,
+      },
+      {
+        key: PermissionFlagType.SEND_EMAIL_TOOL,
+        name: t`Send Email`,
+        description: t`Send emails via connected accounts`,
+        Icon: IconMail,
+        isToolPermission: true,
+      },
+      {
+        key: PermissionFlagType.IMPORT_CSV,
+        name: t`Import CSV`,
+        description: t`Allow importing data from CSV files`,
+        Icon: IconFileImport,
+        isToolPermission: true,
+      },
+      {
+        key: PermissionFlagType.EXPORT_CSV,
+        name: t`Export CSV`,
+        description: t`Allow exporting data to CSV files`,
+        Icon: IconFileExport,
+        isToolPermission: true,
+      },
+      {
+        key: PermissionFlagType.CONNECTED_ACCOUNTS,
+        name: t`Sync Account`,
+        description: t`Sync email and calendar accounts`,
+        Icon: IconAt,
+        isToolPermission: true,
+      },
+      {
+        key: PermissionFlagType.VIEWS,
+        name: t`Manage Views`,
+        description: t`Create, edit, and delete views`,
+        Icon: IconTable,
+        isToolPermission: true,
+      },
+    ];
+
+    return allPermissions.filter((permission) => {
+      if (permission.key === PermissionFlagType.AI && !isAIEnabled) {
+        return false;
+      }
+      return true;
+    });
+  }, [isAIEnabled]);
 
   return (
     <Section>

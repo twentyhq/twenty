@@ -49,7 +49,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async createCoreViewGroup(
     @Args('input') createViewGroupInput: CreateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -74,7 +74,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async updateCoreViewGroup(
     @Args('input') updateViewGroupInput: UpdateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -100,7 +100,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async deleteCoreViewGroup(
     @Args('input') deleteViewGroupInput: DeleteViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -127,7 +127,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async destroyCoreViewGroup(
     @Args('input') destroyViewGroupInput: DestroyViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

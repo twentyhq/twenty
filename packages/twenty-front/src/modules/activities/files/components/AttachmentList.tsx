@@ -137,6 +137,10 @@ export const AttachmentList = ({
     PermissionFlagType.DOWNLOAD_FILE,
   );
 
+  const hasUploadPermission = useHasPermissionFlag(
+    PermissionFlagType.UPLOAD_FILE,
+  );
+
   const { openModal, closeModal } = useModal();
 
   const onUploadFile = async (file: File) => {
@@ -175,8 +179,10 @@ export const AttachmentList = ({
             </StyledTitle>
             {button}
           </StyledTitleBar>
-          <StyledDropZoneContainer onDragEnter={() => setIsDraggingFile(true)}>
-            {isDraggingFile ? (
+          <StyledDropZoneContainer
+            onDragEnter={() => hasUploadPermission && setIsDraggingFile(true)}
+          >
+            {isDraggingFile && hasUploadPermission ? (
               <DropZone
                 setIsDraggingFile={setIsDraggingFile}
                 onUploadFiles={onUploadFiles}

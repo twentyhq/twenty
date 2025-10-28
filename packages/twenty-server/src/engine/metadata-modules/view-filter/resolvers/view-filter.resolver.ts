@@ -49,7 +49,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async createCoreViewFilter(
     @Args('input') createViewFilterInput: CreateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -74,7 +74,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async updateCoreViewFilter(
     @Args('input') updateViewFilterInput: UpdateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -100,7 +100,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async deleteCoreViewFilter(
     @Args('input') deleteViewFilterInput: DeleteViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -127,7 +127,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.MANAGE_VIEWS))
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async destroyCoreViewFilter(
     @Args('input') destroyViewFilterInput: DestroyViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

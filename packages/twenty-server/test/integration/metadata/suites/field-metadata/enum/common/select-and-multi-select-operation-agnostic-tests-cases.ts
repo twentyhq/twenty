@@ -230,7 +230,7 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
             options: [
               {
                 label: 'Option 1',
-                value: undefined as unknown as string,
+                value: undefined,
                 color: 'green',
                 position: 1,
               },
