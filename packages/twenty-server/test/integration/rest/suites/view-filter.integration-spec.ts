@@ -2,6 +2,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { destroyOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-core-view-filter.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorNotFoundResponse,
@@ -9,8 +10,7 @@ import {
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
   createTestViewFilterWithRestApi,
-  createTestViewWithRestApi,
-  deleteTestViewFilterWithRestApi,
+  createTestViewWithRestApi
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { assertViewFilterStructure } from 'test/integration/utils/view-test.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -22,6 +22,7 @@ describe('View Filter REST API', () => {
   let testObjectMetadataId: string;
   let testFieldMetadataId: string;
   let testViewId: string;
+  let testViewFilterId: string | undefined;
 
   beforeAll(async () => {
     const {
@@ -87,6 +88,18 @@ describe('View Filter REST API', () => {
     });
   });
 
+  afterEach(async () => {
+    if (!testViewFilterId) return;
+
+    await destroyOneCoreViewFilter({
+      input: {
+        id: testViewFilterId,
+      },
+      expectToFail: false,
+    });
+    testViewFilterId = undefined;
+  });
+
   describe('GET /metadata/viewFilters', () => {
     it('should return empty array when no view filters exist', async () => {
       const response = await makeRestAPIRequest({
@@ -118,6 +131,8 @@ describe('View Filter REST API', () => {
         fieldMetadataId: testFieldMetadataId,
       });
 
+      testViewFilterId = viewFilter.id;
+
       const response = await makeRestAPIRequest({
         method: 'get',
         path: `/metadata/viewFilters?viewId=${testViewId}`,
@@ -140,8 +155,6 @@ describe('View Filter REST API', () => {
         operand: ViewFilterOperand.CONTAINS,
         value: 'test',
       });
-
-      await deleteTestViewFilterWithRestApi(viewFilter.id);
     });
   });
 
@@ -154,6 +167,8 @@ describe('View Filter REST API', () => {
         fieldMetadataId: testFieldMetadataId,
       });
 
+      testViewFilterId = viewFilter.id;
+
       assertViewFilterStructure(viewFilter, {
         fieldMetadataId: testFieldMetadataId,
         viewId: testViewId,
@@ -161,7 +176,7 @@ describe('View Filter REST API', () => {
         value: 'test value',
       });
 
-      await deleteTestViewFilterWithRestApi(viewFilter.id);
+      testViewFilterId = viewFilter.id;
     });
 
     it('should create a view filter with numeric value', async () => {
@@ -172,14 +187,14 @@ describe('View Filter REST API', () => {
         fieldMetadataId: testFieldMetadataId,
       });
 
+      testViewFilterId = numericFilter.id;
+
       assertViewFilterStructure(numericFilter, {
         fieldMetadataId: testFieldMetadataId,
         viewId: testViewId,
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: '100',
       });
-
-      await deleteTestViewFilterWithRestApi(numericFilter.id);
     });
 
     it('should create a view filter with boolean value', async () => {
@@ -190,14 +205,14 @@ describe('View Filter REST API', () => {
         fieldMetadataId: testFieldMetadataId,
       });
 
+      testViewFilterId = booleanFilter.id;
+
       assertViewFilterStructure(booleanFilter, {
         fieldMetadataId: testFieldMetadataId,
         viewId: testViewId,
         operand: ViewFilterOperand.IS,
         value: 'true',
       });
-
-      await deleteTestViewFilterWithRestApi(booleanFilter.id);
     });
   });
 
@@ -209,6 +224,8 @@ describe('View Filter REST API', () => {
         value: 'test',
         fieldMetadataId: testFieldMetadataId,
       });
+
+      testViewFilterId = viewFilter.id;
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -225,7 +242,7 @@ describe('View Filter REST API', () => {
         value: 'test',
       });
 
-      await deleteTestViewFilterWithRestApi(viewFilter.id);
+      testViewFilterId = viewFilter.id;
     });
 
     it('should return empty object for non-existent view filter', async () => {
@@ -248,6 +265,8 @@ describe('View Filter REST API', () => {
         fieldMetadataId: testFieldMetadataId,
       });
 
+      testViewFilterId = viewFilter.id;
+
       const updateData = {
         operand: ViewFilterOperand.IS_NOT,
         value: 'updated',
@@ -269,7 +288,7 @@ describe('View Filter REST API', () => {
         viewId: testViewId,
       });
 
-      await deleteTestViewFilterWithRestApi(viewFilter.id);
+      testViewFilterId = viewFilter.id;
     });
 
     it('should return 404 error when updating non-existent view filter', async () => {
@@ -297,6 +316,8 @@ describe('View Filter REST API', () => {
         value: 'to delete',
         fieldMetadataId: testFieldMetadataId,
       });
+
+      testViewFilterId = viewFilter.id;
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',

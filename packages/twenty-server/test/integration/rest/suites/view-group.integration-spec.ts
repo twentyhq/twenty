@@ -2,6 +2,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { destroyOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-core-view-group.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorNotFoundResponse,
@@ -9,21 +10,21 @@ import {
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
   createTestViewGroupWithRestApi,
-  createTestViewWithRestApi,
-  deleteTestViewGroupWithRestApi,
+  createTestViewWithRestApi
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { assertViewGroupStructure } from 'test/integration/utils/view-test.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
-import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { type ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 
 describe('View Group REST API', () => {
   let testObjectMetadataId: string;
   let testFieldMetadataId: string;
   let testViewId: string;
+  let testViewGroupId: string | undefined;
 
   beforeAll(async () => {
     const {
@@ -92,6 +93,18 @@ describe('View Group REST API', () => {
     });
   });
 
+  afterEach(async () => {
+    if (!testViewGroupId) return;
+
+    await destroyOneCoreViewGroup({
+      input: {
+        id: testViewGroupId,
+      },
+      expectToFail: false,
+    });
+    testViewGroupId = undefined;
+  });
+
   describe('GET /metadata/viewGroups', () => {
     it('should return empty array when no view groups exist', async () => {
       const response = await makeRestAPIRequest({
@@ -124,6 +137,8 @@ describe('View Group REST API', () => {
         position: 0,
       });
 
+      testViewGroupId = viewGroup.id;
+
       const response = await makeRestAPIRequest({
         method: 'get',
         path: `/metadata/viewGroups?viewId=${testViewId}`,
@@ -147,7 +162,7 @@ describe('View Group REST API', () => {
         position: 0,
       });
 
-      await deleteTestViewGroupWithRestApi(viewGroup.id);
+      testViewGroupId = viewGroup.id;
     });
 
     it('should return multiple view groups for a view', async () => {
@@ -192,8 +207,7 @@ describe('View Group REST API', () => {
         position: 1,
       });
 
-      await deleteTestViewGroupWithRestApi(viewGroup1.id);
-      await deleteTestViewGroupWithRestApi(viewGroup2.id);
+      testViewGroupId = viewGroup2.id;
     });
   });
 
@@ -205,6 +219,8 @@ describe('View Group REST API', () => {
         fieldValue: 'specific-group',
         isVisible: false,
       });
+
+      testViewGroupId = viewGroup.id;
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -220,7 +236,7 @@ describe('View Group REST API', () => {
         isVisible: false,
       });
 
-      await deleteTestViewGroupWithRestApi(viewGroup.id);
+      testViewGroupId = viewGroup.id;
     });
   });
 
@@ -249,7 +265,7 @@ describe('View Group REST API', () => {
         position: 5,
       });
 
-      await deleteTestViewGroupWithRestApi(response.body.id);
+      testViewGroupId = response.body.id;
     });
 
     it('should create view group with minimal required fields', async () => {
@@ -274,7 +290,7 @@ describe('View Group REST API', () => {
         position: 0,
       });
 
-      await deleteTestViewGroupWithRestApi(response.body.id);
+      testViewGroupId = response.body.id;
     });
 
     it('should fail to create view group with missing required fields', async () => {
@@ -309,6 +325,8 @@ describe('View Group REST API', () => {
         position: 1,
       });
 
+      testViewGroupId = viewGroup.id;
+
       const updateData = {
         fieldValue: 'updated-value',
         isVisible: false,
@@ -330,8 +348,6 @@ describe('View Group REST API', () => {
         isVisible: false,
         position: 2,
       });
-
-      await deleteTestViewGroupWithRestApi(viewGroup.id);
     });
 
     it('should update only specific fields', async () => {
@@ -343,6 +359,8 @@ describe('View Group REST API', () => {
         position: 1,
       });
 
+      testViewGroupId = viewGroup.id;
+
       const updateData = {
         fieldValue: 'partially-updated',
       };
@@ -361,8 +379,6 @@ describe('View Group REST API', () => {
         isVisible: true,
         position: 1,
       });
-
-      await deleteTestViewGroupWithRestApi(viewGroup.id);
     });
 
     it('should return 404 for non-existent view group', async () => {
@@ -388,6 +404,8 @@ describe('View Group REST API', () => {
         fieldMetadataId: testFieldMetadataId,
         fieldValue: 'to-be-deleted',
       });
+
+      testViewGroupId = viewGroup.id;
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',
@@ -415,6 +433,8 @@ describe('View Group REST API', () => {
         fieldMetadataId: testFieldMetadataId,
         fieldValue: 'double-delete-test',
       });
+
+      testViewGroupId = viewGroup.id;
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',

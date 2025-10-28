@@ -27,6 +27,7 @@ import {
 describe('View Filter Group REST API', () => {
   let testObjectMetadataId: string;
   let testViewId: string;
+  let testViewFilterGroupId: string | undefined;
 
   beforeAll(async () => {
     const {
@@ -86,6 +87,13 @@ describe('View Filter Group REST API', () => {
     });
   });
 
+  afterEach(async () => {
+    if (!testViewFilterGroupId) return;
+
+    await deleteTestViewFilterGroupWithRestApi(testViewFilterGroupId);
+    testViewFilterGroupId = undefined;
+  });
+
   describe('GET /metadata/viewFilterGroups', () => {
     it('should return empty array when no view filter groups exist', async () => {
       const response = await makeRestAPIRequest({
@@ -115,6 +123,8 @@ describe('View Filter Group REST API', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
 
+      testViewFilterGroupId = viewFilterGroup.id;
+
       const response = await makeRestAPIRequest({
         method: 'get',
         path: `/metadata/viewFilterGroups?viewId=${testViewId}`,
@@ -136,7 +146,7 @@ describe('View Filter Group REST API', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
 
-      await deleteTestViewFilterGroupWithRestApi(viewFilterGroup.id);
+      testViewFilterGroupId = viewFilterGroup.id;
     });
 
     it('should return nested filter groups with parent relationships', async () => {
@@ -221,6 +231,8 @@ describe('View Filter Group REST API', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
       });
 
+      testViewFilterGroupId = viewFilterGroup.id;
+
       assertViewFilterGroupStructure(viewFilterGroup, {
         viewId: testViewId,
         logicalOperator: ViewFilterGroupLogicalOperator.AND,
@@ -234,13 +246,13 @@ describe('View Filter Group REST API', () => {
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
 
+      testViewFilterGroupId = orGroup.id;
+
       assertViewFilterGroupStructure(orGroup, {
         viewId: testViewId,
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
       expect(orGroup.parentViewFilterGroupId).toBeNull();
-
-      await deleteTestViewFilterGroupWithRestApi(orGroup.id);
     });
 
     it('should create a filter group with NOT operator', async () => {

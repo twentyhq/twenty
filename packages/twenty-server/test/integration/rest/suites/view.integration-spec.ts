@@ -1,14 +1,14 @@
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorNotFoundResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
-  createTestViewWithRestApi,
-  deleteTestViewWithRestApi,
+  createTestViewWithRestApi
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { assertViewStructure } from 'test/integration/utils/view-test.util';
@@ -19,6 +19,7 @@ import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum'
 
 describe('View REST API', () => {
   let testObjectMetadataId: string;
+  let testViewId: string | undefined;
 
   beforeAll(async () => {
     const {
@@ -51,6 +52,16 @@ describe('View REST API', () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
+  });
+
+  afterEach(async () => {
+    if (!testViewId) return;
+
+    await destroyOneCoreView({
+      viewId: testViewId,
+      expectToFail: false,
+    });
+    testViewId = undefined;
   });
 
   describe('GET /metadata/views', () => {
@@ -95,6 +106,8 @@ describe('View REST API', () => {
         objectMetadataId: testObjectMetadataId,
       });
 
+      testViewId = view.id;
+
       assertViewStructure(view, {
         name: viewName,
         objectMetadataId: testObjectMetadataId,
@@ -120,6 +133,8 @@ describe('View REST API', () => {
         objectMetadataId: testObjectMetadataId,
       });
 
+      testViewId = kanbanView.id;
+
       assertViewStructure(kanbanView, {
         name: viewName,
         type: ViewType.KANBAN,
@@ -127,8 +142,6 @@ describe('View REST API', () => {
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
         objectMetadataId: testObjectMetadataId,
       });
-
-      await deleteTestViewWithRestApi(kanbanView.id);
     });
   });
 
@@ -145,6 +158,8 @@ describe('View REST API', () => {
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
         objectMetadataId: testObjectMetadataId,
       });
+
+      testViewId = view.id;
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -184,6 +199,8 @@ describe('View REST API', () => {
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
         objectMetadataId: testObjectMetadataId,
       });
+
+      testViewId = view.id;
 
       const updatedName = generateRecordName('Updated View');
       const updateData = {
@@ -241,6 +258,8 @@ describe('View REST API', () => {
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
         objectMetadataId: testObjectMetadataId,
       });
+
+      testViewId = view.id;
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',

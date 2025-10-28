@@ -11,6 +11,7 @@ import {
 import {
   createTestViewSortWithRestApi,
   createTestViewWithRestApi,
+  deleteTestViewSortWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { assertViewSortStructure } from 'test/integration/utils/view-test.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -27,6 +28,7 @@ describe('View Sort REST API', () => {
   let testObjectMetadataId: string;
   let testFieldMetadataId: string;
   let testViewId: string;
+  let testViewSortId: string | undefined;
 
   beforeAll(async () => {
     const {
@@ -92,6 +94,13 @@ describe('View Sort REST API', () => {
     });
   });
 
+  afterEach(async () => {
+    if (!testViewSortId) return;
+
+    await deleteTestViewSortWithRestApi(testViewSortId);
+    testViewSortId = undefined;
+  });
+
   describe('GET /metadata/viewSorts', () => {
     it('should return empty array when no view sorts exist', async () => {
       const response = await makeRestAPIRequest({
@@ -121,6 +130,8 @@ describe('View Sort REST API', () => {
         fieldMetadataId: testFieldMetadataId,
         direction: ViewSortDirection.ASC,
       });
+
+      testViewSortId = viewSort.id;
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -154,6 +165,8 @@ describe('View Sort REST API', () => {
         direction: ViewSortDirection.ASC,
       });
 
+      testViewSortId = viewSort.id;
+
       assertViewSortStructure(viewSort, {
         fieldMetadataId: testFieldMetadataId,
         viewId: testViewId,
@@ -167,6 +180,8 @@ describe('View Sort REST API', () => {
         fieldMetadataId: testFieldMetadataId,
         direction: ViewSortDirection.DESC,
       });
+
+      testViewSortId = descSort.id;
 
       assertViewSortStructure(descSort, {
         fieldMetadataId: testFieldMetadataId,
@@ -183,6 +198,8 @@ describe('View Sort REST API', () => {
         fieldMetadataId: testFieldMetadataId,
         direction: ViewSortDirection.ASC,
       });
+
+      testViewSortId = viewSort.id;
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -217,6 +234,8 @@ describe('View Sort REST API', () => {
         fieldMetadataId: testFieldMetadataId,
         direction: ViewSortDirection.ASC,
       });
+
+      testViewSortId = viewSort.id;
 
       const updateData = {
         direction: ViewSortDirection.DESC,
@@ -261,6 +280,8 @@ describe('View Sort REST API', () => {
         fieldMetadataId: testFieldMetadataId,
         direction: ViewSortDirection.ASC,
       });
+
+      testViewSortId = viewSort.id;
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',

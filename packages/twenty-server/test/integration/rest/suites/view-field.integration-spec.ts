@@ -10,8 +10,7 @@ import {
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
   createTestViewFieldWithRestApi,
-  createTestViewWithRestApi,
-  deleteTestViewFieldWithRestApi,
+  createTestViewWithRestApi
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { assertViewFieldStructure } from 'test/integration/utils/view-test.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -22,11 +21,13 @@ import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
+import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 
 describe('View Field REST API', () => {
   let testObjectMetadataId: string;
   let testFieldMetadataId: string;
   let testViewId: string;
+  let testViewFieldId: string | undefined;
 
   beforeAll(async () => {
     const {
@@ -95,6 +96,18 @@ describe('View Field REST API', () => {
     });
   });
 
+  afterEach(async () => {
+    if (!testViewFieldId) return;
+
+    await destroyOneCoreViewField({
+      expectToFail: false,
+      input: {
+        id: testViewFieldId,
+      },
+    });
+    testViewFieldId = undefined;
+  });
+
   describe('GET /metadata/viewFields', () => {
     it('should return empty array when no view fields exist', async () => {
       const response = await makeRestAPIRequest({
@@ -126,6 +139,7 @@ describe('View Field REST API', () => {
         isVisible: true,
         size: 150,
       });
+      testViewFieldId = viewField.id;
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -150,8 +164,6 @@ describe('View Field REST API', () => {
         isVisible: true,
         size: 150,
       });
-
-      await deleteTestViewFieldWithRestApi(viewField.id);
     });
   });
 
@@ -165,6 +177,8 @@ describe('View Field REST API', () => {
         size: 200,
       });
 
+      testViewFieldId = viewField.id;
+
       assertViewFieldStructure(viewField, {
         fieldMetadataId: testFieldMetadataId,
         viewId: testViewId,
@@ -172,8 +186,6 @@ describe('View Field REST API', () => {
         isVisible: true,
         size: 200,
       });
-
-      await deleteTestViewFieldWithRestApi(viewField.id);
     });
 
     it('should create a hidden view field', async () => {
@@ -185,6 +197,8 @@ describe('View Field REST API', () => {
         size: 100,
       });
 
+      testViewFieldId = hiddenField.id;
+
       assertViewFieldStructure(hiddenField, {
         fieldMetadataId: testFieldMetadataId,
         viewId: testViewId,
@@ -192,8 +206,6 @@ describe('View Field REST API', () => {
         isVisible: false,
         size: 100,
       });
-
-      await deleteTestViewFieldWithRestApi(hiddenField.id);
     });
   });
 
@@ -206,6 +218,7 @@ describe('View Field REST API', () => {
         isVisible: true,
         size: 150,
       });
+      testViewFieldId = viewField.id;
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -219,8 +232,6 @@ describe('View Field REST API', () => {
         fieldMetadataId: testFieldMetadataId,
         viewId: testViewId,
       });
-
-      await deleteTestViewFieldWithRestApi(viewField.id);
     });
 
     it('should return empty object for non-existent view field', async () => {
@@ -243,6 +254,7 @@ describe('View Field REST API', () => {
         isVisible: true,
         size: 150,
       });
+      testViewFieldId = viewField.id;
 
       const updateData = {
         position: 5,
@@ -266,8 +278,6 @@ describe('View Field REST API', () => {
         fieldMetadataId: testFieldMetadataId,
         viewId: testViewId,
       });
-
-      await deleteTestViewFieldWithRestApi(viewField.id);
     });
 
     it('should return 404 error when updating non-existent view field', async () => {
@@ -304,6 +314,8 @@ describe('View Field REST API', () => {
         isVisible: true,
         size: 150,
       });
+
+      testViewFieldId = viewField.id;
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',
