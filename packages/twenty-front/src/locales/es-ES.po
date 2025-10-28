@@ -966,9 +966,43 @@ msgstr "Ocurrió un error al procesar su mensaje"
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/views/hooks/internal/usePersistViewGroup.ts
+#: src/modules/views/hooks/internal/usePersistViewGroup.ts
+#: src/modules/views/hooks/internal/usePersistViewGroup.ts
+#: src/modules/views/hooks/internal/usePersistViewGroup.ts
+#: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
+#: src/modules/views/hooks/internal/usePersistView.ts
+#: src/modules/views/hooks/internal/usePersistView.ts
+#: src/modules/views/hooks/internal/usePersistView.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+#: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
+#: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
+#: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
+#: src/modules/object-metadata/hooks/useUpdateOneObjectMetadataItem.ts
+#: src/modules/object-metadata/hooks/useUpdateOneFieldMetadataItem.ts
+#: src/modules/object-metadata/hooks/useDeleteOneObjectMetadataItem.ts
+#: src/modules/object-metadata/hooks/useDeleteOneFieldMetadataItem.ts
+#: src/modules/object-metadata/hooks/useCreateOneObjectMetadataItem.ts
+#: src/modules/object-metadata/hooks/useCreateOneFieldMetadataItem.ts
 msgid "An error occurred."
 msgstr "Se produjo un error."
+
+#. js-lingui-id: 2xLtB4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "An internal error occurred while applying your changes. Please contact support and try again later."
+msgstr ""
+
+#. js-lingui-id: oRksj8
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "An internal error occurred while validating your changes. Please contact support."
+msgstr ""
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2375,6 +2409,11 @@ msgstr "Créditos Usados"
 msgid "Cron"
 msgstr "Cron"
 
+#. js-lingui-id: t87/Oe
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "cron trigger"
+msgstr ""
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2538,6 +2577,11 @@ msgstr "La configuración de la base de datos está actualmente desactivada."
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Database event"
 msgstr "Evento de base de datos"
+
+#. js-lingui-id: 3GUKXi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "database trigger"
+msgstr ""
 
 #. js-lingui-id: mYGY3B
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -3857,6 +3901,16 @@ msgstr "Créditos Extra Usados"
 msgid "Failed"
 msgstr "Fallido"
 
+#. js-lingui-id: fsNGMi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "Failed to create {translatedMetadataName}. Please try again."
+msgstr ""
+
+#. js-lingui-id: sOnoZ4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "Failed to create {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
+msgstr ""
+
 #. js-lingui-id: w/6jdn
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
@@ -3942,6 +3996,11 @@ msgstr "Indicador de característica"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Feature Flags & Impersonation"
 msgstr "Indicadores de características y suplantación"
+
+#. js-lingui-id: 2lOBKV
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "field"
+msgstr ""
 
 #. js-lingui-id: AXjA78
 #: src/modules/command-menu/pages/page-layout/utils/getFieldLabelWithSubField.ts
@@ -4547,6 +4606,11 @@ msgstr "Inactivo"
 #: src/modules/activities/emails/components/EmailsCard.tsx
 msgid "Inbox"
 msgstr "Bandeja de entrada"
+
+#. js-lingui-id: O5wNUa
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "index"
+msgstr ""
 
 #. js-lingui-id: pZ/USH
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -6017,6 +6081,11 @@ msgstr "Cantidad de nuevos créditos asignados cada {recurringInterval}"
 msgid "Number type"
 msgstr "Tipo de número"
 
+#. js-lingui-id: pNEViR
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "object"
+msgstr ""
+
 #. js-lingui-id: W0i24j
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -6446,6 +6515,11 @@ msgstr "Por favor, actualiza la página."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
 msgstr "Por favor busque un usuario primero"
+
+#. js-lingui-id: wCgL30
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+msgid "Please select at least one destination object for this relation."
+msgstr ""
 
 #. js-lingui-id: 8YnlGz
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -6949,6 +7023,11 @@ msgstr "Roles"
 msgid "Romanian"
 msgstr "Rumano"
 
+#. js-lingui-id: gcbflV
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "route trigger"
+msgstr ""
+
 #. js-lingui-id: 4E5bBq
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "Router"
@@ -7447,6 +7526,11 @@ msgstr "Enviado y recibido"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
 msgstr "Serbio (cirílico)"
+
+#. js-lingui-id: QsydvO
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "serverless function"
+msgstr ""
 
 #. js-lingui-id: eGHP1w
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -8735,6 +8819,11 @@ msgstr "Vertical"
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
+#. js-lingui-id: jUNY/d
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view"
+msgstr ""
+
 #. js-lingui-id: jpctdh
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "View"
@@ -8744,6 +8833,21 @@ msgstr "Vista"
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Ver detalles de facturación"
+
+#. js-lingui-id: AdeX9A
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view field"
+msgstr ""
+
+#. js-lingui-id: BA3jId
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view filter"
+msgstr ""
+
+#. js-lingui-id: n7a9IR
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view group"
+msgstr ""
 
 #. js-lingui-id: lh5BED
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection.tsx
