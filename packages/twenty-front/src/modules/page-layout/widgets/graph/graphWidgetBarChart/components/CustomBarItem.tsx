@@ -112,6 +112,11 @@ export const CustomBarItem = <D extends BarDatum>({
     [barData.value],
   );
 
+  const seriesIndex = useMemo(
+    () => (isDefined(keys) ? keys.findIndex((k) => k === barData.id) : -1),
+    [keys, barData.id],
+  );
+
   const shouldRoundFreeEnd = useMemo(() => {
     const isStackedAndValid =
       groupMode === 'stacked' &&
@@ -132,25 +137,30 @@ export const CustomBarItem = <D extends BarDatum>({
       return true;
     }
 
-    const currentKeyIndex = keys.findIndex((key) => key === barData.id);
-
-    if (currentKeyIndex === -1) {
+    if (seriesIndex === -1) {
       return true;
     }
 
-    const keysAfterCurrentKey = keys.slice(currentKeyIndex + 1);
+    const keysAfterCurrentKey = keys.slice(seriesIndex + 1);
     const hasSameSignBarAfter = keysAfterCurrentKey.some((key) => {
       const value = dataPoint[key];
       return isNumber(value) && (isNegativeValue ? value < 0 : value > 0);
     });
     return !hasSameSignBarAfter;
-  }, [groupMode, keys, barData, chartData, indexBy, isNegativeValue]);
+  }, [
+    groupMode,
+    keys,
+    chartData,
+    indexBy,
+    isNegativeValue,
+    seriesIndex,
+    barData.indexValue,
+  ]);
 
   const isHorizontal = layout === 'horizontal';
-
-  const clipPathId = `round-corner-${chartId ?? 'chart'}-${barData.index}-${String(
-    barData.id,
-  )}`;
+  const clipPathId = `round-corner-${chartId ?? 'chart'}-${barData.index}-${
+    seriesIndex >= 0 ? seriesIndex : 'x'
+  }`;
 
   const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
 
