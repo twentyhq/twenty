@@ -27,7 +27,7 @@ import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -298,7 +298,7 @@ export abstract class RestApiBaseHandler {
     let selectOptions = undefined;
 
     if (!isEmpty(restrictedFields)) {
-      selectOptions = getAllSelectableFields({
+      selectOptions = getAllSelectableColumnNames({
         restrictedFields,
         objectMetadata,
       });

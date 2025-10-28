@@ -67,6 +67,6 @@ export const NumberInput: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findByText('100')).toBeVisible();
+    await expect(await canvas.findByDisplayValue(100)).toBeVisible();
   },
 };

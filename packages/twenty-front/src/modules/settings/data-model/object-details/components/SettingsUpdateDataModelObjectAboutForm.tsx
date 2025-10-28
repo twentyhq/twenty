@@ -125,7 +125,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     <FormProvider {...formConfig}>
       <SettingsDataModelObjectAboutForm
         onNewDirtyField={() => formConfig.handleSubmit(handleSave)()}
-        disableEdition={!objectMetadataItem.isCustom || readonly}
+        disableEdition={readonly}
         objectMetadataItem={objectMetadataItem}
       />
     </FormProvider>

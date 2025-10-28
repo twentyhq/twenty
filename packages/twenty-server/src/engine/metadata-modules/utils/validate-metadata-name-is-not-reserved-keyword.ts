@@ -24,6 +24,8 @@ const coreObjectNames = [
   'billingSubscriptionItems',
   'featureFlag',
   'featureFlags',
+  'job',
+  'jobs',
   'keyValuePair',
   'keyValuePairs',
   'postgresCredential',
