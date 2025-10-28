@@ -113,6 +113,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     AuditModule,
     SubdomainManagerModule,
     DomainServerConfigModule,
+    MetricsModule,
   ],
   controllers: [
     GoogleAuthController,
