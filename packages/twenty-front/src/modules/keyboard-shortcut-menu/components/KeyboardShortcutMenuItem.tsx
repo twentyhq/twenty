@@ -4,6 +4,7 @@ import {
   StyledShortcutKeyContainer,
 } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuStyles';
 import { type Shortcut } from '@/keyboard-shortcut-menu/types/Shortcut';
+import { t } from '@lingui/core/macro';
 
 type KeyboardMenuItemProps = {
   shortcut: Shortcut;
@@ -22,7 +23,7 @@ export const KeyboardMenuItem = ({ shortcut }: KeyboardMenuItemProps) => {
         ) : (
           <StyledShortcutKeyContainer>
             <StyledShortcutKey>{shortcut.firstHotKey}</StyledShortcutKey>
-            then
+            {t`then`}
             <StyledShortcutKey>{shortcut.secondHotKey}</StyledShortcutKey>
           </StyledShortcutKeyContainer>
         )

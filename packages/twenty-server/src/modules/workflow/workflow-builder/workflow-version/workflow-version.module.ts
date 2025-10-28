@@ -14,7 +14,7 @@ import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-b
     WorkflowSchemaModule,
     ServerlessFunctionModule,
     WorkflowVersionStepModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
     RecordPositionModule,
   ],
   providers: [WorkflowVersionWorkspaceService],

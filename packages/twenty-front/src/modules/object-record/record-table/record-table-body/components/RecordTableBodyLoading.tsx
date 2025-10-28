@@ -1,20 +1,20 @@
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
+import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
-import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
+import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
+import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
+import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableBodyLoading = () => {
-  const visibleTableColumns = useRecoilComponentValue(
-    visibleTableColumnsComponentSelector,
-  );
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   return (
-    <tbody>
-      {Array.from({ length: 8 }).map((_, rowIndex) => (
+    <RecordTableBody>
+      {Array.from({ length: 80 }).map((_, rowIndex) => (
         <RecordTableRowContextProvider
           key={rowIndex}
           value={{
@@ -23,7 +23,6 @@ export const RecordTableBodyLoading = () => {
             recordId: `${rowIndex}`,
             rowIndex,
             isSelected: false,
-            inView: true,
           }}
         >
           <RecordTableRowDraggableContextProvider
@@ -38,16 +37,22 @@ export const RecordTableBodyLoading = () => {
               isDragging={false}
               data-testid={`row-id-${rowIndex}`}
               data-selectable-id={`row-id-${rowIndex}`}
+              isFirstRowOfGroup={rowIndex === 0}
             >
-              <RecordTableCellGrip />
+              <RecordTableCellDragAndDrop />
               <RecordTableCellCheckbox />
-              {visibleTableColumns.map((column) => (
-                <RecordTableCellLoading key={column.fieldMetadataId} />
+              {visibleRecordFields.map((recordField, index) => (
+                <RecordTableCellLoading
+                  key={recordField.fieldMetadataItemId}
+                  recordFieldIndex={index}
+                />
               ))}
+              <RecordTablePlusButtonCellPlaceholder />
+              <RecordTableLastEmptyCell />
             </RecordTableTr>
           </RecordTableRowDraggableContextProvider>
         </RecordTableRowContextProvider>
       ))}
-    </tbody>
+    </RecordTableBody>
   );
 };

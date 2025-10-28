@@ -2,14 +2,13 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { fn } from '@storybook/test';
 import '@xyflow/react/dist/style.css';
 import { RecoilRoot } from 'recoil';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNodeEditableContent';
+import { WorkflowDiagramStepNodeEditableContent } from '../../workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
 
 const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
@@ -17,6 +16,7 @@ const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
   parameters: {
     msw: graphqlMocks,
   },
+  decorators: [I18nFrontDecorator],
 };
 
 export default meta;
@@ -121,9 +121,7 @@ export const Catalog: CatalogStory<
   args: {
     id: 'story-node',
     data: ALL_STEPS[0],
-    variant: 'default',
     selected: false,
-    onDelete: fn(),
   },
   parameters: {
     pseudo: { hover: ['.hover'] },
@@ -139,18 +137,6 @@ export const Catalog: CatalogStory<
           name: 'step type',
           values: ALL_STEPS,
           props: (data: WorkflowDiagramStepNodeData) => ({ data }),
-        },
-        {
-          name: 'variant',
-          values: [
-            'empty',
-            'default',
-            'running',
-            'success',
-            'failure',
-            'not-executed',
-          ] satisfies WorkflowDiagramNodeVariant[],
-          props: (variant: WorkflowDiagramNodeVariant) => ({ variant }),
         },
         {
           name: 'selected',

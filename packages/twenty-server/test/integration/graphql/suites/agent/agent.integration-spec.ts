@@ -58,7 +58,7 @@ describe('agentResolver', () => {
           },
         },
         {
-          provide: getRepositoryToken(AgentEntity, 'core'),
+          provide: getRepositoryToken(AgentEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -67,7 +67,7 @@ describe('agentResolver', () => {
           },
         },
         {
-          provide: getRepositoryToken(AgentHandoffEntity, 'core'),
+          provide: getRepositoryToken(AgentHandoffEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -76,7 +76,7 @@ describe('agentResolver', () => {
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
+          provide: getRepositoryToken(RoleTargetsEntity),
           useValue: {
             findOne: jest.fn(),
           },

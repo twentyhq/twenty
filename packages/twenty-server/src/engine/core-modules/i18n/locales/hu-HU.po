@@ -54,14 +54,20 @@ msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "{fieldName} és {fieldName}Id nem adható meg egyszerre."
 
 #. js-lingui-id: ZkHTHm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
-msgstr ""
+msgstr "A(z) {fieldType} mezők nem lehetnek egyediek."
 
-#. js-lingui-id: wapGcj
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "{message}"
-msgstr ""
+#. js-lingui-id: LeIJhm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "{fieldType} fields cannot have a default value."
+msgstr "A(z) {fieldType} típusú mezők nem tartalmazhatnak alapértelmezett értéket."
+
+#. js-lingui-id: iEZavm
+#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
+msgstr "{hostnameCount} hostnév található a(z) '{domainName}' domainhez. Várható 1"
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
@@ -77,6 +83,11 @@ msgstr "Egy cég"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "A connected account"
 msgstr "Egy összekapcsolt fiók"
+
+#. js-lingui-id: cOSBjW
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "A dashboard"
+msgstr "Egy irányítópult"
 
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -185,6 +196,17 @@ msgstr "Művelet szükséges a munkaterület törlésének megakadályozásához
 msgid "Action Needed to Reset Password"
 msgstr "Művelet szükséges a jelszó visszaállításához"
 
+#. js-lingui-id: 52fA3U
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Active fields cannot be deleted"
+msgstr "Aktív mezők nem törölhetők"
+
+#. js-lingui-id: 0N5kF6
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Active objects cannot be deleted"
+msgstr "Aktív objektumok nem törölhetők"
+
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -216,6 +238,20 @@ msgstr "Összegző művelet"
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Összesített/szűrt események, amelyek a cronológiaon jelennek meg"
 
+#. js-lingui-id: pdOYzu
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+msgid "All {objectLabelPlural}"
+msgstr "Minden {objectLabelPlural}"
+
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
@@ -226,12 +262,21 @@ msgstr "Összeg"
 msgid "An attachment"
 msgstr "Egy csatolmány"
 
+#. js-lingui-id: eW83iC
+#: src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception.ts
+msgid "An error occurred during messages import"
+msgstr "Hiba történt az üzenetek importálása közben"
+
 #. js-lingui-id: XyOToQ
-#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "An error occurred."
 msgstr "Hiba történt."
+
+#. js-lingui-id: +MvnxO
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "An index must contain at least one field"
+msgstr "Egy indexnek legalább egy mezővel kell rendelkeznie"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -249,6 +294,11 @@ msgstr "Éves ismétlődő bevétel: A cég tényleges vagy becsült éves bevé
 msgid "Any field filter value"
 msgstr "Bármilyen mező szűrő érték"
 
+#. js-lingui-id: mU5fvk
+#: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+msgid "Approved access domain already registered."
+msgstr "A jóváhagyott hozzáférési tartomány már regisztrálva van."
+
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain does not match email domain"
@@ -260,6 +310,11 @@ msgstr "A jóváhagyott hozzáférési tartomány nem felel meg az e-mail tartom
 msgid "Approved access domain has already been validated"
 msgstr "A jóváhagyott hozzáférési tartomány már ellenőrizve van"
 
+#. js-lingui-id: naCW6Z
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "April"
+msgstr "Április"
+
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ARR"
@@ -269,6 +324,11 @@ msgstr "ARR"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Assigned tasks"
 msgstr "Kijelölt feladatok"
+
+#. js-lingui-id: kZ7PLo
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
+msgid "Assigned to Me"
+msgstr "Hozzám rendelve"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -280,20 +340,35 @@ msgstr "Felelős"
 msgid "Associated User Id"
 msgstr "Kapcsolódó Felhasználó Azonosítója"
 
+#. js-lingui-id: K9efby
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "At least one relation is require"
+msgstr "Legalább egy kapcsolat szükséges"
+
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment"
 msgstr "Csatolmány"
 
-#. js-lingui-id: JAefBH
+#. js-lingui-id: dda+ze
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment author"
-msgstr "Csatolmány szerzője"
+msgid "Attachment author (deprecated - use createdBy)"
+msgstr "Csatolmány szerző (elavult - használja a készítő által készített)"
 
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment company"
 msgstr "Csatolmány cég"
+
+#. js-lingui-id: wtcL/T
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment dashboard"
+msgstr "Csatolmány irányítópult"
+
+#. js-lingui-id: u3pBxa
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment file category"
+msgstr "Csatolmány kategóriája"
 
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -325,16 +400,23 @@ msgstr "Csatolmány személy"
 msgid "Attachment task"
 msgstr "Csatolmány feladat"
 
-#. js-lingui-id: 4qqxMt
+#. js-lingui-id: ZXjjRz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment type"
-msgstr "Csatolmány típusa"
+msgid "Attachment type (deprecated - use fileCategory)"
+msgstr "Csatolmány típusa (elavult - használja a fileCategory)"
+
+#. js-lingui-id: tH6L3e
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment workflow"
+msgstr "Csatolmány munkafolyamat"
 
 #. js-lingui-id: w/Sphq
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -356,15 +438,30 @@ msgstr "A céghez kapcsolódó csatolmányok"
 msgid "Attachments linked to the contact."
 msgstr "A kapcsolattartóhoz kapcsolódó csatolmányok."
 
+#. js-lingui-id: 2AEUIb
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Attachments linked to the dashboard"
+msgstr "Irányítópulthoz kapcsolódó csatolmányok"
+
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Attachments linked to the opportunity"
 msgstr "A lehetőséghez kapcsolódó csatolmányok"
 
+#. js-lingui-id: 83l3Yd
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+msgid "Attachments linked to the workflow"
+msgstr "A munkafolyamatokhoz kapcsolódó csatolmányok"
+
 #. js-lingui-id: fCbqr7
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments tied to the {label}"
 msgstr "Csatolmányok, amelyek a(z) {label}-hez kapcsolódnak"
+
+#. js-lingui-id: DBHTm/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "August"
+msgstr "Augusztus"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -376,6 +473,11 @@ msgstr "Sikertelen hitelesítés időpontja"
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "Az autentikáció nincs engedélyezve ezzel a szolgáltatóval."
+
+#. js-lingui-id: Tsx+z2
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "Authentication is required to access this feature. Please sign in and try again."
+msgstr "Hitelesítés szükséges a funkció eléréséhez. Kérjük, jelentkezzen be, majd próbálja újra."
 
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -440,6 +542,17 @@ msgstr "Tiltólisták"
 msgid "Body"
 msgstr "Szövegtörzs"
 
+#. js-lingui-id: 6+byWT
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
+msgid "By Stage"
+msgstr "Szint szerint"
+
+#. js-lingui-id: jQX8V+
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
+msgid "By Status"
+msgstr "Állapot szerint"
+
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Cached record name"
@@ -503,6 +616,16 @@ msgstr "Naptári Események Résztvevői"
 msgid "Calendar events"
 msgstr "Naptári események"
 
+#. js-lingui-id: eSaCR/
+#: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
+msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
+msgstr "Nem lehet csatlakozni ehhez: {connectFieldName}. Nem található egyedi rekord a következő feltétel alapján: {formattedConnectCondition}"
+
+#. js-lingui-id: 2oVE+z
+#: src/engine/guards/impersonate-permission.guard.ts
+msgid "Can't impersonate user via api key"
+msgstr "Nem lehet felhasználót megszemélyesíteni API kulccsal."
+
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
@@ -518,8 +641,13 @@ msgstr "Nem lehet több vázlat verziót létrehozni ugyanahhoz a munkafolyamath
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Nem hozható létre munkafolyamat verzió nem vázlatos állapottal"
 
+#. js-lingui-id: VPXcr5
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
+msgstr "Nem törölhető a fiók: Ön az egyetlen adminisztrátor. Kérjük, rendeljen másik adminisztrátort, vagy először törölje a munkaterületeket."
+
 #. js-lingui-id: AQyr9X
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Nem törölhető, először frissítse a címkeazonosító mezőt"
@@ -529,15 +657,20 @@ msgstr "Nem törölhető, először frissítse a címkeazonosító mezőt"
 msgid "Cannot disable non-active workflow version"
 msgstr "Nem lehet letiltani nem aktív munkafolyamat verziót"
 
-#. js-lingui-id: RATxdO
+#. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
-msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
-msgstr ""
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
+msgstr "Az egyediség nem engedélyezhető a meglévő, ismétlődő értékek miatt. Kérjük, először tekintse át és javítsa adatait (beleértve a lágyan törölt rekordokat is)."
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Nem lehet egynél több aktív munkafolyamat verzió"
+
+#. js-lingui-id: PjZIyI
+#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
+msgstr ""
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -684,16 +817,43 @@ msgstr "Kapcsolattartó telefonszámai"
 msgid "Contact’s X/Twitter account"
 msgstr "Kapcsolattartó X/Twitter fiókja"
 
+#. js-lingui-id: gdbojg
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
+msgstr "Ellentmondó mező-engedélyek lettek észlelve egy kapcsolat mezőn ({fieldName})."
+
+#. js-lingui-id: LZf/L8
+#: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+msgid "Could not find flat entity in maps"
+msgstr "Nem található sík entitás a térképeken"
+
+#. js-lingui-id: jBrX/g
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Could not find index field related field metadata"
+msgstr "Nem található az index mezőhöz kapcsolódó mező metaadat"
+
+#. js-lingui-id: HVajHk
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Could not find index related object metadata"
+msgstr "Nem találhatók az indexhez kapcsolódó objektum metaadatai"
+
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "Létrehozta"
+
+#. js-lingui-id: 2ZhYYy
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
+msgid "Created field metadata, parent object metadata not found"
+msgstr "Létrehozott mező metaadat, szülő objektum metaadat nem található"
 
 #. js-lingui-id: wPvFAD
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -714,10 +874,74 @@ msgstr "Létrehozás DateTime-ja"
 msgid "Cron pattern '{pattern}' is invalid"
 msgstr "A Cron minta '{pattern}' érvénytelen"
 
+#. js-lingui-id: GuyjcQ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Cron trigger already exists"
+msgstr "A Cron-trigger már létezik"
+
+#. js-lingui-id: Ej90Yp
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Cron trigger not found"
+msgstr "A Cron-trigger nem található"
+
+#. js-lingui-id: vz7B0E
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Cron trigger with same id already exists"
+msgstr "Cron-trigger ugyanazzal az ID-vel már létezik"
+
 #. js-lingui-id: Mikszu
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Custom Connection Parameters"
 msgstr "Egyéni csatlakozási paraméterek"
+
+#. js-lingui-id: 7p5kLi
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Dashboard"
+msgstr "Irányítópult"
+
+#. js-lingui-id: Lddz0a
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard page layout"
+msgstr "Irányítópult oldalelrendezés"
+
+#. js-lingui-id: FrOkwR
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard record Position"
+msgstr "Irányítópult rekord pozíciója"
+
+#. js-lingui-id: xGgnPh
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard title"
+msgstr "Irányítópult címe"
+
+#. js-lingui-id: w6iIMm
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboards"
+msgstr "Irányítópultok"
+
+#. js-lingui-id: K2CQHf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+msgid "Database event trigger already exists"
+msgstr "Az adatbázis-eseménytrigger már létezik"
+
+#. js-lingui-id: iS6kjG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+msgid "Database event trigger not found"
+msgstr "Adatbázis esemény indító nem található"
+
+#. js-lingui-id: 0vtv+s
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+msgid "Database event trigger with same id already exists"
+msgstr "Adatbázis esemény indító már létezik ugyanazzal az azonosítóval"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -728,6 +952,34 @@ msgstr "Dátumformátum"
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Date when the record was deleted"
 msgstr "Rekord törlésének dátuma"
+
+#. js-lingui-id: r6zgGo
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "December"
+msgstr "December"
+
+#. js-lingui-id: GGNmm+
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Default value \"{defaultValue}\" must be one of the option values"
+msgstr "Az alapértelmezett érték \"{defaultValue}\" egyik opciónak kell lennie"
+
+#. js-lingui-id: FdUbPo
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value must be a string"
+msgstr "Az alapértelmezett értéknek karakterláncnak kell lennie"
+
+#. js-lingui-id: sv9P4Q
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Default value should be as quoted string"
+msgstr "Alapértelmezett értéknek idézett szövegnek kell lennie"
+
+#. js-lingui-id: 6pJV03
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "Default values must be unique"
+msgstr "Az alapértelmezett értékeknek egyedinek kell lenniük"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -769,6 +1021,21 @@ msgstr "A rekordok megjelenítése oldalsó panelen vagy rekordoldalon"
 msgid "Display Value"
 msgstr "Megjelenítési érték"
 
+#. js-lingui-id: IymH4t
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Domain already used for workspace custom domain"
+msgstr "A tartomány már használatban van egyéni munkaterületi tartományként."
+
+#. js-lingui-id: 2sIVDj
+#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+msgid "Domain is already registered"
+msgstr "A domain már regisztrálva van."
+
+#. js-lingui-id: PfJswy
+#: src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service.ts
+msgid "Domain is already registered as public domain"
+msgstr "A tartomány már nyilvános tartományként van regisztrálva."
+
 #. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Domain Name"
@@ -780,9 +1047,10 @@ msgid "Due Date"
 msgstr "Esedékesség dátuma"
 
 #. js-lingui-id: BXtAxc
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Duplicated option {field}"
-msgstr ""
+msgstr "Duplikált opció {field}"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -822,15 +1090,20 @@ msgstr "Alkalmazottak"
 msgid "End Date"
 msgstr "Befejezés dátuma"
 
-#. js-lingui-id: hcogQc
-#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
-msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr ""
+#. js-lingui-id: EzGlkq
+#: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
+msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
+msgstr "A CLOUDFLARE_API_KEY környezeti változót meg kell adni a funkció használatához."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "Esemény cég"
+
+#. js-lingui-id: CPhvC+
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+msgid "Event dashboard"
+msgstr "Esemény irányítópult"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -936,15 +1209,31 @@ msgstr "Nem professzionális email címek kizárása"
 msgid "Executed by"
 msgstr "Végrehajtotta"
 
-#. js-lingui-id: o7LKFQ
-#: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
-msgid "Expected 1 record to connect to {connectFieldName}, but found {recordToConnectTotal} for {formattedConnectCondition}"
-msgstr ""
-
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "Elvárt, hogy ugyanazokat a megszorítási mezőket következetesen használják az összes művelet során a(z) {connectFieldName} esetében."
+
+#. js-lingui-id: 5KfWxA
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "External ID"
+msgstr "Külső azonosító"
+
+#. js-lingui-id: pUligB
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to delete jobs. Please try again later."
+msgstr "A feladatok törlése nem sikerült. Kérjük, próbálja meg később."
+
+#. js-lingui-id: HfhmrS
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to load queue jobs. Please try again later."
+msgstr "A várakozási sor feladatainak betöltése nem sikerült. Kérjük, próbálja meg később."
+
+#. js-lingui-id: SJEIIJ
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to retry jobs. Please try again later."
+msgstr "A feladatok újrapróbálása nem sikerült. Kérjük, próbálja meg később."
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -955,6 +1244,11 @@ msgstr "Kedvenc"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite company"
 msgstr "Kedvenc cég"
+
+#. js-lingui-id: Aj026i
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "Favorite dashboard"
+msgstr "Kedvenc irányítópult"
 
 #. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -997,11 +1291,6 @@ msgstr "Kedvenc pozíció"
 msgid "Favorite task"
 msgstr "Kedvenc feladat"
 
-#. js-lingui-id: VkWV1s
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite view"
-msgstr "Kedvelt nézet"
-
 #. js-lingui-id: l+lx2f
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow"
@@ -1027,13 +1316,13 @@ msgstr "Kedvenc munkaterület tag"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
@@ -1054,6 +1343,11 @@ msgstr "A társasághoz kötődő kedvencek"
 msgid "Favorites linked to the contact"
 msgstr "A kapcsolattartóhoz kötődő kedvencek"
 
+#. js-lingui-id: 5zuBdE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Favorites linked to the dashboard"
+msgstr "Irányítópulthoz kötődő kedvencek"
+
 #. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Favorites linked to the note"
@@ -1068,11 +1362,6 @@ msgstr "Lehetőséghez kötődő kedvencek"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Favorites linked to the task"
 msgstr "Feladathoz kötődő kedvencek"
-
-#. js-lingui-id: R+1ib/
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Favorites linked to the view"
-msgstr "Nézethez kötődő kedvencek"
 
 #. js-lingui-id: ee0tmj
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1099,6 +1388,51 @@ msgstr "Munkaterület tagjához kötődő kedvencek"
 msgid "Favorites tied to the {label}"
 msgstr "A {label} kapcsolódó kedvencek"
 
+#. js-lingui-id: 4lgLew
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "February"
+msgstr "Február"
+
+#. js-lingui-id: vngnhF
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Field already exists"
+msgstr "A mező már létezik"
+
+#. js-lingui-id: ugu505
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field cannot be indexed as it belongs to a different object"
+msgstr "A mező nem indexelhető, mivel egy másik objektumhoz tartozik"
+
+#. js-lingui-id: Hg95ys
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field cannot be used as label identifier"
+msgstr "A mező nem használható címke azonosítóként"
+
+#. js-lingui-id: F6OLoA
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field declared as image identifier not found"
+msgstr "A képazonosítónak deklarált mező nem található"
+
+#. js-lingui-id: 75hHpn
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field declared as label identifier not found"
+msgstr "A mező címke azonosítóként nem található"
+
+#. js-lingui-id: qelyBB
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field does not belong to the indexed object"
+msgstr "A mező nem tartozik az indexelt objektumhoz"
+
+#. js-lingui-id: DXxcTd
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field ID is already used in another index"
+msgstr "A mező azonosítóját már más indexben használják"
+
+#. js-lingui-id: AgbRjM
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Field label identifier is required"
+msgstr "A mező címke azonosító megadása kötelező"
+
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -1107,11 +1441,58 @@ msgstr "A {label} kapcsolódó kedvencek"
 msgid "Field Metadata Id"
 msgstr "Mező Metadatázonosítója"
 
+#. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "Field metadata not found"
+msgstr "A mező metaadata nem található"
+
+#. js-lingui-id: uTPwH1
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Field metadata to delete not found"
+msgstr "Törlendő mező metaadat nem található"
+
+#. js-lingui-id: Ljqo/T
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field metadata to update not found"
+msgstr "Frissítendő mező metaadat nem található"
+
 #. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Field metadata used for aggregate operation"
 msgstr "Összegző műveletre használt mező metadaták"
+
+#. js-lingui-id: prTOhK
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Field name is not synced with field label"
+msgstr "A mező neve nincs szinkronizálva a mező címkével"
+
+#. js-lingui-id: QXuG8C
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "Field permissions can only be used to restrict access, not to grant additional permissions."
+msgstr "Mező engedélyek csak a hozzáférés korlátozására használhatók, további engedélyek beállítására nem."
+
+#. js-lingui-id: S+y2Wg
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Field referenced in index does not exist"
+msgstr "Az indexből hivatkozott mező nem létezik"
+
+#. js-lingui-id: cK8ILP
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Field to create related object not found"
+msgstr "A létrehozandó kapcsolódó objektum mező nem található"
+
+#. js-lingui-id: K6qzz4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Field to update not found"
+msgstr "Frissítendő mező nem található"
 
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
@@ -1123,30 +1504,40 @@ msgstr "Teljes szöveges keresésre felhasznált mező"
 msgid "Field Value"
 msgstr "Mezőérték"
 
+#. js-lingui-id: s3HtdT
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required"
+msgstr "A FieldMetadataId szükséges"
+
 #. js-lingui-id: Sof2+k
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
-msgstr ""
+msgstr "A FieldMetadataId szükséges a nézetmező létrehozásához."
 
 #. js-lingui-id: NTyTR5
-#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
-msgstr ""
+msgstr "A FieldMetadataId szükséges a nézet szűrőcsoport létrehozásához."
 
 #. js-lingui-id: Ya6oU7
-#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
-msgstr ""
+msgstr "A FieldMetadataId szükséges a nézet szűrő létrehozásához."
 
 #. js-lingui-id: DU4jcg
-#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
-msgstr ""
+msgstr "A FieldMetadataId szükséges a nézetcsoport létrehozásához."
 
 #. js-lingui-id: snEXuU
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
-msgstr ""
+msgstr "A FieldMetadataId szükséges a nézet rendezés létrehozásához."
+
+#. js-lingui-id: i+AQUz
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "File category"
+msgstr "Fájl kategória"
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1157,6 +1548,11 @@ msgstr "Üzenetcsatorna mappa"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder name"
 msgstr "Mappanév"
+
+#. js-lingui-id: eWmJYU
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Forbidden updated properties for relation field metadata"
+msgstr "Tiltott frissítési tulajdonságok a kapcsolat mező metaadatához"
 
 #. js-lingui-id: kuN9I4
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -1172,6 +1568,11 @@ msgstr "Az űrlap műveleti mezőknek egyedi nevekkel kell rendelkezniük"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "Az űrlap műveletnek legalább egy mezővel kell rendelkeznie"
+
+#. js-lingui-id: 39y5bn
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Friday"
+msgstr "Péntek"
 
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -1240,6 +1641,59 @@ msgstr "Azonosító"
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideális vevőprofil: Jelzi, hogy a cég a legmegfelelőbb és legértékesebb ügyfél-e számotokra"
 
+#. js-lingui-id: YcVn4w
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+msgid "If defined default value must contain at least one value"
+msgstr "Ha meghatározott, az alapértelmezett értéknek legalább egy értéket tartalmaznia kell"
+
+#. js-lingui-id: Kfy/ML
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index already exists"
+msgstr "Az index már létezik"
+
+#. js-lingui-id: EwXumf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index field has an invalid reference"
+msgstr "Az index mezőjének érvénytelen hivatkozása van"
+
+#. js-lingui-id: +hk7cY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index field ID already exists in another index"
+msgstr "Az index mezőazonosítója már létezik egy másik indexben"
+
+#. js-lingui-id: ITue4V
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index field references incorrect index metadata"
+msgstr "Az index mező a helytelen index metaadatra hivatkozik"
+
+#. js-lingui-id: K1hWwv
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index must have at least one field"
+msgstr "Az indexnek legalább egy mezővel kell rendelkeznie"
+
+#. js-lingui-id: Hl6cv2
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index related object not found"
+msgstr "Az indexhez kapcsolódó objektum nem található"
+
+#. js-lingui-id: fY2zUQ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
+msgid "Index to delete not found"
+msgstr "A törlendő index nem található"
+
+#. js-lingui-id: qgBN4Y
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index with same id already exists"
+msgstr "Azonosítóval rendelkező index már létezik"
+
+#. js-lingui-id: a+k+8J
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index with same name already exists"
+msgstr "Az azonos nevű index már létezik"
+
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
 msgid "Input is too short: \"{name}\""
@@ -1259,6 +1713,11 @@ msgstr "Érvénytelen Captcha, próbáljon meg másik eszközt"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Érvénytelen országkód {countryCode}"
+
+#. js-lingui-id: AMeEDO
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid credentials. Please check your username and password."
+msgstr "Érvénytelen hitelesítési adatok. Kérjük, ellenőrizze a felhasználónevet és a jelszót."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1293,6 +1752,21 @@ msgstr "Érvénytelen perc érték. Egészen számnak kell lennie 0 és 59 köz�
 msgid "Invalid minute value. Should be integer greater than 1"
 msgstr "Érvénytelen perc érték. Egészen számnak kell lennie, nagyobbnak 1-nél"
 
+#. js-lingui-id: sDfyvM
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Invalid morph relation input"
+msgstr "Érvénytelen morf kapcsolat bemenet"
+
+#. js-lingui-id: VvhAS2
+#: src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util.ts
+msgid "Invalid object metadata input"
+msgstr "Érvénytelen objektum metaadat bemenet."
+
+#. js-lingui-id: AXZsy/
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
+msgid "Invalid relation creation payload"
+msgstr "Érvénytelen kapcsolatteremtési adatok"
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
@@ -1303,10 +1777,25 @@ msgstr "Érvénytelen beállítás típus a cron triggerben"
 msgid "Invalid trigger type for enabling workflow trigger"
 msgstr "Érvénytelen trigger típus a munkafolyamat trigger engedélyezésekor"
 
+#. js-lingui-id: 1Iyic0
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Invalid uuid {id}"
+msgstr "Érvénytelen uuid {id}"
+
 #. js-lingui-id: VEKoJx
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Érvénytelen ellenőrző kód. Kérjük próbálja újra."
+
+#. js-lingui-id: 8xkULN
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data"
+msgstr "Érvénytelen nézet rendezési adatok"
+
+#. js-lingui-id: I0OzaR
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data for view sort id: {id}"
+msgstr "Érvénytelen nézet rendezési adatok a nézet rendezési azonosítóhoz: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1334,6 +1823,12 @@ msgstr "Egész napos"
 msgid "Is Organizer"
 msgstr "Szervező"
 
+#. js-lingui-id: VrHWrH
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Sent Folder"
+msgstr "Elküldött mappa"
+
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1341,6 +1836,17 @@ msgstr "Szervező"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "Szinkronizálás Aktiválva"
+
+#. js-lingui-id: BHCUSr
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Synced"
+msgstr "Szinkronizálva"
+
+#. js-lingui-id: rjyWPb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "January"
+msgstr "Január"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1372,6 +1878,16 @@ msgstr "Json objektum a trigger megadásához"
 msgid "Json value for event details"
 msgstr "Json érték az esemény részleteihez"
 
+#. js-lingui-id: u4ex5r
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "July"
+msgstr "Július"
+
+#. js-lingui-id: zeEQd/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "June"
+msgstr "Június"
+
 #. js-lingui-id: qmarO2
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "kanbanfieldMetadataId"
@@ -1382,19 +1898,44 @@ msgstr "kanbanfieldMetadatId"
 msgid "Key"
 msgstr "Kulcs"
 
+#. js-lingui-id: ljUvzm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Label identifier field cannot be deactivated"
+msgstr "A címkeazonosító mező nem deaktiválható"
+
+#. js-lingui-id: ACUSmL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "Label identifier view field cannot be deleted"
+msgstr "A címke azonosító nézetmező nem törölhető"
+
+#. js-lingui-id: rI+dAx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+msgid "Label identifier view field has to be in the lowest position"
+msgstr "A címke azonosító nézetmezőnek a legalacsonyabb helyzetben kell lennie"
+
+#. js-lingui-id: PqTWJf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+msgid "Label identifier view field has to be visible"
+msgstr "A címke azonosító nézetmezőnek láthatónak kell lennie"
+
 #. js-lingui-id: w8Rv8T
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
 msgid "Label is required"
 msgstr "Címke szükséges"
 
 #. js-lingui-id: 4EGmy6
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not be empty"
 msgstr "A címke nem lehet üres"
 
 #. js-lingui-id: k731jp
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not contain a comma"
 msgstr "A címke nem tartalmazhat vesszőt"
@@ -1483,6 +2024,21 @@ msgstr "Logikai Operátor"
 msgid "Logical operator for the filter group"
 msgstr "A szűrőcsoport logikai operátora"
 
+#. js-lingui-id: hg6l4j
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "March"
+msgstr "Március"
+
+#. js-lingui-id: hw7Mwk
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr "A feltöltésre kerülő rekordok maximális száma {QUERY_MAX_RECORDS}."
+
+#. js-lingui-id: 3JzsDb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "May"
+msgstr "Május"
+
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1525,6 +2081,11 @@ msgstr "Üzenetcsatorna üzenet-társítás"
 msgid "Message Channel Message Associations"
 msgstr "Üzenetcsatorna üzenet-társítások"
 
+#. js-lingui-id: LOU3x5
+#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+msgid "Message channel not found"
+msgstr ""
+
 #. js-lingui-id: k7LXPQ
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1547,6 +2108,12 @@ msgstr "Üzenet külső azonosítója"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Folder"
 msgstr "Üzenetmappa"
+
+#. js-lingui-id: XCJIdB
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Message folder import policy"
+msgstr "Üzenetmappa importálási beállítás"
 
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1641,6 +2208,42 @@ msgstr "Üzenetküldő szolgáltató frissítési tokene"
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Hiányzó kötelező mezők: legalább egy egyedi megszorításnak teljesen ki kell lennie töltve a(z) '{connectFieldName}' esetében."
 
+#. js-lingui-id: hty0d5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Monday"
+msgstr "Hétfő"
+
+#. js-lingui-id: FqzlX4
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must have the same relation type"
+msgstr "A morf kapcsolat létrehozási fájlnak azonos kapcsolat típusúnak kell lennie"
+
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "A morf kapcsolati teremtési csomagoknak csak más objektum metaadataival kell tartalmazniuk kapcsolatot"
+
+#. js-lingui-id: Z/Awgf
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to the same object metadata"
+msgstr "A morf kapcsolat létrehozási fájlnak csak ugyanahhoz az objektum metaadatához kell tartalmaznia kapcsolatot"
+
+#. js-lingui-id: DsdcRG
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Morph relation fields are disabled for your workspace"
+msgstr "A morf kapcsolat mezői le vannak tiltva az Ön munkaterületén"
+
+#. js-lingui-id: Wu/pkS
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Multi-select field default value must be an array"
+msgstr "A többszörös kiválasztás mező alapértelmezett értékének egy tömbnek kell lennie"
+
+#. js-lingui-id: 6rLmLu
+#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
+msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
+msgstr "Több rekordot találtunk ugyanazokkal az egyedi mezőértékekkel {conflictingFieldsValues}. Nem lehet meghatározni, hogy melyik rekordot kell frissíteni."
+
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1663,15 +2266,45 @@ msgstr "Név"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "A(z) \"{computedMetadataNameFromLabel}\" név nem lehet ugyanaz a kapcsolat mindkét oldalán."
 
+#. js-lingui-id: Ge9TXE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr "A név \"{flatFieldMetadataName}\" nem elérhető"
+
+#. js-lingui-id: h8ic2G
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr "A név \"{flatFieldMetadataName}\" nem elérhető, mivel már egy másik mező használja"
+
+#. js-lingui-id: Q2loDF
+#: src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service.ts
+msgid "Name \"{name}\" is not available."
+msgstr "A név \"{name}\" nem elérhető."
+
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
 msgid "Name is not available, it may be duplicating another field's name."
 msgstr "A név nem elérhető, lehet, hogy duplikál egy másik mező nevet."
 
+#. js-lingui-id: Ny5wFU
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
+msgstr "A név nem érvényes: kisbetűvel kell kezdődnie, és csak alfanumerikus karaktereket tartalmazhat"
+
+#. js-lingui-id: zjh2SJ
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is too long"
+msgstr "A név túl hosszú"
+
 #. js-lingui-id: 0MobB1
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
 msgid "Name is too long: it exceeds the 63 characters limit."
 msgstr "A név túl hosszú: túllépi a 63 karakteres határt."
+
+#. js-lingui-id: go/Vg1
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is too short"
+msgstr "A név túl rövid"
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1682,6 +2315,17 @@ msgstr "A kedvenc mappa neve"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
 msgstr "A munkafolyamat-futtatás neve"
+
+#. js-lingui-id: P+jdmX
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name should be in camelCase"
+msgstr "A név camelCase-ben legyen"
+
+#. js-lingui-id: Dr0xtb
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
+msgid "Names are not synced with labels"
+msgstr "A nevek nincsenek szinkronizálva a címkékkel"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1697,6 +2341,11 @@ msgstr "Nincs bemenet az űrlap lépésben"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
 msgstr "Nincs minta megadva a CUSTOM cron triggerhez"
+
+#. js-lingui-id: 2iURlq
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "No permissions are set for this role on the selected object. Please set object permissions first."
+msgstr "Nincs engedély beállítva erre a szerepkörre az adott objektumon. Kérjük, állítsa be az objektumengedélyeket először."
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1717,6 +2366,11 @@ msgstr "Nincsenek lépések biztosítva a munkafolyamat verzióhoz"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No trigger type provided"
 msgstr "Nincs trigger típus biztosítva"
+
+#. js-lingui-id: /BipSk
+#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+msgid "No valid authentication context found."
+msgstr "Nincs érvényes hitelesítési kontextus."
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1811,6 +2465,16 @@ msgstr "JegyzetCél lehetőség"
 msgid "NoteTarget person"
 msgstr "JegyzetCél személy"
 
+#. js-lingui-id: t9QlBd
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "November"
+msgstr "November"
+
+#. js-lingui-id: bR2sEm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Number format"
+msgstr "Számformátum"
+
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Number of employees in the company"
@@ -1818,18 +2482,83 @@ msgstr "A társaság alkalmazottainak száma"
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Az objektum már létezik"
+
+#. js-lingui-id: wLX74t
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
+msgid "Object label is too long"
+msgstr "Az objektum címkéje túl hosszú"
+
+#. js-lingui-id: nmhjwk
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
+msgid "Object label is too short"
+msgstr "Az objektum címkéje túl rövid"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "Objektum Metaadat Azonosító"
 
+#. js-lingui-id: xrblgA
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "Object metadata not found"
+msgstr "Az objektum metaadata nem található"
+
+#. js-lingui-id: E8vJ0A
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Object related to field to update not found"
+msgstr "A frissítendő mezőhöz kapcsolódó objektum nem található"
+
+#. js-lingui-id: MnOwTp
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Object related to updated field does not have a label identifier"
+msgstr "A frissített mezőhöz kapcsolódó objektumnak nincs címkeazonosítója"
+
+#. js-lingui-id: 6unt40
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
+msgid "Object targeted by field to create not found"
+msgstr "A létrehozandó mező által célzott objektum nem található"
+
+#. js-lingui-id: KHK54G
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Object targeted by the relation not found"
+msgstr "A kapcsolat által célzott objektum nem található"
+
+#. js-lingui-id: bMeJkW
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Object to delete not found"
+msgstr "A törlendő objektum nem található"
+
+#. js-lingui-id: pQ5dZU
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Object to update not found"
+msgstr "A frissítendő objektum nem található"
+
+#. js-lingui-id: cdjRFZ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Object with same id already exists"
+msgstr "Az objektum már létezik ugyanazzal az azonosítóval"
+
 #. js-lingui-id: 53pIyA
-#: src/engine/core-modules/view/exceptions/view.exception.ts
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
-msgstr ""
+msgstr "Az ObjectMetadataId szükséges a nézet létrehozásához."
+
+#. js-lingui-id: dzQfDY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "October"
+msgstr "Október"
+
+#. js-lingui-id: eWQQpx
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
+msgstr "Az egyik vagy több objektum, amelyre engedélyeket próbál beállítani, nem található. Lehet, hogy törölték őket."
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1899,56 +2628,90 @@ msgid "Opportunity stage"
 msgstr "Lehetőség szakasza"
 
 #. js-lingui-id: 2mFkfl
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is invalid"
-msgstr ""
+msgstr "Opció azonosító érvénytelen"
 
 #. js-lingui-id: MniXaX
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is required"
-msgstr ""
+msgstr "Opció azonosító szükséges"
 
 #. js-lingui-id: //eyK1
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Az opció címke \"{sanitizedLabel}\" 1 karakter alatt van"
 
 #. js-lingui-id: mTFS0z
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Az opció címke túllépi a 63 karaktert"
 
+#. js-lingui-id: h8lHqX
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option label format not supported"
+msgstr "Az opció címke formátuma nem támogatott"
+
 #. js-lingui-id: +E9N4m
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Opció címke kötelező"
 
+#. js-lingui-id: dFudyC
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option label must be a string of at least one character"
+msgstr "Az opció címkéjének legalább egy karakter hosszúnak kell lennie"
+
 #. js-lingui-id: nQqNzE
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Az opció érték \"{sanitizedValue}\" 1 karakter alatt van"
 
 #. js-lingui-id: 5m/1Hh
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Az opció érték meghaladja a 63 karaktert"
 
+#. js-lingui-id: zEGChV
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option value format not supported"
+msgstr "Az opció érték formátuma nem támogatott"
+
 #. js-lingui-id: /wsRPd
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Opció érték szükséges"
+
+#. js-lingui-id: Kub9t0
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option value must be a string of at least one character"
+msgstr "Az opció értékének legalább egy karakter hosszú karakterláncnak kell lennie"
 
 #. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Optional aggregate operation"
 msgstr "Opcionális aggregációs művelet"
+
+#. js-lingui-id: EabrTR
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Options are required for enum fields"
+msgstr "Az enum mezőkhöz szükségesek az opciók"
+
+#. js-lingui-id: AODALE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Page Layout ID"
+msgstr "Oldal Elrendezés Azonosító"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -1964,6 +2727,26 @@ msgstr "Szülő Nézet Szűrő Csoport Azonosítója"
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
 msgstr "Jelszó túl gyenge"
+
+#. js-lingui-id: l6qKfi
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Pending action for folder sync"
+msgstr ""
+
+#. js-lingui-id: ttZgHv
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Pending action for group emails"
+msgstr ""
+
+#. js-lingui-id: 5aGQev
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Pending group emails action"
+msgstr ""
+
+#. js-lingui-id: 6jM9pB
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Pending Sync Action"
+msgstr ""
 
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2005,6 +2788,27 @@ msgstr "Telefon"
 msgid "Phones"
 msgstr "Telefonok"
 
+#. js-lingui-id: rxi3R2
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
+msgstr "Kérjük, ellenőrizze a kapcsolat beállításait. Győződjön meg róla, hogy a szerver hoszt, port és jelszó helyes."
+
+#. js-lingui-id: v0iiWr
+#: src/engine/core-modules/webhook/webhook.service.ts
+#: src/engine/core-modules/webhook/webhook.service.ts
+msgid "Please provide a valid HTTP or HTTPS URL."
+msgstr "Kérjük, adjon meg érvényes HTTP vagy HTTPS URL-t."
+
+#. js-lingui-id: RDvKTq
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "Please provide connection details to configure your email account."
+msgstr "Kérjük, adja meg a kapcsolati adatokat, hogy beállíthassa e-mail fiókját."
+
+#. js-lingui-id: 0ldKS0
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
+msgstr "Kérjük, válasszon érvényes kapcsolati típust (IMAP, SMTP vagy CalDAV), majd próbálja újra."
+
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Point of Contact"
@@ -2024,6 +2828,7 @@ msgstr "Kapcsolattartó"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
@@ -2086,10 +2891,31 @@ msgstr "A megadott telefonszám érvénytelen {number}"
 msgid "provider"
 msgstr "szolgáltató"
 
+#. js-lingui-id: OL88cI
+#: src/engine/core-modules/public-domain/public-domain.service.ts
+msgid "Public domain already registered"
+msgstr "A nyilvános domain már regisztrálva van"
+
+#. js-lingui-id: Capzni
+#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
+msgstr "A nyilvános domain URL nincs meghatározva. Kérjük, állítsa be a PUBLIC_DOMAIN_URL környezeti változót."
+
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Fogadás ideje"
+
+#. js-lingui-id: x93onj
+#: src/engine/metadata-modules/view-field/services/view-field.service.ts
+#: src/engine/metadata-modules/view-field/services/view-field.service.ts
+msgid "Record text must be in first position of the view."
+msgstr "A rekord szövegének a nézet első helyén kell lennie."
+
+#. js-lingui-id: KGmwY/
+#: src/engine/metadata-modules/view-field/services/view-field.service.ts
+msgid "Record text must stay visible."
+msgstr "A rekord szövegének láthatónak kell maradnia."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2107,11 +2933,35 @@ msgstr "Frissítési Token"
 msgid "Related user email address"
 msgstr "Kapcsolódó felhasználó e-mail címe"
 
+#. js-lingui-id: +bFtT5
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
+msgid "Relation creation payload is required"
+msgstr "Szükséges kapcsolatteremtési adatok"
+
+#. js-lingui-id: 5y41wK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Relation field target metadata not found"
+msgstr "A kapcsolat mező cél metaadata nem található"
+
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Relations"
 msgstr "Kapcsolatok"
+
+#. js-lingui-id: PWdFkY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Remote objects are not production ready yet"
+msgstr "A távoli objektumok még nem állnak készen a gyártásra"
+
+#. js-lingui-id: yVxtzR
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Remote objects are not supported yet"
+msgstr "A távoli objektumok nem támogatottak még"
 
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -2130,11 +2980,44 @@ msgstr "Válasz státusza"
 msgid "Role"
 msgstr "Szerepkör"
 
+#. js-lingui-id: MFW30/
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route already exists"
+msgstr "Az útvonal már létezik"
+
+#. js-lingui-id: ldQZkA
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route not found"
+msgstr "Útvonal nem található"
+
+#. js-lingui-id: NCQS+K
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route path already exists"
+msgstr "Az útvonal elérési útja már létezik"
+
+#. js-lingui-id: v5H7VS
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route with same id already exists"
+msgstr "Az útvonal már létezik ugyanazzal az azonosítóval"
+
+#. js-lingui-id: c10Yre
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+msgid "Route with same path already exists"
+msgstr "Az útvonal már létezik ugyanazzal az úttal"
+
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Runs"
 msgstr "Futások"
+
+#. js-lingui-id: +5kO8P
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Saturday"
+msgstr "Szombat"
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2147,6 +3030,46 @@ msgstr "Hatáskörök"
 msgid "Search vector"
 msgstr "Kereső vektor"
 
+#. js-lingui-id: hgvbYY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "September"
+msgstr "Szeptember"
+
+#. js-lingui-id: F3+i2a
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+msgid "Serverless function already exists"
+msgstr "Serverless funkció már létezik"
+
+#. js-lingui-id: MSgd2w
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+msgid "Serverless function not found"
+msgstr "Serverless funkció nem található"
+
+#. js-lingui-id: jNhvmj
+#: src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util.ts
+msgid "Serverless function to update not found"
+msgstr "Frissítendő serverless funkció nem található"
+
+#. js-lingui-id: zoBkIJ
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+msgid "Serverless function with same id already exists"
+msgstr "Serverless funkció már létezik ugyanazzal az azonosítóval"
+
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
@@ -2157,10 +3080,31 @@ msgstr "Beállítások"
 msgid "Size"
 msgstr "Méret"
 
+#. js-lingui-id: RyE+Of
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "Some of the information provided is invalid. Please check your input and try again."
+msgstr "Az egyik vagy több információ érvénytelen. Kérjük, ellenőrizze a bevitelt és próbálja újra."
+
+#. js-lingui-id: 01Sxb6
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
+msgstr "Az Ön által kiválasztott engedélyek közül néhány nem érvényes. Kérjük, próbálja meg újra érvényes engedélybeállításokkal."
+
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "Szakasz"
+
+#. js-lingui-id: dc5N0o
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Standard fields cannot be deleted"
+msgstr "A szabványos mezők nem törölhetők"
+
+#. js-lingui-id: Ptv+nG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Standard objects cannot be deleted"
+msgstr "A szabványos objektumok nem törölhetők"
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2171,7 +3115,7 @@ msgstr "Kezdés dátuma"
 #. js-lingui-id: amGzX5
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Start of the week"
-msgstr ""
+msgstr "A hét kezdete"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2199,7 +3143,7 @@ msgid "Statuses cannot be set manually."
 msgstr "A státuszok nem állíthatók be manuálisan."
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Step is not a form"
 msgstr "A lépés nem űrlap"
 
@@ -2219,6 +3163,21 @@ msgstr "Almező neve"
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Tárgy"
+
+#. js-lingui-id: DBC3t5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Sunday"
+msgstr "Vasárnap"
+
+#. js-lingui-id: VuvnTL
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Sync all folders"
+msgstr ""
+
+#. js-lingui-id: 9PsZjo
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Sync all folders including new ones"
+msgstr ""
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2390,6 +3349,11 @@ msgstr "A felhasználói fiók azonosítója (email, felhasználónév, telefons
 msgid "The account provider"
 msgstr "A fiókszolgáltató"
 
+#. js-lingui-id: eC8p5b
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "The API key does not have a valid role assigned. Please check your API key configuration."
+msgstr "Az API kulcshoz nincs érvényes szerepkör rendelve. Kérjük, ellenőrizze az API kulcs beállításait."
+
 #. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Linkedin account"
@@ -2416,7 +3380,9 @@ msgstr "A cég weboldalának URL-je. Ezt az URL-t használjuk a cég ikonjának 
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "A rekord létrehozója"
@@ -2431,10 +3397,25 @@ msgstr "A munkafolyamat-verziók jelenlegi állapotai"
 msgid "The date the message was received"
 msgstr "Az üzenet fogadásának dátuma"
 
+#. js-lingui-id: nCXfEw
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "The default role cannot be deleted as it is required for the workspace to function properly."
+msgstr "Az alapértelmezett szerepkör nem törölhető, mivel szükséges a munkaterület megfelelő működéséhez."
+
+#. js-lingui-id: 6BBrjb
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "The default role for this workspace could not be found. Please contact support for assistance."
+msgstr "Az alapértelmezett szerepkör nem található meg ebben a munkaterületen. Kérjük, vegye fel a kapcsolatot a támogatással segítségért."
+
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
 msgstr "A munkafolyamat végrehajtója"
+
+#. js-lingui-id: LdhPiK
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
+msgstr "A mező, amelyre engedélyeket próbál beállítani, nem található. Lehet, hogy törölték."
 
 #. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -2446,10 +3427,49 @@ msgstr "A kedvenc mappája"
 msgid "The initial version of a workflow can not be deleted"
 msgstr "A munkafolyamat kezdeti verziója nem törölhető"
 
+#. js-lingui-id: YTftFF
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "The name is not available"
+msgstr "Ez a név nem elérhető"
+
+#. js-lingui-id: hx2IZ4
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
+msgstr "Az objektum, amelyre engedélyeket próbál beállítani, nem található. Lehet, hogy törölték."
+
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "Az lehetőség neve"
+
+#. js-lingui-id: Zi9X+u
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
+msgstr "A szerepkör, amit keres, nem található. Lehet, hogy törölték, vagy Ön nem férhet hozzá."
+
+#. js-lingui-id: 5h4Nxe
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "The role you are trying to assign could not be found. It may have been deleted."
+msgstr "A szerepkör, amelyet hozzárendelni próbál, nem található. Lehet, hogy törölték."
+
+#. js-lingui-id: HRcugS
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
+msgstr "A szerepkör, amit módosítani próbál, nem található. Lehet, hogy törölték, vagy Ön nem férhet hozzá."
+
+#. js-lingui-id: H1tAJD
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
+msgid "The singular and plural labels cannot be the same for an object"
+msgstr "Az egyes és többes számú címkék nem lehetnek ugyanazok egy objektumhoz"
+
+#. js-lingui-id: FOEWHl
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+msgid "The singular and plural names cannot be the same for an object"
+msgstr "Az egyes és többes számú nevek nem lehetnek ugyanazok egy objektumhoz"
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -2481,18 +3501,69 @@ msgstr "A munkafolyamat verzió neve"
 msgid "The workflow version status"
 msgstr "A munkafolyamat verzió státusza"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: Kfwq7n
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "There was an issue with your connection settings. Please try again."
+msgstr "Kapcsolati beállításai nem megfelelőek. Kérjük, próbálja újra."
+
+#. js-lingui-id: Bm40Ow
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldName} is already taken. Please choose a different value."
+msgstr "Ez a {fieldName} már foglalt. Kérjük, válasszon másik értéket."
+
+#. js-lingui-id: CYyoPc
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
+msgstr "Ez a {fieldName} értékkel {duplicatedValues} már foglalt. Kérjük, válasszon másik értéket."
+
+#. js-lingui-id: Izdz+Y
+#: src/engine/core-modules/api-key/api-key.service.ts
+msgid "This API Key has been revoked and can no longer be used."
+msgstr "Ez az API kulcs visszavonásra került és már nem használható."
+
+#. js-lingui-id: Jmzgho
+#: src/engine/core-modules/api-key/api-key.service.ts
+msgid "This API Key has expired. Please create a new one."
+msgstr "Ez az API kulcs lejárt. Kérjük, hozzon létre egy újat."
+
+#. js-lingui-id: r/Z8XK
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This combination of {fieldNames} already exists. Please use different values."
+msgstr "Ez a {fieldNames} kombináció már létezik. Kérjük, használjon más értékeket."
+
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Ez a név nem elérhető, mivel már egy másik mező használja"
+msgid "This name is not available as it is already used by another field."
+msgstr "Ez a név nem elérhető, mivel már egy másik mező használja."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator.ts
 msgid "This name is not available."
 msgstr "Ez a név nem elérhető."
+
+#. js-lingui-id: eitC3W
+#: src/engine/workspace-datasource/workspace-datasource.service.ts
+msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
+msgstr "Ez a művelet nem engedélyezett. Kérjük, próbálkozzon más megközelítéssel, vagy ha szükséges, vegye fel a kapcsolatot a támogatással."
+
+#. js-lingui-id: TjUnO1
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This record already exists. Please check your data and try again."
+msgstr "Ez a rekord már létezik. Kérjük, ellenőrizze az adatait és próbálja újra."
+
+#. js-lingui-id: +L9yxk
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "This role cannot be assigned to users. Please select a different role."
+msgstr "Ez a szerepkör nem rendelhető felhasználókhoz. Kérjük, válasszon másik szerepkört."
+
+#. js-lingui-id: KoDdqN
+#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
+msgstr "Ez a szerepkör nem módosítható, mivel rendszerszerepkör. Csak egyéni szerepkörök szerkeszthetők."
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -2512,6 +3583,11 @@ msgstr "Szál azonosítója az üzenetküldő szolgáltatótól"
 msgid "Throttle Failure Count"
 msgstr "Drosszelszelep hiba szám"
 
+#. js-lingui-id: kkDQ8m
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Thursday"
+msgstr "Csütörtök"
+
 #. js-lingui-id: n9nSNJ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Time format"
@@ -2530,6 +3606,7 @@ msgstr "Időzóna"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
@@ -2539,6 +3616,11 @@ msgstr "Idővonal tevékenységek"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Timeline Activities linked to the company"
 msgstr "Idővonal tevékenységek kapcsolódva a céghez"
+
+#. js-lingui-id: CNev+0
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Timeline activities linked to the dashboard"
+msgstr "Idővonal tevékenységek kapcsolódva az irányítópulthoz"
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -2583,28 +3665,49 @@ msgstr "Idővonal tevékenység"
 #. js-lingui-id: MHrjPM
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Cím"
 
+#. js-lingui-id: G3myU+
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Tuesday"
+msgstr "Kedd"
+
 #. js-lingui-id: +zy2Nq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "Típus"
+
+#. js-lingui-id: UhRoLN
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Type (deprecated)"
+msgstr "Típus (elavult)"
 
 #. js-lingui-id: RBJNRI
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Unique field cannot have a default value"
-msgstr ""
+msgstr "Egyedi mező nem tartalmazhat alapértelmezett értéket"
+
+#. js-lingui-id: WWSSTx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
+msgstr "Egyedi index nem hozható létre az {fieldType} típusú {fieldName} mezőhöz."
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
 msgstr "Nem támogatott cron ütemezés típus"
+
+#. js-lingui-id: crxihq
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Unsupported field metadata type {fieldType}"
+msgstr "Nem támogatott mező metaadat típusa {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2612,10 +3715,26 @@ msgstr "Nem támogatott cron ütemezés típus"
 msgid "Update DateTime"
 msgstr "Frissítési dátum és idő"
 
+#. js-lingui-id: r5C2wB
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Updated field name is not synced with label"
+msgstr "A frissített mező neve nincs szinkronizálva a címkével"
+
+#. js-lingui-id: GkcfmO
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "User already exists"
+msgstr "A felhasználó már létezik"
+
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "A felhasználónak nincs hozzáférése ehhez a munkaterülethez"
+
+#. js-lingui-id: Sl1ElS
+#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+msgid "User does not have permission."
+msgstr "A felhasználónak nincs engedélye."
 
 #. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2632,6 +3751,11 @@ msgstr "Felhasználói azonosító"
 msgid "User is not part of the workspace"
 msgstr "A felhasználó nem része a területnek"
 
+#. js-lingui-id: g5Z6no
+#: src/engine/core-modules/admin-panel/admin-panel.service.ts
+msgid "User not found. Please check the email or ID."
+msgstr "A felhasználó nem található. Kérjük, ellenőrizze az e-mail címet vagy az azonosítót."
+
 #. js-lingui-id: 4juE7s
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User time zone"
@@ -2640,22 +3764,32 @@ msgstr "Felhasználói időzóna"
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
-msgstr ""
+msgstr "A felhasználó nem lett létrehozva e-mail/jelszó használatával"
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
 msgstr "Felhasználó preferált dátum formátuma"
 
+#. js-lingui-id: PLfanm
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred number format"
+msgstr "Felhasználó által preferált számformátum"
+
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
-msgstr ""
+msgstr "Felhasználó által előnyben részesített hétköznap"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Felhasználó preferált idő formátuma"
+
+#. js-lingui-id: xInMK/
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Validation failed for 0 object(s) and 0 field(s)"
+msgstr "A validáció meghiúsult 0 objektum(ok) és 0 mező(k) esetén"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -2663,9 +3797,10 @@ msgid "Value"
 msgstr "Érték"
 
 #. js-lingui-id: UBPzFQ
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr ""
+msgstr "Az értéknek UPPER_CASE formátumban kell lennie, és követnie kell a snake_case formátumot \"{sanitizedValue}\""
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2695,14 +3830,38 @@ msgstr "Verziók"
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "View"
 msgstr "Nézet"
+
+#. js-lingui-id: HhN1Bv
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View already exists"
+msgstr "A nézet már létezik"
 
 #. js-lingui-id: cZPDyy
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Nézet mező"
+
+#. js-lingui-id: pTvQqf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field already exists"
+msgstr "A nézet mező már létezik"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "A nézet mező már létezik."
+
+#. js-lingui-id: 7jUWQ+
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field metadata already exists"
+msgstr "A nézet mező metaadata már létezik"
+
+#. js-lingui-id: Yvf7WL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field metadata with id {flatViewFieldId} already exists"
+msgstr "A nézet mező metaadata azonosítóval {flatViewFieldId} már létezik"
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -2710,10 +3869,22 @@ msgstr "Nézet mező"
 msgid "View Field position"
 msgstr "Nézet mező pozíció"
 
+#. js-lingui-id: 7LMaUn
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field position cannot be lower than label identifier view field position"
+msgstr "A nézetmező pozíciója nem lehet alacsonyabb a címke azonosító nézetmező pozíciójánál"
+
 #. js-lingui-id: Ju6gri
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field related view"
 msgstr "Kapcsolódó nézetre vonatkozó mező megtekintése"
+
+#. js-lingui-id: WZzm3R
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field related view object metadata not found"
+msgstr "A nézetmezőhöz kapcsolódó nézetobjektum metaadata nem található"
 
 #. js-lingui-id: tvTr2y
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -2725,10 +3896,46 @@ msgstr "Mező méretének megtekintése"
 msgid "View Field target field"
 msgstr "Mező célmezőjének megtekintése"
 
+#. js-lingui-id: XJlyZS
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to delete not found"
+msgstr "A törlendő nézetmező nem található"
+
+#. js-lingui-id: DXyYuh
+#: src/engine/metadata-modules/flat-view-field/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
+msgid "View field to destroy not found"
+msgstr "A nem megsemmisíthető nézetmező nem található"
+
+#. js-lingui-id: Fpy/K1
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+msgid "View field to update not found"
+msgstr "A frissítendő nézetmező nem található"
+
+#. js-lingui-id: AprfQL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to update parent view not found"
+msgstr "A szülő nézet frissítéséhez tartozó nézetmező nem található"
+
+#. js-lingui-id: sqzMKR
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to update parent view object not found"
+msgstr "A szülő nézetobjektum frissítéséhez tartozó nézetmező nem található"
+
 #. js-lingui-id: Gd/LzL
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field visibility"
 msgstr "Mező láthatóságának megtekintése"
+
+#. js-lingui-id: 89Wiy+
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field with same fieldmetadataId and viewId already exists"
+msgstr "A megtekintési mező ugyanazzal a fieldmetadataId és viewId azonosítóval már létezik"
 
 #. js-lingui-id: GUFYyq
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2765,6 +3972,14 @@ msgstr "Szűrőcsoport azonosítójának megtekintése"
 msgid "View Filter Groups"
 msgstr "Szűrőcsoportok megtekintése"
 
+#. js-lingui-id: 1KSqGE
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter not found"
+msgstr "A nézet szűrő nem található"
+
 #. js-lingui-id: 4MG8+B
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter operand"
@@ -2780,10 +3995,31 @@ msgstr "Kapcsolódó nézet szűrőjének megtekintése"
 msgid "View Filter target field"
 msgstr "Szűrő célmezőjének megtekintése"
 
+#. js-lingui-id: 3l1ppY
+#: src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util.ts
+msgid "View filter to delete not found"
+msgstr "A törlendő nézet szűrő nem található"
+
+#. js-lingui-id: 9gedIx
+#: src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util.ts
+msgid "View filter to destroy not found"
+msgstr "A törlendő nézet szűrő nem található"
+
+#. js-lingui-id: GzthLy
+#: src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util.ts
+msgid "View filter to update not found"
+msgstr "A frissítendő nézet szűrő nem található"
+
 #. js-lingui-id: 3KzkxN
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "View Filter value"
 msgstr "Szűrő értékének megtekintése"
+
+#. js-lingui-id: LnNgrI
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter with this id already exists"
+msgstr "Már létezik egy nézet szűrő ugyanazzal az azonosítóval"
 
 #. js-lingui-id: vj5JsR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2797,6 +4033,16 @@ msgstr "Szűrők megtekintése"
 msgid "View Group"
 msgstr "Nézetcsoport megtekintése"
 
+#. js-lingui-id: MGbEFN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata already exists"
+msgstr "A nézetcsoport metaadata már létezik."
+
+#. js-lingui-id: lbyQO4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata with id {flatViewGroupId} already exists"
+msgstr "A nézetcsoport metaadata a(z) {flatViewGroupId} azonosítóval már létezik."
+
 #. js-lingui-id: uQ3c2q
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group related view"
@@ -2806,6 +4052,37 @@ msgstr "Kapcsolódó nézet nézetcsoportjának megtekintése"
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
 msgid "View Group target field"
 msgstr "Nézetcsoport célmezőjének megtekintése"
+
+#. js-lingui-id: JdAvYa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to delete not found"
+msgstr "A törlendő nézetcsoport nem található."
+
+#. js-lingui-id: 34hWb7
+#: src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to destroy not found"
+msgstr "A megsemmisítendő nézetcsoport nem található."
+
+#. js-lingui-id: UP/TXo
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
+msgid "View group to update not found"
+msgstr "A frissítendő nézetcsoport nem található."
+
+#. js-lingui-id: XbOhpY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent field not found"
+msgstr "A frissítendő nézetcsoport szülőmezője nem található."
+
+#. js-lingui-id: P0grPG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent view not found"
+msgstr "A frissítendő nézetcsoport szülőnézete nem található."
 
 #. js-lingui-id: b1Vc+l
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -2824,6 +4101,14 @@ msgstr "Nézetcsoportok megtekintése"
 msgid "View icon"
 msgstr "Ikon megtekintése"
 
+#. js-lingui-id: M7KWZV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View kanban aggregate field metadata not found"
+msgstr "Kanban összesített mező metaadatok nem találhatók"
+
 #. js-lingui-id: cd/+ZD
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View Kanban column field"
@@ -2839,6 +4124,20 @@ msgstr "Kulcs megtekintése"
 msgid "View name"
 msgstr "Név megtekintése"
 
+#. js-lingui-id: F4A9mL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View not found"
+msgstr "A nézet nem található"
+
 #. js-lingui-id: rhO8zp
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View position"
@@ -2849,10 +4148,20 @@ msgstr "Pozíció megtekintése"
 msgid "View Sort"
 msgstr "Rendezés megtekintése"
 
+#. js-lingui-id: znNExx
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
+msgid "View sort (id: {id}) not found"
+msgstr "A nézet rendezés (azonosító: {id}) nem található"
+
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort direction"
 msgstr "Rendezés irányának megtekintése"
+
+#. js-lingui-id: 3zMs+f
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
+msgid "View sort not found"
+msgstr "A nézet rendezés nem található"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -2876,35 +4185,66 @@ msgstr "Rendezések megtekintése"
 msgid "View target object"
 msgstr "Cél objektum megtekintése"
 
+#. js-lingui-id: toB/08
+#: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
+msgid "View to delete not found"
+msgstr "A törlendő nézet nem található"
+
+#. js-lingui-id: NnD3Ti
+#: src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
+msgid "View to destroy not found"
+msgstr "A törlendő nézet nem található"
+
+#. js-lingui-id: 3+GbNY
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "View to update not found"
+msgstr "A frissítendő nézet nem található"
+
 #. js-lingui-id: bJAIqT
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"
 msgstr "Típus megtekintése"
 
+#. js-lingui-id: ZgRtC4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View with same id is already exists"
+msgstr "A nézet már létezik ugyanazzal az azonosítóval"
+
+#. js-lingui-id: aeqysn
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "ViewId"
+msgstr "MegtekintésiAzonosító"
+
+#. js-lingui-id: kpQRY2
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
+msgid "ViewId is required"
+msgstr "ViewId szükséges"
+
 #. js-lingui-id: l88nXn
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
-msgstr ""
+msgstr "A ViewId szükséges a nézetmező létrehozásához."
 
 #. js-lingui-id: 9XMTpT
-#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
-msgstr ""
+msgstr "A ViewId szükséges a nézet szűrőcsoport létrehozásához."
 
 #. js-lingui-id: pCCxli
-#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
-msgstr ""
+msgstr "A ViewId szükséges a nézet szűrő létrehozásához."
 
 #. js-lingui-id: 1X1RW5
-#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
-msgstr ""
+msgstr "A ViewId szükséges a nézetcsoport létrehozásához."
 
 #. js-lingui-id: uGUFcy
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
-msgstr ""
+msgstr "A ViewId szükséges a nézet rendezés létrehozásához."
 
 #. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2928,7 +4268,37 @@ msgstr "Látható"
 #. js-lingui-id: xvV2NJ
 #: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
-msgstr ""
+msgstr "Átmeneti problémát tapasztalunk az adatbázisunkkal. Kérjük, próbálja meg később újra."
+
+#. js-lingui-id: B3CG/U
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't connect to your CalDAV server. Please check your server settings and try again."
+msgstr "Nem tudtunk csatlakozni a CalDAV szerveréhez. Kérjük, ellenőrizze a szerver beállításait és próbálja újra."
+
+#. js-lingui-id: ax8unE
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't connect to your email server. Please check your server settings and try again."
+msgstr "Nem tudtunk csatlakozni az e-mail szerveréhez. Kérjük, ellenőrizze a szerver beállításait és próbálja újra."
+
+#. js-lingui-id: g4rOV3
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again."
+msgstr "Nem tudtunk csatlakozni a kimenő e-mail szerveréhez. Kérjük, ellenőrizze az SMTP beállításokat és próbálja újra."
+
+#. js-lingui-id: v8UNEA
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't log in to your email account. Please check your email address and password, then try again."
+msgstr "Nem tudtunk bejelentkezni az e-mail fiókjába. Kérjük, ellenőrizze az e-mail címet és a jelszót, majd próbálja újra."
+
+#. js-lingui-id: YxBvFz
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
+msgstr "Problémába ütköztünk, amikor megpróbáltunk csatlakozni az e-mail fiókjához. Kérjük, ellenőrizze a beállításokat és próbálja újra."
+
+#. js-lingui-id: VAcXNz
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Wednesday"
+msgstr "Szerda"
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
@@ -2944,6 +4314,7 @@ msgstr "Üdvözöljük a Twenty-ben: Kérjük, erősítse meg e-mail-címét"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Workflow"
 msgstr "Munkafolyamatok"
 
@@ -2973,6 +4344,17 @@ msgstr "Munkafolyamat futtatása"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run ended at"
 msgstr "Munkafolyamat futtatása befejeződött"
+
+#. js-lingui-id: NKQlas
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+msgid "Workflow run enqueued at"
+msgstr "Munkafolyamat futtatása sorba állítva ekkor:"
+
+#. js-lingui-id: C5dusT
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "Workflow run is not running"
+msgstr "A Workflow futás nem fut"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3082,6 +4464,11 @@ msgstr "MunkafolyamatVerzió"
 msgid "WorkflowVersion workflow"
 msgstr "MunkafolyamatVerzió munkafolyamat"
 
+#. js-lingui-id: XsSVrR
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace creation is restricted to admins"
+msgstr "A munkaterület létrehozása csak az adminisztrátorok számára engedélyezett"
+
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
@@ -3122,35 +4509,40 @@ msgstr "Munkaterület tag pozíciója"
 msgid "Workspace Members"
 msgstr "Munkaterület Tagjai"
 
+#. js-lingui-id: bBr+RW
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required"
+msgstr "WorkspaceId szükséges"
+
 #. js-lingui-id: kjLpTn
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
-msgstr ""
+msgstr "A WorkspaceId szükséges a nézetmező létrehozásához."
 
 #. js-lingui-id: zWj6VZ
-#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
-msgstr ""
+msgstr "A WorkspaceId szükséges a nézet szűrőcsoport létrehozásához."
 
 #. js-lingui-id: jQMXtD
-#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
-msgstr ""
+msgstr "A WorkspaceId szükséges a nézet szűrő létrehozásához."
 
 #. js-lingui-id: NAoJAX
-#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
-msgstr ""
+msgstr "A WorkspaceId szükséges a nézetcsoport létrehozásához."
 
 #. js-lingui-id: hU1QaN
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
-msgstr ""
+msgstr "A WorkspaceId szükséges a nézet rendezés létrehozásához."
 
 #. js-lingui-id: jtb/lI
-#: src/engine/core-modules/view/exceptions/view.exception.ts
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
-msgstr ""
+msgstr "A WorkspaceId szükséges a nézet létrehozásához."
 
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
@@ -3170,6 +4562,52 @@ msgstr "Hibás jelszó"
 msgid "X"
 msgstr "X"
 
+#. js-lingui-id: 1SQnFB
+#: src/engine/metadata-modules/role/role.resolver.ts
+msgid "You cannot change your own role. Please ask another administrator to update your role."
+msgstr "Nem változtathatja meg a saját szerepkörét. Kérjen meg egy másik adminisztrátort, hogy frissítse a szerepkörét."
+
+#. js-lingui-id: y5haJ4
+#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
+msgstr "Nem adhat szerkesztési engedélyt olvasási engedély nélkül. Kérjük, először engedélyezze az olvasási hozzáférést."
+
+#. js-lingui-id: 8wovNr
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
+msgstr "Nem távolíthatja el az adminisztrátori szerepkört az utolsó adminisztrátortól. Először rendeljen másik adminisztrátort."
+
+#. js-lingui-id: WUcQVb
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "You cannot set field permissions on system objects as they are managed by the platform."
+msgstr "Nem állíthat be mező engedélyeket rendszerobjektumokra, mivel azokat a platform kezeli."
+
+#. js-lingui-id: SI6USg
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "You cannot set permissions on system objects as they are managed by the platform."
+msgstr "Nem állíthat be engedélyeket rendszerobjektumokra, mivel azokat a platform kezeli."
+
+#. js-lingui-id: EFQeXU
+#: src/engine/guards/settings-permissions.guard.ts
+msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
+msgstr "Nincs engedélye a funkció eléréséhez. Kérjük, lépjen kapcsolatba munkaterületének adminisztrátorával a hozzáférés érdekében."
+
+#. js-lingui-id: +2vVRB
+#: src/engine/guards/impersonate-permission.guard.ts
+msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
+msgstr "Nincs engedélye felhasználók megszemélyesítésére. Kérjük, lépjen kapcsolatba munkaterületének adminisztrátorával a hozzáférés érdekében."
+
+#. js-lingui-id: k7P8yU
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "You do not have permission to manage security settings. Please contact your workspace administrator."
+msgstr "Nincs engedélye a biztonsági beállítások kezelésére. Kérjük, lépjen kapcsolatba munkaterületének adminisztrátorával."
+
+#. js-lingui-id: svchJc
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "You do not have permission to manage workspace settings. Please contact your workspace administrator."
+msgstr "Nincs engedélye a munkaterület beállításainak kezelésére. Kérjük, lépjen kapcsolatba munkaterületének adminisztrátorával."
+
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
@@ -3180,10 +4618,22 @@ msgstr "Az akció végrehajtásához autentikáltnak kell lenni."
 msgid "Your app version is out of date. Please refresh the page to continue."
 msgstr "Az alkalmazás ön verziója elavult. Kérjük, frissítse az oldalt a folytatáshoz."
 
+#. js-lingui-id: J5Vm4Q
+#: src/engine/core-modules/billing/billing.validate.ts
+msgid "Your billing subscription is corrupted. Please contact support."
+msgstr "A számlázási előfizetése hibás. Kérjük, lépjen kapcsolatba a támogatással."
+
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
 msgstr "Jelszavát sikeresen megváltoztatta"
+
+#. js-lingui-id: XxkUFT
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
+msgstr "A szerepköre ebben a munkaterületen nem található. Kérjük, lépjen kapcsolatba munkaterületének adminisztrátorával."
 
 #. js-lingui-id: vPccnr
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -3194,3 +4644,8 @@ msgstr "Az Ön csapatának megbízott tagja, aki a cégfiókot kezeli"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "Az ön munkaterülete frissítve lett egy új adattípussal. Kérjük, frissítse az oldalt."
+
+#. js-lingui-id: ZukXiD
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
+msgstr "Munkaterülethez való tagsága nem található. Lehet, hogy már nincs hozzáférése a munkaterülethez."

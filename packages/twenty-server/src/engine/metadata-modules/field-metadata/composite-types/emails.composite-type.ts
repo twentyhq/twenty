@@ -23,5 +23,5 @@ export const emailsCompositeType: CompositeType = {
 
 export type EmailsMetadata = {
   primaryEmail: string;
-  additionalEmails: object | null;
+  additionalEmails: string[] | null;
 };

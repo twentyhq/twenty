@@ -1,5 +1,6 @@
 import {
   type AllowedAddressSubField,
+  type FieldMetadataMultiItemSettings,
   type FieldMetadataType,
   type IsExactly,
 } from 'twenty-shared/types';
@@ -48,6 +49,11 @@ export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
 };
 
+export type FieldMetadataTsVectorSettings = {
+  asExpression?: string;
+  generatedType?: 'STORED' | 'VIRTUAL';
+};
+
 type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
@@ -55,7 +61,12 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
-  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings | null; // TODO Should not be null
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
+  [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
+  [FieldMetadataType.PHONES]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.EMAILS]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.LINKS]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.ARRAY]: FieldMetadataMultiItemSettings | null;
 };
 
 export type AllFieldMetadataSettings =

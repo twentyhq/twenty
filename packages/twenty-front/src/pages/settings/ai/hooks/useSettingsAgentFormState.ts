@@ -14,9 +14,10 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
     description: '',
     icon: 'IconRobot',
     modelId: mode === 'edit' ? '' : 'auto',
-    role: '',
+    role: null,
     prompt: '',
     isCustom: true,
+    modelConfiguration: {},
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,6 +51,7 @@ export const useSettingsAgentFormState = (mode: 'create' | 'edit') => {
         role: '',
         prompt: '',
         isCustom: true,
+        modelConfiguration: {},
       });
     }
   };

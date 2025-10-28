@@ -1,9 +1,14 @@
 import { gql } from '@apollo/client';
 
-export const SWITCH_SUBSCRIPTION_TO_YEARLY_INTERVAL = gql`
-  mutation SwitchSubscriptionToYearlyInterval {
-    switchToYearlyInterval {
-      success
+export const SWITCH_SUBSCRIPTION_INTERVAL = gql`
+  mutation SwitchSubscriptionInterval {
+    switchSubscriptionInterval {
+      currentBillingSubscription {
+        ...CurrentBillingSubscriptionFragment
+      }
+      billingSubscriptions {
+        ...BillingSubscriptionFragment
+      }
     }
   }
 `;

@@ -5,6 +5,7 @@ const SEARCHABLE_FIELD_TYPES = [
   FieldMetadataType.EMAILS,
   FieldMetadataType.ADDRESS,
   FieldMetadataType.LINKS,
+  FieldMetadataType.PHONES,
   FieldMetadataType.RICH_TEXT,
   FieldMetadataType.RICH_TEXT_V2,
 ] as const;

@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-type FakeValueTypes =
+export type FakeValueTypes =
   | string
   | number
   | boolean

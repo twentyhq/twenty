@@ -1,5 +1,5 @@
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { type RecordUpdateHookParams } from '@/object-record/record-field/contexts/FieldContext';
+import { type RecordUpdateHookParams } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -9,14 +9,13 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 
 type RecordIndexTableContainerProps = {
   recordTableId: string;
-  viewBarId: string;
 };
 
 export const RecordIndexTableContainer = ({
   recordTableId,
-  viewBarId,
 }: RecordIndexTableContainerProps) => {
-  const { objectNameSingular } = useRecordIndexContextOrThrow();
+  const { objectNameSingular, viewBarInstanceId } =
+    useRecordIndexContextOrThrow();
 
   const isRecordIndexRemoveSortingModalOpened = useRecoilComponentValue(
     isModalOpenedComponentState,
@@ -39,7 +38,7 @@ export const RecordIndexTableContainer = ({
       <RecordTableWithWrappers
         recordTableId={recordTableId}
         objectNameSingular={objectNameSingular}
-        viewBarId={viewBarId}
+        viewBarId={viewBarInstanceId}
         updateRecordMutation={updateEntity}
       />
       {isRecordIndexRemoveSortingModalOpened && (

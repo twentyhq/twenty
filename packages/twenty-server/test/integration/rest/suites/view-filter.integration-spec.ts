@@ -1,11 +1,14 @@
 import {
-  TEST_FIELD_METADATA_1_ID,
   TEST_NOT_EXISTING_VIEW_FILTER_ID,
   TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-  assertRestApiErrorResponse,
+  assertRestApiErrorNotFoundResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
@@ -17,19 +20,75 @@ import {
   assertViewFilterStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
-
-import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
-import {
-  generateViewFilterExceptionMessage,
-  ViewFilterExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-filter.exception';
+import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 describe('View Filter REST API', () => {
+  let testObjectMetadataId: string;
+  let testFieldMetadataId: string;
+
+  beforeAll(async () => {
+    const {
+      data: {
+        createOneObject: { id: objectMetadataId },
+      },
+    } = await createOneObjectMetadata({
+      input: {
+        nameSingular: 'myTestObject',
+        namePlural: 'myTestObjects',
+        labelSingular: 'My Test Object',
+        labelPlural: 'My Test Objects',
+        icon: 'Icon123',
+      },
+    });
+
+    testObjectMetadataId = objectMetadataId;
+
+    const createFieldInput = {
+      name: 'testField',
+      label: 'Test Field',
+      type: FieldMetadataType.TEXT,
+      objectMetadataId: testObjectMetadataId,
+      isLabelSyncedWithName: true,
+    };
+
+    const {
+      data: {
+        createOneField: { id: fieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
+      input: createFieldInput,
+      gqlFields: `
+          id
+          name
+          label
+          isLabelSyncedWithName
+        `,
+    });
+
+    testFieldMetadataId = fieldMetadataId;
+  });
+
+  afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
+    await deleteOneObjectMetadata({
+      input: { idToDelete: testObjectMetadataId },
+    });
+  });
+
   beforeEach(async () => {
     await cleanupViewRecords();
 
     await createTestViewWithRestApi({
       name: 'Test View for Filters',
+      objectMetadataId: testObjectMetadataId,
     });
   });
 
@@ -64,6 +123,7 @@ describe('View Filter REST API', () => {
       const viewFilter = await createTestViewFilterWithRestApi({
         operand: ViewFilterOperand.CONTAINS,
         value: 'test',
+        fieldMetadataId: testFieldMetadataId,
       });
 
       const response = await makeRestAPIRequest({
@@ -80,7 +140,7 @@ describe('View Filter REST API', () => {
 
       assertViewFilterStructure(returnedViewFilter, {
         id: viewFilter.id,
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         viewId: TEST_VIEW_1_ID,
         operand: ViewFilterOperand.CONTAINS,
         value: 'test',
@@ -95,10 +155,11 @@ describe('View Filter REST API', () => {
       const viewFilter = await createTestViewFilterWithRestApi({
         operand: ViewFilterOperand.IS,
         value: 'test value',
+        fieldMetadataId: testFieldMetadataId,
       });
 
       assertViewFilterStructure(viewFilter, {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         viewId: TEST_VIEW_1_ID,
         operand: ViewFilterOperand.IS,
         value: 'test value',
@@ -111,10 +172,11 @@ describe('View Filter REST API', () => {
       const numericFilter = await createTestViewFilterWithRestApi({
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: '100',
+        fieldMetadataId: testFieldMetadataId,
       });
 
       assertViewFilterStructure(numericFilter, {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         viewId: TEST_VIEW_1_ID,
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: '100',
@@ -127,10 +189,11 @@ describe('View Filter REST API', () => {
       const booleanFilter = await createTestViewFilterWithRestApi({
         operand: ViewFilterOperand.IS,
         value: 'true',
+        fieldMetadataId: testFieldMetadataId,
       });
 
       assertViewFilterStructure(booleanFilter, {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         viewId: TEST_VIEW_1_ID,
         operand: ViewFilterOperand.IS,
         value: 'true',
@@ -145,6 +208,7 @@ describe('View Filter REST API', () => {
       const viewFilter = await createTestViewFilterWithRestApi({
         operand: ViewFilterOperand.IS,
         value: 'test',
+        fieldMetadataId: testFieldMetadataId,
       });
 
       const response = await makeRestAPIRequest({
@@ -156,7 +220,7 @@ describe('View Filter REST API', () => {
       assertRestApiSuccessfulResponse(response);
       assertViewFilterStructure(response.body, {
         id: viewFilter.id,
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         viewId: TEST_VIEW_1_ID,
         operand: ViewFilterOperand.IS,
         value: 'test',
@@ -172,8 +236,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toEqual({});
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 
@@ -182,6 +245,7 @@ describe('View Filter REST API', () => {
       const viewFilter = await createTestViewFilterWithRestApi({
         operand: ViewFilterOperand.IS,
         value: 'original',
+        fieldMetadataId: testFieldMetadataId,
       });
 
       const updateData = {
@@ -201,7 +265,7 @@ describe('View Filter REST API', () => {
         id: viewFilter.id,
         operand: ViewFilterOperand.IS_NOT,
         value: 'updated',
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         viewId: TEST_VIEW_1_ID,
       });
 
@@ -221,14 +285,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiErrorResponse(
-        response,
-        404,
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_FILTER_ID,
-        ),
-      );
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 
@@ -237,6 +294,7 @@ describe('View Filter REST API', () => {
       const viewFilter = await createTestViewFilterWithRestApi({
         operand: ViewFilterOperand.IS,
         value: 'to delete',
+        fieldMetadataId: testFieldMetadataId,
       });
 
       const deleteResponse = await makeRestAPIRequest({
@@ -254,8 +312,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(getResponse);
-      expect(getResponse.body).toEqual({});
+      assertRestApiErrorNotFoundResponse(getResponse);
     });
 
     it('should return 404 error when deleting non-existent view filter', async () => {
@@ -265,14 +322,7 @@ describe('View Filter REST API', () => {
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiErrorResponse(
-        response,
-        404,
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_FILTER_ID,
-        ),
-      );
+      assertRestApiErrorNotFoundResponse(response);
     });
   });
 });

@@ -30,10 +30,12 @@ export function addPersonEmailFiltersToQueryBuilder({
       'person.id',
       'person.emailsPrimaryEmail',
       'person.emailsAdditionalEmails',
+      'person.deletedAt',
     ])
     .where('LOWER(person.emailsPrimaryEmail) IN (:...emails)', {
       emails: normalizedEmails,
-    });
+    })
+    .withDeleted();
 
   if (excludePersonIds.length > 0) {
     queryBuilder = queryBuilder.andWhere(

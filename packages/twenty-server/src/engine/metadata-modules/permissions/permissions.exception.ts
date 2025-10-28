@@ -49,6 +49,8 @@ export enum PermissionsExceptionCode {
   EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'EMPTY_FIELD_PERMISSION_NOT_ALLOWED',
   JOIN_COLUMN_NAME_REQUIRED = 'JOIN_COLUMN_NAME_REQUIRED',
   COMPOSITE_TYPE_NOT_FOUND = 'COMPOSITE_TYPE_NOT_FOUND',
+  ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET',
+  ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
 }
 
 export enum PermissionsExceptionMessage {
@@ -78,4 +80,6 @@ export enum PermissionsExceptionMessage {
   FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT = 'Field restriction on update only makes sense on updatable object',
   OBJECT_PERMISSION_NOT_FOUND = 'Object permission not found',
   EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'Empty field permission not allowed',
+  ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'Role must be assignable to at least one target type',
+  ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'Role cannot be assigned to users',
 }

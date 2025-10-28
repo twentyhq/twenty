@@ -4,11 +4,10 @@ import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
-import { msg } from '@lingui/core/macro';
+import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 
 export const useRunWorkflowRecordAgnosticActions = () => {
   const { getIcon } = useIcons();
@@ -41,7 +40,7 @@ export const useRunWorkflowRecordAgnosticActions = () => {
         type: ActionType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionScope.Global,
-        label: msg`${name}`,
+        label: name,
         position: index,
         Icon,
         shouldBeRegistered: () => true,

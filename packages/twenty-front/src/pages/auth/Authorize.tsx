@@ -1,7 +1,7 @@
-import { AppPath } from '@/types/AppPath';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useLingui } from '@lingui/react/macro';

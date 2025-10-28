@@ -61,7 +61,7 @@ describe('shouldGenerateFieldFakeValue', () => {
     expect(shouldGenerateFieldFakeValue(field)).toBe(false);
   });
 
-  it('should return false for system fields (except id)', () => {
+  it('should return true for system fields', () => {
     const field = getMockFieldMetadataEntity({
       workspaceId: '20202020-0000-0000-0000-000000000000',
       objectMetadataId: '20202020-0000-0000-0000-000000000001',
@@ -77,7 +77,7 @@ describe('shouldGenerateFieldFakeValue', () => {
       updatedAt: new Date(),
     });
 
-    expect(shouldGenerateFieldFakeValue(field)).toBe(false);
+    expect(shouldGenerateFieldFakeValue(field)).toBe(true);
   });
 
   it('should return false for relation fields', () => {

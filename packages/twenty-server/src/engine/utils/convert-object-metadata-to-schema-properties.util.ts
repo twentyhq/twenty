@@ -256,6 +256,7 @@ export const convertObjectMetadataToSchemaProperties = ({
                 'EMAIL',
                 'CALENDAR',
                 'WORKFLOW',
+                'AGENT',
                 'API',
                 'IMPORT',
                 'MANUAL',

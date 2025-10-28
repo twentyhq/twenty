@@ -35,11 +35,11 @@ import { type SearchableFieldType } from 'src/engine/workspace-manager/workspace
 @Injectable()
 export class SearchVectorService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly tsVectorColumnActionFactory: TsVectorColumnActionFactory,
     private readonly indexMetadataService: IndexMetadataService,
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,

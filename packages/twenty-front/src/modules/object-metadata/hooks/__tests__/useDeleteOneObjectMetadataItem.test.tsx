@@ -12,11 +12,13 @@ import {
 } from '../__mocks__/useDeleteOneObjectMetadataItem';
 
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { FIND_ALL_CORE_VIEWS } from '@/views/graphql/queries/findAllCoreViews';
+import { mockedUserData } from '~/testing/mock-data/users';
+import { mockedCoreViewsData } from '~/testing/mock-data/views';
 import {
   query as findManyObjectMetadataItemsQuery,
   responseData as findManyObjectMetadataItemsResponseData,
 } from '../__mocks__/useFindManyObjectMetadataItems';
-import { mockedUserData } from '~/testing/mock-data/users';
 
 const mocks = [
   {
@@ -38,6 +40,17 @@ const mocks = [
     result: jest.fn(() => ({
       data: {
         currentUser: mockedUserData,
+      },
+    })),
+  },
+  {
+    request: {
+      query: FIND_ALL_CORE_VIEWS,
+      variables: {},
+    },
+    result: jest.fn(() => ({
+      data: {
+        getCoreViews: mockedCoreViewsData,
       },
     })),
   },

@@ -9,6 +9,8 @@ import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/even
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 export type CallWebhookJobData = {
   targetUrl: string;
@@ -28,6 +30,7 @@ export class CallWebhookJob {
   constructor(
     private readonly httpService: HttpService,
     private readonly auditService: AuditService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   private generateSignature(
@@ -42,13 +45,21 @@ export class CallWebhookJob {
   }
 
   @Process(CallWebhookJob.name)
-  async handle(data: CallWebhookJobData): Promise<void> {
+  async handle(webhookJobEvents: CallWebhookJobData[]): Promise<void> {
+    await Promise.all(
+      webhookJobEvents.map(
+        async (webhookJobEvent) => await this.callWebhook(webhookJobEvent),
+      ),
+    );
+  }
+
+  private async callWebhook(data: CallWebhookJobData): Promise<void> {
     const commonPayload = {
       url: data.targetUrl,
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
-    const analytics = this.auditService.createContext({
+    const auditService = this.auditService.createContext({
       workspaceId: data.workspaceId,
     });
 
@@ -74,18 +85,26 @@ export class CallWebhookJob {
       const response = await this.httpService.axiosRef.post(
         getAbsoluteUrl(data.targetUrl),
         payloadWithoutSecret,
-        { headers },
+        {
+          headers,
+          timeout: 5_000,
+        },
       );
 
       const success = response.status >= 200 && response.status < 300;
 
-      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+      auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         status: response.status,
         success,
         ...commonPayload,
       });
+
+      this.metricsService.incrementCounter({
+        key: MetricsKeys.JobWebhookCallCompleted,
+        shouldStoreInCache: false,
+      });
     } catch (err) {
-      analytics.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+      auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         success: false,
         ...commonPayload,
         ...(err.response && { status: err.response.status }),

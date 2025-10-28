@@ -15,18 +15,19 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
-import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { ViewFilterOperand } from 'twenty-shared/types';
+import {
+  isDefined,
+  relationFilterValueSchemaObject,
+} from 'twenty-shared/utils';
 
 const filterQueryParamsSchema = z.object({
   viewId: z.string().optional(),
   filter: z
     .record(
-      z.record(
-        z.nativeEnum(ViewFilterOperand),
+      z.string(),
+      z.partialRecord(
+        z.enum(ViewFilterOperand),
         z.string().or(z.array(z.string())).or(relationFilterValueSchemaObject),
       ),
     )
@@ -70,10 +71,6 @@ export const useViewFromQueryParams = () => {
   const hasFiltersQueryParams =
     isDefined(filterQueryParams) &&
     Object.entries(filterQueryParams).length > 0;
-
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   const getFiltersFromQueryParams = useRecoilCallback(
     ({ snapshot }) =>
@@ -131,7 +128,6 @@ export const useViewFromQueryParams = () => {
                       objectMetadataItem: relationObjectMetadataItem,
                       objectMetadataItems,
                       objectPermissionsByObjectMetadataId,
-                      isFieldsPermissionsEnabled,
                     }),
                     variables: {
                       filter: {
@@ -193,7 +189,6 @@ export const useViewFromQueryParams = () => {
       objectMetadataItem.fields,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
-      isFieldsPermissionsEnabled,
     ],
   );
 

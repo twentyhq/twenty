@@ -1,17 +1,19 @@
-import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
+import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { HTTP_REQUEST_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/HttpRequestAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -97,7 +99,7 @@ export const WorkflowEditActionHttpRequest = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'HTTP Request',
+      defaultTitle: HTTP_REQUEST_ACTION.defaultLabel,
     });
 
   const { formData, handleFieldChange, saveAction } = useHttpRequestForm({
@@ -105,14 +107,12 @@ export const WorkflowEditActionHttpRequest = ({
     onActionUpdate: actionOptions.onActionUpdate,
     readonly: actionOptions.readonly === true,
   });
-
   const { outputSchema, handleOutputSchemaChange, error } =
     useHttpRequestOutputSchema({
       action,
       onActionUpdate: actionOptions.onActionUpdate,
       readonly: actionOptions.readonly === true,
     });
-
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
@@ -141,7 +141,7 @@ export const WorkflowEditActionHttpRequest = ({
         behaveAsLinks={false}
         componentInstanceId={WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID}
       />
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;
@@ -153,6 +153,7 @@ export const WorkflowEditActionHttpRequest = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={actionOptions.readonly}
+        iconTooltip={HTTP_REQUEST_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         {activeTabId === WorkflowHttpRequestTabId.CONFIGURATION && (
@@ -177,6 +178,7 @@ export const WorkflowEditActionHttpRequest = ({
             />
 
             <KeyValuePairInput
+              key={getBodyTypeFromHeaders(formData.headers) || 'none'}
               label="Headers Input"
               defaultValue={formData.headers}
               onChange={(value) => handleFieldChange('headers', value)}
@@ -188,8 +190,11 @@ export const WorkflowEditActionHttpRequest = ({
             {isMethodWithBody(formData.method) && (
               <BodyInput
                 defaultValue={formData.body}
-                onChange={(value) => handleFieldChange('body', value)}
+                onChange={(value, type = 'body') =>
+                  handleFieldChange(type, value)
+                }
                 readonly={actionOptions.readonly}
+                headers={formData.headers}
               />
             )}
 
@@ -217,15 +222,20 @@ export const WorkflowEditActionHttpRequest = ({
           </StyledTestTabContent>
         )}
       </WorkflowStepBody>
-      {activeTabId === WorkflowHttpRequestTabId.TEST && (
-        <RightDrawerFooter
-          actions={[
-            <CmdEnterActionButton
-              title="Test"
-              onClick={handleTestRequest}
-              disabled={isTesting || actionOptions.readonly}
-            />,
-          ]}
+      {!actionOptions.readonly && (
+        <WorkflowStepFooter
+          stepId={action.id}
+          additionalActions={
+            activeTabId === WorkflowHttpRequestTabId.TEST
+              ? [
+                  <CmdEnterActionButton
+                    title="Test"
+                    onClick={handleTestRequest}
+                    disabled={isTesting}
+                  />,
+                ]
+              : []
+          }
         />
       )}
     </>

@@ -1,8 +1,14 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
+import {
+  ViewKey as CoreViewKey,
+  ViewOpenRecordIn as CoreViewOpenRecordIn,
+  ViewType as CoreViewType,
+} from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const companyObjectMetadata = getMockObjectMetadataItemOrThrow('company');
@@ -92,5 +98,84 @@ export const mockedViewsData: View[] = [
     viewFilters: [],
     viewSorts: [],
     __typename: 'View',
+  },
+];
+
+export const mockedCoreViewsData: CoreViewWithRelations[] = [
+  {
+    id: '37a8a866-eb17-4e76-9382-03143a2f6a80',
+    name: 'All companies',
+    objectMetadataId: companyObjectMetadata.id,
+    type: CoreViewType.TABLE,
+    icon: 'IconSkyline',
+    key: CoreViewKey.INDEX,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
+    kanbanAggregateOperationFieldMetadataId: '',
+    position: 0,
+    isCompact: false,
+    openRecordIn: CoreViewOpenRecordIn.SIDE_PANEL,
+    viewFilterGroups: [],
+    viewGroups: [],
+    viewFields: [],
+    viewFilters: [],
+    viewSorts: [],
+    __typename: 'CoreView',
+  },
+  {
+    id: '6095799e-b48f-4e00-b071-10818083593a',
+    name: 'All people',
+    objectMetadataId: personObjectMetadata.id,
+    type: CoreViewType.TABLE,
+    icon: 'IconPerson',
+    key: CoreViewKey.INDEX,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
+    kanbanAggregateOperationFieldMetadataId: '',
+    position: 0,
+    isCompact: false,
+    openRecordIn: CoreViewOpenRecordIn.SIDE_PANEL,
+    viewFilterGroups: [],
+    viewGroups: [],
+    viewFields: [],
+    viewFilters: [],
+    viewSorts: [],
+    __typename: 'CoreView',
+  },
+  {
+    id: 'e26f66b7-f890-4a5c-b4d2-ec09987b5308',
+    name: 'All opportunities',
+    objectMetadataId: opportunityObjectMetadata.id,
+    type: CoreViewType.KANBAN,
+    icon: 'IconOpportunity',
+    key: CoreViewKey.INDEX,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
+    kanbanAggregateOperationFieldMetadataId: '',
+    position: 0,
+    isCompact: false,
+    openRecordIn: CoreViewOpenRecordIn.SIDE_PANEL,
+    viewFilterGroups: [],
+    viewGroups: [],
+    viewFields: [],
+    viewFilters: [],
+    viewSorts: [],
+    __typename: 'CoreView',
+  },
+  {
+    id: '5c307222-1dd5-4ff3-ab06-8d990e9b3c74',
+    name: 'All companies (v2)',
+    objectMetadataId: companyObjectMetadata.id,
+    type: CoreViewType.TABLE,
+    icon: 'IconSkyline',
+    key: null,
+    kanbanAggregateOperation: AggregateOperations.COUNT,
+    kanbanAggregateOperationFieldMetadataId: '',
+    position: 0,
+    isCompact: false,
+    openRecordIn: CoreViewOpenRecordIn.SIDE_PANEL,
+    viewFilterGroups: [],
+    viewGroups: [],
+    viewFields: [],
+    viewFilters: [],
+    viewSorts: [],
+    __typename: 'CoreView',
   },
 ];

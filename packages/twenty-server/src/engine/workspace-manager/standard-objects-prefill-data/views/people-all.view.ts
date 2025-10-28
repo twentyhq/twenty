@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
@@ -6,7 +8,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const peopleAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
+export const peopleAllView = (
+  objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
+) => {
   const personObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.person,
   );
@@ -16,7 +21,7 @@ export const peopleAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   }
 
   return {
-    name: 'All People',
+    name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All People',
     objectMetadataId: personObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

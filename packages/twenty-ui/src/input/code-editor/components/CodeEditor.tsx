@@ -27,7 +27,8 @@ const StyledEditorLoader = styled.div<{
 }>`
   align-items: center;
   display: flex;
-  height: ${({ height }) => height}px;
+  height: ${({ height }) =>
+    typeof height === 'number' ? `${height}px` : height};
   justify-content: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -164,6 +165,8 @@ export const CodeEditor = ({
         onValidate?.(markers);
       }}
       options={{
+        formatOnPaste: true,
+        formatOnType: true,
         overviewRulerLanes: 0,
         scrollbar: {
           vertical: 'hidden',

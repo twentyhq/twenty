@@ -1,7 +1,6 @@
-import {
-  type ObjectRecord,
-  type ObjectRecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ObjectRecord } from 'twenty-shared/types';
+
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
@@ -64,8 +63,7 @@ export const getCursor = (
 };
 
 export const getPaginationInfo = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  objectRecords: any[],
+  objectRecords: ObjectRecord[],
   limit: number,
   isForwardPagination: boolean,
 ) => {

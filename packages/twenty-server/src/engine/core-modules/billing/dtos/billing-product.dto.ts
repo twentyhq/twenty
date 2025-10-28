@@ -1,12 +1,18 @@
-/* @license Enterprise */
+import { Field, InterfaceType, ObjectType } from '@nestjs/graphql';
 
-import { Field, ObjectType } from '@nestjs/graphql';
-
-import { type BillingPriceLicensedDTO } from 'src/engine/core-modules/billing/dtos/billing-price-licensed.dto';
-import { type BillingPriceMeteredDTO } from 'src/engine/core-modules/billing/dtos/billing-price-metered.dto';
-import { BillingPriceUnionDTO } from 'src/engine/core-modules/billing/dtos/billing-price-union.dto';
 import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
+import { BillingPriceLicensedDTO } from 'src/engine/core-modules/billing/dtos/billing-price-licensed.dto';
+import { BillingPriceMeteredDTO } from 'src/engine/core-modules/billing/dtos/billing-price-metered.dto';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 
+@InterfaceType({
+  resolveType(product: BillingProductDTO) {
+    return product.metadata.productKey ===
+      BillingProductKey.WORKFLOW_NODE_EXECUTION
+      ? BillingMeteredProduct
+      : BillingLicensedProduct;
+  },
+})
 @ObjectType('BillingProduct')
 export class BillingProductDTO {
   @Field(() => String)
@@ -18,9 +24,18 @@ export class BillingProductDTO {
   @Field(() => [String], { nullable: true })
   images: string[];
 
-  @Field(() => [BillingPriceUnionDTO], { nullable: true })
-  prices: Array<BillingPriceLicensedDTO> | Array<BillingPriceMeteredDTO>;
-
   @Field(() => BillingProductMetadata)
   metadata: BillingProductMetadata;
+}
+
+@ObjectType({ implements: BillingProductDTO })
+export class BillingLicensedProduct {
+  @Field(() => [BillingPriceLicensedDTO], { nullable: true })
+  prices: BillingPriceLicensedDTO[] | null;
+}
+
+@ObjectType({ implements: BillingProductDTO })
+export class BillingMeteredProduct {
+  @Field(() => [BillingPriceMeteredDTO], { nullable: true })
+  prices: BillingPriceMeteredDTO[] | null;
 }

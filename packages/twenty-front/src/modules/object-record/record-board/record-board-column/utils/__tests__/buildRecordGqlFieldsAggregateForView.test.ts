@@ -35,6 +35,7 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     isCustom: false,
     isActive: true,
     isSystem: false,
+    isUIReadOnly: false,
     isRemote: false,
     isSearchable: false,
     labelIdentifierFieldMetadataId: '06b33746-5293-4d07-9f7f-ebf5ad396064',

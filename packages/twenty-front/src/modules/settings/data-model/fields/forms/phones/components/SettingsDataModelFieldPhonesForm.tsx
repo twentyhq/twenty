@@ -1,17 +1,18 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
+import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
 import { Select } from '@/ui/input/components/Select';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { useLingui } from '@lingui/react/macro';
 import type { CountryCode } from 'libphonenumber-js';
 import {
   IconCircleOff,
-  type IconComponentProps,
   IconMap,
+  type IconComponentProps,
 } from 'twenty-ui/display';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
@@ -20,17 +21,16 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 type SettingsDataModelFieldPhonesFormProps = {
   disabled?: boolean;
   defaultCountryCode?: string;
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
-  >;
+  existingFieldMetadataId: string;
 };
 
-export const settingsDataModelFieldPhonesFormSchema = z.object({
-  defaultValue: phonesFieldDefaultValueSchema,
-});
+export const settingsDataModelFieldPhonesFormSchema = z
+  .object({
+    defaultValue: phonesFieldDefaultValueSchema,
+  })
+  .merge(settingsDataModelFieldMaxValuesSchema);
 
-export type SettingsDataModelFieldTextFormValues = z.infer<
+export type SettingsDataModelFieldPhonesFormValues = z.infer<
   typeof settingsDataModelFieldPhonesFormSchema
 >;
 
@@ -38,10 +38,14 @@ export type CountryCodeOrEmpty = CountryCode | '';
 
 export const SettingsDataModelFieldPhonesForm = ({
   disabled,
-  fieldMetadataItem,
+  existingFieldMetadataId,
 }: SettingsDataModelFieldPhonesFormProps) => {
   const { t } = useLingui();
-  const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
+  const { control } = useFormContext<SettingsDataModelFieldPhonesFormValues>();
+
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    existingFieldMetadataId,
+  );
 
   const countries = [
     { label: t`No country`, value: '', Icon: IconCircleOff },

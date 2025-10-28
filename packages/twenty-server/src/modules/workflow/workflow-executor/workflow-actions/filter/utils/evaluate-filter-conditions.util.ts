@@ -1,25 +1,53 @@
-import { isObject, isString } from '@sniptt/guards';
+import {
+  isNonEmptyArray,
+  isNonEmptyString,
+  isObject,
+  isString,
+} from '@sniptt/guards';
 import {
   type StepFilter,
   type StepFilterGroup,
   ViewFilterOperand,
+  type ViewFilterOperandDeprecated,
 } from 'twenty-shared/types';
+import { convertViewFilterOperandToCoreOperand as convertViewFilterOperandDeprecated } from 'twenty-shared/utils';
 
-type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
+import { parseAndEvaluateRelativeDateFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
+
+type ResolvedFilterWithPotentiallyDeprecatedOperand = Omit<
+  StepFilter,
+  'value' | 'stepOutputKey' | 'operand'
+> & {
   rightOperand: unknown;
   leftOperand: unknown;
+  operand: ViewFilterOperand | ViewFilterOperandDeprecated;
 };
 
-function evaluateFilter(filter: ResolvedFilter): boolean {
+type ResolvedFilter = Omit<
+  StepFilter,
+  'value' | 'stepOutputKey' | 'operand'
+> & {
+  rightOperand: unknown;
+  leftOperand: unknown;
+  operand: ViewFilterOperand;
+};
+
+function evaluateFilter(
+  filter: ResolvedFilterWithPotentiallyDeprecatedOperand,
+): boolean {
+  const filterWithConvertedOperand = {
+    ...filter,
+    operand: convertViewFilterOperandDeprecated(filter.operand),
+  };
+
   switch (filter.type) {
     case 'NUMBER':
     case 'NUMERIC':
-      return evaluateNumberFilter(filter);
+      return evaluateNumberFilter(filterWithConvertedOperand);
     case 'DATE':
     case 'DATE_TIME':
-      return evaluateDateFilter(filter);
+      return evaluateDateFilter(filterWithConvertedOperand);
     case 'TEXT':
-    case 'SELECT':
     case 'MULTI_SELECT':
     case 'FULL_NAME':
     case 'EMAILS':
@@ -28,17 +56,19 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
     case 'LINKS':
     case 'ARRAY':
     case 'RAW_JSON':
-      return evaluateTextAndArrayFilter(filter);
+      return evaluateTextAndArrayFilter(filterWithConvertedOperand);
+    case 'SELECT':
+      return evaluateSelectFilter(filterWithConvertedOperand);
     case 'BOOLEAN':
-      return evaluateBooleanFilter(filter);
+      return evaluateBooleanFilter(filterWithConvertedOperand);
     case 'UUID':
-      return evaluateUuidFilter(filter);
+      return evaluateUuidFilter(filterWithConvertedOperand);
     case 'RELATION':
-      return evaluateRelationFilter(filter);
+      return evaluateRelationFilter(filterWithConvertedOperand);
     case 'CURRENCY':
-      return evaluateCurrencyFilter(filter);
+      return evaluateCurrencyFilter(filterWithConvertedOperand);
     default:
-      return evaluateDefaultFilter(filter);
+      return evaluateDefaultFilter(filterWithConvertedOperand);
   }
 }
 
@@ -114,25 +144,16 @@ function contains(leftValue: unknown, rightValue: unknown): boolean {
 
 function evaluateTextAndArrayFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
-    case ViewFilterOperand.Contains:
+    case ViewFilterOperand.CONTAINS:
       return contains(filter.leftOperand, filter.rightOperand);
-    case ViewFilterOperand.DoesNotContain:
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
       return !contains(filter.leftOperand, filter.rightOperand);
-    case ViewFilterOperand.IsEmpty:
-      return (
-        filter.leftOperand === null ||
-        filter.leftOperand === undefined ||
-        filter.leftOperand === '' ||
-        (Array.isArray(filter.leftOperand) && filter.leftOperand.length === 0)
-      );
+    case ViewFilterOperand.IS_EMPTY:
+      return !isNotEmptyTextOrArray(filter.leftOperand);
 
-    case ViewFilterOperand.IsNotEmpty:
-      return (
-        filter.leftOperand !== null &&
-        filter.leftOperand !== undefined &&
-        filter.leftOperand !== '' &&
-        (!Array.isArray(filter.leftOperand) || filter.leftOperand.length > 0)
-      );
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isNotEmptyTextOrArray(filter.leftOperand);
+
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for this filter type`,
@@ -140,9 +161,13 @@ function evaluateTextAndArrayFilter(filter: ResolvedFilter): boolean {
   }
 }
 
+function isNotEmptyTextOrArray(value: unknown): boolean {
+  return isNonEmptyString(value) || isNonEmptyArray(value);
+}
+
 function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return Boolean(filter.leftOperand) === Boolean(filter.rightOperand);
     default:
       throw new Error(
@@ -153,39 +178,53 @@ function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
 
 function evaluateDateFilter(filter: ResolvedFilter): boolean {
   const dateLeftValue = new Date(String(filter.leftOperand));
-  const dateRightValue = new Date(String(filter.rightOperand));
 
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
-      return dateLeftValue.getDate() === dateRightValue.getDate();
-    case ViewFilterOperand.IsInPast:
+    case ViewFilterOperand.IS:
+      return (
+        dateLeftValue.getDate() ===
+        new Date(String(filter.rightOperand)).getDate()
+      );
+    case ViewFilterOperand.IS_IN_PAST:
       return dateLeftValue.getTime() < Date.now();
 
-    case ViewFilterOperand.IsInFuture:
+    case ViewFilterOperand.IS_IN_FUTURE:
       return dateLeftValue.getTime() > Date.now();
 
-    case ViewFilterOperand.IsToday:
+    case ViewFilterOperand.IS_TODAY:
       return dateLeftValue.toDateString() === new Date().toDateString();
 
-    case ViewFilterOperand.IsBefore:
-      return dateLeftValue.getTime() < dateRightValue.getTime();
+    case ViewFilterOperand.IS_BEFORE:
+      return (
+        dateLeftValue.getTime() <
+        new Date(String(filter.rightOperand)).getTime()
+      );
 
-    case ViewFilterOperand.IsAfter:
-      return dateLeftValue.getTime() > dateRightValue.getTime();
+    case ViewFilterOperand.IS_AFTER:
+      return (
+        dateLeftValue.getTime() >
+        new Date(String(filter.rightOperand)).getTime()
+      );
 
-    case ViewFilterOperand.IsEmpty:
+    case ViewFilterOperand.IS_EMPTY:
       return (
         filter.leftOperand === null ||
         filter.leftOperand === undefined ||
         filter.leftOperand === ''
       );
 
-    case ViewFilterOperand.IsNotEmpty:
+    case ViewFilterOperand.IS_NOT_EMPTY:
       return (
         filter.leftOperand !== null &&
         filter.leftOperand !== undefined &&
         filter.leftOperand !== ''
       );
+
+    case ViewFilterOperand.IS_RELATIVE:
+      return parseAndEvaluateRelativeDateFilter({
+        dateToCheck: dateLeftValue,
+        relativeDateString: String(filter.rightOperand),
+      });
 
     default:
       throw new Error(
@@ -196,9 +235,9 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
 
 function evaluateUuidFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return filter.leftOperand === filter.rightOperand;
-    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.IS_NOT:
       return filter.leftOperand !== filter.rightOperand;
     default:
       throw new Error(
@@ -220,9 +259,9 @@ function evaluateRelationFilter(filter: ResolvedFilter): boolean {
       : filter.rightOperand;
 
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return leftValue === rightValue;
-    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.IS_NOT:
       return leftValue !== rightValue;
     default:
       throw new Error(
@@ -234,22 +273,14 @@ function evaluateRelationFilter(filter: ResolvedFilter): boolean {
 function evaluateCurrencyFilter(filter: ResolvedFilter): boolean {
   if (filter.compositeFieldSubFieldName === 'currencyCode') {
     switch (filter.operand) {
-      case ViewFilterOperand.Is:
+      case ViewFilterOperand.IS:
         return filter.leftOperand === filter.rightOperand;
-      case ViewFilterOperand.IsNot:
+      case ViewFilterOperand.IS_NOT:
         return filter.leftOperand !== filter.rightOperand;
-      case ViewFilterOperand.IsEmpty:
-        return (
-          filter.leftOperand === null ||
-          filter.leftOperand === undefined ||
-          filter.leftOperand === ''
-        );
-      case ViewFilterOperand.IsNotEmpty:
-        return (
-          filter.leftOperand !== null &&
-          filter.leftOperand !== undefined &&
-          filter.leftOperand !== ''
-        );
+      case ViewFilterOperand.IS_EMPTY:
+        return !isNonEmptyString(filter.leftOperand);
+      case ViewFilterOperand.IS_NOT_EMPTY:
+        return isNonEmptyString(filter.leftOperand);
       default:
         throw new Error(
           `Operand ${filter.operand} not supported for currency filter`,
@@ -265,17 +296,17 @@ function evaluateNumberFilter(filter: ResolvedFilter): boolean {
   const rightValue = filter.rightOperand;
 
   switch (filter.operand) {
-    case ViewFilterOperand.GreaterThanOrEqual:
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
       return Number(leftValue) >= Number(rightValue);
 
-    case ViewFilterOperand.LessThanOrEqual:
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL:
       return Number(leftValue) <= Number(rightValue);
 
-    case ViewFilterOperand.IsEmpty:
-      return leftValue === null || leftValue === undefined || leftValue === '';
+    case ViewFilterOperand.IS_EMPTY:
+      return !isNonEmptyString(leftValue);
 
-    case ViewFilterOperand.IsNotEmpty:
-      return leftValue !== null && leftValue !== undefined && leftValue !== '';
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isNonEmptyString(leftValue);
 
     default:
       throw new Error(
@@ -289,35 +320,43 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
   const rightValue = filter.rightOperand;
 
   switch (filter.operand) {
-    case ViewFilterOperand.Is:
+    case ViewFilterOperand.IS:
       return leftValue == rightValue;
-    case ViewFilterOperand.IsNot:
+    case ViewFilterOperand.IS_NOT:
       return leftValue != rightValue;
-    case ViewFilterOperand.IsEmpty:
-      return (
-        leftValue === null ||
-        leftValue === undefined ||
-        leftValue === '' ||
-        (Array.isArray(leftValue) && leftValue.length === 0)
-      );
-    case ViewFilterOperand.IsNotEmpty:
-      return (
-        leftValue !== null &&
-        leftValue !== undefined &&
-        leftValue !== '' &&
-        (!Array.isArray(leftValue) || leftValue.length > 0)
-      );
-    case ViewFilterOperand.Contains:
+    case ViewFilterOperand.IS_EMPTY:
+      return !isNotEmptyTextOrArray(leftValue);
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isNotEmptyTextOrArray(leftValue);
+    case ViewFilterOperand.CONTAINS:
       return contains(leftValue, rightValue);
-    case ViewFilterOperand.DoesNotContain:
+    case ViewFilterOperand.DOES_NOT_CONTAIN:
       return !contains(leftValue, rightValue);
-    case ViewFilterOperand.GreaterThanOrEqual:
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
       return Number(leftValue) >= Number(rightValue);
-    case ViewFilterOperand.LessThanOrEqual:
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL:
       return Number(leftValue) <= Number(rightValue);
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for ${filter.type} filter type`,
+      );
+  }
+}
+
+function evaluateSelectFilter(filter: ResolvedFilter): boolean {
+  switch (filter.operand) {
+    case ViewFilterOperand.IS:
+      return contains(filter.leftOperand, filter.rightOperand);
+    case ViewFilterOperand.IS_NOT:
+      return !contains(filter.leftOperand, filter.rightOperand);
+    case ViewFilterOperand.IS_EMPTY:
+      return !isNotEmptyTextOrArray(filter.leftOperand);
+
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isNotEmptyTextOrArray(filter.leftOperand);
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for select filter`,
       );
   }
 }

@@ -4,13 +4,12 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { WorkflowVariablesDropdownAllItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems';
-import { WorkflowVariablesDropdownFieldItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownFieldItems';
-import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
+import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
+import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -39,7 +38,6 @@ export const WorkflowVariablesDropdown = ({
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
   fieldTypesToExclude,
-  shouldEnableSelectRelationObject,
   multiline,
   clickableComponent,
 }: {
@@ -48,7 +46,6 @@ export const WorkflowVariablesDropdown = ({
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
   fieldTypesToExclude?: InputSchemaPropertyType[];
-  shouldEnableSelectRelationObject?: boolean;
   disabled?: boolean;
   multiline?: boolean;
   clickableComponent?: React.ReactNode;
@@ -75,7 +72,7 @@ export const WorkflowVariablesDropdown = ({
       : undefined;
 
   const [selectedStep, setSelectedStep] = useState<
-    StepOutputSchema | undefined
+    StepOutputSchemaV2 | undefined
   >(initialStep);
 
   const handleStepSelect = (stepId: string) => {
@@ -112,6 +109,7 @@ export const WorkflowVariablesDropdown = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
+      isDropdownInModal={true}
       clickableComponent={
         clickableComponent ?? (
           <StyledDropdownVariableButtonContainer
@@ -124,23 +122,17 @@ export const WorkflowVariablesDropdown = ({
       }
       dropdownComponents={
         !isDefined(selectedStep) ? (
-          <WorkflowVariablesDropdownWorkflowStepItems
+          <WorkflowVariablesDropdownSteps
             dropdownId={dropdownId}
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
           />
-        ) : shouldDisplayRecordObjects ? (
-          <WorkflowVariablesDropdownAllItems
-            step={selectedStep}
-            onSelect={handleSubItemSelect}
-            onBack={handleBack}
-            shouldEnableSelectRelationObject={shouldEnableSelectRelationObject}
-          />
         ) : (
-          <WorkflowVariablesDropdownFieldItems
+          <WorkflowVariablesDropdownStepItems
             step={selectedStep}
             onSelect={handleSubItemSelect}
             onBack={handleBack}
+            shouldDisplayRecordObjects={shouldDisplayRecordObjects}
           />
         )
       }

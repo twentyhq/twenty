@@ -7,7 +7,7 @@ import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 import {
-  getCompaniesMock,
+  getCompaniesRecordConnectionMock,
   getCompanyDuplicateMock,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
@@ -22,8 +22,10 @@ import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
+import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { isDefined } from 'twenty-shared/utils';
+import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 import { getRolesMock } from '~/testing/mock-data/roles';
 import { mockedTasks } from '~/testing/mock-data/tasks';
@@ -37,7 +39,7 @@ import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
 const peopleMock = getPeopleRecordConnectionMock();
-const companiesMock = getCompaniesMock();
+const companiesMock = getCompaniesRecordConnectionMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
 
 export const metadataGraphql = graphql.link(
@@ -382,6 +384,7 @@ export const graphqlMocks = {
               startCursor: null,
               endCursor: null,
             },
+            totalCount: mockedData.length,
           },
         },
       });
@@ -680,6 +683,11 @@ export const graphqlMocks = {
         data: {
           getRoles: getRolesMock(),
         },
+      });
+    }),
+    graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
+      return HttpResponse.json({
+        data: mockBillingPlans,
       });
     }),
     http.get('https://chat-assets.frontapp.com/v1/chat.bundle.js', () => {

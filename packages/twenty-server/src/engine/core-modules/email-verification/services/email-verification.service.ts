@@ -1,49 +1,51 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendEmailVerificationLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
-import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 export class EmailVerificationService {
   constructor(
-    @InjectRepository(AppToken, 'core')
-    private readonly appTokenRepository: Repository<AppToken>,
-    private readonly domainManagerService: DomainManagerService,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly domainsServerConfigService: DomainServerConfigService,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly userService: UserService,
     private readonly emailVerificationTokenService: EmailVerificationTokenService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async sendVerificationEmail(
     userId: string,
     email: string,
-    workspace:
-      | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
-      | undefined,
+    workspace: WorkspaceDomainConfig | undefined,
     locale: keyof typeof APP_LOCALES,
     verifyEmailRedirectPath?: string,
   ) {
@@ -55,7 +57,7 @@ export class EmailVerificationService {
       await this.emailVerificationTokenService.generateToken(userId, email);
 
     const linkPathnameAndSearchParams = {
-      pathname: 'verify-email',
+      pathname: AppPath.VerifyEmail,
       searchParams: {
         emailVerificationToken,
         email,
@@ -65,11 +67,13 @@ export class EmailVerificationService {
       },
     };
     const verificationLink = workspace
-      ? this.domainManagerService.buildWorkspaceURL({
+      ? this.workspaceDomainsService.buildWorkspaceURL({
           workspace,
           ...linkPathnameAndSearchParams,
         })
-      : this.domainManagerService.buildBaseUrl(linkPathnameAndSearchParams);
+      : this.domainsServerConfigService.buildBaseUrl(
+          linkPathnameAndSearchParams,
+        );
 
     const emailData = {
       link: verificationLink.toString(),
@@ -78,18 +82,21 @@ export class EmailVerificationService {
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
-    const html = render(emailTemplate);
-    const text = render(emailTemplate, {
+    const html = await render(emailTemplate);
+    const text = await render(emailTemplate, {
       plainText: true,
     });
 
-    i18n.activate(locale);
+    const emailVerificationMsg = msg`Welcome to Twenty: Please Confirm Your Email`;
+    const i18n = this.i18nService.getI18nInstance(locale);
+    const subject = i18n._(emailVerificationMsg);
+
     await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: t`Welcome to Twenty: Please Confirm Your Email`,
+      subject,
       text,
       html,
     });
@@ -99,9 +106,7 @@ export class EmailVerificationService {
 
   async resendEmailVerificationToken(
     email: string,
-    workspace:
-      | WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType
-      | undefined,
+    workspace: WorkspaceDomainConfig | undefined,
     locale: keyof typeof APP_LOCALES,
   ) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
@@ -111,7 +116,7 @@ export class EmailVerificationService {
       );
     }
 
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     if (user.isEmailVerified) {
       throw new EmailVerificationException(

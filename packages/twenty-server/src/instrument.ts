@@ -15,7 +15,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
-import { WorkspaceCacheKeys } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WORKSPACE_CACHE_KEYS } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { parseArrayEnvVar } from 'src/utils/parse-array-env-var';
 
 const meterDrivers = parseArrayEnvVar(
@@ -32,7 +32,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     integrations: [
       // TODO: Redis integration doesn't seem to work - investigate why
       Sentry.redisIntegration({
-        cachePrefixes: Object.values(WorkspaceCacheKeys).map(
+        cachePrefixes: Object.values(WORKSPACE_CACHE_KEYS).map(
           (key) => `engine:${key}:`,
         ),
       }),
@@ -40,11 +40,15 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       Sentry.expressIntegration(),
       Sentry.graphqlIntegration(),
       Sentry.postgresIntegration(),
-      Sentry.vercelAIIntegration(),
+      Sentry.vercelAIIntegration({
+        recordInputs: true,
+        recordOutputs: true,
+      }),
       nodeProfilingIntegration(),
     ],
     tracesSampleRate: 0.1,
     profilesSampleRate: 0.3,
+    sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
   });
 }

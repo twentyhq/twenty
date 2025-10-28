@@ -1,32 +1,20 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
-import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
-import { isDefined } from 'twenty-shared/utils';
+import { useDeleteWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionStep';
 
-export const useDeleteStep = ({
-  workflow,
-}: {
-  workflow: WorkflowWithCurrentVersion | undefined;
-}) => {
+export const useDeleteStep = () => {
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
 
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
   const { closeCommandMenu } = useCommandMenu();
 
   const deleteStep = async (stepId: string) => {
-    assertWorkflowWithCurrentVersionIsDefined(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
-
-    if (!isDefined(workflowVersionId)) {
-      throw new Error('Could not find workflow version');
-    }
-
-    const workflowVersionStepChanges = await deleteWorkflowVersionStep({
+    await deleteWorkflowVersionStep({
       workflowVersionId,
       stepId,
     });
@@ -34,7 +22,7 @@ export const useDeleteStep = ({
     closeCommandMenu();
 
     deleteStepsOutputSchema({
-      stepIds: workflowVersionStepChanges?.deletedStepIds ?? [],
+      stepIds: [stepId],
       workflowVersionId,
     });
   };

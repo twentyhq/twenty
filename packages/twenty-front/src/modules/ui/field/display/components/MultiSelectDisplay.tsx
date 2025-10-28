@@ -1,4 +1,4 @@
-import { type FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { styled } from '@linaria/react';
 import { Tag } from 'twenty-ui/components';
 import { type SelectOption } from 'twenty-ui/input';

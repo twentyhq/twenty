@@ -5,13 +5,13 @@ import { useParams } from 'react-router-dom';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { Loader } from 'twenty-ui/feedback';
 
+import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useImapSmtpCaldavConnectionForm } from '../hooks/useImapSmtpCaldavConnectionForm';
@@ -60,17 +60,17 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SubMenuTopBarContainer
-        title={t`Edit Email Account`}
+        title={t`Edit Account`}
         links={[
           {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            children: t`User`,
+            href: getSettingsPath(SettingsPath.ProfilePage),
           },
           {
             children: t`Accounts`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
-          { children: t`Edit Email Account` },
+          { children: t`Edit Account` },
         ]}
         actionButton={
           <SaveAndCancelButtons

@@ -1,15 +1,21 @@
-import { keyframes, useTheme } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
+import { useRecoilValue } from 'recoil';
+import { Avatar, IconSparkles } from 'twenty-ui/display';
 
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 
-import { type AgentChatMessage } from '~/generated/graphql';
+import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
+import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
+import { AIChatErrorMessageWithRecordsContext } from '@/ai/components/internal/AIChatErrorMessageWithRecordsContext';
+import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -23,11 +29,10 @@ const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
   }
 `;
 
-const StyledMessageRow = styled.div<{ isShowingToolCall?: boolean }>`
+const StyledMessageRow = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: ${({ isShowingToolCall }) =>
-    isShowingToolCall ? 'center' : 'flex-start'};
+  align-items: flex-start;
   gap: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 `;
@@ -43,7 +48,60 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     isUser ? theme.font.color.light : theme.font.color.primary};
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
   width: fit-content;
-  white-space: pre-line;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  /* Pre-wrap within the whole container turns every newline between block
+     elements into extra spacing; keep normal flow and only pre-wrap code. */
+  white-space: normal;
+
+  code {
+    overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.4;
+    padding: ${({ theme }) => theme.spacing(1)};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+    background: ${({ theme }) => theme.background.tertiary};
+  }
+
+  pre {
+    background: ${({ theme }) => theme.background.tertiary};
+    padding: ${({ theme }) => theme.spacing(2)};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+    overflow-x: auto;
+    max-width: 100%;
+
+    code {
+      padding: 0;
+      border-radius: 0;
+      background: none;
+    }
+  }
+
+  p {
+    margin-block: ${({ isUser, theme }) =>
+      isUser ? '0' : `${theme.spacing(1)}`};
+    line-height: 1.5;
+  }
+
+  ul,
+  ol {
+    margin: ${({ theme }) => theme.spacing(1)} 0;
+    padding-left: ${({ theme }) => theme.spacing(4)};
+  }
+
+  li {
+    margin: ${({ theme }) => theme.spacing(0.5)} 0;
+  }
+
+  blockquote {
+    border-left: 3px solid ${({ theme }) => theme.border.color.medium};
+    margin: ${({ theme }) => theme.spacing(2)} 0;
+    padding-left: ${({ theme }) => theme.spacing(2)};
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
 `;
 
 const StyledMessageFooter = styled.div`
@@ -85,87 +143,33 @@ const StyledFilesContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-const dots = keyframes`
-  0% { content: ''; }
-  33% { content: '.'; }
-  66% { content: '..'; }
-  100% { content: '...'; }
-`;
-
-const StyledToolCallContainer = styled.div`
-  &::after {
-    display: inline-block;
-    content: '';
-    animation: ${dots} 750ms steps(3, end) infinite;
-    width: 2ch;
-    text-align: left;
-  }
-`;
-
-const StyledDotsIconContainer = styled.div`
-  align-items: center;
-  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  justify-content: center;
-  padding-inline: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledDotsIcon = styled(IconDotsVertical)`
-  color: ${({ theme }) => theme.font.color.light};
-  transform: rotate(90deg);
-`;
-
 export const AIChatMessage = ({
   message,
-  agentStreamingMessage,
+  isLastMessageStreaming,
+  error,
 }: {
-  message: AgentChatMessage;
-  agentStreamingMessage: { streamingText: string; toolCall: string };
+  message: ExtendedUIMessage;
+  isLastMessageStreaming: boolean;
+  error?: Error | null;
 }) => {
   const theme = useTheme();
+  const { localeCatalog } = useRecoilValue(dateLocaleState);
 
-  const markdownRender = (text: string) => {
-    return <LazyMarkdownRenderer text={text} />;
-  };
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
 
-  const getAssistantMessageContent = (message: AgentChatMessage) => {
-    if (message.content !== '') {
-      return markdownRender(message.content);
-    }
+  const showError =
+    isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
 
-    if (agentStreamingMessage.streamingText !== '') {
-      return markdownRender(agentStreamingMessage.streamingText);
-    }
-
-    if (agentStreamingMessage.toolCall !== '') {
-      return (
-        <StyledToolCallContainer>
-          {agentStreamingMessage.toolCall}
-        </StyledToolCallContainer>
-      );
-    }
-
-    return (
-      <StyledDotsIconContainer>
-        <StyledDotsIcon size={theme.icon.size.xl} />
-      </StyledDotsIconContainer>
-    );
-  };
+  const fileParts = message.parts.filter((part) => part.type === 'file');
 
   return (
     <StyledMessageBubble
       key={message.id}
       isUser={message.role === AgentChatMessageRole.USER}
     >
-      <StyledMessageRow
-        isShowingToolCall={
-          message.role === AgentChatMessageRole.ASSISTANT &&
-          message.content === '' &&
-          agentStreamingMessage.streamingText === '' &&
-          agentStreamingMessage.toolCall !== ''
-        }
-      >
+      <StyledMessageRow>
         {message.role === AgentChatMessageRole.ASSISTANT && (
           <StyledAvatarContainer>
             <Avatar
@@ -185,21 +189,38 @@ export const AIChatMessage = ({
           <StyledMessageText
             isUser={message.role === AgentChatMessageRole.USER}
           >
-            {message.role === AgentChatMessageRole.ASSISTANT
-              ? getAssistantMessageContent(message)
-              : message.content}
+            <AIChatAssistantMessageRenderer
+              isLastMessageStreaming={isLastMessageStreaming}
+              messageParts={message.parts}
+              hasError={showError}
+            />
           </StyledMessageText>
-          {message.files.length > 0 && (
+          {fileParts.length > 0 && (
             <StyledFilesContainer>
-              {message.files.map((file) => (
-                <AgentChatFilePreview key={file.id} file={file} />
+              {fileParts.map((file) => (
+                <AgentChatFilePreview key={file.filename} file={file} />
               ))}
             </StyledFilesContainer>
           )}
-          {message.content && (
+          {showError &&
+            (contextStoreCurrentObjectMetadataItemId ? (
+              <AIChatErrorMessageWithRecordsContext error={error} />
+            ) : (
+              <AIChatErrorMessage error={error} />
+            ))}
+          {message.parts.length > 0 && message.metadata?.createdAt && (
             <StyledMessageFooter className="message-footer">
-              <span>{beautifyPastDateRelativeToNow(message.createdAt)}</span>
-              <LightCopyIconButton copyText={message.content} />
+              <span>
+                {beautifyPastDateRelativeToNow(
+                  message.metadata?.createdAt,
+                  localeCatalog,
+                )}
+              </span>
+              <LightCopyIconButton
+                copyText={
+                  message.parts.find((part) => part.type === 'text')?.text ?? ''
+                }
+              />
             </StyledMessageFooter>
           )}
         </StyledMessageContainer>

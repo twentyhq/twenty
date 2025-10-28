@@ -6,17 +6,18 @@ import {
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-
 describe('updateOne', () => {
-  describe('FieldMetadataService name/label sync', () => {
+  describe('successful fieldMetadataService name/label sync', () => {
     let listingObjectId = '';
     let testFieldId = '';
 
     beforeEach(async () => {
       const { data } = await createOneObjectMetadata({
+        expectToFail: false,
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,
@@ -30,6 +31,7 @@ describe('updateOne', () => {
       listingObjectId = data.createOneObject.id;
 
       const { data: createdFieldMetadata } = await createOneFieldMetadata({
+        expectToFail: false,
         input: {
           objectMetadataId: listingObjectId,
           type: FieldMetadataType.TEXT,
@@ -42,7 +44,17 @@ describe('updateOne', () => {
       testFieldId = createdFieldMetadata.createOneField.id;
     });
     afterEach(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: listingObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
       await deleteOneObjectMetadata({
+        expectToFail: false,
         input: { idToDelete: listingObjectId },
       });
     });
@@ -92,6 +104,55 @@ describe('updateOne', () => {
       // Assert
       expect(data.updateOneField.name).toBe('differentName');
     });
+  });
+
+  describe('failing update', () => {
+    let listingObjectId = '';
+    let testFieldId = '';
+
+    beforeAll(async () => {
+      const { data } = await createOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          labelSingular: LISTING_NAME_SINGULAR,
+          labelPlural: LISTING_NAME_PLURAL,
+          nameSingular: LISTING_NAME_SINGULAR,
+          namePlural: LISTING_NAME_PLURAL,
+          icon: 'IconBuildingSkyscraper',
+          isLabelSyncedWithName: true,
+        },
+      });
+
+      listingObjectId = data.createOneObject.id;
+
+      const { data: createdFieldMetadata } = await createOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          objectMetadataId: listingObjectId,
+          type: FieldMetadataType.TEXT,
+          name: 'testName',
+          label: 'Test name',
+          isLabelSyncedWithName: true,
+        },
+      });
+
+      testFieldId = createdFieldMetadata.createOneField.id;
+    });
+    afterAll(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: listingObjectId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: listingObjectId },
+      });
+    });
 
     it('should not update a field name if it is not synced correctly with label and labelSync is true', async () => {
       // Arrange
@@ -112,14 +173,14 @@ describe('updateOne', () => {
         expectToFail: true,
       });
 
-      // Assert
-      expect(errors[0].message).toBe(
-        'Name is not synced with label. Expected name: "testName", got newName',
+      expect(errors).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors),
       );
     });
 
     it('should throw if the field name is not available because of other field with the same name', async () => {
       await createOneFieldMetadata({
+        expectToFail: false,
         input: {
           objectMetadataId: listingObjectId,
           type: FieldMetadataType.TEXT,
@@ -129,46 +190,15 @@ describe('updateOne', () => {
       });
 
       const { errors } = await updateOneFieldMetadata({
+        expectToFail: true,
         input: {
           idToUpdate: testFieldId,
-          updatePayload: { name: 'testName' },
+          updatePayload: { name: 'otherTestName' },
         },
       });
 
-      // Assert
-      expect(errors[0].message).toBe(
-        'Name "testName" is not available, check that it is not duplicating another field\'s name.',
-      );
-    });
-
-    it('should throw if the field name is not available because of other relation field using the same {name}Id', async () => {
-      // Arrange
-      await createOneFieldMetadata({
-        input: {
-          objectMetadataId: listingObjectId,
-          type: FieldMetadataType.RELATION,
-          name: 'children',
-          label: 'Children',
-          relationCreationPayload: {
-            targetObjectMetadataId: listingObjectId,
-            targetFieldLabel: 'parent',
-            targetFieldIcon: 'IconBuildingSkyscraper',
-            type: RelationType.ONE_TO_MANY,
-          },
-        },
-      });
-
-      // Act
-      const { errors } = await updateOneFieldMetadata({
-        input: {
-          idToUpdate: testFieldId,
-          updatePayload: { name: 'parentId' },
-        },
-      });
-
-      // Assert
-      expect(errors[0].message).toBe(
-        'Name "parentId" is not available, check that it is not duplicating another field\'s name.',
+      expect(errors).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors),
       );
     });
   });

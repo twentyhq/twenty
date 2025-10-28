@@ -1,4 +1,4 @@
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -21,7 +21,7 @@ export const EditableFilterChip = ({
 }: EditableFilterChipProps) => {
   const { getIcon } = useIcons();
 
-  const { fieldMetadataItem } = useFieldMetadataItemById(
+  const { fieldMetadataItem } = useFieldMetadataItemByIdOrThrow(
     recordFilter.fieldMetadataId,
   );
 
@@ -44,7 +44,10 @@ export const EditableFilterChip = ({
     : recordFilter.label;
 
   const labelKey = `${fieldNameLabel}`;
-  const labelValue = getRecordFilterLabelValue(recordFilter);
+  const labelValue = getRecordFilterLabelValue({
+    recordFilter,
+    fieldMetadataOptions: fieldMetadataItem.options ?? [],
+  });
 
   return (
     <SortOrFilterChip

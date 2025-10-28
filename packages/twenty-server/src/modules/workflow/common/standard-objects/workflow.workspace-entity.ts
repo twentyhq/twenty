@@ -13,6 +13,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -23,6 +24,7 @@ import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
@@ -90,6 +92,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconVersions',
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
   lastPublishedVersionId: string | null;
 
   @WorkspaceField({
@@ -101,6 +104,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     options: WorkflowStatusOptions,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
   statuses: WorkflowStatus[] | null;
 
   @WorkspaceField({
@@ -140,6 +144,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   versions: Relation<WorkflowVersionWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -151,6 +156,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   runs: Relation<WorkflowRunWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -162,6 +168,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsSystem()
+  @WorkspaceIsFieldUIReadOnly()
   automatedTriggers: Relation<WorkflowAutomatedTriggerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -187,6 +194,18 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
+  @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.attachments,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Attachments`,
+    description: msg`Attachments linked to the workflow`,
+    icon: 'IconFileUpload',
+    inverseSideTarget: () => AttachmentWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  attachments: Relation<AttachmentWorkspaceEntity[]>;
+
   @WorkspaceField({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
@@ -194,5 +213,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCreativeCommonsSa',
     description: msg`The creator of the record`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 }

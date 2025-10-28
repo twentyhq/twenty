@@ -1,4 +1,9 @@
-import { getPageTitleFromPath, SettingsPageTitles } from '../title-utils';
+import { i18n } from '@lingui/core';
+import { messages as enMessages } from '~/locales/generated/en';
+import { getPageTitleFromPath } from '../title-utils';
+
+i18n.load('en', enMessages);
+i18n.activate('en');
 
 describe('title-utils', () => {
   it('should return the correct title for a given path', () => {
@@ -10,37 +15,37 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/create/workspace')).toBe('Create Workspace');
     expect(getPageTitleFromPath('/create/profile')).toBe('Create Profile');
     expect(getPageTitleFromPath('/settings/objects/opportunities')).toBe(
-      SettingsPageTitles.Objects,
+      'Data model - Settings',
     );
     expect(getPageTitleFromPath('/settings/profile')).toBe(
-      SettingsPageTitles.Profile,
+      'Profile - Settings',
     );
     expect(getPageTitleFromPath('/settings/experience')).toBe(
-      SettingsPageTitles.Experience,
+      'Experience - Settings',
     );
     expect(getPageTitleFromPath('/settings/accounts')).toBe(
-      SettingsPageTitles.Accounts,
+      'Account - Settings',
     );
     expect(getPageTitleFromPath('/settings/accounts/new')).toBe(
-      SettingsPageTitles.Accounts,
+      'Account - Settings',
     );
     expect(getPageTitleFromPath('/settings/accounts/calendars')).toBe(
-      SettingsPageTitles.Accounts,
+      'Account - Settings',
     );
     expect(
       getPageTitleFromPath('/settings/accounts/calendars/:accountUuid'),
-    ).toBe(SettingsPageTitles.Accounts);
+    ).toBe('Account - Settings');
     expect(getPageTitleFromPath('/settings/accounts/emails')).toBe(
-      SettingsPageTitles.Accounts,
+      'Account - Settings',
     );
     expect(getPageTitleFromPath('/settings/accounts/emails/:accountUuid')).toBe(
-      SettingsPageTitles.Accounts,
+      'Account - Settings',
     );
     expect(getPageTitleFromPath('/settings/members')).toBe(
-      SettingsPageTitles.Members,
+      'Members - Settings',
     );
     expect(getPageTitleFromPath('/settings/general')).toBe(
-      SettingsPageTitles.General,
+      'General - Settings',
     );
     expect(getPageTitleFromPath('/')).toBe('Twenty');
     expect(getPageTitleFromPath('/random')).toBe('Twenty');

@@ -1,9 +1,9 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 
-import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { INDEX_FILE_NAME } from '@/serverless-functions/constants/IndexFileName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunctionFields';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
@@ -15,8 +15,9 @@ import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { isDefined } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
+import { CodeEditor } from 'twenty-ui/input';
+import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -68,9 +69,15 @@ export const WorkflowReadonlyActionServerlessFunction = ({
     return null;
   }
 
+  const indexFileContent =
+    typeof formValues.code?.[SOURCE_FOLDER_NAME] !== 'string' &&
+    typeof formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME] === 'string'
+      ? formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME]
+      : '';
+
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         Icon={getIcon(headerIcon)}
         iconColor={headerIconColor}
         initialTitle={headerTitle}
@@ -85,8 +92,8 @@ export const WorkflowReadonlyActionServerlessFunction = ({
         <StyledCodeEditorContainer>
           <CodeEditor
             height={343}
-            value={formValues.code?.[INDEX_FILE_PATH]}
-            language={'typescript'}
+            value={indexFileContent}
+            language="typescript"
             onMount={handleEditorDidMount}
             setMarkers={getWrongExportedFunctionMarkers}
             options={{

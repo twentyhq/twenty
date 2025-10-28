@@ -1,6 +1,5 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
-import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
 import styled from '@emotion/styled';
@@ -23,17 +22,13 @@ export const CommandMenuWorkflowViewStepContent = () => {
   }
 
   return (
-    <WorkflowStepContextProvider
-      value={{ workflowVersionId: flow.workflowVersionId }}
-    >
-      <StyledContainer>
-        <WorkflowStepDetail
-          stepId={workflowSelectedNode}
-          trigger={flow.trigger}
-          steps={flow.steps}
-          readonly
-        />
-      </StyledContainer>
-    </WorkflowStepContextProvider>
+    <StyledContainer>
+      <WorkflowStepDetail
+        stepId={workflowSelectedNode}
+        trigger={flow.trigger}
+        steps={flow.steps}
+        readonly
+      />
+    </StyledContainer>
   );
 };

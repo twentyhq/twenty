@@ -4,7 +4,6 @@ import type Stripe from 'stripe';
 
 import { BillingPriceBillingScheme } from 'src/engine/core-modules/billing/enums/billing-price-billing-scheme.enum';
 import { BillingPriceTaxBehavior } from 'src/engine/core-modules/billing/enums/billing-price-tax-behavior.enum';
-import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { BillingPriceType } from 'src/engine/core-modules/billing/enums/billing-price-type.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
@@ -30,7 +29,6 @@ describe('transformStripePriceToDatabasePrice', () => {
       },
       currency_options: null,
       tiers: null,
-      tiers_mode: null,
       ...overrides,
     }) as unknown as Stripe.Price;
 
@@ -55,7 +53,6 @@ describe('transformStripePriceToDatabasePrice', () => {
       interval: SubscriptionInterval.Month,
       currencyOptions: undefined,
       tiers: undefined,
-      tiersMode: undefined,
       recurring: {
         usage_type: 'licensed',
         interval: 'month',
@@ -130,8 +127,6 @@ describe('transformStripePriceToDatabasePrice', () => {
 
     it.each([
       ['month', SubscriptionInterval.Month],
-      ['day', SubscriptionInterval.Day],
-      ['week', SubscriptionInterval.Week],
       ['year', SubscriptionInterval.Year],
     ])('should transform interval %s correctly', (stripeInterval, expected) => {
       const mockPrice = createMockPrice({
@@ -145,31 +140,6 @@ describe('transformStripePriceToDatabasePrice', () => {
 
       expect(result.interval).toBe(expected);
     });
-  });
-
-  describe('tiered pricing configurations', () => {
-    const mockTiers = [
-      { up_to: 10, unit_amount: 1000 },
-      { up_to: 20, unit_amount: 800 },
-    ];
-
-    it.each([
-      ['graduated', BillingPriceTiersMode.GRADUATED],
-      ['volume', BillingPriceTiersMode.VOLUME],
-    ])(
-      'should transform tiers mode %s correctly',
-      (stripeTiersMode, expected) => {
-        const mockPrice = createMockPrice({
-          billing_scheme: 'tiered',
-          tiers: mockTiers,
-          tiers_mode: stripeTiersMode as Stripe.Price.TiersMode,
-        });
-        const result = transformStripePriceToDatabasePrice(mockPrice);
-
-        expect(result.tiersMode).toBe(expected);
-        expect(result.tiers).toEqual(mockTiers);
-      },
-    );
   });
 
   describe('optional fields handling', () => {

@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
@@ -15,6 +17,7 @@ import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsObjectUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-object-ui-readonly.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -39,7 +42,14 @@ export enum WorkflowRunStatus {
   COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
   ENQUEUED = 'ENQUEUED',
+  STOPPING = 'STOPPING',
+  STOPPED = 'STOPPED',
 }
+
+registerEnumType(WorkflowRunStatus, {
+  name: 'WorkflowRunStatusEnum',
+  description: 'Status of the workflow run',
+});
 
 export type StepOutput = {
   id: string;
@@ -80,6 +90,7 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
   icon: STANDARD_OBJECT_ICONS.workflowRun,
 })
 @WorkspaceIsNotAuditLogged()
+@WorkspaceIsObjectUIReadOnly()
 export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.name,
@@ -89,6 +100,16 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettingsAutomation',
   })
   name: string;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.enqueuedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: msg`Workflow run enqueued at`,
+    description: msg`Workflow run enqueued at`,
+    icon: 'IconHistory',
+  })
+  @WorkspaceIsNullable()
+  enqueuedAt: Date | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
@@ -146,6 +167,18 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
         label: 'Enqueued',
         position: 4,
         color: 'blue',
+      },
+      {
+        value: WorkflowRunStatus.STOPPING,
+        label: 'Stopping',
+        position: 5,
+        color: 'orange',
+      },
+      {
+        value: WorkflowRunStatus.STOPPED,
+        label: 'Stopped',
+        position: 6,
+        color: 'gray',
       },
     ],
     defaultValue: "'NOT_STARTED'",

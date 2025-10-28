@@ -6,7 +6,7 @@ import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
 import { commandMenuWorkflowVersionIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowVersionIdComponentState';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -62,13 +62,14 @@ const renderHooks = () => {
     () => {
       const {
         openWorkflowTriggerTypeInCommandMenu,
-        openStepSelectInCommandMenu,
+        openWorkflowCreateStepInCommandMenu,
         openWorkflowEditStepInCommandMenu,
+        openWorkflowEditStepTypeInCommandMenu,
         openWorkflowViewStepInCommandMenu,
       } = useWorkflowCommandMenu();
       const commandMenuPage = useRecoilValue(commandMenuPageState);
-      const commandMenuNavigationMorphItemByPage = useRecoilValue(
-        commandMenuNavigationMorphItemByPageState,
+      const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+        commandMenuNavigationMorphItemsByPageState,
       );
 
       const viewableRecordId = useRecoilComponentValue(
@@ -107,14 +108,15 @@ const renderHooks = () => {
 
       return {
         openWorkflowTriggerTypeInCommandMenu,
-        openStepSelectInCommandMenu,
+        openWorkflowCreateStepInCommandMenu,
         openWorkflowEditStepInCommandMenu,
+        openWorkflowEditStepTypeInCommandMenu,
         openWorkflowViewStepInCommandMenu,
         workflowId,
         workflowVersionId,
         viewableRecordId,
         commandMenuPage,
-        commandMenuNavigationMorphItemByPage,
+        commandMenuNavigationMorphItemsByPage,
         viewableRecordNameSingular,
         currentObjectMetadataItemId,
         targetedRecordsRule,
@@ -145,25 +147,42 @@ describe('useWorkflowCommandMenu', () => {
     expect(result.current.workflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.WorkflowStepSelectTriggerType,
+      page: CommandMenuPages.WorkflowTriggerSelectType,
       pageTitle: t`Trigger Type`,
       pageIcon: IconBolt,
       pageId: 'mocked-uuid',
     });
   });
 
-  it('should navigate to the workflow step select action page', () => {
+  it('should navigate to the workflow step create action page', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openStepSelectInCommandMenu('test-workflow-id');
+      result.current.openWorkflowCreateStepInCommandMenu('test-workflow-id');
     });
 
     expect(result.current.workflowId).toBe('test-workflow-id');
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
-      page: CommandMenuPages.WorkflowStepSelectAction,
+      page: CommandMenuPages.WorkflowStepCreate,
       pageTitle: t`Select Action`,
+      pageIcon: IconSettingsAutomation,
+      pageId: 'mocked-uuid',
+    });
+  });
+
+  it('should navigate to the workflow step edit type page', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.openWorkflowEditStepTypeInCommandMenu('test-workflow-id');
+    });
+
+    expect(result.current.workflowId).toBe('test-workflow-id');
+
+    expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
+      page: CommandMenuPages.WorkflowStepEditType,
+      pageTitle: t`Select action`,
       pageIcon: IconSettingsAutomation,
       pageId: 'mocked-uuid',
     });

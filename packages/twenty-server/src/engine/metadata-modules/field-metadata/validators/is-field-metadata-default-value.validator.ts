@@ -21,7 +21,7 @@ export class IsFieldMetadataDefaultValue
   implements ValidatorConstraintInterface
 {
   constructor(
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly loggerService: LoggerService,
   ) {}

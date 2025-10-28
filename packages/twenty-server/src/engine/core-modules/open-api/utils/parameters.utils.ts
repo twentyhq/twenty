@@ -1,11 +1,9 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
-
-import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-
-import { DEFAULT_CONJUNCTION } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/add-default-conjunction.utils';
-import { FilterComparators } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-base-filter.utils';
-import { Conjunctions } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter.utils';
-import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/input-factories/order-by-input.factory';
+import {
+  QUERY_DEFAULT_LIMIT_RECORDS,
+  QUERY_MAX_RECORDS,
+} from 'twenty-shared/constants';
+import { OrderByDirection } from 'twenty-shared/types';
 
 export const computeLimitParameters = (
   fromMetadata = false,
@@ -18,8 +16,8 @@ export const computeLimitParameters = (
     schema: {
       type: 'integer',
       minimum: 0,
-      maximum: fromMetadata ? 1000 : 60,
-      default: fromMetadata ? 1000 : 60,
+      maximum: fromMetadata ? 1000 : QUERY_MAX_RECORDS,
+      default: fromMetadata ? 1000 : QUERY_DEFAULT_LIMIT_RECORDS,
     },
   };
 };
@@ -28,12 +26,8 @@ export const computeOrderByParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'order_by',
     in: 'query',
-    description: `Sorts objects returned.  
-    Should have the following shape: **field_name_1,field_name_2[DIRECTION_2],...**  
-    Available directions are **${Object.values(OrderByDirection).join(
-      '**, **',
-    )}**.  
-    Default direction is **${DEFAULT_ORDER_DIRECTION}**`,
+    description: `Format: **field_name_1,field_name_2[DIRECTION_2]
+    Refer to the filter section at the top of the page for more details.`,
     required: false,
     schema: {
       type: 'string',
@@ -56,14 +50,41 @@ export const computeDepthParameters = (): OpenAPIV3_1.ParameterObject => {
     name: 'depth',
     in: 'query',
     description: `Determines the level of nested related objects to include in the response.  
-    - 0: Returns only the primary object's information.  
-    - 1: Returns the primary object along with its directly related objects (with no additional nesting for related objects).  
-    - 2: Returns the primary object, its directly related objects, and the related objects of those related objects.`,
+    - 0: Primary object only  
+    - 1: Primary object + direct relations`,
     required: false,
     schema: {
       type: 'integer',
-      enum: [0, 1, 2],
+      enum: [0, 1],
       default: 1,
+    },
+  };
+};
+
+export const computeUpsertParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'upsert',
+    in: 'query',
+    description:
+      'If true, creates the object or updates it if it already exists.',
+    required: false,
+    schema: {
+      type: 'boolean',
+      default: false,
+    },
+  };
+};
+
+export const computeSoftDeleteParameters = (): OpenAPIV3_1.ParameterObject => {
+  return {
+    name: 'soft_delete',
+    in: 'query',
+    description:
+      'If true, soft deletes the objects. If false, objects are permanently deleted.',
+    required: false,
+    schema: {
+      type: 'boolean',
+      default: false,
     },
   };
 };
@@ -72,20 +93,8 @@ export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'filter',
     in: 'query',
-    description: `Filters objects returned.  
-    Should have the following shape: **field_1[COMPARATOR]:value_1,field_2[COMPARATOR]:value_2...
-    To filter on composite type fields use **field.subField[COMPARATOR]:value_1
-    **
-    Available comparators are **${Object.values(FilterComparators).join(
-      '**, **',
-    )}**.  
-    You can create more complex filters using conjunctions **${Object.values(
-      Conjunctions,
-    ).join('**, **')}**.  
-    Default root conjunction is **${DEFAULT_CONJUNCTION}**.  
-    To filter **null** values use **field[is]:NULL** or **field[is]:NOT_NULL**  
-    To filter using **boolean** values use **field[eq]:true** or **field[eq]:false**`,
-
+    description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2  
+    Refer to the filter section at the top of the page for more details.`,
     required: false,
     schema: {
       type: 'string',

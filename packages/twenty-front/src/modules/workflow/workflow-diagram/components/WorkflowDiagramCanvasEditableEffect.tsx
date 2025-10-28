@@ -1,39 +1,35 @@
-import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { assertEdgeHasDefinedHandlesOrThrow } from '@/workflow/workflow-diagram/utils/assertEdgeHasDefinedHandlesOrThrow';
+import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import {
   type OnSelectionChangeParams,
   useOnSelectionChange,
 } from '@xyflow/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
-  const { setEdgeSelected, clearEdgeSelection } = useEdgeSelected();
-
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
+  const { setEdgeSelected, clearEdgeSelected } = useEdgeState();
 
   const handleSelectedEdges = useCallback(
     ({ edges }: OnSelectionChangeParams) => {
-      if (!isWorkflowBranchEnabled) {
-        return;
-      }
-
       const selectedEdge = edges?.[0];
 
       if (!isDefined(selectedEdge)) {
-        clearEdgeSelection();
+        clearEdgeSelected();
+
         return;
       }
+
+      assertEdgeHasDefinedHandlesOrThrow(selectedEdge);
 
       setEdgeSelected({
         source: selectedEdge.source,
         target: selectedEdge.target,
+        sourceHandle: selectedEdge.sourceHandle,
+        targetHandle: selectedEdge.targetHandle,
       });
     },
-    [isWorkflowBranchEnabled, setEdgeSelected, clearEdgeSelection],
+    [setEdgeSelected, clearEdgeSelected],
   );
 
   useOnSelectionChange({

@@ -49,6 +49,7 @@ export const computeStandardFields = (
           isNullable: true,
           isLabelSyncedWithName: true,
           isUnique: null,
+          isUIReadOnly: false,
           options: null,
           relationTargetFieldMetadata: null,
           relationTargetFieldMetadataId: null,
@@ -56,6 +57,7 @@ export const computeStandardFields = (
           relationTargetObjectMetadataId: null,
           settings: null,
           standardOverrides: null,
+          morphId: null,
         });
       }
     } else {

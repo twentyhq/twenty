@@ -1,10 +1,13 @@
-import { type ViewSort } from '@/views/types/ViewSort';
+import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { areViewSortsEqual } from '@/views/utils/areViewSortsEqual';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getViewSortsToUpdate = (
-  currentViewSorts: ViewSort[],
-  newViewSorts: ViewSort[],
+  currentViewSorts: Pick<
+    CoreViewSortEssential,
+    'fieldMetadataId' | 'direction'
+  >[],
+  newViewSorts: CoreViewSortEssential[],
 ) => {
   return newViewSorts.filter((newViewSort) => {
     const correspondingViewSort = currentViewSorts.find(

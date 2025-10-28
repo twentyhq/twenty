@@ -1,6 +1,8 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -11,18 +13,18 @@ type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
   objectMetadataNameSingular: string;
   objectMetadataNamePlural: string;
   existingObjectMetadataId?: string;
-  objectMetadataMaps: ObjectMetadataMaps;
+  objectMetadataMaps: ObjectMetadataMaps | FlatEntityMaps<FlatObjectMetadata>;
 };
 
-export const validatesNoOtherObjectWithSameNameExistsOrThrows = ({
-  objectMetadataNameSingular,
-  objectMetadataNamePlural,
-  existingObjectMetadataId,
+export const doesOtherObjectWithSameNameExists = ({
   objectMetadataMaps,
-}: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams) => {
-  const objectAlreadyExists = Object.values(objectMetadataMaps.byId)
+  objectMetadataNamePlural,
+  objectMetadataNameSingular,
+  existingObjectMetadataId,
+}: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams) =>
+  Object.values(objectMetadataMaps.byId)
     .filter(isDefined)
-    .find(
+    .some(
       (objectMetadata) =>
         (objectMetadata.nameSingular === objectMetadataNameSingular ||
           objectMetadata.namePlural === objectMetadataNamePlural ||
@@ -31,12 +33,17 @@ export const validatesNoOtherObjectWithSameNameExistsOrThrows = ({
         objectMetadata.id !== existingObjectMetadataId,
     );
 
+export const validatesNoOtherObjectWithSameNameExistsOrThrows = (
+  args: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams,
+) => {
+  const objectAlreadyExists = doesOtherObjectWithSameNameExists(args);
+
   if (objectAlreadyExists) {
     throw new ObjectMetadataException(
       'Object already exists',
       ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
       {
-        userFriendlyMessage: t`Object already exists`,
+        userFriendlyMessage: msg`Object already exists`,
       },
     );
   }

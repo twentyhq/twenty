@@ -23,14 +23,12 @@ describe('getHttpRequestOutputSchema', () => {
         type: 'string',
         label: 'name',
         value: 'John',
-        icon: 'IconAbc',
       },
       email: {
         isLeaf: true,
         type: 'string',
         label: 'email',
         value: 'john@example.com',
-        icon: 'IconAbc',
       },
     };
     expect(getHttpRequestOutputSchema(input)).toEqual(expected);
@@ -44,14 +42,12 @@ describe('getHttpRequestOutputSchema', () => {
         type: 'number',
         label: 'age',
         value: 25,
-        icon: 'IconText',
       },
       score: {
         isLeaf: true,
         type: 'number',
         label: 'score',
         value: 98.5,
-        icon: 'IconText',
       },
     };
     expect(getHttpRequestOutputSchema(input)).toEqual(expected);
@@ -65,14 +61,12 @@ describe('getHttpRequestOutputSchema', () => {
         type: 'boolean',
         label: 'isActive',
         value: true,
-        icon: 'IconCheckbox',
       },
       isVerified: {
         isLeaf: true,
         type: 'boolean',
         label: 'isVerified',
         value: false,
-        icon: 'IconCheckbox',
       },
     };
     expect(getHttpRequestOutputSchema(input)).toEqual(expected);
@@ -93,44 +87,40 @@ describe('getHttpRequestOutputSchema', () => {
       user: {
         isLeaf: false,
         label: 'user',
+        type: 'object',
         value: {
           name: {
             isLeaf: true,
             type: 'string',
             label: 'name',
             value: 'John',
-            icon: 'IconAbc',
           },
           age: {
             isLeaf: true,
             type: 'number',
             label: 'age',
             value: 25,
-            icon: 'IconText',
           },
           address: {
             isLeaf: false,
             label: 'address',
+            type: 'object',
             value: {
               city: {
                 isLeaf: true,
                 type: 'string',
                 label: 'city',
                 value: 'New York',
-                icon: 'IconAbc',
               },
               country: {
                 isLeaf: true,
                 type: 'string',
                 label: 'country',
                 value: 'USA',
-                icon: 'IconAbc',
               },
             },
-            icon: 'IconBox',
           },
         },
-        icon: 'IconBox',
       },
     };
     expect(getHttpRequestOutputSchema(input)).toEqual(expected);
@@ -144,74 +134,22 @@ describe('getHttpRequestOutputSchema', () => {
     };
     const expected = {
       tags: {
-        isLeaf: false,
+        isLeaf: true,
         label: 'tags',
-        value: {
-          '0': {
-            isLeaf: true,
-            type: 'string',
-            label: '0',
-            value: 'tag1',
-            icon: 'IconAbc',
-          },
-          '1': {
-            isLeaf: true,
-            type: 'string',
-            label: '1',
-            value: 'tag2',
-            icon: 'IconAbc',
-          },
-        },
-        icon: 'IconBox',
+        type: 'array',
+        value: ['tag1', 'tag2'],
       },
       scores: {
-        isLeaf: false,
+        isLeaf: true,
         label: 'scores',
-        value: {
-          '0': {
-            isLeaf: true,
-            type: 'number',
-            label: '0',
-            value: 1,
-            icon: 'IconText',
-          },
-          '1': {
-            isLeaf: true,
-            type: 'number',
-            label: '1',
-            value: 2,
-            icon: 'IconText',
-          },
-          '2': {
-            isLeaf: true,
-            type: 'number',
-            label: '2',
-            value: 3,
-            icon: 'IconText',
-          },
-        },
-        icon: 'IconBox',
+        type: 'array',
+        value: [1, 2, 3],
       },
       flags: {
-        isLeaf: false,
+        isLeaf: true,
         label: 'flags',
-        value: {
-          '0': {
-            isLeaf: true,
-            type: 'boolean',
-            label: '0',
-            value: true,
-            icon: 'IconCheckbox',
-          },
-          '1': {
-            isLeaf: true,
-            type: 'boolean',
-            label: '1',
-            value: false,
-            icon: 'IconCheckbox',
-          },
-        },
-        icon: 'IconBox',
+        type: 'array',
+        value: [true, false],
       },
     };
     expect(getHttpRequestOutputSchema(input)).toEqual(expected);
@@ -225,14 +163,12 @@ describe('getHttpRequestOutputSchema', () => {
         type: 'unknown',
         label: 'name',
         value: null,
-        icon: 'IconQuestionMark',
       },
       age: {
         isLeaf: true,
         type: 'unknown',
         label: 'age',
         value: null,
-        icon: 'IconQuestionMark',
       },
     };
     expect(getHttpRequestOutputSchema(input)).toEqual(expected);
@@ -256,70 +192,49 @@ describe('getHttpRequestOutputSchema', () => {
         type: 'string',
         label: 'name',
         value: 'John',
-        icon: 'IconAbc',
       },
       age: {
         isLeaf: true,
         type: 'number',
         label: 'age',
         value: 25,
-        icon: 'IconText',
       },
       isActive: {
         isLeaf: true,
         type: 'boolean',
         label: 'isActive',
         value: true,
-        icon: 'IconCheckbox',
       },
       tags: {
-        isLeaf: false,
+        isLeaf: true,
         label: 'tags',
-        value: {
-          '0': {
-            isLeaf: true,
-            type: 'string',
-            label: '0',
-            value: 'tag1',
-            icon: 'IconAbc',
-          },
-          '1': {
-            isLeaf: true,
-            type: 'string',
-            label: '1',
-            value: 'tag2',
-            icon: 'IconAbc',
-          },
-        },
-        icon: 'IconBox',
+        type: 'array',
+        value: ['tag1', 'tag2'],
       },
       address: {
         isLeaf: false,
         label: 'address',
+        type: 'object',
         value: {
           city: {
             isLeaf: true,
             type: 'string',
             label: 'city',
             value: 'New York',
-            icon: 'IconAbc',
           },
           zip: {
             isLeaf: true,
             type: 'number',
             label: 'zip',
             value: 10001,
-            icon: 'IconText',
           },
         },
-        icon: 'IconBox',
       },
       metadata: {
         isLeaf: true,
         type: 'unknown',
         label: 'metadata',
         value: null,
-        icon: 'IconQuestionMark',
       },
     };
     expect(getHttpRequestOutputSchema(input)).toEqual(expected);

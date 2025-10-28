@@ -34,7 +34,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 @Injectable()
 export class IndexMetadataService {
   constructor(
-    @InjectRepository(IndexMetadataEntity, 'core')
+    @InjectRepository(IndexMetadataEntity)
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
@@ -269,7 +269,10 @@ export class IndexMetadataService {
     queryRunner,
   }: {
     workspaceId: string;
-    objectMetadata: ObjectMetadataEntity;
+    objectMetadata: Pick<
+      ObjectMetadataEntity,
+      'nameSingular' | 'isCustom' | 'id'
+    >;
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[];
     queryRunner?: QueryRunner;
   }) {

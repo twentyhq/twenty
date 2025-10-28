@@ -4,7 +4,7 @@ import { act } from 'react';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useUpsertRecordFilter } from '../useUpsertRecordFilter';
@@ -34,7 +34,7 @@ describe('useUpsertRecordFilter', () => {
       id: 'filter-1',
       fieldMetadataId: 'field-1',
       value: 'test-value',
-      operand: ViewFilterOperand.Contains,
+      operand: ViewFilterOperand.CONTAINS,
       displayValue: 'test-value',
       label: 'Test Field',
       type: FieldMetadataType.TEXT,
@@ -68,7 +68,7 @@ describe('useUpsertRecordFilter', () => {
       id: 'filter-1',
       fieldMetadataId: 'field-1',
       value: 'initial-value',
-      operand: ViewFilterOperand.Contains,
+      operand: ViewFilterOperand.CONTAINS,
       displayValue: 'initial-value',
       label: 'Test Field',
       type: FieldMetadataType.TEXT,
@@ -78,7 +78,7 @@ describe('useUpsertRecordFilter', () => {
       id: 'filter-1',
       fieldMetadataId: 'field-1',
       value: 'updated-value',
-      operand: ViewFilterOperand.Contains,
+      operand: ViewFilterOperand.CONTAINS,
       displayValue: 'updated-value',
       label: 'Test Field',
       type: FieldMetadataType.TEXT,

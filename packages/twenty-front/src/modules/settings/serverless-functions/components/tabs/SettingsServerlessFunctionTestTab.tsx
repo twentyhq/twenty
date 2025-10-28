@@ -1,6 +1,7 @@
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
-import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
+import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
 import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
@@ -20,10 +21,13 @@ const StyledCodeEditorContainer = styled.div`
 export const SettingsServerlessFunctionTestTab = ({
   handleExecute,
   serverlessFunctionId,
+  isTesting = false,
 }: {
   handleExecute: () => void;
   serverlessFunctionId: string;
+  isTesting?: boolean;
 }) => {
+  const { t } = useLingui();
   const [serverlessFunctionTestData, setServerlessFunctionTestData] =
     useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));
 
@@ -37,21 +41,22 @@ export const SettingsServerlessFunctionTestTab = ({
   return (
     <Section>
       <H2Title
-        title="Test your function"
-        description='Insert a JSON input, then press "Run" to test your function.'
+        title={t`Test your function`}
+        description={t`Insert a JSON input, then press "Run" to test your function.`}
       />
       <StyledInputsContainer>
         <StyledCodeEditorContainer>
           <CoreEditorHeader
-            title={'Input'}
+            title={t`Input`}
             rightNodes={[
               <Button
-                title="Run Function"
+                title={t`Run Function`}
                 variant="primary"
                 accent="blue"
                 size="small"
                 Icon={IconPlayerPlay}
                 onClick={handleExecute}
+                disabled={isTesting}
               />,
             ]}
           />
@@ -65,6 +70,7 @@ export const SettingsServerlessFunctionTestTab = ({
         </StyledCodeEditorContainer>
         <ServerlessFunctionExecutionResult
           serverlessFunctionTestData={serverlessFunctionTestData}
+          isTesting={isTesting}
         />
       </StyledInputsContainer>
     </Section>

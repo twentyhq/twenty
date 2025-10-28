@@ -1,13 +1,24 @@
+import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { OBJECT_MODEL_COMMON_FIELDS } from 'test/integration/constants/object-model-common-fields';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
+import {
+  TEST_COMPANY_1_ID,
+  TEST_COMPANY_2_ID,
+} from 'test/integration/constants/test-company-ids.constants';
 import {
   TEST_PERSON_1_ID,
   TEST_PERSON_2_ID,
   TEST_PERSON_3_ID,
+  TEST_PERSON_4_ID,
+  TEST_PERSON_5_ID,
+  TEST_PERSON_6_ID,
+  TEST_PERSON_7_ID,
 } from 'test/integration/constants/test-person-ids.constants';
 import {
   TEST_PET_ID_1,
   TEST_PET_ID_2,
+  TEST_PET_ID_3,
+  TEST_PET_ID_4,
 } from 'test/integration/constants/test-pet-ids.constants';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { performCreateManyOperation } from 'test/integration/graphql/utils/perform-create-many-operation.utils';
@@ -24,16 +35,80 @@ import { type SearchResultEdgeDTO } from 'src/engine/core-modules/search/dtos/se
 import { type SearchCursor } from 'src/engine/core-modules/search/services/search.service';
 
 describe('SearchResolver', () => {
-  const [firstPerson, secondPerson, thirdPerson] = [
-    { id: TEST_PERSON_1_ID, name: { firstName: 'searchInput1' } },
-    { id: TEST_PERSON_2_ID, name: { firstName: 'searchInput2' } },
+  const persons = [
+    {
+      id: TEST_PERSON_1_ID,
+      name: { firstName: 'searchInput1' },
+      phones: {
+        primaryPhoneNumber: '2071234567',
+        primaryPhoneCallingCode: '+44',
+        primaryPhoneCountryCode: 'GB',
+      },
+    },
+    {
+      id: TEST_PERSON_2_ID,
+      name: { firstName: 'searchInput2' },
+      phones: {
+        primaryPhoneNumber: '5551234567',
+        primaryPhoneCallingCode: '+1',
+        primaryPhoneCountryCode: 'US',
+      },
+    },
     { id: TEST_PERSON_3_ID, name: { firstName: 'searchInput3' } },
+    {
+      id: TEST_PERSON_4_ID,
+      name: { firstName: 'José', lastName: 'García' },
+      jobTitle: 'Café Manager',
+      emails: { primaryEmail: 'josé@café.com' },
+      phones: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+33',
+        primaryPhoneCountryCode: 'FR',
+      },
+    },
+    {
+      id: TEST_PERSON_5_ID,
+      name: { firstName: 'François', lastName: 'Müller' },
+      jobTitle: 'Manager',
+      emails: { primaryEmail: 'françois@naïve.com' },
+    },
+    {
+      id: TEST_PERSON_6_ID,
+      name: { firstName: 'Jose', lastName: 'Garcia' },
+      jobTitle: 'Cafe Manager',
+      emails: { primaryEmail: 'jose@cafe.com' },
+    },
+    {
+      id: TEST_PERSON_7_ID,
+      name: { firstName: 'Francois', lastName: 'Muller' },
+      jobTitle: 'Manager',
+      emails: { primaryEmail: 'francois@naive.com' },
+    },
   ];
 
-  const [firstPet, secondPet] = [
+  const companies = [
+    { id: TEST_COMPANY_1_ID, name: 'Café Corp' },
+    { id: TEST_COMPANY_2_ID, name: 'Naïve Solutions' },
+  ];
+
+  const pets = [
     { id: TEST_PET_ID_1, name: 'searchInput1' },
     { id: TEST_PET_ID_2, name: 'searchInput2' },
+    { id: TEST_PET_ID_3, name: 'Café' },
+    { id: TEST_PET_ID_4, name: 'Naïve' },
   ];
+
+  const [
+    searchInput1Person,
+    searchInput2Person,
+    searchInput3Person,
+    josePerson,
+    francoisPerson,
+    josePersonNoAccent,
+    francoisPersonNoAccent,
+  ] = persons;
+  const [cafeCorp, naiveCorp] = companies;
+  const [searchInput1Pet, searchInput2Pet, cafePet, naivePet] = pets;
 
   beforeAll(async () => {
     await deleteAllRecords('person');
@@ -43,6 +118,7 @@ describe('SearchResolver', () => {
     await deleteAllRecords('task');
     await deleteAllRecords('noteTarget');
     await deleteAllRecords('taskTarget');
+    await deleteAllRecords('dashboard');
     await deleteAllRecords('_pet');
     await deleteAllRecords('_surveyResult');
 
@@ -51,14 +127,22 @@ describe('SearchResolver', () => {
         'pet',
         'pets',
         OBJECT_MODEL_COMMON_FIELDS,
-        [firstPet, secondPet],
+        pets,
       );
 
-      await performCreateManyOperation('person', 'people', PERSON_GQL_FIELDS, [
-        firstPerson,
-        secondPerson,
-        thirdPerson,
-      ]);
+      await performCreateManyOperation(
+        'person',
+        'people',
+        PERSON_GQL_FIELDS,
+        persons,
+      );
+
+      await performCreateManyOperation(
+        'company',
+        'companies',
+        COMPANY_GQL_FIELDS,
+        companies,
+      );
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error);
@@ -87,19 +171,28 @@ describe('SearchResolver', () => {
         },
         eval: {
           orderedRecordIds: [
-            firstPerson.id,
-            secondPerson.id,
-            thirdPerson.id,
-            firstPet.id,
-            secondPet.id,
+            searchInput1Person.id,
+            searchInput2Person.id,
+            searchInput3Person.id,
+            josePerson.id,
+            francoisPerson.id,
+            josePersonNoAccent.id,
+            francoisPersonNoAccent.id,
+            naiveCorp.id,
+            cafeCorp.id,
+            searchInput1Pet.id,
+            searchInput2Pet.id,
+            cafePet.id,
+            naivePet.id,
           ],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                person: thirdPerson.id,
-                pet: secondPet.id,
+                person: francoisPersonNoAccent.id,
+                company: cafeCorp.id,
+                pet: naivePet.id,
               },
             },
           },
@@ -115,14 +208,14 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstPerson.id, firstPet.id],
+          orderedRecordIds: [searchInput1Person.id, searchInput1Pet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: firstPerson.id,
-                pet: firstPet.id,
+                person: searchInput1Person.id,
+                pet: searchInput1Pet.id,
               },
             },
           },
@@ -139,13 +232,18 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstPet.id, secondPet.id],
+          orderedRecordIds: [
+            searchInput1Pet.id,
+            searchInput2Pet.id,
+            cafePet.id,
+            naivePet.id,
+          ],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: secondPet.id,
+                pet: naivePet.id,
               },
             },
           },
@@ -161,13 +259,21 @@ describe('SearchResolver', () => {
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstPet.id, secondPet.id],
+          orderedRecordIds: [
+            naiveCorp.id,
+            cafeCorp.id,
+            searchInput1Pet.id,
+            searchInput2Pet.id,
+            cafePet.id,
+            naivePet.id,
+          ],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: secondPet.id,
+                company: cafeCorp.id,
+                pet: naivePet.id,
               },
             },
           },
@@ -180,17 +286,17 @@ describe('SearchResolver', () => {
         input: {
           searchInput: '',
           excludedObjectNameSingulars: ['workspaceMember'],
-          filter: { id: { eq: firstPet.id } },
+          filter: { id: { eq: searchInput1Pet.id } },
           limit: 50,
         },
         eval: {
-          orderedRecordIds: [firstPet.id],
+          orderedRecordIds: [searchInput1Pet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
+                pet: searchInput1Pet.id,
               },
             },
           },
@@ -207,18 +313,17 @@ describe('SearchResolver', () => {
         },
         eval: {
           orderedRecordIds: [
-            firstPerson.id,
-            secondPerson.id,
-            thirdPerson.id,
-            firstPet.id,
+            searchInput1Person.id,
+            searchInput2Person.id,
+            searchInput3Person.id,
+            josePerson.id,
           ],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
-                person: thirdPerson.id,
+                person: josePerson.id,
               },
             },
           },
@@ -234,13 +339,13 @@ describe('SearchResolver', () => {
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [firstPerson.id, secondPerson.id],
+          orderedRecordIds: [searchInput1Person.id, searchInput2Person.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                person: secondPerson.id,
+                person: searchInput2Person.id,
               },
             },
           },
@@ -256,20 +361,19 @@ describe('SearchResolver', () => {
           after: encodeCursorData({
             lastRanks: { tsRank: 0, tsRankCD: 0 },
             lastRecordIdsPerObject: {
-              person: secondPerson.id,
+              person: searchInput2Person.id,
             },
           }),
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [thirdPerson.id, firstPet.id],
+          orderedRecordIds: [searchInput3Person.id, josePerson.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
-                person: thirdPerson.id,
+                person: josePerson.id,
               },
             },
           },
@@ -286,18 +390,18 @@ describe('SearchResolver', () => {
         },
         eval: {
           orderedRecordIds: [
-            firstPerson.id,
-            secondPerson.id,
-            thirdPerson.id,
-            firstPet.id,
+            searchInput1Person.id,
+            searchInput2Person.id,
+            searchInput3Person.id,
+            searchInput1Pet.id,
           ],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
-                person: thirdPerson.id,
+                pet: searchInput1Pet.id,
+                person: searchInput3Person.id,
               },
             },
           },
@@ -313,13 +417,13 @@ describe('SearchResolver', () => {
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [firstPerson.id, secondPerson.id],
+          orderedRecordIds: [searchInput1Person.id, searchInput2Person.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: secondPerson.id,
+                person: searchInput2Person.id,
               },
             },
           },
@@ -336,20 +440,20 @@ describe('SearchResolver', () => {
           after: encodeCursorData({
             lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
             lastRecordIdsPerObject: {
-              person: secondPerson.id,
+              person: searchInput2Person.id,
             },
           }),
           limit: 2,
         },
         eval: {
-          orderedRecordIds: [thirdPerson.id, firstPet.id],
+          orderedRecordIds: [searchInput3Person.id, searchInput1Pet.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
-                person: thirdPerson.id,
+                pet: searchInput1Pet.id,
+                person: searchInput3Person.id,
               },
             },
           },
@@ -366,21 +470,21 @@ describe('SearchResolver', () => {
           after: encodeCursorData({
             lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
             lastRecordIdsPerObject: {
-              person: secondPerson.id,
+              person: searchInput2Person.id,
             },
           }),
           limit: 2,
-          filter: { id: { neq: firstPet.id } },
+          filter: { id: { neq: searchInput1Pet.id } },
         },
         eval: {
-          orderedRecordIds: [thirdPerson.id, secondPet.id],
+          orderedRecordIds: [searchInput3Person.id, searchInput2Pet.id],
           pageInfo: {
             hasNextPage: false,
             decodedEndCursor: {
               lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
               lastRecordIdsPerObject: {
-                person: thirdPerson.id,
-                pet: secondPet.id,
+                person: searchInput3Person.id,
+                pet: searchInput2Pet.id,
               },
             },
           },
@@ -396,13 +500,13 @@ describe('SearchResolver', () => {
           limit: 1,
         },
         eval: {
-          orderedRecordIds: [firstPet.id],
+          orderedRecordIds: [naiveCorp.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
+                company: naiveCorp.id,
               },
             },
           },
@@ -419,13 +523,13 @@ describe('SearchResolver', () => {
           limit: 1,
         },
         eval: {
-          orderedRecordIds: [firstPet.id],
+          orderedRecordIds: [searchInput1Pet.id],
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: {
               lastRanks: { tsRank: 0, tsRankCD: 0 },
               lastRecordIdsPerObject: {
-                pet: firstPet.id,
+                pet: searchInput1Pet.id,
               },
             },
           },
@@ -445,6 +549,359 @@ describe('SearchResolver', () => {
           pageInfo: {
             hasNextPage: true,
             decodedEndCursor: null,
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find both "José" and "Jose" when searching for "jose" (bidirectional accent-insensitive)',
+      context: {
+        input: {
+          searchInput: 'jose',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [josePerson.id, josePersonNoAccent.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.12158542, tsRankCD: 0.2 },
+              lastRecordIdsPerObject: {
+                person: josePersonNoAccent.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find both "García" and "Garcia" when searching for "garcia" (bidirectional accent-insensitive)',
+      context: {
+        input: {
+          searchInput: 'garcia',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [josePerson.id, josePersonNoAccent.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: josePersonNoAccent.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find both accented and non-accented "Café"/"Cafe" records when searching for "cafe" (bidirectional accent-insensitive)',
+      context: {
+        input: {
+          searchInput: 'cafe',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [
+            josePerson.id,
+            josePersonNoAccent.id,
+            cafeCorp.id,
+            cafePet.id,
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: josePersonNoAccent.id,
+                company: cafeCorp.id,
+                pet: cafePet.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find both accented and non-accented "Naïve"/"Naive" records when searching for "naive" (bidirectional accent-insensitive)',
+      context: {
+        input: {
+          searchInput: 'naive',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [
+            francoisPerson.id,
+            francoisPersonNoAccent.id,
+            naiveCorp.id,
+            naivePet.id,
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: francoisPersonNoAccent.id,
+                company: naiveCorp.id,
+                pet: naivePet.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find both "Müller" and "Muller" when searching for "muller" (bidirectional accent-insensitive)',
+      context: {
+        input: {
+          searchInput: 'muller',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [francoisPerson.id, francoisPersonNoAccent.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: francoisPersonNoAccent.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find both "François" and "Francois" when searching for "francois" (bidirectional accent-insensitive)',
+      context: {
+        input: {
+          searchInput: 'francois',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [francoisPerson.id, francoisPersonNoAccent.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.12158542, tsRankCD: 0.2 },
+              lastRecordIdsPerObject: {
+                person: francoisPersonNoAccent.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by raw phone number',
+      context: {
+        input: {
+          searchInput: '2071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by international phone number with plus',
+      context: {
+        input: {
+          searchInput: '+442071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by international phone number without plus',
+      context: {
+        input: {
+          searchInput: '442071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by trunk prefix phone number (UK)',
+      context: {
+        input: {
+          searchInput: '02071234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by trunk prefix phone number (France)',
+      context: {
+        input: {
+          searchInput: '0123456789',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [josePerson.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: josePerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by US phone number (raw national)',
+      context: {
+        input: {
+          searchInput: '5551234567',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput2Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput2Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title: 'should find person by partial phone number',
+      context: {
+        input: {
+          searchInput: '555123',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput2Person.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput2Person.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should find multiple persons when phone search matches multiple records',
+      context: {
+        input: {
+          searchInput: '123456789',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [josePerson.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: josePerson.id,
+              },
+            },
+          },
+        },
+      },
+    },
+    {
+      title:
+        'should rank phone search results appropriately vs other field matches',
+      context: {
+        input: {
+          searchInput: 'searchInput1',
+          excludedObjectNameSingulars: ['workspaceMember'],
+          limit: 50,
+        },
+        eval: {
+          orderedRecordIds: [searchInput1Person.id, searchInput1Pet.id],
+          pageInfo: {
+            hasNextPage: false,
+            decodedEndCursor: {
+              lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
+              lastRecordIdsPerObject: {
+                person: searchInput1Person.id,
+                pet: searchInput1Pet.id,
+              },
+            },
           },
         },
       },
@@ -496,7 +953,7 @@ describe('SearchResolver', () => {
           cursor: encodeCursorData({
             lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
             lastRecordIdsPerObject: {
-              person: firstPerson.id,
+              person: searchInput1Person.id,
             },
           }),
         },
@@ -504,7 +961,7 @@ describe('SearchResolver', () => {
           cursor: encodeCursorData({
             lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
             lastRecordIdsPerObject: {
-              person: secondPerson.id,
+              person: searchInput2Person.id,
             },
           }),
         },
@@ -514,7 +971,7 @@ describe('SearchResolver', () => {
         endCursor: encodeCursorData({
           lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
           lastRecordIdsPerObject: {
-            person: secondPerson.id,
+            person: searchInput2Person.id,
           },
         }),
       },
@@ -536,9 +993,9 @@ describe('SearchResolver', () => {
       excludedObjectNameSingulars: ['workspaceMember'],
       limit: 2,
       after: encodeCursorData({
-        lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
+        lastRanks: { tsRank: 0.06079271, tsRankCD: 0.1 },
         lastRecordIdsPerObject: {
-          person: secondPerson.id,
+          person: searchInput2Person.id,
         },
       }),
     });
@@ -551,7 +1008,7 @@ describe('SearchResolver', () => {
           cursor: encodeCursorData({
             lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
             lastRecordIdsPerObject: {
-              person: thirdPerson.id,
+              person: searchInput3Person.id,
             },
           }),
         },
@@ -559,8 +1016,8 @@ describe('SearchResolver', () => {
           cursor: encodeCursorData({
             lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
             lastRecordIdsPerObject: {
-              person: thirdPerson.id,
-              pet: firstPet.id,
+              person: searchInput3Person.id,
+              pet: searchInput1Pet.id,
             },
           }),
         },
@@ -570,8 +1027,8 @@ describe('SearchResolver', () => {
         endCursor: encodeCursorData({
           lastRanks: { tsRankCD: 0.1, tsRank: 0.06079271 },
           lastRecordIdsPerObject: {
-            person: thirdPerson.id,
-            pet: firstPet.id,
+            person: searchInput3Person.id,
+            pet: searchInput1Pet.id,
           },
         }),
       },

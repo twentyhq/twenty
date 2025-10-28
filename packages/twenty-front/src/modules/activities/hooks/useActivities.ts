@@ -8,10 +8,10 @@ import { type Note } from '@/activities/types/Note';
 import { type Task } from '@/activities/types/Task';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
 export const useActivities = <T extends Task | Note>({

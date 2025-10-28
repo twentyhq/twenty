@@ -7,7 +7,7 @@ import { AI_MODELS, ModelProvider } from './ai-models.const';
 
 describe('AI_MODELS', () => {
   it('should contain all expected models', () => {
-    expect(AI_MODELS).toHaveLength(6);
+    expect(AI_MODELS).toHaveLength(9);
     expect(AI_MODELS.map((model) => model.modelId)).toEqual([
       'gpt-4o',
       'gpt-4o-mini',
@@ -15,6 +15,9 @@ describe('AI_MODELS', () => {
       'claude-opus-4-20250514',
       'claude-sonnet-4-20250514',
       'claude-3-5-haiku-20241022',
+      'grok-3',
+      'grok-3-mini',
+      'grok-4',
     ]);
   });
 });

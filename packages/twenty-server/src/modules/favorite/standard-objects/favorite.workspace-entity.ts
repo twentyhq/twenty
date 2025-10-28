@@ -4,12 +4,14 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -18,12 +20,12 @@ import { FAVORITE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/worksp
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
-import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -212,19 +214,35 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   noteId: string;
 
   @WorkspaceRelation({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.view,
+    standardId: FAVORITE_STANDARD_FIELD_IDS.dashboard,
     type: RelationType.MANY_TO_ONE,
-    label: msg`View`,
-    description: msg`Favorite view`,
-    icon: 'IconLayoutCollage',
-    inverseSideTarget: () => ViewWorkspaceEntity,
+    label: msg`Dashboard`,
+    description: msg`Favorite dashboard`,
+    icon: 'IconLayoutDashboard',
+    inverseSideTarget: () => DashboardWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+  })
   @WorkspaceIsNullable()
-  view: Relation<ViewWorkspaceEntity> | null;
+  dashboard: Relation<DashboardWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('view')
+  @WorkspaceJoinColumn('dashboard')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+  })
+  dashboardId: string;
+
+  @WorkspaceField({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.view,
+    type: FieldMetadataType.UUID,
+    label: msg`ViewId`,
+    description: msg`ViewId`,
+    icon: 'IconView',
+  })
+  @WorkspaceIsNullable()
   viewId: string;
 
   @WorkspaceDynamicRelation({

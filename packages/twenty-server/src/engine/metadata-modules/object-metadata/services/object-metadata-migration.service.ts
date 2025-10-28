@@ -32,7 +32,7 @@ import { RELATION_MIGRATION_PRIORITY_PREFIX } from 'src/engine/workspace-manager
 @Injectable()
 export class ObjectMetadataMigrationService {
   constructor(
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
@@ -142,7 +142,7 @@ export class ObjectMetadataMigrationService {
     currentObjectMetadata: Pick<ObjectMetadataEntity, 'nameSingular'>,
     alteredObjectMetadata: Pick<ObjectMetadataEntity, 'nameSingular'>,
     relationMetadataCollection: {
-      targetObjectMetadata: ObjectMetadataEntity;
+      targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
       targetFieldMetadata: FieldMetadataEntity;
       sourceFieldMetadata: FieldMetadataEntity;
     }[],

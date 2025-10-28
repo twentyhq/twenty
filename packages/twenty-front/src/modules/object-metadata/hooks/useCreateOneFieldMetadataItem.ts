@@ -9,7 +9,7 @@ import {
 import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { useRefreshCachedViews } from '@/views/hooks/useRefreshViews';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 
 export const useCreateOneFieldMetadataItem = () => {
   const { refreshObjectMetadataItems } =
@@ -20,7 +20,8 @@ export const useCreateOneFieldMetadataItem = () => {
     CreateOneFieldMetadataItemMutationVariables
   >(CREATE_ONE_FIELD_METADATA_ITEM);
 
-  const { refreshCachedViews } = useRefreshCachedViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const createOneFieldMetadataItem = async (input: CreateFieldInput) => {
     const result = await mutate({
@@ -33,8 +34,7 @@ export const useCreateOneFieldMetadataItem = () => {
 
     await refreshObjectMetadataItems();
 
-    await refreshCachedViews();
-
+    await refreshCoreViewsByObjectMetadataId(input.objectMetadataId);
     return result;
   };
 

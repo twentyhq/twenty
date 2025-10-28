@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
-  type FindOperator,
   In,
+  type FindOperator,
   type InsertResult,
   type ObjectLiteral,
 } from 'typeorm';
@@ -13,7 +15,6 @@ import {
   GraphqlQueryBaseResolverService,
   type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -41,10 +42,18 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<ObjectRecord[]> {
+    if (executionArgs.args.data.length > QUERY_MAX_RECORDS) {
+      throw new GraphqlQueryRunnerException(
+        `Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        GraphqlQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED,
+        {
+          userFriendlyMessage: msg`Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        },
+      );
+    }
+
     const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
-
-    const { roleId } = executionArgs;
 
     const objectRecords = await this.insertOrUpsertRecords(executionArgs);
 
@@ -52,6 +61,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       executionArgs,
       objectRecords,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     await this.processNestedRelationsIfNeeded({
@@ -59,7 +69,6 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       records: upsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-      roleId,
     });
 
     return this.formatRecordsForResponse(
@@ -73,12 +82,14 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
     if (!executionArgs.args.upsert) {
-      const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+      const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+        executionArgs.options;
 
       const selectedColumns = buildColumnsToReturn({
         select: executionArgs.graphqlQuerySelectedFieldsResult.select,
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
       });
 
       return await executionArgs.repository.insert(
@@ -94,7 +105,8 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
   private async performUpsertOperation(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
   ): Promise<InsertResult> {
-    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+    const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
     const conflictingFields = this.getConflictingFields(
       objectMetadataItemWithFieldMaps,
@@ -120,6 +132,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     if (recordsToUpdate.length > 0) {
@@ -279,12 +292,36 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const recordsToInsert: Partial<ObjectRecord>[] = [];
 
     for (const record of records) {
-      let existingRecord: PartialObjectRecordWithId | null = null;
+      const matchingRecordId = this.getMatchingRecordId(
+        record,
+        conflictingFields,
+        existingRecords,
+      );
 
-      for (const field of conflictingFields) {
+      if (isDefined(matchingRecordId)) {
+        recordsToUpdate.push({ ...record, id: matchingRecordId });
+      } else {
+        recordsToInsert.push(record);
+      }
+    }
+
+    return { recordsToUpdate, recordsToInsert };
+  }
+
+  private getMatchingRecordId(
+    record: Partial<ObjectRecord>,
+    conflictingFields: {
+      baseField: string;
+      fullPath: string;
+      column: string;
+    }[],
+    existingRecords: PartialObjectRecordWithId[],
+  ): string | undefined {
+    const matchingRecordIds = conflictingFields.reduce<string[]>(
+      (acc, field) => {
         const requestFieldValue = this.getValueFromPath(record, field.fullPath);
 
-        const existingRec = existingRecords.find((existingRecord) => {
+        const matchingRecord = existingRecords.find((existingRecord) => {
           const existingFieldValue = this.getValueFromPath(
             existingRecord,
             field.fullPath,
@@ -296,20 +333,35 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
           );
         });
 
-        if (existingRec) {
-          existingRecord = { ...record, id: existingRec.id };
-          break;
+        if (isDefined(matchingRecord)) {
+          acc.push(matchingRecord.id);
         }
-      }
 
-      if (existingRecord) {
-        recordsToUpdate.push({ ...record, id: existingRecord.id });
-      } else {
-        recordsToInsert.push(record);
-      }
+        return acc;
+      },
+      [],
+    );
+
+    if ([...new Set(matchingRecordIds)].length > 1) {
+      const conflictingFieldsValues = conflictingFields
+        .map((field) => {
+          const value = this.getValueFromPath(record, field.fullPath);
+
+          return isDefined(value) ? `${field.fullPath}: ${value}` : undefined;
+        })
+        .filter(isDefined)
+        .join(', ');
+
+      throw new GraphqlQueryRunnerException(
+        `Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
+        GraphqlQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT,
+        {
+          userFriendlyMessage: msg`Multiple records found with the same unique field values for ${conflictingFieldsValues}. Cannot determine which record to update.`,
+        },
+      );
     }
 
-    return { recordsToUpdate, recordsToInsert };
+    return matchingRecordIds[0];
   }
 
   private async processRecordsToUpdate({
@@ -333,7 +385,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const savedRecords = await repository.updateMany(
       partialRecordsToUpdateWithoutCreatedByUpdate.map((record) => ({
         criteria: record.id,
-        partialEntity: record,
+        partialEntity: { ...record, deletedAt: null },
       })),
       undefined,
       columnsToReturn,
@@ -375,6 +427,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
     objectRecords: InsertResult,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<ObjectRecord[]> {
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -384,6 +437,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const upsertedRecords = await queryBuilder
@@ -393,6 +447,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       .where({
         id: In(objectRecords.generatedMaps.map((record) => record.id)),
       })
+      .withDeleted()
       .take(QUERY_MAX_RECORDS)
       .getMany();
 
@@ -404,13 +459,11 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     records,
     objectMetadataItemWithFieldMaps,
     objectMetadataMaps,
-    roleId,
   }: {
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>;
     records: ObjectRecord[];
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
     objectMetadataMaps: ObjectMetadataMaps;
-    roleId?: string;
   }): Promise<void> {
     if (!executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       return;
@@ -424,8 +477,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       limit: QUERY_MAX_RECORDS,
       authContext: executionArgs.options.authContext,
       workspaceDataSource: executionArgs.workspaceDataSource,
-      roleId,
-      shouldBypassPermissionChecks: executionArgs.shouldBypassPermissionChecks,
+      rolePermissionConfig: executionArgs.rolePermissionConfig,
       selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
     });
   }

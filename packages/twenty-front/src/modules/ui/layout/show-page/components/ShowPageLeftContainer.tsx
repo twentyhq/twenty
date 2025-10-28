@@ -30,15 +30,14 @@ const StyledIntermediateContainer = styled.div`
 `;
 
 export type ShowPageLeftContainerProps = {
-  forceMobile: boolean;
   children: ReactNode;
 };
 
 export const ShowPageLeftContainer = ({
-  forceMobile = false,
   children,
 }: ShowPageLeftContainerProps) => {
-  const isMobile = useIsMobile() || forceMobile;
+  const isMobile = useIsMobile();
+
   return (
     <StyledOuterContainer isMobile={isMobile}>
       {isMobile ? (

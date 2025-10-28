@@ -8,6 +8,7 @@ import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util
 import { Select } from '@/ui/input/components/Select';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useRefreshAllCoreViews } from '@/views/hooks/useRefreshAllCoreViews';
 import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
 import { APP_LOCALES } from 'twenty-shared/translations';
@@ -35,6 +36,8 @@ export const LocalePicker = () => {
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
+
+  const { refreshAllCoreViews } = useRefreshAllCoreViews('network-only');
 
   const updateWorkspaceMember = async (changedFields: any) => {
     if (!currentWorkspaceMember?.id) {
@@ -74,6 +77,7 @@ export const LocalePicker = () => {
       console.log('Failed to save locale to localStorage:', error);
     }
     await refreshObjectMetadataItems();
+    await refreshAllCoreViews();
   };
 
   const unsortedLocaleOptions: Array<{

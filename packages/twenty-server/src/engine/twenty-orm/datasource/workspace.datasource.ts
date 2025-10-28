@@ -1,6 +1,6 @@
 import { type Entity } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'class-validator';
-import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import {
   DataSource,
   type DataSourceOptions,
@@ -23,6 +23,7 @@ import {
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { type WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 type CreateQueryBuilderOptions = {
   calledByWorkspaceEntityManager?: boolean;
@@ -34,8 +35,9 @@ export class WorkspaceDataSource extends DataSource {
   featureFlagMapVersion: string;
   featureFlagMap: FeatureFlagMap;
   rolesPermissionsVersion: string;
-  permissionsPerRoleId: ObjectsPermissionsByRoleIdDeprecated;
+  permissionsPerRoleId: ObjectsPermissionsByRoleId;
   dataSourceWithOverridenCreateQueryBuilder: WorkspaceDataSource;
+  isPoolSharingEnabled: boolean;
 
   constructor(
     internalContext: WorkspaceInternalContext,
@@ -43,7 +45,8 @@ export class WorkspaceDataSource extends DataSource {
     featureFlagMapVersion: string,
     featureFlagMap: FeatureFlagMap,
     rolesPermissionsVersion: string,
-    permissionsPerRoleId: ObjectsPermissionsByRoleIdDeprecated,
+    permissionsPerRoleId: ObjectsPermissionsByRoleId,
+    isPoolSharingEnabled: boolean,
   ) {
     super(options);
     this.internalContext = internalContext;
@@ -53,35 +56,15 @@ export class WorkspaceDataSource extends DataSource {
     this.manager = this.createEntityManager();
     this.rolesPermissionsVersion = rolesPermissionsVersion;
     this.permissionsPerRoleId = permissionsPerRoleId;
+    this.isPoolSharingEnabled = isPoolSharingEnabled;
   }
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    shouldBypassPermissionChecks = false,
-    roleId?: string,
+    permissionOptions?: RolePermissionConfig,
     authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
-    if (shouldBypassPermissionChecks === true) {
-      return this.manager.getRepository(
-        target,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-        authContext,
-      );
-    }
-
-    if (roleId) {
-      return this.manager.getRepository(
-        target,
-        {
-          roleId,
-        },
-        authContext,
-      );
-    }
-
-    return this.manager.getRepository(target, undefined, authContext);
+    return this.manager.getRepository(target, permissionOptions, authContext);
   }
 
   override createEntityManager(
@@ -235,9 +218,7 @@ export class WorkspaceDataSource extends DataSource {
     this.rolesPermissionsVersion = rolesPermissionsVersion;
   }
 
-  setRolesPermissions(
-    permissionsPerRoleId: ObjectsPermissionsByRoleIdDeprecated,
-  ) {
+  setRolesPermissions(permissionsPerRoleId: ObjectsPermissionsByRoleId) {
     this.permissionsPerRoleId = permissionsPerRoleId;
   }
 
@@ -247,5 +228,26 @@ export class WorkspaceDataSource extends DataSource {
 
   setFeatureFlagMapVersion(featureFlagMapVersion: string) {
     this.featureFlagMapVersion = featureFlagMapVersion;
+  }
+
+  override async destroy(): Promise<void> {
+    if (this.isPoolSharingEnabled) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `PromiseMemoizer Event: A WorkspaceDataSource for workspace ${this.internalContext.workspaceId} is being cleared. Actual pool closure managed by PgPoolSharedService. Not calling dataSource.destroy().`,
+      );
+      // We should NOT call dataSource.destroy() here, because that would end
+      // the shared pool, potentially affecting other active users of that pool.
+      // The PgPoolSharedService is responsible for the lifecycle of shared pools.
+
+      return Promise.resolve();
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(
+        `PromiseMemoizer Event: A WorkspaceDataSource for workspace ${this.internalContext.workspaceId} is being cleared. Calling safelyDestroyDataSource.`,
+      );
+
+      return super.destroy();
+    }
   }
 }

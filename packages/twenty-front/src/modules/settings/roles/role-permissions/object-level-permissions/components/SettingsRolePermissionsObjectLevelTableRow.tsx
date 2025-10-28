@@ -2,21 +2,18 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { SettingsRolePermissionsObjectLevelOverrideCellContainer } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCellContainer';
 import { SettingsRolePermissionsObjectLevelSeeFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject';
 import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject';
-import {
-  OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS,
-  OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS_WITHOUT_FIELD_PERMISSIONS,
-} from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
-import { SettingsPath } from '@/types/SettingsPath';
+import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledNameTableCell = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.primary};
@@ -32,13 +29,11 @@ const StyledNameLabel = styled.div`
 type SettingsRolePermissionsObjectLevelTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
   roleId: string;
-  isFieldsPermissionsEnabled: boolean;
 };
 
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectMetadataItem,
   roleId,
-  isFieldsPermissionsEnabled,
 }: SettingsRolePermissionsObjectLevelTableRowProps) => {
   const { getIcon } = useIcons();
   const theme = useTheme();
@@ -53,11 +48,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         roleId: roleId,
         objectMetadataId: objectMetadataItem.id,
       })}
-      gridAutoColumns={
-        isFieldsPermissionsEnabled
-          ? OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS
-          : OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS_WITHOUT_FIELD_PERMISSIONS
-      }
+      gridAutoColumns={OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS}
     >
       <StyledNameTableCell>
         {!!Icon && (
@@ -78,23 +69,19 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           objectLabel={objectLabelPlural}
         />
       </TableCell>
-      {isFieldsPermissionsEnabled && (
-        <>
-          <TableCell>
-            <SettingsRolePermissionsObjectLevelSeeFieldsValueForObject
-              roleId={roleId}
-              objectMetadataItemId={objectMetadataItem.id}
-            />
-          </TableCell>
-          <TableCell>
-            <SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject
-              roleId={roleId}
-              objectMetadataItemId={objectMetadataItem.id}
-            />
-          </TableCell>
-        </>
-      )}
-      <TableCell align={'right'}>
+      <TableCell>
+        <SettingsRolePermissionsObjectLevelSeeFieldsValueForObject
+          roleId={roleId}
+          objectMetadataItemId={objectMetadataItem.id}
+        />
+      </TableCell>
+      <TableCell>
+        <SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject
+          roleId={roleId}
+          objectMetadataItemId={objectMetadataItem.id}
+        />
+      </TableCell>
+      <TableCell align="right">
         <IconChevronRight
           size={theme.icon.size.md}
           color={theme.font.color.tertiary}

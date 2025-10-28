@@ -1,8 +1,8 @@
-import { type ViewSort } from '@/views/types/ViewSort';
+import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 
 export const getViewSortsToDelete = (
-  currentViewSorts: ViewSort[],
-  newViewSorts: ViewSort[],
+  currentViewSorts: CoreViewSortEssential[],
+  newViewSorts: Pick<CoreViewSortEssential, 'fieldMetadataId'>[],
 ) => {
   return currentViewSorts.filter(
     (currentViewSort) =>

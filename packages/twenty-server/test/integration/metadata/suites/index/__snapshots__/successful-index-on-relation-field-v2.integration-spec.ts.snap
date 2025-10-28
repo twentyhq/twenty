@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Index metadata creation on relation field creation v2 Should create and delete index on MANY_TO_ONE relation field creation and deletion 1`] = `
+{
+  "indexFieldMetadataList": [
+    {
+      "createdAt": Any<String>,
+      "fieldMetadataId": Any<String>,
+      "id": Any<String>,
+      "order": 0,
+      "updatedAt": Any<String>,
+    },
+  ],
+  "indexType": "BTREE",
+  "isCustom": true,
+  "isUnique": false,
+  "name": "IDX_c7afa9b8a4109b84530eafdacdb",
+}
+`;
+
+exports[`Index metadata creation on relation field creation v2 Should create and delete index on ONE_TO_MANY relation field creation and deletion 1`] = `
+{
+  "indexFieldMetadataList": [
+    {
+      "createdAt": Any<String>,
+      "fieldMetadataId": Any<String>,
+      "id": Any<String>,
+      "order": 0,
+      "updatedAt": Any<String>,
+    },
+  ],
+  "indexType": "BTREE",
+  "isCustom": true,
+  "isUnique": false,
+  "name": "IDX_9343d8f57e4835944dffb85d501",
+}
+`;

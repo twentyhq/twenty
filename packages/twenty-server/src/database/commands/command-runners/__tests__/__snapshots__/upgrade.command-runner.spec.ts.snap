@@ -8,12 +8,14 @@ exports[`UpgradeCommandRunner Workspace upgrade should fail when current version
 
 exports[`UpgradeCommandRunner Workspace upgrade should fail when previous version is not found 1`] = `[Error: No previous version found for version 1.0.0. Please review the "allCommands" record. Available versions are: 1.0.0, 2.0.0]`;
 
-exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not defined 1`] = `[Error: WORKSPACE_VERSION_NOT_DEFINED workspace=workspace_0]`;
+exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not defined 1`] = `
+[Error: Unable to run the upgrade command. Aborting the upgrade process.
+Please ensure that all workspaces are on at least the previous minor version (1.0.0).
+If any workspaces are not on the previous minor version, roll back to that version and run the upgrade command again.]
+`;
 
-exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not equal to fromVersion 1`] = `[Error: WORKSPACE_VERSION_MISSMATCH Upgrade for workspace workspace_0 failed as its version is beneath fromWorkspaceVersion=1.0.0]`;
-
-exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 1`] = `[Error: WORKSPACE_VERSION_MISSMATCH Upgrade for workspace outated_version_workspace failed as its version is beneath fromWorkspaceVersion=1.0.0]`;
-
-exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 2`] = `[Error: Received invalid version: invalid 1.0.0]`;
-
-exports[`UpgradeCommandRunner should run upgrade command with failing and successful workspaces 3`] = `[Error: WORKSPACE_VERSION_NOT_DEFINED workspace=null_version_workspace]`;
+exports[`UpgradeCommandRunner Workspace upgrade should fail when workspace version is not equal to fromVersion 1`] = `
+[Error: Unable to run the upgrade command. Aborting the upgrade process.
+Please ensure that all workspaces are on at least the previous minor version (1.0.0).
+If any workspaces are not on the previous minor version, roll back to that version and run the upgrade command again.]
+`;

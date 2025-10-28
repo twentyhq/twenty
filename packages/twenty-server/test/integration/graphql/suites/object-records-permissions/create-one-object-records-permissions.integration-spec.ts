@@ -5,11 +5,21 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 describe('createOneObjectRecordsPermissions', () => {
+  let createdPersonIds: string[] = [];
+
+  afterEach(async () => {
+    if (createdPersonIds.length > 0) {
+      await deleteRecordsByIds('person', createdPersonIds);
+      createdPersonIds = [];
+    }
+  });
+
   it('should throw a permission error when user does not have permission (guest role)', async () => {
     const graphqlOperation = createOneOperationFactory({
       objectMetadataSingularName: 'person',
@@ -41,6 +51,8 @@ describe('createOneObjectRecordsPermissions', () => {
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
+    createdPersonIds.push(personId);
+
     expect(response.body.data).toBeDefined();
     expect(response.body.data.createPerson).toBeDefined();
     expect(response.body.data.createPerson.id).toBe(personId);
@@ -57,6 +69,8 @@ describe('createOneObjectRecordsPermissions', () => {
     });
 
     const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+
+    createdPersonIds.push(personId);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.createPerson).toBeDefined();

@@ -13,10 +13,8 @@ const DEFAULT_STEP_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: '',
-  displayValue: '',
   type: 'text',
-  label: 'New Filter',
-  operand: ViewFilterOperand.Is,
+  operand: ViewFilterOperand.IS,
   value: '',
   positionInStepFilterGroup: 0,
 };

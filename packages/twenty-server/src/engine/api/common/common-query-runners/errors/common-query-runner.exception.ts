@@ -1,0 +1,14 @@
+import { CustomException } from 'src/utils/custom-exception';
+
+export class CommonQueryRunnerException extends CustomException<CommonQueryRunnerExceptionCode> {}
+
+export enum CommonQueryRunnerExceptionCode {
+  RECORD_NOT_FOUND = 'RECORD_NOT_FOUND',
+  INVALID_QUERY_INPUT = 'INVALID_QUERY_INPUT',
+  INVALID_AUTH_CONTEXT = 'INVALID_AUTH_CONTEXT',
+  ARGS_CONFLICT = 'ARGS_CONFLICT',
+  INVALID_ARGS_FIRST = 'INVALID_ARGS_FIRST',
+  INVALID_ARGS_LAST = 'INVALID_ARGS_LAST',
+  UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT = 'UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT',
+  MISSING_SYSTEM_FIELD = 'MISSING_SYSTEM_FIELD',
+}

@@ -1,4 +1,3 @@
-import { AppPath } from '@/types/AppPath';
 import { ApolloError, useApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import {
@@ -8,13 +7,13 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 
 import { billingState } from '@/client-config/states/billingState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  type AuthTokenPair,
   useCheckUserExistsLazyQuery,
   useGetAuthTokensFromLoginTokenMutation,
   useGetAuthTokensFromOtpMutation,
@@ -24,6 +23,7 @@ import {
   useSignInMutation,
   useSignUpInWorkspaceMutation,
   useSignUpMutation,
+  type AuthTokenPair,
 } from '~/generated-metadata/graphql';
 
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
@@ -42,6 +42,7 @@ import {
   getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -52,6 +53,7 @@ import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
@@ -68,8 +70,10 @@ import { loginTokenState } from '../states/loginTokenState';
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setLoginToken = useSetRecoilState(loginTokenState);
+
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
+  const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const isEmailVerificationRequired = useRecoilValue(
     isEmailVerificationRequiredState,
@@ -110,6 +114,7 @@ export const useAuth = () => {
   const [, setSearchParams] = useSearchParams();
 
   const navigate = useNavigate();
+  const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   const clearSession = useRecoilCallback(
     ({ snapshot }) =>
@@ -161,6 +166,7 @@ export const useAuth = () => {
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
+          set(isCaptchaScriptLoadedState, isCaptchaScriptLoaded);
           return undefined;
         });
 
@@ -171,9 +177,17 @@ export const useAuth = () => {
         await client.clearStore();
         // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);
+        await loadMockedObjectMetadataItems();
         navigate(AppPath.SignInUp);
       },
-    [navigate, client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
+    [
+      goToRecoilSnapshot,
+      client,
+      setLastAuthenticateWorkspaceDomain,
+      loadMockedObjectMetadataItems,
+      navigate,
+      isCaptchaScriptLoaded,
+    ],
   );
 
   const handleSetAuthTokens = useCallback(
@@ -304,7 +318,7 @@ export const useAuth = () => {
       handleSetAuthTokens(authTokens);
 
       // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
-      // then UserProvider updates its children and PrefetchDataProvider is triggered
+      // then UserProvider updates its children and PrefetchDataProvider is then triggered
       // which requires the correct metadata to be loaded (not the mocks)
       await loadCurrentUser();
       await refreshObjectMetadataItems();
@@ -483,8 +497,8 @@ export const useAuth = () => {
 
   const handleSignOut = useCallback(async () => {
     await clearSession();
-    await requestFreshCaptchaToken();
-  }, [clearSession, requestFreshCaptchaToken]);
+    if (isCaptchaScriptLoaded) await requestFreshCaptchaToken();
+  }, [clearSession, isCaptchaScriptLoaded, requestFreshCaptchaToken]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({

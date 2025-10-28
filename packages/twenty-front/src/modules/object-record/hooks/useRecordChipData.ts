@@ -1,5 +1,5 @@
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
-import { type RecordChipData } from '@/object-record/record-field/types/RecordChipData';
+import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';

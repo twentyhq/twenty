@@ -3,8 +3,8 @@
 import { z } from 'zod';
 
 const validator = z.object({
-  entityID: z.string().url(),
-  ssoUrl: z.string().url(),
+  entityID: z.url(),
+  ssoUrl: z.url(),
   certificate: z.string().min(1),
 });
 

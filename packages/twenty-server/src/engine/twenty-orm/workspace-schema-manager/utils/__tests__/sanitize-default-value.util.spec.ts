@@ -2,26 +2,15 @@ import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-man
 
 describe('sanitizeDefaultValue', () => {
   describe('allowed functions', () => {
-    it('should allow gen_random_uuid() function', () => {
-      // Prepare
-      const input = 'gen_random_uuid()';
-
-      // Act
-      const result = sanitizeDefaultValue(input);
-
-      // Assert
-      expect(result).toBe('gen_random_uuid()');
-    });
-
     it('should allow uuid_generate_v4() function', () => {
       // Prepare
-      const input = 'uuid_generate_v4()';
+      const input = 'public.uuid_generate_v4()';
 
       // Act
       const result = sanitizeDefaultValue(input);
 
       // Assert
-      expect(result).toBe('uuid_generate_v4()');
+      expect(result).toBe('public.uuid_generate_v4()');
     });
 
     it('should allow now() function', () => {
@@ -35,71 +24,10 @@ describe('sanitizeDefaultValue', () => {
       expect(result).toBe('now()');
     });
 
-    it('should allow current_timestamp function', () => {
-      // Prepare
-      const input = 'current_timestamp';
-
-      // Act
-      const result = sanitizeDefaultValue(input);
-
-      // Assert
-      expect(result).toBe('current_timestamp');
-    });
-
-    it('should allow current_date function', () => {
-      // Prepare
-      const input = 'current_date';
-
-      // Act
-      const result = sanitizeDefaultValue(input);
-
-      // Assert
-      expect(result).toBe('current_date');
-    });
-
-    it('should allow current_time function', () => {
-      // Prepare
-      const input = 'current_time';
-
-      // Act
-      const result = sanitizeDefaultValue(input);
-
-      // Assert
-      expect(result).toBe('current_time');
-    });
-
-    it('should allow localtime function', () => {
-      // Prepare
-      const input = 'localtime';
-
-      // Act
-      const result = sanitizeDefaultValue(input);
-
-      // Assert
-      expect(result).toBe('localtime');
-    });
-
-    it('should allow localtimestamp function', () => {
-      // Prepare
-      const input = 'localtimestamp';
-
-      // Act
-      const result = sanitizeDefaultValue(input);
-
-      // Assert
-      expect(result).toBe('localtimestamp');
-    });
-
     it('should be case insensitive for allowed functions', () => {
       // Act & Assert
-      expect(sanitizeDefaultValue('GEN_RANDOM_UUID()')).toBe(
-        'GEN_RANDOM_UUID()',
-      );
+
       expect(sanitizeDefaultValue('NOW()')).toBe('NOW()');
-      expect(sanitizeDefaultValue('CURRENT_TIMESTAMP')).toBe(
-        'CURRENT_TIMESTAMP',
-      );
-      expect(sanitizeDefaultValue('Current_Date')).toBe('Current_Date');
     });
   });
 
@@ -115,7 +43,7 @@ describe('sanitizeDefaultValue', () => {
       expect(result).not.toContain('DROP TABLE');
       expect(result).not.toContain(';');
       expect(result).not.toContain('--');
-      expect(result).toBe('DROPTABLEusers');
+      expect(result).toBe("'DROPTABLEusers'");
     });
 
     it('should sanitize quotes in string values', () => {
@@ -127,7 +55,7 @@ describe('sanitizeDefaultValue', () => {
 
       // Assert
       expect(result).not.toContain('"');
-      expect(result).toBe('testvalue');
+      expect(result).toBe("'testvalue'");
     });
 
     it('should sanitize parentheses in non-function values', () => {
@@ -140,7 +68,7 @@ describe('sanitizeDefaultValue', () => {
       // Assert
       expect(result).not.toContain('(');
       expect(result).not.toContain(')');
-      expect(result).toBe('testvalue');
+      expect(result).toBe("'testvalue'");
     });
 
     it('should sanitize backslashes', () => {
@@ -152,7 +80,7 @@ describe('sanitizeDefaultValue', () => {
 
       // Assert
       expect(result).not.toContain('\\');
-      expect(result).toBe('testvalue');
+      expect(result).toBe("'testvalue'");
     });
 
     it('should sanitize SQL comment patterns', () => {
@@ -165,7 +93,7 @@ describe('sanitizeDefaultValue', () => {
       // Assert
       expect(result).not.toContain('/*');
       expect(result).not.toContain('*/');
-      expect(result).toBe('valuecommenttest');
+      expect(result).toBe("'valuecommenttest'");
     });
 
     it('should remove non-alphanumeric characters but preserve SQL keywords in alphanumeric form', () => {
@@ -176,7 +104,7 @@ describe('sanitizeDefaultValue', () => {
       const result = sanitizeDefaultValue(inputWithKeywords);
 
       // Assert
-      expect(result).toBe('SELECTFROMusers');
+      expect(result).toBe("'SELECTFROMusers'");
       expect(result).not.toContain('*');
       expect(result).not.toContain(' ');
     });
@@ -191,24 +119,24 @@ describe('sanitizeDefaultValue', () => {
       const result = sanitizeDefaultValue(input);
 
       // Assert
-      expect(result).toBe('simple_value');
+      expect(result).toBe("'simple_value'");
     });
 
-    it('should preserve numeric string values', () => {
+    it('should preserve numeric values', () => {
       // Prepare
-      const input = '12345';
+      const input = 12345;
 
       // Act
       const result = sanitizeDefaultValue(input);
 
       // Assert
-      expect(result).toBe('12345');
+      expect(result).toBe(12345);
     });
 
-    it('should preserve boolean string values', () => {
+    it('should preserve boolean values', () => {
       // Act & Assert
-      expect(sanitizeDefaultValue('true')).toBe('true');
-      expect(sanitizeDefaultValue('false')).toBe('false');
+      expect(sanitizeDefaultValue(true)).toBe(true);
+      expect(sanitizeDefaultValue(false)).toBe(false);
     });
 
     it('should handle empty string', () => {
@@ -219,7 +147,7 @@ describe('sanitizeDefaultValue', () => {
       const result = sanitizeDefaultValue(input);
 
       // Assert
-      expect(result).toBe('');
+      expect(result).toBe("''");
     });
 
     it('should remove whitespace but preserve alphanumeric and underscores', () => {
@@ -230,7 +158,7 @@ describe('sanitizeDefaultValue', () => {
       const result = sanitizeDefaultValue(input);
 
       // Assert
-      expect(result).toBe('test');
+      expect(result).toBe("'test'");
     });
 
     it('should preserve alphanumeric values with underscores', () => {
@@ -241,7 +169,7 @@ describe('sanitizeDefaultValue', () => {
       const result = sanitizeDefaultValue(input);
 
       // Assert
-      expect(result).toBe('test_value_123');
+      expect(result).toBe("'test_value_123'");
     });
   });
 
@@ -249,14 +177,14 @@ describe('sanitizeDefaultValue', () => {
     it('should distinguish between allowed functions and similar strings', () => {
       // Act & Assert
       expect(sanitizeDefaultValue('now()')).toBe('now()');
-      expect(sanitizeDefaultValue('now_test')).toBe('now_test');
-      expect(sanitizeDefaultValue('not_now()')).toBe('not_now');
+      expect(sanitizeDefaultValue('now_test')).toBe("'now_test'");
+      expect(sanitizeDefaultValue('not_now()')).toBe("'not_now'");
     });
 
     it('should handle functions with different casing but sanitize non-functions normally', () => {
       // Act & Assert
       expect(sanitizeDefaultValue('NOW()')).toBe('NOW()');
-      expect(sanitizeDefaultValue('now_function')).toBe('now_function');
+      expect(sanitizeDefaultValue('now_function')).toBe("'now_function'");
     });
 
     it('should handle complex mixed input', () => {
@@ -267,7 +195,7 @@ describe('sanitizeDefaultValue', () => {
       const result = sanitizeDefaultValue(complexInput);
 
       // Assert
-      expect(result).toBe('testvalueDROPTABLEuserscommentnow');
+      expect(result).toBe("'testvalueDROPTABLEuserscommentnow'");
       expect(result).not.toContain(';');
       expect(result).not.toContain('"');
       expect(result).not.toContain('/*');
@@ -277,18 +205,16 @@ describe('sanitizeDefaultValue', () => {
   });
 
   describe('edge cases', () => {
-    it('should handle null-like strings', () => {
+    it('should handle null', () => {
       // Act & Assert
-      expect(sanitizeDefaultValue('null')).toBe('null');
-      expect(sanitizeDefaultValue('NULL')).toBe('NULL');
-      expect(sanitizeDefaultValue('undefined')).toBe('undefined');
+      expect(sanitizeDefaultValue(null)).toBe('NULL');
     });
 
     it('should handle strings that start with allowed function names', () => {
       // Act & Assert
-      expect(sanitizeDefaultValue('now_extended')).toBe('now_extended');
+      expect(sanitizeDefaultValue('now_extended')).toBe("'now_extended'");
       expect(sanitizeDefaultValue('gen_random_uuid_custom')).toBe(
-        'gen_random_uuid_custom',
+        "'gen_random_uuid_custom'",
       );
     });
 
@@ -300,7 +226,7 @@ describe('sanitizeDefaultValue', () => {
       const result = sanitizeDefaultValue(specialChars);
 
       // Assert
-      expect(result).toBe('');
+      expect(result).toBe("''");
     });
 
     it('should handle very long strings', () => {
@@ -311,7 +237,7 @@ describe('sanitizeDefaultValue', () => {
       const result = sanitizeDefaultValue(longString);
 
       // Assert
-      expect(result).toBe('a'.repeat(1000) + 'DROPTABLEusers');
+      expect(result).toBe(`'${'a'.repeat(1000)}DROPTABLEusers'`);
       expect(result).not.toContain(';');
       expect(result).not.toContain(' ');
     });

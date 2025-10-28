@@ -15,7 +15,7 @@ import {
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-max-attempts';
 import {
-  type MessageImportDriverException,
+  MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
@@ -25,7 +25,6 @@ import {
 } from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 
 export enum MessageImportSyncStep {
-  FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH', // TODO: deprecate to only use MESSAGE_LIST_FETCH
   MESSAGE_LIST_FETCH = 'MESSAGE_LIST_FETCH',
   MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
   MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
@@ -150,7 +149,7 @@ export class MessageImportExceptionHandlerService {
     );
 
     switch (syncStep) {
-      case MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH:
+      case MessageImportSyncStep.MESSAGE_LIST_FETCH:
         await this.messageChannelSyncStatusService.scheduleMessageListFetch([
           messageChannel.id,
         ]);
@@ -230,8 +229,15 @@ export class MessageImportExceptionHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    if (syncStep === MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH) {
-      return;
+    if (syncStep === MessageImportSyncStep.MESSAGE_LIST_FETCH) {
+      await this.handleUnknownException(
+        new MessageImportDriverException(
+          'Not Found exception occurred while fetching message list, which should never happen',
+          MessageImportDriverExceptionCode.UNKNOWN,
+        ),
+        messageChannel,
+        workspaceId,
+      );
     }
 
     await this.messageChannelSyncStatusService.resetAndScheduleMessageListFetch(

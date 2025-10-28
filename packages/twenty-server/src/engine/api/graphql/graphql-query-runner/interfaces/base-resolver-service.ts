@@ -1,16 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { type ObjectRecord } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   type ResolverArgs,
-  ResolverArgsType,
   type WorkspaceResolverBuilderMethodNames,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -24,7 +23,7 @@ import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/g
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
@@ -36,6 +35,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
@@ -45,8 +45,7 @@ export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
   isExecutedByApiKey: boolean;
-  roleId?: string;
-  shouldBypassPermissionChecks: boolean;
+  rolePermissionConfig?: RolePermissionConfig;
 };
 
 @Injectable()
@@ -85,7 +84,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       const workspace = authContext.workspace;
 
-      workspaceValidator.assertIsDefinedOrThrow(workspace);
+      assertIsDefinedOrThrow(workspace);
 
       await this.validate(args, options);
 
@@ -111,25 +110,16 @@ export abstract class GraphqlQueryBaseResolverService<
       const computedArgs = (await this.queryRunnerArgsFactory.create(
         hookedArgs,
         options,
-        // @ts-expect-error legacy noImplicitAny
-        ResolverArgsType[capitalize(operationName)],
+        operationName,
       )) as Input;
 
       let roleId: string | undefined;
-      let shouldBypassPermissionChecks = false;
 
       if (isDefined(authContext.apiKey)) {
-        const isApiKeyRolesEnabled =
-          featureFlagsMap[FeatureFlagKey.IS_API_KEY_ROLES_ENABLED];
-
-        if (!isApiKeyRolesEnabled) {
-          shouldBypassPermissionChecks = true;
-        } else {
-          roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
-            authContext.apiKey.id,
-            workspace.id,
-          );
-        }
+        roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
+          authContext.apiKey.id,
+          workspace.id,
+        );
       }
 
       if (isDefined(authContext.userWorkspaceId)) {
@@ -155,11 +145,12 @@ export abstract class GraphqlQueryBaseResolverService<
           PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
         );
       }
-
+      const rolePermissionConfig: RolePermissionConfig | undefined = roleId
+        ? { unionOf: [roleId] }
+        : undefined;
       const repository = workspaceDataSource.getRepository(
         objectMetadataItemWithFieldMaps.nameSingular,
-        shouldBypassPermissionChecks,
-        roleId,
+        rolePermissionConfig,
         authContext,
       );
 
@@ -171,10 +162,7 @@ export abstract class GraphqlQueryBaseResolverService<
       const selectedFields = graphqlFields(options.info);
 
       const graphqlQuerySelectedFieldsResult =
-        graphqlQueryParser.parseSelectedFields(
-          objectMetadataItemWithFieldMaps,
-          selectedFields,
-        );
+        graphqlQueryParser.parseSelectedFields(selectedFields);
 
       const graphqlQueryResolverExecutionArgs = {
         args: computedArgs,
@@ -184,10 +172,8 @@ export abstract class GraphqlQueryBaseResolverService<
         graphqlQueryParser,
         graphqlQuerySelectedFieldsResult,
         isExecutedByApiKey: isDefined(authContext.apiKey),
-        roleId,
-        shouldBypassPermissionChecks,
+        rolePermissionConfig,
       };
-
       const results = await this.resolve(
         graphqlQueryResolverExecutionArgs,
         featureFlagsMap,
@@ -209,7 +195,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       return resultWithGetters;
     } catch (error) {
-      workspaceQueryRunnerGraphqlApiExceptionHandler(error, options);
+      workspaceQueryRunnerGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -220,7 +206,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
     const workspace = authContext.workspace;
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     if (
       Object.keys(OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS).includes(

@@ -4,7 +4,6 @@ export const query = gql`
   mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
     createOneObject(input: $input) {
       id
-      dataSourceId
       nameSingular
       namePlural
       labelSingular
@@ -72,7 +71,6 @@ export const variables = {
 
 export const responseData = {
   id: '',
-  dataSourceId: '',
   nameSingular: 'viewFilter',
   namePlural: 'viewFilters',
   labelSingular: 'View Filter',

@@ -9,7 +9,7 @@ import {
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 
 registerEnumType(FeatureFlagKey, {
   name: 'FeatureFlagKey',
@@ -18,6 +18,15 @@ registerEnumType(FeatureFlagKey, {
 registerEnumType(ModelProvider, {
   name: 'ModelProvider',
 });
+
+@ObjectType()
+class NativeModelCapabilities {
+  @Field(() => Boolean, { nullable: true })
+  webSearch?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  twitterSearch?: boolean;
+}
 
 @ObjectType()
 export class ClientAIModelConfig {
@@ -35,6 +44,9 @@ export class ClientAIModelConfig {
 
   @Field(() => Number)
   outputCostPer1kTokensInCredits: number;
+
+  @Field(() => NativeModelCapabilities, { nullable: true })
+  nativeCapabilities?: NativeModelCapabilities;
 }
 
 @ObjectType()
@@ -111,8 +123,8 @@ export class ClientConfig {
   @Field(() => String, { nullable: true })
   appVersion?: string;
 
-  @Field(() => AuthProviders, { nullable: false })
-  authProviders: AuthProviders;
+  @Field(() => AuthProvidersDTO, { nullable: false })
+  authProviders: AuthProvidersDTO;
 
   @Field(() => Billing, { nullable: false })
   billing: Billing;

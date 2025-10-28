@@ -1,4 +1,5 @@
 import {
+  IsDefined,
   IsNotEmpty,
   IsObject,
   IsOptional,
@@ -14,6 +15,7 @@ export class JsonRpc {
   @Matches(/^2\.0$/, { message: 'jsonrpc must be exactly "2.0"' })
   jsonrpc = '2.0';
 
+  @IsDefined({ message: 'method is required' })
   @IsString()
   @IsNotEmpty()
   method: string;
@@ -27,5 +29,5 @@ export class JsonRpc {
 
   @IsOptional()
   @Validate(IsNumberOrString)
-  id: string | number | null;
+  id: string | number;
 }

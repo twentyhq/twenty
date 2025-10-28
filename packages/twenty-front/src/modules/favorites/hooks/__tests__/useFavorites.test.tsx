@@ -6,9 +6,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { mockedViewsData } from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import {
   initialFavorites,
@@ -27,8 +25,6 @@ describe('useFavorites', () => {
         const setPrefetchFavorites = useSetRecoilState(prefetchFavoritesState);
         setPrefetchFavorites(initialFavorites);
 
-        const setPrefetchViewsState = useSetRecoilState(prefetchViewsState);
-        setPrefetchViewsState(mockedViewsData);
         const setCurrentWorkspaceMember = useSetRecoilState(
           currentWorkspaceMemberState,
         );

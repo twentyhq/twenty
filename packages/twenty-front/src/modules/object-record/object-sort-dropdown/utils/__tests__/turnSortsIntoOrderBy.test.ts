@@ -4,7 +4,10 @@ import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/Re
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { type EachTestingContext } from 'twenty-shared/testing';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  ViewSortDirection,
+} from '~/generated-metadata/graphql';
 
 const fields = [
   {
@@ -31,6 +34,7 @@ const objectMetadataItemWithPositionField: ObjectMetadataItem = {
   icon: 'icon',
   isActive: true,
   isSystem: false,
+  isUIReadOnly: false,
   isCustom: false,
   isRemote: false,
   isSearchable: false,
@@ -80,7 +84,7 @@ const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
         {
           id: 'id',
           fieldMetadataId: 'field1',
-          direction: 'asc',
+          direction: ViewSortDirection.ASC,
         },
       ],
       expected: [{ field1: 'AscNullsFirst' }, { position: 'AscNullsFirst' }],
@@ -97,12 +101,12 @@ const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
         {
           id: 'id',
           fieldMetadataId: 'field1',
-          direction: 'asc',
+          direction: ViewSortDirection.ASC,
         },
         {
           id: 'id',
           fieldMetadataId: 'field2',
-          direction: 'desc',
+          direction: ViewSortDirection.DESC,
         },
       ],
       expected: [
@@ -120,7 +124,7 @@ const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
         {
           id: 'id',
           fieldMetadataId: 'invalidField',
-          direction: 'asc',
+          direction: ViewSortDirection.ASC,
         },
       ],
       expected: [{ position: 'AscNullsFirst' }],
@@ -134,7 +138,7 @@ const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
         {
           id: 'id',
           fieldMetadataId: 'invalidField',
-          direction: 'asc',
+          direction: ViewSortDirection.ASC,
         },
       ],
       expected: [],

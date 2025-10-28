@@ -54,6 +54,11 @@ export interface WorkspaceEntityMetadataArgs {
   readonly isSystem: boolean;
 
   /**
+   * Is UI read-only object.
+   */
+  readonly isUIReadOnly: boolean;
+
+  /**
    * Entity gate.
    */
   readonly gate?: Gate;

@@ -7,7 +7,7 @@ describe('transformLinksValue', () => {
     expect(transformLinksValue({})).toEqual({
       primaryLinkLabel: null,
       primaryLinkUrl: null,
-      secondaryLinks: '[]',
+      secondaryLinks: null,
     });
   });
 
@@ -16,13 +16,13 @@ describe('transformLinksValue', () => {
       const input = {
         primaryLinkUrl: 'HTTPS://EXAMPLE.COM',
         primaryLinkLabel: 'Example',
-        secondaryLinks: '[]',
+        secondaryLinks: null,
       };
 
       const expected = {
         primaryLinkUrl: 'https://example.com',
         primaryLinkLabel: 'Example',
-        secondaryLinks: '[]',
+        secondaryLinks: null,
       };
 
       expect(transformLinksValue(input)).toEqual(expected);
@@ -32,13 +32,13 @@ describe('transformLinksValue', () => {
       const input = {
         primaryLinkUrl: 'https://example.com/',
         primaryLinkLabel: 'Example',
-        secondaryLinks: '[]',
+        secondaryLinks: null,
       };
 
       const expected = {
         primaryLinkUrl: 'https://example.com',
         primaryLinkLabel: 'Example',
-        secondaryLinks: '[]',
+        secondaryLinks: null,
       };
 
       expect(transformLinksValue(input)).toEqual(expected);
@@ -48,13 +48,13 @@ describe('transformLinksValue', () => {
       const input = {
         primaryLinkUrl: 'example.com',
         primaryLinkLabel: 'Example',
-        secondaryLinks: '[]',
+        secondaryLinks: null,
       };
 
       const expected = {
         primaryLinkUrl: 'example.com',
         primaryLinkLabel: 'Example',
-        secondaryLinks: '[]',
+        secondaryLinks: null,
       };
 
       expect(transformLinksValue(input)).toEqual(expected);
@@ -64,13 +64,13 @@ describe('transformLinksValue', () => {
       const input = {
         primaryLinkUrl: 'www.example.com',
         primaryLinkLabel: 'Example',
-        secondaryLinks: '[]',
+        secondaryLinks: null,
       };
 
       const expected = {
         primaryLinkUrl: 'www.example.com',
         primaryLinkLabel: 'Example',
-        secondaryLinks: '[]',
+        secondaryLinks: null,
       };
 
       expect(transformLinksValue(input)).toEqual(expected);

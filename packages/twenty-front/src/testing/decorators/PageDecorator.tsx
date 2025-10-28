@@ -15,7 +15,7 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { UserProviderEffect } from '@/users/components/UserProviderEffect';
+import { UserAndViewsProviderEffect } from '@/users/components/UserAndViewsProviderEffect';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -24,9 +24,7 @@ import { MainContextStoreProvider } from '@/context-store/components/MainContext
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
@@ -87,7 +85,7 @@ const Providers = () => {
             <ApolloStorybookDevLogEffect />
             <ClientConfigProviderEffect />
             <ClientConfigProvider>
-              <UserProviderEffect />
+              <UserAndViewsProviderEffect />
               <WorkspaceProviderEffect />
               <UserProvider>
                 <ApolloCoreClientMockedProvider>
@@ -97,26 +95,9 @@ const Providers = () => {
                       <HelmetProvider>
                         <IconsProvider>
                           <PrefetchDataProvider>
-                            <RecordFilterGroupsComponentInstanceContext.Provider
-                              value={{
-                                instanceId:
-                                  'storybook-test-record-filter-groups',
-                              }}
-                            >
-                              <RecordFiltersComponentInstanceContext.Provider
-                                value={{
-                                  instanceId: 'storybook-test-record-filters',
-                                }}
-                              >
-                                <RecordSortsComponentInstanceContext.Provider
-                                  value={{
-                                    instanceId: 'storybook-test-record-sorts',
-                                  }}
-                                >
-                                  <Outlet />
-                                </RecordSortsComponentInstanceContext.Provider>
-                              </RecordFiltersComponentInstanceContext.Provider>
-                            </RecordFilterGroupsComponentInstanceContext.Provider>
+                            <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
+                              <Outlet />
+                            </RecordComponentInstanceContextsWrapper>
                           </PrefetchDataProvider>
                         </IconsProvider>
                       </HelmetProvider>

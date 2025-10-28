@@ -1,5 +1,8 @@
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { useRecoilValue } from 'recoil';
 
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type EmailThreadHeaderProps = {
@@ -40,13 +43,19 @@ export const EmailThreadHeader = ({
   subject,
   lastMessageSentAt,
 }: EmailThreadHeaderProps) => {
+  const { localeCatalog } = useRecoilValue(dateLocaleState);
+  const lastMessageSentAtFormatted = beautifyPastDateRelativeToNow(
+    lastMessageSentAt,
+    localeCatalog,
+  );
+
   return (
     <StyledContainer>
       <StyledHead>
         <StyledHeading>{subject}</StyledHeading>
         {lastMessageSentAt && (
           <StyledContent>
-            Last message {beautifyPastDateRelativeToNow(lastMessageSentAt)}
+            {t`Last message ${lastMessageSentAtFormatted}`}
           </StyledContent>
         )}
       </StyledHead>

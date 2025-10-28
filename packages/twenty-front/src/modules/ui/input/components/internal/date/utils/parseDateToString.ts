@@ -1,5 +1,7 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { DateTime } from 'luxon';
+import { format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
+import { isDefined } from 'twenty-shared/utils';
 import { getDateFormatString } from '~/utils/date-utils';
 
 type ParseDateToStringArgs = {
@@ -17,23 +19,14 @@ export const parseDateToString = ({
 }: ParseDateToStringArgs) => {
   const parsingFormat = getDateFormatString(dateFormat, isDateTimeInput);
 
-  const dateParsed = DateTime.fromJSDate(date, { zone: userTimezone });
-
-  const dateWithoutTime = DateTime.fromJSDate(date)
-    .toLocal()
-    .set({
-      day: date.getUTCDate(),
-      month: date.getUTCMonth() + 1,
-      year: date.getUTCFullYear(),
-      hour: 0,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    });
-
-  const formattedDate = isDateTimeInput
-    ? dateParsed.setZone(userTimezone).toFormat(parsingFormat)
-    : dateWithoutTime.toFormat(parsingFormat);
-
-  return formattedDate;
+  if (isDateTimeInput && isDefined(userTimezone)) {
+    return formatInTimeZone(date, userTimezone, parsingFormat);
+  } else if (isDateTimeInput) {
+    return format(date, parsingFormat);
+  } else {
+    const dateWithoutTime = new Date(
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+    );
+    return format(dateWithoutTime, parsingFormat);
+  }
 };

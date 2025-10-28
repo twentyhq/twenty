@@ -1,14 +1,10 @@
-import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
+import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 
-export const SendMessageWithRecordsContextButton = ({
-  agentId,
-}: {
-  agentId: string;
-}) => {
+export const SendMessageWithRecordsContextButton = () => {
   const { records } = useFindManyRecordsSelectedInContextStore({
     limit: 10,
   });
 
-  return <SendMessageButton records={records} agentId={agentId} />;
+  return <SendMessageButton records={records} />;
 };

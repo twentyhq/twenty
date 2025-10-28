@@ -6,8 +6,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-import { AppPath } from '@/types/AppPath';
 import { t } from '@lingui/core/macro';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';

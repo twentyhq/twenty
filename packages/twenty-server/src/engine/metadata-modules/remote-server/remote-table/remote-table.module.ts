@@ -17,7 +17,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 @Module({
   imports: [
     DistantTableModule,
-    TypeOrmModule.forFeature([RemoteServerEntity, RemoteTableEntity], 'core'),
+    TypeOrmModule.forFeature([RemoteServerEntity, RemoteTableEntity]),
     DataSourceModule,
     ObjectMetadataModule,
     FieldMetadataModule,

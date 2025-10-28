@@ -1,7 +1,6 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isGlobalManualTrigger } from '@/action-menu/actions/record-actions/utils/isGlobalManualTrigger';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
   type ManualTriggerWorkflowVersion,
@@ -32,28 +31,29 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
   if (isDefined(objectMetadataItem)) {
     filters.push({
       trigger: {
-        like: `%"objectType": "${objectMetadataItem.nameSingular}"%`,
+        like: `%"objectNameSingular": "${objectMetadataItem?.nameSingular}"%`,
       },
     });
   }
 
-  const { objectMetadataItem: workflowVersionObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
-
   const { records } = useFindManyRecords<
-    ManualTriggerWorkflowVersion & { workflow: Workflow }
+    Pick<
+      ManualTriggerWorkflowVersion,
+      'id' | '__typename' | 'status' | 'workflowId' | 'trigger'
+    > & {
+      workflow: Workflow;
+    }
   >({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     filter: {
       and: filters,
     },
     recordGqlFields: {
-      ...generateDepthOneRecordGqlFields({
-        objectMetadataItem: workflowVersionObjectMetadataItem,
-      }),
+      id: true,
+      trigger: true,
+      workflowId: true,
       workflow: true,
+      status: true,
     },
     skip,
   });
@@ -64,8 +64,8 @@ export const useActiveWorkflowVersionsWithManualTrigger = ({
       records: records.filter(
         (record) =>
           record.status === 'ACTIVE' &&
-          record.trigger?.type === 'MANUAL' &&
-          !isDefined(record.trigger?.settings.objectType),
+          isDefined(record.trigger) &&
+          isGlobalManualTrigger(record.trigger),
       ),
     };
   }

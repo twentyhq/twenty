@@ -3,18 +3,11 @@ import { Field, InputType, OmitType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import { IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
-
-import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { RelationCreationPayload } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
-export type RelationCreationPayload = {
-  targetObjectMetadataId: string;
-  targetFieldLabel: string;
-  targetFieldIcon: string;
-  type: RelationType;
-};
 @InputType()
 export class CreateFieldInput extends OmitType(
   FieldMetadataDTO,

@@ -1,5 +1,6 @@
+import { type EntityManager } from 'typeorm';
+
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import {
   AIRBNB_ID,
   ANTHROPIC_ID,
@@ -9,13 +10,11 @@ import {
 } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 
 export const prefillPeople = async (
-  entityManager: WorkspaceEntityManager,
+  entityManager: EntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder(undefined, undefined, undefined, {
-      shouldBypassPermissionChecks: true,
-    })
+    .createQueryBuilder()
     .insert()
     .into(`${schemaName}.person`, [
       'nameFirstName',

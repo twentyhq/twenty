@@ -1,25 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { type CoreMessage, type StreamTextResult, streamText } from 'ai';
+import { LanguageModel, type ModelMessage, streamText } from 'ai';
 
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 
 @Injectable()
 export class AiService {
   constructor(private aiModelRegistryService: AiModelRegistryService) {}
 
-  streamText(
-    messages: CoreMessage[],
-    options?: {
-      temperature?: number;
-      maxTokens?: number;
-      modelId?: string; // Optional model override
-    },
-  ): StreamTextResult<Record<string, never>, undefined> {
-    const modelId = options?.modelId;
+  getModel(modelId: string | undefined) {
     const registeredModel = modelId
       ? this.aiModelRegistryService.getModel(modelId)
-      : this.aiModelRegistryService.getDefaultModel();
+      : this.aiModelRegistryService.getDefaultPerformanceModel();
 
     if (!registeredModel) {
       throw new Error(
@@ -29,19 +22,26 @@ export class AiService {
       );
     }
 
+    return registeredModel.model;
+  }
+
+  streamText({
+    messages,
+    options,
+  }: {
+    messages: ModelMessage[];
+    options: {
+      temperature?: number;
+      maxOutputTokens?: number;
+      model: LanguageModel;
+    };
+  }) {
     return streamText({
-      model: registeredModel.model,
+      model: options.model,
       messages,
       temperature: options?.temperature,
-      maxTokens: options?.maxTokens,
+      maxOutputTokens: options?.maxOutputTokens,
+      experimental_telemetry: AI_TELEMETRY_CONFIG,
     });
-  }
-
-  getAvailableModels() {
-    return this.aiModelRegistryService.getAvailableModels();
-  }
-
-  getDefaultModel() {
-    return this.aiModelRegistryService.getDefaultModel();
   }
 }

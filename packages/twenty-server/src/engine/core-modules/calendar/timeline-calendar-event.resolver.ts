@@ -5,7 +5,7 @@ import { Max } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TIMELINE_CALENDAR_EVENTS_MAX_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
-import { TimelineCalendarEventsWithTotal } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
+import { TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { TimelineCalendarEventService } from 'src/engine/core-modules/calendar/timeline-calendar-event.service';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -50,13 +50,13 @@ class GetTimelineCalendarEventsFromOpportunityIdArgs {
 }
 
 @UseGuards(WorkspaceAuthGuard)
-@Resolver(() => TimelineCalendarEventsWithTotal)
+@Resolver(() => TimelineCalendarEventsWithTotalDTO)
 export class TimelineCalendarEventResolver {
   constructor(
     private readonly timelineCalendarEventService: TimelineCalendarEventService,
   ) {}
 
-  @Query(() => TimelineCalendarEventsWithTotal)
+  @Query(() => TimelineCalendarEventsWithTotalDTO)
   async getTimelineCalendarEventsFromPersonId(
     @Args()
     { personId, page, pageSize }: GetTimelineCalendarEventsFromPersonIdArgs,
@@ -73,7 +73,7 @@ export class TimelineCalendarEventResolver {
     return timelineCalendarEvents;
   }
 
-  @Query(() => TimelineCalendarEventsWithTotal)
+  @Query(() => TimelineCalendarEventsWithTotalDTO)
   async getTimelineCalendarEventsFromCompanyId(
     @Args()
     { companyId, page, pageSize }: GetTimelineCalendarEventsFromCompanyIdArgs,
@@ -90,7 +90,7 @@ export class TimelineCalendarEventResolver {
     return timelineCalendarEvents;
   }
 
-  @Query(() => TimelineCalendarEventsWithTotal)
+  @Query(() => TimelineCalendarEventsWithTotalDTO)
   async getTimelineCalendarEventsFromOpportunityId(
     @Args()
     {

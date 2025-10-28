@@ -58,6 +58,7 @@ export const createMorphRelationBetweenObjects = async ({
     input: createFieldInput,
     gqlFields: `
             id
+            type
             name
             label
             isLabelSyncedWithName

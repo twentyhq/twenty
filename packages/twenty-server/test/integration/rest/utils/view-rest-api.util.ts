@@ -6,18 +6,50 @@ import {
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-import { type ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { type ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { type ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { type ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { type ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { type View } from 'src/engine/core-modules/view/entities/view.entity';
-import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
+import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
+import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
+import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { type ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+
+export const findViewByIdWithRestApi = async (
+  viewId: string,
+): Promise<ViewEntity | null> => {
+  const response = await makeRestAPIRequest({
+    method: 'get',
+    path: `/metadata/views/${viewId}`,
+    bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  });
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  return response.body;
+};
+
+export const findViewFilterWithRestApi = async (
+  viewFilterId: string,
+): Promise<ViewFilterEntity | null> => {
+  const response = await makeRestAPIRequest({
+    method: 'get',
+    path: `/metadata/viewFilters/${viewFilterId}`,
+    bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  });
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  return response.body;
+};
 
 export const createTestViewWithRestApi = async (
-  overrides: Partial<View> = {},
-): Promise<View> => {
+  overrides: Partial<ViewEntity> = {},
+): Promise<ViewEntity> => {
   const viewData = {
     id: TEST_VIEW_1_ID,
     name: generateRecordName('Test View'),
@@ -48,8 +80,8 @@ export const createTestViewWithRestApi = async (
 };
 
 export const createTestViewFieldWithRestApi = async (
-  overrides: Partial<ViewField> = {},
-): Promise<ViewField> => {
+  overrides: Partial<ViewFieldEntity> = {},
+): Promise<ViewFieldEntity> => {
   const viewFieldData = {
     viewId: TEST_VIEW_1_ID,
     fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -76,8 +108,8 @@ export const createTestViewFieldWithRestApi = async (
 };
 
 export const createTestViewFilterWithRestApi = async (
-  overrides: Partial<ViewFilter> = {},
-): Promise<ViewFilter> => {
+  overrides: Partial<ViewFilterEntity> = {},
+): Promise<ViewFilterEntity> => {
   const viewFilterData = {
     viewId: TEST_VIEW_1_ID,
     fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -103,8 +135,8 @@ export const createTestViewFilterWithRestApi = async (
 };
 
 export const createTestViewSortWithRestApi = async (
-  overrides: Partial<ViewSort> = {},
-): Promise<ViewSort> => {
+  overrides: Partial<ViewSortEntity> = {},
+): Promise<ViewSortEntity> => {
   const viewSortData = {
     viewId: TEST_VIEW_1_ID,
     fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -129,8 +161,8 @@ export const createTestViewSortWithRestApi = async (
 };
 
 export const createTestViewGroupWithRestApi = async (
-  overrides: Partial<ViewGroup> = {},
-): Promise<ViewGroup> => {
+  overrides: Partial<ViewGroupEntity> = {},
+): Promise<ViewGroupEntity> => {
   const viewGroupData = {
     viewId: TEST_VIEW_1_ID,
     fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -157,8 +189,8 @@ export const createTestViewGroupWithRestApi = async (
 };
 
 export const createTestViewFilterGroupWithRestApi = async (
-  overrides: Partial<ViewFilterGroup> = {},
-): Promise<ViewFilterGroup> => {
+  overrides: Partial<ViewFilterGroupEntity> = {},
+): Promise<ViewFilterGroupEntity> => {
   const viewFilterGroupData = {
     viewId: TEST_VIEW_1_ID,
     logicalOperator: 'AND',

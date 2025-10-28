@@ -5,24 +5,26 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
-import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
 import { workflowDiagramWaitingNodesDimensionsComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramWaitingNodesDimensionsComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
+  type WorkflowConnection,
   type WorkflowDiagram,
   type WorkflowDiagramEdge,
   type WorkflowDiagramEdgeType,
   type WorkflowDiagramNode,
   type WorkflowDiagramNodeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
+import { assertWorkflowConnectionOrThrow } from '@/workflow/workflow-diagram/utils/assertWorkflowConnectionOrThrow';
+import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramConnection';
+import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
+import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
+import { type WorkflowDiagramEdgeComponentProps } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdgeComponentProps';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -33,11 +35,13 @@ import {
   useReactFlow,
   type Connection,
   type EdgeChange,
-  type EdgeProps,
   type FitViewOptions,
   type NodeChange,
   type NodeProps,
+  type OnBeforeDelete,
+  type OnDelete,
   type OnNodeDrag,
+  type OnReconnect,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -52,7 +56,6 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -68,20 +71,6 @@ const StyledResetReactflowStyles = styled.div`
     width: auto;
     text-align: start;
     white-space: nowrap;
-  }
-
-  .react-flow__handle {
-    min-height: 0;
-    min-width: 0;
-  }
-  .react-flow__handle-top {
-    transform: translate(-50%, -50%);
-  }
-  .react-flow__handle-bottom {
-    transform: translate(-50%, 100%);
-  }
-  .react-flow__handle.connectionindicator {
-    cursor: pointer;
   }
 
   --xy-node-border-radius: none;
@@ -112,7 +101,11 @@ export const WorkflowDiagramCanvasBase = ({
   tagText,
   onInit,
   onConnect,
+  onDeleteEdge,
   onNodeDragStop,
+  onReconnect,
+  onReconnectStart,
+  onReconnectEnd,
   handlePaneContextMenu,
   nodesConnectable = false,
   nodesDraggable = false,
@@ -132,7 +125,7 @@ export const WorkflowDiagramCanvasBase = ({
     Record<
       WorkflowDiagramEdgeType,
       React.ComponentType<
-        EdgeProps & {
+        WorkflowDiagramEdgeComponentProps & {
           data: any;
           type: any;
         }
@@ -144,8 +137,12 @@ export const WorkflowDiagramCanvasBase = ({
   tagColor: TagColor;
   tagText: string;
   onInit?: () => void;
-  onConnect?: (params: Connection) => void;
+  onConnect?: (params: WorkflowConnection) => void;
+  onDeleteEdge?: (edge: WorkflowDiagramEdge) => void;
   onNodeDragStop?: OnNodeDrag<WorkflowDiagramNode>;
+  onReconnect?: OnReconnect;
+  onReconnectStart?: () => void;
+  onReconnectEnd?: () => void;
   nodesConnectable?: boolean;
   nodesDraggable?: boolean;
   handlePaneContextMenu?: ({
@@ -188,24 +185,17 @@ export const WorkflowDiagramCanvasBase = ({
     workflowDiagramWaitingNodesDimensionsComponentState,
   );
 
-  const { setEdgeHovered, setNoEdgeHovered } = useEdgeHovered();
-
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
+  const { setEdgeHovered, clearEdgeHover } = useEdgeState();
 
   const [workflowDiagramFlowInitialized, setWorkflowDiagramFlowInitialized] =
     useState<boolean>(false);
 
   const { nodes, edges } = useMemo(() => {
     if (isDefined(workflowDiagram)) {
-      if (isWorkflowBranchEnabled) {
-        return workflowDiagram;
-      }
-      return getOrganizedDiagram(workflowDiagram);
+      return workflowDiagram;
     }
     return { nodes: [], edges: [] };
-  }, [workflowDiagram, isWorkflowBranchEnabled]);
+  }, [workflowDiagram]);
 
   const { rightDrawerState } = useRightDrawerState();
   const { isInRightDrawer } = useContext(ActionMenuContext);
@@ -411,6 +401,29 @@ export const WorkflowDiagramCanvasBase = ({
     ],
   );
 
+  const onBeforeDelete: OnBeforeDelete<
+    WorkflowDiagramNode,
+    WorkflowDiagramEdge
+  > = async ({ nodes, edges }) => {
+    if (nodes.length === 0 && edges.length > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const onDelete: OnDelete<WorkflowDiagramNode, WorkflowDiagramEdge> = async ({
+    edges,
+  }) => {
+    if (!isDefined(onDeleteEdge)) {
+      return;
+    }
+
+    for (const edge of edges) {
+      onDeleteEdge(edge);
+    }
+  };
+
   const onPaneContextMenu = useCallback(
     (event: MouseEvent | React.MouseEvent<Element, MouseEvent>) => {
       event.preventDefault();
@@ -427,15 +440,29 @@ export const WorkflowDiagramCanvasBase = ({
   );
 
   const onEdgeMouseEnter = useCallback(
-    (_: React.MouseEvent<Element, MouseEvent>, edge: WorkflowDiagramEdge) => {
-      setEdgeHovered(edge.id);
+    (
+      _: React.MouseEvent<Element, MouseEvent>,
+      hoveredEdge: WorkflowDiagramEdge,
+    ) => {
+      setEdgeHovered({
+        source: hoveredEdge.source,
+        target: hoveredEdge.target,
+        sourceHandle: hoveredEdge.sourceHandle,
+        targetHandle: hoveredEdge.targetHandle,
+      });
     },
     [setEdgeHovered],
   );
 
   const onEdgeMouseLeave = useCallback(() => {
-    setNoEdgeHovered();
-  }, [setNoEdgeHovered]);
+    clearEdgeHover();
+  }, [clearEdgeHover]);
+
+  const handleConnect = (connection: Connection) => {
+    assertWorkflowConnectionOrThrow(connection);
+
+    onConnect?.(connection);
+  };
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
@@ -447,6 +474,7 @@ export const WorkflowDiagramCanvasBase = ({
         maxZoom={defaultFitViewOptions.maxZoom}
         defaultViewport={{ x: 0, y: 150, zoom: defaultFitViewOptions.maxZoom }}
         nodeTypes={nodeTypes}
+        // @ts-expect-error We override Reactflow types for sourceHandle and targetHandle to be required
         edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
@@ -454,27 +482,34 @@ export const WorkflowDiagramCanvasBase = ({
         onEdgeMouseLeave={onEdgeMouseLeave}
         onNodesChange={handleNodesChanges}
         onEdgesChange={handleEdgesChange}
-        onConnect={isWorkflowBranchEnabled ? onConnect : undefined}
-        onNodeDragStop={isWorkflowBranchEnabled ? onNodeDragStop : undefined}
+        onConnect={handleConnect}
+        onReconnect={onReconnect}
+        onReconnectStart={onReconnectStart}
+        onReconnectEnd={onReconnectEnd}
+        onNodeDragStop={onNodeDragStop}
+        onBeforeDelete={onBeforeDelete}
+        onDelete={onDelete}
         selectNodesOnDrag={false}
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
         nodesFocusable={false}
-        nodesDraggable={isWorkflowBranchEnabled ? nodesDraggable : false}
+        nodesDraggable={nodesDraggable}
+        edgesFocusable={isDefined(onDeleteEdge)}
         panOnDrag={workflowDiagramPanOnDrag}
-        onPaneContextMenu={
-          isWorkflowBranchEnabled ? onPaneContextMenu : undefined
-        }
-        nodesConnectable={isWorkflowBranchEnabled ? nodesConnectable : false}
+        panOnScroll={true}
+        onPaneContextMenu={onPaneContextMenu}
+        nodesConnectable={nodesConnectable}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
-        preventScrolling={false}
+        preventScrolling={true}
+        connectionLineComponent={WorkflowDiagramConnection}
+        connectionRadius={0}
       >
         <Background color={theme.border.color.medium} size={2} />
 
         {children}
       </ReactFlow>
 
-      {isDefined(handlePaneContextMenu) && isWorkflowBranchEnabled && (
+      {isDefined(handlePaneContextMenu) && (
         <WorkflowDiagramRightClickCommandMenu />
       )}
 

@@ -15,6 +15,11 @@ const rolesMock: Role[] = [
     canUpdateAllSettings: true,
     canAccessAllTools: true,
     isEditable: false,
+    canBeAssignedToUsers: true,
+    canBeAssignedToAgents: true,
+    canBeAssignedToApiKeys: true,
+    agents: [],
+    apiKeys: [],
     workspaceMembers: [mockWorkspaceMembers[0]],
     permissionFlags: [
       {
@@ -48,6 +53,11 @@ const rolesMock: Role[] = [
     canUpdateAllSettings: false,
     canAccessAllTools: false,
     isEditable: true,
+    canBeAssignedToUsers: true,
+    canBeAssignedToAgents: true,
+    canBeAssignedToApiKeys: true,
+    agents: [],
+    apiKeys: [],
     workspaceMembers: [mockWorkspaceMembers[1]],
     permissionFlags: [],
     objectPermissions: [

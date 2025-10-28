@@ -4,18 +4,20 @@ import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { type ChangeEvent, type ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 as uuidV4 } from 'uuid';
-import {
-  beautifyExactDateTime,
-  beautifyPastDateRelativeToNow,
-} from '~/utils/date-utils';
 import {
   AppTooltip,
   Avatar,
   type AvatarType,
   type IconComponent,
 } from 'twenty-ui/display';
+import { v4 as uuidV4 } from 'uuid';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import {
+  beautifyExactDateTime,
+  beautifyPastDateRelativeToNow,
+} from '~/utils/date-utils';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -121,8 +123,9 @@ export const ShowPageSummaryCard = ({
   loading,
   isMobile = false,
 }: ShowPageSummaryCardProps) => {
+  const { localeCatalog } = useRecoilValue(dateLocaleState);
   const beautifiedCreatedAt =
-    date !== '' ? beautifyPastDateRelativeToNow(date) : '';
+    date !== '' ? beautifyPastDateRelativeToNow(date, localeCatalog) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
   const dateElementId = `date-id-${uuidV4()}`;
   const inputFileRef = useRef<HTMLInputElement>(null);

@@ -3,11 +3,11 @@ import { FormProvider } from 'react-hook-form';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPath } from 'twenty-shared/types';
 
+import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 import { SettingsAccountsConnectionForm } from '@/settings/accounts/components/SettingsAccountsConnectionForm';
 import { useImapSmtpCaldavConnectionForm } from '../hooks/useImapSmtpCaldavConnectionForm';
@@ -31,17 +31,17 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SubMenuTopBarContainer
-        title={t`New Email Account`}
+        title={t`New Account`}
         links={[
           {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            children: t`User`,
+            href: getSettingsPath(SettingsPath.ProfilePage),
           },
           {
             children: t`Accounts`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
-          { children: t`New Email Account` },
+          { children: t`New Account` },
         ]}
         actionButton={
           <SaveAndCancelButtons

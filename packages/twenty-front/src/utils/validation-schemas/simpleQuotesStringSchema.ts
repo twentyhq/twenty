@@ -1,15 +1,11 @@
 import { z } from 'zod';
 
-export const simpleQuotesStringSchema: z.ZodType<
-  `'${string}'`,
-  z.ZodTypeDef,
-  string
-> = z
+export const simpleQuotesStringSchema = z
   .string()
   .refine(
     (value: string): value is `'${string}'` =>
       value.startsWith("'") && value.endsWith("'"),
     {
-      message: 'String should be wrapped in simple quotes',
+      error: 'String should be wrapped in simple quotes',
     },
   );

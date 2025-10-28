@@ -10,13 +10,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconUserPin, useIcons } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import {
-  type Role,
   type UpdateWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
+import { type RoleWithPartialMembers } from '../types/RoleWithPartialMembers';
 
 type SettingsRoleDefaultRoleProps = {
-  roles: Role[];
+  roles: RoleWithPartialMembers[];
 };
 
 export const SettingsRoleDefaultRole = ({
@@ -76,7 +76,7 @@ export const SettingsRoleDefaultRole = ({
       <Card rounded>
         <SettingsOptionCardContentSelect
           Icon={IconUserPin}
-          title="Default Role"
+          title={t`Default Role`}
           description={t`Set a default role for this workspace`}
         >
           <Select

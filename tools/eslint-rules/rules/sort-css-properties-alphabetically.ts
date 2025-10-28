@@ -1,9 +1,9 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/utils';
 import { isIdentifier } from '@typescript-eslint/utils/ast-utils';
 import {
-  RuleFix,
-  RuleFixer,
-  SourceCode,
+  type RuleFix,
+  type RuleFixer,
+  type SourceCode,
 } from '@typescript-eslint/utils/ts-eslint';
 
 import postcss from 'postcss';

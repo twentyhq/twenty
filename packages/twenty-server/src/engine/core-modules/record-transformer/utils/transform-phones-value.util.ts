@@ -1,9 +1,10 @@
-import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { msg } from '@lingui/core/macro';
+import { isArray, isNonEmptyString } from '@sniptt/guards';
 import {
   type CountryCallingCode,
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
+import isEmpty from 'lodash.isempty';
 import {
   getCountryCodesForCallingCode,
   isDefined,
@@ -43,7 +44,7 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
     throw new RecordTransformerException(
       `Invalid country code ${countryCode}`,
       RecordTransformerExceptionCode.INVALID_PHONE_COUNTRY_CODE,
-      { userFriendlyMessage: t`Invalid country code ${countryCode}` },
+      { userFriendlyMessage: msg`Invalid country code ${countryCode}` },
     );
   }
 
@@ -57,7 +58,7 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
     throw new RecordTransformerException(
       `Invalid calling code ${callingCode}`,
       RecordTransformerExceptionCode.INVALID_PHONE_CALLING_CODE,
-      { userFriendlyMessage: t`Invalid calling code ${callingCode}` },
+      { userFriendlyMessage: msg`Invalid calling code ${callingCode}` },
     );
   }
 
@@ -71,7 +72,7 @@ const validatePrimaryPhoneCountryCodeAndCallingCode = ({
       `Provided country code and calling code are conflicting`,
       RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE,
       {
-        userFriendlyMessage: t`Provided country code and calling code are conflicting`,
+        userFriendlyMessage: msg`Provided country code and calling code are conflicting`,
       },
     );
   }
@@ -93,7 +94,7 @@ const parsePhoneNumberExceptionWrapper = ({
     throw new RecordTransformerException(
       `Provided phone number is invalid ${number}`,
       RecordTransformerExceptionCode.INVALID_PHONE_NUMBER,
-      { userFriendlyMessage: t`Provided phone number is invalid ${number}` },
+      { userFriendlyMessage: msg`Provided phone number is invalid ${number}` },
     );
   }
 };
@@ -118,7 +119,7 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
       'Provided and inferred country code are conflicting',
       RecordTransformerExceptionCode.CONFLICTING_PHONE_COUNTRY_CODE,
       {
-        userFriendlyMessage: t`Provided and inferred country code are conflicting`,
+        userFriendlyMessage: msg`Provided and inferred country code are conflicting`,
       },
     );
   }
@@ -132,7 +133,7 @@ const validateAndInferMetadataFromPrimaryPhoneNumber = ({
       'Provided and inferred calling code are conflicting',
       RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE,
       {
-        userFriendlyMessage: t`Provided and inferred calling code are conflicting`,
+        userFriendlyMessage: msg`Provided and inferred calling code are conflicting`,
       },
     );
   }
@@ -195,15 +196,20 @@ export const transformPhonesValue = ({
     number: primary.primaryPhoneNumber,
   });
 
-  const parsedAdditionalPhones = isDefined(additionalPhones)
-    ? parseJson<AdditionalPhoneMetadata[]>(additionalPhones)
-    : additionalPhones;
-  const transformedAdditionalPhones = isDefined(parsedAdditionalPhones)
-    ? JSON.stringify(parsedAdditionalPhones.map(validateAndInferPhoneInput))
-    : parsedAdditionalPhones;
+  const parsedAdditionalPhones = isNonEmptyString(additionalPhones)
+    ? (parseJson<Partial<AdditionalPhoneMetadata>[]>(additionalPhones) ?? [])
+    : isArray(additionalPhones)
+      ? additionalPhones
+      : [];
+
+  const validatedAdditionalPhones = parsedAdditionalPhones.map(
+    validateAndInferPhoneInput,
+  );
 
   return removeUndefinedFields({
-    additionalPhones: transformedAdditionalPhones,
+    additionalPhones: isEmpty(validatedAdditionalPhones)
+      ? null
+      : JSON.stringify(validatedAdditionalPhones),
     primaryPhoneCallingCode,
     primaryPhoneCountryCode,
     primaryPhoneNumber,

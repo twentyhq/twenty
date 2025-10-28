@@ -20,6 +20,7 @@ import { useRecoilState } from 'recoil';
 import { IconSearch } from 'twenty-ui/display';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const GET_SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObjectDetailTableItem> =
   {
@@ -155,25 +156,25 @@ export const SettingsObjectFieldTable = ({
     tableMetadata,
   );
 
-  const filteredActiveItems = useMemo(
-    () =>
-      sortedActiveObjectSettingsDetailItems.filter(
-        (item) =>
-          item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.dataType.toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
-    [sortedActiveObjectSettingsDetailItems, searchTerm],
-  );
+  const filteredActiveItems = useMemo(() => {
+    const searchNormalized = normalizeSearchText(searchTerm);
+    return sortedActiveObjectSettingsDetailItems.filter((item) => {
+      return (
+        normalizeSearchText(item.label).includes(searchNormalized) ||
+        normalizeSearchText(item.dataType).includes(searchNormalized)
+      );
+    });
+  }, [sortedActiveObjectSettingsDetailItems, searchTerm]);
 
-  const filteredDisabledItems = useMemo(
-    () =>
-      sortedDisabledObjectSettingsDetailItems.filter(
-        (item) =>
-          item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.dataType.toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
-    [sortedDisabledObjectSettingsDetailItems, searchTerm],
-  );
+  const filteredDisabledItems = useMemo(() => {
+    const searchNormalized = normalizeSearchText(searchTerm);
+    return sortedDisabledObjectSettingsDetailItems.filter((item) => {
+      return (
+        normalizeSearchText(item.label).includes(searchNormalized) ||
+        normalizeSearchText(item.dataType).includes(searchNormalized)
+      );
+    });
+  }, [sortedDisabledObjectSettingsDetailItems, searchTerm]);
 
   return (
     <>

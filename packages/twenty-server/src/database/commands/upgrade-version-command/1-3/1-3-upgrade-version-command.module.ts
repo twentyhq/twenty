@@ -2,12 +2,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
-import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-assign-roles-to-existing-api-keys.command';
 import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-update-timestamp-column-type-in-workspace-schema.command';
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -20,17 +19,14 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [
-        Workspace,
-        ApiKey,
-        FieldMetadataEntity,
-        ObjectMetadataEntity,
-        RoleEntity,
-        RoleTargetsEntity,
-      ],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      ApiKeyEntity,
+      FieldMetadataEntity,
+      ObjectMetadataEntity,
+      RoleEntity,
+      RoleTargetsEntity,
+    ]),
     WorkspaceDataSourceModule,
     ApiKeyModule,
     FeatureFlagModule,
@@ -40,12 +36,10 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     WorkspaceFeatureFlagsMapCacheModule,
   ],
   providers: [
-    AssignRolesToExistingApiKeysCommand,
     AddNextStepIdsToWorkflowRunsTrigger,
     UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
   ],
   exports: [
-    AssignRolesToExistingApiKeysCommand,
     AddNextStepIdsToWorkflowRunsTrigger,
     UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
   ],

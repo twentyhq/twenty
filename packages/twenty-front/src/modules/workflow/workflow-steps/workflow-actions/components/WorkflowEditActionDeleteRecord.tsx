@@ -1,16 +1,19 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useEffect, useState } from 'react';
 
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { DELETE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/DeleteRecordAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
@@ -45,11 +48,18 @@ export const WorkflowEditActionDeleteRecord = ({
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems.map((item) => ({
-      Icon: getIcon(item.icon),
-      label: item.labelPlural,
-      value: item.nameSingular,
-    }));
+    activeNonSystemObjectMetadataItems
+      .filter((objectMetadataItem) =>
+        canObjectBeManagedByWorkflow({
+          nameSingular: objectMetadataItem.nameSingular,
+          isSystem: objectMetadataItem.isSystem,
+        }),
+      )
+      .map((item) => ({
+        Icon: getIcon(item.icon),
+        label: item.labelPlural,
+        value: item.nameSingular,
+      }));
 
   const [formData, setFormData] = useState<DeleteRecordFormData>({
     objectNameSingular: action.settings.input.objectName,
@@ -109,12 +119,12 @@ export const WorkflowEditActionDeleteRecord = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Delete Record',
+      defaultTitle: DELETE_RECORD_ACTION.defaultLabel,
     });
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;
@@ -130,6 +140,7 @@ export const WorkflowEditActionDeleteRecord = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={isFormDisabled}
+        iconTooltip={DELETE_RECORD_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         <Select
@@ -163,7 +174,7 @@ export const WorkflowEditActionDeleteRecord = ({
             onChange={(objectRecordId) =>
               handleFieldChange('objectRecordId', objectRecordId)
             }
-            objectNameSingular={objectNameSingular}
+            objectNameSingulars={[objectNameSingular]}
             defaultValue={formData.objectRecordId}
             testId="workflow-edit-action-record-delete-object-record-id"
             disabled={isFormDisabled}
@@ -171,6 +182,7 @@ export const WorkflowEditActionDeleteRecord = ({
           />
         )}
       </WorkflowStepBody>
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

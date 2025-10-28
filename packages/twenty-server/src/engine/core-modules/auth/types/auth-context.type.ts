@@ -1,17 +1,21 @@
-import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
-import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type User } from 'src/engine/core-modules/user/user.entity';
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type AuthContext = {
-  user?: User | null | undefined;
-  apiKey?: ApiKey | null | undefined;
+  user?: UserEntity | null | undefined;
+  apiKey?: ApiKeyEntity | null | undefined;
   workspaceMemberId?: string;
-  workspace?: Workspace;
+  workspace?: WorkspaceEntity;
   userWorkspaceId?: string;
-  userWorkspace?: UserWorkspace;
+  userWorkspace?: UserWorkspaceEntity;
   authProvider?: AuthProviderEnum;
+  impersonationContext?: {
+    impersonatorUserWorkspaceId?: string;
+    impersonatedUserWorkspaceId?: string;
+  };
 };
 
 export enum JwtTokenTypeEnum {
@@ -43,7 +47,8 @@ export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
 export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
-  authProvider?: AuthProviderEnum;
+  authProvider: AuthProviderEnum;
+  impersonatorUserWorkspaceId?: string;
 };
 
 export type TransientTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -60,6 +65,9 @@ export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   jti?: string;
   authProvider?: AuthProviderEnum;
   targetedTokenType: JwtTokenTypeEnum;
+  isImpersonating?: boolean;
+  impersonatorUserWorkspaceId?: string;
+  impersonatedUserWorkspaceId?: string;
 };
 
 export type WorkspaceAgnosticTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -81,7 +89,10 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   userId: string;
   workspaceMemberId?: string;
   userWorkspaceId: string;
-  authProvider?: AuthProviderEnum;
+  authProvider: AuthProviderEnum;
+  isImpersonating?: boolean;
+  impersonatorUserWorkspaceId?: string;
+  impersonatedUserWorkspaceId?: string;
 };
 
 export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {

@@ -4,7 +4,7 @@ import {
   MUTATION_MAX_MERGE_RECORDS,
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,7 +13,6 @@ import {
   GraphqlQueryBaseResolverService,
   type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type MergeManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
@@ -26,6 +25,7 @@ import {
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
+import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -47,7 +47,6 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
     const { ids, conflictPriorityIndex, dryRun } = executionArgs.args;
-    const { roleId } = executionArgs;
 
     const recordsToMerge = await this.fetchRecordsToMerge(executionArgs, ids);
 
@@ -96,12 +95,11 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       mergedData,
     );
 
-    if (roleId) {
+    if (executionArgs.rolePermissionConfig) {
       await this.processNestedRelations({
         executionArgs,
         updatedRecords: [updatedRecord],
         authContext,
-        roleId,
       });
     }
 
@@ -188,15 +186,19 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       } else if (recordsWithValues.length === 1) {
         mergedResult[fieldName] = recordsWithValues[0].value;
       } else {
-        const priorityValue = recordsWithValues.find(
-          (item) => item.recordId === priorityRecordId,
-        );
+        const fieldMetadata = Object.values(
+          objectMetadataItemWithFieldMaps.fieldsById,
+        ).find((field) => field?.name === fieldName);
 
-        if (priorityValue) {
-          mergedResult[fieldName] = priorityValue.value;
-        } else {
-          mergedResult[fieldName] = recordsWithValues[0].value;
+        if (!fieldMetadata) {
+          return;
         }
+
+        mergedResult[fieldName] = mergeFieldValues(
+          fieldMetadata.type,
+          recordsWithValues,
+          priorityRecordId,
+        );
       }
     });
 
@@ -211,11 +213,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       objectMetadataItemWithFieldMaps.fieldsById,
     ).find((field) => field?.name === fieldName);
 
-    if (fieldMetadata?.isSystem) {
-      return true;
-    }
-
-    return false;
+    return fieldMetadata?.isSystem ?? false;
   }
 
   private createDryRunResponse(
@@ -247,7 +245,8 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     priorityRecordId: string,
     mergedData: Partial<ObjectRecord>,
   ): Promise<ObjectRecord> {
-    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+    const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -257,6 +256,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const updatedObjectRecords = await queryBuilder
@@ -333,8 +333,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       try {
         const repository = executionArgs.workspaceDataSource.getRepository(
           relationField.objectMetadata.nameSingular,
-          executionArgs.isExecutedByApiKey,
-          executionArgs.roleId,
+          executionArgs.rolePermissionConfig,
         );
 
         const whereCondition = { [relationField.joinColumnName]: In(fromIds) };
@@ -361,12 +360,10 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     executionArgs,
     updatedRecords,
     authContext,
-    roleId,
   }: {
     executionArgs: GraphqlQueryResolverExecutionArgs<MergeManyResolverArgs>;
     updatedRecords: ObjectRecord[];
     authContext: AuthContext;
-    roleId: string;
   }): Promise<void> {
     const { objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
@@ -380,9 +377,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks:
-          executionArgs.shouldBypassPermissionChecks,
+        rolePermissionConfig: executionArgs.rolePermissionConfig,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type AddressObject, type ParsedMail } from 'mailparser';
-// @ts-expect-error legacy noImplicitAny
-import planer from 'planer';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-by-batch.service';
 import { type MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
+import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-text-extractor.service';
+import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
@@ -25,7 +25,10 @@ type ConnectedAccountType = Pick<
 export class ImapGetMessagesService {
   private readonly logger = new Logger(ImapGetMessagesService.name);
 
-  constructor(private readonly fetchByBatchService: ImapFetchByBatchService) {}
+  constructor(
+    private readonly fetchByBatchService: ImapFetchByBatchService,
+    private readonly messageTextExtractor: ImapMessageTextExtractorService,
+  ) {}
 
   async getMessages(
     messageIds: string[],
@@ -35,31 +38,55 @@ export class ImapGetMessagesService {
       return [];
     }
 
-    const { batchResults } = await this.fetchByBatchService.fetchAllByBatches(
-      messageIds,
-      connectedAccount,
-    );
+    const folderToUidsMap = this.groupMessageIdsByFolder(messageIds);
 
-    this.logger.log(`IMAP fetch completed`);
+    const allMessages: MessageWithParticipants[] = [];
 
-    const messages = this.formatBatchResponsesAsMessages(
-      batchResults,
-      connectedAccount,
-    );
+    for (const [folder, uids] of folderToUidsMap.entries()) {
+      if (!uids.length) {
+        continue;
+      }
 
-    return messages;
+      const { results } = await this.fetchByBatchService.fetchAllByBatches(
+        uids,
+        connectedAccount,
+        folder,
+      );
+
+      this.logger.log(`IMAP fetch completed for folder: ${folder}`);
+
+      const messages = this.formatBatchResponseAsMessages(
+        results,
+        connectedAccount,
+        folder,
+      );
+
+      allMessages.push(...messages);
+    }
+
+    return allMessages;
   }
 
-  public formatBatchResponsesAsMessages(
-    batchResults: MessageFetchResult[][],
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'handle' | 'handleAliases'
-    >,
-  ): MessageWithParticipants[] {
-    return batchResults.flatMap((batchResult) => {
-      return this.formatBatchResponseAsMessages(batchResult, connectedAccount);
-    });
+  private groupMessageIdsByFolder(messageIds: string[]): Map<string, number[]> {
+    const folderToUidsMap = new Map<string, number[]>();
+
+    for (const messageId of messageIds) {
+      const parsedMessageId = parseMessageId(messageId);
+
+      if (!parsedMessageId) {
+        this.logger.warn(`Invalid messageId format: ${messageId}`);
+        continue;
+      }
+
+      const { folder, uid } = parsedMessageId;
+
+      if (!folderToUidsMap.has(folder)) {
+        folderToUidsMap.set(folder, []);
+      }
+      folderToUidsMap.get(folder)!.push(uid);
+    }
+
+    return folderToUidsMap;
   }
 
   private formatBatchResponseAsMessages(
@@ -68,11 +95,12 @@ export class ImapGetMessagesService {
       ConnectedAccountWorkspaceEntity,
       'handle' | 'handleAliases'
     >,
+    folder: string,
   ): MessageWithParticipants[] {
     const messages = batchResults.map((result) => {
       if (!result.parsed) {
-        this.logger.debug(
-          `Message ${result.messageId} could not be parsed - likely not found in current mailboxes`,
+        this.logger.warn(
+          `Message UID ${result.uid} could not be parsed - likely not found in current folders`,
         );
 
         return undefined;
@@ -80,21 +108,29 @@ export class ImapGetMessagesService {
 
       return this.createMessageFromParsedMail(
         result.parsed,
-        result.messageId,
+        result.uid.toString(),
         connectedAccount,
+        folder,
       );
     });
 
-    return messages.filter(isDefined);
+    const validMessages = messages.filter(isDefined);
+
+    this.logger.log(
+      `Successfully parsed ${validMessages.length} out of ${batchResults.length} messages`,
+    );
+
+    return validMessages;
   }
 
   private createMessageFromParsedMail(
     parsed: ParsedMail,
-    messageId: string,
+    uid: string,
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'handle' | 'handleAliases'
     >,
+    folder: string,
   ): MessageWithParticipants {
     const participants = this.extractAllParticipants(parsed);
     const attachments = this.extractAttachments(parsed);
@@ -107,18 +143,17 @@ export class ImapGetMessagesService {
 
     const fromHandle = fromAddresses.length > 0 ? fromAddresses[0].address : '';
 
-    const textWithoutReplyQuotations = parsed.text
-      ? planer.extractFrom(parsed.text, 'text/plain')
-      : '';
+    const textWithoutReplyQuotations =
+      this.messageTextExtractor.extractTextWithoutReplyQuotations(parsed);
 
     const direction = computeMessageDirection(fromHandle, connectedAccount);
     const text = sanitizeString(textWithoutReplyQuotations);
     const subject = sanitizeString(parsed.subject || '');
 
     return {
-      externalId: messageId,
-      messageThreadExternalId: threadId || messageId,
-      headerMessageId: parsed.messageId || messageId,
+      externalId: `${folder}:${uid}`,
+      messageThreadExternalId: threadId || parsed.messageId || uid,
+      headerMessageId: parsed.messageId || uid,
       subject: subject,
       text: text,
       receivedAt: parsed.date || new Date(),
@@ -135,7 +170,7 @@ export class ImapGetMessagesService {
       const threadRoot = references[0].trim();
 
       if (threadRoot && threadRoot.length > 0) {
-        return this.normalizeMessageId(threadRoot);
+        return threadRoot;
       }
     }
 
@@ -146,32 +181,18 @@ export class ImapGetMessagesService {
           : String(inReplyTo).trim();
 
       if (cleanInReplyTo && cleanInReplyTo.length > 0) {
-        return this.normalizeMessageId(cleanInReplyTo);
+        return cleanInReplyTo;
       }
     }
 
     if (messageId) {
-      return this.normalizeMessageId(messageId);
+      return messageId.trim();
     }
 
     const timestamp = Date.now();
     const randomSuffix = Math.random().toString(36).substring(2, 11);
 
     return `thread-${timestamp}-${randomSuffix}`;
-  }
-
-  private normalizeMessageId(messageId: string): string {
-    const trimmedMessageId = messageId.trim();
-
-    if (
-      trimmedMessageId.includes('@') &&
-      !trimmedMessageId.startsWith('<') &&
-      !trimmedMessageId.endsWith('>')
-    ) {
-      return `<${trimmedMessageId}>`;
-    }
-
-    return trimmedMessageId;
   }
 
   private extractAllParticipants(parsed: ParsedMail) {

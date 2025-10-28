@@ -3,8 +3,11 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -232,6 +235,15 @@ describe('Field metadata relation creation should fail', () => {
     for (const objectMetadataId of Object.values(
       globalTestContext.objectMetadataIds,
     )) {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: objectMetadataId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
       await deleteOneObjectMetadata({
         input: {
           idToDelete: objectMetadataId,
@@ -273,7 +285,9 @@ describe('Field metadata relation creation should fail', () => {
       });
 
       expect(errors).toBeDefined();
-      expect(errors).toMatchSnapshot();
+      expect(errors).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors),
+      );
     },
   );
 
@@ -309,8 +323,57 @@ describe('Field metadata relation creation should fail', () => {
         },
       });
 
-      expect(errors).toBeDefined();
-      expect(errors).toMatchSnapshot();
+      expectOneNotInternalServerErrorSnapshot({
+        errors,
+      });
     },
   );
+
+  it('should fail when creating MANY_TO_ONE self-relation with same field name and label', async () => {
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        objectMetadataId: globalTestContext.objectMetadataIds.sourceObjectId,
+        name: 'manager',
+        label: 'Manager',
+        isLabelSyncedWithName: false,
+        type: FieldMetadataType.RELATION,
+        relationCreationPayload: {
+          targetFieldLabel: 'Manager',
+          type: RelationType.MANY_TO_ONE,
+          targetObjectMetadataId:
+            globalTestContext.objectMetadataIds.sourceObjectId,
+          targetFieldIcon: 'IconUser',
+        },
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
+  });
+
+  it('should fail when creating ONE_TO_MANY self-relation with same field name and label', async () => {
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        objectMetadataId: globalTestContext.objectMetadataIds.sourceObjectId,
+        name: 'manager',
+        label: 'Manager',
+        isLabelSyncedWithName: false,
+        type: FieldMetadataType.RELATION,
+        relationCreationPayload: {
+          targetFieldLabel: 'Manager',
+          type: RelationType.ONE_TO_MANY,
+          targetObjectMetadataId:
+            globalTestContext.objectMetadataIds.sourceObjectId,
+          targetFieldIcon: 'IconUser',
+        },
+      },
+    });
+
+    expectOneNotInternalServerErrorSnapshot({
+      errors,
+    });
+  });
 });

@@ -1,5 +1,10 @@
 name: 'Preview Environment Dispatch'
 
+permissions:
+  contents: write
+  actions: write
+  pull-requests: read
+
 on:
   # Using pull_request_target instead of pull_request to have access to secrets for external contributors
   # Security note: This is safe because we're only using the repository-dispatch action with limited scope
@@ -19,10 +24,6 @@ concurrency:
 
 jobs:
   trigger-preview:
-    permissions:
-      contents: write
-      actions: write
-      pull-requests: read
     if: github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened' || (github.event.action == 'labeled' && github.event.label.name == 'preview-app')
     timeout-minutes: 5
     runs-on: ubuntu-latest

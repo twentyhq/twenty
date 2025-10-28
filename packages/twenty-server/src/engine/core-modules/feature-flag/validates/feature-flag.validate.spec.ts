@@ -12,15 +12,6 @@ describe('featureFlagValidator', () => {
       ).not.toThrow();
     });
 
-    it('should not throw error for new workflow filtering feature flag', () => {
-      expect(() =>
-        featureFlagValidator.assertIsFeatureFlagKey(
-          'IS_WORKFLOW_FILTERING_ENABLED',
-          new UnknownException('Error', 'Error'),
-        ),
-      ).not.toThrow();
-    });
-
     it('should throw error if featureFlagKey is invalid', () => {
       const invalidKey = 'InvalidKey';
       const exception = new UnknownException('Error', 'Error');

@@ -6,7 +6,7 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { AppPath } from '@/types/AppPath';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -22,6 +22,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { z } from 'zod';
@@ -126,6 +127,7 @@ export const PasswordReset = () => {
 
   const { signInWithCredentialsInWorkspace } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
+  const { isCaptchaReady } = useCaptcha();
 
   const onSubmit = async (formData: Form) => {
     try {
@@ -151,7 +153,14 @@ export const PasswordReset = () => {
         return;
       }
 
-      const token = await readCaptchaToken();
+      if (!isCaptchaReady) {
+        enqueueErrorSnackBar({
+          message: t`Captcha (anti-bot check) is still loading, try again`,
+        });
+        return;
+      }
+
+      const token = readCaptchaToken();
 
       await signInWithCredentialsInWorkspace(
         email || '',

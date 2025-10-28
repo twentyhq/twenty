@@ -10,7 +10,7 @@ import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -21,7 +21,7 @@ export class McpService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly toolService: ToolService,
     private readonly userRoleService: UserRoleService,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
@@ -39,7 +39,7 @@ export class McpService {
     }
   }
 
-  handleInitialize(requestId: string | number | null) {
+  handleInitialize(requestId: string | number) {
     return wrapJsonRpcResponse(requestId, {
       result: {
         capabilities: {
@@ -47,6 +47,9 @@ export class McpService {
           resources: { listChanged: false },
           prompts: { listChanged: false },
         },
+        tools: [],
+        resources: [],
+        prompts: [],
       },
     });
   }
@@ -90,13 +93,17 @@ export class McpService {
     return roleId;
   }
 
-  async executeTool(
+  async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
     {
       workspace,
       userWorkspaceId,
       apiKey,
-    }: { workspace: Workspace; userWorkspaceId?: string; apiKey?: string },
+    }: {
+      workspace: WorkspaceEntity;
+      userWorkspaceId?: string;
+      apiKey?: string;
+    },
   ): Promise<Record<string, unknown>> {
     try {
       await this.checkAiEnabled(workspace.id);
@@ -105,19 +112,60 @@ export class McpService {
         return this.handleInitialize(id);
       }
 
+      if (method === 'ping') {
+        return wrapJsonRpcResponse(
+          id,
+          {
+            result: {},
+          },
+          true,
+        );
+      }
+
       const roleId = await this.getRoleId(
         workspace.id,
         userWorkspaceId,
         apiKey,
       );
 
-      const toolSet = await this.toolService.listTools(roleId, workspace.id);
+      const toolSet = await this.toolService.listTools(
+        { unionOf: [roleId] },
+        workspace.id,
+      );
 
       if (method === 'tools/call' && params) {
         return await this.handleToolCall(id, toolSet, params);
       }
 
-      return await this.handleToolsListing(id, toolSet);
+      if (method === 'tools/list') {
+        return await this.handleToolsListing(id, toolSet);
+      }
+
+      if (method === 'prompts/list') {
+        return wrapJsonRpcResponse(id, {
+          result: {
+            capabilities: {
+              prompts: { listChanged: false },
+            },
+            prompts: [],
+          },
+        });
+      }
+
+      if (method === 'resources/list') {
+        return wrapJsonRpcResponse(id, {
+          result: {
+            capabilities: {
+              resources: { listChanged: false },
+            },
+            resources: [],
+          },
+        });
+      }
+
+      return wrapJsonRpcResponse(id, {
+        result: {},
+      });
     } catch (error) {
       return wrapJsonRpcResponse(id, {
         error: {
@@ -129,7 +177,7 @@ export class McpService {
   }
 
   private async handleToolCall(
-    id: string | number | null,
+    id: string | number,
     toolSet: ToolSet,
     params: Record<string, unknown>,
   ) {
@@ -161,14 +209,26 @@ export class McpService {
     );
   }
 
-  private handleToolsListing(id: string | number | null, toolSet: ToolSet) {
+  private handleToolsListing(id: string | number, toolSet: ToolSet) {
     const toolsArray = Object.entries(toolSet)
-      .filter(([, def]) => !!def.parameters.jsonSchema)
-      .map(([name, def]) => ({
-        name,
-        description: def.description,
-        inputSchema: def.parameters.jsonSchema,
-      }));
+      .filter(([, def]) => !!def.inputSchema)
+      .map(([name, def]) => {
+        // Unwrap the AI SDK's jsonSchema wrapper if present
+        // The AI SDK serializes schemas as { jsonSchema: {...} } but MCP expects {...} directly
+        const inputSchema = def.inputSchema;
+        const unwrappedSchema =
+          inputSchema &&
+          typeof inputSchema === 'object' &&
+          'jsonSchema' in inputSchema
+            ? inputSchema.jsonSchema
+            : inputSchema;
+
+        return {
+          name,
+          description: def.description,
+          inputSchema: unwrappedSchema,
+        };
+      });
 
     return wrapJsonRpcResponse(id, {
       result: {
@@ -176,6 +236,8 @@ export class McpService {
           tools: { listChanged: false },
         },
         tools: toolsArray,
+        resources: [],
+        prompts: [],
       },
     });
   }

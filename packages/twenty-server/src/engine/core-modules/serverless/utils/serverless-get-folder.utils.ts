@@ -9,13 +9,16 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 export const getServerlessFolder = ({
   serverlessFunction,
   version,
+  toDelete = false,
 }: {
-  serverlessFunction: ServerlessFunctionEntity;
+  serverlessFunction: ServerlessFunctionEntity | FlatServerlessFunction;
   version?: 'draft' | 'latest' | (string & NonNullable<unknown>);
+  toDelete?: boolean;
 }) => {
   if (version === 'latest' && !isDefined(serverlessFunction.latestVersion)) {
     throw new ServerlessFunctionException(
@@ -29,7 +32,9 @@ export const getServerlessFolder = ({
 
   return join(
     'workspace-' + serverlessFunction.workspaceId,
-    FileFolder.ServerlessFunction,
+    toDelete
+      ? FileFolder.ServerlessFunctionToDelete
+      : FileFolder.ServerlessFunction,
     serverlessFunction.id,
     computedVersion || '',
   );

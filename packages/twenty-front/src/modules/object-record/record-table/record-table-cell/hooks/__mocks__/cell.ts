@@ -1,7 +1,6 @@
 import { RecordTableCellContextValue } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextValue } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextValue } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const recordTableRowContextValue: RecordTableRowContextValue = {
   rowIndex: 2,
@@ -9,7 +8,6 @@ export const recordTableRowContextValue: RecordTableRowContextValue = {
   recordId: 'recordId',
   pathToShowPage: '/',
   objectNameSingular: 'objectNameSingular',
-  inView: true,
 };
 
 export const recordTableRowDraggableContextValue: RecordTableRowDraggableContextValue = {
@@ -18,17 +16,12 @@ export const recordTableRowDraggableContextValue: RecordTableRowDraggableContext
 };
 
 export const recordTableCellContextValue: RecordTableCellContextValue = {
-  columnDefinition: {
+  recordField: {
     size: 1,
     position: 1,
-    fieldMetadataId: 'fieldMetadataId',
-    label: 'label',
-    iconName: 'iconName',
-    type: FieldMetadataType.TEXT,
-    metadata: {
-      placeHolder: 'placeHolder',
-      fieldName: 'fieldName',
-    },
+    fieldMetadataItemId: 'fieldMetadataId',
+    id: 'id',
+    isVisible: true,
   },
   cellPosition: {
     row: 2,

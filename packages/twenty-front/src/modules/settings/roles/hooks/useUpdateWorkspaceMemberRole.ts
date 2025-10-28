@@ -1,17 +1,15 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import {
-  useUpdateWorkspaceMemberRoleMutation,
-  type WorkspaceMember,
-} from '~/generated-metadata/graphql';
+import { useUpdateWorkspaceMemberRoleMutation } from '~/generated-metadata/graphql';
+import { type PartialWorkspaceMember } from '../types/RoleWithPartialMembers';
 
 type AddWorkspaceMemberToRoleAndUpdateStateParams = {
   workspaceMemberId: string;
 };
 
 type UpdateWorkspaceMemberRoleDraftStateParams = {
-  workspaceMember: WorkspaceMember;
+  workspaceMember: PartialWorkspaceMember;
 };
 
 type AddWorkspaceMembersToRoleParams = {
@@ -40,8 +38,8 @@ export const useUpdateWorkspaceMemberRole = (roleId: string) => {
         {
           id: workspaceMember.id,
           name: workspaceMember.name,
-          colorScheme: workspaceMember.colorScheme,
           userEmail: workspaceMember.userEmail,
+          avatarUrl: workspaceMember.avatarUrl,
         },
       ],
     });

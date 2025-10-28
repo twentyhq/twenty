@@ -1194,11 +1194,6 @@ export const oneSucceededWorkflowRunQueryResult = {
                     value: '20202020-1c25-4d02-bf25-6aeccf7ea419',
                     isLeaf: true,
                   },
-                  dataSourceId: {
-                    label: ' Data Source Id',
-                    value: 'f20df2e6-420e-40e0-a4ca-68846bbe6c92',
-                    isLeaf: true,
-                  },
                   isSearchable: {
                     label: ' Is Searchable',
                     value: true,
@@ -3415,7 +3410,6 @@ export const oneSucceededWorkflowRunQueryResult = {
               description: 'A company',
               labelPlural: 'Companies',
               workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-              dataSourceId: 'f20df2e6-420e-40e0-a4ca-68846bbe6c92',
               fieldsByName: {
                 id: {
                   id: '593dd556-69ab-4df7-aa2e-ab5e20eb7977',
@@ -5638,11 +5632,6 @@ export const oneSucceededWorkflowRunQueryResult = {
                 workspaceId: {
                   label: ' Workspace Id',
                   value: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-                  isLeaf: true,
-                },
-                dataSourceId: {
-                  label: ' Data Source Id',
-                  value: 'f20df2e6-420e-40e0-a4ca-68846bbe6c92',
                   isLeaf: true,
                 },
                 isSearchable: {

@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { differenceInDays, parseISO, addDays } from 'date-fns';
 
 export const computeNewExpirationDate = (
   expiresAt: string | null | undefined,
@@ -7,8 +7,8 @@ export const computeNewExpirationDate = (
   if (!expiresAt) {
     return null;
   }
-  const days = DateTime.fromISO(expiresAt).diff(DateTime.fromISO(createdAt), [
-    'days',
-  ]).days;
-  return DateTime.utc().plus({ days }).toISO();
+  const expirationDate = parseISO(expiresAt);
+  const creationDate = parseISO(createdAt);
+  const days = differenceInDays(expirationDate, creationDate);
+  return addDays(new Date(), days).toISOString();
 };

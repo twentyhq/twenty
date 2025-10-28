@@ -1,7 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { BOOLEAN_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
@@ -18,17 +17,19 @@ export type SettingsDataModelFieldBooleanFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldBooleanFormProps = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue'>;
+  existingFieldMetadataId: string;
+  disabled?: boolean;
 };
 
 export const SettingsDataModelFieldBooleanForm = ({
-  fieldMetadataItem,
+  disabled,
+  existingFieldMetadataId,
 }: SettingsDataModelFieldBooleanFormProps) => {
   const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldBooleanFormValues>();
 
   const { initialDefaultValue } = useBooleanSettingsFormInitialValues({
-    fieldMetadataItem,
+    existingFieldMetadataId,
   });
 
   return (
@@ -47,6 +48,7 @@ export const SettingsDataModelFieldBooleanForm = ({
             onChange={onChange}
             dropdownId="object-field-default-value-select-boolean"
             dropdownWidth={120}
+            disabled={disabled}
             needIconCheck={false}
             options={BOOLEAN_DATA_MODEL_SELECT_OPTIONS.map((option) => ({
               ...option,

@@ -8,18 +8,21 @@ import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useR
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
-import { AppPath } from '@/types/AppPath';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { useRecoilCallback } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
+type UseCreateNewIndexRecordProps = {
+  objectMetadataItem: ObjectMetadataItem;
+};
+
 export const useCreateNewIndexRecord = ({
   objectMetadataItem,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
+}: UseCreateNewIndexRecordProps) => {
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
   const { createOneRecord } = useCreateOneRecord({
@@ -45,11 +48,12 @@ export const useCreateNewIndexRecord = ({
           .getLoadable(recordIndexOpenRecordInState)
           .getValue();
 
-        await createOneRecord({
+        const createdRecord = await createOneRecord({
           id: recordId,
           ...recordInputFromFilters,
           ...recordInput,
         });
+
         if (
           recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL &&
           canOpenObjectInSidePanel(objectMetadataItem.nameSingular)
@@ -67,7 +71,11 @@ export const useCreateNewIndexRecord = ({
             openRecordTitleCell({
               recordId,
               fieldName: labelIdentifierFieldMetadataItem.name,
-              containerType: RecordTitleCellContainerType.ShowPage,
+              instanceId: getRecordFieldInputInstanceId({
+                recordId,
+                fieldName: labelIdentifierFieldMetadataItem.name,
+                prefix: RecordTitleCellContainerType.ShowPage,
+              }),
             });
           }
         } else {
@@ -76,6 +84,8 @@ export const useCreateNewIndexRecord = ({
             objectRecordId: recordId,
           });
         }
+
+        return createdRecord;
       },
     [
       buildRecordInputFromFilters,

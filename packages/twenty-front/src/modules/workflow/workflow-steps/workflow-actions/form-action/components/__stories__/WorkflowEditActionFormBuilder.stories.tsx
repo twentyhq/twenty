@@ -5,7 +5,9 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
+import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 
@@ -56,9 +58,11 @@ const meta: Meta<typeof WorkflowEditActionFormBuilder> = {
   },
   decorators: [
     WorkflowStepActionDrawerDecorator,
+    WorkflowStepDecorator,
     ComponentDecorator,
     RouterDecorator,
     I18nFrontDecorator,
+    ObjectMetadataItemsDecorator,
   ],
 };
 

@@ -12,4 +12,9 @@ export const VIEW_PICKER_TYPE_SELECT_OPTIONS = [
     label: msg`Kanban`,
     Icon: viewTypeIconMapping(ViewType.Kanban),
   },
+  {
+    value: ViewType.Calendar,
+    label: msg`Calendar`,
+    Icon: viewTypeIconMapping(ViewType.Calendar),
+  },
 ];

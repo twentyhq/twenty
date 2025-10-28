@@ -14,6 +14,7 @@ type SelectInputProps = {
   onFilterChange?: ((filteredOptions: SelectOption[]) => void) | undefined;
   onClear?: (() => void) | undefined;
   clearLabel?: string;
+  onAddSelectOption?: (optionName: string) => void;
 };
 
 export const SelectInput = ({
@@ -27,6 +28,7 @@ export const SelectInput = ({
   onFilterChange,
   onClear,
   clearLabel,
+  onAddSelectOption,
 }: SelectInputProps) => {
   return (
     <SelectableList
@@ -43,6 +45,7 @@ export const SelectInput = ({
         onClear={onClear}
         clearLabel={clearLabel}
         focusId={focusId}
+        onAddSelectOption={onAddSelectOption}
       />
     </SelectableList>
   );

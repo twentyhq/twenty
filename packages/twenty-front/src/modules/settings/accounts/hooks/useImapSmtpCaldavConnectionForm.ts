@@ -6,8 +6,8 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
 import {
   type ConnectionParameters,
   useSaveImapSmtpCaldavAccountMutation,
@@ -49,7 +49,7 @@ export const useImapSmtpCaldavConnectionForm = ({
     defaultValues: {
       handle: '',
       IMAP: { host: '', port: 993, password: '', secure: true },
-      SMTP: { host: '', port: 587, password: '', secure: true },
+      SMTP: { host: '', username: '', port: 587, password: '', secure: true },
       CALDAV: {
         host: '',
         port: 443,
@@ -132,7 +132,7 @@ export const useImapSmtpCaldavConnectionForm = ({
       });
 
       try {
-        await saveConnection({
+        const { data } = await saveConnection({
           variables: {
             ...(isEditing && connectedAccountId
               ? { id: connectedAccountId }
@@ -142,13 +142,20 @@ export const useImapSmtpCaldavConnectionForm = ({
             connectionParameters,
           },
         });
+        if (!isDefined(data)) return;
 
         const successMessage = isEditing
           ? t`Connection successfully updated`
           : t`Connection successfully created`;
 
         enqueueSuccessSnackBar({ message: successMessage });
-        navigate(SettingsPath.Accounts);
+
+        const { connectedAccountId: returnedConnectedAccountId } =
+          data?.saveImapSmtpCaldavAccount || {};
+
+        navigate(SettingsPath.AccountsConfiguration, {
+          connectedAccountId: returnedConnectedAccountId,
+        });
       } catch (error) {
         enqueueErrorSnackBar({
           apolloError: error instanceof ApolloError ? error : undefined,

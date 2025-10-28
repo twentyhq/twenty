@@ -1,3 +1,4 @@
+import { CommandMenuWorkflowRunStepContentComponentInstanceContext } from '@/command-menu/pages/workflow/step/view-run/states/contexts/CommandMenuWorkflowRunStepContentComponentInstanceContext';
 import { getIsInputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsInputTabDisabled';
 import { getIsOutputTabDisabled } from '@/command-menu/pages/workflow/step/view-run/utils/getIsOutputTabDisabled';
 import { getShouldFocusNodeTab } from '@/command-menu/pages/workflow/step/view-run/utils/getShouldFocusNodeTab';
@@ -10,7 +11,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
-import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
@@ -21,6 +21,7 @@ import {
   type WorkflowRunTabIdType,
 } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
+import { WorkflowIteratorSubStepSwitcher } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher';
 import styled from '@emotion/styled';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -113,10 +114,9 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
   ];
 
   return (
-    <WorkflowStepContextProvider
+    <CommandMenuWorkflowRunStepContentComponentInstanceContext.Provider
       value={{
-        workflowVersionId: workflowRun.workflowVersionId,
-        workflowRunId: workflowRun.id,
+        instanceId: `${workflowRunId}_${workflowSelectedNode}`,
       }}
     >
       <StyledContainer>
@@ -157,9 +157,11 @@ export const CommandMenuWorkflowRunViewStepContent = () => {
                 stepId={workflowSelectedNode}
               />
             ) : null}
+
+            <WorkflowIteratorSubStepSwitcher stepId={workflowSelectedNode} />
           </>
         )}
       </StyledContainer>
-    </WorkflowStepContextProvider>
+    </CommandMenuWorkflowRunStepContentComponentInstanceContext.Provider>
   );
 };

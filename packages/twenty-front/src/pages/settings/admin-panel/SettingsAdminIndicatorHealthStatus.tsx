@@ -3,11 +3,12 @@ import { SettingsAdminIndicatorHealthStatusContent } from '@/settings/admin-pane
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, H3Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
@@ -15,7 +16,6 @@ import {
   HealthIndicatorId,
   useGetIndicatorHealthStatusQuery,
 } from '~/generated-metadata/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTitleContainer = styled.div`
   align-items: center;

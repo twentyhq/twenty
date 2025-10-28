@@ -8,7 +8,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
   type GenericFieldContextType,
-} from '@/object-record/record-field/contexts/FieldContext';
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -162,7 +162,7 @@ export const AttachmentRow = ({
     >
       <ActivityRow disabled>
         <StyledLeftContent>
-          <FileIcon fileType={attachment.type} />
+          <FileIcon fileCategory={attachment.fileCategory} />
           {isEditing ? (
             <SettingsTextInput
               instanceId={`attachment-${attachment.id}-name`}

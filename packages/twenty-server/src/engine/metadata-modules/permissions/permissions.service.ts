@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
@@ -19,6 +17,7 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
 export class PermissionsService {
@@ -26,8 +25,7 @@ export class PermissionsService {
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    private readonly featureFlagService: FeatureFlagService,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
@@ -54,8 +52,7 @@ export class PermissionsService {
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         {
-          userFriendlyMessage:
-            'Your role in this workspace could not be found. Please contact your workspace administrator.',
+          userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
         },
       );
     }
@@ -85,35 +82,16 @@ export class PermissionsService {
         workspaceId,
       });
 
-    const objectPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
-
-    const objectRecordsPermissions: UserWorkspacePermissions['objectRecordsPermissions'] =
-      {
-        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canReadAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canUpdateAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canSoftDeleteAllObjectRecords ?? false,
-        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]:
-          roleOfUserWorkspace.canDestroyAllObjectRecords ?? false,
-      };
+    const objectsPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
 
     return {
       permissionFlags,
-      objectRecordsPermissions,
-      objectPermissions,
+      objectsPermissions,
     };
   }
 
   public getDefaultUserWorkspacePermissions = () =>
     ({
-      objectRecordsPermissions: {
-        [PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS]: false,
-        [PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS]: false,
-      },
       permissionFlags: {
         [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: false,
         [PermissionFlagType.WORKSPACE]: false,
@@ -126,8 +104,9 @@ export class PermissionsService {
         [PermissionFlagType.SEND_EMAIL_TOOL]: false,
         [PermissionFlagType.IMPORT_CSV]: false,
         [PermissionFlagType.EXPORT_CSV]: false,
+        [PermissionFlagType.IMPERSONATE]: false,
       },
-      objectPermissions: {},
+      objectsPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
 
   public async userHasWorkspaceSettingPermission({
@@ -142,16 +121,6 @@ export class PermissionsService {
     apiKeyId?: string;
   }): Promise<boolean> {
     if (apiKeyId) {
-      const isApiKeyRolesEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-          workspaceId,
-        );
-
-      if (!isApiKeyRolesEnabled) {
-        return true;
-      }
-
       const roleId = await this.apiKeyRoleService.getRoleIdForApiKey(
         apiKeyId,
         workspaceId,
@@ -167,8 +136,7 @@ export class PermissionsService {
           PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
           PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
           {
-            userFriendlyMessage:
-              'The API key does not have a valid role assigned. Please check your API key configuration.',
+            userFriendlyMessage: msg`The API key does not have a valid role assigned. Please check your API key configuration.`,
           },
         );
       }
@@ -189,8 +157,7 @@ export class PermissionsService {
           PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
           PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
           {
-            userFriendlyMessage:
-              'Your role in this workspace could not be found. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
           },
         );
       }
@@ -202,13 +169,12 @@ export class PermissionsService {
       PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
       PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
       {
-        userFriendlyMessage:
-          'Authentication is required to access this feature. Please sign in and try again.',
+        userFriendlyMessage: msg`Authentication is required to access this feature. Please sign in and try again.`,
       },
     );
   }
 
-  private checkRolePermissions(
+  public checkRolePermissions(
     role: RoleEntity,
     setting: PermissionFlagType,
   ): boolean {
@@ -223,30 +189,101 @@ export class PermissionsService {
     );
   }
 
+  private async getRolesFromPermissionConfig(
+    rolePermissionConfig: RolePermissionConfig,
+    workspaceId: string,
+    relations: string[] = [],
+  ): Promise<{ roles: RoleEntity[]; useIntersection: boolean } | null> {
+    if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
+      return null;
+    }
+
+    let roleIds: string[] = [];
+    let useIntersection = false;
+
+    if ('intersectionOf' in rolePermissionConfig) {
+      roleIds = rolePermissionConfig.intersectionOf;
+      useIntersection = true;
+    } else if ('unionOf' in rolePermissionConfig) {
+      roleIds = rolePermissionConfig.unionOf;
+      useIntersection = false;
+    }
+
+    if (roleIds.length === 0) {
+      throw new Error('No role IDs provided');
+    }
+
+    const roles = await this.roleRepository.find({
+      where: { id: In(roleIds), workspaceId },
+      relations,
+    });
+
+    if (roles.length !== roleIds.length) {
+      throw new Error('Some roles not found');
+    }
+
+    return { roles, useIntersection };
+  }
+
+  public async checkRolesPermissions(
+    rolePermissionConfig: RolePermissionConfig,
+    workspaceId: string,
+    setting: PermissionFlagType,
+  ): Promise<boolean> {
+    try {
+      const result = await this.getRolesFromPermissionConfig(
+        rolePermissionConfig,
+        workspaceId,
+        ['permissionFlags'],
+      );
+
+      if (result === null) {
+        return true;
+      }
+
+      const { roles, useIntersection } = result;
+
+      return useIntersection
+        ? roles.every((role) => this.checkRolePermissions(role, setting))
+        : roles.some((role) => this.checkRolePermissions(role, setting));
+    } catch {
+      return false;
+    }
+  }
+
   public async hasToolPermission(
-    roleId: string,
+    rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     flag: PermissionFlagType,
   ): Promise<boolean> {
     try {
-      const role = await this.roleRepository.findOne({
-        where: { id: roleId, workspaceId },
-        relations: ['permissionFlags'],
-      });
+      const result = await this.getRolesFromPermissionConfig(
+        rolePermissionConfig,
+        workspaceId,
+        ['permissionFlags'],
+      );
 
-      if (!role) {
-        return false;
-      }
-
-      if (role.canAccessAllTools === true) {
+      if (result === null) {
         return true;
       }
 
-      const permissionFlags = role.permissionFlags ?? [];
+      const { roles, useIntersection } = result;
 
-      return permissionFlags.some(
-        (permissionFlag) => permissionFlag.flag === flag,
-      );
+      const checkRoleHasPermission = (role: RoleEntity) => {
+        if (role.canAccessAllTools === true) {
+          return true;
+        }
+
+        const permissionFlags = role.permissionFlags ?? [];
+
+        return permissionFlags.some(
+          (permissionFlag) => permissionFlag.flag === flag,
+        );
+      };
+
+      return useIntersection
+        ? roles.every(checkRoleHasPermission)
+        : roles.some(checkRoleHasPermission);
     } catch {
       return false;
     }

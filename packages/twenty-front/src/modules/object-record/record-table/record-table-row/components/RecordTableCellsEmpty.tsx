@@ -1,16 +1,18 @@
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
+import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 
 export const RecordTableCellsEmpty = () => {
   const { isSelected } = useRecordTableRowContextOrThrow();
 
-  const visibleTableColumns = useRecoilComponentValue(
-    visibleTableColumnsComponentSelector,
-  );
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  return visibleTableColumns.map((column) => (
-    <RecordTableTd isSelected={isSelected} key={column.fieldMetadataId} />
+  return visibleRecordFields.map((recordField, index) => (
+    <RecordTableCellStyleWrapper
+      isSelected={isSelected}
+      key={recordField.fieldMetadataItemId}
+      widthClassName={getRecordTableColumnFieldWidthClassName(index)}
+    />
   ));
 };

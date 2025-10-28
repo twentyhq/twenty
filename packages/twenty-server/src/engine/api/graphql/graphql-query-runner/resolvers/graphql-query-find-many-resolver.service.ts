@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -8,10 +9,8 @@ import {
   type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
-  type ObjectRecord,
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,
-  OrderByDirection,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -45,10 +44,11 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
-    const { roleId } = executionArgs;
+    const objectMetadataNameSingular =
+      objectMetadataItemWithFieldMaps.nameSingular;
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataNameSingular,
     );
 
     const aggregateQueryBuilder = queryBuilder.clone();
@@ -58,7 +58,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       aggregateQueryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataNameSingular,
       appliedFilters,
     );
 
@@ -93,14 +93,14 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataNameSingular,
       appliedFilters,
     );
 
     executionArgs.graphqlQueryParser.applyOrderToBuilder(
       queryBuilder,
       orderByWithIdCondition,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataNameSingular,
       isForwardPagination,
     );
 
@@ -113,6 +113,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       selectedAggregatedFields:
         executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
       queryBuilder: aggregateQueryBuilder,
+      objectMetadataNameSingular,
     });
 
     const limit =
@@ -122,7 +123,12 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
+
+    if (isDefined(executionArgs.args.offset)) {
+      queryBuilder.skip(executionArgs.args.offset);
+    }
 
     const objectRecords = (await queryBuilder
       .setFindOptions({
@@ -155,9 +161,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks:
-          executionArgs.shouldBypassPermissionChecks,
+        rolePermissionConfig: executionArgs.rolePermissionConfig,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }
@@ -166,11 +170,13 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.createConnection({
-      objectRecords,
+      objectRecords: isForwardPagination
+        ? objectRecords
+        : objectRecords.reverse(),
       objectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
       selectedAggregatedFields:
         executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
-      objectName: objectMetadataItemWithFieldMaps.nameSingular,
+      objectName: objectMetadataNameSingular,
       take: limit,
       totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       order: orderByWithIdCondition,

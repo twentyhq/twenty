@@ -1,21 +1,12 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
-import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
-import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
-import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { type ReactNode, useContext } from 'react';
-import { useRecoilValue } from 'recoil';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useContext, type ReactNode } from 'react';
 
 type RecordTableCellFieldContextLabelIdentifierProps = {
   children: ReactNode;
@@ -24,20 +15,16 @@ type RecordTableCellFieldContextLabelIdentifierProps = {
 export const RecordTableCellFieldContextLabelIdentifier = ({
   children,
 }: RecordTableCellFieldContextLabelIdentifierProps) => {
-  const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
-    useRecordIndexContextOrThrow();
-  const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
+  const {
+    objectPermissionsByObjectMetadataId,
+    fieldDefinitionByFieldMetadataItemId,
+  } = useRecordIndexContextOrThrow();
+  const { recordId, isRecordReadOnly, rowIndex } =
+    useRecordTableRowContextOrThrow();
 
-  const { columnDefinition } = useContext(RecordTableCellContext);
-  const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
-  const { rowIndex } = useRecordTableRowContextOrThrow();
-  const { activateRecordTableRow } = useActiveRecordTableRow(recordTableId);
-  const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
-
-  const isMobile = useIsMobile();
-  const isRecordTableScrolledLeftComponent = useRecoilComponentValue(
-    isRecordTableScrolledLeftComponentState,
-  );
+  const { recordField } = useContext(RecordTableCellContext);
+  const { objectMetadataItem, onRecordIdentifierClick, triggerEvent } =
+    useRecordTableContextOrThrow();
 
   const objectPermissions = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
@@ -48,42 +35,31 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 
   const updateRecord = useContext(RecordUpdateContext);
 
-  const isLabelIdentifierCompact =
-    isMobile && !isRecordTableScrolledLeftComponent;
+  const fieldDefinition =
+    fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
-  const { openRecordFromIndexView } = useOpenRecordFromIndexView();
-
-  const recordIndexOpenRecordIn = useRecoilValue(recordIndexOpenRecordInState);
-  const triggerEvent =
-    recordIndexOpenRecordIn === ViewOpenRecordInType.SIDE_PANEL
-      ? 'CLICK'
-      : 'MOUSE_DOWN';
+  const handleChipClick = () => {
+    onRecordIdentifierClick?.(rowIndex, recordId);
+  };
 
   return (
     <FieldContext.Provider
       value={{
         recordId,
-        fieldDefinition: columnDefinition,
+        fieldDefinition,
         useUpdateRecord: () => [updateRecord, {}],
-        labelIdentifierLink: indexIdentifierUrl(recordId),
         isLabelIdentifier: true,
-        isLabelIdentifierCompact,
         displayedMaxRows: 1,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
-          objectPermissions,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          fieldName: columnDefinition.metadata.fieldName,
-          fieldType: columnDefinition.type,
-          isCustom: objectMetadataItem.isCustom,
-          fieldMetadataId: columnDefinition.fieldMetadataId,
           isRecordReadOnly: isRecordReadOnly ?? false,
+          objectPermissions,
+          fieldMetadataItem: {
+            id: recordField.fieldMetadataItemId,
+            isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
+          },
         }),
-        maxWidth: columnDefinition.size,
-        onRecordChipClick: () => {
-          activateRecordTableRow(rowIndex);
-          unfocusRecordTableRow();
-          openRecordFromIndexView({ recordId });
-        },
+        maxWidth: recordField.size,
+        onRecordChipClick: handleChipClick,
         isForbidden: !hasObjectReadPermissions,
         triggerEvent,
       }}

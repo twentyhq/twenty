@@ -1,6 +1,12 @@
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { msg } from '@lingui/core/macro';
 
-export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
+
+export const customAllView = (
+  objectMetadataItem: ObjectMetadataEntity,
+  useCoreNaming = false,
+) => {
   const nameField = objectMetadataItem.fields.find(
     (field) => field.name === 'name',
   );
@@ -16,12 +22,15 @@ export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
   }
 
   return {
-    name: `All ${objectMetadataItem.namePlural}`,
+    name: useCoreNaming
+      ? msg`All {objectLabelPlural}`
+      : `All ${objectMetadataItem.labelPlural}`,
     objectMetadataId: objectMetadataItem.id,
     type: 'table',
     key: 'INDEX',
     position: 0,
     icon: 'IconList',
+    isCustom: false,
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [
@@ -31,13 +40,13 @@ export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
             ?.id ?? '',
         position: 0,
         isVisible: true,
-        size: 180,
+        size: DEFAULT_VIEW_FIELD_SIZE,
       },
       ...otherFields.map((field, index) => ({
         fieldMetadataId: field.id,
         position: index + 1,
         isVisible: true,
-        size: 180,
+        size: DEFAULT_VIEW_FIELD_SIZE,
       })),
     ],
   };

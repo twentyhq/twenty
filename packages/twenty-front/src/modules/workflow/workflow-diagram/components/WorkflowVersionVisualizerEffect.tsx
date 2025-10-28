@@ -6,10 +6,8 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowVersionVisualizerEffect = ({
   workflowVersionId,
@@ -30,14 +28,6 @@ export const WorkflowVersionVisualizerEffect = ({
   );
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
-
-  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
-  );
-
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {
@@ -70,18 +60,11 @@ export const WorkflowVersionVisualizerEffect = ({
 
     const nextWorkflowDiagram = getWorkflowVersionDiagram({
       workflowVersion,
-      isWorkflowFilteringEnabled,
-      isWorkflowBranchEnabled,
-      isEditable: false,
+      workflowContext: 'workflow-version',
     });
 
     setWorkflowDiagram(nextWorkflowDiagram);
-  }, [
-    isWorkflowBranchEnabled,
-    isWorkflowFilteringEnabled,
-    setWorkflowDiagram,
-    workflowVersion,
-  ]);
+  }, [setWorkflowDiagram, workflowVersion]);
 
   useEffect(() => {
     if (!isDefined(workflowVersion)) {

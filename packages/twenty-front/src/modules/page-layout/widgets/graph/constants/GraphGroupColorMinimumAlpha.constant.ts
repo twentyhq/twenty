@@ -1,0 +1,1 @@
+export const GRAPH_GROUP_COLOR_MINIMUM_ALPHA = 0.2;

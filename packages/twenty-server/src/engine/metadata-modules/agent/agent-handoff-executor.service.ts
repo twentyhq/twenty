@@ -1,11 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateText } from 'ai';
+import { ProviderOptions } from '@ai-sdk/provider-utils';
+import {
+  generateText,
+  LanguageModel,
+  ModelMessage,
+  StopCondition,
+  streamText,
+  ToolSet,
+  UIDataTypes,
+  UIMessage,
+  UITools,
+} from 'ai';
 import { Repository } from 'typeorm';
-
-import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { AGENT_HANDOFF_PROMPT_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-prompt.const';
 
 import { AgentHandoffService } from './agent-handoff.service';
 import { AgentEntity } from './agent.entity';
@@ -15,24 +23,48 @@ export type HandoffRequest = {
   fromAgentId: string;
   toAgentId: string;
   workspaceId: string;
-  reason: string;
-  context?: string;
+  messages: UIMessage<unknown, UIDataTypes, UITools>[];
+  isStreaming?: boolean;
 };
+
+export interface AgentExecutionContext {
+  prepareAIRequestConfig: (params: {
+    system: string;
+    agent: AgentEntity | null;
+    messages: UIMessage<unknown, UIDataTypes, UITools>[];
+    excludeHandoffTools?: boolean; // Prevent infinite recursion
+  }) => Promise<{
+    system: string;
+    tools: ToolSet;
+    model: LanguageModel;
+    messages: ModelMessage[];
+    stopWhen?: StopCondition<ToolSet>;
+    providerOptions?: ProviderOptions;
+  }>;
+}
 
 @Injectable()
 export class AgentHandoffExecutorService {
   private readonly logger = new Logger(AgentHandoffExecutorService.name);
 
   constructor(
-    @InjectRepository(AgentEntity, 'core')
+    @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentHandoffService: AgentHandoffService,
-    private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
-  async executeHandoff(handoffRequest: HandoffRequest) {
+  async executeHandoff(
+    handoffRequest: HandoffRequest,
+    executionContext: AgentExecutionContext,
+  ) {
     try {
-      const { fromAgentId, toAgentId, workspaceId } = handoffRequest;
+      const {
+        fromAgentId,
+        toAgentId,
+        workspaceId,
+        messages,
+        isStreaming = false,
+      } = handoffRequest;
 
       const canHandoff = await this.agentHandoffService.canHandoffTo({
         fromAgentId,
@@ -58,47 +90,55 @@ export class AgentHandoffExecutorService {
         );
       }
 
-      const registeredModel = this.aiModelRegistryService.getModel(
-        targetAgent.modelId,
-      );
-
-      if (!registeredModel) {
-        throw new AgentException(
-          `Model ${targetAgent.modelId} not found in registry`,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
-
-      const aiRequestConfig = {
+      // Prepare AI request config using the execution context
+      const aiRequestConfig = await executionContext.prepareAIRequestConfig({
         system: targetAgent.prompt,
-        prompt: this.createHandoffPrompt(handoffRequest),
-        model: registeredModel.model,
-      };
+        agent: targetAgent,
+        messages,
+        excludeHandoffTools: true, // Prevent infinite recursion
+      });
 
-      const textResponse = await generateText(aiRequestConfig);
+      if (isStreaming) {
+        // Return stream for streaming contexts
+        const stream = streamText(aiRequestConfig);
 
-      return textResponse.text;
+        this.logger.log(`Started streaming handoff to agent ${toAgentId}`);
+
+        return stream;
+      } else {
+        // Use generateText for non-streaming contexts (workflows)
+        const textResponse = await generateText(aiRequestConfig);
+
+        this.logger.log(
+          `Successfully executed handoff to agent ${toAgentId} with response length: ${textResponse.text.length}`,
+        );
+
+        return {
+          success: true,
+          message: `Successfully executed handoff to agent ${targetAgent.name}`,
+          result: {
+            response: textResponse.text,
+            targetAgentName: targetAgent.name,
+          },
+        };
+      }
     } catch (error) {
       this.logger.error(
         `Handoff execution failed: ${error.message}`,
         error.stack,
       );
 
+      const { isStreaming = false, toAgentId } = handoffRequest;
+
+      if (isStreaming) {
+        throw error; // Let streaming context handle the error
+      }
+
       return {
         success: false,
-        newAgentId: handoffRequest.toAgentId,
-        newAgentName: 'Unknown',
+        message: `Failed to execute handoff to agent ${toAgentId}`,
         error: error.message,
       };
     }
-  }
-
-  private createHandoffPrompt(handoffRequest: HandoffRequest): string {
-    const { reason, context } = handoffRequest;
-
-    return AGENT_HANDOFF_PROMPT_TEMPLATE.replace('{reason}', reason).replace(
-      '{context}',
-      context || 'No additional context provided',
-    );
   }
 }

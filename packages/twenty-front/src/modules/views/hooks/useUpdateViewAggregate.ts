@@ -3,9 +3,11 @@ import { recordIndexKanbanAggregateOperationState } from '@/object-record/record
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateViewAggregate = () => {
   const currentViewId = useRecoilComponentValue(
@@ -17,18 +19,26 @@ export const useUpdateViewAggregate = () => {
     recordIndexKanbanAggregateOperationState,
   );
 
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
+
   const updateViewAggregate = useCallback(
     ({
       kanbanAggregateOperationFieldMetadataId,
       kanbanAggregateOperation,
+      objectMetadataId,
     }: {
       kanbanAggregateOperationFieldMetadataId: string | null;
       kanbanAggregateOperation: ExtendedAggregateOperations | null;
+      objectMetadataId: string;
     }) => {
-      const convertedKanbanAggregateOperation =
-        convertExtendedAggregateOperationToAggregateOperation(
-          kanbanAggregateOperation,
-        );
+      const convertedKanbanAggregateOperation = isDefined(
+        kanbanAggregateOperation,
+      )
+        ? convertExtendedAggregateOperationToAggregateOperation(
+            kanbanAggregateOperation,
+          )
+        : null;
       updateView({
         id: currentViewId,
         kanbanAggregateOperationFieldMetadataId,
@@ -39,8 +49,15 @@ export const useUpdateViewAggregate = () => {
         operation: kanbanAggregateOperation,
         fieldMetadataId: kanbanAggregateOperationFieldMetadataId,
       });
+
+      refreshCoreViewsByObjectMetadataId(objectMetadataId);
     },
-    [currentViewId, updateView, setRecordIndexKanbanAggregateOperationState],
+    [
+      currentViewId,
+      updateView,
+      setRecordIndexKanbanAggregateOperationState,
+      refreshCoreViewsByObjectMetadataId,
+    ],
   );
 
   return {

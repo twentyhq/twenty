@@ -1,4 +1,5 @@
 name: Changed files reusable workflow
+
 on:
   workflow_call:
     inputs:
@@ -8,6 +9,9 @@ on:
     outputs:
       any_changed:
         value: ${{ jobs.changed-files.outputs.any_changed }}
+
+permissions:
+  contents: read
 
 jobs:
   changed-files:

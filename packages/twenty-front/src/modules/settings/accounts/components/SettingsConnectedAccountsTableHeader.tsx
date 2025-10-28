@@ -15,7 +15,7 @@ export const SettingsConnectedAccountsTableHeader = () => {
         <StyledTableHeader>
           <Trans>Account</Trans>
         </StyledTableHeader>
-        <StyledTableHeader align={'right'}>
+        <StyledTableHeader align="right">
           <Trans>Status</Trans>
         </StyledTableHeader>
       </TableRow>

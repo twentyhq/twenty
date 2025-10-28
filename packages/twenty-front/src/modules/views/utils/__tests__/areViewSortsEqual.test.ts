@@ -1,13 +1,16 @@
-import { type RecordSortDirection } from '@/object-record/record-sort/types/RecordSortDirection';
-import { type ViewSort } from '@/views/types/ViewSort';
 import { areViewSortsEqual } from '@/views/utils/areViewSortsEqual';
+import { type CoreViewSort, ViewSortDirection } from '~/generated/graphql';
 
 describe('areViewSortsEqual', () => {
-  const baseSort: ViewSort = {
-    __typename: 'ViewSort',
+  const baseSort: CoreViewSort = {
+    __typename: 'CoreViewSort',
     id: 'sort-1',
     fieldMetadataId: 'field-1',
-    direction: 'asc',
+    direction: ViewSortDirection.ASC,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    viewId: 'view-1',
+    workspaceId: 'workspace-1',
   };
 
   it('should return true when all comparable properties are equal', () => {
@@ -19,7 +22,7 @@ describe('areViewSortsEqual', () => {
 
   it('should return false when displayValue is different', () => {
     const sortA = { ...baseSort };
-    const sortB = { ...baseSort, direction: 'desc' as RecordSortDirection };
+    const sortB = { ...baseSort, direction: 'desc' as ViewSortDirection };
 
     expect(areViewSortsEqual(sortA, sortB)).toBe(false);
   });

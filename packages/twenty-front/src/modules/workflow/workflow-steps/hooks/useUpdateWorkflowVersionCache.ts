@@ -5,11 +5,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import {
-  type WorkflowAction,
-  type WorkflowVersion,
-} from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import { applyDiff, isDefined } from 'twenty-shared/utils';
 import { type WorkflowVersionStepChanges } from '~/generated/graphql';
 
 export const useUpdateWorkflowVersionCache = () => {
@@ -44,47 +41,14 @@ export const useUpdateWorkflowVersionCache = () => {
       return;
     }
 
-    const {
-      triggerNextStepIds,
-      stepsNextStepIds,
-      createdStep,
-      deletedStepIds,
-    } = workflowVersionStepChanges;
+    const { triggerDiff, stepsDiff } = workflowVersionStepChanges;
 
     const newCachedRecord = {
       ...cachedRecord,
-      trigger: isDefined(cachedRecord.trigger)
-        ? {
-            ...cachedRecord.trigger,
-            nextStepIds: triggerNextStepIds,
-          }
-        : cachedRecord.trigger,
-      steps: (cachedRecord.steps || []).map((step: WorkflowAction) => ({
-        ...step,
-        nextStepIds: stepsNextStepIds[step.id] ?? step.nextStepIds,
-      })),
-    } satisfies WorkflowVersion;
-
-    if (isDefined(createdStep)) {
-      const formattedCreatedStep = {
-        ...(createdStep as WorkflowAction),
-        nextStepIds: createdStep.nextStepIds || [],
-      };
-
-      newCachedRecord.steps.push(formattedCreatedStep);
-    }
-
-    if (isDefined(deletedStepIds) && deletedStepIds.length > 0) {
-      newCachedRecord.steps = newCachedRecord.steps.filter(
-        (step: WorkflowAction) => !deletedStepIds.includes(step.id),
-      );
-
-      const hasDeletedTrigger: boolean = deletedStepIds.includes('trigger');
-
-      if (hasDeletedTrigger) {
-        newCachedRecord.trigger = null;
-      }
-    }
+      steps: applyDiff({ steps: cachedRecord.steps }, stepsDiff).steps,
+      trigger: applyDiff({ trigger: cachedRecord.trigger }, triggerDiff)
+        .trigger,
+    } as WorkflowVersion;
 
     const recordGqlFields = {
       steps: true,

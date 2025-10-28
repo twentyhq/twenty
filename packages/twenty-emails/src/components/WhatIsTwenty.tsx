@@ -1,8 +1,12 @@
-import { i18n } from '@lingui/core';
+import { type I18n } from '@lingui/core';
 import { MainText } from 'src/components/MainText';
 import { SubTitle } from 'src/components/SubTitle';
 
-export const WhatIsTwenty = () => {
+type WhatIsTwentyProps = {
+  i18n: I18n;
+};
+
+export const WhatIsTwenty = ({ i18n }: WhatIsTwentyProps) => {
   return (
     <>
       <SubTitle value={i18n._('What is Twenty?')} />

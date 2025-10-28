@@ -1,23 +1,27 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
+import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/hooks/useRecordsFieldVisibleGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
-import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
 
 export const useRecordIndexTableFetchMore = (objectNameSingular: string) => {
+  const params = useFindManyRecordIndexTableParams(objectNameSingular);
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  const params = useFindManyRecordIndexTableParams(objectNameSingular);
-
-  const recordGqlFields = useRecordTableRecordGqlFields({ objectMetadataItem });
-
-  const { fetchMoreRecordsLazy, queryIdentifier } = useLazyFindManyRecords({
-    ...params,
-    recordGqlFields,
+  const recordGqlFields = useRecordsFieldVisibleGqlFields({
+    objectMetadataItem,
   });
 
+  const { fetchMoreRecordsLazy, queryIdentifier, findManyRecordsLazy } =
+    useLazyFindManyRecords({
+      ...params,
+      recordGqlFields,
+    });
+
   return {
+    findManyRecordsLazy,
     fetchMoreRecordsLazy,
     queryIdentifier,
   };

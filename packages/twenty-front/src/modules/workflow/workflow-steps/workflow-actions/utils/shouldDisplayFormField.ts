@@ -1,6 +1,6 @@
-import { CustomError } from '@/error-handler/CustomError';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
+import { CustomError } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const COMMON_DISPLAYABLE_FIELD_TYPES = [
@@ -48,6 +48,7 @@ export const shouldDisplayFormField = ({
         fieldMetadataItem.isActive
       );
     case 'UPDATE_RECORD':
+    case 'UPSERT_RECORD':
       isTypeAllowedForAction =
         COMMON_DISPLAYABLE_FIELD_TYPES.includes(fieldMetadataItem.type) ||
         fieldMetadataItem.settings?.['relationType'] === 'MANY_TO_ONE';

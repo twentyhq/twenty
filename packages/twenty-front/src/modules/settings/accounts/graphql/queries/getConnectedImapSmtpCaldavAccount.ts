@@ -16,6 +16,7 @@ export const GET_CONNECTED_IMAP_SMTP_CALDAV_ACCOUNT = gql`
         }
         SMTP {
           host
+          username
           port
           secure
           password

@@ -12,5 +12,4 @@ export type WorkspaceSchemaIndexDefinition = {
   type?: WorkspaceSchemaIndexType;
   isUnique?: boolean;
   where?: string;
-  include?: string[];
 };

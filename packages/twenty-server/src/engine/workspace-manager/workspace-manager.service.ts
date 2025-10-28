@@ -1,22 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
@@ -28,25 +27,26 @@ export class WorkspaceManagerService {
   private readonly logger = new Logger(WorkspaceManagerService.name);
 
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
-    @InjectRepository(FieldMetadataEntity, 'core')
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(UserWorkspace, 'core')
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
     private readonly featureFlagService: FeatureFlagService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
+    @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly agentService: AgentService,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   public async init({
@@ -92,17 +92,6 @@ export class WorkspaceManagerService {
 
     await this.setupDefaultRoles(workspaceId, userId);
 
-    if (featureFlags[FeatureFlagKey.IS_AI_ENABLED]) {
-      const defaultAgentEnabledStart = performance.now();
-
-      await this.initDefaultAgent(workspaceId);
-      const defaultAgentEnabledEnd = performance.now();
-
-      this.logger.log(
-        `Default agent enabled took ${defaultAgentEnabledEnd - defaultAgentEnabledStart}ms`,
-      );
-    }
-
     const prefillStandardObjectsStart = performance.now();
 
     await this.prefillWorkspaceWithStandardObjectsRecords(
@@ -123,41 +112,28 @@ export class WorkspaceManagerService {
     workspaceId: string,
     featureFlags: Record<string, boolean>,
   ) {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
-    if (!mainDataSource) {
-      throw new Error('Could not connect to main data source');
-    }
-
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
     await standardObjectsPrefillData(
-      mainDataSource,
+      this.coreDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      featureFlags,
     );
 
-    if (featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED]) {
-      this.logger.log(`Prefilling core views for workspace ${workspaceId}`);
-
-      await prefillCoreViews(
-        mainDataSource,
-        workspaceId,
-        createdObjectMetadata,
-      );
-    }
+    await prefillCoreViews({
+      coreDataSource: this.coreDataSource,
+      workspaceId,
+      objectMetadataItems: createdObjectMetadata,
+      schemaName: dataSourceMetadata.schema,
+      featureFlags,
+    });
   }
 
   public async delete(workspaceId: string): Promise<void> {
     //TODO: delete all logs when #611 closed
     this.logger.log(`Deleting workspace ${workspaceId} ...`);
-
-    await this.fieldMetadataRepository.delete({
-      workspaceId,
-    });
-    this.logger.log(`workspace ${workspaceId} field metadata deleted`);
 
     await this.roleTargetsRepository.delete({
       workspaceId,
@@ -179,25 +155,8 @@ export class WorkspaceManagerService {
     this.logger.log(`workspace ${workspaceId} data source deleted`);
     // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
+
     this.logger.log(`workspace ${workspaceId} schema deleted`);
-  }
-
-  private async initDefaultAgent(workspaceId: string) {
-    const agent = await this.agentService.createOneAgent(
-      {
-        label: 'Routing Agent',
-        name: 'routing-agent',
-        description: 'Default Routing Agent',
-        prompt: '',
-        modelId: 'auto',
-        isCustom: false,
-      },
-      workspaceId,
-    );
-
-    await this.workspaceRepository.update(workspaceId, {
-      defaultAgentId: agent.id,
-    });
   }
 
   private async setupDefaultRoles(

@@ -1,20 +1,23 @@
+import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
 import { type WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { CREATE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
@@ -73,11 +76,18 @@ export const WorkflowEditActionCreateRecord = ({
     useFilteredObjectMetadataItems();
 
   const availableMetadata: Array<SelectOption<string>> =
-    activeNonSystemObjectMetadataItems.map((item) => ({
-      Icon: getIcon(item.icon),
-      label: item.labelPlural,
-      value: item.nameSingular,
-    }));
+    activeNonSystemObjectMetadataItems
+      .filter((objectMetadataItem) =>
+        canObjectBeManagedByWorkflow({
+          nameSingular: objectMetadataItem.nameSingular,
+          isSystem: objectMetadataItem.isSystem,
+        }),
+      )
+      .map((item) => ({
+        Icon: getIcon(item.icon),
+        label: item.labelPlural,
+        value: item.nameSingular,
+      }));
 
   const [formData, setFormData] = useState<CreateRecordFormData>({
     objectName: action.settings.input.objectName,
@@ -189,12 +199,12 @@ export const WorkflowEditActionCreateRecord = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Create Record',
+      defaultTitle: CREATE_RECORD_ACTION.defaultLabel,
     });
 
   return (
     <>
-      <WorkflowStepHeader
+      <SidePanelHeader
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
             return;
@@ -210,6 +220,7 @@ export const WorkflowEditActionCreateRecord = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={isFormDisabled}
+        iconTooltip={CREATE_RECORD_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         <Select
@@ -263,6 +274,7 @@ export const WorkflowEditActionCreateRecord = ({
           );
         })}
       </WorkflowStepBody>
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

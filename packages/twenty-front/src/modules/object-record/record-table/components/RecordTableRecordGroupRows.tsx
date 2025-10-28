@@ -53,12 +53,13 @@ export const RecordTableRecordGroupRows = () => {
             recordId={recordId}
             rowIndexForFocus={rowIndex}
             rowIndexForDrag={rowIndexInGroup}
+            isFirstRowOfGroup={rowIndexInGroup === 0}
           />
         );
       })}
+      <RecordTableBodyDroppablePlaceholder />
       <RecordTableRecordGroupSectionLoadMore />
       <RecordTableRecordGroupSectionAddNew />
-      <RecordTableBodyDroppablePlaceholder />
       <RecordTableAggregateFooter
         key={currentRecordGroupId}
         currentRecordGroupId={currentRecordGroupId}

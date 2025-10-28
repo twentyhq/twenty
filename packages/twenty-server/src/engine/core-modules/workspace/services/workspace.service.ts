@@ -3,15 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
+import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
+import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -22,16 +25,17 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
+  WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import {
   PermissionsException,
@@ -46,17 +50,17 @@ import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
-export class WorkspaceService extends TypeOrmQueryService<Workspace> {
+export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   private readonly featureLookUpKey = BillingEntitlementKey.CUSTOM_DOMAIN;
   protected readonly logger = new Logger(WorkspaceService.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(UserWorkspace, 'core')
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -65,75 +69,15 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
-    private readonly customDomainService: CustomDomainService,
+    private readonly dnsManagerService: DnsManagerService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly subdomainManagerService: SubdomainManagerService,
+    private readonly customDomainManagerService: CustomDomainManagerService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super(workspaceRepository);
-  }
-
-  private async isCustomDomainEnabled(workspaceId: string) {
-    const isCustomDomainBillingEnabled =
-      await this.billingService.hasEntitlement(
-        workspaceId,
-        this.featureLookUpKey,
-      );
-
-    if (!isCustomDomainBillingEnabled) {
-      throw new WorkspaceException(
-        `No entitlement found for this workspace`,
-        WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED,
-      );
-    }
-  }
-
-  private async validateSubdomainUpdate(newSubdomain: string) {
-    const subdomainAvailable = await this.isSubdomainAvailable(newSubdomain);
-
-    if (
-      !subdomainAvailable ||
-      this.twentyConfigService.get('DEFAULT_SUBDOMAIN') === newSubdomain
-    ) {
-      throw new WorkspaceException(
-        'Subdomain already taken',
-        WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
-      );
-    }
-  }
-
-  private async setCustomDomain(workspace: Workspace, customDomain: string) {
-    await this.isCustomDomainEnabled(workspace.id);
-
-    const existingWorkspace = await this.workspaceRepository.findOne({
-      where: { customDomain },
-    });
-
-    if (existingWorkspace && existingWorkspace.id !== workspace.id) {
-      throw new WorkspaceException(
-        'Domain already taken',
-        WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
-      );
-    }
-
-    if (
-      customDomain &&
-      workspace.customDomain !== customDomain &&
-      isDefined(workspace.customDomain)
-    ) {
-      await this.customDomainService.updateCustomDomain(
-        workspace.customDomain,
-        customDomain,
-      );
-    }
-
-    if (
-      customDomain &&
-      workspace.customDomain !== customDomain &&
-      !isDefined(workspace.customDomain)
-    ) {
-      await this.customDomainService.registerCustomDomain(customDomain);
-    }
   }
 
   async updateWorkspaceById({
@@ -141,7 +85,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     userWorkspaceId,
     apiKey,
   }: {
-    payload: Partial<Workspace> & { id: string };
+    payload: Partial<WorkspaceEntity> & { id: string };
     userWorkspaceId?: string;
     apiKey?: string;
   }) {
@@ -149,7 +93,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       id: payload.id,
     });
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     await this.validateSecurityPermissions({
       payload,
@@ -167,13 +111,15 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
-      await this.validateSubdomainUpdate(payload.subdomain);
+      await this.subdomainManagerService.validateSubdomainOrThrow(
+        payload.subdomain,
+      );
     }
 
     let customDomainRegistered = false;
 
     if (payload.customDomain === null && isDefined(workspace.customDomain)) {
-      await this.customDomainService.deleteCustomHostnameByHostnameSilently(
+      await this.dnsManagerService.deleteHostnameSilently(
         workspace.customDomain,
       );
       workspace.isCustomDomainEnabled = false;
@@ -183,7 +129,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       payload.customDomain &&
       workspace.customDomain !== payload.customDomain
     ) {
-      await this.setCustomDomain(workspace, payload.customDomain);
+      await this.customDomainManagerService.setCustomDomain(
+        workspace,
+        payload.customDomain,
+      );
       customDomainRegistered = true;
     }
 
@@ -220,8 +169,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     } catch (error) {
       // revert custom domain registration on error
       if (payload.customDomain && customDomainRegistered) {
-        this.customDomainService
-          .deleteCustomHostnameByHostnameSilently(payload.customDomain)
+        this.dnsManagerService
+          .deleteHostnameSilently(payload.customDomain)
           .catch((err) => {
             this.exceptionHandlerService.captureExceptions([err]);
           });
@@ -231,8 +180,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   async activateWorkspace(
-    user: User,
-    workspace: Workspace,
+    user: UserEntity,
+    workspace: WorkspaceEntity,
     data: ActivateWorkspaceInput,
   ) {
     if (!data.displayName || !data.displayName.length) {
@@ -279,7 +228,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
   }
 
-  async deleteMetadataSchemaCacheAndUserWorkspace(workspace: Workspace) {
+  async deleteMetadataSchemaCacheAndUserWorkspace(workspace: WorkspaceEntity) {
     await this.userWorkspaceRepository.delete({ workspaceId: workspace.id });
 
     if (this.billingService.isBillingEnabled()) {
@@ -325,6 +274,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspace.id,
       workspace.metadataVersion,
     );
+    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
+      workspaceId: workspace.id,
+    });
     this.logger.log(`workspace ${id} cache flushed`);
 
     if (softDelete) {
@@ -347,7 +299,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     );
 
     if (workspace.customDomain) {
-      await this.customDomainService.deleteCustomHostnameByHostnameSilently(
+      await this.dnsManagerService.deleteHostnameSilently(
         workspace.customDomain,
       );
       this.logger.log(`workspace ${id} custom domain deleted`);
@@ -388,21 +340,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  async isSubdomainAvailable(subdomain: string) {
-    const existingWorkspace = await this.workspaceRepository.findOne({
-      where: { subdomain: subdomain },
-    });
-
-    return !existingWorkspace;
-  }
-
   private async validateSecurityPermissions({
     payload,
     userWorkspaceId,
     workspaceId,
     apiKey,
   }: {
-    payload: Partial<Workspace>;
+    payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey?: string;
@@ -430,8 +374,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage:
-              'You do not have permission to manage security settings. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`You do not have permission to manage security settings. Please contact your workspace administrator.`,
           },
         );
       }
@@ -445,7 +388,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     apiKey,
     workspaceActivationStatus,
   }: {
-    payload: Partial<Workspace>;
+    payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey?: string;
@@ -455,7 +398,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       'displayName' in payload ||
       'subdomain' in payload ||
       'customDomain' in payload ||
-      'logo' in payload
+      'logo' in payload ||
+      'trashRetentionDays' in payload
     ) {
       if (!userWorkspaceId) {
         throw new Error('Missing userWorkspaceId in authContext');
@@ -480,8 +424,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
           {
-            userFriendlyMessage:
-              'You do not have permission to manage workspace settings. Please contact your workspace administrator.',
+            userFriendlyMessage: msg`You do not have permission to manage workspace settings. Please contact your workspace administrator.`,
           },
         );
       }

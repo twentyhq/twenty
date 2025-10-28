@@ -1,8 +1,6 @@
-import styled from '@emotion/styled';
 import omit from 'lodash.omit';
 import { z } from 'zod';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { settingsDataModelFieldAddressFormSchema } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
@@ -10,28 +8,31 @@ import { SettingsDataModelFieldAddressSettingsFormCard } from '@/settings/data-m
 import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
+import { SettingsDataModelFieldMaxValuesForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm';
 import { settingsDataModelFieldTextFormSchema } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
 import { SettingsDataModelFieldTextSettingsFormCard } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextSettingsFormCard';
 import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
 import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
+import { settingsDataModelFieldMorphRelationFormSchema } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
 import { SettingsDataModelFieldPhonesSettingsFormCard } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesSettingsFormCard';
-import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
-import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
 import {
   settingsDataModelFieldMultiSelectFormSchema,
   settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { settingsDataModelFieldMaxValuesSchema } from '@/settings/data-model/fields/forms/utils/settingsDataModelFieldMaxValuesSchema';
+import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
+
+import { Separator } from '@/settings/components/Separator';
+import { SettingsDataModelFieldRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationFormCard';
+import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 const isUniqueFieldFormSchema = z.object({
   isUnique: z.boolean().nullable().default(false),
@@ -39,52 +40,69 @@ const isUniqueFieldFormSchema = z.object({
 
 const booleanFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.BOOLEAN) })
-  .merge(settingsDataModelFieldBooleanFormSchema);
+  .extend(settingsDataModelFieldBooleanFormSchema.shape);
 
 const currencyFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.CURRENCY) })
-  .merge(settingsDataModelFieldCurrencyFormSchema);
+  .extend(settingsDataModelFieldCurrencyFormSchema.shape);
 
 const dateFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE) })
-  .merge(settingsDataModelFieldDateFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldDateFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
 const dateTimeFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE_TIME) })
-  .merge(settingsDataModelFieldDateFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldDateFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
-const relationFieldFormSchema = z
-  .object({ type: z.literal(FieldMetadataType.RELATION) })
-  .merge(settingsDataModelFieldRelationFormSchema);
+const morphRelationFieldFormSchema = z
+  .object({
+    type: z.literal(FieldMetadataType.MORPH_RELATION),
+  })
+  .extend(settingsDataModelFieldMorphRelationFormSchema.shape);
 
 const selectFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.SELECT) })
-  .merge(settingsDataModelFieldSelectFormSchema);
+  .extend(settingsDataModelFieldSelectFormSchema.shape);
 
 const multiSelectFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.MULTI_SELECT) })
-  .merge(settingsDataModelFieldMultiSelectFormSchema);
+  .extend(settingsDataModelFieldMultiSelectFormSchema.shape);
 
 const numberFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.NUMBER) })
-  .merge(settingsDataModelFieldNumberFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldNumberFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
 const textFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.TEXT) })
-  .merge(settingsDataModelFieldTextFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldTextFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
 const addressFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.ADDRESS) })
-  .merge(settingsDataModelFieldAddressFormSchema);
+  .extend(settingsDataModelFieldAddressFormSchema.shape);
 
 const phonesFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.PHONES) })
-  .merge(settingsDataModelFieldPhonesFormSchema)
-  .merge(isUniqueFieldFormSchema);
+  .extend(settingsDataModelFieldPhonesFormSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
+
+const emailsFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.EMAILS) })
+  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
+
+const linksFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.LINKS) })
+  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
+
+const arrayFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.ARRAY) })
+  .extend(settingsDataModelFieldMaxValuesSchema.shape)
+  .extend(isUniqueFieldFormSchema.shape);
 
 const otherFieldsFormSchema = z
   .object({
@@ -93,7 +111,7 @@ const otherFieldsFormSchema = z
         omit(SETTINGS_FIELD_TYPE_CONFIGS, [
           FieldMetadataType.BOOLEAN,
           FieldMetadataType.CURRENCY,
-          FieldMetadataType.RELATION,
+          FieldMetadataType.MORPH_RELATION,
           FieldMetadataType.SELECT,
           FieldMetadataType.MULTI_SELECT,
           FieldMetadataType.DATE,
@@ -102,11 +120,14 @@ const otherFieldsFormSchema = z
           FieldMetadataType.ADDRESS,
           FieldMetadataType.PHONES,
           FieldMetadataType.TEXT,
+          FieldMetadataType.EMAILS,
+          FieldMetadataType.LINKS,
+          FieldMetadataType.ARRAY,
         ]),
       ) as [FieldMetadataType, ...FieldMetadataType[]],
     ),
   })
-  .merge(isUniqueFieldFormSchema);
+  .extend(isUniqueFieldFormSchema.shape);
 
 export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
   'type',
@@ -115,28 +136,26 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     currencyFieldFormSchema,
     dateFieldFormSchema,
     dateTimeFieldFormSchema,
-    relationFieldFormSchema,
+    morphRelationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
     numberFieldFormSchema,
     textFieldFormSchema,
     addressFieldFormSchema,
     phonesFieldFormSchema,
+    emailsFieldFormSchema,
+    linksFieldFormSchema,
+    arrayFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
 
 type SettingsDataModelFieldSettingsFormCardProps = {
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
-  > &
-    Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
-
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  flex: 1 1 100%;
-`;
+  existingFieldMetadataId: string;
+  fieldType: FieldMetadataType;
+  objectNameSingular: string;
+  disabled?: boolean;
+};
 
 const previewableTypes = [
   FieldMetadataType.ARRAY,
@@ -154,102 +173,121 @@ const previewableTypes = [
   FieldMetadataType.RATING,
   FieldMetadataType.RAW_JSON,
   FieldMetadataType.RELATION,
+  FieldMetadataType.MORPH_RELATION,
   FieldMetadataType.SELECT,
   FieldMetadataType.TEXT,
   FieldMetadataType.UUID,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
-  fieldMetadataItem,
-  objectMetadataItem,
+  existingFieldMetadataId,
+  fieldType,
+  objectNameSingular,
+  disabled = false,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  if (!previewableTypes.includes(fieldMetadataItem.type)) {
+  const { watch } = useFormContext<SettingsDataModelFieldEditFormValues>();
+
+  if (!previewableTypes.includes(fieldType)) {
     return null;
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.BOOLEAN) {
+  if (fieldType === FieldMetadataType.BOOLEAN) {
     return (
       <SettingsDataModelFieldBooleanSettingsFormCard
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        existingFieldMetadataId={existingFieldMetadataId}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
 
-  if (fieldMetadataItem.type === FieldMetadataType.CURRENCY) {
+  if (fieldType === FieldMetadataType.CURRENCY) {
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        existingFieldMetadataId={existingFieldMetadataId}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
 
   if (
-    fieldMetadataItem.type === FieldMetadataType.DATE ||
-    fieldMetadataItem.type === FieldMetadataType.DATE_TIME
+    fieldType === FieldMetadataType.DATE ||
+    fieldType === FieldMetadataType.DATE_TIME
   ) {
     return (
       <SettingsDataModelFieldDateSettingsFormCard
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
-      />
-    );
-  }
-
-  if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
-    return (
-      <SettingsDataModelFieldRelationSettingsFormCard
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
-      />
-    );
-  }
-
-  if (fieldMetadataItem.type === FieldMetadataType.NUMBER) {
-    return (
-      <SettingsDataModelFieldNumberSettingsFormCard
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
-      />
-    );
-  }
-
-  if (fieldMetadataItem.type === FieldMetadataType.TEXT) {
-    return (
-      <SettingsDataModelFieldTextSettingsFormCard
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
-      />
-    );
-  }
-
-  if (fieldMetadataItem.type === FieldMetadataType.ADDRESS) {
-    return (
-      <SettingsDataModelFieldAddressSettingsFormCard
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
-      />
-    );
-  }
-
-  if (fieldMetadataItem.type === FieldMetadataType.PHONES) {
-    return (
-      <SettingsDataModelFieldPhonesSettingsFormCard
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        existingFieldMetadataId={existingFieldMetadataId}
+        fieldType={fieldType}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
 
   if (
-    fieldMetadataItem.type === FieldMetadataType.SELECT ||
-    fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT
+    fieldType === FieldMetadataType.RELATION ||
+    fieldType === FieldMetadataType.MORPH_RELATION
+  ) {
+    return (
+      <SettingsDataModelFieldRelationFormCard
+        existingFieldMetadataId={existingFieldMetadataId}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
+      />
+    );
+  }
+
+  if (fieldType === FieldMetadataType.NUMBER) {
+    return (
+      <SettingsDataModelFieldNumberSettingsFormCard
+        existingFieldMetadataId={existingFieldMetadataId}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
+      />
+    );
+  }
+
+  if (fieldType === FieldMetadataType.TEXT) {
+    return (
+      <SettingsDataModelFieldTextSettingsFormCard
+        existingFieldMetadataId={existingFieldMetadataId}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
+      />
+    );
+  }
+
+  if (fieldType === FieldMetadataType.ADDRESS) {
+    return (
+      <SettingsDataModelFieldAddressSettingsFormCard
+        existingFieldMetadataId={existingFieldMetadataId}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
+      />
+    );
+  }
+
+  if (fieldType === FieldMetadataType.PHONES) {
+    return (
+      <SettingsDataModelFieldPhonesSettingsFormCard
+        existingFieldMetadataId={existingFieldMetadataId}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
+      />
+    );
+  }
+
+  if (
+    fieldType === FieldMetadataType.SELECT ||
+    fieldType === FieldMetadataType.MULTI_SELECT
   ) {
     return (
       <SettingsDataModelFieldSelectSettingsFormCard
-        fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        existingFieldMetadataId={existingFieldMetadataId}
+        fieldType={fieldType}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
       />
     );
   }
@@ -257,15 +295,40 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledFieldPreviewCard
-          fieldMetadataItem={fieldMetadataItem}
-          objectMetadataItem={objectMetadataItem}
+        <SettingsDataModelFieldPreviewWidget
+          fieldMetadataItem={{
+            type: fieldType,
+            label: watch('label'),
+            icon: watch('icon'),
+            defaultValue: watch('defaultValue'),
+            settings: watch('settings'),
+          }}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={
-        <SettingsDataModelFieldIsUniqueForm
-          fieldMetadataItem={fieldMetadataItem}
-        />
+        <>
+          {[
+            FieldMetadataType.EMAILS,
+            FieldMetadataType.LINKS,
+            FieldMetadataType.ARRAY,
+          ].includes(fieldType) && (
+            <>
+              <SettingsDataModelFieldMaxValuesForm
+                existingFieldMetadataId={existingFieldMetadataId}
+                fieldType={fieldType}
+                disabled={disabled}
+              />
+              <Separator />
+            </>
+          )}
+          <SettingsDataModelFieldIsUniqueForm
+            fieldType={fieldType}
+            existingFieldMetadataId={existingFieldMetadataId}
+            objectNameSingular={objectNameSingular}
+            disabled={disabled}
+          />
+        </>
       }
     />
   );

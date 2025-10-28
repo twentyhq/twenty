@@ -1,5 +1,8 @@
+import { msg } from '@lingui/core/macro';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   COMPANY_STANDARD_FIELD_IDS,
@@ -8,6 +11,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 export const companiesAllView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const companyObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.company,
@@ -18,7 +22,7 @@ export const companiesAllView = (
   }
 
   return {
-    name: 'All Companies',
+    name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Companies',
     objectMetadataId: companyObjectMetadata.id ?? '',
     type: 'table',
     key: 'INDEX',
@@ -34,7 +38,7 @@ export const companiesAllView = (
           )?.id ?? '',
         position: 0,
         isVisible: true,
-        size: 180,
+        size: DEFAULT_VIEW_FIELD_SIZE,
       },
       {
         fieldMetadataId:

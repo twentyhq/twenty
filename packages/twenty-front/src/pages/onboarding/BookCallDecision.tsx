@@ -1,11 +1,11 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { AppPath } from '@/types/AppPath';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import { LightButton, MainButton } from 'twenty-ui/input';
 import { useSkipBookOnboardingStepMutation } from '~/generated-metadata/graphql';
 

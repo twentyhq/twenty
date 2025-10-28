@@ -58,7 +58,7 @@ export class WorkspaceMigrationFactory {
         {
           factory: this.basicColumnActionFactory,
           options: {
-            defaultValue: '',
+            defaultValue: "''",
           },
         },
       ],

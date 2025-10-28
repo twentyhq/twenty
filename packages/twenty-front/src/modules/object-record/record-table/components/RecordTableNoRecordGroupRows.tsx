@@ -1,39 +1,37 @@
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { RecordTableAddNew } from '@/object-record/record-table/components/RecordTableAddNew';
-import { RecordTableBodyDroppablePlaceholder } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppablePlaceholder';
-import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFetchMoreLoader';
-import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
-import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
-import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { RecordTableNoRecordGroupAddNew } from '@/object-record/record-table/components/RecordTableNoRecordGroupAddNew';
+import { RecordTableRowVirtualizedContainer } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedContainer';
+import { RecordTableVirtualizedBodyPlaceholder } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedBodyPlaceholder';
+import { RecordTableVirtualizedDebugHelper } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDebugHelper';
+import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
+import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { getContiguousIncrementalValues } from 'twenty-shared/utils';
 
 export const RecordTableNoRecordGroupRows = () => {
-  const allRecordIds = useRecoilComponentValue(
-    recordIndexAllRecordIdsComponentSelector,
+  const totalNumberOfRecordsToVirtualize =
+    useRecoilComponentValue(totalNumberOfRecordsToVirtualizeComponentState) ??
+    0;
+
+  const numberOfRows = Math.min(
+    totalNumberOfRecordsToVirtualize,
+    NUMBER_OF_VIRTUALIZED_ROWS,
   );
 
-  const isRecordTableInitialLoading = useRecoilComponentValue(
-    isRecordTableInitialLoadingComponentState,
-  );
+  const virtualRowIndices = getContiguousIncrementalValues(numberOfRows);
 
   return (
     <>
-      {allRecordIds.map((recordId, rowIndex) => {
+      <RecordTableVirtualizedBodyPlaceholder />
+      {virtualRowIndices.map((virtualRowIndex) => {
         return (
-          <RecordTableRow
-            key={recordId}
-            recordId={recordId}
-            rowIndexForFocus={rowIndex}
-            rowIndexForDrag={rowIndex}
+          <RecordTableRowVirtualizedContainer
+            key={virtualRowIndex}
+            virtualIndex={virtualRowIndex}
           />
         );
       })}
-      <RecordTableAddNew />
-      <RecordTableBodyFetchMoreLoader />
-      <RecordTableBodyDroppablePlaceholder />
-      {!isRecordTableInitialLoading && allRecordIds.length > 0 && (
-        <RecordTableAggregateFooter />
-      )}
+      <RecordTableNoRecordGroupAddNew />
+      <RecordTableVirtualizedDebugHelper />
     </>
   );
 };

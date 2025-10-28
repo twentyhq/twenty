@@ -1,6 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { expect, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, within } from '@storybook/test';
 import { HttpResponse, graphql, http } from 'msw';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
@@ -70,6 +70,7 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: graphqlMocks,
   },
+  tags: ['no-tests'],
 };
 
 export default meta;

@@ -28,7 +28,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -50,7 +49,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.updated`,
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -72,29 +70,6 @@ describe('getTriggerDefaultDefinition', () => {
         eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.deleted`,
         outputSchema: {},
       },
-      nextStepIds: [],
-      position: {
-        x: 0,
-        y: 0,
-      },
-    });
-  });
-
-  it('returns a valid configuration for DATABASE_EVENT trigger type creation', () => {
-    expect(
-      getTriggerDefaultDefinition({
-        defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
-        type: 'DATABASE_EVENT',
-        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
-      }),
-    ).toStrictEqual({
-      type: 'DATABASE_EVENT',
-      name: 'Record is created',
-      settings: {
-        eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
-        outputSchema: {},
-      },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -113,11 +88,15 @@ describe('getTriggerDefaultDefinition', () => {
       type: 'MANUAL',
       name: 'Launch manually',
       settings: {
-        objectType: generatedMockObjectMetadataItems[0].nameSingular,
+        availability: {
+          type: 'GLOBAL',
+          locations: undefined,
+        },
         outputSchema: {},
         icon: COMMAND_MENU_DEFAULT_ICON,
+        isPinned: false,
+        objectType: undefined,
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -140,7 +119,6 @@ describe('getTriggerDefaultDefinition', () => {
         schedule: { day: 1, hour: 0, minute: 0 },
         outputSchema: {},
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,
@@ -163,7 +141,6 @@ describe('getTriggerDefaultDefinition', () => {
         httpMethod: 'GET',
         authentication: null,
       },
-      nextStepIds: [],
       position: {
         x: 0,
         y: 0,

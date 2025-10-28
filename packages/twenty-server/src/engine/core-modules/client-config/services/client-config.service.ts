@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -13,7 +15,7 @@ import {
   type ClientAIModelConfig,
   type ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -21,13 +23,16 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class ClientConfigService {
   constructor(
     private twentyConfigService: TwentyConfigService,
-    private domainManagerService: DomainManagerService,
+    private domainServerConfigService: DomainServerConfigService,
     private aiModelRegistryService: AiModelRegistryService,
   ) {}
 
   async getClientConfig(): Promise<ClientConfig> {
     const captchaProvider = this.twentyConfigService.get('CAPTCHA_DRIVER');
     const supportDriver = this.twentyConfigService.get('SUPPORT_DRIVER');
+    const calendarBookingPageId = this.twentyConfigService.get(
+      'CALENDAR_BOOKING_PAGE_ID',
+    );
 
     const availableModels = this.aiModelRegistryService.getAvailableModels();
 
@@ -41,6 +46,7 @@ export class ClientConfigService {
           modelId: registeredModel.modelId,
           label: builtInModel?.label || registeredModel.modelId,
           provider: registeredModel.provider,
+          nativeCapabilities: builtInModel?.nativeCapabilities,
           inputCostPer1kTokensInCredits: builtInModel
             ? convertCentsToBillingCredits(
                 builtInModel.inputCostPer1kTokensInCents,
@@ -101,7 +107,7 @@ export class ClientConfigService {
         'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-      frontDomain: this.domainManagerService.getFrontUrl().hostname,
+      frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
       debugMode:
         this.twentyConfigService.get('NODE_ENV') ===
         NodeEnvironment.DEVELOPMENT,
@@ -153,9 +159,9 @@ export class ClientConfigService {
       isImapSmtpCaldavEnabled: this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
-      calendarBookingPageId: this.twentyConfigService.get(
-        'CALENDAR_BOOKING_PAGE_ID',
-      ),
+      calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
+        ? calendarBookingPageId
+        : undefined,
     };
 
     return clientConfig;

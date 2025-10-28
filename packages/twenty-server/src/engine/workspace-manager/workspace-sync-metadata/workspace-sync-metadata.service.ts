@@ -5,12 +5,14 @@ import { DataSource, QueryFailedError } from 'typeorm';
 
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import {
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceSyncAgentService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-agent.service';
 import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
@@ -28,7 +30,7 @@ export class WorkspaceSyncMetadataService {
   private readonly logger = new Logger(WorkspaceSyncMetadataService.name);
 
   constructor(
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
@@ -38,6 +40,8 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceSyncRoleService: WorkspaceSyncRoleService,
+    private readonly workspaceSyncAgentService: WorkspaceSyncAgentService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   /**
@@ -57,6 +61,7 @@ export class WorkspaceSyncMetadataService {
   }> {
     let workspaceMigrations: WorkspaceMigrationEntity[] = [];
     const storage = new WorkspaceSyncStorage();
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     this.logger.log('Syncing standard objects and fields metadata');
@@ -172,6 +177,17 @@ export class WorkspaceSyncMetadataService {
         `Workspace role migrations took ${workspaceRoleMigrationsEnd - workspaceRoleMigrationsStart}ms`,
       );
 
+      // 7 - Sync standard agents
+      const workspaceAgentMigrationsStart = performance.now();
+
+      await this.workspaceSyncAgentService.synchronize(context, manager);
+
+      const workspaceAgentMigrationsEnd = performance.now();
+
+      this.logger.log(
+        `Workspace agent migrations took ${workspaceAgentMigrationsEnd - workspaceAgentMigrationsStart}ms`,
+      );
+
       const workspaceMigrationsSaveStart = performance.now();
 
       // Save workspace migrations into the database
@@ -192,7 +208,14 @@ export class WorkspaceSyncMetadataService {
       if (!options.applyChanges) {
         this.logger.log('Running in dry run mode, rolling back transaction');
 
-        await queryRunner.rollbackTransaction();
+        if (queryRunner.isTransactionActive) {
+          try {
+            await queryRunner.rollbackTransaction();
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.trace(`Failed to rollback transaction: ${error.message}`);
+          }
+        }
 
         await queryRunner.release();
 
@@ -226,12 +249,24 @@ export class WorkspaceSyncMetadataService {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.logger.error((error as any).detail);
       }
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
+      }
+      throw error;
     } finally {
       await queryRunner.release();
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         context.workspaceId,
       );
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId: context.workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
     }
 
     return {

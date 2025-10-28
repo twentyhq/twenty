@@ -55,7 +55,7 @@ export class BlocklistValidationService {
     const emailOrDomainSchema = z
       .string()
       .trim()
-      .email('Invalid email or domain')
+      .pipe(z.email({ error: 'Invalid email or domain' }))
       .or(
         z
           .string()
@@ -73,7 +73,7 @@ export class BlocklistValidationService {
       const result = emailOrDomainSchema.safeParse(handle);
 
       if (!result.success) {
-        throw new BadRequestException(result.error.errors[0].message);
+        throw new BadRequestException(result.error.issues[0].message);
       }
     }
   }

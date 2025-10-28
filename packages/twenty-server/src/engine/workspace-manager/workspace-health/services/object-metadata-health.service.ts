@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+
+import { DataSource } from 'typeorm';
 
 import {
   type WorkspaceHealthIssue,
@@ -7,13 +10,15 @@ import {
 import { type WorkspaceHealthOptions } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { validName } from 'src/engine/workspace-manager/workspace-health/utils/valid-name.util';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { validName } from 'src/engine/workspace-manager/workspace-health/utils/valid-name.util';
 
 @Injectable()
 export class ObjectMetadataHealthService {
-  constructor(private readonly typeORMService: TypeORMService) {}
+  constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
+  ) {}
 
   async healthCheck(
     schemaName: string,
@@ -50,11 +55,10 @@ export class ObjectMetadataHealthService {
     schemaName: string,
     objectMetadata: ObjectMetadataEntity,
   ): Promise<WorkspaceHealthIssue[]> {
-    const mainDataSource = this.typeORMService.getMainDataSource();
     const issues: WorkspaceHealthIssue[] = [];
 
     // Check if the table exist in database
-    const tableExist = await mainDataSource.query(
+    const tableExist = await this.coreDataSource.query(
       `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_schema = '${schemaName}' 
         AND table_name = '${computeObjectTargetTable(objectMetadata)}')`,
     );

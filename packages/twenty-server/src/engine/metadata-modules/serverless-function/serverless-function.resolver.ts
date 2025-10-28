@@ -7,11 +7,10 @@ import { Repository } from 'typeorm';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
 import { GetServerlessFunctionSourceCodeInput } from 'src/engine/metadata-modules/serverless-function/dtos/get-serverless-function-source-code.input';
 import { PublishServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/publish-serverless-function.input';
@@ -22,6 +21,7 @@ import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serve
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
+import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
 @Resolver()
@@ -30,14 +30,14 @@ import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadat
 export class ServerlessFunctionResolver {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    @InjectRepository(ServerlessFunctionEntity, 'core')
+    @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
   @Query(() => ServerlessFunctionDTO)
   async findOneServerlessFunction(
     @Args('input') { id }: ServerlessFunctionIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.serverlessFunctionRepository.findOneOrFail({
@@ -45,6 +45,7 @@ export class ServerlessFunctionResolver {
           id,
           workspaceId,
         },
+        relations: ['cronTriggers', 'databaseEventTriggers', 'routeTriggers'],
       });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
@@ -53,11 +54,12 @@ export class ServerlessFunctionResolver {
 
   @Query(() => [ServerlessFunctionDTO])
   async findManyServerlessFunctions(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
-      return await this.serverlessFunctionService.findManyServerlessFunctions({
-        workspaceId,
+      return this.serverlessFunctionRepository.find({
+        where: { workspaceId },
+        relations: ['cronTriggers', 'databaseEventTriggers', 'routeTriggers'],
       });
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
@@ -76,7 +78,7 @@ export class ServerlessFunctionResolver {
   @Query(() => graphqlTypeJson, { nullable: true })
   async getServerlessFunctionSourceCode(
     @Args('input') input: GetServerlessFunctionSourceCodeInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.serverlessFunctionService.getServerlessFunctionSourceCode(
@@ -92,7 +94,7 @@ export class ServerlessFunctionResolver {
   @Mutation(() => ServerlessFunctionDTO)
   async deleteOneServerlessFunction(
     @Args('input') input: ServerlessFunctionIdInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.serverlessFunctionService.deleteOneServerlessFunction({
@@ -108,7 +110,7 @@ export class ServerlessFunctionResolver {
   async updateOneServerlessFunction(
     @Args('input')
     input: UpdateServerlessFunctionInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.serverlessFunctionService.updateOneServerlessFunction(
@@ -124,7 +126,7 @@ export class ServerlessFunctionResolver {
   async createOneServerlessFunction(
     @Args('input')
     input: CreateServerlessFunctionInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       return await this.serverlessFunctionService.createOneServerlessFunction(
@@ -139,7 +141,7 @@ export class ServerlessFunctionResolver {
   @Mutation(() => ServerlessFunctionExecutionResultDTO)
   async executeOneServerlessFunction(
     @Args('input') input: ExecuteServerlessFunctionInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       const { id, payload, version } = input;
@@ -158,7 +160,7 @@ export class ServerlessFunctionResolver {
   @Mutation(() => ServerlessFunctionDTO)
   async publishServerlessFunction(
     @Args('input') input: PublishServerlessFunctionInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
       const { id } = input;

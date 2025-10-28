@@ -1,17 +1,38 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+import { useDeleteCoreViewMutation } from '~/generated/graphql';
 
 export const useDeleteView = () => {
-  const { deleteOneRecord } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
+  const [deleteCoreViewMutation] = useDeleteCoreViewMutation();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const deleteView = useRecoilCallback(
-    () => async (viewId: string) => {
-      await deleteOneRecord(viewId);
-    },
-    [deleteOneRecord],
+    ({ snapshot }) =>
+      async (viewId: string) => {
+        const currentView = snapshot
+          .getLoadable(
+            coreViewFromViewIdFamilySelector({
+              viewId,
+            }),
+          )
+          .getValue();
+
+        if (!isDefined(currentView)) {
+          return;
+        }
+
+        await deleteCoreViewMutation({
+          variables: {
+            id: viewId,
+          },
+        });
+
+        await refreshCoreViewsByObjectMetadataId(currentView.objectMetadataId);
+      },
+    [deleteCoreViewMutation, refreshCoreViewsByObjectMetadataId],
   );
 
   return { deleteView };

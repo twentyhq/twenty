@@ -10,14 +10,10 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
@@ -30,11 +26,11 @@ export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWork
   private clearUsage = false;
 
   constructor(
-    @InjectRepository(Workspace, 'core')
-    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(BillingSubscription, 'core')
-    protected readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingSubscriptionEntity)
+    protected readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
   ) {
@@ -80,13 +76,6 @@ export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWork
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },
       );
-
-    if (!isDefined(subscription)) {
-      throw new BillingException(
-        `No subscription found for workspace ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
-      );
-    }
 
     const subscriptionItemToUpdate = subscription.billingSubscriptionItems.find(
       (item) => item.stripePriceId === this.stripePriceIdToUpdate,

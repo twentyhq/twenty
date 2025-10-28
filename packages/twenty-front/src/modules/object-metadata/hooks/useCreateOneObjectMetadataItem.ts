@@ -9,13 +9,14 @@ import {
 import { CREATE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { useRefreshCachedViews } from '@/views/hooks/useRefreshViews';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateOneObjectMetadataItem = () => {
-  const { refreshCachedViews } = useRefreshCachedViews();
-
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const [mutate] = useMutation<
     CreateOneObjectMetadataItemMutation,
@@ -30,7 +31,13 @@ export const useCreateOneObjectMetadataItem = () => {
     });
 
     await refreshObjectMetadataItems();
-    refreshCachedViews();
+
+    if (isDefined(createdObjectMetadata.data?.createOneObject?.id)) {
+      await refreshCoreViewsByObjectMetadataId(
+        createdObjectMetadata.data.createOneObject.id,
+      );
+    }
+
     return createdObjectMetadata;
   };
 

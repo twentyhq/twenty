@@ -8,6 +8,7 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { EditableFilterChipDropdownContent } from '@/views/components/EditableFilterChipDropdownContent';
+import { EditableRelationFilterChip } from '@/views/components/EditableRelationFilterChip';
 import { useClearVectorSearchInput } from '@/views/hooks/useClearVectorSearchInput';
 import { useSetEditableFilterChipDropdownStates } from '@/views/hooks/useSetEditableFilterChipDropdownStates';
 
@@ -54,11 +55,19 @@ export const EditableFilterDropdownButton = ({
       <Dropdown
         dropdownId={recordFilter.id}
         clickableComponent={
-          <EditableFilterChip
-            recordFilter={recordFilter}
-            onRemove={handleRemove}
-            onClick={handleFilterChipClick}
-          />
+          recordFilter.type === 'RELATION' ? (
+            <EditableRelationFilterChip
+              recordFilter={recordFilter}
+              onRemove={handleRemove}
+              onClick={handleFilterChipClick}
+            />
+          ) : (
+            <EditableFilterChip
+              recordFilter={recordFilter}
+              onRemove={handleRemove}
+              onClick={handleFilterChipClick}
+            />
+          )
         }
         dropdownComponents={
           <EditableFilterChipDropdownContent recordFilterId={recordFilter.id} />

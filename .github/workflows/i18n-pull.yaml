@@ -3,6 +3,10 @@
 
 name: 'Pull translations from Crowdin'
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   schedule:
     - cron: '0 */2 * * *' # Every two hours.
@@ -23,16 +27,12 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   pull_translations:
     name: Pull translations
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -99,7 +99,8 @@ jobs:
 
       - name: Compile translations
         id: compile_translations
-        if: inputs.force_pull || steps.compile_translations_strict.outcome == 'failure'
+        # Because we have set English as a fallback locale, this condition does not work anymore
+        # if: inputs.force_pull || steps.compile_translations_strict.outcome == 'failure'
         run: |
           npx nx run twenty-server:lingui:compile
           npx nx run twenty-emails:lingui:compile 

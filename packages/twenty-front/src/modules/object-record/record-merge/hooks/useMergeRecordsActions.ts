@@ -1,12 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
-import { AppPath } from '@/types/AppPath';
+import { useMergePreview } from '@/object-record/record-merge/hooks/useMergePreview';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { AppPath } from 'twenty-shared/types';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { isMergeInProgressState } from '../states/mergeInProgressState';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 type UseMergeRecordsActionsProps = {
@@ -17,15 +18,16 @@ export const useMergeRecordsActions = ({
   objectNameSingular,
 }: UseMergeRecordsActionsProps) => {
   const mergeSettings = useRecoilValue(mergeSettingsState);
-  const { records: selectedRecords } = useFindManyRecordsSelectedInContextStore(
-    {
-      limit: 10,
-    },
-  );
+
+  const { selectedRecords } = useMergePreview({
+    objectNameSingular,
+  });
 
   const { mergeManyRecords, loading: isMerging } = useMergeManyRecords({
     objectNameSingular,
   });
+
+  const setMergeInProgress = useSetRecoilState(isMergeInProgressState);
 
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -33,6 +35,7 @@ export const useMergeRecordsActions = ({
 
   const navigate = useNavigateApp();
   const handleMergeRecords = async () => {
+    setMergeInProgress(true);
     try {
       const mergedRecord = await mergeManyRecords({
         recordIds: selectedRecords.map((record) => record.id),
@@ -62,6 +65,8 @@ export const useMergeRecordsActions = ({
             ? error.message
             : 'Failed to merge records. Please try again.',
       });
+    } finally {
+      setMergeInProgress(false);
     }
   };
 

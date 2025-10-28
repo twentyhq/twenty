@@ -35,10 +35,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
       );
     }}
   >
-    <RecordTableComponentInstance
-      recordTableId="test-table-id"
-      onColumnsChange={jest.fn()}
-    >
+    <RecordTableComponentInstance recordTableId="test-table-id">
       {children}
     </RecordTableComponentInstance>
   </RecoilRoot>
@@ -49,11 +46,13 @@ const renderHooks = () => {
     () => {
       const { setIsRecordTableCellFocusActive } =
         useSetIsRecordTableCellFocusActive('test-table-id');
+
       const isRecordTableFocusActive = useRecoilValue(
         isRecordTableCellFocusActiveComponentState.atomFamily({
           instanceId: 'test-table-id',
         }),
       );
+
       const focusPosition = useRecoilValue(
         recordTableFocusPositionComponentState.atomFamily({
           instanceId: 'test-table-id',
@@ -92,10 +91,6 @@ describe('useSetIsRecordTableFocusActive', () => {
       });
     });
 
-    expect(mockGetElementById).toHaveBeenCalledWith('record-table-cell-1-0');
-
-    expect(mockClassList.add).toHaveBeenCalledWith('focus-active');
-
     expect(result.current.isRecordTableFocusActive).toBe(true);
 
     expect(result.current.focusPosition).toEqual(cellPosition);
@@ -113,13 +108,9 @@ describe('useSetIsRecordTableFocusActive', () => {
       });
     });
 
-    expect(mockGetElementById).toHaveBeenCalledWith('record-table-cell-1-0');
-
-    expect(mockClassList.remove).toHaveBeenCalledWith('focus-active');
-
     expect(result.current.isRecordTableFocusActive).toBe(false);
 
-    expect(result.current.focusPosition).toEqual(cellPosition);
+    expect(result.current.focusPosition).toEqual(null);
   });
 
   it('should handle case when the cell element is not found', () => {
@@ -135,10 +126,6 @@ describe('useSetIsRecordTableFocusActive', () => {
         cellPosition,
       });
     });
-
-    expect(mockGetElementById).toHaveBeenCalledWith('record-table-cell-1-0');
-
-    expect(mockClassList.add).not.toHaveBeenCalled();
 
     expect(result.current.isRecordTableFocusActive).toBe(true);
 

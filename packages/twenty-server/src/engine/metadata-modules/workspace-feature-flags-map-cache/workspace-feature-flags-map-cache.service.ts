@@ -5,9 +5,9 @@ import { Repository } from 'typeorm';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { getFromCacheWithRecompute } from 'src/engine/utils/get-data-from-cache-with-recompute.util';
+import { GetDataFromCacheWithRecomputeService } from 'src/engine/workspace-cache-storage/services/get-data-from-cache-with-recompute.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 const FEATURE_FLAG_MAP = 'Feature flag map';
@@ -18,8 +18,12 @@ export class WorkspaceFeatureFlagsMapCacheService {
 
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    @InjectRepository(FeatureFlag, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(FeatureFlagEntity)
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    private readonly getFromCacheWithRecomputeService: GetDataFromCacheWithRecomputeService<
+      string,
+      FeatureFlagMap
+    >,
   ) {}
 
   async getWorkspaceFeatureFlagsMap({
@@ -38,7 +42,7 @@ export class WorkspaceFeatureFlagsMapCacheService {
   }: {
     workspaceId: string;
   }) {
-    return getFromCacheWithRecompute<string, FeatureFlagMap>({
+    return this.getFromCacheWithRecomputeService.getFromCacheWithRecompute({
       workspaceId,
       getCacheData: () =>
         this.workspaceCacheStorageService.getFeatureFlagsMap(workspaceId),
@@ -49,7 +53,6 @@ export class WorkspaceFeatureFlagsMapCacheService {
       recomputeCache: (params) => this.recomputeFeatureFlagsMapCache(params),
       cachedEntityName: FEATURE_FLAG_MAP,
       exceptionCode: TwentyORMExceptionCode.FEATURE_FLAG_MAP_VERSION_NOT_FOUND,
-      logger: this.logger,
     });
   }
 

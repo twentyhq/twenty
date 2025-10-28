@@ -5,7 +5,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import {
   FieldContext,
   type RecordUpdateHook,
-} from '@/object-record/record-field/contexts/FieldContext';
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useMockFieldContext = ({
   clearable,

@@ -24,9 +24,10 @@ export type CurrentWorkspace = Pick<
   | 'workspaceUrls'
   | 'metadataVersion'
   | 'isTwoFactorAuthenticationEnforced'
+  | 'trashRetentionDays'
+  | 'routerModel'
 > & {
-  defaultRole?: Omit<Role, 'workspaceMembers'> | null;
-  defaultAgent?: { id: string } | null;
+  defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
 };
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ZodError, isDirty, type z } from 'zod';
+import { ZodError, type z } from 'zod';
 
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { isLabelIdentifierFieldMetadataTypes } from 'twenty-shared/utils';
 import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
   objectMetadataItemSchema.pick({
@@ -44,6 +45,7 @@ const StyledContainer = styled.div`
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
+  const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
   const formConfig = useForm<SettingsDataModelObjectIdentifiersFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectIdentifiersFormSchema),
@@ -54,7 +56,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   const handleSave = async (
     formValues: SettingsDataModelObjectIdentifiersFormValues,
   ) => {
-    if (!isDirty) {
+    if (!formConfig.formState.isDirty) {
       return;
     }
 
@@ -134,7 +136,7 @@ export const SettingsDataModelObjectIdentifiersForm = ({
               options={options}
               value={value}
               withSearchInput={label === t`Record label`}
-              disabled={!objectMetadataItem.isCustom}
+              disabled={!objectMetadataItem.isCustom || readonly}
               callToActionButton={
                 label === t`Record label`
                   ? {

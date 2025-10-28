@@ -1,9 +1,9 @@
-import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 
+import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';

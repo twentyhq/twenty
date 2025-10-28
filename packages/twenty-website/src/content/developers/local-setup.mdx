@@ -124,8 +124,44 @@ You should run all commands in the following steps from the root of the project.
     ```bash
       brew install postgresql@16
       export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      brew services start postgresql@16
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
+
+    You can verify if the PostgreSQL server is running by executing:
+    ```bash
+      brew services list
+    ```
+
+    The installer might not create the `postgres` user by default when installing 
+    via Homebrew on MacOS. Instead, it creates a PostgreSQL role that matches your macOS
+    username (e.g., "john").
+    To check and create the `postgres` user if necessary, follow these steps:
+    ```bash
+      # Connect to PostgreSQL
+      psql postgres
+      or
+      psql -U $(whoami) -d postgres
+    ```
+
+    Once at the psql prompt (postgres=#), run:
+     ```bash
+      # List existing PostgreSQL roles
+      \du
+    ```
+    You'll see output similar to:
+     ```bash
+      Role name | Attributes  | Member of 
+      -----------+-------------+-----------
+      john      | Superuser   | {}
+    ```
+
+    If you do not see a `postgres` role listed, proceed to the next step.
+    Create the `postgres` role manually:
+     ```bash
+      CREATE ROLE postgres WITH SUPERUSER LOGIN;
+    ```
+    This creates a superuser role named `postgres` with login access.
 
     <b>Option 2:</b> If you have docker installed:
     ```bash

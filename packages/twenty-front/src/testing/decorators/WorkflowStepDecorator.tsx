@@ -1,7 +1,10 @@
+import { commandMenuWorkflowIdComponentState } from '@/command-menu/pages/workflow/states/commandMenuWorkflowIdComponentState';
+import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
-import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
+import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -31,6 +34,18 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
           getWorkflowMock().id,
         );
         set(
+          workflowVisualizerWorkflowVersionIdComponentState.atomFamily({
+            instanceId: workflowVisualizerComponentInstanceId,
+          }),
+          workflowVersion.id,
+        );
+        set(
+          workflowVisualizerWorkflowRunIdComponentState.atomFamily({
+            instanceId: workflowVisualizerComponentInstanceId,
+          }),
+          '123',
+        );
+        set(
           workflowSelectedNodeComponentState.atomFamily({
             instanceId: workflowVisualizerComponentInstanceId,
           }),
@@ -46,6 +61,12 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
             steps: workflowVersion.steps,
           },
         );
+        set(
+          commandMenuWorkflowIdComponentState.atomFamily({
+            instanceId: workflowVisualizerComponentInstanceId,
+          }),
+          getWorkflowMock().id,
+        );
         populateStepsOutputSchema(workflowVersion);
         setReady(true);
       },
@@ -57,19 +78,18 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
   }, [handleMount]);
 
   return (
-    <WorkflowVisualizerComponentInstanceContext.Provider
+    <CommandMenuPageComponentInstanceContext.Provider
       value={{
         instanceId: workflowVisualizerComponentInstanceId,
       }}
     >
-      <WorkflowStepContextProvider
+      <WorkflowVisualizerComponentInstanceContext.Provider
         value={{
-          workflowVersionId: workflowVersion.id,
-          workflowRunId: '123',
+          instanceId: workflowVisualizerComponentInstanceId,
         }}
       >
         {ready && <Story />}
-      </WorkflowStepContextProvider>
-    </WorkflowVisualizerComponentInstanceContext.Provider>
+      </WorkflowVisualizerComponentInstanceContext.Provider>
+    </CommandMenuPageComponentInstanceContext.Provider>
   );
 };

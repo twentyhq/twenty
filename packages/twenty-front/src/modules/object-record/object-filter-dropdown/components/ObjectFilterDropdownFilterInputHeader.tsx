@@ -33,7 +33,7 @@ export const ObjectFilterDropdownFilterInputHeader = () => {
     dropdownInstanceId === VIEW_BAR_FILTER_DROPDOWN_ID;
 
   const isVectorSearchFilter =
-    selectedOperandInDropdown === ViewFilterOperand.VectorSearch;
+    selectedOperandInDropdown === ViewFilterOperand.VECTOR_SEARCH;
 
   if (isInViewBarFilterDropdown) {
     return <ViewBarFilterDropdownFilterInputMenuHeader />;

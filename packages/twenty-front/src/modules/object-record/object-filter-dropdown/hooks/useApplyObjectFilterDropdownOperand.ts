@@ -14,7 +14,7 @@ import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/ut
 import {
   type VariableDateViewFilterValueDirection,
   type VariableDateViewFilterValueUnit,
-} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownOperand = () => {
@@ -44,11 +44,11 @@ export const useApplyObjectFilterDropdownOperand = () => {
     newOperand: RecordFilterOperand,
   ) => {
     const isValuelessOperand = [
-      RecordFilterOperand.IsEmpty,
-      RecordFilterOperand.IsNotEmpty,
-      RecordFilterOperand.IsInPast,
-      RecordFilterOperand.IsInFuture,
-      RecordFilterOperand.IsToday,
+      RecordFilterOperand.IS_EMPTY,
+      RecordFilterOperand.IS_NOT_EMPTY,
+      RecordFilterOperand.IS_IN_PAST,
+      RecordFilterOperand.IS_IN_FUTURE,
+      RecordFilterOperand.IS_TODAY,
     ].includes(newOperand);
 
     let recordFilterToUpsert: RecordFilter | null | undefined = null;
@@ -93,7 +93,7 @@ export const useApplyObjectFilterDropdownOperand = () => {
         );
 
         recordFilterToUpsert.displayValue = displayValue;
-      } else if (newOperand === RecordFilterOperand.IsRelative) {
+      } else if (newOperand === RecordFilterOperand.IS_RELATIVE) {
         const defaultRelativeDate = {
           direction: 'THIS' as VariableDateViewFilterValueDirection,
           amount: 1,

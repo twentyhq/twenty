@@ -15,5 +15,6 @@ export const WORKSPACE_MEMBER_QUERY_FRAGMENT = gql`
     dateFormat
     timeFormat
     calendarStartDay
+    numberFormat
   }
 `;

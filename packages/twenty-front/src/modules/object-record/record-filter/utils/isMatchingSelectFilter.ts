@@ -1,4 +1,4 @@
-import { type SelectFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type SelectFilter } from 'twenty-shared/types';
 
 export const isMatchingSelectFilter = ({
   selectFilter,
@@ -20,6 +20,9 @@ export const isMatchingSelectFilter = ({
     }
     case selectFilter.eq !== undefined: {
       return value === selectFilter.eq;
+    }
+    case selectFilter.neq !== undefined: {
+      return value !== selectFilter.neq;
     }
     default: {
       throw new Error(

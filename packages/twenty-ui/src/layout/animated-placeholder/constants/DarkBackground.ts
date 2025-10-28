@@ -14,4 +14,5 @@ export const DARK_BACKGROUND: Record<string, string> = {
   emptyFunctions: '/images/placeholders/dark-background/empty_functions_bg.png',
   noDeletedRecord:
     '/images/placeholders/dark-background/no_deleted_record_bg.png',
+  noWidgets: '/images/placeholders/dark-background/no_widgets_bg.png',
 };

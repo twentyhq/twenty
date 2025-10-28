@@ -1,6 +1,7 @@
 import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -19,7 +20,11 @@ export const getDefaultFlatFieldMetadata = ({
     ['defaultValue', 'settings'],
   );
 
+  const createdAt = new Date();
+
   return {
+    calendarViewIds: [],
+    viewFieldIds: [],
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,
     icon: createFieldInput.icon ?? null,
@@ -33,20 +38,26 @@ export const getDefaultFlatFieldMetadata = ({
     ),
     isSystem: false,
     isUnique: createFieldInput.isUnique ?? null,
-    label: createFieldInput.label ?? null,
-    name: createFieldInput.name ?? null,
+    label: createFieldInput.label,
+    name: createFieldInput.name,
     objectMetadataId: createFieldInput.objectMetadataId,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     standardId: null,
     standardOverrides: null,
     type: createFieldInput.type,
-    uniqueIdentifier: fieldMetadataId,
+    universalIdentifier: fieldMetadataId,
     workspaceId,
-    flatRelationTargetFieldMetadata: null,
-    flatRelationTargetObjectMetadata: null,
     options: null,
-    defaultValue: defaultValue ?? null,
+    defaultValue: defaultValue ?? generateDefaultValue(createFieldInput.type),
     settings: settings ?? null,
+    createdAt,
+    updatedAt: createdAt,
+    isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
+    morphId: null,
+    applicationId: null,
+    viewFilterIds: [],
+    viewGroupIds: [],
+    kanbanAggregateOperationViewIds: [],
   } as const satisfies FlatFieldMetadata;
 };

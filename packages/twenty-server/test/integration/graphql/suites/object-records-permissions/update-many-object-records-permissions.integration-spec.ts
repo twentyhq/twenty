@@ -6,11 +6,21 @@ import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/
 import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
+import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 describe('updateManyObjectRecordsPermissions', () => {
+  let createdPersonIds: string[] = [];
+
+  afterEach(async () => {
+    if (createdPersonIds.length > 0) {
+      await deleteRecordsByIds('person', createdPersonIds);
+      createdPersonIds = [];
+    }
+  });
+
   it('should throw a permission error when user does not have permission (guest role)', async () => {
     const personId1 = randomUUID();
     const personId2 = randomUUID();
@@ -29,6 +39,7 @@ describe('updateManyObjectRecordsPermissions', () => {
     });
 
     await makeGraphqlAPIRequest(createGraphqlOperation);
+    createdPersonIds.push(personId1, personId2);
 
     const updateGraphqlOperation = updateManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -74,6 +85,7 @@ describe('updateManyObjectRecordsPermissions', () => {
     });
 
     await makeGraphqlAPIRequest(createGraphqlOperation);
+    createdPersonIds.push(personId1, personId2);
 
     const updateGraphqlOperation = updateManyOperationFactory({
       objectMetadataSingularName: 'person',
@@ -118,6 +130,7 @@ describe('updateManyObjectRecordsPermissions', () => {
     });
 
     await makeGraphqlAPIRequest(createGraphqlOperation);
+    createdPersonIds.push(personId1, personId2);
 
     const updateGraphqlOperation = updateManyOperationFactory({
       objectMetadataSingularName: 'person',

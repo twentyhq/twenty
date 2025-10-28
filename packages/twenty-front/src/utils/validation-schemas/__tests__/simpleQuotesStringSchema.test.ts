@@ -1,4 +1,4 @@
-import { type SafeParseError } from 'zod';
+import { type ZodSafeParseError } from 'zod';
 
 import { simpleQuotesStringSchema } from '../simpleQuotesStringSchema';
 
@@ -27,7 +27,7 @@ describe('simpleQuotesStringSchema', () => {
 
     // Then
     expect(result.success).toBe(false);
-    expect((result as SafeParseError<string>).error.errors).toEqual([
+    expect((result as ZodSafeParseError<string>).error.issues).toEqual([
       {
         code: 'custom',
         message: 'String should be wrapped in simple quotes',

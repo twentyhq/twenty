@@ -20,7 +20,14 @@ export const generateObjectMetadataMaps = (
 
     for (const fieldMetadata of objectMetadata.fields) {
       if (
-        isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
+        isFieldMetadataEntityOfType(
+          fieldMetadata,
+          FieldMetadataType.RELATION,
+        ) ||
+        isFieldMetadataEntityOfType(
+          fieldMetadata,
+          FieldMetadataType.MORPH_RELATION,
+        )
       ) {
         if (fieldMetadata.settings?.joinColumnName) {
           fieldIdByJoinColumnNameMap[fieldMetadata.settings.joinColumnName] =

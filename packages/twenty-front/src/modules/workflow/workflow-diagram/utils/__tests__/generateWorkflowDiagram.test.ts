@@ -19,7 +19,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      workflowContext: 'workflow',
     });
 
     expect(result.nodes).toHaveLength(1);
@@ -86,7 +86,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      workflowContext: 'workflow',
     });
 
     expect(result.nodes).toHaveLength(steps.length + 1); // All steps + trigger
@@ -165,7 +165,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      workflowContext: 'workflow',
     });
 
     expect(result.edges.length).toEqual(2);
@@ -232,7 +232,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      workflowContext: 'workflow',
     });
 
     expect(result.edges.length).toEqual(2);
@@ -318,7 +318,7 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      workflowContext: 'workflow',
     });
 
     expect(result.edges.length).toEqual(4);

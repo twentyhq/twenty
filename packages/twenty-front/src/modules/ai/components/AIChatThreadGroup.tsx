@@ -1,9 +1,9 @@
-import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThreadComponentState';
+import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
-import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilState } from 'recoil';
 import { IconSparkles } from 'twenty-ui/display';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -69,18 +69,13 @@ const StyledThreadTitle = styled.div`
 export const AIChatThreadGroup = ({
   threads,
   title,
-  agentId,
 }: {
   threads: AgentChatThread[];
-  agentId: string;
   title: string;
 }) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const [, setCurrentThreadId] = useRecoilComponentState(
-    currentAIChatThreadComponentState,
-    agentId,
-  );
+  const [, setCurrentAIChatThread] = useRecoilState(currentAIChatThreadState);
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
 
   if (threads.length === 0) {
@@ -94,7 +89,7 @@ export const AIChatThreadGroup = ({
         {threads.map((thread) => (
           <StyledThreadItem
             onClick={() => {
-              setCurrentThreadId(thread.id);
+              setCurrentAIChatThread(thread.id);
               openAskAIPage(thread.title);
             }}
             key={thread.id}

@@ -1,13 +1,13 @@
+import { useSingleRecordPickerPerformSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerPerformSearch';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { useFilteredSearchRecordQuery } from '@/search/hooks/useFilteredSearchRecordQuery';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const useSingleRecordPickerRecords = ({
-  objectNameSingular,
+  objectNameSingulars,
   excludedRecordIds = [],
 }: {
-  objectNameSingular: string;
+  objectNameSingulars: string[];
   excludedRecordIds?: string[];
 }) => {
   const recordPickerSearchFilter = useRecoilComponentValue(
@@ -17,13 +17,12 @@ export const useSingleRecordPickerRecords = ({
   const selectedRecordId = useRecoilComponentValue(
     singleRecordPickerSelectedIdComponentState,
   );
-
-  const records = useFilteredSearchRecordQuery({
+  const { pickableMorphItems, loading } = useSingleRecordPickerPerformSearch({
     searchFilter: recordPickerSearchFilter,
     selectedIds: selectedRecordId ? [selectedRecordId] : [],
     excludedRecordIds: excludedRecordIds,
-    objectNameSingular,
+    objectNameSingulars,
   });
 
-  return { records };
+  return { pickableMorphItems, loading };
 };

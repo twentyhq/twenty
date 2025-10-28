@@ -10,7 +10,7 @@ export const SettingsRolesTableHeader = () => {
         <TableHeader>
           <Trans>Name</Trans>
         </TableHeader>
-        <TableHeader align={'right'}>
+        <TableHeader align="right">
           <Trans>Assigned to</Trans>
         </TableHeader>
         <TableHeader></TableHeader>

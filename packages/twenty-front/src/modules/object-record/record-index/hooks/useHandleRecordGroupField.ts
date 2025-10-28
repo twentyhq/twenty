@@ -106,11 +106,24 @@ export const useHandleRecordGroupField = () => {
         );
 
         if (viewGroupsToCreate.length > 0) {
-          await createViewGroupRecords({ viewGroupsToCreate, viewId: view.id });
+          await createViewGroupRecords(
+            viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
+              input: {
+                ...viewGroup,
+                viewId: view.id,
+              },
+            })),
+          );
         }
 
         if (viewGroupsToDelete.length > 0) {
-          await deleteViewGroupRecords(viewGroupsToDelete);
+          await deleteViewGroupRecords(
+            viewGroupsToDelete.map((group) => ({
+              input: {
+                id: group.id,
+              },
+            })),
+          );
         }
       },
     [
@@ -144,7 +157,13 @@ export const useHandleRecordGroupField = () => {
           return;
         }
 
-        await deleteViewGroupRecords(view.viewGroups);
+        await deleteViewGroupRecords(
+          view.viewGroups.map((group) => ({
+            input: {
+              id: group.id,
+            },
+          })),
+        );
 
         setRecordGroupsFromViewGroups(view.id, [], objectMetadataItem);
       },

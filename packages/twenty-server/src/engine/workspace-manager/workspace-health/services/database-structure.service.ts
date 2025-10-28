@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { type ColumnType } from 'typeorm';
-import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { DataSource, type ColumnType } from 'typeorm';
+import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 
 import {
   type FieldMetadataDefaultValue,
@@ -13,7 +14,6 @@ import {
   type WorkspaceTableStructureResult,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -22,18 +22,20 @@ import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metada
 import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
 @Injectable()
 export class DatabaseStructureService {
-  constructor(private readonly typeORMService: TypeORMService) {}
+  constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
+  ) {}
 
   async getWorkspaceTableColumns(
     schemaName: string,
     tableName: string,
   ): Promise<WorkspaceTableStructure[]> {
-    const mainDataSource = this.typeORMService.getMainDataSource();
-    const results = await mainDataSource.query<
+    const results = await this.coreDataSource.query<
       WorkspaceTableStructureResult[]
     >(`
       WITH foreign_keys AS (
@@ -150,8 +152,6 @@ export class DatabaseStructureService {
   }
 
   getPostgresDataTypes(fieldMetadata: FieldMetadataEntity): string[] {
-    const mainDataSource = this.typeORMService.getMainDataSource();
-
     const normalizer = (
       type: FieldMetadataType,
       isArray: boolean | undefined,
@@ -166,7 +166,7 @@ export class DatabaseStructureService {
         return `${objectName}_${columnName}_enum${isArray ? '[]' : ''}`;
       }
 
-      return mainDataSource.driver.normalizeType({
+      return this.coreDataSource.driver.normalizeType({
         type: typeORMType,
       });
     };
@@ -201,14 +201,13 @@ export class DatabaseStructureService {
   getFieldMetadataTypeFromPostgresDataType(
     postgresDataType: string,
   ): FieldMetadataType | null {
-    const mainDataSource = this.typeORMService.getMainDataSource();
     const types = Object.values(FieldMetadataType).filter((type) => {
       // We're skipping composite and relation types, as they're not directly mapped to a column type
       if (isCompositeFieldMetadataType(type)) {
         return false;
       }
 
-      if (isRelationFieldMetadataType(type)) {
+      if (isMorphOrRelationFieldMetadataType(type)) {
         return false;
       }
 
@@ -219,7 +218,7 @@ export class DatabaseStructureService {
       const typeORMType = fieldMetadataTypeToColumnType(
         FieldMetadataType[type],
       ) as ColumnType;
-      const dataType = mainDataSource.driver.normalizeType({
+      const dataType = this.coreDataSource.driver.normalizeType({
         type: typeORMType,
       });
 
@@ -248,7 +247,6 @@ export class DatabaseStructureService {
         | null,
     ) => {
       const typeORMType = fieldMetadataTypeToColumnType(type) as ColumnType;
-      const mainDataSource = this.typeORMService.getMainDataSource();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let value: any =
@@ -282,7 +280,7 @@ export class DatabaseStructureService {
         value = value.replace(/^'/, '').replace(/'$/, '');
       }
 
-      return mainDataSource.driver.normalizeDefault({
+      return this.coreDataSource.driver.normalizeDefault({
         type: typeORMType,
         default: value,
         isArray: false,

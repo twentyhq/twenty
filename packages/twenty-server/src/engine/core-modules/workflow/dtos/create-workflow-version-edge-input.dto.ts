@@ -1,5 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import graphqlTypeJson from 'graphql-type-json';
+
+import { WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepCreationOptions';
+
 @InputType()
 export class CreateWorkflowVersionEdgeInput {
   @Field(() => String, {
@@ -19,4 +23,10 @@ export class CreateWorkflowVersionEdgeInput {
     nullable: false,
   })
   target: string;
+
+  @Field(() => graphqlTypeJson, {
+    description: 'Workflow version source step connection options',
+    nullable: true,
+  })
+  sourceConnectionOptions?: WorkflowStepConnectionOptions;
 }

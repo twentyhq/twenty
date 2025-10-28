@@ -3,28 +3,11 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
-import { type CustomException } from 'src/utils/custom-exception';
-
-const assertIsDefinedOrThrow = (
-  workspace: Workspace | undefined | null,
-  exceptionToThrow: CustomException = new WorkspaceException(
-    'Workspace not found',
-    WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-  ),
-): asserts workspace is Workspace => {
-  if (!workspace) {
-    throw exceptionToThrow;
-  }
-};
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const isAuthEnabledOrThrow = (
   provider: AuthProviderEnum,
-  workspace: Workspace,
+  workspace: WorkspaceEntity,
   exceptionToThrowCustom: AuthException = new AuthException(
     `${provider} auth is not enabled for this workspace`,
     AuthExceptionCode.OAUTH_ACCESS_DENIED,
@@ -44,7 +27,10 @@ const isAuthEnabledOrThrow = (
   throw exceptionToThrowCustom;
 };
 
-const isAuthEnabled = (provider: AuthProviderEnum, workspace: Workspace) => {
+const isAuthEnabled = (
+  provider: AuthProviderEnum,
+  workspace: WorkspaceEntity,
+) => {
   if (provider === AuthProviderEnum.Google && workspace.isGoogleAuthEnabled)
     return true;
   if (
@@ -59,11 +45,9 @@ const isAuthEnabled = (provider: AuthProviderEnum, workspace: Workspace) => {
 };
 
 export const workspaceValidator: {
-  assertIsDefinedOrThrow: typeof assertIsDefinedOrThrow;
   isAuthEnabledOrThrow: typeof isAuthEnabledOrThrow;
   isAuthEnabled: typeof isAuthEnabled;
 } = {
-  assertIsDefinedOrThrow: assertIsDefinedOrThrow,
   isAuthEnabledOrThrow: isAuthEnabledOrThrow,
   isAuthEnabled: isAuthEnabled,
 };

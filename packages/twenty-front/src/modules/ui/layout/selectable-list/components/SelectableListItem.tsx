@@ -35,8 +35,8 @@ export const SelectableListItem = ({
   useEffect(() => {
     if (isSelectedItemId) {
       listItemRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
+        behavior: 'auto',
+        block: 'start',
       });
     }
   }, [isSelectedItemId]);

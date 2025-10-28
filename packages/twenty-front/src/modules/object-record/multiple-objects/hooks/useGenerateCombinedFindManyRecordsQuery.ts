@@ -1,19 +1,16 @@
 import { gql } from '@apollo/client';
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import isEmpty from 'lodash.isempty';
 import { capitalize } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({
   operationSignatures,
@@ -22,10 +19,6 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   if (!isNonEmptyArray(operationSignatures)) {
     return null;
@@ -83,14 +76,6 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
       )
       .join(', ');
 
-  const limitPerMetadataItemArray =
-    queryOperationSignatureWithObjectMetadataItemArray
-      .map(
-        ({ objectMetadataItem }) =>
-          `$limit${capitalize(objectMetadataItem.nameSingular)}: Int`,
-      )
-      .join(', ');
-
   if (isEmpty(queryOperationSignatureWithObjectMetadataItemArray)) {
     return null;
   }
@@ -99,8 +84,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
     query CombinedFindManyRecords(
       ${filterPerMetadataItemArray}, 
       ${orderByPerMetadataItemArray}, 
-      ${cursorFilteringPerMetadataItemArray}, 
-      ${limitPerMetadataItemArray}
+      ${cursorFilteringPerMetadataItemArray},
     ) {
       ${queryOperationSignatureWithObjectMetadataItemArray
         .map(
@@ -114,11 +98,12 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
               objectMetadataItem,
               recordGqlFields:
                 operationSignature.fields ??
-                generateDepthOneRecordGqlFields({
+                generateDepthRecordGqlFieldsFromObject({
+                  objectMetadataItems,
+                  depth: 1,
                   objectMetadataItem,
                 }),
               objectPermissionsByObjectMetadataId,
-              isFieldsPermissionsEnabled,
             })}
             cursor
           }

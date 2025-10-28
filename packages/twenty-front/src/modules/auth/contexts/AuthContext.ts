@@ -1,9 +1,9 @@
-import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { createContext } from 'react';
 import { type DeletedWorkspaceMember } from '~/generated-metadata/graphql';
 
 export type AuthContextType = {
-  currentWorkspaceMembers: CurrentWorkspaceMember[];
+  currentWorkspaceMembers: PartialWorkspaceMember[];
   currentWorkspaceDeletedMembers: DeletedWorkspaceMember[];
 };
 

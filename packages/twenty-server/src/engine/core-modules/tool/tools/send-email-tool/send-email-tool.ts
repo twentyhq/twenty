@@ -1,10 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { render, toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
+import { reactMarkupFromJSON } from 'twenty-emails';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { In, Repository } from 'typeorm';
 import { z } from 'zod';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import {
   SendEmailToolException,
   SendEmailToolExceptionCode,
@@ -17,6 +22,10 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
+import { parseEmailBody } from 'src/utils/parse-email-body';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
 @Injectable()
 export class SendEmailTool implements Tool {
@@ -24,12 +33,15 @@ export class SendEmailTool implements Tool {
 
   description =
     'Send an email using a connected account. Requires SEND_EMAIL_TOOL permission.';
-  parameters = SendEmailToolParametersZodSchema;
+  inputSchema = SendEmailToolParametersZodSchema;
 
   constructor(
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly sendMessageService: MessagingSendMessageService,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
+    private readonly fileService: FileService,
   ) {}
 
   private async getConnectedAccount(
@@ -48,8 +60,14 @@ export class SendEmailTool implements Tool {
         workspaceId,
         'connectedAccount',
       );
-    const connectedAccount = await connectedAccountRepository.findOneBy({
-      id: connectedAccountId,
+
+    const connectedAccount = await connectedAccountRepository.findOne({
+      where: { id: connectedAccountId },
+      relations: {
+        messageChannels: {
+          messageFolders: true,
+        },
+      },
     });
 
     if (!isDefined(connectedAccount)) {
@@ -82,14 +100,77 @@ export class SendEmailTool implements Tool {
     return allAccounts[0].id;
   }
 
+  private async getAttachments(
+    files: Array<{ id: string; name: string; type: string }>,
+    workspaceId: string,
+  ): Promise<MessageAttachment[]> {
+    if (files.length === 0) {
+      return [];
+    }
+
+    const fileIds = files.map((file) => file.id);
+
+    const fileEntities = await this.fileRepository.find({
+      where: { id: In(fileIds) },
+    });
+
+    const fileEntityMap = new Map(
+      fileEntities.map((entity) => [entity.id, entity]),
+    );
+
+    const filesNotFound: string[] = [];
+
+    for (const fileMetadata of files) {
+      if (!fileEntityMap.has(fileMetadata.id)) {
+        filesNotFound.push(`${fileMetadata.name} (${fileMetadata.id})`);
+      }
+    }
+
+    if (filesNotFound.length > 0) {
+      throw new SendEmailToolException(
+        `Files not found: ${filesNotFound.join(', ')}`,
+        SendEmailToolExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    const attachments: MessageAttachment[] = [];
+
+    for (const fileMetadata of files) {
+      const fileEntity = fileEntityMap.get(fileMetadata.id)!;
+
+      const { folderPath, filename } = extractFolderPathAndFilename(
+        fileEntity.fullPath,
+      );
+
+      const stream = await this.fileService.getFileStream(
+        folderPath,
+        filename,
+        workspaceId,
+      );
+
+      const buffer = await streamToBuffer(stream);
+
+      attachments.push({
+        filename: fileMetadata.name,
+        content: buffer,
+        contentType: fileMetadata.type,
+      });
+    }
+
+    return attachments;
+  }
+
   async execute(parameters: SendEmailInput): Promise<ToolOutput> {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
-    const { email, subject, body } = parameters;
+    const { email, subject, body, files } = parameters;
     let { connectedAccountId } = parameters;
 
     try {
-      const emailSchema = z.string().trim().email('Invalid email');
+      const emailSchema = z
+        .string()
+        .trim()
+        .pipe(z.email({ error: 'Invalid email' }));
       const emailValidation = emailSchema.safeParse(email);
 
       if (!emailValidation.success) {
@@ -116,31 +197,49 @@ export class SendEmailTool implements Tool {
         workspaceId,
       );
 
+      const attachments = await this.getAttachments(files || [], workspaceId);
+
+      const parsedBody = parseEmailBody(body);
+      const reactMarkup = reactMarkupFromJSON(parsedBody);
+      const htmlBody = await render(reactMarkup);
+      const textBody = toPlainText(htmlBody);
+
+      const { JSDOM } = await import('jsdom');
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
-      const safeBody = purify.sanitize(body || '');
+      const safeHtmlBody = purify.sanitize(htmlBody || '');
       const safeSubject = purify.sanitize(subject || '');
 
       await this.sendMessageService.sendMessage(
         {
           to: email,
           subject: safeSubject,
-          body: safeBody,
+          body: textBody,
+          html: safeHtmlBody,
+          attachments,
         },
         connectedAccount,
       );
 
-      this.logger.log(`Email sent successfully to ${email}`);
+      this.logger.log(
+        `Email sent successfully to ${email}${attachments.length > 0 ? ` with ${attachments.length} attachments` : ''}`,
+      );
 
       return {
+        success: true,
+        message: `Email sent successfully to ${email}`,
         result: {
-          success: true,
-          message: `Email sent successfully to ${email}`,
+          recipient: email,
+          subject: safeSubject,
+          connectedAccountId,
+          attachmentCount: attachments.length,
         },
       };
     } catch (error) {
       if (error instanceof SendEmailToolException) {
         return {
+          success: false,
+          message: `Failed to send email to ${email}`,
           error: error.message,
         };
       }
@@ -148,6 +247,8 @@ export class SendEmailTool implements Tool {
       this.logger.error(`Failed to send email: ${error}`);
 
       return {
+        success: false,
+        message: `Failed to send email to ${email}`,
         error: error instanceof Error ? error.message : 'Failed to send email',
       };
     }

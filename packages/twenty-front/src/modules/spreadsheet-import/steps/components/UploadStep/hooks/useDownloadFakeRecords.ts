@@ -3,7 +3,8 @@ import { spreadsheetImportFilterAvailableFieldMetadataItems } from '@/object-rec
 import { getCompositeSubFieldLabelWithFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldLabelWithFieldLabel';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
-import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
+import { formatValueForCSV } from '@/spreadsheet-import/utils/formatValueForCSV';
+import { sanitizeValueForCSVExport } from '@/spreadsheet-import/utils/sanitizeValueForCSVExport';
 import { saveAs } from 'file-saver';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -120,12 +121,16 @@ export const useDownloadFakeRecords = () => {
     return { headerRow, bodyRows };
   };
 
-  const formatToCsvContent = (rows: string[][]) => {
+  const formatToCsvContent = (rows: (string | JSON | string[])[][]) => {
     const escapedRows = rows.map((row) => {
-      return row.map((value) => escapeCSVValue(value));
+      return row.map((value) => {
+        const stringifiedValue =
+          typeof value === 'string' ? value : JSON.stringify(value);
+        return formatValueForCSV(sanitizeValueForCSVExport(stringifiedValue));
+      });
     });
 
-    const csvContent = [...escapedRows.map((row) => row.join(','))].join('\n');
+    const csvContent = escapedRows.map((row) => row.join(',')).join('\n');
     return [csvContent];
   };
 

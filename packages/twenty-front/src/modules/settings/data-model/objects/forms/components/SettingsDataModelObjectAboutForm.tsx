@@ -20,7 +20,7 @@ import {
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { type StringKeyOf } from 'type-fest';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 type SettingsDataModelObjectAboutFormProps = {
   disableEdition?: boolean;
@@ -139,7 +139,11 @@ export const SettingsDataModelObjectAboutForm = ({
             render={({ field: { onChange, value } }) => (
               <IconPicker
                 selectedIconKey={value}
+                disabled={disableEdition}
                 onChange={({ iconKey }) => {
+                  if (disableEdition) {
+                    return;
+                  }
                   onChange(iconKey);
                   onNewDirtyField?.();
                 }}
@@ -149,7 +153,7 @@ export const SettingsDataModelObjectAboutForm = ({
         </StyledInputContainer>
         <Controller
           key={`object-labelSingular-text-input`}
-          name={'labelSingular'}
+          name="labelSingular"
           control={control}
           defaultValue={objectMetadataItem?.labelSingular ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
@@ -159,7 +163,7 @@ export const SettingsDataModelObjectAboutForm = ({
               noErrorHelper={true}
               error={errors.labelSingular?.message}
               label={t`Singular`}
-              placeholder={'Listing'}
+              placeholder={t`Listing`}
               value={value}
               onChange={(value) => {
                 onChange(capitalize(value));
@@ -170,9 +174,10 @@ export const SettingsDataModelObjectAboutForm = ({
               }}
               onBlur={() => onNewDirtyField?.()}
               disabled={
-                objectMetadataItem &&
-                !objectMetadataItem?.isCustom &&
-                isLabelSyncedWithName
+                disableEdition ||
+                (objectMetadataItem &&
+                  !objectMetadataItem?.isCustom &&
+                  isLabelSyncedWithName)
               }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
@@ -181,7 +186,7 @@ export const SettingsDataModelObjectAboutForm = ({
         />
         <Controller
           key={`object-labelPlural-text-input`}
-          name={'labelPlural'}
+          name="labelPlural"
           control={control}
           defaultValue={objectMetadataItem?.labelPlural ?? ''}
           render={({ field: { onChange, value }, formState: { errors } }) => (
@@ -201,9 +206,10 @@ export const SettingsDataModelObjectAboutForm = ({
               }}
               onBlur={() => onNewDirtyField?.()}
               disabled={
-                objectMetadataItem &&
-                !objectMetadataItem?.isCustom &&
-                isLabelSyncedWithName
+                disableEdition ||
+                (objectMetadataItem &&
+                  !objectMetadataItem?.isCustom &&
+                  isLabelSyncedWithName)
               }
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
@@ -222,6 +228,7 @@ export const SettingsDataModelObjectAboutForm = ({
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             onBlur={() => onNewDirtyField?.()}
+            disabled={disableEdition}
           />
         )}
       />
@@ -326,6 +333,7 @@ export const SettingsDataModelObjectAboutForm = ({
                         description={t`Should changing an object's label also change the API?`}
                         checked={value ?? true}
                         advancedMode
+                        disabled={disableEdition}
                         onChange={(value) => {
                           onChange(value);
                           const isCustomObject =

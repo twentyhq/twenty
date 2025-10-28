@@ -6,8 +6,6 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const LISTING_NAME_SINGULAR = 'listing';
-
 describe('Custom object renaming', () => {
   let listingObjectId = '';
 
@@ -80,19 +78,20 @@ describe('Custom object renaming', () => {
 
     fillStandardObjectRelationsMapObjectMetadataId(standardObjects);
 
-    const LISTING_OBJECT = {
-      namePlural: 'listings',
-      nameSingular: LISTING_NAME_SINGULAR,
-      labelPlural: 'Listings',
-      labelSingular: 'Listing',
-      description: 'Listing object',
+    const CUSTOM_OBJECT = {
+      namePlural: 'customObjectNamePlural',
+      nameSingular: 'customObjectNameSingular',
+      labelPlural: 'customObjectLabelPlural',
+      labelSingular: 'customObjectLabelSingular',
+      description: 'Custom object description',
       icon: 'IconListNumbers',
       isLabelSyncedWithName: false,
     };
 
     // Act
     const { data } = await createOneObjectMetadata({
-      input: LISTING_OBJECT,
+      expectToFail: false,
+      input: CUSTOM_OBJECT,
       gqlFields: `
           id
           nameSingular
@@ -100,7 +99,7 @@ describe('Custom object renaming', () => {
     });
 
     // Assert
-    expect(data.createOneObject.nameSingular).toBe(LISTING_NAME_SINGULAR);
+    expect(data.createOneObject.nameSingular).toBe(CUSTOM_OBJECT.nameSingular);
 
     listingObjectId = data.createOneObject.id;
 
@@ -110,7 +109,7 @@ describe('Custom object renaming', () => {
       .filter(
         // @ts-expect-error legacy noImplicitAny
         (field) =>
-          field.node.name === `${LISTING_NAME_SINGULAR}` &&
+          field.node.name === `${CUSTOM_OBJECT.nameSingular}` &&
           field.node.type === FieldMetadataType.RELATION,
       )
       // @ts-expect-error legacy noImplicitAny
@@ -143,6 +142,7 @@ describe('Custom object renaming', () => {
 
     // Act
     const { data } = await updateOneObjectMetadata({
+      expectToFail: false,
       gqlFields: `
         nameSingular
         labelSingular
@@ -165,32 +165,19 @@ describe('Custom object renaming', () => {
     expect(data.updateOneObject.namePlural).toBe(HOUSE_NAME_PLURAL);
     expect(data.updateOneObject.labelSingular).toBe(HOUSE_LABEL_SINGULAR);
     expect(data.updateOneObject.labelPlural).toBe(HOUSE_LABEL_PLURAL);
-
-    const fieldsResponse = await makeMetadataAPIRequest(fieldsGraphqlOperation);
-
-    const fieldsMetadata = fieldsResponse.body.data.fields.edges.map(
-      // @ts-expect-error legacy noImplicitAny
-      (field) => field.node,
-    );
-
-    // standard relations have been updated
-    STANDARD_OBJECT_RELATIONS.forEach((relation) => {
-      // relation field
-      const relationFieldMetadataId =
-        // @ts-expect-error legacy noImplicitAny
-        standardObjectRelationsMap[relation].relationFieldMetadataId;
-
-      const updatedRelationFieldMetadata = fieldsMetadata.find(
-        // @ts-expect-error legacy noImplicitAny
-        (field) => field.id === relationFieldMetadataId,
-      );
-
-      expect(updatedRelationFieldMetadata.name).toBe(HOUSE_NAME_SINGULAR);
-      expect(updatedRelationFieldMetadata.label).toBe(HOUSE_LABEL_SINGULAR);
-    });
   });
 
   it('3. should delete custom object', async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: listingObjectId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
+
     const { data } = await deleteOneObjectMetadata({
       input: {
         idToDelete: listingObjectId,

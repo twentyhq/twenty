@@ -6,10 +6,6 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
-const StyledBanner = styled(Banner)`
-  position: absolute;
-`;
-
 const StyledText = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
@@ -32,7 +28,7 @@ export const InformationBanner = ({
   isButtonDisabled?: boolean;
 }) => {
   return (
-    <StyledBanner variant={variant}>
+    <Banner variant={variant}>
       <StyledText>{message}</StyledText>
       {buttonTitle && buttonOnClick && (
         <Button
@@ -45,6 +41,6 @@ export const InformationBanner = ({
           disabled={isButtonDisabled}
         />
       )}
-    </StyledBanner>
+    </Banner>
   );
 };

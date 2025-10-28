@@ -1,5 +1,7 @@
-import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { NotificationCounter } from 'twenty-ui/navigation';
@@ -19,7 +21,10 @@ export const RecordBoardCardMultiDragPreview = ({
   isDragging,
 }: RecordBoardCardMultiDragPreviewProps) => {
   const { recordId } = useContext(RecordBoardCardContext);
-  const multiDragState = useBoardCardDragState();
+  const recordBoardId = useAvailableComponentInstanceIdOrThrow(
+    RecordBoardComponentInstanceContext,
+  );
+  const multiDragState = useRecordDragState('board', recordBoardId);
 
   const isCurrentCardSelected =
     multiDragState?.originalSelection.includes(recordId) || false;

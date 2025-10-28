@@ -1,5 +1,6 @@
 import { sortFavorites } from '@/favorites/utils/sortFavorites';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useFavoritesMetadata } from './useFavoritesMetadata';
@@ -13,7 +14,7 @@ export const useSortedFavorites = () => {
     favoriteRelationFields,
   } = useFavoritesMetadata();
 
-  const prefetchViews = useRecoilValue(prefetchViewsState);
+  const coreViews = useRecoilValue(coreViewsState).map(convertCoreViewToView);
 
   const favoritesSorted = useMemo(() => {
     return sortFavorites(
@@ -21,15 +22,15 @@ export const useSortedFavorites = () => {
       favoriteRelationFields,
       getObjectRecordIdentifierByNameSingular,
       true,
-      prefetchViews,
+      coreViews,
       objectMetadataItems,
     );
   }, [
+    coreViews,
     favoriteRelationFields,
     favorites,
     getObjectRecordIdentifierByNameSingular,
     objectMetadataItems,
-    prefetchViews,
   ]);
 
   const workspaceFavoritesSorted = useMemo(() => {
@@ -38,14 +39,14 @@ export const useSortedFavorites = () => {
       favoriteRelationFields,
       getObjectRecordIdentifierByNameSingular,
       false,
-      prefetchViews,
+      coreViews,
       objectMetadataItems,
     );
   }, [
     workspaceFavorites,
     favoriteRelationFields,
     getObjectRecordIdentifierByNameSingular,
-    prefetchViews,
+    coreViews,
     objectMetadataItems,
   ]);
 

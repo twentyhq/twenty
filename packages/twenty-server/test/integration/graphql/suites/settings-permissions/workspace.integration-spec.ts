@@ -326,13 +326,18 @@ describe('workspace permissions', () => {
   });
 
   describe('billing', () => {
-    describe('switchToYearlyInterval', () => {
+    describe('switchSubscriptionInterval', () => {
       it('should throw a permission error when user does not have permission (member role)', async () => {
         const queryData = {
           query: `
-            mutation SwitchToYearlyInterval {
-              switchToYearlyInterval {
-                success
+            mutation SwitchSubscriptionInterval {
+              switchSubscriptionInterval {
+                billingSubscriptions {
+                  id
+                }
+                currentBillingSubscription {
+                  id
+                }
               }
             }
           `,

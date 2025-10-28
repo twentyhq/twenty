@@ -16,8 +16,10 @@ export const ApolloProvider = ({ children }: React.PropsWithChildren) => {
     extraLinks: [captchaRefreshLink],
   });
 
-  // This will attach the right apollo client to Apollo Dev Tools
-  window.__APOLLO_CLIENT__ = apolloClient;
+  // Expose Apollo client in development to Apollo Dev Tools
+  if (process.env.NODE_ENV === 'development') {
+    window.__APOLLO_CLIENT__ = apolloClient;
+  }
 
   return (
     <ApolloProviderBase client={apolloClient}>{children}</ApolloProviderBase>

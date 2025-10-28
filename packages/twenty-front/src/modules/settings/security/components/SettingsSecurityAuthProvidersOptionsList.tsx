@@ -18,11 +18,9 @@ import {
 import { Card } from 'twenty-ui/layout';
 import {
   type AuthProviders,
-  FeatureFlagKey,
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
 
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Toggle2FA } from './Toggle2FA';
 
 const StyledSettingsSecurityOptionsList = styled.div`
@@ -40,10 +38,6 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
-  );
-
-  const isTwoFactorAuthenticationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_ENABLED,
   );
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
@@ -185,11 +179,9 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               }
             />
           </Card>
-          {isTwoFactorAuthenticationEnabled && (
-            <Card rounded>
-              <Toggle2FA />
-            </Card>
-          )}
+          <Card rounded>
+            <Toggle2FA />
+          </Card>
         </>
       )}
     </StyledSettingsSecurityOptionsList>

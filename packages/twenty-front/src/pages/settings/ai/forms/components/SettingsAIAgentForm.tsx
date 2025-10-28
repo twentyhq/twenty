@@ -7,8 +7,8 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { isDefined } from 'twenty-shared/utils';
-import { useGetRolesQuery } from '~/generated-metadata/graphql';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
+import { SettingsAgentModelCapabilities } from '../../components/SettingsAgentModelCapabilities';
 import { type SettingsAIAgentFormValues } from '../../hooks/useSettingsAgentFormState';
 
 const StyledFormContainer = styled.div`
@@ -39,22 +39,17 @@ type SettingsAIAgentFormProps = {
     field: keyof SettingsAIAgentFormValues,
     value: SettingsAIAgentFormValues[keyof SettingsAIAgentFormValues],
   ) => void;
+  disabled: boolean;
 };
 
 export const SettingsAIAgentForm = ({
   formValues,
   onFieldChange,
+  disabled,
 }: SettingsAIAgentFormProps) => {
   const { t } = useLingui();
 
   const modelOptions = useAiModelOptions();
-  const { data: rolesData } = useGetRolesQuery();
-
-  const rolesOptions =
-    rolesData?.getRoles?.map((role) => ({
-      label: role.label,
-      value: role.id,
-    })) || [];
 
   const noModelsAvailable = modelOptions.length === 0;
 
@@ -72,6 +67,7 @@ export const SettingsAIAgentForm = ({
             onChange={({ iconKey }) => {
               onFieldChange('icon', iconKey);
             }}
+            disabled={disabled}
           />
 
           <StyledNameContainer>
@@ -84,6 +80,7 @@ export const SettingsAIAgentForm = ({
                 fillNameFromLabel(value);
               }}
               fullWidth
+              disabled={disabled}
             />
           </StyledNameContainer>
         </StyledIconNameRow>
@@ -96,6 +93,7 @@ export const SettingsAIAgentForm = ({
           minRows={3}
           value={formValues.description || ''}
           onChange={(value) => onFieldChange('description', value)}
+          disabled={disabled}
         />
       </StyledFormContainer>
 
@@ -106,7 +104,7 @@ export const SettingsAIAgentForm = ({
           value={formValues.modelId}
           onChange={(value) => onFieldChange('modelId', value)}
           options={modelOptions}
-          disabled={noModelsAvailable}
+          disabled={noModelsAvailable || disabled}
         />
         {noModelsAvailable && (
           <StyledErrorMessage>
@@ -115,28 +113,29 @@ export const SettingsAIAgentForm = ({
         )}
       </StyledFormContainer>
 
-      <StyledFormContainer>
-        <Select
-          dropdownId="ai-role-select"
-          label={t`Role`}
-          value={formValues.role || ''}
-          onChange={(value) => onFieldChange('role', value)}
-          options={rolesOptions}
-          emptyOption={{
-            label: t`Select a role`,
-            value: '',
-          }}
-        />
-      </StyledFormContainer>
+      {formValues.modelId && (
+        <StyledFormContainer>
+          <SettingsAgentModelCapabilities
+            selectedModelId={formValues.modelId}
+            modelConfiguration={formValues.modelConfiguration || {}}
+            onConfigurationChange={(configuration) =>
+              onFieldChange('modelConfiguration', configuration)
+            }
+            disabled={disabled}
+          />
+        </StyledFormContainer>
+      )}
 
       <StyledFormContainer>
         <TextArea
           textAreaId="agent-prompt-textarea"
-          label={t`System Prompt*`}
+          label={t`System Prompt`}
           placeholder={t`Enter the system prompt that defines this agent's behavior and capabilities`}
           minRows={6}
+          maxRows={15}
           value={formValues.prompt}
           onChange={(value) => onFieldChange('prompt', value)}
+          disabled={disabled}
         />
       </StyledFormContainer>
     </StyledFormContainer>

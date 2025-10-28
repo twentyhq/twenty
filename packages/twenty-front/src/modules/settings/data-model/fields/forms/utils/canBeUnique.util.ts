@@ -6,10 +6,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const canBeUnique = (
   field: Pick<FieldMetadataItem, 'type' | 'isCustom'>,
 ) => {
-  if (field.isCustom === false) {
-    return false;
-  }
-
   if (
     [FieldMetadataType.MORPH_RELATION, FieldMetadataType.RELATION].includes(
       field.type,

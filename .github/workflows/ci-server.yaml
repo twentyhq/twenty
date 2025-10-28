@@ -1,4 +1,5 @@
 name: CI Server
+
 on:
   push:
     branches:
@@ -6,9 +7,12 @@ on:
 
   pull_request:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
   SERVER_SETUP_CACHE_KEY: server-setup
@@ -29,8 +33,6 @@ jobs:
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
-    env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -114,7 +116,7 @@ jobs:
             echo "$CORE_MIGRATION_OUTPUT"
 
             rm -f packages/twenty-server/*core-migration-check.ts
-            
+
             exit 1
           fi
       - name: GraphQL / Check for Pending Generation
@@ -144,8 +146,6 @@ jobs:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     needs: server-setup
-    env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -170,7 +170,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5]
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -191,7 +191,7 @@ jobs:
         ports:
           - 6379:6379
       clickhouse:
-        image: clickhouse/clickhouse-server:latest
+        image: clickhouse/clickhouse-server:25.8.8
         env:
           CLICKHOUSE_PASSWORD: clickhousePassword
           CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
@@ -199,17 +199,16 @@ jobs:
           - 8123:8123
           - 9000:9000
         options: >-
-          --health-cmd "clickhouse-client --host=localhost --port=9000 --user=default --password=clickhousePassword --query='SELECT 1'" 
-          --health-interval 10s 
-          --health-timeout 5s 
+          --health-cmd "clickhouse-client --host=localhost --port=9000 --user=default --password=clickhousePassword --query='SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
           --health-retries 5
     env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       NODE_ENV: test
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
-      SHARD_COUNTER: 4
+      SHARD_COUNTER: 5
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -219,6 +218,7 @@ jobs:
         uses: ./.github/workflows/actions/yarn-install
       - name: Update .env.test for integrations tests
         run: |
+          echo "" >> .env.test
           echo "IS_BILLING_ENABLED=true" >> .env.test
           echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test
@@ -251,9 +251,9 @@ jobs:
   ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-latest
     needs: [changed-files-check, server-setup, server-test, server-integration-test]
     steps:
-      - name: Fail job if any needs failed 
+      - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure')
         run: exit 1

@@ -12,11 +12,12 @@ import {
 } from 'typeorm';
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ModelConfiguration } from 'src/engine/metadata-modules/agent/types/modelConfiguration';
 
-import { AgentChatThreadEntity } from './agent-chat-thread.entity';
 import { AgentHandoffEntity } from './agent-handoff.entity';
 
 @Entity('agent')
@@ -25,9 +26,15 @@ import { AgentHandoffEntity } from './agent-handoff.entity';
   unique: true,
   where: '"deletedAt" IS NULL',
 })
-export class AgentEntity {
+export class AgentEntity
+  extends SyncableEntity
+  implements Required<AgentEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: true, type: 'uuid' })
+  standardId: string | null;
 
   @Column({ nullable: false })
   name: string;
@@ -56,14 +63,11 @@ export class AgentEntity {
   @Column({ default: false })
   isCustom: boolean;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.agents, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.agents, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
-
-  @OneToMany(() => AgentChatThreadEntity, (chatThread) => chatThread.agent)
-  chatThreads: Relation<AgentChatThreadEntity[]>;
+  workspace: Relation<WorkspaceEntity>;
 
   @OneToMany(() => AgentHandoffEntity, (handoff) => handoff.fromAgent)
   outgoingHandoffs: Relation<AgentHandoffEntity[]>;
@@ -78,5 +82,8 @@ export class AgentEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date;
+  deletedAt: Date | null;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  modelConfiguration: ModelConfiguration;
 }

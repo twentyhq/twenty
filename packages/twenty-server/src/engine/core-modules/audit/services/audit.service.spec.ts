@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { AuditContextMock } from 'test/utils/audit-context.mock';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
+import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-created';
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -135,7 +136,7 @@ describe('AuditService', () => {
       const context = service.createContext(mockUserIdAndWorkspaceId);
 
       const result = await context.createObjectEvent(
-        CUSTOM_DOMAIN_ACTIVATED_EVENT,
+        OBJECT_RECORD_CREATED_EVENT,
         {
           recordId: 'test-record-id',
           objectMetadataId: 'test-object-metadata-id',

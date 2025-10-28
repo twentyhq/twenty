@@ -12,12 +12,14 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { AppPath } from '@/types/AppPath';
+import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
+import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -176,11 +178,14 @@ const StyledActionBackLinkContainer = styled.div`
 `;
 
 export const SignInUpTOTPVerification = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { getAuthTokensFromOTP } = useAuth();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
+  const { isCaptchaReady } = useCaptcha();
   const loginToken = useRecoilValue(loginTokenState);
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const { t } = useLingui();
@@ -188,8 +193,17 @@ export const SignInUpTOTPVerification = () => {
   const { form } = useTwoFactorAuthenticationForm();
 
   const submitOTP = async (values: OTPFormValues) => {
+    setIsLoading(true);
     try {
-      const captchaToken = await readCaptchaToken();
+      if (!isCaptchaReady) {
+        enqueueErrorSnackBar({
+          message: t`Captcha (anti-bot check) is still loading, try again`,
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      const captchaToken = readCaptchaToken();
 
       if (!loginToken) {
         return navigate(AppPath.SignInUp);
@@ -205,6 +219,8 @@ export const SignInUpTOTPVerification = () => {
           dedupeKey: 'invalid-otp-dedupe-key',
         },
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -258,10 +274,11 @@ export const SignInUpTOTPVerification = () => {
         />
       </StyledMainContentContainer>
       <MainButton
-        title={'Submit'}
+        title={t`Submit`}
         type="submit"
-        variant={'primary'}
+        variant="primary"
         fullWidth
+        disabled={isLoading}
       />
       <StyledActionBackLinkContainer>
         <ClickToActionLink onClick={handleBack}>

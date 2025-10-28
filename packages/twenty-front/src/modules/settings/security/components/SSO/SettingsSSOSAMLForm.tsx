@@ -167,7 +167,7 @@ export const SettingsSSOSAMLForm = () => {
               type="button"
             />
           </StyledContainer>
-          <HorizontalSeparator text={'Or'} />
+          <HorizontalSeparator text={t`Or`} />
           <StyledContainer>
             <StyledLinkContainer>
               <SettingsTextInput

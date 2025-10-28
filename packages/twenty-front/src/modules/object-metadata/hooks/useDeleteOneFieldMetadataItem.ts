@@ -5,10 +5,10 @@ import {
   type DeleteOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useRecoilState } from 'recoil';
 import { DELETE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
@@ -20,13 +20,13 @@ export const useDeleteOneFieldMetadataItem = () => {
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const [
     recordIndexKanbanAggregateOperation,
     setRecordIndexKanbanAggregateOperation,
   ] = useRecoilState(recordIndexKanbanAggregateOperationState);
-
-  const apolloCoreClient = useApolloCoreClient();
 
   const resetRecordIndexKanbanAggregateOperation = async (
     idToDelete: DeleteOneFieldMetadataItemMutationVariables['idToDelete'],
@@ -37,14 +37,15 @@ export const useDeleteOneFieldMetadataItem = () => {
         fieldMetadataId: null,
       });
     }
-    await apolloCoreClient.refetchQueries({
-      include: ['FindManyViews'],
-    });
   };
 
-  const deleteOneFieldMetadataItem = async (
-    idToDelete: DeleteOneFieldMetadataItemMutationVariables['idToDelete'],
-  ) => {
+  const deleteOneFieldMetadataItem = async ({
+    idToDelete,
+    objectMetadataId,
+  }: {
+    idToDelete: DeleteOneFieldMetadataItemMutationVariables['idToDelete'];
+    objectMetadataId: string;
+  }) => {
     const result = await mutate({
       variables: {
         idToDelete,
@@ -54,6 +55,7 @@ export const useDeleteOneFieldMetadataItem = () => {
     await resetRecordIndexKanbanAggregateOperation(idToDelete);
 
     await refreshObjectMetadataItems();
+    await refreshCoreViewsByObjectMetadataId(objectMetadataId);
 
     return result;
   };

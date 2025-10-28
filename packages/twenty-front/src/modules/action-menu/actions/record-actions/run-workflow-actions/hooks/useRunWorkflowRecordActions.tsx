@@ -1,4 +1,5 @@
 import { Action } from '@/action-menu/actions/components/Action';
+import { isBulkRecordsManualTrigger } from '@/action-menu/actions/record-actions/utils/isBulkRecordsManualTrigger';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -7,7 +8,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
-import { msg } from '@lingui/core/macro';
 
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
@@ -44,25 +44,48 @@ export const useRunWorkflowRecordActions = ({
     ({ snapshot }) =>
       async (
         selectedRecordIds: string[],
-        activeWorkflowVersion: WorkflowVersion,
+        activeWorkflowVersion: Pick<
+          WorkflowVersion,
+          'id' | 'workflowId' | 'trigger'
+        >,
       ) => {
-        for (const selectedRecordId of selectedRecordIds) {
-          const selectedRecord = snapshot
-            .getLoadable(recordStoreFamilyState(selectedRecordId))
-            .getValue();
-
-          if (!isDefined(selectedRecord)) {
-            continue;
-          }
+        if (
+          isDefined(activeWorkflowVersion?.trigger) &&
+          isBulkRecordsManualTrigger(activeWorkflowVersion.trigger)
+        ) {
+          const objectNamePlural = objectMetadataItem.namePlural;
+          const selectedRecords = selectedRecordIds
+            .map((recordId) =>
+              snapshot.getLoadable(recordStoreFamilyState(recordId)).getValue(),
+            )
+            .filter(isDefined);
 
           await runWorkflowVersion({
             workflowId: activeWorkflowVersion.workflowId,
             workflowVersionId: activeWorkflowVersion.id,
-            payload: selectedRecord,
+            payload: {
+              [objectNamePlural]: selectedRecords,
+            },
           });
+        } else {
+          for (const selectedRecordId of selectedRecordIds) {
+            const selectedRecord = snapshot
+              .getLoadable(recordStoreFamilyState(selectedRecordId))
+              .getValue();
+
+            if (!isDefined(selectedRecord)) {
+              continue;
+            }
+
+            await runWorkflowVersion({
+              workflowId: activeWorkflowVersion.workflowId,
+              workflowVersionId: activeWorkflowVersion.id,
+              payload: selectedRecord,
+            });
+          }
         }
       },
-    [runWorkflowVersion],
+    [runWorkflowVersion, objectMetadataItem],
   );
 
   return activeWorkflowVersions
@@ -81,9 +104,11 @@ export const useRunWorkflowRecordActions = ({
         type: ActionType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionScope.RecordSelection,
-        label: msg`${name}`,
+        label: name,
+        shortLabel: name,
         position: index,
         Icon,
+        isPinned: activeWorkflowVersion.trigger?.settings?.isPinned,
         shouldBeRegistered: () => true,
         component: (
           <Action

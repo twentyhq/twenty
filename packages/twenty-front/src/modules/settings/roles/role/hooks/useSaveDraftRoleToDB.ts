@@ -1,13 +1,15 @@
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
+import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
+import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
 import { newFieldPermissionsFilter } from '@/settings/roles/role/hooks/utils/newFieldPermissionsFilter.util';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { SettingsPath } from '@/types/SettingsPath';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   useCreateOneRoleMutation,
   useUpdateOneRoleMutation,
@@ -18,7 +20,6 @@ import {
 import { type Role } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'label',
@@ -30,6 +31,9 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'canUpdateAllObjectRecords',
   'canSoftDeleteAllObjectRecords',
   'canDestroyAllObjectRecords',
+  'canBeAssignedToUsers',
+  'canBeAssignedToAgents',
+  'canBeAssignedToApiKeys',
 ];
 
 export const useSaveDraftRoleToDB = ({
@@ -45,6 +49,8 @@ export const useSaveDraftRoleToDB = ({
   const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
   const [upsertFieldPermissions] = useUpsertFieldPermissionsMutation();
   const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
+  const { addAgentsToRole } = useUpdateAgentRole(roleId);
+  const { addApiKeysToRole } = useUpdateApiKeyRole(roleId);
   const navigateSettings = useNavigateSettings();
 
   const settingsPersistedRole = useRecoilValue(
@@ -98,7 +104,7 @@ export const useSaveDraftRoleToDB = ({
     if (
       isNonEmptyArray(
         fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless,
-      )
+      ) === true
     ) {
       for (const fieldPermissionToRemoveInDraftRole of fieldPermissionsThatShouldntBeCreatedBecauseTheyAreUseless) {
         removeFieldPermissionInDraftRole(
@@ -125,6 +131,9 @@ export const useSaveDraftRoleToDB = ({
               settingsDraftRole.canSoftDeleteAllObjectRecords,
             canDestroyAllObjectRecords:
               settingsDraftRole.canDestroyAllObjectRecords,
+            canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+            canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+            canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
           } satisfies Partial<Role>,
         },
         refetchQueries: [getOperationName(GET_ROLES) ?? ''],
@@ -173,7 +182,7 @@ export const useSaveDraftRoleToDB = ({
         });
       }
 
-      if (isNonEmptyArray(fieldPermissionsToUpsert)) {
+      if (isNonEmptyArray(fieldPermissionsToUpsert) === true) {
         await upsertFieldPermissions({
           variables: {
             upsertFieldPermissionsInput: {
@@ -191,12 +200,35 @@ export const useSaveDraftRoleToDB = ({
         });
       }
 
-      if (isDefined(dirtyFields.workspaceMembers)) {
+      if (
+        isDefined(dirtyFields.workspaceMembers) &&
+        settingsDraftRole.canBeAssignedToUsers
+      ) {
         await addWorkspaceMembersToRole({
           roleId: data.createOneRole.id,
           workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
             (member) => member.id,
           ),
+        });
+      }
+
+      if (
+        isDefined(dirtyFields.agents) &&
+        settingsDraftRole.canBeAssignedToAgents
+      ) {
+        await addAgentsToRole({
+          roleId: data.createOneRole.id,
+          agentIds: settingsDraftRole.agents.map((agent) => agent.id),
+        });
+      }
+
+      if (
+        isDefined(dirtyFields.apiKeys) &&
+        settingsDraftRole.canBeAssignedToApiKeys
+      ) {
+        await addApiKeysToRole({
+          roleId: data.createOneRole.id,
+          apiKeyIds: settingsDraftRole.apiKeys.map((apiKey) => apiKey.id),
         });
       }
 
@@ -238,6 +270,10 @@ export const useSaveDraftRoleToDB = ({
                   settingsDraftRole.canSoftDeleteAllObjectRecords,
                 canDestroyAllObjectRecords:
                   settingsDraftRole.canDestroyAllObjectRecords,
+                canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+                canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+                canBeAssignedToApiKeys:
+                  settingsDraftRole.canBeAssignedToApiKeys,
               },
             },
           },
@@ -269,7 +305,7 @@ export const useSaveDraftRoleToDB = ({
         });
       }
 
-      if (isNonEmptyArray(fieldPermissionsToUpsert)) {
+      if (isNonEmptyArray(fieldPermissionsToUpsert) === true) {
         await upsertFieldPermissions({
           variables: {
             upsertFieldPermissionsInput: {

@@ -73,6 +73,7 @@ const config: StorybookConfig = {
           'react-dom/client': 'react-dom/profiling',
         },
       },
+      logLevel: 'warn',
     });
   },
 

@@ -3,5 +3,5 @@
   "compilerOptions": {
     "types": ["jest", "node"]
   },
-  "include": ["jest.config.ts", "**/*.test.ts", "**/*.spec.ts", "**/*.d.ts"]
+  "include": ["jest.config.mjs", "**/*.test.ts", "**/*.spec.ts", "**/*.d.ts"]
 }

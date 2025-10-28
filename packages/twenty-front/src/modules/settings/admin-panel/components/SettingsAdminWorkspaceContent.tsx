@@ -7,6 +7,7 @@ import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonat
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
+import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/get-workspace-schema-name.util';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -20,12 +21,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
-import { Chip, AvatarChip } from 'twenty-ui/components';
+import { AvatarChip, Chip } from 'twenty-ui/components';
 import {
   H2Title,
   IconEyeShare,
   IconHome,
   IconId,
+  IconLink,
   IconUser,
 } from 'twenty-ui/display';
 import { Button, Toggle } from 'twenty-ui/input';
@@ -92,6 +94,7 @@ export const SettingsAdminWorkspaceContent = ({
         return executeImpersonationRedirect(
           workspace.workspaceUrls,
           loginToken.token,
+          '_blank',
         );
       },
       onError: (error) => {
@@ -132,6 +135,10 @@ export const SettingsAdminWorkspaceContent = ({
     });
   };
 
+  const getWorkspaceUrl = (workspaceUrls: WorkspaceInfo['workspaceUrls']) => {
+    return workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl;
+  };
+
   const workspaceInfoItems = [
     {
       Icon: IconHome,
@@ -160,6 +167,20 @@ export const SettingsAdminWorkspaceContent = ({
       value: activeWorkspace?.id,
     },
     {
+      Icon: IconId,
+      label: t`Schema name`,
+      value: isDefined(activeWorkspace?.id)
+        ? getWorkspaceSchemaName(activeWorkspace.id)
+        : '',
+    },
+    {
+      Icon: IconLink,
+      label: t`URL`,
+      value: activeWorkspace?.workspaceUrls
+        ? getWorkspaceUrl(activeWorkspace.workspaceUrls)
+        : '',
+    },
+    {
       Icon: IconUser,
       label: t`Members`,
       value: activeWorkspace?.totalUsers,
@@ -185,7 +206,11 @@ export const SettingsAdminWorkspaceContent = ({
               Icon={IconEyeShare}
               variant="primary"
               accent="default"
-              title={t`Impersonate`}
+              title={
+                activeWorkspace.allowImpersonation === false
+                  ? t`Impersonation is disabled for this workspace`
+                  : t`Impersonate`
+              }
               onClick={() => handleImpersonate(activeWorkspace.id)}
               disabled={
                 isImpersonateLoading ||

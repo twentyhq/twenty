@@ -41,10 +41,7 @@ export const SettingsIntegrationGroup = ({
     <StyledIntegrationGroupHeader>
       <H2Title title={integrationGroup.title} />
       {integrationGroup.hyperlink && (
-        <StyledGroupLink
-          target={'_blank'}
-          to={integrationGroup.hyperlink ?? ''}
-        >
+        <StyledGroupLink target="_blank" to={integrationGroup.hyperlink ?? ''}>
           <div>{integrationGroup.hyperlinkText}</div>
           <div>→</div>
         </StyledGroupLink>

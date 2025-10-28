@@ -1,13 +1,16 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type EachTestingContext } from 'twenty-shared/testing';
+import {
+  eachTestingContextFilter,
+  type EachTestingContext,
+} from 'twenty-shared/testing';
 import { type Repository } from 'typeorm';
 
 import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -41,7 +44,7 @@ type CommandRunnerValues =
   | typeof BasicUpgradeCommandRunner
   | typeof InvalidUpgradeCommandRunner;
 
-const generateMockWorkspace = (overrides?: Partial<Workspace>) =>
+const generateMockWorkspace = (overrides?: Partial<WorkspaceEntity>) =>
   ({
     id: 'workspace-id',
     version: '1.0.0',
@@ -57,10 +60,10 @@ const generateMockWorkspace = (overrides?: Partial<Workspace>) =>
     activationStatus: 'active',
     workspaceMembersCount: 1,
     ...overrides,
-  }) as Workspace;
+  }) as WorkspaceEntity;
 
 type BuildUpgradeCommandModuleArgs = {
-  workspaces: Workspace[];
+  workspaces: WorkspaceEntity[];
   appVersion: string | null;
   commandRunner: CommandRunnerValues;
 };
@@ -73,7 +76,7 @@ const buildUpgradeCommandModule = async ({
     providers: [
       commandRunner,
       {
-        provide: getRepositoryToken(Workspace, 'core'),
+        provide: getRepositoryToken(WorkspaceEntity),
         useValue: {
           findOneByOrFail: jest
             .fn()
@@ -121,16 +124,17 @@ const buildUpgradeCommandModule = async ({
 
 describe('UpgradeCommandRunner', () => {
   let upgradeCommandRunner: BasicUpgradeCommandRunner;
-  let workspaceRepository: Repository<Workspace>;
+  let workspaceRepository: Repository<WorkspaceEntity>;
   let syncWorkspaceMetadataCommand: jest.Mocked<SyncWorkspaceMetadataCommand>;
   let runAfterSyncMetadataSpy: jest.SpyInstance;
   let runBeforeSyncMetadataSpy: jest.SpyInstance;
+  let runCoreMigrationsSpy: jest.SpyInstance;
   let twentyORMGlobalManagerSpy: TwentyORMGlobalManager;
 
   type BuildModuleAndSetupSpiesArgs = {
     numberOfWorkspace?: number;
-    workspaceOverride?: Partial<Workspace>;
-    workspaces?: Workspace[];
+    workspaceOverride?: Partial<WorkspaceEntity>;
+    workspaces?: WorkspaceEntity[];
     appVersion?: string | null;
     commandRunner?: CommandRunnerValues;
   };
@@ -156,6 +160,11 @@ describe('UpgradeCommandRunner', () => {
     });
 
     upgradeCommandRunner = module.get(commandRunner);
+
+    jest.spyOn(upgradeCommandRunner['logger'], 'log').mockImplementation();
+    jest.spyOn(upgradeCommandRunner['logger'], 'error').mockImplementation();
+    jest.spyOn(upgradeCommandRunner['logger'], 'warn').mockImplementation();
+
     runBeforeSyncMetadataSpy = jest.spyOn(
       upgradeCommandRunner,
       'runBeforeSyncMetadata',
@@ -165,9 +174,12 @@ describe('UpgradeCommandRunner', () => {
       'runAfterSyncMetadata',
     );
     jest.spyOn(upgradeCommandRunner, 'runOnWorkspace');
+    runCoreMigrationsSpy = jest
+      .spyOn(upgradeCommandRunner, 'runCoreMigrations')
+      .mockImplementation(() => Promise.resolve());
 
-    workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace, 'core'),
+    workspaceRepository = module.get<Repository<WorkspaceEntity>>(
+      getRepositoryToken(WorkspaceEntity),
     );
     syncWorkspaceMetadataCommand = module.get(SyncWorkspaceMetadataCommand);
     twentyORMGlobalManagerSpy = module.get<TwentyORMGlobalManager>(
@@ -211,76 +223,6 @@ describe('UpgradeCommandRunner', () => {
       upgradeCommandRunner.runAfterSyncMetadata,
       workspaceRepository.update,
     ].forEach((fn) => expect(fn).not.toHaveBeenCalled());
-  });
-
-  it('should run upgrade command with failing and successful workspaces', async () => {
-    const outdatedVersionWorkspaces = generateMockWorkspace({
-      id: 'outated_version_workspace',
-      version: '0.42.42',
-    });
-    const invalidVersionWorkspace = generateMockWorkspace({
-      id: 'invalid_version_workspace',
-      version: 'invalid',
-    });
-    const nullVersionWorkspace = generateMockWorkspace({
-      id: 'null_version_workspace',
-      version: null,
-    });
-    const numberOfValidWorkspace = 4;
-    const failingWorkspaces = [
-      outdatedVersionWorkspaces,
-      invalidVersionWorkspace,
-      nullVersionWorkspace,
-    ];
-    const totalWorkspace = numberOfValidWorkspace + failingWorkspaces.length;
-    const appVersion = 'v2.0.0';
-    const expectedToVersion = '2.0.0';
-
-    await buildModuleAndSetupSpies({
-      numberOfWorkspace: numberOfValidWorkspace,
-      workspaces: failingWorkspaces,
-      appVersion,
-    });
-    // @ts-expect-error legacy noImplicitAny
-    const passedParams = [];
-    const options = {};
-
-    // @ts-expect-error legacy noImplicitAny
-    await upgradeCommandRunner.run(passedParams, options);
-
-    // Common assertions
-    const { fail: failReport, success: successReport } =
-      upgradeCommandRunner.migrationReport;
-
-    [
-      twentyORMGlobalManagerSpy.destroyDataSourceForWorkspace,
-      upgradeCommandRunner.runOnWorkspace,
-    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(totalWorkspace));
-    expect(failReport.length + successReport.length).toBe(totalWorkspace);
-
-    // Success assertions
-    [
-      upgradeCommandRunner.runBeforeSyncMetadata,
-      syncWorkspaceMetadataCommand.runOnWorkspace,
-      upgradeCommandRunner.runAfterSyncMetadata,
-    ].forEach((fn) => expect(fn).toHaveBeenCalledTimes(numberOfValidWorkspace));
-    expect(successReport.length).toBe(numberOfValidWorkspace);
-    expect(workspaceRepository.update).toHaveBeenNthCalledWith(
-      numberOfValidWorkspace,
-      { id: expect.any(String) },
-      { version: expectedToVersion },
-    );
-
-    // Failing assertions
-    expect(failReport.length).toBe(failingWorkspaces.length);
-    failReport.forEach((report) => {
-      expect(
-        failingWorkspaces.some(
-          (workspace) => workspace.id === report.workspaceId,
-        ),
-      ).toBe(true);
-      expect(report.error).toMatchSnapshot();
-    });
   });
 
   it('should run upgrade over several workspaces', async () => {
@@ -383,7 +325,7 @@ describe('UpgradeCommandRunner', () => {
       },
     ];
 
-    it.each(successfulTestUseCases)(
+    it.each(eachTestingContextFilter(successfulTestUseCases))(
       '$title',
       async ({ context: { input } }) => {
         await buildModuleAndSetupSpies(input);
@@ -400,8 +342,9 @@ describe('UpgradeCommandRunner', () => {
 
         expect(failReport.length).toBe(0);
         expect(successReport.length).toBe(1);
-        expect(runAfterSyncMetadataSpy).toBeCalledTimes(1);
-        expect(runBeforeSyncMetadataSpy).toBeCalledTimes(1);
+        expect(runCoreMigrationsSpy).toHaveBeenCalledTimes(1);
+        expect(runAfterSyncMetadataSpy).toHaveBeenCalledTimes(1);
+        expect(runBeforeSyncMetadataSpy).toHaveBeenCalledTimes(1);
         const { workspaceId } = successReport[0];
 
         expect(workspaceId).toBe('workspace_0');
@@ -412,6 +355,9 @@ describe('UpgradeCommandRunner', () => {
   describe('Workspace upgrade should fail', () => {
     const failingTestUseCases: EachTestingContext<{
       input: Omit<BuildModuleAndSetupSpiesArgs, 'numberOfWorkspace'>;
+      output?: {
+        failReportWorkspaceId: string;
+      };
     }>[] = [
       {
         title: 'when workspace version is not equal to fromVersion',
@@ -421,6 +367,9 @@ describe('UpgradeCommandRunner', () => {
             workspaceOverride: {
               version: '0.1.0',
             },
+          },
+          output: {
+            failReportWorkspaceId: 'workspace_0',
           },
         },
       },
@@ -432,6 +381,9 @@ describe('UpgradeCommandRunner', () => {
               version: null,
             },
           },
+          output: {
+            failReportWorkspaceId: 'workspace_0',
+          },
         },
       },
       {
@@ -440,6 +392,9 @@ describe('UpgradeCommandRunner', () => {
           input: {
             appVersion: null,
           },
+          output: {
+            failReportWorkspaceId: 'global',
+          },
         },
       },
       {
@@ -447,6 +402,9 @@ describe('UpgradeCommandRunner', () => {
         context: {
           input: {
             appVersion: '42.0.0',
+          },
+          output: {
+            failReportWorkspaceId: 'global',
           },
         },
       },
@@ -468,25 +426,26 @@ describe('UpgradeCommandRunner', () => {
       },
     ];
 
-    it.each(failingTestUseCases)('$title', async ({ context: { input } }) => {
-      await buildModuleAndSetupSpies(input);
+    it.each(eachTestingContextFilter(failingTestUseCases))(
+      '$title',
+      async ({ context: { input, output } }) => {
+        await buildModuleAndSetupSpies(input);
 
-      // @ts-expect-error legacy noImplicitAny
-      const passedParams = [];
-      const options = {};
+        const passedParams: string[] = [];
+        const options = {};
 
-      // @ts-expect-error legacy noImplicitAny
-      await upgradeCommandRunner.run(passedParams, options);
+        await upgradeCommandRunner.run(passedParams, options);
 
-      const { fail: failReport, success: successReport } =
-        upgradeCommandRunner.migrationReport;
+        const { fail: failReport, success: successReport } =
+          upgradeCommandRunner.migrationReport;
 
-      expect(successReport.length).toBe(0);
-      expect(failReport.length).toBe(1);
-      const { workspaceId, error } = failReport[0];
+        expect(successReport.length).toBe(0);
+        expect(failReport.length).toBe(1);
+        const { workspaceId, error } = failReport[0];
 
-      expect(workspaceId).toBe('workspace_0');
-      expect(error).toMatchSnapshot();
-    });
+        expect(workspaceId).toBe(output?.failReportWorkspaceId ?? 'global');
+        expect(error).toMatchSnapshot();
+      },
+    );
   });
 });

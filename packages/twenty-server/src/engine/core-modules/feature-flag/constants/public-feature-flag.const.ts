@@ -23,39 +23,29 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_ENABLED,
+    key: FeatureFlagKey.IS_MESSAGE_FOLDER_CONTROL_ENABLED,
     metadata: {
-      label: 'Two Factor Authentication',
-      description: 'Enable two-factor authentication for your workspace',
+      label: 'Message Folder Control',
+      description: 'Control which folders are synced',
       imagePath:
-        'https://twenty.com/images/lab/is-two-factors-auth-enabled.png',
+        'https://twenty.com/images/lab/is-message-folder-control-enabled.png',
     },
   },
   {
-    key: FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
+    key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
     metadata: {
-      label: 'Fields Permissions',
-      description: 'Configure permissions at field-level for your workspace',
-      imagePath:
-        'https://twenty.com/images/lab/is-fields-permissions-enabled.png',
+      label: 'Calendar View',
+      description: 'View and manage calendar events',
+      imagePath: 'https://twenty.com/images/lab/is-calendar-view-enabled.png',
     },
   },
   {
-    key: FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+    key: FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
     metadata: {
-      label: 'Workflow Filter Step',
+      label: 'Morph Relations',
       description:
-        'Continue to the next node only if the filter conditions are met',
-      imagePath:
-        'https://twenty.com/images/lab/is-worklfow-filtering-enabled.png',
-    },
-  },
-  {
-    key: FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-    metadata: {
-      label: 'Workflow Branches',
-      description: 'Create multiple branches on your workflows',
-      imagePath: 'https://twenty.com/images/lab/is-workflow-branch-enabled.png',
+        'Create polymorphic relationships that can link to multiple object types',
+      imagePath: 'https://twenty.com/images/lab/is-morph-relation-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

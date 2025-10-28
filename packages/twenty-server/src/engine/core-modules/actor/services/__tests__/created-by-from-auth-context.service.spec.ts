@@ -2,23 +2,24 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
-import { type ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   type ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { type FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type TestingAuthContext = Omit<AuthContext, 'workspace' | 'apiKey' | 'user'> & {
-  workspace: Partial<Workspace>;
-  apiKey?: Partial<ApiKey>;
-  user?: Partial<User>;
+  workspace: Partial<WorkspaceEntity>;
+  apiKey?: Partial<ApiKeyEntity>;
+  user?: Partial<UserEntity>;
 };
 
 type ExpectedResult = { createdBy: ActorMetadata }[];
@@ -51,9 +52,36 @@ describe('CreatedByFromAuthContextService', () => {
           useValue: twentyORMGlobalManager,
         },
         {
-          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
+          provide: getRepositoryToken(FieldMetadataEntity),
           useValue: {
             findOne: jest.fn().mockResolvedValue(true),
+          },
+        },
+        {
+          provide: WorkspaceMetadataCacheService,
+          useValue: {
+            getExistingOrRecomputeMetadataMaps: jest.fn().mockResolvedValue({
+              objectMetadataMaps: {
+                byId: {
+                  'person-id': {
+                    id: 'person-id',
+                    nameSingular: 'person',
+                    fieldsById: {
+                      createdBy: {
+                        id: 'createdBy-id',
+                        name: 'createdBy',
+                      },
+                    },
+                    fieldIdByName: {
+                      createdBy: 'createdBy-id',
+                    },
+                  },
+                },
+                idByNameSingular: {
+                  person: 'person-id',
+                },
+              },
+            }),
           },
         },
       ],

@@ -15,7 +15,9 @@ export class CacheStorageService {
   ) {}
 
   async get<T>(key: string): Promise<T | undefined> {
-    return this.cache.get(this.getKey(key));
+    const value = await this.cache.get<T>(this.getKey(key));
+
+    return value;
   }
 
   async set<T>(key: string, value: T, ttl?: Milliseconds) {
@@ -107,7 +109,7 @@ export class CacheStorageService {
 
     do {
       const result = await redisClient.scan(cursor, {
-        MATCH: scanPattern,
+        MATCH: `${this.namespace}:${scanPattern}`,
         COUNT: 100,
       });
 

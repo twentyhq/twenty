@@ -1,4 +1,4 @@
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
@@ -39,7 +39,6 @@ export const mapViewFieldsToColumnDefinitions = ({
         fieldMetadataId: viewField.fieldMetadataId,
         label: correspondingColumnDefinition.label,
         metadata: correspondingColumnDefinition.metadata,
-        infoTooltipContent: correspondingColumnDefinition.infoTooltipContent,
         iconName: correspondingColumnDefinition.iconName,
         type: correspondingColumnDefinition.type,
         position: isLabelIdentifier ? 0 : viewField.position,
@@ -47,6 +46,7 @@ export const mapViewFieldsToColumnDefinitions = ({
         isLabelIdentifier,
         isVisible: isLabelIdentifier || viewField.isVisible,
         viewFieldId: viewField.id,
+        isUIReadOnly: correspondingColumnDefinition.metadata.isUIReadOnly,
         isSortable: correspondingColumnDefinition.isSortable,
         isFilterable: correspondingColumnDefinition.isFilterable,
         defaultValue: correspondingColumnDefinition.defaultValue,

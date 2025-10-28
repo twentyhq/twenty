@@ -1,4 +1,3 @@
-import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react';
 import { Img } from '@react-email/components';
 import { emailTheme } from 'src/common-style';
@@ -12,6 +11,7 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
+import { createI18nInstance } from 'src/utils/i18n.utils';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
@@ -34,6 +34,7 @@ export const SendInviteLinkEmail = ({
   serverUrl,
   locale,
 }: SendInviteLinkEmailProps) => {
+  const i18n = createI18nInstance(locale);
   const workspaceLogo = workspace.logo
     ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : null;
@@ -76,7 +77,7 @@ export const SendInviteLinkEmail = ({
         {workspace.name ? <HighlightedText value={workspace.name} /> : <></>}
         <CallToAction href={link} value={i18n._('Accept invite')} />
       </HighlightedContainer>
-      <WhatIsTwenty />
+      <WhatIsTwenty i18n={i18n} />
     </BaseEmail>
   );
 };

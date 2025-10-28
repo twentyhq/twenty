@@ -27,7 +27,7 @@ Having a list that is draggable will be useful, not only in dropdown.
 
 Create a folder @/ui/draggable-list with a DraggableList component
 This component should take as prop: itemsComponents, onDragEnd((previousIndex, nextIndex) => {})
-Use this component in ViewFieldsVisibilityDropdownSection (move the logic from ViewFieldsVisibilityDropdownSection to DraggableList) by passing a list of DraggableMenuItems
+Use this component in ObjectOptionsDropdownHiddenFieldsContent (move the logic from ObjectOptionsDropdownHiddenFieldsContent to DraggableList) by passing a list of DraggableMenuItems
 Add a storybook test on this list (we don't know how to actually test the draggable behavior, but we can at least make sure the component renders correctly a list of items)
 ```
 

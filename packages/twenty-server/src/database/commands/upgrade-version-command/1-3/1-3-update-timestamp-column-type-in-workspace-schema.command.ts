@@ -1,19 +1,18 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Command({
   name: 'upgrade:1-3:update-timestamp-column-type-in-workspace-schema',
@@ -22,11 +21,12 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 })
 export class UpdateTimestampColumnTypeInWorkspaceSchemaCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
-    protected readonly workspaceRepository: Repository<Workspace>,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
@@ -43,16 +43,13 @@ export class UpdateTimestampColumnTypeInWorkspaceSchemaCommand extends ActiveOrS
       relations: ['object'],
     });
 
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
     for (const fieldMetadataItem of dateTimeFieldMetadataItems) {
       this.logger.log(
         `Updating column type for ${fieldMetadataItem.name} in ${schemaName}."${computeObjectTargetTable(fieldMetadataItem.object)}"`,
       );
-      await mainDataSource.query(
+      await this.coreDataSource.query(
         `ALTER TABLE ${schemaName}."${computeObjectTargetTable(fieldMetadataItem.object)}"
         ALTER COLUMN "${fieldMetadataItem.name}" TYPE timestamptz(3);`,
       );

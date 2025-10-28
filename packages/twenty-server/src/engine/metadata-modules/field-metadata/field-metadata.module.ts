@@ -24,19 +24,22 @@ import { FieldMetadataValidationService } from 'src/engine/metadata-modules/fiel
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
+import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
+import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-group.module';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
-import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
-import { ViewModule } from 'src/modules/view/view.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -48,10 +51,10 @@ import { FieldMetadataService } from './services/field-metadata.service';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [FieldMetadataEntity, ObjectMetadataEntity],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([
+          FieldMetadataEntity,
+          ObjectMetadataEntity,
+        ]),
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,
@@ -62,12 +65,15 @@ import { FieldMetadataService } from './services/field-metadata.service';
         ActorModule,
         FeatureFlagModule,
         ViewModule,
+        ViewFieldModule,
+        ViewFilterModule,
+        ViewGroupModule,
         PermissionsModule,
         WorkspaceMetadataCacheModule,
-        WorkspaceMigrationBuilderV2Module,
-        WorkspaceMigrationRunnerV2Module,
+        WorkspaceMigrationV2Module,
         FlatFieldMetadataModule,
         IndexMetadataModule,
+        WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [
         IsFieldMetadataDefaultValue,

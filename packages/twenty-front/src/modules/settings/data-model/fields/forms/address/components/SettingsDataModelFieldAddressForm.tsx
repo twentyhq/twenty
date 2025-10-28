@@ -1,11 +1,10 @@
 import { Separator } from '@/settings/components/Separator';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   addressSchema as addressFieldDefaultValueSchema,
   addressSettingsSchema,
-} from '@/object-record/record-field/types/guards/isFieldAddressValue';
+} from '@/object-record/record-field/ui/types/guards/isFieldAddressValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { MultiSelectAddressFields } from '@/settings/data-model/fields/forms/address/components/MultiSelectAddressFields';
 import { DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES } from '@/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages';
@@ -17,10 +16,10 @@ import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
 import {
   IconCircleOff,
-  type IconComponentProps,
   IconList,
   IconMap,
   IconRefresh,
+  type IconComponentProps,
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { z } from 'zod';
@@ -30,10 +29,7 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 type SettingsDataModelFieldAddressFormProps = {
   disabled?: boolean;
   defaultCountry?: string;
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
-  >;
+  existingFieldMetadataId: string;
 };
 
 export const settingsDataModelFieldAddressFormSchema = z.object({
@@ -47,7 +43,7 @@ export type SettingsDataModelFieldTextFormValues = z.infer<
 
 export const SettingsDataModelFieldAddressForm = ({
   disabled,
-  fieldMetadataItem,
+  existingFieldMetadataId,
 }: SettingsDataModelFieldAddressFormProps) => {
   const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
@@ -66,33 +62,23 @@ export const SettingsDataModelFieldAddressForm = ({
           Flag({ width: props.size, height: props.size }),
       })),
   ];
-  const { initialDisplaySubFields, resetDefaultValueField } =
-    useAddressSettingsFormInitialValues({ fieldMetadataItem });
+  const {
+    initialDisplaySubFields,
+    initialDefaultValue,
+    resetDefaultValueField,
+  } = useAddressSettingsFormInitialValues({ existingFieldMetadataId });
 
   const { closeDropdown } = useCloseDropdown();
   const reset = () => {
     resetDefaultValueField();
     closeDropdown('addressSubFieldsId');
   };
-  const defaultDefaultValue = {
-    addressStreet1: "''",
-    addressStreet2: null,
-    addressCity: null,
-    addressState: null,
-    addressPostcode: null,
-    addressCountry: null,
-    addressLat: null,
-    addressLng: null,
-  };
 
   return (
     <>
       <Controller
         name="defaultValue"
-        defaultValue={{
-          ...defaultDefaultValue,
-          ...fieldMetadataItem?.defaultValue,
-        }}
+        defaultValue={initialDefaultValue}
         control={control}
         render={({ field: { onChange, value } }) => {
           const defaultCountry = value?.addressCountry || '';
@@ -142,7 +128,7 @@ export const SettingsDataModelFieldAddressForm = ({
                   }),
                 )}
                 values={values}
-                dropdownId={'addressSubFieldsId'}
+                dropdownId="addressSubFieldsId"
                 onChange={onChange}
                 callToActionButton={{
                   text: t`Reset to default`,

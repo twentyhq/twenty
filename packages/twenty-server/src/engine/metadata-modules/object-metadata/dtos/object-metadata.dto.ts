@@ -35,9 +35,6 @@ export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @Field(() => UUIDScalarType)
-  dataSourceId: string;
-
   @Field()
   nameSingular: string;
 
@@ -75,10 +72,16 @@ export class ObjectMetadataDTO {
   isSystem: boolean;
 
   @FilterableField()
+  isUIReadOnly: boolean;
+
+  @FilterableField()
   isSearchable: boolean;
 
   @HideField()
   workspaceId: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId?: string;
 
   @Field()
   createdAt: Date;

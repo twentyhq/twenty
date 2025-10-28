@@ -1,4 +1,4 @@
-import { type OnModuleDestroy } from '@nestjs/common';
+import { Logger, type OnModuleDestroy } from '@nestjs/common';
 
 import {
   type JobsOptions,
@@ -18,14 +18,17 @@ import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/d
 import { type MessageQueueJob } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
+import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
+import { MESSAGE_QUEUE_PRIORITY } from 'src/engine/core-modules/message-queue/message-queue-priority.constant';
 
 export type BullMQDriverOptions = QueueOptions;
 
 const V4_LENGTH = 36;
 
 export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
+  private logger = new Logger(BullMQDriver.name);
   private queueMap: Record<MessageQueue, Queue> = {} as Record<
     MessageQueue,
     Queue
@@ -71,7 +74,18 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       queueName,
       async (job) => {
         // TODO: Correctly support for job.id
+        const timeStart = performance.now();
+
+        this.logger.log(
+          `Processing job ${job.id} with name ${job.name} on queue ${queueName}`,
+        );
         await handler({ data: job.data, id: job.id ?? '', name: job.name });
+        const timeEnd = performance.now();
+        const executionTime = timeEnd - timeStart;
+
+        this.logger.log(
+          `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms`,
+        );
       },
       workerOptions,
     );
@@ -99,8 +113,14 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     const queueOptions: JobsOptions = {
       priority: options?.priority,
       repeat: options?.repeat,
-      removeOnComplete: true,
-      removeOnFail: 100,
+      removeOnComplete: {
+        age: QUEUE_RETENTION.completedMaxAge,
+        count: QUEUE_RETENTION.completedMaxCount,
+      },
+      removeOnFail: {
+        age: QUEUE_RETENTION.failedMaxAge,
+        count: QUEUE_RETENTION.failedMaxCount,
+      },
     };
 
     await this.queueMap[queueName].upsertJobScheduler(
@@ -155,10 +175,17 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
 
     const queueOptions: JobsOptions = {
       jobId: options?.id ? `${options.id}-${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
-      priority: options?.priority,
+      priority: options?.priority ?? MESSAGE_QUEUE_PRIORITY[queueName],
       attempts: 1 + (options?.retryLimit || 0),
-      removeOnComplete: true,
-      removeOnFail: 100,
+      removeOnComplete: {
+        age: QUEUE_RETENTION.completedMaxAge,
+        count: QUEUE_RETENTION.completedMaxCount,
+      },
+      removeOnFail: {
+        age: QUEUE_RETENTION.failedMaxAge,
+        count: QUEUE_RETENTION.failedMaxCount,
+      },
+      delay: options?.delay,
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);

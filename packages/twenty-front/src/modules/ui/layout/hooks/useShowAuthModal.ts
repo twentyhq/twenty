@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { AppPath } from '@/types/AppPath';
 import { useLocation } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const useShowAuthModal = () => {

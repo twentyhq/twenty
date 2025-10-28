@@ -10,8 +10,8 @@ import { type MouseEvent } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  Chip,
   AvatarChip,
+  Chip,
   type ChipSize,
   ChipVariant,
   LinkChip,
@@ -28,6 +28,7 @@ export type RecordChipProps = {
   to?: string | undefined;
   size?: ChipSize;
   isLabelHidden?: boolean;
+  isIconHidden?: boolean;
   triggerEvent?: TriggerEventType;
   onClick?: (event: MouseEvent) => void;
 };
@@ -42,6 +43,7 @@ export const RecordChip = ({
   size,
   forceDisableClick = false,
   isLabelHidden = false,
+  isIconHidden = false,
   triggerEvent = 'MOUSE_DOWN',
   onClick,
 }: RecordChipProps) => {
@@ -92,7 +94,7 @@ export const RecordChip = ({
         maxWidth={maxWidth}
         className={className}
         variant={ChipVariant.Transparent}
-        leftComponent={avatarChip}
+        leftComponent={isIconHidden ? null : avatarChip}
       />
     );
   }
@@ -103,7 +105,7 @@ export const RecordChip = ({
       maxWidth={maxWidth}
       label={recordChipData.name}
       isLabelHidden={isLabelHidden}
-      leftComponent={avatarChip}
+      leftComponent={isIconHidden ? null : avatarChip}
       className={className}
       variant={
         variant ??

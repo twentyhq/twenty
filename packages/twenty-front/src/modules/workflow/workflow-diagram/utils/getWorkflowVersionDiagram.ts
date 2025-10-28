@@ -1,61 +1,28 @@
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
-import {
-  type WorkflowDiagram,
-  type WorkflowDiagramEdgeType,
-} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowContext } from '@/workflow/workflow-diagram/types/WorkflowContext';
+import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isDefined } from 'twenty-shared/utils';
-import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 
 const EMPTY_DIAGRAM: WorkflowDiagram = {
   nodes: [],
   edges: [],
 };
 
-const getEdgeTypeToCreateByDefault = ({
-  isWorkflowFilteringEnabled,
-  isEditable,
-}: {
-  isWorkflowFilteringEnabled: boolean;
-  isEditable: boolean;
-}): WorkflowDiagramEdgeType => {
-  if (isWorkflowFilteringEnabled) {
-    return isEditable ? 'empty-filter--editable' : 'empty-filter--readonly';
-  }
-
-  return isEditable
-    ? 'filtering-disabled--editable'
-    : 'filtering-disabled--readonly';
-};
-
 export const getWorkflowVersionDiagram = ({
   workflowVersion,
-  isWorkflowFilteringEnabled,
-  isWorkflowBranchEnabled,
-  isEditable,
+  workflowContext,
 }: {
   workflowVersion: WorkflowVersion | undefined;
-  isWorkflowFilteringEnabled: boolean;
-  isWorkflowBranchEnabled?: boolean;
-  isEditable: boolean;
+  workflowContext: WorkflowContext;
 }): WorkflowDiagram => {
   if (!isDefined(workflowVersion)) {
     return EMPTY_DIAGRAM;
   }
 
-  const diagram = generateWorkflowDiagram({
+  return generateWorkflowDiagram({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
-    defaultEdgeType: getEdgeTypeToCreateByDefault({
-      isWorkflowFilteringEnabled,
-      isEditable,
-    }),
-    isWorkflowBranchEnabled,
-  });
-
-  return transformFilterNodesAsEdges({
-    nodes: diagram.nodes,
-    edges: diagram.edges,
-    defaultFilterEdgeType: isEditable ? 'filter--editable' : 'filter--readonly',
+    workflowContext,
   });
 };

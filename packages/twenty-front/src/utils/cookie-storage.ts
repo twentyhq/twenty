@@ -13,7 +13,14 @@ class CookieStorage {
     attributes?: Cookies.CookieAttributes,
   ): void {
     this.keys.add(key);
-    Cookies.set(key, value, attributes);
+
+    const secureAttributes = {
+      secure: window.location.protocol === 'https:',
+      sameSite: 'lax' as const,
+      ...attributes,
+    };
+
+    Cookies.set(key, value, secureAttributes);
   }
 
   removeItem(key: string, attributes?: Cookies.CookieAttributes): void {

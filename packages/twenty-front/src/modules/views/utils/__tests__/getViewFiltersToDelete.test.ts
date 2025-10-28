@@ -1,5 +1,5 @@
 import { type ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { getViewFiltersToDelete } from '../getViewFiltersToDelete';
 
 describe('getViewFiltersToDelete', () => {
@@ -7,7 +7,7 @@ describe('getViewFiltersToDelete', () => {
     __typename: 'ViewFilter',
     id: 'filter-1',
     fieldMetadataId: 'field-1',
-    operand: ViewFilterOperand.Contains,
+    operand: ViewFilterOperand.CONTAINS,
     value: 'test',
     displayValue: 'test',
     viewFilterGroupId: 'group-1',

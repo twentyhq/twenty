@@ -10,7 +10,7 @@
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "esModuleInterop": true,
-    "target": "es2017",
+    "target": "es2018",
     "sourceMap": true,
     "inlineSources": true,
     "outDir": "./dist",

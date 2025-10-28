@@ -20,7 +20,7 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem, MenuItemSelectColor } from 'twenty-ui/navigation';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
+import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;

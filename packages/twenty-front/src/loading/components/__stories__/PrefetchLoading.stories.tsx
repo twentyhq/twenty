@@ -22,6 +22,7 @@ const meta: Meta<PageDecoratorArgs> = {
     msw: graphqlMocks,
     prefetchLoadingSetDelay: 1000,
   },
+  tags: ['no-tests'],
 };
 
 export default meta;

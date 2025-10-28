@@ -4,12 +4,73 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_OBJECT_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_OBJECT_INPUT",
+                "message": "labelIdentifierFieldMetadataId validation failed: field type not compatible",
+                "userFriendlyMessage": "Field cannot be used as label identifier",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "namePlural": "whatevers",
+              "nameSingular": "whatever",
+            },
+            "status": "fail",
+            "type": "update_object",
+          },
+        ],
+        "routeTrigger": [],
+        "serverlessFunction": [],
+        "view": [],
+        "viewField": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_VIEW_DATA",
+                "message": "View field position cannot be lower than label identifier view field position",
+                "userFriendlyMessage": "View field position cannot be lower than label identifier view field position",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "fieldMetadataId": Any<String>,
+              "id": Any<String>,
+              "viewId": Any<String>,
+            },
+            "status": "fail",
+            "type": "create_view_field",
+          },
+        ],
+        "viewFilter": [],
+        "viewGroup": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
+        "invalidServerlessFunction": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "invalidViewFilter": 0,
+        "invalidViewGroup": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "labelIdentifierFieldMetadataId validation failed: it must be a TEXT or FULL_NAME field metadata type id",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while updating object",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -18,12 +79,78 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_OBJECT_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_OBJECT_INPUT",
+                "message": "labelIdentifierFieldMetadataId validation failed: related field metadata not found",
+                "userFriendlyMessage": "Field declared as label identifier not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "namePlural": "whatevers",
+              "nameSingular": "whatever",
+            },
+            "status": "fail",
+            "type": "update_object",
+          },
+        ],
+        "routeTrigger": [],
+        "serverlessFunction": [],
+        "view": [],
+        "viewField": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_VIEW_DATA",
+                "message": "Field metadata not found",
+                "userFriendlyMessage": "Field metadata not found",
+              },
+              {
+                "code": "INVALID_VIEW_DATA",
+                "message": "View field position cannot be lower than label identifier view field position",
+                "userFriendlyMessage": "View field position cannot be lower than label identifier view field position",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "fieldMetadataId": Any<String>,
+              "id": Any<String>,
+              "viewId": Any<String>,
+            },
+            "status": "fail",
+            "type": "create_view_field",
+          },
+        ],
+        "viewFilter": [],
+        "viewGroup": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
+        "invalidServerlessFunction": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "invalidViewFilter": 0,
+        "invalidViewGroup": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
     },
-    "message": "labelIdentifierFieldMetadataId validation failed: related field metadata not found",
-    "name": "UserInputError",
+    "message": "Multiple validation errors occurred while updating object",
+    "name": "GraphQLError",
   },
 ]
 `;
@@ -37,9 +164,68 @@ exports[`Object metadata update should fail when labelIdentifier is not a uuid 1
         "status": 400,
       },
       "userFriendlyMessage": "An error occurred.",
+      "value": "not-a-uuid",
     },
     "message": "Invalid UUID",
     "name": "ValidationError",
+  },
+]
+`;
+
+exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "cronTrigger": [],
+        "databaseEventTrigger": [],
+        "fieldMetadata": [],
+        "index": [],
+        "objectMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_OBJECT_INPUT",
+                "message": "labelIdentifierFieldMetadataId cannot be null",
+                "userFriendlyMessage": "Field label identifier is required",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "namePlural": "whatevers",
+              "nameSingular": "whatever",
+            },
+            "status": "fail",
+            "type": "update_object",
+          },
+        ],
+        "routeTrigger": [],
+        "serverlessFunction": [],
+        "view": [],
+        "viewField": [],
+        "viewFilter": [],
+        "viewGroup": [],
+      },
+      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "summary": {
+        "invalidCronTrigger": 0,
+        "invalidDatabaseEventTrigger": 0,
+        "invalidFieldMetadata": 0,
+        "invalidIndex": 0,
+        "invalidObjectMetadata": 0,
+        "invalidRouteTrigger": 0,
+        "invalidServerlessFunction": 0,
+        "invalidView": 0,
+        "invalidViewField": 0,
+        "invalidViewFilter": 0,
+        "invalidViewGroup": 0,
+        "totalErrors": 0,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating object",
+    "name": "GraphQLError",
   },
 ]
 `;

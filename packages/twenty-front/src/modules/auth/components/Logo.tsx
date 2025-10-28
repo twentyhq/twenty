@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { AppPath } from 'twenty-shared/types';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/display';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useRedirectToDefaultDomain } from '~/modules/domain-manager/hooks/useRedirectToDefaultDomain';
-import { AppPath } from '~/modules/types/AppPath';
 
 type LogoProps = {
   primaryLogo?: string | null;

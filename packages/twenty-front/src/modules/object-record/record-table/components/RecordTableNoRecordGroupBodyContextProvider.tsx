@@ -1,6 +1,5 @@
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedCell';
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
@@ -9,8 +8,10 @@ import {
   useOpenRecordTableCell,
 } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useTriggerActionMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerActionMenuDropdown';
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type ReactNode } from 'react';
 
 type RecordTableNoRecordGroupBodyContextProviderProps = {
@@ -57,9 +58,9 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
     triggerActionMenuDropdown(event, recordId);
   };
 
-  const { handleContainerMouseEnter } = useHandleContainerMouseEnter({
-    recordTableId,
-  });
+  const hasUserSelectedAllRows = useRecoilComponentValue(
+    hasUserSelectedAllRowsComponentState,
+  );
 
   return (
     <RecordTableBodyContextProvider
@@ -69,7 +70,7 @@ export const RecordTableNoRecordGroupBodyContextProvider = ({
         onCloseTableCell: handleCloseTableCell,
         onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
         onActionMenuDropdownOpened: handleActionMenuDropdown,
-        onCellMouseEnter: handleContainerMouseEnter,
+        hasUserSelectedAllRows,
       }}
     >
       {children}

@@ -3,7 +3,7 @@ import { useRef } from 'react';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { recordIndexHasRecordsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexHasRecordsComponentSelector';
 import { RecordTableBodyEffectsWrapper } from '@/object-record/record-table/components/RecordTableBodyEffectsWrapper';
 import { RecordTableContent } from '@/object-record/record-table/components/RecordTableContent';
 import { RecordTableEmpty } from '@/object-record/record-table/components/RecordTableEmpty';
@@ -11,7 +11,7 @@ import { RecordTableScrollToFocusedCellEffect } from '@/object-record/record-tab
 import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedRowEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -24,7 +24,7 @@ export const RecordTable = () => {
     objectMetadataItem.id,
   );
 
-  const tableBodyRef = useRef<HTMLTableElement>(null);
+  const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const { toggleClickOutside } = useClickOutsideListener(
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
@@ -35,8 +35,8 @@ export const RecordTable = () => {
     recordTableId,
   );
 
-  const allRecordIds = useRecoilComponentValue(
-    recordIndexAllRecordIdsComponentSelector,
+  const recordTableHasRecords = useRecoilComponentValue(
+    recordIndexHasRecordsComponentSelector,
     recordTableId,
   );
 
@@ -45,12 +45,10 @@ export const RecordTable = () => {
     recordTableId,
   );
 
-  const { resetTableRowSelection, setRowSelected } = useRecordTable({
-    recordTableId,
-  });
+  const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
 
   const recordTableIsEmpty =
-    !isRecordTableInitialLoading && allRecordIds.length === 0;
+    !isRecordTableInitialLoading && !recordTableHasRecords;
 
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
@@ -84,7 +82,6 @@ export const RecordTable = () => {
           tableBodyRef={tableBodyRef}
           handleDragSelectionStart={handleDragSelectionStart}
           handleDragSelectionEnd={handleDragSelectionEnd}
-          setRowSelected={setRowSelected}
           hasRecordGroups={hasRecordGroups}
           recordTableId={recordTableId}
         />

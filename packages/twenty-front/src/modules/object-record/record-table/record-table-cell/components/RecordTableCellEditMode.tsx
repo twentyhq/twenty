@@ -1,9 +1,8 @@
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
-import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
-import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
-import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
+import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
+import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
+import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -12,13 +11,13 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
-  type MiddlewareState,
   autoUpdate,
   flip,
   offset,
   useFloating,
+  type MiddlewareState,
 } from '@floating-ui/react';
-import { type ReactElement, useContext } from 'react';
+import { useContext, type ReactElement } from 'react';
 
 const StyledEditableCellEditModeContainer = styled.div<{
   isFieldInputOnly: boolean;
@@ -28,7 +27,6 @@ const StyledEditableCellEditModeContainer = styled.div<{
   height: 100%;
   position: absolute;
   width: calc(100% + 2px);
-  z-index: ${TABLE_Z_INDEX.cell.editMode};
 `;
 
 const StyledInputModeOnlyContainer = styled.div`

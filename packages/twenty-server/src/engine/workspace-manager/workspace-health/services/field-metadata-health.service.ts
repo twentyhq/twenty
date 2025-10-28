@@ -22,7 +22,7 @@ import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadat
 import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-default-value-for-type.util';
 import { validateOptionsForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-options-for-type.util';
 import { customNamePrefix } from 'src/engine/utils/compute-table-name.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { validName } from 'src/engine/workspace-manager/workspace-health/utils/valid-name.util';
 
@@ -42,7 +42,7 @@ export class FieldMetadataHealthService {
 
     for (const fieldMetadata of fieldMetadataCollection) {
       // Relation metadata are checked in another service
-      if (isRelationFieldMetadataType(fieldMetadata.type)) {
+      if (isMorphOrRelationFieldMetadataType(fieldMetadata.type)) {
         continue;
       }
 

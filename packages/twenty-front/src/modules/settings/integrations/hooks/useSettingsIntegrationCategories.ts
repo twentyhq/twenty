@@ -1,5 +1,4 @@
 import { MOCK_REMOTE_DATABASES } from '@/settings/integrations/constants/MockRemoteDatabases';
-import { SETTINGS_INTEGRATION_AI_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationMcp';
 import { SETTINGS_INTEGRATION_REQUEST_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationRequest';
 import { SETTINGS_INTEGRATION_ZAPIER_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationZapier';
 import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
@@ -30,10 +29,6 @@ export const useSettingsIntegrationCategories =
       ({ name }) => name === 'stripe',
     )?.isActive;
 
-    const isAiIntegrationEnabled = useIsFeatureEnabled(
-      FeatureFlagKey.IS_AI_ENABLED,
-    );
-
     const allIntegrations = getSettingsIntegrationAll({
       isAirtableIntegrationEnabled,
       isAirtableIntegrationActive,
@@ -46,7 +41,6 @@ export const useSettingsIntegrationCategories =
     return [
       ...(allIntegrations.integrations.length > 0 ? [allIntegrations] : []),
       SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
-      ...(isAiIntegrationEnabled ? [SETTINGS_INTEGRATION_AI_CATEGORY] : []),
       SETTINGS_INTEGRATION_REQUEST_CATEGORY,
     ];
   };

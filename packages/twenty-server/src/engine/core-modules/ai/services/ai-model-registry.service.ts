@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { anthropic } from '@ai-sdk/anthropic';
 import { createOpenAI, openai } from '@ai-sdk/openai';
+import { xai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
 
 import {
   AI_MODELS,
-  type AIModelConfig,
   ModelProvider,
+  type AIModelConfig,
 } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -15,6 +16,7 @@ export interface RegisteredAIModel {
   modelId: string;
   provider: ModelProvider;
   model: LanguageModel;
+  doesSupportThinking?: boolean;
 }
 
 @Injectable()
@@ -38,6 +40,12 @@ export class AiModelRegistryService {
 
     if (anthropicApiKey) {
       this.registerAnthropicModels();
+    }
+
+    const xaiApiKey = this.twentyConfigService.get('XAI_API_KEY');
+
+    if (xaiApiKey) {
+      this.registerXaiModels();
     }
 
     const openaiCompatibleBaseUrl = this.twentyConfigService.get(
@@ -79,6 +87,21 @@ export class AiModelRegistryService {
         modelId: modelConfig.modelId,
         provider: ModelProvider.ANTHROPIC,
         model: anthropic(modelConfig.modelId),
+        doesSupportThinking: modelConfig.doesSupportThinking,
+      });
+    });
+  }
+
+  private registerXaiModels(): void {
+    const xaiModels = AI_MODELS.filter(
+      (model) => model.provider === ModelProvider.XAI,
+    );
+
+    xaiModels.forEach((modelConfig) => {
+      this.modelRegistry.set(modelConfig.modelId, {
+        modelId: modelConfig.modelId,
+        provider: ModelProvider.XAI,
+        model: xai(modelConfig.modelId),
       });
     });
   }
@@ -115,8 +138,25 @@ export class AiModelRegistryService {
     return Array.from(this.modelRegistry.values());
   }
 
-  getDefaultModel(): RegisteredAIModel | undefined {
-    const defaultModelId = this.twentyConfigService.get('DEFAULT_MODEL_ID');
+  getDefaultSpeedModel(): RegisteredAIModel {
+    const defaultModelId = this.twentyConfigService.get(
+      'DEFAULT_AI_SPEED_MODEL_ID',
+    );
+    let model = this.getModel(defaultModelId);
+
+    if (!model) {
+      const availableModels = this.getAvailableModels();
+
+      model = availableModels[0];
+    }
+
+    return model;
+  }
+
+  getDefaultPerformanceModel(): RegisteredAIModel {
+    const defaultModelId = this.twentyConfigService.get(
+      'DEFAULT_AI_PERFORMANCE_MODEL_ID',
+    );
     let model = this.getModel(defaultModelId);
 
     if (!model) {
@@ -130,7 +170,7 @@ export class AiModelRegistryService {
 
   getEffectiveModelConfig(modelId: string): AIModelConfig {
     if (modelId === 'auto') {
-      const defaultModel = this.getDefaultModel();
+      const defaultModel = this.getDefaultPerformanceModel();
 
       if (!defaultModel) {
         throw new Error(
@@ -172,14 +212,55 @@ export class AiModelRegistryService {
     return {
       modelId: registeredModel.modelId,
       label: registeredModel.modelId,
+      description: `Custom model: ${registeredModel.modelId}`,
       provider: registeredModel.provider,
       inputCostPer1kTokensInCents: 0,
       outputCostPer1kTokensInCents: 0,
+      contextWindowTokens: 128000,
+      maxOutputTokens: 4096,
     };
   }
 
   // Force refresh the registry (useful if config changes)
   refreshRegistry(): void {
     this.buildModelRegistry();
+  }
+
+  async resolveModelForAgent(agent: { modelId: string } | null) {
+    const aiModel = this.getEffectiveModelConfig(agent?.modelId ?? 'auto');
+
+    await this.validateApiKey(aiModel.provider);
+    const registeredModel = this.getModel(aiModel.modelId);
+
+    if (!registeredModel) {
+      throw new Error(`Model ${aiModel.modelId} not found in registry`);
+    }
+
+    return registeredModel;
+  }
+
+  async validateApiKey(provider: ModelProvider): Promise<void> {
+    let apiKey: string | undefined;
+
+    switch (provider) {
+      case ModelProvider.OPENAI:
+        apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
+        break;
+      case ModelProvider.ANTHROPIC:
+        apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
+        break;
+      case ModelProvider.XAI:
+        apiKey = this.twentyConfigService.get('XAI_API_KEY');
+        break;
+      case ModelProvider.OPENAI_COMPATIBLE:
+        apiKey = this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY');
+        break;
+      default:
+        return;
+    }
+
+    if (!apiKey) {
+      throw new Error(`${provider.toUpperCase()} API key not configured`);
+    }
   }
 }

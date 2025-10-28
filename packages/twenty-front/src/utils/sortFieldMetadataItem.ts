@@ -16,5 +16,5 @@ export const sortFieldMetadataItem = (
   if (!dateA) return 1;
   if (!dateB) return -1;
 
-  return dateB.diff(dateA).milliseconds > 0 ? -1 : 1;
+  return dateB.getTime() - dateA.getTime() > 0 ? -1 : 1;
 };

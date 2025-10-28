@@ -9,10 +9,7 @@ import { AgentRoleService } from './agent-role.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [AgentEntity, RoleEntity, RoleTargetsEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([AgentEntity, RoleEntity, RoleTargetsEntity]),
   ],
   providers: [AgentRoleService],
   exports: [AgentRoleService],

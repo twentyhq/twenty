@@ -1,34 +1,37 @@
-import { RecordTableStickyBottomEffect } from '@/object-record/record-table/components/RecordTableStickyBottomEffect';
-import { RecordTableStickyEffect } from '@/object-record/record-table/components/RecordTableStickyEffect';
-import { StyledTable } from '@/object-record/record-table/components/RecordTableStyles';
+import { RecordTableColumnWidthEffect } from '@/object-record/record-table/components/RecordTableColumnWidthEffect';
+import { RecordTableScrollAndZIndexEffect } from '@/object-record/record-table/components/RecordTableScrollAndZIndexEffect';
+import { RecordTableStyleWrapper } from '@/object-record/record-table/components/RecordTableStyleWrapper';
+import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
+import { RECORD_TABLE_HTML_ID } from '@/object-record/record-table/constants/RecordTableHtmlId';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableLastColumnWidthToFill } from '@/object-record/record-table/hooks/useRecordTableLastColumnWidthToFill';
 import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
+import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
+import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
-
-const StyledTableWithPointerEvents = styled(StyledTable)<{
-  isDragging: boolean;
-}>`
-  & > * {
-    pointer-events: ${({ isDragging }) => (isDragging ? 'none' : 'auto')};
-  }
-`;
+import { useRecoilCallback } from 'recoil';
 
 const StyledTableContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 100%;
+  width: fit-content;
 `;
 
 export interface RecordTableContentProps {
-  tableBodyRef: React.RefObject<HTMLTableElement>;
+  tableBodyRef: React.RefObject<HTMLDivElement>;
   handleDragSelectionStart: () => void;
   handleDragSelectionEnd: () => void;
-  setRowSelected: (rowId: string, selected: boolean) => void;
   hasRecordGroups: boolean;
   recordTableId: string;
 }
@@ -37,7 +40,6 @@ export const RecordTableContent = ({
   tableBodyRef,
   handleDragSelectionStart,
   handleDragSelectionEnd,
-  setRowSelected,
   hasRecordGroups,
   recordTableId,
 }: RecordTableContentProps) => {
@@ -51,27 +53,77 @@ export const RecordTableContent = ({
 
   const handleDragEnd = () => {
     setIsDragging(false);
+
     handleDragSelectionEnd();
   };
 
+  const isRowSelectedCallbackFamilyState =
+    useRecoilComponentFamilyCallbackState(isRowSelectedComponentFamilyState);
+
+  const handleDragSelectionChange = useRecoilCallback(
+    ({ set }) =>
+      (rowId: string, selected: boolean) => {
+        set(isRowSelectedCallbackFamilyState(rowId), selected);
+      },
+    [isRowSelectedCallbackFamilyState],
+  );
+
+  const recordTableScrollWrapperId = `record-table-scroll-${recordTableId}`;
+
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
+
+  const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
+
+  const setRecordTableHoverPosition = useSetRecoilComponentState(
+    recordTableHoverPositionComponentState,
+  );
+
+  const isSomeCellInEditModeCallbackState = useRecoilComponentCallbackState(
+    isSomeCellInEditModeComponentSelector,
+  );
+
+  const handleMouseLeave = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const isSomeCellInEditMode = getSnapshotValue(
+          snapshot,
+          isSomeCellInEditModeCallbackState,
+        );
+
+        if (!isSomeCellInEditMode) {
+          setRecordTableHoverPosition(null);
+        }
+      },
+    [isSomeCellInEditModeCallbackState, setRecordTableHoverPosition],
+  );
+
   return (
     <StyledTableContainer ref={containerRef}>
-      <StyledTableWithPointerEvents ref={tableBodyRef} isDragging={isDragging}>
+      <RecordTableStyleWrapper
+        ref={tableBodyRef}
+        isDragging={isDragging}
+        visibleRecordFields={visibleRecordFields}
+        lastColumnWidth={lastColumnWidth}
+        id={RECORD_TABLE_HTML_ID}
+        onMouseLeave={handleMouseLeave}
+        hasRecordGroups={hasRecordGroups}
+      >
         <RecordTableHeader />
         {hasRecordGroups ? (
           <RecordTableRecordGroupsBody />
         ) : (
           <RecordTableNoRecordGroupBody />
         )}
-        <RecordTableStickyEffect />
-        <RecordTableStickyBottomEffect />
-      </StyledTableWithPointerEvents>
+        <RecordTableScrollAndZIndexEffect />
+        <RecordTableColumnWidthEffect />
+        <RecordTableWidthEffect />
+      </RecordTableStyleWrapper>
       <DragSelect
         selectableItemsContainerRef={containerRef}
         onDragSelectionStart={handleDragStart}
-        onDragSelectionChange={setRowSelected}
+        onDragSelectionChange={handleDragSelectionChange}
         onDragSelectionEnd={handleDragEnd}
-        scrollWrapperComponentInstanceId={`record-table-scroll-${recordTableId}`}
+        scrollWrapperComponentInstanceId={recordTableScrollWrapperId}
         selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
       />
     </StyledTableContainer>

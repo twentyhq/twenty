@@ -31,16 +31,14 @@ export type BaseOutputSchema = Record<string, Leaf | Node>;
 
 export type FieldOutputSchema =
   | ((Leaf | Node) & {
-      fieldMetadataId?: string;
+      fieldMetadataId: string;
     })
   | RecordOutputSchema;
 
 export type RecordOutputSchema = {
   object: {
-    nameSingular: string;
     fieldIdName: string;
     objectMetadataId: string;
-    isRelationField?: boolean;
   } & Leaf;
   fields: Record<string, FieldOutputSchema>;
   _outputSchemaType: 'RECORD';

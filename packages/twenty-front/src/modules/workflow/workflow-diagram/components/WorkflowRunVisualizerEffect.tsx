@@ -9,6 +9,7 @@ import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
+import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { type WorkflowRunState } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramStatusComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramStatusComponentState';
@@ -17,12 +18,10 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { selectWorkflowDiagramNode } from '@/workflow/workflow-diagram/utils/selectWorkflowDiagramNode';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext, useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowRunVisualizerEffect = ({
   workflowRunId,
@@ -32,11 +31,16 @@ export const WorkflowRunVisualizerEffect = ({
   const { getIcon } = useIcons();
 
   const workflowRun = useWorkflowRun({ workflowRunId });
-  const workflowVersion = useWorkflowVersion(workflowRun?.workflowVersionId);
-
   const setWorkflowRunId = useSetRecoilComponentState(
     workflowVisualizerWorkflowRunIdComponentState,
   );
+
+  const workflowVersionId = workflowRun?.workflowVersionId;
+  const workflowVersion = useWorkflowVersion(workflowVersionId);
+  const setWorkflowVisualizerWorkflowVersionId = useSetRecoilComponentState(
+    workflowVisualizerWorkflowVersionIdComponentState,
+  );
+
   const workflowVisualizerWorkflowIdState = useRecoilComponentCallbackState(
     workflowVisualizerWorkflowIdComponentState,
   );
@@ -65,10 +69,6 @@ export const WorkflowRunVisualizerEffect = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
-  );
-
   useEffect(() => {
     setWorkflowRunId(workflowRunId);
   }, [setWorkflowRunId, workflowRunId]);
@@ -80,6 +80,14 @@ export const WorkflowRunVisualizerEffect = ({
 
     setWorkflowVisualizerWorkflowId(workflowRun.workflowId);
   }, [setWorkflowVisualizerWorkflowId, workflowRun]);
+
+  useEffect(() => {
+    if (!isDefined(workflowVersionId)) {
+      return;
+    }
+
+    setWorkflowVisualizerWorkflowVersionId(workflowVersionId);
+  }, [setWorkflowVisualizerWorkflowVersionId, workflowVersionId]);
 
   const handleWorkflowRunDiagramGeneration = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -119,7 +127,6 @@ export const WorkflowRunVisualizerEffect = ({
             trigger: workflowRunState.flow.trigger,
             steps: workflowRunState.flow.steps,
             stepInfos: workflowRunState.stepInfos,
-            isWorkflowFilteringEnabled,
           });
 
         if (workflowDiagramStatus !== 'done') {
@@ -190,7 +197,6 @@ export const WorkflowRunVisualizerEffect = ({
     [
       flowState,
       getIcon,
-      isWorkflowFilteringEnabled,
       openWorkflowRunViewStepInCommandMenu,
       workflowDiagramState,
       workflowDiagramStatusState,

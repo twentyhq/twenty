@@ -2,9 +2,9 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/components/SettingsConnectedAccountsTableHeader';
 import { SettingsConnectedAccountsTableRow } from '@/settings/components/SettingsConnectedAccountsTableRow';
-import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/display';
@@ -23,7 +23,6 @@ const StyledAddAccountSection = styled(Section)`
   display: flex;
   justify-content: flex-end;
   padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsAccountsConnectedAccountsListCard = ({

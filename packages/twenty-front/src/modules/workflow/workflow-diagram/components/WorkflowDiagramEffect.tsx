@@ -1,32 +1,31 @@
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
-import {
-  type WorkflowVersion,
-  type WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 import { mergeWorkflowDiagrams } from '@/workflow/workflow-diagram/utils/mergeWorkflowDiagrams';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
-export const WorkflowDiagramEffect = ({
-  workflowWithCurrentVersion,
-}: {
-  workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
-}) => {
-  const workflowDiagramState = useRecoilComponentCallbackState(
-    workflowDiagramComponentState,
+export const WorkflowDiagramEffect = () => {
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+    workflowVisualizerWorkflowIdComponentState,
   );
-  const setWorkflowDiagram = useSetRecoilComponentState(
+
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+    workflowVisualizerWorkflowId,
+  );
+
+  const workflowDiagramState = useRecoilComponentCallbackState(
     workflowDiagramComponentState,
   );
   const setFlow = useSetRecoilComponentState(flowComponentState);
@@ -36,13 +35,7 @@ export const WorkflowDiagramEffect = ({
     workflowLastCreatedStepIdComponentState,
   );
 
-  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
-  );
-
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
+  const currentVersion = workflowWithCurrentVersion?.currentVersion;
 
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {
@@ -54,9 +47,7 @@ export const WorkflowDiagramEffect = ({
 
         const nextWorkflowDiagram = getWorkflowVersionDiagram({
           workflowVersion: currentVersion,
-          isWorkflowFilteringEnabled,
-          isWorkflowBranchEnabled,
-          isEditable: true,
+          workflowContext: 'workflow',
         });
 
         let mergedWorkflowDiagram = nextWorkflowDiagram;
@@ -89,21 +80,11 @@ export const WorkflowDiagramEffect = ({
         set(workflowDiagramState, mergedWorkflowDiagram);
       };
     },
-    [
-      workflowDiagramState,
-      isWorkflowFilteringEnabled,
-      isWorkflowBranchEnabled,
-      workflowLastCreatedStepIdState,
-    ],
+    [workflowDiagramState, workflowLastCreatedStepIdState],
   );
-
-  const currentVersion = workflowWithCurrentVersion?.currentVersion;
 
   useEffect(() => {
     if (!isDefined(currentVersion)) {
-      setFlow(undefined);
-      setWorkflowDiagram(undefined);
-
       return;
     }
 
@@ -114,12 +95,7 @@ export const WorkflowDiagramEffect = ({
     });
 
     computeAndMergeNewWorkflowDiagram(currentVersion);
-  }, [
-    computeAndMergeNewWorkflowDiagram,
-    setFlow,
-    setWorkflowDiagram,
-    currentVersion,
-  ]);
+  }, [computeAndMergeNewWorkflowDiagram, setFlow, currentVersion]);
 
   useEffect(() => {
     if (!isDefined(currentVersion)) {

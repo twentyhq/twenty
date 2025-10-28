@@ -1,5 +1,7 @@
 import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 export const getSettingsIntegrationAll = ({
   isAirtableIntegrationEnabled,
@@ -26,7 +28,9 @@ export const getSettingsIntegrationAll = ({
       },
       type: isAirtableIntegrationActive ? 'Active' : 'Add',
       text: 'Airtable',
-      link: '/settings/integrations/airtable',
+      link: getSettingsPath(SettingsPath.IntegrationDatabase, {
+        databaseKey: 'airtable',
+      }),
     },
     isPostgresqlIntegrationEnabled && {
       from: {
@@ -35,7 +39,9 @@ export const getSettingsIntegrationAll = ({
       },
       type: isPostgresqlIntegrationActive ? 'Active' : 'Add',
       text: 'PostgreSQL',
-      link: '/settings/integrations/postgresql',
+      link: getSettingsPath(SettingsPath.IntegrationDatabase, {
+        databaseKey: 'postgresql',
+      }),
     },
     isStripeIntegrationEnabled && {
       from: {
@@ -44,7 +50,9 @@ export const getSettingsIntegrationAll = ({
       },
       type: isStripeIntegrationActive ? 'Active' : 'Add',
       text: 'Stripe',
-      link: '/settings/integrations/stripe',
+      link: getSettingsPath(SettingsPath.IntegrationDatabase, {
+        databaseKey: 'stripe',
+      }),
     },
   ].filter(Boolean) as SettingsIntegration[],
 });

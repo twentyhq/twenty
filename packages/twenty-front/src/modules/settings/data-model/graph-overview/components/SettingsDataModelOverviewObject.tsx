@@ -6,16 +6,15 @@ import { Link } from 'react-router-dom';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ObjectFieldRow } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewField';
-import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
-import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { ObjectFieldRowWithoutRelation } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewFieldWithoutRelation';
-import { SettingsPath } from '@/types/SettingsPath';
 import '@xyflow/react/dist/style.css';
 import { useState } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/display';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 
 type SettingsDataModelOverviewObjectNode = Node<ObjectMetadataItem, 'object'>;
 type SettingsDataModelOverviewObjectProps =
@@ -134,9 +133,7 @@ export const SettingsDataModelOverviewObject = ({
           </StyledObjectLink>
           <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
         </StyledObjectName>
-        <SettingsDataModelObjectTypeTag
-          objectTypeLabel={getObjectTypeLabel(objectMetadataItem)}
-        ></SettingsDataModelObjectTypeTag>
+        <SettingsItemTypeTag item={objectMetadataItem} />
       </StyledHeader>
 
       <StyledInnerCard>

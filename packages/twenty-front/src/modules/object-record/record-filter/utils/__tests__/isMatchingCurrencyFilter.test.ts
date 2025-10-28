@@ -1,5 +1,5 @@
-import { type CurrencyFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
+import { type CurrencyFilter } from 'twenty-shared/types';
 
 describe('isMatchingCurrencyFilter', () => {
   describe('amountMicros', () => {

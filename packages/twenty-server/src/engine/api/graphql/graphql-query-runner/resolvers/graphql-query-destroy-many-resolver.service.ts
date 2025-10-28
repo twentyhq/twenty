@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { type ObjectRecord } from 'twenty-shared/types';
 
 import {
   GraphqlQueryBaseResolverService,
   type GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseResolverService<
@@ -25,20 +24,13 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
 
-    const { roleId } = executionArgs;
-
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const tableName = computeTableName(
-      objectMetadataItemWithFieldMaps.nameSingular,
-      objectMetadataItemWithFieldMaps.isCustom,
-    );
-
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      tableName,
+      objectMetadataItemWithFieldMaps.nameSingular,
       executionArgs.args.filter,
     );
 
@@ -46,6 +38,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const deletedObjectRecords = await queryBuilder
@@ -63,9 +56,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource: executionArgs.workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks:
-          executionArgs.shouldBypassPermissionChecks,
+        rolePermissionConfig: executionArgs.rolePermissionConfig,
         selectedFields: executionArgs.graphqlQuerySelectedFieldsResult.select,
       });
     }

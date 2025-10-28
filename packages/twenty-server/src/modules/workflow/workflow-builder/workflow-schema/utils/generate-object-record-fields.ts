@@ -3,18 +3,19 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type FieldOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
+import { generateFakeRecordField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-record-field';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
-
-const MAXIMUM_DEPTH = 1;
+import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 export const generateObjectRecordFields = ({
   objectMetadataInfo,
   depth = 0,
+  maxDepth = 1,
 }: {
   objectMetadataInfo: ObjectMetadataInfo;
   depth?: number;
+  maxDepth?: number;
 }): Record<string, FieldOutputSchema> => {
   const objectMetadata = objectMetadataInfo.objectMetadataItemWithFieldsMaps;
 
@@ -25,7 +26,7 @@ export const generateObjectRecordFields = ({
       }
 
       if (field.type !== FieldMetadataType.RELATION) {
-        acc[field.name] = generateFakeField({
+        acc[field.name] = generateFakeRecordField({
           type: field.type,
           label: field.label,
           icon: field.icon ?? undefined,
@@ -35,10 +36,11 @@ export const generateObjectRecordFields = ({
         return acc;
       }
 
-      if (
-        depth < MAXIMUM_DEPTH &&
-        isDefined(field.relationTargetObjectMetadataId)
-      ) {
+      if (!isDefined(field.relationTargetObjectMetadataId)) {
+        return acc;
+      }
+
+      if (depth < maxDepth) {
         const relationTargetObjectMetadata =
           objectMetadataInfo.objectMetadataMaps.byId[
             field.relationTargetObjectMetadataId
@@ -60,9 +62,18 @@ export const generateObjectRecordFields = ({
               objectMetadataMaps: objectMetadataInfo.objectMetadataMaps,
             },
             depth: depth + 1,
-            isRelationField: true,
           }),
         };
+      } else if (depth === maxDepth) {
+        const relationIdFieldName = `${field.name}Id`;
+        const relationIdFieldLabel = camelToTitleCase(relationIdFieldName);
+
+        acc[relationIdFieldName] = generateFakeRecordField({
+          type: FieldMetadataType.UUID,
+          label: relationIdFieldLabel,
+          icon: field.icon ?? undefined,
+          fieldMetadataId: field.id,
+        });
       }
 
       return acc;

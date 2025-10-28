@@ -14,17 +14,17 @@ import {
 
 import type Stripe from 'stripe';
 
-import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 registerEnumType(BillingUsageType, { name: 'BillingUsageType' });
 @Entity({ name: 'billingProduct', schema: 'core' })
-export class BillingProduct {
+export class BillingProductEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  deletedAt?: Date;
+  deletedAt?: Date | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
@@ -59,8 +59,11 @@ export class BillingProduct {
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: BillingProductMetadata;
 
-  @OneToMany(() => BillingPrice, (billingPrice) => billingPrice.billingProduct)
-  billingPrices: Relation<BillingPrice[]>;
+  @OneToMany(
+    () => BillingPriceEntity,
+    (billingPrice) => billingPrice.billingProduct,
+  )
+  billingPrices: Relation<BillingPriceEntity[]>;
 
   @Column({ nullable: true, type: 'text' })
   unitLabel: string | null;

@@ -3,8 +3,7 @@ DOCKER_NETWORK=twenty_network
 ensure-docker-network:
 	docker network inspect $(DOCKER_NETWORK) >/dev/null 2>&1 || docker network create $(DOCKER_NETWORK)
 
-postgres-on-docker:
-	make ensure-docker-network
+postgres-on-docker: ensure-docker-network
 	docker run -d --network $(DOCKER_NETWORK) \
 	--name twenty_pg \
 	-e POSTGRES_USER=postgres \
@@ -22,16 +21,13 @@ postgres-on-docker:
 		-c "CREATE DATABASE \"default\" WITH OWNER postgres;" \
 		-c "CREATE DATABASE \"test\" WITH OWNER postgres;"
 
-redis-on-docker:
-	make ensure-docker-network
+redis-on-docker: ensure-docker-network
 	docker run -d --network $(DOCKER_NETWORK) --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
 
-clickhouse-on-docker:
-	make ensure-docker-network
+clickhouse-on-docker: ensure-docker-network
 	docker run -d --network $(DOCKER_NETWORK) --name twenty_clickhouse -p 8123:8123 -p 9000:9000 -e CLICKHOUSE_PASSWORD=devPassword clickhouse/clickhouse-server:latest \
 
-grafana-on-docker:
-	make ensure-docker-network
+grafana-on-docker: ensure-docker-network
 	docker run -d --network $(DOCKER_NETWORK) \
 	--name twenty_grafana \
 	-p 4000:3000 \
@@ -41,8 +37,7 @@ grafana-on-docker:
 	-v $(PWD)/packages/twenty-docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources \
 	grafana/grafana-oss:latest
 
-opentelemetry-collector-on-docker:
-	make ensure-docker-network
+opentelemetry-collector-on-docker: ensure-docker-network
 	docker run -d --network $(DOCKER_NETWORK) \
 	--name twenty_otlp_collector \
 	-p 4317:4317 \

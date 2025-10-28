@@ -52,7 +52,7 @@ export class RecordInputTransformerService {
     return transformedEntries;
   }
 
-  async transformFieldValue(
+  private async transformFieldValue(
     fieldType: FieldMetadataType,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,

@@ -1,3 +1,5 @@
+import { ObjectType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -9,10 +11,10 @@ import {
   Relation,
 } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentChatMessageEntity } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity('file')
+@ObjectType('File')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
 export class FileEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -33,20 +35,11 @@ export class FileEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, {
+  @ManyToOne(() => WorkspaceEntity, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
-
-  @Column({ nullable: true, type: 'uuid' })
-  messageId: string;
-
-  @ManyToOne(() => AgentChatMessageEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'messageId' })
-  message: Relation<AgentChatMessageEntity>;
+  workspace: Relation<WorkspaceEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -12,20 +12,18 @@ import { SettingsDevelopersRoleSelector } from '@/settings/developers/components
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
 import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  FeatureFlagKey,
   useAssignRoleToApiKeyMutation,
   useCreateApiKeyMutation,
   useGenerateApiKeyTokenMutation,
@@ -34,7 +32,6 @@ import {
   useRevokeApiKeyMutation,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -70,10 +67,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
         set(apiKeyTokenFamilyState(apiKeyId), token);
       },
     [],
-  );
-
-  const isApiKeyRolesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
   );
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
@@ -143,7 +136,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         },
       });
       if (redirect) {
-        navigate(SettingsPath.APIs);
+        navigate(SettingsPath.ApiWebhooks);
       }
     } catch {
       enqueueErrorSnackBar({ message: t`Error deleting api key.` });
@@ -156,10 +149,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
     name: string,
     newExpiresAt: string | null,
   ) => {
-    const adminRole = roles.find((role) => role.label === 'Admin');
-    const roleIdToUse = isApiKeyRolesEnabled ? selectedRoleId : adminRole?.id;
+    const roleIdToUse = selectedRoleId;
 
-    if (!roleIdToUse && isApiKeyRolesEnabled) {
+    if (!roleIdToUse) {
       enqueueErrorSnackBar({
         message: t`A role must be selected for the API key`,
       });
@@ -167,7 +159,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     }
 
     if (!isDefined(roleIdToUse)) {
-      throw new Error('Admin role not found - this should never happen');
+      throw new Error('Role not selected - this should never happen');
     }
 
     const { data: newApiKeyData } = await createApiKey({
@@ -242,8 +234,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
               href: getSettingsPath(SettingsPath.Workspace),
             },
             {
-              children: t`APIs`,
-              href: getSettingsPath(SettingsPath.APIs),
+              children: t`APIs & Webhooks`,
+              href: getSettingsPath(SettingsPath.ApiWebhooks),
             },
             { children: apiKey?.name },
           ]}
@@ -286,19 +278,17 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 onNameUpdate={setApiKeyName}
               />
             </Section>
-            {isApiKeyRolesEnabled && (
-              <Section>
-                <H2Title
-                  title={t`Role`}
-                  description={t`What this API can do: Select a user role to define its permissions.`}
-                />
-                <SettingsDevelopersRoleSelector
-                  value={selectedRoleId}
-                  onChange={handleRoleChange}
-                  roles={roles}
-                />
-              </Section>
-            )}
+            <Section>
+              <H2Title
+                title={t`Role`}
+                description={t`What this API can do: Select a user role to define its permissions.`}
+              />
+              <SettingsDevelopersRoleSelector
+                value={selectedRoleId}
+                onChange={handleRoleChange}
+                roles={roles}
+              />
+            </Section>
             <Section>
               <H2Title
                 title={t`Expiration`}

@@ -71,11 +71,11 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
         await deleteViewFilterGroupRecords(viewFilterGroupIdsToDelete);
       },
     [
-      createViewFilterGroupRecords,
-      deleteViewFilterGroupRecords,
-      updateViewFilterGroupRecords,
-      currentRecordFilterGroupsCallbackState,
       currentView,
+      currentRecordFilterGroupsCallbackState,
+      createViewFilterGroupRecords,
+      updateViewFilterGroupRecords,
+      deleteViewFilterGroupRecords,
     ],
   );
 

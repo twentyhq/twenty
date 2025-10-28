@@ -110,6 +110,11 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
 
   @IsBoolean()
   @IsOptional()
+  @FilterableField({ nullable: true })
+  isUIReadOnly?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
   @Field({ nullable: true })
   isNullable?: boolean;
 
@@ -143,7 +148,10 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   isLabelSyncedWithName?: boolean;
 
-  @IsDateString()
+  @IsDateString(undefined, {
+    message: ({ value }) =>
+      `Field metadata created at is invalid got ${JSON.stringify(value)} isDate: ${value instanceof Date}`,
+  })
   @Field()
   createdAt: Date;
 

@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
@@ -7,6 +9,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 export const tasksByStatusView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const taskObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.task,
@@ -17,7 +20,7 @@ export const tasksByStatusView = (
   }
 
   return {
-    name: 'By Status',
+    name: useCoreNaming ? msg`By Status` : 'By Status',
     objectMetadataId: taskObjectMetadata.id,
     type: 'kanban',
     key: null,

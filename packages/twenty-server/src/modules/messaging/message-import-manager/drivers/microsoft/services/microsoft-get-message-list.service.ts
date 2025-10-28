@@ -6,18 +6,15 @@ import {
   type PageIteratorCallback,
 } from '@microsoft/microsoft-graph-client';
 import { isNonEmptyString } from '@sniptt/guards';
-import { v4 } from 'uuid';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
-import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
@@ -32,9 +29,8 @@ const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
 export class MicrosoftGetMessageListService {
   private readonly logger = new Logger(MicrosoftGetMessageListService.name);
   constructor(
-    private readonly microsoftClientProvider: MicrosoftClientProvider,
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
     private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
-    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async getMessageLists({
@@ -45,46 +41,10 @@ export class MicrosoftGetMessageListService {
     const result: GetMessageListsResponse = [];
 
     if (messageFolders.length === 0) {
-      // permanent solution:
-      // throw new MessageImportDriverException(
-      //   `Message channel ${messageChannel.id} has no message folders`,
-      //   MessageImportDriverExceptionCode.NOT_FOUND,
-      // );
-
-      // temporary solution: TODO: remove this once we have a permanent solution
-      // if no folders exist, most probably a first time sync for microsoft
-      // so we create the folders INBOX and SENTITEMS
-      // and fill the INBOX with the previous sync cursor
-      // and for sentitms, we do the full message list fetch
-      // console.warn(
-      //   `Message channel ${messageChannel.id} has no message folders, most probably a first time`,
-      // );
-
-      const messageFolderRepository =
-        await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
-          'messageFolder',
-        );
-
-      const newFolder = await messageFolderRepository.save({
-        id: v4(),
-        messageChannelId: messageChannel.id,
-        name: MessageFolderName.INBOX,
-        syncCursor: messageChannel.syncCursor,
-      });
-
-      const response = await this.getMessageList(connectedAccount, {
-        name: MessageFolderName.INBOX,
-        syncCursor: messageChannel.syncCursor,
-      });
-
-      result.push({
-        ...response,
-        folderId: newFolder.id,
-      });
-
-      // we are ok with not synchronizing the legacy connected microsoft accounts.
-      // so we return an empty array.
-      return result;
+      throw new MessageImportDriverException(
+        `Message channel ${messageChannel.id} has no message folders`,
+        MessageImportDriverExceptionCode.NOT_FOUND,
+      );
     }
 
     for (const folder of messageFolders) {
@@ -102,19 +62,25 @@ export class MicrosoftGetMessageListService {
   public async getMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'accessToken' | 'id'
     >,
-    messageFolder: Pick<MessageFolderWorkspaceEntity, 'name' | 'syncCursor'>,
+    messageFolder: Pick<
+      MessageFolderWorkspaceEntity,
+      'name' | 'syncCursor' | 'externalId'
+    >,
   ): Promise<GetOneMessageListResponse> {
     const messageExternalIds: string[] = [];
     const messageExternalIdsToDelete: string[] = [];
 
     const microsoftClient =
-      await this.microsoftClientProvider.getMicrosoftClient(connectedAccount);
+      await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
+        connectedAccount,
+      );
 
+    const folderId = messageFolder.externalId || messageFolder.name;
     const apiUrl = isNonEmptyString(messageFolder.syncCursor)
       ? messageFolder.syncCursor
-      : `/me/mailfolders/${messageFolder.name}/messages/delta?$select=id`;
+      : `/me/mailfolders/${folderId}/messages/delta?$select=id`;
 
     const response: PageCollection = await microsoftClient
       .api(apiUrl)

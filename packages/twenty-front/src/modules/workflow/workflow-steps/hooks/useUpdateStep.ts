@@ -1,34 +1,23 @@
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
-import {
-  type WorkflowStep,
-  type WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { type WorkflowAction } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
-import { isDefined } from 'twenty-shared/utils';
 
-export const useUpdateStep = ({
-  workflow,
-}: {
-  workflow: WorkflowWithCurrentVersion;
-}) => {
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+export const useUpdateStep = () => {
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
   const { updateWorkflowVersionStep } = useUpdateWorkflowVersionStep();
 
-  const updateStep = async <T extends WorkflowStep>(updatedStep: T) => {
-    if (!isDefined(workflow.currentVersion)) {
-      throw new Error('Could not find current workflow version');
-    }
+  const updateStep = async (updatedStep: WorkflowAction) => {
+    const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
-
-    if (!isDefined(workflowVersionId)) {
-      throw new Error('Workflow version not found');
-    }
-
-    await updateWorkflowVersionStep({
+    const result = await updateWorkflowVersionStep({
       workflowVersionId,
       step: updatedStep,
     });
+
+    return {
+      updatedStep: result?.data?.updateWorkflowVersionStep,
+    };
   };
 
   return {

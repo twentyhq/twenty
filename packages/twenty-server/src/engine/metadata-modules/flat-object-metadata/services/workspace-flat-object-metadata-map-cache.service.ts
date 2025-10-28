@@ -1,0 +1,70 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
+import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+
+@Injectable()
+@WorkspaceFlatMapCache('flatObjectMetadataMaps')
+export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMapCacheService<
+  FlatEntityMaps<FlatObjectMetadata>
+> {
+  constructor(
+    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
+    cacheStorageService: CacheStorageService,
+
+    @InjectRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+  ) {
+    super(cacheStorageService);
+  }
+
+  protected async computeFlatMap({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<FlatEntityMaps<FlatObjectMetadata>> {
+    const objectMetadatas = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+      },
+      withDeleted: true,
+      select: {
+        fields: {
+          id: true,
+        },
+        indexMetadatas: {
+          id: true,
+        },
+        views: {
+          id: true,
+        },
+      },
+      relations: ['fields', 'indexMetadatas', 'views'],
+    });
+
+    return objectMetadatas.reduce(
+      (flatObjectMetadataMaps, objectMetadataEntity) => {
+        const flatObjectMetadata =
+          fromObjectMetadataEntityToFlatObjectMetadata(objectMetadataEntity);
+
+        return addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: flatObjectMetadata,
+          flatEntityMaps: flatObjectMetadataMaps,
+        });
+      },
+      EMPTY_FLAT_ENTITY_MAPS,
+    );
+  }
+}

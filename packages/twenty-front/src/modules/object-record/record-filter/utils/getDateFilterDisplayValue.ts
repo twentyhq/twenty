@@ -1,4 +1,4 @@
-import { type FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { type FilterableAndTSVectorFieldType } from 'twenty-shared/types';
 
 export const getDateFilterDisplayValue = (
   value: Date,

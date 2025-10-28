@@ -5,11 +5,17 @@ import { type Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
+import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
+import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
-import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
+import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
 import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -19,12 +25,14 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
+import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 export interface AgentToolTestContext {
   module: TestingModule;
-  agentToolService: AgentToolService;
+  agentToolService: AgentToolGeneratorService;
   agentService: AgentService;
   objectMetadataService: ObjectMetadataService;
   roleRepository: Repository<RoleEntity>;
@@ -46,7 +54,7 @@ export const createAgentToolTestModule =
 
     const module = await Test.createTestingModule({
       providers: [
-        AgentToolService,
+        AgentToolGeneratorService,
         {
           provide: AgentService,
           useValue: {
@@ -54,9 +62,10 @@ export const createAgentToolTestModule =
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'core'),
+          provide: getRepositoryToken(RoleEntity),
           useValue: {
             findOne: jest.fn(),
+            find: jest.fn(),
           },
         },
         {
@@ -83,6 +92,46 @@ export const createAgentToolTestModule =
           useClass: ToolService,
         },
         {
+          provide: CreateRecordService,
+          useValue: {
+            execute: jest.fn(),
+          },
+        },
+        {
+          provide: UpdateRecordService,
+          useValue: {
+            execute: jest.fn(),
+          },
+        },
+        {
+          provide: DeleteRecordService,
+          useValue: {
+            execute: jest.fn(),
+          },
+        },
+        {
+          provide: FindRecordsService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue({
+              success: true,
+              message: 'Records found successfully',
+              result: [],
+            }),
+          },
+        },
+        {
+          provide: RecordInputTransformerService,
+          useValue: {
+            process: jest.fn(async ({ recordInput }) => recordInput),
+          },
+        },
+        {
+          provide: WorkspaceCacheStorageService,
+          useValue: {
+            getObjectMetadataMapsOrThrow: jest.fn(),
+          },
+        },
+        {
           provide: ToolAdapterService,
           useClass: ToolAdapterService,
         },
@@ -94,7 +143,7 @@ export const createAgentToolTestModule =
           provide: SendEmailTool,
           useValue: {
             description: 'mock',
-            parameters: {},
+            inputSchema: {},
             execute: jest.fn(),
           },
         },
@@ -112,6 +161,8 @@ export const createAgentToolTestModule =
           provide: PermissionsService,
           useValue: {
             hasToolPermission: jest.fn(),
+            checkRolePermissions: jest.fn().mockReturnValue(true),
+            checkRolesPermissions: jest.fn().mockResolvedValue(true),
           },
         },
         {
@@ -128,16 +179,24 @@ export const createAgentToolTestModule =
             executeHandoff: jest.fn().mockResolvedValue({ success: true }),
           },
         },
+        {
+          provide: WorkflowToolWorkspaceService,
+          useValue: {
+            generateWorkflowTools: jest.fn().mockResolvedValue({}),
+          },
+        },
       ],
     }).compile();
 
-    const agentToolService = module.get<AgentToolService>(AgentToolService);
+    const agentToolService = module.get<AgentToolGeneratorService>(
+      AgentToolGeneratorService,
+    );
     const agentService = module.get<AgentService>(AgentService);
     const objectMetadataService = module.get<ObjectMetadataService>(
       ObjectMetadataService,
     );
     const roleRepository = module.get<Repository<RoleEntity>>(
-      getRepositoryToken(RoleEntity, 'core'),
+      getRepositoryToken(RoleEntity),
     );
     const workspacePermissionsCacheService =
       module.get<WorkspacePermissionsCacheService>(
@@ -153,6 +212,11 @@ export const createAgentToolTestModule =
       label: 'Test Agent',
       icon: 'IconTest',
       isCustom: false,
+      applicationId: null,
+      application: {} as ApplicationEntity,
+      standardId: null,
+      deletedAt: null,
+      universalIdentifier: testAgentId,
       description: 'Test agent for integration tests',
       prompt: 'You are a test agent',
       modelId: 'gpt-4o',
@@ -162,9 +226,9 @@ export const createAgentToolTestModule =
       roleId: testRoleId,
       createdAt: new Date(),
       updatedAt: new Date(),
-      chatThreads: [],
       incomingHandoffs: [],
       outgoingHandoffs: [],
+      modelConfiguration: {},
     };
 
     const testRole: RoleEntity = {
@@ -212,6 +276,29 @@ export const createAgentToolTestModule =
       fieldPermissions: [],
     });
 
+    // Ensure ToolService input transformation has access to minimal metadata maps
+    const workspaceCacheStorageService =
+      module.get<WorkspaceCacheStorageService>(WorkspaceCacheStorageService);
+
+    // Return a barebones object metadata map where fields are unknown (so transformer is a no-op)
+    const getMapsMock =
+      workspaceCacheStorageService.getObjectMetadataMapsOrThrow as jest.Mock;
+
+    getMapsMock.mockResolvedValue({
+      byId: {
+        [testObjectMetadata.id]: {
+          ...testObjectMetadata,
+          fieldsById: {},
+          fieldIdByJoinColumnName: {},
+          fieldIdByName: {},
+          indexMetadatas: [],
+        },
+      },
+      idByNameSingular: {
+        [testObjectMetadata.nameSingular]: testObjectMetadata.id,
+      },
+    });
+
     return {
       module,
       agentToolService,
@@ -255,10 +342,10 @@ export const setupBasicPermissions = (context: AgentToolTestContext) => {
       data: {
         [context.testRoleId]: {
           [context.testObjectMetadata.id]: {
-            canRead: true,
-            canUpdate: true,
-            canSoftDelete: true,
-            canDestroy: false,
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: true,
+            canSoftDeleteObjectRecords: true,
+            canDestroyObjectRecords: false,
             restrictedFields: {},
           },
         },

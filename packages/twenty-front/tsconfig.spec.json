@@ -10,7 +10,7 @@
   },
   "include": [
     "**/__mocks__/**/*",
-    "jest.config.ts",
+    "jest.config.mjs",
     "setupTests.ts",
     "src/**/*.d.ts",
     "src/**/*.spec.ts",

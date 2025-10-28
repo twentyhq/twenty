@@ -3,6 +3,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import graphqlTypeJson from 'graphql-type-json';
 import Stripe from 'stripe';
 import {
   Column,
@@ -16,12 +17,12 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-modules/billing/dtos/billing-subscription-schedule-phase.dto';
 import { BillingSubscriptionItemDTO } from 'src/engine/core-modules/billing/dtos/outputs/billing-subscription-item.output';
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -34,8 +35,8 @@ registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
   unique: true,
   where: `status IN ('trialing', 'active', 'past_due')`,
 })
-@ObjectType()
-export class BillingSubscription {
+@ObjectType('BillingSubscription')
+export class BillingSubscriptionEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -72,17 +73,17 @@ export class BillingSubscription {
     enum: Object.values(SubscriptionInterval),
     nullable: true,
   })
-  interval: Stripe.Price.Recurring.Interval;
+  interval: SubscriptionInterval;
 
   @Field(() => [BillingSubscriptionItemDTO], { nullable: true })
   @OneToMany(
-    () => BillingSubscriptionItem,
+    () => BillingSubscriptionItemEntity,
     (billingSubscriptionItem) => billingSubscriptionItem.billingSubscription,
   )
-  billingSubscriptionItems: Relation<BillingSubscriptionItem[]>;
+  billingSubscriptionItems: Relation<BillingSubscriptionItemEntity[]>;
 
   @ManyToOne(
-    () => BillingCustomer,
+    () => BillingCustomerEntity,
     (billingCustomer) => billingCustomer.billingSubscriptions,
     {
       nullable: false,
@@ -94,7 +95,7 @@ export class BillingSubscription {
     referencedColumnName: 'stripeCustomerId',
     name: 'stripeCustomerId',
   })
-  billingCustomer: Relation<BillingCustomer>;
+  billingCustomer: Relation<BillingCustomerEntity>;
 
   @Column({ nullable: false, default: false })
   cancelAtPeriodEnd: boolean;
@@ -102,6 +103,7 @@ export class BillingSubscription {
   @Column({ nullable: false, default: 'USD' })
   currency: string;
 
+  @Field(() => Date, { nullable: true })
   @Column({
     nullable: false,
     type: 'timestamptz',
@@ -119,6 +121,10 @@ export class BillingSubscription {
   @Field(() => graphqlTypeJson)
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;
+
+  @Field(() => [BillingSubscriptionSchedulePhaseDTO])
+  @Column({ nullable: false, type: 'jsonb', default: [] })
+  phases: Array<BillingSubscriptionSchedulePhaseDTO>;
 
   @Column({ nullable: true, type: 'timestamptz' })
   cancelAt: Date | null;

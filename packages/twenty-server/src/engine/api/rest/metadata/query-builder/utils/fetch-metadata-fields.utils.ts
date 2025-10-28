@@ -52,7 +52,6 @@ export const fetchMetadataFields = (
       const objectsSelection =
         selector?.objects?.join('\n') ??
         `
-        dataSourceId
         nameSingular
         namePlural
         labelSingular

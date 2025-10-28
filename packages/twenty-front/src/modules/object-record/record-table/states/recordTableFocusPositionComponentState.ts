@@ -3,11 +3,8 @@ import { createComponentState } from '@/ui/utilities/state/component-state/utils
 import { type TableCellPosition } from '../types/TableCellPosition';
 
 export const recordTableFocusPositionComponentState =
-  createComponentState<TableCellPosition>({
+  createComponentState<TableCellPosition | null>({
     key: 'recordTableFocusPositionComponentState',
-    defaultValue: {
-      row: 0,
-      column: 1,
-    },
+    defaultValue: null,
     componentInstanceContext: RecordTableComponentInstanceContext,
   });

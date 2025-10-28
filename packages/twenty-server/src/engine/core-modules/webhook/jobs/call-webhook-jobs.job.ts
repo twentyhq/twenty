@@ -1,22 +1,26 @@
-import { isDefined } from 'twenty-shared/utils';
+import { Logger } from '@nestjs/common';
+
+import chunk from 'lodash.chunk';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import {
   CallWebhookJob,
   type CallWebhookJobData,
 } from 'src/engine/core-modules/webhook/jobs/call-webhook.job';
-import { type ObjectRecordEventForWebhook } from 'src/engine/core-modules/webhook/types/object-record-event-for-webhook.type';
-import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
+import { WebhookService } from 'src/engine/core-modules/webhook/webhook.service';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import type { ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
+import { transformEventBatchToWebhookEvents } from 'src/engine/core-modules/webhook/utils/transform-event-batch-to-webhook-events';
+
+const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
+  private readonly logger = new Logger(CallWebhookJobsJob.name);
   constructor(
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -25,7 +29,7 @@ export class CallWebhookJobsJob {
 
   @Process(CallWebhookJobsJob.name)
   async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEventForWebhook>,
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<void> {
     // If you change that function, double check it does not break Zapier
     // trigger in packages/twenty-zapier/src/triggers/trigger_record.ts
@@ -44,51 +48,19 @@ export class CallWebhookJobsJob {
       ],
     );
 
-    for (const eventData of workspaceEventBatch.events) {
-      const eventName = workspaceEventBatch.name;
-      const objectMetadata: Pick<ObjectMetadataEntity, 'id' | 'nameSingular'> =
-        {
-          id: eventData.objectMetadata.id,
-          nameSingular: eventData.objectMetadata.nameSingular,
-        };
-      const workspaceId = workspaceEventBatch.workspaceId;
-      const record =
-        'after' in eventData.properties && isDefined(eventData.properties.after)
-          ? eventData.properties.after
-          : 'before' in eventData.properties &&
-              isDefined(eventData.properties.before)
-            ? eventData.properties.before
-            : {};
-      const updatedFields =
-        'updatedFields' in eventData.properties
-          ? eventData.properties.updatedFields
-          : undefined;
+    const webhookEvents = transformEventBatchToWebhookEvents({
+      workspaceEventBatch,
+      webhooks,
+    });
 
-      const isWebhookEvent = nameSingular === 'webhook';
-      const sanitizedRecord = removeSecretFromWebhookRecord(
-        record,
-        isWebhookEvent,
+    const webhookEventsChunks = chunk(webhookEvents, WEBHOOK_JOBS_CHUNK_SIZE);
+
+    for (const webhookEventsChunk of webhookEventsChunks) {
+      await this.messageQueueService.add<CallWebhookJobData[]>(
+        CallWebhookJob.name,
+        webhookEventsChunk,
+        { retryLimit: 3 },
       );
-
-      webhooks.forEach((webhook) => {
-        const webhookData = {
-          targetUrl: webhook.targetUrl,
-          secret: webhook.secret,
-          eventName,
-          objectMetadata,
-          workspaceId,
-          webhookId: webhook.id,
-          eventDate: new Date(),
-          record: sanitizedRecord,
-          ...(updatedFields && { updatedFields }),
-        };
-
-        this.messageQueueService.add<CallWebhookJobData>(
-          CallWebhookJob.name,
-          webhookData,
-          { retryLimit: 3 },
-        );
-      });
     }
   }
 }

@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { differenceInDays } from 'date-fns';
 import {
@@ -13,22 +12,25 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 import {
   WorkspaceCleanerException,
   WorkspaceCleanerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class CleanerWorkspaceService {
@@ -43,13 +45,15 @@ export class CleanerWorkspaceService {
     private readonly userVarsService: UserVarsService,
     private readonly userService: UserService,
     private readonly emailService: EmailService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(BillingSubscription, 'core')
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(UserWorkspace, 'core')
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly i18nService: I18nService,
+    private readonly metricsService: MetricsService,
   ) {
     this.inactiveDaysBeforeSoftDelete = this.twentyConfigService.get(
       'WORKSPACE_INACTIVE_DAYS_BEFORE_SOFT_DELETION',
@@ -67,7 +71,7 @@ export class CleanerWorkspaceService {
   }
 
   async computeWorkspaceBillingInactivity(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
   ): Promise<number> {
     try {
       const lastSubscription =
@@ -122,24 +126,26 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = WarnSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
-    i18n.activate(workspaceMember.locale);
+    const workspaceDeletionMsg = msg`Action needed to prevent workspace deletion`;
+    const i18n = this.i18nService.getI18nInstance(workspaceMember.locale);
+    const subject = i18n._(workspaceDeletionMsg);
 
     this.emailService.send({
       to: workspaceMember.userEmail,
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
-      subject: t`Action needed to prevent workspace deletion`,
+      subject,
       html,
       text,
     });
   }
 
   async warnWorkspaceMembers(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     daysSinceInactive: number,
     dryRun: boolean,
   ) {
@@ -198,8 +204,8 @@ export class CleanerWorkspaceService {
       locale: workspaceMember.locale,
     };
     const emailTemplate = CleanSuspendedWorkspaceEmail(emailData);
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
     this.emailService.send({
       to: workspaceMember.userEmail,
@@ -213,7 +219,7 @@ export class CleanerWorkspaceService {
   }
 
   async informWorkspaceMembersAndSoftDeleteWorkspace(
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     daysSinceInactive: number,
     dryRun: boolean,
   ) {
@@ -444,6 +450,11 @@ export class CleanerWorkspaceService {
 
       if (!dryRun) {
         await this.workspaceService.deleteWorkspace(workspace.id);
+
+        this.metricsService.incrementCounter({
+          key: MetricsKeys.CronJobDeletedWorkspace,
+          shouldStoreInCache: false,
+        });
       }
 
       this.logger.log(

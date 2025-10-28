@@ -1,7 +1,4 @@
-import {
-  TEST_FIELD_METADATA_1_ID,
-  TEST_NOT_EXISTING_VIEW_SORT_ID,
-} from 'test/integration/constants/test-view-ids.constants';
+import { TEST_NOT_EXISTING_VIEW_SORT_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createViewSortOperationFactory } from 'test/integration/graphql/utils/create-view-sort-operation-factory.util';
 import { deleteViewSortOperationFactory } from 'test/integration/graphql/utils/delete-view-sort-operation-factory.util';
 import { destroyViewSortOperationFactory } from 'test/integration/graphql/utils/destroy-view-sort-operation-factory.util';
@@ -17,33 +14,90 @@ import {
   updateViewSortData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import {
   assertViewSortStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import {
   generateViewSortExceptionMessage,
   ViewSortExceptionMessageKey,
-} from 'src/engine/core-modules/view/exceptions/view-sort.exception';
+} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 
 describe('View Sort Resolver', () => {
   let testViewId: string;
+  let testObjectMetadataId: string;
+  let testFieldMetadataId: string;
+
+  beforeAll(async () => {
+    const {
+      data: {
+        createOneObject: { id: objectMetadataId },
+      },
+    } = await createOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        nameSingular: 'mySortTestObject',
+        namePlural: 'mySortTestObjects',
+        labelSingular: 'My Sort Test Object',
+        labelPlural: 'My Sort Test Objects',
+        icon: 'Icon123',
+      },
+    });
+
+    testObjectMetadataId = objectMetadataId;
+
+    const {
+      data: {
+        createOneField: { id: fieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        name: 'testField',
+        label: 'Test Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: testObjectMetadataId,
+        isLabelSyncedWithName: true,
+      },
+    });
+
+    testFieldMetadataId = fieldMetadataId;
+  });
+
+  afterAll(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
+    await deleteOneObjectMetadata({
+      expectToFail: false,
+      input: { idToDelete: testObjectMetadataId },
+    });
+    await cleanupViewRecords();
+  });
 
   beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Sorts',
+      objectMetadataId: testObjectMetadataId,
     });
 
     testViewId = view.id;
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
   });
 
   describe('getCoreViewSorts', () => {
@@ -58,6 +112,7 @@ describe('View Sort Resolver', () => {
     it('should return view sorts for a specific view', async () => {
       const sortData = createViewSortData(testViewId, {
         direction: ViewSortDirection.ASC,
+        fieldMetadataId: testFieldMetadataId,
       });
       const createOperation = createViewSortOperationFactory({
         data: sortData,
@@ -73,7 +128,7 @@ describe('View Sort Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewSorts).toHaveLength(1);
       assertViewSortStructure(response.body.data.getCoreViewSorts[0], {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         direction: ViewSortDirection.ASC,
         viewId: testViewId,
       });
@@ -84,6 +139,7 @@ describe('View Sort Resolver', () => {
     it('should create a new view sort with ASC direction', async () => {
       const sortData = createViewSortData(testViewId, {
         direction: ViewSortDirection.ASC,
+        fieldMetadataId: testFieldMetadataId,
       });
 
       const operation = createViewSortOperationFactory({ data: sortData });
@@ -91,7 +147,7 @@ describe('View Sort Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertViewSortStructure(response.body.data.createCoreViewSort, {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         direction: ViewSortDirection.ASC,
         viewId: testViewId,
       });
@@ -100,6 +156,7 @@ describe('View Sort Resolver', () => {
     it('should create a view sort with DESC direction', async () => {
       const sortData = createViewSortData(testViewId, {
         direction: ViewSortDirection.DESC,
+        fieldMetadataId: testFieldMetadataId,
       });
 
       const operation = createViewSortOperationFactory({ data: sortData });
@@ -107,7 +164,7 @@ describe('View Sort Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertViewSortStructure(response.body.data.createCoreViewSort, {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         direction: ViewSortDirection.DESC,
         viewId: testViewId,
       });
@@ -118,6 +175,7 @@ describe('View Sort Resolver', () => {
     it('should update an existing view sort', async () => {
       const sortData = createViewSortData(testViewId, {
         direction: ViewSortDirection.ASC,
+        fieldMetadataId: testFieldMetadataId,
       });
       const createOperation = createViewSortOperationFactory({
         data: sortData,
@@ -160,7 +218,9 @@ describe('View Sort Resolver', () => {
 
   describe('deleteCoreViewSort', () => {
     it('should delete an existing view sort', async () => {
-      const sortData = createViewSortData(testViewId);
+      const sortData = createViewSortData(testViewId, {
+        fieldMetadataId: testFieldMetadataId,
+      });
       const createOperation = createViewSortOperationFactory({
         data: sortData,
       });
@@ -195,7 +255,9 @@ describe('View Sort Resolver', () => {
 
   describe('destroyCoreViewSort', () => {
     it('should destroy an existing view sort', async () => {
-      const sortData = createViewSortData(testViewId);
+      const sortData = createViewSortData(testViewId, {
+        fieldMetadataId: testFieldMetadataId,
+      });
       const createOperation = createViewSortOperationFactory({
         data: sortData,
       });

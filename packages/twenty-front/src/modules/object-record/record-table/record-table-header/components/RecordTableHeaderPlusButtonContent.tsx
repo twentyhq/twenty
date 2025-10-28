@@ -2,44 +2,43 @@ import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
-import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem, recordTableId, visibleRecordFields } =
+    useRecordTableContextOrThrow();
 
   const { closeDropdown } = useCloseDropdown();
 
-  const hiddenTableColumns = useRecoilComponentValue(
-    hiddenTableColumnsComponentSelector,
-  );
-
   const { getIcon } = useIcons();
-  const { handleColumnVisibilityChange } = useTableColumns({
-    objectMetadataId: objectMetadataItem.id,
-  });
+
+  const { changeRecordFieldVisibility } =
+    useChangeRecordFieldVisibility(recordTableId);
 
   const handleAddColumn = useCallback(
-    (column: ColumnDefinition<FieldMetadata>) => {
+    async (
+      column: Pick<ColumnDefinition<FieldMetadata>, 'fieldMetadataId'>,
+    ) => {
       closeDropdown();
-      handleColumnVisibilityChange(column);
+      await changeRecordFieldVisibility({ ...column, isVisible: true });
     },
-    [handleColumnVisibilityChange, closeDropdown],
+    [changeRecordFieldVisibility, closeDropdown],
   );
 
   const location = useLocation();
@@ -47,15 +46,36 @@ export const RecordTableHeaderPlusButtonContent = () => {
     navigationMemorizedUrlState,
   );
 
+  const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
+    objectMetadataItem,
+  });
+
+  const availableFieldMetadataItemsToShow = activeFieldMetadataItems.filter(
+    (fieldMetadataItemToFilter) =>
+      !visibleRecordFields
+        .map((recordField) => recordField.fieldMetadataItemId)
+        .includes(fieldMetadataItemToFilter.id),
+  );
+
+  const handleFieldMetadataItemMenuItemClick = async (
+    fieldMetadataItem: FieldMetadataItem,
+  ) => {
+    await handleAddColumn({
+      fieldMetadataId: fieldMetadataItem.id,
+    });
+  };
+
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        {hiddenTableColumns.map((column) => (
+        {availableFieldMetadataItemsToShow.map((fieldMetadataItem) => (
           <MenuItem
-            key={column.fieldMetadataId}
-            onClick={() => handleAddColumn(column)}
-            LeftIcon={getIcon(column.iconName)}
-            text={column.label}
+            key={fieldMetadataItem.id}
+            onClick={() =>
+              handleFieldMetadataItemMenuItemClick(fieldMetadataItem)
+            }
+            LeftIcon={getIcon(fieldMetadataItem.icon)}
+            text={fieldMetadataItem.label}
           />
         ))}
       </DropdownMenuItemsContainer>

@@ -1,13 +1,13 @@
 import { act, renderHook } from '@testing-library/react';
 
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { type ViewSort } from '@/views/types/ViewSort';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
+import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewSortDirection } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { useApplyViewSortsToCurrentRecordSorts } from '../useApplyViewSortsToCurrentRecordSorts';
 
@@ -32,11 +32,11 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
     throw new Error(`Missing mock field metadata Name`);
   }
 
-  const mockViewSort: ViewSort = {
-    __typename: 'ViewSort',
+  const mockViewSort: CoreViewSortEssential = {
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
-    direction: 'asc',
+    direction: ViewSortDirection.ASC,
+    viewId: 'view-1',
   };
 
   it('should apply view sorts to current record sorts', () => {
@@ -70,7 +70,7 @@ describe('useApplyViewSortsToCurrentRecordSorts', () => {
         id: mockViewSort.id,
         fieldMetadataId: mockViewSort.fieldMetadataId,
         direction: mockViewSort.direction,
-      } satisfies RecordSort,
+      },
     ]);
   });
 

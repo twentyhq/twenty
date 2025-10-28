@@ -13,7 +13,7 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 @Injectable()
 export class TwentyORMManager {
   constructor(
-    @InjectRepository(RoleTargetsEntity, 'core')
+    @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
@@ -74,8 +74,7 @@ export class TwentyORMManager {
 
     return workspaceDataSource.getRepository<T>(
       objectMetadataName,
-      false,
-      roleId,
+      roleId ? { unionOf: [roleId] } : undefined,
     );
   }
 

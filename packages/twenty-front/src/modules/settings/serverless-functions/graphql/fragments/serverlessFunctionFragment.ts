@@ -8,8 +8,27 @@ export const SERVERLESS_FUNCTION_FRAGMENT = gql`
     runtime
     timeoutSeconds
     latestVersion
-    latestVersionInputSchema
     publishedVersions
+    cronTriggers {
+      id
+      settings
+      createdAt
+      updatedAt
+    }
+    databaseEventTriggers {
+      id
+      settings
+      createdAt
+      updatedAt
+    }
+    routeTriggers {
+      id
+      path
+      isAuthRequired
+      httpMethod
+      createdAt
+      updatedAt
+    }
     createdAt
     updatedAt
   }

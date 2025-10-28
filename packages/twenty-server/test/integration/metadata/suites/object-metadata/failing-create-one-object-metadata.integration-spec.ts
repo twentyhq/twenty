@@ -1,128 +1,37 @@
+import { OBJECT_METADATA_LABEL_FAILING_TEST_CASES } from 'test/integration/metadata/suites/object-metadata/common/object-metadata-label-failing-tests-cases';
+import { OBJECT_METADATA_NAMES_FAILING_TEST_CASES } from 'test/integration/metadata/suites/object-metadata/common/object-metadata-names-failing-tests-cases';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
-import { type EachTestingContext } from 'twenty-shared/testing';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-
-type CreateObjectInputPayload = Omit<
-  CreateObjectInput,
-  'workspaceId' | 'dataSourceId'
->;
-
-type CreateOneObjectMetadataItemTestingContext = EachTestingContext<
-  Partial<CreateObjectInputPayload>
->[];
-const failingNamesCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext =
-  [
-    {
-      title: 'when nameSingular has invalid characters',
-      context: { nameSingular: 'μ' },
-    },
-    {
-      title: 'when namePlural has invalid characters',
-      context: { namePlural: 'μ' },
-    },
-    {
-      title: 'when nameSingular is a reserved keyword',
-      context: { nameSingular: 'user' },
-    },
-    {
-      title: 'when namePlural is a reserved keyword',
-      context: { namePlural: 'users' },
-    },
-    {
-      title: 'when nameSingular is not camelCased',
-      context: { nameSingular: 'Not_Camel_Case' },
-    },
-    {
-      title: 'when namePlural is not camelCased',
-      context: { namePlural: 'Not_Camel_Case' },
-    },
-    {
-      title: 'when namePlural is an empty string',
-      context: { namePlural: '' },
-    },
-    {
-      title: 'when nameSingular is an empty string',
-      context: { nameSingular: '' },
-    },
-    {
-      title: 'when nameSingular contains only whitespaces',
-      context: { nameSingular: '                 ' },
-    },
-    {
-      title: 'when nameSingular contains only one char and whitespaces',
-      context: { nameSingular: '     a        a    ' },
-    },
-    {
-      title: 'when name exceeds maximum length',
-      context: { nameSingular: 'a'.repeat(64) },
-    },
-    {
-      title: 'when names are identical',
-      context: {
-        nameSingular: 'fooBar',
-        namePlural: 'fooBar',
-      },
-    },
-    {
-      title: 'when names with whitespaces result to be identical',
-      context: {
-        nameSingular: '      fooBar               ',
-        namePlural: 'fooBar',
-      },
-    },
-  ];
-
-const failingLabelsCreationTestsUseCase: CreateOneObjectMetadataItemTestingContext =
-  [
-    {
-      title: 'when labelSingular is empty',
-      context: { labelSingular: '' },
-    },
-    {
-      title: 'when labelPlural is empty',
-      context: { labelPlural: '' },
-    },
-    {
-      title: 'when labelSingular exceeds maximum length',
-      context: { labelSingular: 'A'.repeat(64) },
-    },
-    {
-      title: 'when labelPlural exceeds maximum length',
-      context: { labelPlural: 'A'.repeat(64) },
-    },
-    {
-      title: 'when labelSingular contains only whitespace',
-      context: { labelSingular: '   ' },
-    },
-    {
-      title: 'when labelPlural contains only whitespace',
-      context: { labelPlural: '   ' },
-    },
-    {
-      title: 'when labels are identical',
-      context: {
-        labelPlural: 'fooBar',
-        labelSingular: 'fooBar',
-      },
-    },
-    {
-      title: 'when labels with whitespaces result to be identical',
-      context: {
-        labelPlural: '      fooBar               ',
-        labelSingular: 'fooBar',
-      },
-    },
-  ];
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 const allTestsUseCases = [
-  ...failingNamesCreationTestsUseCase,
-  ...failingLabelsCreationTestsUseCase,
+  ...OBJECT_METADATA_NAMES_FAILING_TEST_CASES,
+  ...OBJECT_METADATA_LABEL_FAILING_TEST_CASES,
 ];
 
 describe('Object metadata creation should fail', () => {
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
+  });
+
   it.each(allTestsUseCases)('$title', async ({ context }) => {
     const { errors } = await createOneObjectMetadata({
       input: getMockCreateObjectInput(context),

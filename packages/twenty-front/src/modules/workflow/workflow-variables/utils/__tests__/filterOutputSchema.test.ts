@@ -1,24 +1,23 @@
-import { type OutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { filterOutputSchema } from '../filterOutputSchema';
 
 describe('filterOutputSchema', () => {
   const createRecordSchema = (
     nameSingular: string,
     fields = {},
-  ): OutputSchema => ({
+  ): RecordOutputSchemaV2 => ({
     _outputSchemaType: 'RECORD',
     object: {
-      nameSingular,
-      fieldIdName: 'id',
-      isLeaf: true,
-      value: 'Fake value',
+      label: nameSingular,
       objectMetadataId: '123',
+      isRelationField: false,
     },
     fields,
   });
 
-  const createBaseSchema = (fields = {}): OutputSchema => ({
+  const createBaseSchema = (fields = {}): BaseOutputSchemaV2 => ({
     ...fields,
   });
 
@@ -68,7 +67,7 @@ describe('filterOutputSchema', () => {
     });
   });
 
-  describe('shouldDisplayRecordObjects only (false, true)', () => {
+  describe('shouldDisplayRecordObjects and related fields only (false, true)', () => {
     describe('record schema', () => {
       it('should keep record schema with object and filter compatible fields', () => {
         const inputSchema = createRecordSchema('person', {
@@ -78,9 +77,11 @@ describe('filterOutputSchema', () => {
             isLeaf: false,
             value: createRecordSchema('employee'),
           },
+          domain: { isLeaf: true, type: FieldMetadataType.TEXT },
         });
 
         const expectedSchema = createRecordSchema('person', {
+          id: { isLeaf: true, type: FieldMetadataType.UUID },
           name: { isLeaf: true, value: 'string' },
           employee: {
             isLeaf: false,

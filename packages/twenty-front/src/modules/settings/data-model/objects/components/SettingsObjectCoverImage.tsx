@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
 
-import { SettingsPath } from '@/types/SettingsPath';
 import { useLingui } from '@lingui/react/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { IconEye } from 'twenty-ui/display';
 import { FloatingButton } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
+
 import DarkCoverImage from '../../assets/cover-dark.png';
 import LightCoverImage from '../../assets/cover-light.png';
 
@@ -36,7 +38,7 @@ export const SettingsObjectCoverImage = () => {
           Icon={IconEye}
           title={t`Visualize`}
           size="small"
-          to={'/settings/' + SettingsPath.ObjectOverview}
+          to={getSettingsPath(SettingsPath.ObjectOverview)}
         />
       </StyledButtonContainer>
     </StyledCoverImageContainer>

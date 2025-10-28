@@ -1,9 +1,11 @@
+import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { getFileType } from '@/activities/files/utils/getFileType';
-import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
+import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
+import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
-import { type File as FileDocument } from '~/generated-metadata/graphql';
-import { Chip, ChipVariant, AvatarChip } from 'twenty-ui/components';
-import { IconX } from 'twenty-ui/display';
+import { type FileUIPart } from 'ai';
+import { AvatarChip, Chip, ChipVariant } from 'twenty-ui/components';
+import { type IconComponent, IconX } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 
 export const AgentChatFilePreview = ({
@@ -11,24 +13,33 @@ export const AgentChatFilePreview = ({
   onRemove,
   isUploading,
 }: {
-  file: File | FileDocument;
+  file: FileUIPart | File;
   onRemove?: () => void;
   isUploading?: boolean;
 }) => {
   const theme = useTheme();
-  const iconColors = useFileTypeColors();
+  const iconColors: Record<AttachmentFileCategory, string> =
+    useFileCategoryColors();
+
+  const fileName =
+    file instanceof File ? file.name : (file.filename ?? 'Unknown file');
+
+  const fileCategory: AttachmentFileCategory = getFileType(fileName);
+
+  const FileCategoryIcon: IconComponent = IconMapping[fileCategory];
+  const iconBackgroundColor: string = iconColors[fileCategory];
 
   return (
     <Chip
-      label={file.name}
+      label={fileName}
       variant={ChipVariant.Static}
       leftComponent={
         isUploading ? (
           <Loader color="yellow" />
         ) : (
           <AvatarChip
-            Icon={IconMapping[getFileType(file.name)]}
-            IconBackgroundColor={iconColors[getFileType(file.name)]}
+            Icon={FileCategoryIcon}
+            IconBackgroundColor={iconBackgroundColor}
           />
         )
       }
@@ -38,7 +49,7 @@ export const AgentChatFilePreview = ({
             Icon={IconX}
             IconColor={theme.font.color.secondary}
             onClick={onRemove}
-            divider={'left'}
+            divider="left"
           />
         ) : undefined
       }

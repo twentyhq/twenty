@@ -3,4 +3,6 @@ export type WorkflowActionOutput = {
   error?: string;
   pendingEvent?: boolean;
   shouldEndWorkflowRun?: boolean;
+  shouldRemainRunning?: boolean;
+  shouldSkipStepExecution?: boolean;
 };

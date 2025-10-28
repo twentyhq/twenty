@@ -1,8 +1,10 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filterUserFacingFieldMetadataItems';
-import { StyledObjectFieldTableRow } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow';
-import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow';
+import {
+  SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow,
+  StyledObjectFieldTableRow,
+} from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type OrderBy } from '@/types/OrderBy';
@@ -12,15 +14,14 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { H2Title, IconEye, IconPencil, IconSearch } from 'twenty-ui/display';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { H2Title, IconSearch } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { sortByProperty } from '~/utils/array/sortByProperty';
-import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { turnOrderByIntoSort } from '~/utils/turnOrderByIntoSort';
 
 export const SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID =
@@ -41,7 +42,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
   objectMetadataItem,
   roleId,
 }: SettingsRolePermissionsObjectLevelObjectFieldPermissionTableProps) => {
-  const theme = useTheme();
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -84,6 +84,12 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
       objectMetadataItemId: objectMetadataItem.id,
     });
 
+  const shouldShowSeeTableHeader = !cannotAllowFieldReadRestrict;
+  const shouldShowUpdateTableHeader =
+    !cannotAllowFieldReadRestrict && !cannotAllowFieldUpdateRestrict;
+  const shouldShowEmptyTableHeader =
+    cannotAllowFieldReadRestrict && cannotAllowFieldUpdateRestrict;
+
   return (
     <Section>
       <H2Title
@@ -100,7 +106,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
       <Table>
         <StyledObjectFieldTableRow>
           <SortableTableHeader
-            fieldName={'label'}
+            fieldName="label"
             label={t`Name`}
             tableId={
               SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID
@@ -110,28 +116,19 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
           <TableHeader>
             <TableHeaderText>{t`Data type`}</TableHeaderText>
           </TableHeader>
-          {cannotAllowFieldReadRestrict ? (
-            <TableHeader></TableHeader>
-          ) : (
-            <TableHeader align="center">
-              <TableHeaderText>{t`See`}</TableHeaderText>
-              <IconEye
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.md}
-              />
-            </TableHeader>
-          )}
-          {cannotAllowFieldUpdateRestrict ? (
-            <TableHeader></TableHeader>
-          ) : (
-            <TableHeader>
-              <TableHeaderText>{t`Edit`}</TableHeaderText>
-              <IconPencil
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.md}
-              />
-            </TableHeader>
-          )}
+          <>
+            {shouldShowEmptyTableHeader && <TableHeader />}
+            {shouldShowSeeTableHeader && (
+              <TableHeader>
+                <TableHeaderText>{t`See`}</TableHeaderText>
+              </TableHeader>
+            )}
+            {shouldShowUpdateTableHeader && (
+              <TableHeader>
+                <TableHeaderText>{t`Edit`}</TableHeaderText>
+              </TableHeader>
+            )}
+          </>
         </StyledObjectFieldTableRow>
         <SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow
           roleId={roleId}
@@ -145,6 +142,10 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
               fieldPermissions={fieldPermissions}
               objectMetadataItem={objectMetadataItem}
               roleId={roleId}
+              isLabelIdentifier={
+                objectMetadataItem.labelIdentifierFieldMetadataId ===
+                fieldMetadataItem.id
+              }
             />
           ))}
       </Table>

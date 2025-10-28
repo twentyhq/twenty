@@ -28,6 +28,12 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number }>`
   width: 100%;
 
   overflow-y: auto;
+  scrollbar-color: ${({ theme }) => theme.border.color.medium} transparent;
+  scrollbar-width: 4px;
+
+  *::-webkit-scrollbar-thumb {
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+  }
 `;
 
 const StyledInternalContainer = styled.div`

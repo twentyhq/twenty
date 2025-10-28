@@ -1,9 +1,9 @@
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { produce } from 'immer';
-import { type Role } from '~/generated/graphql';
 
 export const getRoleWithRemovedFieldPermission = (
-  role: Role,
+  role: RoleWithPartialMembers,
   fieldPermissionFieldMetadataId: string,
 ) => {
   return produce(role, (draftRole) => {

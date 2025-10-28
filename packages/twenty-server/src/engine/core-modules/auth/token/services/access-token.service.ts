@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { addMilliseconds } from 'date-fns';
 import { type Request } from 'express';
 import ms from 'ms';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
@@ -11,7 +12,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
+import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
   type AccessTokenJwtPayload,
@@ -20,14 +21,14 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { userWorkspaceValidator } from 'src/engine/core-modules/user-workspace/user-workspace.validate';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceNotFoundDefaultError } from 'src/engine/core-modules/user-workspace/user-workspace.exception';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class AccessTokenService {
@@ -35,19 +36,22 @@ export class AccessTokenService {
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly jwtStrategy: JwtAuthStrategy,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(UserWorkspace, 'core')
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async generateAccessToken({
     userId,
     workspaceId,
     authProvider,
+    isImpersonating,
+    impersonatorUserWorkspaceId,
+    impersonatedUserWorkspaceId,
   }: Omit<
     AccessTokenJwtPayload,
     'type' | 'workspaceMemberId' | 'userWorkspaceId' | 'sub'
@@ -71,7 +75,7 @@ export class AccessTokenService {
       where: { id: workspaceId },
     });
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     if (isWorkspaceActiveOrSuspended(workspace)) {
       const workspaceMemberRepository =
@@ -86,12 +90,13 @@ export class AccessTokenService {
         },
       });
 
-      if (!workspaceMember) {
-        throw new AuthException(
+      assertIsDefinedOrThrow(
+        workspaceMember,
+        new AuthException(
           'User is not a member of the workspace',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
+        ),
+      );
 
       tokenWorkspaceMemberId = workspaceMember.id;
     }
@@ -102,7 +107,12 @@ export class AccessTokenService {
       },
     });
 
-    userWorkspaceValidator.assertIsDefinedOrThrow(userWorkspace);
+    assertIsDefinedOrThrow(userWorkspace, UserWorkspaceNotFoundDefaultError);
+
+    const payloadImpersonatorUserWorkspaceId =
+      isImpersonating === true ? impersonatorUserWorkspaceId : undefined;
+    const payloadOriginalUserWorkspaceId =
+      isImpersonating === true ? impersonatedUserWorkspaceId : undefined;
 
     const jwtPayload: AccessTokenJwtPayload = {
       sub: user.id,
@@ -112,6 +122,9 @@ export class AccessTokenService {
       userWorkspaceId: userWorkspace.id,
       type: JwtTokenTypeEnum.ACCESS,
       authProvider,
+      isImpersonating: isImpersonating === true,
+      impersonatorUserWorkspaceId: payloadImpersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId: payloadOriginalUserWorkspaceId,
     };
 
     return {
@@ -131,25 +144,9 @@ export class AccessTokenService {
 
     const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
 
-    const {
-      user,
-      apiKey,
-      workspace,
-      workspaceMemberId,
-      userWorkspace,
-      userWorkspaceId,
-      authProvider,
-    } = await this.jwtStrategy.validate(decoded);
+    const context = await this.jwtStrategy.validate(decoded);
 
-    return {
-      user,
-      apiKey,
-      workspace,
-      userWorkspace,
-      workspaceMemberId,
-      userWorkspaceId,
-      authProvider,
-    };
+    return context;
   }
 
   async validateTokenByRequest(request: Request): Promise<AuthContext> {

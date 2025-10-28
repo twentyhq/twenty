@@ -1,6 +1,7 @@
 import { type DataSource } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 const tableName = 'featureFlag';
 
@@ -41,14 +42,9 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+        key: FeatureFlagKey.IS_APPLICATION_ENABLED,
         workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
@@ -61,34 +57,44 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_CORE_VIEW_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         workspaceId: workspaceId,
+        value: workspaceId === SEED_APPLE_WORKSPACE_ID,
+      },
+      {
+        key: FeatureFlagKey.IS_COMMON_API_ENABLED,
+        workspaceId: workspaceId,
         value: false,
       },
       {
-        key: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
+        key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
+        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
+        key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED,
+        key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
         workspaceId: workspaceId,
         value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_DYNAMIC_SEARCH_FIELDS_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
       },
     ])
     .execute();

@@ -1,9 +1,9 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,7 +28,7 @@ export const useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups =
           () => {
             const currentView = snapshot
               .getLoadable(
-                prefetchViewFromViewIdFamilySelector({
+                coreViewFromViewIdFamilySelector({
                   viewId: currentViewId ?? '',
                 }),
               )

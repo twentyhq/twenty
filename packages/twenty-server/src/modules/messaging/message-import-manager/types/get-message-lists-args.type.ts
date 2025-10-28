@@ -6,10 +6,15 @@ export type GetMessageListsArgs = {
   messageChannel: Pick<MessageChannelWorkspaceEntity, 'syncCursor' | 'id'>;
   connectedAccount: Pick<
     ConnectedAccountWorkspaceEntity,
-    'provider' | 'refreshToken' | 'id' | 'handle' | 'connectionParameters'
+    | 'provider'
+    | 'accessToken'
+    | 'refreshToken'
+    | 'id'
+    | 'handle'
+    | 'connectionParameters'
   >;
   messageFolders: Pick<
     MessageFolderWorkspaceEntity,
-    'name' | 'syncCursor' | 'id'
+    'name' | 'syncCursor' | 'id' | 'isSynced' | 'isSentFolder' | 'externalId'
   >[];
 };

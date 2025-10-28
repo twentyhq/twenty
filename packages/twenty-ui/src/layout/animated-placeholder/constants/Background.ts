@@ -13,4 +13,5 @@ export const BACKGROUND: Record<string, string> = {
   error404: '/images/placeholders/background/404_bg.png',
   error500: '/images/placeholders/background/500_bg.png',
   noDeletedRecord: '/images/placeholders/background/no_deleted_record_bg.png',
+  noWidgets: '/images/placeholders/background/no_widgets_bg.png',
 };

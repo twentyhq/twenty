@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Field Resolver - Failing Delete Operation - v2 should fail to delete view field when non-existent view field 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "View field to delete not found",
+  "name": "NotFoundError",
+}
+`;

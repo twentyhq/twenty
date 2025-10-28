@@ -7,8 +7,7 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/constants/CommandMenuContextChipGroupsDropdownId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
-import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -73,11 +72,9 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
         const commandMenuNavigationStack = useRecoilValue(
           commandMenuNavigationStackState,
         );
-        const commandMenuNavigationRecords = useRecoilValue(
-          commandMenuNavigationRecordsState,
-        );
-        const commandMenuNavigationMorphItemByPage = useRecoilValue(
-          commandMenuNavigationMorphItemByPageState,
+
+        const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+          commandMenuNavigationMorphItemsByPageState,
         );
         const hasUserSelectedCommand = useRecoilValue(
           hasUserSelectedCommandState,
@@ -97,9 +94,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
         const setCommandMenuNavigationStack = useSetRecoilState(
           commandMenuNavigationStackState,
         );
-        const setCommandMenuNavigationRecords = useSetRecoilState(
-          commandMenuNavigationRecordsState,
-        );
+
         const setHasUserSelectedCommand = useSetRecoilState(
           hasUserSelectedCommandState,
         );
@@ -115,8 +110,7 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
           isCommandMenuOpened,
           commandMenuSearch,
           commandMenuNavigationStack,
-          commandMenuNavigationRecords,
-          commandMenuNavigationMorphItemByPage,
+          commandMenuNavigationMorphItemsByPage,
           hasUserSelectedCommand,
           isCommandMenuClosing,
           viewableRecordId,
@@ -125,7 +119,6 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
           setIsCommandMenuOpened,
           setCommandMenuSearch,
           setCommandMenuNavigationStack,
-          setCommandMenuNavigationRecords,
           setHasUserSelectedCommand,
           setIsCommandMenuClosing,
           setViewableRecordId,
@@ -158,12 +151,6 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
           pageId: '1',
         },
       ]);
-      result.current.setCommandMenuNavigationRecords([
-        {
-          objectMetadataItem: { id: '1', nameSingular: 'Record' } as any,
-          record: { id: '1' } as any,
-        },
-      ]);
       result.current.setHasUserSelectedCommand(true);
       result.current.setIsCommandMenuClosing(true);
       result.current.setViewableRecordId('record-123');
@@ -185,12 +172,6 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
         pageId: '1',
       },
     ]);
-    expect(result.current.commandMenuNavigationRecords).toEqual([
-      {
-        objectMetadataItem: { id: '1', nameSingular: 'Record' } as any,
-        record: { id: '1' } as any,
-      },
-    ]);
     expect(result.current.hasUserSelectedCommand).toBe(true);
     expect(result.current.isCommandMenuClosing).toBe(true);
     expect(result.current.viewableRecordId).toBe('record-123');
@@ -208,7 +189,6 @@ describe('useCommandMenuCloseAnimationCompleteCleanup', () => {
     expect(result.current.isCommandMenuOpened).toBe(false);
     expect(result.current.commandMenuSearch).toBe('');
     expect(result.current.commandMenuNavigationStack).toEqual([]);
-    expect(result.current.commandMenuNavigationRecords).toEqual([]);
     expect(result.current.hasUserSelectedCommand).toBe(false);
     expect(result.current.isCommandMenuClosing).toBe(false);
     expect(result.current.viewableRecordId).toBe(null);

@@ -1,16 +1,11 @@
 import { useMergePreview } from '@/object-record/record-merge/hooks/useMergePreview';
-import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
-import styled from '@emotion/styled';
+import { CardType } from '@/object-record/record-show/types/CardType';
+import { getCardComponent } from '@/object-record/record-show/utils/getCardComponent';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
-
-const StyledLoadingContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100px;
-  justify-content: center;
-`;
+import { PageLayoutType } from '~/generated/graphql';
 
 type MergePreviewTabProps = {
   objectNameSingular: string;
@@ -23,34 +18,34 @@ export const MergePreviewTab = ({
     objectNameSingular,
   });
 
-  if (isGeneratingPreview) {
-    return (
-      <StyledLoadingContainer>
-        Generating merge preview...
-      </StyledLoadingContainer>
-    );
-  }
-
-  if (!isDefined(mergePreviewRecord)) {
+  if (!isDefined(mergePreviewRecord) && !isGeneratingPreview) {
     return null;
   }
 
-  return (
-    <Section>
-      <SummaryCard
-        objectNameSingular={objectNameSingular}
-        objectRecordId={mergePreviewRecord.id}
-        isInRightDrawer={true}
-      />
+  const recordId = mergePreviewRecord?.id ?? 'merge-preview-loading';
 
-      <CardComponents.FieldCard
-        targetableObject={{
+  return (
+    <LayoutRenderingProvider
+      value={{
+        targetRecordIdentifier: {
+          id: recordId,
           targetObjectNameSingular: objectNameSingular,
-          id: mergePreviewRecord.id,
-        }}
-        showDuplicatesSection={false}
-        isInRightDrawer={true}
-      />
-    </Section>
+        },
+        layoutType: PageLayoutType.RECORD_PAGE,
+        isInRightDrawer: true,
+      }}
+    >
+      <Section>
+        <SummaryCard
+          objectNameSingular={objectNameSingular}
+          objectRecordId={recordId}
+          isInRightDrawer={true}
+        />
+
+        {getCardComponent(CardType.FieldCard, {
+          showDuplicatesSection: false,
+        })}
+      </Section>
+    </LayoutRenderingProvider>
   );
 };

@@ -1,4 +1,4 @@
-import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
+import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 
 describe('extractRawVariableNamePart', () => {
   it('returns the last part of a properly formatted variable', () => {

@@ -5,7 +5,7 @@ import {
   type FieldEmailsValue,
   type FieldLinksValue,
   type FieldPhonesValue,
-} from '@/object-record/record-field/types/FieldMetadata';
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type OrderBy } from '@/types/OrderBy';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

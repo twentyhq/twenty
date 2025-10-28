@@ -1,29 +1,29 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, ObjectRecord } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
-import {
-  type ObjectRecord,
-  type ObjectRecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   type CreateManyResolverArgs,
   type CreateOneResolverArgs,
   type FindDuplicatesResolverArgs,
   type FindManyResolverArgs,
   type FindOneResolverArgs,
+  GroupByResolverArgs,
   type MergeManyResolverArgs,
   type ResolverArgs,
   ResolverArgsType,
   type UpdateManyResolverArgs,
   type UpdateOneResolverArgs,
+  type WorkspaceResolverBuilderMethodNames,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
@@ -37,43 +37,48 @@ export class QueryRunnerArgsFactory {
   async create(
     args: ResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-    resolverArgsType: ResolverArgsType,
+    resolverArgsType: WorkspaceResolverBuilderMethodNames,
   ) {
     const fieldMetadataMapByNameByName =
       options.objectMetadataItemWithFieldMaps.fieldsById;
 
+    const { objectMetadataItemWithFieldMaps, authContext } = options;
+
     switch (resolverArgsType) {
-      case ResolverArgsType.CreateOne:
+      case ResolverArgsType.CREATE_ONE:
         return {
           ...args,
           data: (
-            await this.overrideDataByFieldMetadata(
-              [(args as CreateOneResolverArgs).data],
-              options,
-            )
+            await this.overrideDataByFieldMetadata({
+              partialRecordInputs: [(args as CreateOneResolverArgs).data],
+              authContext,
+              objectMetadataItemWithFieldMaps,
+            })
           )[0],
         } satisfies CreateOneResolverArgs;
-      case ResolverArgsType.CreateMany:
+      case ResolverArgsType.CREATE_MANY:
         return {
           ...args,
-          data: await this.overrideDataByFieldMetadata(
-            (args as CreateManyResolverArgs).data,
-            options,
-          ),
+          data: await this.overrideDataByFieldMetadata({
+            partialRecordInputs: (args as CreateManyResolverArgs).data,
+            authContext,
+            objectMetadataItemWithFieldMaps,
+          }),
         } satisfies CreateManyResolverArgs;
-      case ResolverArgsType.UpdateOne:
+      case ResolverArgsType.UPDATE_ONE:
         return {
           ...args,
           id: (args as UpdateOneResolverArgs).id,
           data: (
-            await this.overrideDataByFieldMetadata(
-              [(args as UpdateOneResolverArgs).data],
-              options,
-              false,
-            )
+            await this.overrideDataByFieldMetadata({
+              partialRecordInputs: [(args as UpdateOneResolverArgs).data],
+              authContext,
+              objectMetadataItemWithFieldMaps,
+              shouldBackfillPositionIfUndefined: false,
+            })
           )[0],
         } satisfies UpdateOneResolverArgs;
-      case ResolverArgsType.UpdateMany:
+      case ResolverArgsType.UPDATE_MANY:
         return {
           ...args,
           filter: this.overrideFilterByFieldMetadata(
@@ -81,14 +86,15 @@ export class QueryRunnerArgsFactory {
             options.objectMetadataItemWithFieldMaps,
           ),
           data: (
-            await this.overrideDataByFieldMetadata(
-              [(args as UpdateManyResolverArgs).data],
-              options,
-              false,
-            )
+            await this.overrideDataByFieldMetadata({
+              partialRecordInputs: [(args as UpdateManyResolverArgs).data],
+              authContext,
+              objectMetadataItemWithFieldMaps,
+              shouldBackfillPositionIfUndefined: false,
+            })
           )[0],
         } satisfies UpdateManyResolverArgs;
-      case ResolverArgsType.FindOne:
+      case ResolverArgsType.FIND_ONE:
         return {
           ...args,
           filter: this.overrideFilterByFieldMetadata(
@@ -96,7 +102,7 @@ export class QueryRunnerArgsFactory {
             options.objectMetadataItemWithFieldMaps,
           ),
         };
-      case ResolverArgsType.FindMany:
+      case ResolverArgsType.FIND_MANY:
         return {
           ...args,
           filter: this.overrideFilterByFieldMetadata(
@@ -104,8 +110,7 @@ export class QueryRunnerArgsFactory {
             options.objectMetadataItemWithFieldMaps,
           ),
         };
-
-      case ResolverArgsType.FindDuplicates:
+      case ResolverArgsType.FIND_DUPLICATES:
         return {
           ...args,
           ids: (await Promise.all(
@@ -114,16 +119,18 @@ export class QueryRunnerArgsFactory {
                 'id',
                 id,
                 fieldMetadataMapByNameByName,
+                options.objectMetadataItemWithFieldMaps,
               ),
             ) ?? [],
           )) as string[],
-          data: await this.overrideDataByFieldMetadata(
-            (args as FindDuplicatesResolverArgs).data,
-            options,
-            false,
-          ),
+          data: await this.overrideDataByFieldMetadata({
+            partialRecordInputs: (args as FindDuplicatesResolverArgs).data,
+            authContext,
+            objectMetadataItemWithFieldMaps,
+            shouldBackfillPositionIfUndefined: false,
+          }),
         } satisfies FindDuplicatesResolverArgs;
-      case ResolverArgsType.MergeMany:
+      case ResolverArgsType.MERGE_MANY:
         return {
           ...args,
           ids: (await Promise.all(
@@ -132,6 +139,7 @@ export class QueryRunnerArgsFactory {
                 'id',
                 id,
                 fieldMetadataMapByNameByName,
+                options.objectMetadataItemWithFieldMaps,
               ),
             ) ?? [],
           )) as string[],
@@ -139,34 +147,48 @@ export class QueryRunnerArgsFactory {
             .conflictPriorityIndex,
           dryRun: (args as MergeManyResolverArgs).dryRun,
         } satisfies MergeManyResolverArgs;
+      case ResolverArgsType.GROUP_BY:
+        return {
+          ...args,
+          filter: this.overrideFilterByFieldMetadata(
+            (args as GroupByResolverArgs).filter,
+            options.objectMetadataItemWithFieldMaps,
+          ),
+        };
       default:
         return args;
     }
   }
 
-  private async overrideDataByFieldMetadata(
-    partialRecordInputs: Partial<ObjectRecord>[] | undefined,
-    options: WorkspaceQueryRunnerOptions,
+  async overrideDataByFieldMetadata({
+    partialRecordInputs,
+    authContext,
+    objectMetadataItemWithFieldMaps,
     shouldBackfillPositionIfUndefined = true,
-  ): Promise<Partial<ObjectRecord>[]> {
+  }: {
+    partialRecordInputs: Partial<ObjectRecord>[] | undefined;
+    authContext: AuthContext;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    shouldBackfillPositionIfUndefined?: boolean;
+  }): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
       return [];
     }
 
     const allOverriddenRecords: Partial<ObjectRecord>[] = [];
 
-    const workspace = options.authContext.workspace;
+    const workspace = authContext.workspace;
 
-    workspaceValidator.assertIsDefinedOrThrow(workspace);
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
     const overriddenPositionRecords =
       await this.recordPositionService.overridePositionOnRecords({
         partialRecordInputs,
         workspaceId: workspace.id,
         objectMetadata: {
-          isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
-          nameSingular: options.objectMetadataItemWithFieldMaps.nameSingular,
-          fieldIdByName: options.objectMetadataItemWithFieldMaps.fieldIdByName,
+          isCustom: objectMetadataItemWithFieldMaps.isCustom,
+          nameSingular: objectMetadataItemWithFieldMaps.nameSingular,
+          fieldIdByName: objectMetadataItemWithFieldMaps.fieldIdByName,
         },
         shouldBackfillPositionIfUndefined,
       });
@@ -176,9 +198,9 @@ export class QueryRunnerArgsFactory {
       const createArgByArgKey: [string, any][] = await Promise.all(
         Object.entries(record).map(async ([key, value]) => {
           const fieldMetadataId =
-            options.objectMetadataItemWithFieldMaps.fieldIdByName[key];
+            objectMetadataItemWithFieldMaps.fieldIdByName[key];
           const fieldMetadata =
-            options.objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+            objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
           if (!fieldMetadata) {
             return [key, value];
@@ -191,13 +213,13 @@ export class QueryRunnerArgsFactory {
             case FieldMetadataType.RICH_TEXT_V2:
             case FieldMetadataType.LINKS:
             case FieldMetadataType.EMAILS: {
-              const transformedValue =
-                await this.recordInputTransformerService.transformFieldValue(
-                  fieldMetadata.type,
-                  value,
-                );
+              const transformedRecord =
+                await this.recordInputTransformerService.process({
+                  recordInput: { [key]: value },
+                  objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+                });
 
-              return [key, transformedValue];
+              return [key, transformedRecord[key]];
             }
             default:
               return [key, value];
@@ -211,12 +233,14 @@ export class QueryRunnerArgsFactory {
     return allOverriddenRecords;
   }
 
-  private overrideFilterByFieldMetadata(
-    filter: ObjectRecordFilter | undefined,
+  public overrideFilterByFieldMetadata<
+    T extends ObjectRecordFilter | undefined,
+  >(
+    filter: T,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  ) {
-    if (!filter) {
-      return;
+  ): T {
+    if (!isDefined(filter)) {
+      return filter;
     }
 
     const overrideFilter = (filterObject: ObjectRecordFilter) => {
@@ -242,7 +266,7 @@ export class QueryRunnerArgsFactory {
       }, {});
     };
 
-    return overrideFilter(filter);
+    return overrideFilter(filter) as T;
   }
 
   private transformFilterValueByType(
@@ -278,11 +302,12 @@ export class QueryRunnerArgsFactory {
     }
   }
 
-  private async overrideValueByFieldMetadata(
+  async overrideValueByFieldMetadata(
     key: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     fieldMetadataMapByName: FieldMetadataMap,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ) {
     const fieldMetadata = fieldMetadataMapByName[key];
 
@@ -290,9 +315,9 @@ export class QueryRunnerArgsFactory {
       return value;
     }
 
-    return this.recordInputTransformerService.transformFieldValue(
-      fieldMetadata.type,
-      value,
-    );
+    return this.recordInputTransformerService.process({
+      recordInput: { [key]: value },
+      objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+    });
   }
 }

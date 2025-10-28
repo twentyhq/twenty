@@ -1,4 +1,4 @@
-import { i18n } from '@lingui/core';
+import { type I18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -18,6 +18,7 @@ export const resolveObjectMetadataStandardOverride = (
   >,
   labelKey: 'labelPlural' | 'labelSingular' | 'description' | 'icon',
   locale: keyof typeof APP_LOCALES | undefined,
+  i18nInstance: I18n,
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
 
@@ -52,7 +53,7 @@ export const resolveObjectMetadataStandardOverride = (
   }
 
   const messageId = generateMessageId(objectMetadata[labelKey] ?? '');
-  const translatedMessage = i18n._(messageId);
+  const translatedMessage = i18nInstance._(messageId);
 
   if (translatedMessage === messageId) {
     return objectMetadata[labelKey] ?? '';

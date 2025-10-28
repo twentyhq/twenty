@@ -1,4 +1,4 @@
-import { type FloatFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type FloatFilter } from 'twenty-shared/types';
 
 export const isMatchingFloatFilter = ({
   floatFilter,

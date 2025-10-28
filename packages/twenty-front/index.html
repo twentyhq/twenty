@@ -60,14 +60,30 @@
         disableInputAutoZoom();
       }
     </script>
+    <style>
+      :root {
+        /* THEME_DARK.background.tertiary */
+        --theme-dark-background-tertiary: #1d1d1d;
+        /* THEME_LIGHT.background.tertiary */
+        --theme-light-background-tertiary: #f1f1f1;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        html, body {
+          background-color: var(--theme-dark-background-tertiary);
+        }
+      }
+
+      @media (prefers-color-scheme: light) {
+        html, body {
+          background-color: var(--theme-light-background-tertiary);
+        }
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <script
-      type="module"
-      src="/src/renderBodyOptimisticBackgroundBeforeAppBootstrap.ts"
-    ></script>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>

@@ -1,35 +1,30 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type AssignTypeIfIsRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-relation-field-metadata-type.type';
-import { type FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const fieldMetadataRelationProperties = [
+export const FIELD_METADATA_RELATION_PROPERTIES = [
   'relationTargetFieldMetadata',
   'relationTargetObjectMetadata',
   'fieldPermissions',
   'indexFieldMetadatas',
   'object',
+  'viewFields',
+  'application',
+  'viewFilters',
+  'viewGroups',
+  'kanbanAggregateOperationViews',
+  'calendarViews',
 ] as const satisfies (keyof FieldMetadataEntity)[];
 
 export type FieldMetadataEntityRelationProperties =
-  (typeof fieldMetadataRelationProperties)[number];
+  (typeof FIELD_METADATA_RELATION_PROPERTIES)[number];
 
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
-  Omit<
-    FieldMetadataEntity<T>,
-    FieldMetadataEntityRelationProperties | 'createdAt' | 'updatedAt'
-  > & {
-    uniqueIdentifier: string;
-    flatRelationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<
-      Omit<
-        FlatFieldMetadata,
-        'flatRelationTargetFieldMetadata' | 'flatRelationTargetObjectMetadata'
-      >,
-      T
-    >;
-    flatRelationTargetObjectMetadata: AssignTypeIfIsRelationFieldMetadataType<
-      FlatObjectMetadataWithoutFields,
-      T
-    >;
+  Omit<FieldMetadataEntity<T>, FieldMetadataEntityRelationProperties> & {
+    universalIdentifier: string;
+    viewFieldIds: string[];
+    viewFilterIds: string[];
+    viewGroupIds: string[];
+    kanbanAggregateOperationViewIds: string[];
+    calendarViewIds: string[];
   };

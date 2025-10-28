@@ -1,17 +1,16 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 
 export const RestoreSingleRecordAction = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { recordIndexId, objectMetadataItem } =
+    useRecordIndexIdFromCurrentContextStore();
 
   const recordId = useSelectedRecordIdOrThrow();
 
-  const { resetTableRowSelection } = useRecordTable({
-    recordTableId: objectMetadataItem.namePlural,
-  });
+  const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
   const { restoreManyRecords } = useRestoreManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,

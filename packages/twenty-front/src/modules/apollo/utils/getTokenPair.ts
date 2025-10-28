@@ -1,16 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type AuthTokenPair } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
-
-const isValidAuthTokenPair = (tokenPair: any): tokenPair is AuthTokenPair => {
-  return (
-    tokenPair &&
-    typeof tokenPair === 'object' &&
-    tokenPair.accessOrWorkspaceAgnosticToken &&
-    typeof tokenPair.accessOrWorkspaceAgnosticToken === 'object' &&
-    typeof tokenPair.accessOrWorkspaceAgnosticToken.token === 'string'
-  );
-};
+import { isValidAuthTokenPair } from './isValidAuthTokenPair';
 
 export const getTokenPair = (): AuthTokenPair | undefined => {
   const stringTokenPair = cookieStorage.getItem('tokenPair');

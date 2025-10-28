@@ -1,30 +1,29 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import {
+  type WorkflowTrigger,
   type WorkflowTriggerType,
-  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/DatabaseTriggerTypes';
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
+import { isDefined } from 'twenty-shared/utils';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-import { MenuItemCommand } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { MenuItem } from 'twenty-ui/navigation';
 
-export const CommandMenuWorkflowSelectTriggerTypeContent = ({
-  workflow,
-}: {
-  workflow: WorkflowWithCurrentVersion;
-}) => {
+export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
   const { getIcon } = useIcons();
-  const { updateTrigger } = useUpdateWorkflowVersionTrigger({ workflow });
+  const workflowId = useCommandMenuWorkflowIdOrThrow();
+  const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -33,10 +32,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
     workflowSelectedNodeComponentState,
   );
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
-
-  const isWorkflowBranchEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
-  );
+  const flow = useFlowOrThrow();
 
   const handleTriggerTypeClick = ({
     type,
@@ -48,49 +44,67 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
     icon: string;
   }) => {
     return async () => {
-      await updateTrigger(
-        getTriggerDefaultDefinition({
-          defaultLabel,
-          type,
-          activeNonSystemObjectMetadataItems,
-          steps: !isWorkflowBranchEnabled ? workflow.currentVersion.steps : [],
-        }),
-      );
+      let updatedTrigger: WorkflowTrigger | null = getTriggerDefaultDefinition({
+        defaultLabel,
+        type,
+        activeNonSystemObjectMetadataItems,
+      });
+
+      if (isDefined(flow.trigger)) {
+        updatedTrigger = {
+          ...updatedTrigger,
+          position: flow.trigger.position,
+          nextStepIds: flow.trigger.nextStepIds,
+        };
+      }
+
+      await updateTrigger(updatedTrigger);
 
       setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
       openWorkflowEditStepInCommandMenu(
-        workflow.id,
+        workflowId,
         defaultLabel,
         getIcon(icon),
       );
     };
   };
 
+  const theme = useTheme();
+
   return (
     <RightDrawerStepListContainer>
       <RightDrawerWorkflowSelectStepTitle>
         Data
       </RightDrawerWorkflowSelectStepTitle>
-      {DATABASE_TRIGGER_TYPES.map((action) => (
-        <MenuItemCommand
-          key={action.defaultLabel}
-          LeftIcon={getIcon(action.icon)}
-          text={action.defaultLabel}
-          onClick={handleTriggerTypeClick(action)}
-        />
-      ))}
+      {DATABASE_TRIGGER_TYPES.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
+          <MenuItem
+            withIconContainer={true}
+            key={action.defaultLabel}
+            LeftIcon={() => <Icon color={theme.color.blue} size={16} />}
+            text={action.defaultLabel}
+            onClick={handleTriggerTypeClick(action)}
+          />
+        );
+      })}
+
       <RightDrawerWorkflowSelectStepTitle>
         Others
       </RightDrawerWorkflowSelectStepTitle>
-      {OTHER_TRIGGER_TYPES.map((action) => (
-        <MenuItemCommand
-          key={action.defaultLabel}
-          LeftIcon={getIcon(action.icon)}
-          text={action.defaultLabel}
-          onClick={handleTriggerTypeClick(action)}
-        />
-      ))}
+      {OTHER_TRIGGER_TYPES.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
+          <MenuItem
+            withIconContainer={true}
+            key={action.defaultLabel}
+            LeftIcon={() => <Icon color={theme.color.purple} size={16} />}
+            text={action.defaultLabel}
+            onClick={handleTriggerTypeClick(action)}
+          />
+        );
+      })}
     </RightDrawerStepListContainer>
   );
 };

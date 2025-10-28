@@ -1,12 +1,13 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { type FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 
+import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -14,10 +15,11 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiSelectInputProps = {
@@ -28,6 +30,7 @@ type MultiSelectInputProps = {
   options: SelectOption[];
   onOptionSelected: (value: FieldMultiSelectValue) => void;
   dropdownWidth?: number;
+  onAddSelectOption?: (optionName: string) => void;
 };
 
 export const MultiSelectInput = ({
@@ -38,9 +41,8 @@ export const MultiSelectInput = ({
   onCancel,
   onOptionSelected,
   dropdownWidth,
+  onAddSelectOption,
 }: MultiSelectInputProps) => {
-  const { t } = useLingui();
-
   const { resetSelectedItem } = useSelectableList(
     selectableListComponentInstanceId,
   );
@@ -49,6 +51,7 @@ export const MultiSelectInput = ({
     selectedItemIdComponentState,
     selectableListComponentInstanceId,
   );
+
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -56,9 +59,12 @@ export const MultiSelectInput = ({
     values?.includes(option.value),
   );
 
-  const filteredOptionsInDropDown = options.filter((option) =>
-    option.label.toLowerCase().includes(searchFilter.toLowerCase()),
-  );
+  const filteredOptionsInDropDown = useMemo(() => {
+    const searchTerm = normalizeSearchText(searchFilter);
+    return options.filter((option) => {
+      return normalizeSearchText(option.label).includes(searchTerm);
+    });
+  }, [options, searchFilter]);
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(
@@ -125,7 +131,7 @@ export const MultiSelectInput = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
           {filteredOptionsInDropDown.length === 0 ? (
-            <MenuItem disabled text={t`No option found`} accent="placeholder" />
+            <MenuItem text={t`No option found`} />
           ) : (
             filteredOptionsInDropDown.map((option) => {
               return (
@@ -152,6 +158,19 @@ export const MultiSelectInput = ({
             })
           )}
         </DropdownMenuItemsContainer>
+        {onAddSelectOption &&
+          searchFilter &&
+          filteredOptionsInDropDown.length === 0 && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer scrollable={false}>
+                <AddSelectOptionMenuItem
+                  name={searchFilter}
+                  onAddSelectOption={onAddSelectOption}
+                />
+              </DropdownMenuItemsContainer>
+            </>
+          )}
       </DropdownContent>
     </SelectableList>
   );

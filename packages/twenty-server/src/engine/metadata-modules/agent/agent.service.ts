@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/agent/dtos/create-agent.input';
@@ -16,12 +15,57 @@ import { AgentException, AgentExceptionCode } from './agent.exception';
 @Injectable()
 export class AgentService {
   constructor(
-    @InjectRepository(AgentEntity, 'core')
+    @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
+    @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly agentRoleService: AgentRoleService,
   ) {}
+
+  async findManyAgents(workspaceId: string) {
+    const agents = await this.agentRepository.find({
+      where: { workspaceId },
+      order: { createdAt: 'DESC' },
+    });
+
+    if (agents.length === 0) {
+      return [];
+    }
+
+    const roleTargets = await this.roleTargetsRepository.find({
+      where: {
+        workspaceId,
+        agentId: In(agents.map((agent) => agent.id)),
+      },
+    });
+
+    const agentRoleMap = new Map<string, string>();
+
+    roleTargets.forEach((roleTarget) => {
+      if (roleTarget.agentId) {
+        agentRoleMap.set(roleTarget.agentId, roleTarget.roleId);
+      }
+    });
+
+    return agents.map((agent) => ({
+      ...agent,
+      roleId: agentRoleMap.get(agent.id) || null,
+    }));
+  }
+
+  async findOneByApplicationAndStandardId({
+    applicationId,
+    standardId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    standardId: string;
+    workspaceId: string;
+  }) {
+    return await this.agentRepository.findOne({
+      where: { applicationId, standardId, workspaceId },
+    });
+  }
 
   async findOneAgent(id: string, workspaceId: string) {
     const agent = await this.agentRepository.findOne({
@@ -88,7 +132,7 @@ export class AgentService {
       name: updatedName,
     });
 
-    if (!isDefined(input.roleId)) {
+    if (!('roleId' in input)) {
       return updatedAgent;
     }
 

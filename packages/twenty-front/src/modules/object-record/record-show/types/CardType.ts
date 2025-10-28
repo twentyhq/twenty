@@ -10,4 +10,5 @@ export enum CardType {
   WorkflowVersionCard = 'WorkflowVersionCard',
   WorkflowRunCard = 'WorkflowRunCard',
   RichTextCard = 'RichTextCard',
+  DashboardCard = 'DashboardCard',
 }

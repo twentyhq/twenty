@@ -1,10 +1,13 @@
-import { type WorkspaceMigrationFieldActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
-import { type WorkspaceMigrationIndexActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-index-action-v2';
-import { type WorkspaceMigrationObjectActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { type MetadataWorkspaceMigrationAction } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 
 export type WorkspaceMigrationActionV2 =
-  | WorkspaceMigrationObjectActionV2
-  | WorkspaceMigrationFieldActionV2
-  | WorkspaceMigrationIndexActionV2;
+  MetadataWorkspaceMigrationAction<AllMetadataName>;
 
 export type WorkspaceMigrationActionTypeV2 = WorkspaceMigrationActionV2['type'];
+
+export type ExtractAction<T extends WorkspaceMigrationActionTypeV2> = Extract<
+  WorkspaceMigrationActionV2,
+  { type: T }
+>;

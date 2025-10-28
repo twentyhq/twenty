@@ -12,6 +12,7 @@ export const STANDARD_OBJECT_ICONS = {
   comment: 'IconMessageCircle',
   company: 'IconBuildingSkyscraper',
   connectedAccount: 'IconAt',
+  dashboard: 'IconLayoutDashboard',
   favorite: 'IconHeart',
   auditLog: 'IconTimelineEvent',
   messageChannelMessageAssociation: 'IconMessage',
@@ -40,4 +41,4 @@ export const STANDARD_OBJECT_ICONS = {
   workflowVersion: 'IconVersions',
   workflowAutomatedTrigger: 'IconSettingsAutomation',
   workspaceMember: 'IconUserCircle',
-};
+} as const;

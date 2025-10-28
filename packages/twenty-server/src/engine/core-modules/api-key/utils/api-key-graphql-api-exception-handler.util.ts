@@ -27,6 +27,10 @@ export const apiKeyGraphqlApiExceptionHandler = (error: Error) => {
         throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
+      case ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS:
+        throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
       default: {
         return assertUnreachable(error.code);
       }

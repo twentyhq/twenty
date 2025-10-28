@@ -1,9 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -14,16 +15,16 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
   constructor(
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
+    @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
-    @InjectRepository(UserWorkspace, 'core')
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
@@ -196,8 +197,7 @@ export class UserRoleService {
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         {
-          userFriendlyMessage:
-            'Your role in this workspace could not be found. Please contact your workspace administrator.',
+          userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
         },
       );
     }
@@ -235,8 +235,7 @@ export class UserRoleService {
         'User workspace not found',
         PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'Your workspace membership could not be found. You may no longer have access to this workspace.',
+          userFriendlyMessage: msg`Your workspace membership could not be found. You may no longer have access to this workspace.`,
         },
       );
     }
@@ -252,8 +251,17 @@ export class UserRoleService {
         'Role not found',
         PermissionsExceptionCode.ROLE_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'The role you are trying to assign could not be found. It may have been deleted.',
+          userFriendlyMessage: msg`The role you are trying to assign could not be found. It may have been deleted.`,
+        },
+      );
+    }
+
+    if (!role.canBeAssignedToUsers) {
+      throw new PermissionsException(
+        `Role "${role.label}" cannot be assigned to users`,
+        PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+        {
+          userFriendlyMessage: msg`This role cannot be assigned to users. Please select a different role.`,
         },
       );
     }
@@ -301,8 +309,7 @@ export class UserRoleService {
         PermissionsExceptionMessage.CANNOT_UNASSIGN_LAST_ADMIN,
         PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN,
         {
-          userFriendlyMessage:
-            'You cannot remove the admin role from the last administrator. Please assign another administrator first.',
+          userFriendlyMessage: msg`You cannot remove the admin role from the last administrator. Please assign another administrator first.`,
         },
       );
     }

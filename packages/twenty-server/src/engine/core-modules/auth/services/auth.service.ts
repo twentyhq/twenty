@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import crypto from 'node:crypto';
+import crypto, { randomUUID } from 'node:crypto';
 
-import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
-import { isDefined } from 'twenty-shared/utils';
+import { AppPath } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -27,13 +28,13 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { type AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
+import { type AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { type AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { type AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
-import { type UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
+import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
+import { type UpdatePasswordOutput } from 'src/engine/core-modules/auth/dto/update-password.dto';
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
-import { type CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.entity';
-import { type WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
+import { type CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.dto';
+import { type WorkspaceInviteHashValidOutput } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
 import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
@@ -49,18 +50,19 @@ import {
   type SignInUpBaseParams,
   type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { type WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType } from 'src/engine/core-modules/domain-manager/domain-manager.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
@@ -69,7 +71,8 @@ export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly domainServerConfigService: DomainServerConfigService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly loginTokenService: LoginTokenService,
     private readonly guardRedirectService: GuardRedirectService,
@@ -78,19 +81,21 @@ export class AuthService {
     private readonly authSsoService: AuthSsoService,
     private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
-    @InjectRepository(AppToken, 'core')
-    private readonly appTokenRepository: Repository<AppToken>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
+    private readonly i18nService: I18nService,
+    private readonly auditService: AuditService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
-    workspace: Workspace,
-    user: User,
+    workspace: WorkspaceEntity,
+    user: UserEntity,
   ) {
     if (
       await this.userWorkspaceService.checkUserWorkspaceExists(
@@ -128,7 +133,7 @@ export class AuthService {
 
   async validateLoginWithPassword(
     input: UserCredentialsInput,
-    targetWorkspace?: Workspace,
+    targetWorkspace?: WorkspaceEntity,
   ) {
     if (targetWorkspace && !targetWorkspace.isPasswordAuthEnabled) {
       throw new AuthException(
@@ -160,7 +165,7 @@ export class AuthService {
         'Incorrect login method',
         AuthExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage: t`User was not created with email/password`,
+          userFriendlyMessage: msg`User was not created with email/password`,
         },
       );
     }
@@ -172,7 +177,7 @@ export class AuthService {
         'Wrong password',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: t`Wrong password`,
+          userFriendlyMessage: msg`Wrong password`,
         },
       );
     }
@@ -218,7 +223,7 @@ export class AuthService {
   private async isAuthProviderEnabledOrThrow(
     userData: ExistingUserOrNewUser['userData'],
     authParams: AuthProviderWithPasswordType['authParams'],
-    workspace: Workspace | undefined | null,
+    workspace: WorkspaceEntity | undefined | null,
   ) {
     if (authParams.provider === AuthProviderEnum.Password) {
       await this.validatePassword(userData, authParams);
@@ -268,7 +273,7 @@ export class AuthService {
   async verify(
     email: string,
     workspaceId: string,
-    authProvider?: AuthProviderEnum,
+    authProvider: AuthProviderEnum,
   ): Promise<AuthTokens> {
     if (!email) {
       throw new AuthException(
@@ -277,11 +282,9 @@ export class AuthService {
       );
     }
 
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
+    const user = await this.userService.findUserByEmail(email);
 
-    userValidator.assertIsDefinedOrThrow(
+    assertIsDefinedOrThrow(
       user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
@@ -309,6 +312,65 @@ export class AuthService {
     };
   }
 
+  async generateImpersonationAccessTokenAndRefreshToken({
+    workspaceId,
+    impersonatorUserWorkspaceId,
+    impersonatedUserWorkspaceId,
+    impersonatorUserId,
+    impersonatedUserId,
+  }: {
+    workspaceId: string;
+    impersonatorUserWorkspaceId: string;
+    impersonatedUserWorkspaceId: string;
+    impersonatorUserId: string;
+    impersonatedUserId: string;
+  }): Promise<AuthTokens> {
+    const correlationId = randomUUID();
+
+    const analytics = this.auditService.createContext({
+      workspaceId,
+      userId: impersonatorUserId,
+    });
+
+    await analytics.insertWorkspaceEvent('Monitoring', {
+      eventName: 'workspace.impersonation.attempted',
+      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
+    });
+
+    const accessToken = await this.accessTokenService.generateAccessToken({
+      userId: impersonatedUserId,
+      workspaceId,
+      authProvider: AuthProviderEnum.Impersonation,
+      isImpersonating: true,
+      impersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId,
+    });
+    const refreshToken = await this.refreshTokenService.generateRefreshToken(
+      {
+        userId: impersonatedUserId,
+        workspaceId,
+        authProvider: AuthProviderEnum.Impersonation,
+        targetedTokenType: JwtTokenTypeEnum.ACCESS,
+        isImpersonating: true,
+        impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId,
+      },
+      true,
+    );
+
+    await analytics.insertWorkspaceEvent('Monitoring', {
+      eventName: 'workspace.impersonation.issued',
+      message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
+    });
+
+    return {
+      tokens: {
+        accessOrWorkspaceAgnosticToken: accessToken,
+        refreshToken,
+      },
+    };
+  }
+
   async countAvailableWorkspacesByEmail(email: string): Promise<number> {
     return Object.values(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
@@ -316,11 +378,9 @@ export class AuthService {
   }
 
   async checkUserExists(email: string): Promise<CheckUserExistOutput> {
-    const user = await this.userRepository.findOneBy({
-      email,
-    });
+    const user = await this.userService.findUserByEmail(email);
 
-    const isUserExist = userValidator.isDefined(user);
+    const isUserExist = isDefined(user);
 
     return {
       exists: isUserExist,
@@ -332,7 +392,7 @@ export class AuthService {
 
   async checkWorkspaceInviteHashIsValid(
     inviteHash: string,
-  ): Promise<WorkspaceInviteHashValid> {
+  ): Promise<WorkspaceInviteHashValidOutput> {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash,
     });
@@ -342,9 +402,9 @@ export class AuthService {
 
   async generateAuthorizationCode(
     authorizeAppInput: AuthorizeAppInput,
-    user: User,
-    workspace: Workspace,
-  ): Promise<AuthorizeApp> {
+    user: UserEntity,
+    workspace: WorkspaceEntity,
+  ): Promise<AuthorizeAppOutput> {
     // TODO: replace with db call to - third party app table
     const apps = [
       {
@@ -430,7 +490,7 @@ export class AuthService {
   async updatePassword(
     userId: string,
     newPassword: string,
-  ): Promise<UpdatePassword> {
+  ): Promise<UpdatePasswordOutput> {
     if (!userId) {
       throw new AuthException(
         'User ID is required',
@@ -477,21 +537,23 @@ export class AuthService {
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
-      link: this.domainManagerService.getBaseUrl().toString(),
+      link: this.domainServerConfigService.getBaseUrl().toString(),
       locale: firstUserWorkspace.locale,
     });
 
-    const html = render(emailTemplate, { pretty: true });
-    const text = render(emailTemplate, { plainText: true });
+    const html = await render(emailTemplate, { pretty: true });
+    const text = await render(emailTemplate, { plainText: true });
 
-    i18n.activate(firstUserWorkspace.locale);
+    const passwordChangedMsg = msg`Your Password Has Been Successfully Changed`;
+    const i18n = this.i18nService.getI18nInstance(firstUserWorkspace.locale);
+    const subject = i18n._(passwordChangedMsg);
 
     await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
       to: user.email,
-      subject: t`Your Password Has Been Successfully Changed`,
+      subject,
       text,
       html,
     });
@@ -501,7 +563,7 @@ export class AuthService {
 
   async findWorkspaceFromInviteHashOrFail(
     inviteHash: string,
-  ): Promise<Workspace> {
+  ): Promise<WorkspaceEntity> {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash,
     });
@@ -522,12 +584,12 @@ export class AuthService {
     billingCheckoutSessionState,
   }: {
     loginToken: string;
-    workspace: WorkspaceSubdomainCustomDomainAndIsCustomDomainEnabledType;
+    workspace: WorkspaceDomainConfig;
     billingCheckoutSessionState?: string;
   }) {
-    const url = this.domainManagerService.buildWorkspaceURL({
+    const url = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
-      pathname: '/verify',
+      pathname: AppPath.Verify,
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
@@ -539,7 +601,7 @@ export class AuthService {
 
   async findInvitationForSignInUp(
     params: {
-      currentWorkspace: Workspace;
+      currentWorkspace: WorkspaceEntity;
     } & ({ workspacePersonalInviteToken: string } | { email: string }),
   ) {
     const qr = this.appTokenRepository
@@ -613,7 +675,7 @@ export class AuthService {
 
   formatUserDataPayload(
     newUserPayload: SignInUpNewUserPayload,
-    existingUser?: User | null,
+    existingUser?: UserEntity | null,
   ): ExistingUserOrNewUser {
     return {
       userData: existingUser
@@ -685,6 +747,9 @@ export class AuthService {
       throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`User does not have access to this workspace`,
+        },
       );
     }
   }
@@ -710,9 +775,7 @@ export class AuthService {
         ? await this.countAvailableWorkspacesByEmail(email)
         : 0;
 
-    const existingUser = await this.userRepository.findOne({
-      where: { email },
-    });
+    const existingUser = await this.userService.findUserByEmail(email);
 
     if (
       !workspaceId &&
@@ -735,8 +798,8 @@ export class AuthService {
           },
         ));
 
-      const url = this.domainManagerService.buildBaseUrl({
-        pathname: '/welcome',
+      const url = this.domainServerConfigService.buildBaseUrl({
+        pathname: AppPath.SignInUp,
         searchParams: {
           tokenPair: JSON.stringify({
             accessOrWorkspaceAgnosticToken:
@@ -821,10 +884,10 @@ export class AuthService {
       return this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
         error,
         workspace:
-          this.domainManagerService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+          this.workspaceDomainsService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
             currentWorkspace,
           ),
-        pathname: '/verify',
+        pathname: AppPath.Verify,
       });
     }
   }

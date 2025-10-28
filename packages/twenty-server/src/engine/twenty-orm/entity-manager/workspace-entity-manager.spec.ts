@@ -1,4 +1,4 @@
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
 import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
@@ -75,7 +75,7 @@ describe('WorkspaceEntityManager', () => {
   let mockDataSource: WorkspaceDataSource;
   let mockPermissionOptions: {
     shouldBypassPermissionChecks: boolean;
-    objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+    objectRecordsPermissions?: ObjectsPermissions;
   };
 
   beforeEach(() => {
@@ -128,17 +128,22 @@ describe('WorkspaceEntityManager', () => {
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
+        IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_WORKFLOW_FILTERING_ENABLED: false,
-        IS_WORKFLOW_BRANCH_ENABLED: false,
         IS_RELATION_CONNECT_ENABLED: false,
-        IS_FIELDS_PERMISSIONS_ENABLED: false,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
         IS_CORE_VIEW_ENABLED: false,
-        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
-        IS_API_KEY_ROLES_ENABLED: false,
+        IS_PAGE_LAYOUT_ENABLED: false,
+        IS_RECORD_PAGE_LAYOUT_ENABLED: false,
+        IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
+        IS_CALENDAR_VIEW_ENABLED: false,
+        IS_PUBLIC_DOMAIN_ENABLED: false,
+        IS_EMAILING_DOMAIN_ENABLED: false,
+        IS_DYNAMIC_SEARCH_FIELDS_ENABLED: false,
+        IS_COMMON_API_ENABLED: false,
+        IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
@@ -155,13 +160,21 @@ describe('WorkspaceEntityManager', () => {
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
+        IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_WORKFLOW_FILTERING_ENABLED: false,
         IS_RELATION_CONNECT_ENABLED: false,
-        IS_FIELDS_PERMISSIONS_ENABLED: true,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
-        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
+        IS_CORE_VIEW_ENABLED: false,
+        IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
+        IS_PAGE_LAYOUT_ENABLED: false,
+        IS_RECORD_PAGE_LAYOUT_ENABLED: false,
+        IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
+        IS_CALENDAR_VIEW_ENABLED: false,
+        IS_PUBLIC_DOMAIN_ENABLED: false,
+        IS_EMAILING_DOMAIN_ENABLED: false,
+        IS_DYNAMIC_SEARCH_FIELDS_ENABLED: false,
+        IS_COMMON_API_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
@@ -170,10 +183,10 @@ describe('WorkspaceEntityManager', () => {
       shouldBypassPermissionChecks: false,
       objectRecordsPermissions: {
         'test-entity': {
-          canRead: true,
-          canUpdate: false,
-          canSoftDelete: false,
-          canDestroy: false,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+          canDestroyObjectRecords: false,
           restrictedFields: {},
         },
       },
@@ -236,10 +249,6 @@ describe('WorkspaceEntityManager', () => {
       .mockImplementation(
         ({ formattedResult }: { formattedResult: string[] }) => formattedResult,
       );
-
-    jest.spyOn(entityManager as any, 'getFeatureFlagMap').mockReturnValue({
-      IS_FIELDS_PERMISSIONS_ENABLED: true,
-    });
 
     jest
       .spyOn(entityManager as any, 'extractTargetNameSingularFromEntityTarget')
@@ -329,7 +338,6 @@ describe('WorkspaceEntityManager', () => {
       });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
-        isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
@@ -364,7 +372,6 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
-        isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],

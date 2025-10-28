@@ -1,4 +1,4 @@
-import { AppBasePath } from '@/types/AppBasePath';
+import { AppBasePath } from 'twenty-shared/types';
 import { isMatchingLocation } from '../isMatchingLocation';
 
 describe('isMatchingLocation', () => {

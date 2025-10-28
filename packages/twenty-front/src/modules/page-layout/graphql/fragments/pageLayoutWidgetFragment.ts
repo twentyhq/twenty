@@ -1,0 +1,93 @@
+import { gql } from '@apollo/client';
+
+export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
+  fragment PageLayoutWidgetFragment on PageLayoutWidget {
+    id
+    title
+    type
+    objectMetadataId
+    createdAt
+    updatedAt
+    deletedAt
+    gridPosition {
+      column
+      columnSpan
+      row
+      rowSpan
+    }
+    configuration {
+      ... on BarChartConfiguration {
+        graphType
+        aggregateFieldMetadataId
+        aggregateOperation
+        primaryAxisGroupByFieldMetadataId
+        primaryAxisGroupBySubFieldName
+        primaryAxisOrderBy
+        secondaryAxisGroupByFieldMetadataId
+        secondaryAxisGroupBySubFieldName
+        secondaryAxisOrderBy
+        omitNullValues
+        axisNameDisplay
+        displayDataLabel
+        rangeMin
+        rangeMax
+        color
+        description
+        filter
+        groupMode
+      }
+      ... on LineChartConfiguration {
+        graphType
+        aggregateFieldMetadataId
+        aggregateOperation
+        primaryAxisGroupByFieldMetadataId
+        primaryAxisGroupBySubFieldName
+        primaryAxisOrderBy
+        secondaryAxisGroupByFieldMetadataId
+        secondaryAxisGroupBySubFieldName
+        secondaryAxisOrderBy
+        omitNullValues
+        axisNameDisplay
+        displayDataLabel
+        rangeMin
+        rangeMax
+        color
+        description
+        filter
+      }
+      ... on PieChartConfiguration {
+        graphType
+        groupByFieldMetadataId
+        aggregateFieldMetadataId
+        aggregateOperation
+        groupBySubFieldName
+        orderBy
+        displayDataLabel
+        color
+        description
+        filter
+      }
+      ... on AggregateChartConfiguration {
+        graphType
+        aggregateFieldMetadataId
+        aggregateOperation
+        displayDataLabel
+        description
+        filter
+      }
+      ... on GaugeChartConfiguration {
+        graphType
+        aggregateFieldMetadataId
+        aggregateOperation
+        displayDataLabel
+        color
+        description
+        filter
+      }
+      ... on IframeConfiguration {
+        url
+      }
+    }
+    pageLayoutTabId
+  }
+`;

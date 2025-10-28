@@ -4,6 +4,7 @@ import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useA
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -14,12 +15,15 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const resetTableRowSelection = useResetTableRowSelection(
-    recordTableIdFromContext,
-  );
+  const { resetTableRowSelection } = useResetTableRowSelection();
 
   const setRecordTableHoverPosition = useSetRecoilComponentState(
     recordTableHoverPositionComponentState,
+    recordTableIdFromContext,
+  );
+
+  const setRecordTableFocusPosition = useSetRecoilComponentState(
+    recordTableFocusPositionComponentState,
     recordTableIdFromContext,
   );
 
@@ -47,6 +51,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     deactivateRecordTableRow();
 
     setRecordTableHoverPosition(null);
+    setRecordTableFocusPosition(null);
 
     resetFocusStackToRecordIndex();
   };

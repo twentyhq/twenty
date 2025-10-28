@@ -1,6 +1,6 @@
-import { type AppPath } from '@/types/AppPath';
 import { useNavigate } from 'react-router-dom';
-import { getAppPath } from '~/utils/navigation/getAppPath';
+import { type AppPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 export const useNavigateApp = () => {
   const navigate = useNavigate();

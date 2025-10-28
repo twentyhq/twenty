@@ -2,12 +2,13 @@ import { useCallback, useState } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useMergeManyRecordsMutation } from '@/object-record/hooks/useMergeManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
 import { getOperationName } from '@apollo/client/utilities';
@@ -27,6 +28,7 @@ export const useMergeManyRecords = <
   objectNameSingular,
   recordGqlFields,
 }: UseMergeManyRecordsProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
   const apolloCoreClient = useApolloCoreClient();
   const [loading, setLoading] = useState(false);
 
@@ -34,8 +36,13 @@ export const useMergeManyRecords = <
     objectNameSingular,
   });
 
-  const computedRecordGqlFields =
-    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+  const { recordGqlFields: depthOneRecordGqlFields } =
+    useGenerateDepthRecordGqlFieldsFromObject({
+      objectNameSingular,
+      depth: 1,
+    });
+
+  const computedRecordGqlFields = recordGqlFields ?? depthOneRecordGqlFields;
 
   const { mergeManyRecordsMutation } = useMergeManyRecordsMutation({
     objectNameSingular,
@@ -96,6 +103,9 @@ export const useMergeManyRecords = <
 
         if (!preview) {
           await refetchAggregateQueries();
+          registerObjectOperation(objectNameSingular, {
+            type: 'merge-records',
+          });
         }
 
         return mergedObject.data?.[mutationResponseField] ?? null;
@@ -105,11 +115,13 @@ export const useMergeManyRecords = <
       }
     },
     [
-      apolloCoreClient,
-      findDuplicateRecordsQuery,
-      findOneRecordQuery,
-      mergeManyRecordsMutation,
       objectMetadataItem.namePlural,
+      apolloCoreClient,
+      mergeManyRecordsMutation,
+      findOneRecordQuery,
+      findDuplicateRecordsQuery,
+      registerObjectOperation,
+      objectNameSingular,
       refetchAggregateQueries,
     ],
   );

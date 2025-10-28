@@ -3,10 +3,30 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 describe('update one unique field metadata', () => {
   let createdObjectId = '';
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+    });
+  });
 
   beforeEach(async () => {
     const {
@@ -27,6 +47,15 @@ describe('update one unique field metadata', () => {
   });
 
   afterEach(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectId },
     });
@@ -287,5 +316,65 @@ describe('update one unique field metadata', () => {
     expect(errors[0].message).toContain(
       'Unique index cannot be created for field fullNameField of type FULL_NAME',
     );
+  });
+
+  it('should update a standard field to unique field metadata if it has not standard unique index', async () => {
+    const { data: createdField } = await createOneFieldMetadata({
+      input: {
+        name: 'testField',
+        label: 'Test Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: createdObjectId,
+        isUnique: false,
+        isCustom: false,
+      },
+      gqlFields: `
+        id
+        name
+        label
+        type
+        isUnique
+      `,
+    });
+
+    const { data: addUniqueData, errors: addUniqueErrors } =
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: createdField.createOneField.id,
+          updatePayload: { isUnique: true },
+        },
+        gqlFields: `
+        id
+        name
+        label
+        type
+        isUnique
+      `,
+      });
+
+    expect(addUniqueErrors).toBeUndefined();
+    expect(addUniqueData).not.toBeNull();
+    expect(addUniqueData.updateOneField).toBeDefined();
+    expect(addUniqueData.updateOneField.isUnique).toBe(true);
+
+    const { data: removeUniqueData, errors: removeUniqueErrors } =
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: createdField.createOneField.id,
+          updatePayload: { isUnique: false },
+        },
+        gqlFields: `
+        id
+        name
+        label
+        type
+        isUnique
+      `,
+      });
+
+    expect(removeUniqueErrors).toBeUndefined();
+    expect(removeUniqueData).not.toBeNull();
+    expect(removeUniqueData.updateOneField).toBeDefined();
+    expect(removeUniqueData.updateOneField.isUnique).toBe(false);
   });
 });

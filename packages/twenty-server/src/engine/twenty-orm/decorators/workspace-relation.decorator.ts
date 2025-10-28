@@ -58,6 +58,12 @@ export function WorkspaceRelation<TClass extends object>(
         object,
         propertyKey.toString(),
       ) ?? false;
+    const isUIReadOnly =
+      TypedReflect.getMetadata(
+        'workspace:is-field-ui-readonly-metadata-args',
+        object,
+        propertyKey.toString(),
+      ) ?? false;
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',
       object,
@@ -89,6 +95,7 @@ export function WorkspaceRelation<TClass extends object>(
       isPrimary,
       isNullable,
       isSystem,
+      isUIReadOnly,
       gate,
       isLabelSyncedWithName,
     });

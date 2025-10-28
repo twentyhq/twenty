@@ -52,6 +52,15 @@ export class EntitySchemaRelationFactory {
         objectMetadataMaps,
       );
 
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
+
+      if (!targetObjectMetadata) {
+        throw new Error(
+          `Target object metadata not found for field ${fieldMetadata.name}`,
+        );
+      }
+
       entitySchemaRelationMap[fieldMetadata.name] = {
         type: schemaRelationDetails.relationType,
         target: schemaRelationDetails.target,

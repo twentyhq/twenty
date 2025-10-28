@@ -2,10 +2,10 @@ import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/Bill
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { SettingsPath } from '@/types/SettingsPath';
 import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const InformationBannerNoBillingSubscription = () => {
   const { handleCheckoutSession, isSubmitting } = useHandleCheckoutSession({

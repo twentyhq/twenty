@@ -50,7 +50,7 @@ export const RecordIndexBoardDataLoader = ({
           objectNameSingular={objectNameSingular}
           kanbanFieldMetadataItem={recordIndexKanbanFieldMetadataItem}
           recordBoardId={recordBoardId}
-          columnId={'no-value'}
+          columnId="no-value"
         />
       )}
     </>

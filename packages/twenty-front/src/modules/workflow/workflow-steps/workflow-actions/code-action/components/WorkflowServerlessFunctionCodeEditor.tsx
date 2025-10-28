@@ -61,7 +61,7 @@ export const WorkflowServerlessFunctionCodeEditor = ({
       <CodeEditor
         height="100%"
         value={value}
-        language={'typescript'}
+        language="typescript"
         onChange={onChange}
         onMount={onMount}
         setMarkers={getWrongExportedFunctionMarkers}

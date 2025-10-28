@@ -1,4 +1,3 @@
-import { CustomError } from '@/error-handler/CustomError';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -7,6 +6,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { type ConfigVariableValue } from 'twenty-shared/types';
+import { CustomError } from 'twenty-shared/utils';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { ConfigVariableType } from '~/generated/graphql';
 import { type ConfigVariableOptions } from '../types/ConfigVariableOptions';

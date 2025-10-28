@@ -3,12 +3,12 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { In } from 'typeorm';
 
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -29,7 +29,7 @@ describe('ApiKeyRoleService', () => {
   const mockRoleId = 'role-789';
   const mockNewRoleId = 'role-999';
 
-  const mockApiKey: ApiKey = {
+  const mockApiKey: ApiKeyEntity = {
     id: mockApiKeyId,
     name: 'Test API Key',
     expiresAt: new Date('2025-12-31'),
@@ -55,6 +55,9 @@ describe('ApiKeyRoleService', () => {
     canUpdateAllObjectRecords: true,
     canSoftDeleteAllObjectRecords: true,
     canDestroyAllObjectRecords: true,
+    canBeAssignedToAgents: false,
+    canBeAssignedToUsers: true,
+    canBeAssignedToApiKeys: true,
   };
 
   const mockNewRole: Partial<RoleEntity> = {
@@ -113,23 +116,23 @@ describe('ApiKeyRoleService', () => {
       providers: [
         ApiKeyRoleService,
         {
-          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
+          provide: getRepositoryToken(RoleTargetsEntity),
           useValue: mockRoleTargetsRepository,
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'core'),
+          provide: getRepositoryToken(RoleEntity),
           useValue: mockRoleRepository,
         },
         {
-          provide: getRepositoryToken(Workspace, 'core'),
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: mockWorkspaceRepository,
         },
         {
-          provide: getRepositoryToken(ApiKey, 'core'),
+          provide: getRepositoryToken(ApiKeyEntity),
           useValue: mockApiKeyRepository,
         },
         {
-          provide: getDataSourceToken('core'),
+          provide: getDataSourceToken(),
           useValue: mockDataSource,
         },
         {
@@ -427,6 +430,10 @@ describe('ApiKeyRoleService', () => {
         canUpdateAllObjectRecords: true,
         canSoftDeleteAllObjectRecords: true,
         canDestroyAllObjectRecords: true,
+        canBeAssignedToAgents: false,
+        canBeAssignedToUsers: true,
+        canBeAssignedToApiKeys: true,
+        standardId: undefined,
       });
     });
 

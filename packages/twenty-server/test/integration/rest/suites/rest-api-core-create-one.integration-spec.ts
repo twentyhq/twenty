@@ -14,6 +14,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 describe('Core REST API Create One endpoint', () => {
   beforeEach(async () => {
     await deleteAllRecords('person');
+    await deleteAllRecords('company');
     await makeRestAPIRequest({
       method: 'post',
       path: '/companies',
@@ -24,6 +25,11 @@ describe('Core REST API Create One endpoint', () => {
         },
       },
     });
+  });
+
+  afterAll(async () => {
+    await deleteAllRecords('person');
+    await deleteAllRecords('company');
   });
 
   it('should create a new person', async () => {
@@ -147,7 +153,7 @@ describe('Core REST API Create One endpoint', () => {
       });
   });
 
-  it('should support depth 2 parameter', async () => {
+  it('should not support depth 2 parameter', async () => {
     const personCity = generateRecordName(TEST_PERSON_1_ID);
     const requestBody = {
       id: TEST_PERSON_1_ID,
@@ -159,19 +165,7 @@ describe('Core REST API Create One endpoint', () => {
       method: 'post',
       path: `/people?depth=2`,
       body: requestBody,
-    })
-      .expect(201)
-      .expect((res) => {
-        const createdPerson = res.body.data.createPerson;
-
-        expect(createdPerson.company.people).toBeDefined();
-        const depth2Person = createdPerson.company.people.find(
-          // @ts-expect-error legacy noImplicitAny
-          (p) => p.id === createdPerson.id,
-        );
-
-        expect(depth2Person).toBeDefined();
-      });
+    }).expect(400);
   });
 
   it('should return a BadRequestException when trying to create a person with an existing ID', async () => {

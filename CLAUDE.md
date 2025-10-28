@@ -29,6 +29,9 @@ npx nx run twenty-server:test:integration:with-db-reset  # Integration tests wit
 # Storybook
 npx nx storybook:build twenty-front         # Build Storybook
 npx nx storybook:serve-and-test:static twenty-front     # Run Storybook tests
+
+
+When testing the UI end to end, click on "Continue with Email" and use the prefilled credentials.
 ```
 
 ### Code Quality
@@ -65,7 +68,7 @@ npx nx run twenty-server:database:migrate:prod # Run migrations
 npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/[name] -d src/database/typeorm/core/core.datasource.ts
 
 # Sync metadata
-npx nx run twenty-server:command workspace:sync-metadata -f
+npx nx run twenty-server:command workspace:sync-metadata
 ```
 
 ### GraphQL
@@ -121,6 +124,8 @@ packages/
 - **ClickHouse** for analytics (when enabled)
 
 ## Development Workflow
+
+IMPORTANT: Use Context7 for code generation, setup or configuration steps, or library/API documentation. Automatically use the Context7 MCP tools to resolve library IDs and get library docs without waiting for explicit requests.
 
 ### Before Making Changes
 1. Always run linting and type checking after code changes

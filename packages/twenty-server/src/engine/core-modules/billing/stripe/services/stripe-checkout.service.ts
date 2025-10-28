@@ -1,18 +1,17 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class StripeCheckoutService {
@@ -22,8 +21,7 @@ export class StripeCheckoutService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSDKService: StripeSDKService,
-    @InjectRepository(BillingCustomer, 'core')
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    private readonly stripeCustomerService: StripeCustomerService,
   ) {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
@@ -35,7 +33,7 @@ export class StripeCheckoutService {
 
   async createCheckoutSession({
     user,
-    workspaceId,
+    workspace,
     stripeSubscriptionLineItems,
     successUrl,
     cancelUrl,
@@ -44,8 +42,8 @@ export class StripeCheckoutService {
     requirePaymentMethod = true,
     withTrialPeriod,
   }: {
-    user: User;
-    workspaceId: string;
+    user: UserEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
     stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     successUrl?: string;
     cancelUrl?: string;
@@ -55,19 +53,14 @@ export class StripeCheckoutService {
     withTrialPeriod: boolean;
   }): Promise<Stripe.Checkout.Session> {
     if (!isDefined(stripeCustomerId)) {
-      const customer = await this.stripe.customers.create({
-        email: user.email,
-        metadata: {
-          workspaceId,
-        },
-      });
+      const stripeCustomer =
+        await this.stripeCustomerService.createStripeCustomer(
+          user.email,
+          workspace.id,
+          workspace.displayName,
+        );
 
-      await this.billingCustomerRepository.save({
-        stripeCustomerId: customer.id,
-        workspaceId,
-      });
-
-      stripeCustomerId = customer.id;
+      stripeCustomerId = stripeCustomer.id;
     }
 
     return await this.stripe.checkout.sessions.create({
@@ -75,23 +68,13 @@ export class StripeCheckoutService {
       mode: 'subscription',
       subscription_data: {
         metadata: {
-          workspaceId,
+          workspaceId: workspace.id,
           plan,
         },
-        ...(withTrialPeriod
-          ? {
-              trial_period_days: this.twentyConfigService.get(
-                requirePaymentMethod
-                  ? 'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS'
-                  : 'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
-              ),
-              trial_settings: {
-                end_behavior: {
-                  missing_payment_method: 'create_invoice',
-                },
-              },
-            }
-          : {}),
+        ...this.getStripeSubscriptionTrialPeriodConfig(
+          withTrialPeriod,
+          requirePaymentMethod,
+        ),
       },
       automatic_tax: { enabled: !!requirePaymentMethod },
       tax_id_collection: { enabled: !!requirePaymentMethod },
@@ -103,5 +86,77 @@ export class StripeCheckoutService {
         ? 'always'
         : 'if_required',
     });
+  }
+
+  async createDirectSubscription({
+    user,
+    workspace,
+    stripeSubscriptionLineItems,
+    stripeCustomerId,
+    plan = BillingPlanKey.PRO,
+    requirePaymentMethod = false,
+    withTrialPeriod,
+  }: {
+    user: UserEntity;
+    workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
+    stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
+    stripeCustomerId?: string;
+    plan?: BillingPlanKey;
+    requirePaymentMethod?: boolean;
+    withTrialPeriod: boolean;
+  }): Promise<Stripe.Subscription> {
+    if (!isDefined(stripeCustomerId)) {
+      const stripeCustomer =
+        await this.stripeCustomerService.createStripeCustomer(
+          user.email,
+          workspace.id,
+          workspace.displayName,
+        );
+
+      stripeCustomerId = stripeCustomer.id;
+    }
+
+    // Convert checkout session line items to subscription items format
+    const subscriptionItems: Stripe.SubscriptionCreateParams.Item[] =
+      stripeSubscriptionLineItems.map((lineItem) => ({
+        price: lineItem.price as string,
+        quantity: lineItem.quantity,
+      }));
+
+    const subscriptionParams: Stripe.SubscriptionCreateParams = {
+      customer: stripeCustomerId,
+      items: subscriptionItems,
+      metadata: {
+        workspaceId: workspace.id,
+        plan,
+      },
+      ...this.getStripeSubscriptionTrialPeriodConfig(
+        withTrialPeriod,
+        requirePaymentMethod,
+      ),
+      automatic_tax: { enabled: !!requirePaymentMethod },
+    };
+
+    return await this.stripe.subscriptions.create(subscriptionParams);
+  }
+
+  private getStripeSubscriptionTrialPeriodConfig(
+    withTrialPeriod: boolean,
+    requirePaymentMethod: boolean,
+  ) {
+    return withTrialPeriod
+      ? {
+          trial_period_days: this.twentyConfigService.get(
+            requirePaymentMethod
+              ? 'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS'
+              : 'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
+          ),
+          trial_settings: {
+            end_behavior: {
+              missing_payment_method: 'create_invoice' as const,
+            },
+          },
+        }
+      : {};
   }
 }

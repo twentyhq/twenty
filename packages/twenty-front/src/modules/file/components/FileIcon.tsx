@@ -1,5 +1,6 @@
-import { type AttachmentType } from '@/activities/files/types/Attachment';
-import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
+import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
+import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
+import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -14,14 +15,18 @@ const StyledIconContainer = styled.div<{ background: string }>`
   padding: ${({ theme }) => theme.spacing(1.25)};
 `;
 
-export const FileIcon = ({ fileType }: { fileType: AttachmentType }) => {
+export const FileIcon = ({
+  fileCategory,
+}: {
+  fileCategory: AttachmentFileCategory;
+}) => {
   const theme = useTheme();
-  const iconColors = useFileTypeColors();
+  const iconColors = useFileCategoryColors();
 
-  const Icon = IconMapping[fileType];
+  const Icon = IconMapping[fileCategory];
 
   return (
-    <StyledIconContainer background={iconColors[fileType]}>
+    <StyledIconContainer background={iconColors[fileCategory]}>
       {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledIconContainer>
   );

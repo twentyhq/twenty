@@ -3,7 +3,7 @@ import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
 
 import { CommandMenuContextRecordsChip } from '@/command-menu/components/CommandMenuContextRecordsChip';
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
-import { type RecordChipData } from '@/object-record/record-field/types/RecordChipData';
+import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ComponentDecorator } from 'twenty-ui/testing';

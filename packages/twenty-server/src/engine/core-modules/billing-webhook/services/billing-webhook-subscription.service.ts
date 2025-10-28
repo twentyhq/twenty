@@ -13,9 +13,9 @@ import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from '
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
-import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -24,11 +24,13 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   CleanWorkspaceDeletionWarningUserVarsJob,
   type CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -40,16 +42,18 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeCustomerService: StripeCustomerService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(BillingSubscription, 'core')
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingSubscriptionItem, 'core')
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(BillingCustomer, 'core')
-    private readonly billingCustomerRepository: Repository<BillingCustomer>,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    @InjectRepository(BillingSubscriptionItemEntity)
+    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceService: WorkspaceService,
+    private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
+    private readonly stripeBillingAlertService: StripeBillingAlertService,
   ) {}
 
   async processStripeEvent(
@@ -83,7 +87,12 @@ export class BillingWebhookSubscriptionService {
     );
 
     await this.billingSubscriptionRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseSubscription(workspaceId, data),
+      transformStripeSubscriptionEventToDatabaseSubscription(
+        workspaceId,
+        await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+          data.object.id,
+        ),
+      ),
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
@@ -145,6 +154,15 @@ export class BillingWebhookSubscriptionService {
     if (event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED) {
       await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
         updatedBillingSubscription.id,
+      );
+      const gte =
+        this.billingSubscriptionService.getTrialPeriodFreeWorkflowCredits(
+          updatedBillingSubscription,
+        );
+
+      await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
+        updatedBillingSubscription.stripeCustomerId,
+        gte,
       );
     }
 

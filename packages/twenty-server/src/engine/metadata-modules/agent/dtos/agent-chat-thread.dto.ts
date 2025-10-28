@@ -7,9 +7,6 @@ export class AgentChatThreadDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
-  @Field(() => UUIDScalarType)
-  agentId: string;
-
   @Field({ nullable: true })
   title: string;
 

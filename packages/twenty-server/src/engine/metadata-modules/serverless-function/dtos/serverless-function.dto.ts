@@ -13,10 +13,11 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
+import { CronTriggerDTO } from 'src/engine/metadata-modules/cron-trigger/dtos/cron-trigger.dto';
+import { DatabaseEventTriggerDTO } from 'src/engine/metadata-modules/database-event-trigger/dtos/database-event-trigger.dto';
+import { RouteTriggerDTO } from 'src/engine/metadata-modules/route-trigger/dtos/route-trigger.dto';
 
 @ObjectType('ServerlessFunction')
 @Authorize({
@@ -41,7 +42,7 @@ export class ServerlessFunctionDTO {
 
   @IsString()
   @Field({ nullable: true })
-  description: string;
+  description?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -54,14 +55,20 @@ export class ServerlessFunctionDTO {
 
   @IsString()
   @Field({ nullable: true })
-  latestVersion: string;
+  latestVersion?: string;
 
   @IsArray()
   @Field(() => [String], { nullable: false })
   publishedVersions: string[];
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  latestVersionInputSchema: InputSchema;
+  @Field(() => [CronTriggerDTO], { nullable: true })
+  cronTriggers?: CronTriggerDTO[];
+
+  @Field(() => [DatabaseEventTriggerDTO], { nullable: true })
+  databaseEventTriggers?: DatabaseEventTriggerDTO[];
+
+  @Field(() => [RouteTriggerDTO], { nullable: true })
+  routeTriggers?: RouteTriggerDTO[];
 
   @HideField()
   workspaceId: string;

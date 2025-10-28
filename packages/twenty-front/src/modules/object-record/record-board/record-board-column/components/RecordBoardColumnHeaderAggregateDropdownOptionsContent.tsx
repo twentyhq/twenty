@@ -28,7 +28,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
   availableAggregations: AvailableFieldsForAggregateOperation;
   title: string;
 }) => {
-  const { onContentChange, closeDropdown, resetContent } =
+  const { onContentChange, closeDropdown, resetContent, objectMetadataItem } =
     useDropdownContextStateManagement<RecordBoardColumnHeaderAggregateDropdownContextValue>(
       {
         context: RecordBoardColumnHeaderAggregateDropdownContext,
@@ -89,6 +89,7 @@ export const RecordBoardColumnHeaderAggregateDropdownOptionsContent = ({
                         availableAggregationFieldsIdsForOperation[0],
                       kanbanAggregateOperation:
                         availableAggregationOperation as AggregateOperations,
+                      objectMetadataId: objectMetadataItem.id,
                     });
                     closeDropdown();
                   }

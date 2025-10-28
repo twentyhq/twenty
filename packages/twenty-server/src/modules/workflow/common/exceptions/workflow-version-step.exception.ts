@@ -3,9 +3,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export class WorkflowVersionStepException extends CustomException<WorkflowVersionStepExceptionCode> {}
 
 export enum WorkflowVersionStepExceptionCode {
-  UNKNOWN = 'UNKNOWN',
+  INVALID_REQUEST = 'INVALID_REQUEST',
   NOT_FOUND = 'NOT_FOUND',
-  UNDEFINED = 'UNDEFINED',
-  FAILURE = 'FAILURE',
-  INVALID = 'INVALID',
+  CODE_STEP_FAILURE = 'CODE_STEP_FAILURE',
 }

@@ -1,18 +1,46 @@
 import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { config } from 'dotenv';
-import { DataSource, type DataSourceOptions } from 'typeorm';
+import { DataSource, type DataSourceOptions, type LogLevel } from 'typeorm';
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
   override: true,
 });
+
+const isRunningCommand = (): boolean => {
+  const scriptPath = process.argv[1] || '';
+
+  return scriptPath.includes('/command/command.');
+};
+
+const getLoggingConfig = (): LogLevel[] => {
+  if (process.env.NODE_ENV === 'test') {
+    return [];
+  }
+  const ormQueryLogging = process.env.ORM_QUERY_LOGGING || 'disabled';
+
+  switch (ormQueryLogging) {
+    case 'disabled':
+      return ['error'];
+    case 'server-only':
+      if (isRunningCommand()) {
+        return ['error'];
+      }
+
+      return ['query', 'error'];
+    case 'always':
+      return ['query', 'error'];
+    default:
+      return ['error'];
+  }
+};
 
 const isJest = process.argv.some((arg) => arg.includes('jest'));
 
 export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
-  logging: ['error'],
+  logging: getLoggingConfig(),
   schema: 'core',
   entities:
     process.env.IS_BILLING_ENABLED === 'true'
@@ -43,6 +71,9 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
           rejectUnauthorized: false,
         }
       : undefined,
+  extra: {
+    query_timeout: 15000,
+  },
 };
 
 export const connectionSource = new DataSource(

@@ -88,7 +88,7 @@ export const createIndexMigration = async (
         .filter(isDefined);
 
       const defaultWhereClause = indexMetadata.isUnique
-        ? `${columns.map((column) => `"${column}"`).join(" != '' AND ")} != '' AND "deletedAt" IS NULL`
+        ? `${columns.map((column) => `"${column}"`).join(" != '' AND ")} != ''`
         : null;
 
       return {

@@ -13,19 +13,20 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagDTO } from 'src/engine/core-modules/feature-flag/dtos/feature-flag-dto';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -36,17 +37,23 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
-  type AuthProviders,
+  type AuthProvidersDTO,
   PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
-import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+  WorkspaceNotFoundDefaultError,
+} from 'src/engine/core-modules/workspace/workspace.exception';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -55,19 +62,14 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
-import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-
-import { Workspace } from './workspace.entity';
-
-import { WorkspaceService } from './services/workspace.service';
-
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
@@ -76,7 +78,7 @@ const OriginHeader = createParamDecorator(
   },
 );
 
-@Resolver(() => Workspace)
+@Resolver(() => WorkspaceEntity)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -85,7 +87,7 @@ const OriginHeader = createParamDecorator(
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
@@ -93,14 +95,14 @@ export class WorkspaceResolver {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly roleService: RoleService,
-    private readonly agentService: AgentService,
-    @InjectRepository(BillingSubscription, 'core')
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    private readonly viewService: ViewService,
+    private readonly dnsManagerService: DnsManagerService,
+    private readonly customDomainManagerService: CustomDomainManagerService,
   ) {}
 
-  @Query(() => Workspace)
+  @Query(() => WorkspaceEntity)
   @UseGuards(WorkspaceAuthGuard)
-  async currentWorkspace(@AuthWorkspace() { id }: Workspace) {
+  async currentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
     const workspace = await this.workspaceService.findById(id);
 
     assert(workspace, 'Workspace not found');
@@ -108,21 +110,21 @@ export class WorkspaceResolver {
     return workspace;
   }
 
-  @Mutation(() => Workspace)
+  @Mutation(() => WorkspaceEntity)
   @UseGuards(UserAuthGuard, WorkspaceAuthGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return await this.workspaceService.activateWorkspace(user, workspace, data);
   }
 
-  @Mutation(() => Workspace)
+  @Mutation(() => WorkspaceEntity)
   @UseGuards(WorkspaceAuthGuard)
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthApiKey() apiKey?: string,
   ) {
@@ -146,7 +148,7 @@ export class WorkspaceResolver {
     SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
   async uploadWorkspaceLogo(
-    @AuthWorkspace() { id }: Workspace,
+    @AuthWorkspace() { id }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<SignedFileDTO> {
@@ -175,7 +177,7 @@ export class WorkspaceResolver {
 
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
   async featureFlags(
-    @Parent() workspace: Workspace,
+    @Parent() workspace: WorkspaceEntity,
   ): Promise<FeatureFlagDTO[]> {
     const featureFlags = await this.featureFlagService.getWorkspaceFeatureFlags(
       workspace.id,
@@ -186,34 +188,36 @@ export class WorkspaceResolver {
     );
   }
 
-  @Mutation(() => Workspace)
+  @Mutation(() => WorkspaceEntity)
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
   )
-  async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
+  async deleteCurrentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
     return this.workspaceService.deleteWorkspace(id);
   }
 
-  @ResolveField(() => [BillingSubscription])
+  @ResolveField(() => [BillingSubscriptionEntity])
   async billingSubscriptions(
-    @Parent() workspace: Workspace,
-  ): Promise<BillingSubscription[] | undefined> {
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<BillingSubscriptionEntity[] | undefined> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return [];
     }
 
     try {
-      return this.billingSubscriptionRepository.find({
-        where: { workspaceId: workspace.id },
-      });
+      return this.billingSubscriptionService.getBillingSubscriptions(
+        workspace.id,
+      );
     } catch (error) {
       workspaceGraphqlApiExceptionHandler(error);
     }
   }
 
   @ResolveField(() => RoleDTO, { nullable: true })
-  async defaultRole(@Parent() workspace: Workspace): Promise<RoleDTO | null> {
+  async defaultRole(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<RoleDTO | null> {
     if (!workspace.defaultRoleId) {
       return null;
     }
@@ -224,51 +228,35 @@ export class WorkspaceResolver {
     );
   }
 
-  @ResolveField(() => AgentDTO, { nullable: true })
-  async defaultAgent(@Parent() workspace: Workspace): Promise<AgentDTO | null> {
-    if (!workspace.defaultAgentId) {
-      return null;
-    }
-
-    try {
-      const agent = await this.agentService.findOneAgent(
-        workspace.defaultAgentId,
-        workspace.id,
-      );
-
-      // Convert roleId from null to undefined to match AgentDTO
-      return {
-        ...agent,
-        roleId: agent.roleId ?? undefined,
-      };
-    } catch {
-      // If agent is not found, return null instead of throwing
-      return null;
-    }
+  @ResolveField(() => String, { nullable: true })
+  async routerModel(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<string | null> {
+    return workspace.routerModel;
   }
 
-  @ResolveField(() => BillingSubscription, { nullable: true })
+  @ResolveField(() => BillingSubscriptionEntity, { nullable: true })
   async currentBillingSubscription(
-    @Parent() workspace: Workspace,
-  ): Promise<BillingSubscription | undefined> {
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<BillingSubscriptionEntity | undefined> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
     }
 
-    return this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-      { workspaceId: workspace.id },
-    );
+    return this.billingSubscriptionService.getCurrentBillingSubscription({
+      workspaceId: workspace.id,
+    });
   }
 
   @ResolveField(() => Number)
   async workspaceMembersCount(
-    @Parent() workspace: Workspace,
+    @Parent() workspace: WorkspaceEntity,
   ): Promise<number | undefined> {
     return await this.userWorkspaceService.getUserCount(workspace.id);
   }
 
   @ResolveField(() => String)
-  async logo(@Parent() workspace: Workspace): Promise<string> {
+  async logo(@Parent() workspace: WorkspaceEntity): Promise<string> {
     if (workspace.logo) {
       try {
         return this.fileService.signFileUrl({
@@ -288,13 +276,13 @@ export class WorkspaceResolver {
     return isDefined(this.twentyConfigService.get('ENTERPRISE_KEY'));
   }
 
-  @ResolveField(() => WorkspaceUrls)
-  workspaceUrls(@Parent() workspace: Workspace) {
-    return this.domainManagerService.getWorkspaceUrls(workspace);
+  @ResolveField(() => WorkspaceUrlsDTO)
+  workspaceUrls(@Parent() workspace: WorkspaceEntity) {
+    return this.workspaceDomainsService.getWorkspaceUrls(workspace);
   }
 
   @ResolveField(() => Boolean)
-  isGoogleAuthEnabled(@Parent() workspace: Workspace) {
+  isGoogleAuthEnabled(@Parent() workspace: WorkspaceEntity) {
     return (
       workspace.isGoogleAuthEnabled &&
       this.twentyConfigService.get('AUTH_GOOGLE_ENABLED')
@@ -302,7 +290,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
-  isMicrosoftAuthEnabled(@Parent() workspace: Workspace) {
+  isMicrosoftAuthEnabled(@Parent() workspace: WorkspaceEntity) {
     return (
       workspace.isMicrosoftAuthEnabled &&
       this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED')
@@ -310,11 +298,16 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
-  isPasswordAuthEnabled(@Parent() workspace: Workspace) {
+  isPasswordAuthEnabled(@Parent() workspace: WorkspaceEntity) {
     return (
       workspace.isPasswordAuthEnabled &&
       this.twentyConfigService.get('AUTH_PASSWORD_ENABLED')
     );
+  }
+
+  @ResolveField(() => [ViewDTO])
+  async views(@Parent() workspace: WorkspaceEntity): Promise<ViewDTO[]> {
+    return this.viewService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
@@ -324,7 +317,7 @@ export class WorkspaceResolver {
     @Args('origin', { nullable: true }) origin?: string,
   ): Promise<PublicWorkspaceDataOutput | undefined> {
     try {
-      const systemEnabledProviders: AuthProviders = {
+      const systemEnabledProviders: AuthProvidersDTO = {
         google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
         magicLink: false,
         password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
@@ -346,11 +339,11 @@ export class WorkspaceResolver {
       }
 
       const workspace =
-        await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
           origin,
         );
 
-      workspaceValidator.assertIsDefinedOrThrow(workspace);
+      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
       let workspaceLogoWithToken = '';
 
@@ -369,7 +362,7 @@ export class WorkspaceResolver {
         id: workspace.id,
         logo: workspaceLogoWithToken,
         displayName: workspace.displayName,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
         authProviders: getAuthProvidersByWorkspace({
           workspace,
           systemEnabledProviders,
@@ -378,5 +371,28 @@ export class WorkspaceResolver {
     } catch (err) {
       workspaceGraphqlApiExceptionHandler(err);
     }
+  }
+
+  @Mutation(() => DomainValidRecords, { nullable: true })
+  @UseGuards(WorkspaceAuthGuard)
+  async checkCustomDomainValidRecords(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<DomainValidRecords | undefined> {
+    assertIsDefinedOrThrow(
+      workspace.customDomain,
+      new WorkspaceException(
+        `Custom domain not found`,
+        WorkspaceExceptionCode.CUSTOM_DOMAIN_NOT_FOUND,
+      ),
+    );
+
+    const domainValidRecords = await this.dnsManagerService.refreshHostname(
+      workspace.customDomain,
+    );
+
+    return this.customDomainManagerService.checkCustomDomainValidRecords(
+      workspace,
+      domainValidRecords,
+    );
   }
 }

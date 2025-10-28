@@ -10,9 +10,9 @@ import { AgentException, AgentExceptionCode } from './agent.exception';
 @Injectable()
 export class AgentHandoffService {
   constructor(
-    @InjectRepository(AgentEntity, 'core')
+    @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(AgentHandoffEntity, 'core')
+    @InjectRepository(AgentHandoffEntity)
     private readonly agentHandoffRepository: Repository<AgentHandoffEntity>,
   ) {}
 

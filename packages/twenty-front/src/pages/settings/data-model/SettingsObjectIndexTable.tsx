@@ -16,6 +16,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { IconSearch, IconSquareKey } from 'twenty-ui/display';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export const StyledObjectIndexTableRow = styled(TableRow)`
   grid-template-columns: 350px 70px 80px;
@@ -102,11 +103,13 @@ export const SettingsObjectIndexTable = ({
 
   const filteredActiveItems = useMemo(
     () =>
-      sortedActiveObjectSettingsDetailItems.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.indexType.toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
+      sortedActiveObjectSettingsDetailItems.filter((item) => {
+        const searchNormalized = normalizeSearchText(searchTerm);
+        return (
+          normalizeSearchText(item.name).includes(searchNormalized) ||
+          normalizeSearchText(item.indexType).includes(searchNormalized)
+        );
+      }),
     [sortedActiveObjectSettingsDetailItems, searchTerm],
   );
 

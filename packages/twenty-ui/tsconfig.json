@@ -1,10 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ES2020",
     "jsx": "react-jsx",
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "noEmit": true,
     "types": ["node"],

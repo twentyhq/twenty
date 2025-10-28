@@ -56,6 +56,21 @@ export class UpdateRolePayload {
   @IsOptional()
   @Field({ nullable: true })
   canDestroyAllObjectRecords?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  canBeAssignedToUsers?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  canBeAssignedToAgents?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  canBeAssignedToApiKeys?: boolean;
 }
 
 @InputType()

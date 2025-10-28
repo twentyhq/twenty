@@ -4,9 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { fromObjectMetadataMapsToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/from-flat-object-metadata-to-flat-object-metadata-with-flat-field-maps.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -22,41 +20,19 @@ type GetExistingOrRecomputeMetadataMapsResult = {
   metadataVersion: number;
 };
 
-type GetExistingOrRecomputeFlatObjectMetadataMapsResult = {
-  flatObjectMetadataMaps: FlatObjectMetadataMaps;
-  metadataVersion: number;
-};
-
 @Injectable()
 export class WorkspaceMetadataCacheService {
   logger = new Logger(WorkspaceMetadataCacheService.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(IndexMetadataEntity, 'core')
+    @InjectRepository(IndexMetadataEntity)
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
   ) {}
-
-  async getExistingOrRecomputeFlatObjectMetadataMaps({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<GetExistingOrRecomputeFlatObjectMetadataMapsResult> {
-    const { objectMetadataMaps, metadataVersion } =
-      await this.getExistingOrRecomputeMetadataMaps({
-        workspaceId,
-      });
-
-    return {
-      flatObjectMetadataMaps:
-        fromObjectMetadataMapsToFlatObjectMetadataMaps(objectMetadataMaps),
-      metadataVersion,
-    };
-  }
 
   async getExistingOrRecomputeMetadataMaps({
     workspaceId,

@@ -1,4 +1,4 @@
-import { AppPath } from '@/types/AppPath';
+import { AppPath } from 'twenty-shared/types';
 
 const getIndexAppPath = () => {
   return AppPath.Index;

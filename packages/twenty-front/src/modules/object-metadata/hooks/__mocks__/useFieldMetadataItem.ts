@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { FieldMetadataType, PermissionsOnAllObjectRecords } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated/graphql';
 
 export const FIELD_METADATA_ID = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
 export const FIELD_RELATION_METADATA_ID =
@@ -22,48 +22,9 @@ export const queries = {
         createdAt
         updatedAt
         settings
-      }
-    }
-  `,
-  findManyViewsQuery: gql`
-    query FindManyViews(
-      $filter: ViewFilterInput
-      $orderBy: [ViewOrderByInput]
-      $lastCursor: String
-      $limit: Int
-    ) {
-      views(
-        filter: $filter
-        orderBy: $orderBy
-        first: $limit
-        after: $lastCursor
-      ) {
-        edges {
-          node {
-            __typename
-            id
-            viewGroups {
-              edges {
-                node {
-                  __typename
-                  fieldMetadataId
-                  fieldValue
-                  id
-                  isVisible
-                  position
-                }
-              }
-            }
-          }
-          cursor
+        object {
+          id
         }
-        pageInfo {
-          hasNextPage
-          hasPreviousPage
-          startCursor
-          endCursor
-        }
-        totalCount
       }
     }
   `,
@@ -86,6 +47,9 @@ export const queries = {
         updatedAt
         settings
         isLabelSyncedWithName
+        object {
+          id
+        }
       }
     }
   `,
@@ -108,6 +72,9 @@ export const queries = {
         defaultValue
         options
         isLabelSyncedWithName
+        object {
+          id
+        }
       }
     }
   `,
@@ -200,12 +167,6 @@ export const responseData = {
       workspaceMembers: [],
       currentUserWorkspace: {
         permissionFlags: ['DATA_MODEL'],
-        objectRecordsPermissions: [
-          PermissionsOnAllObjectRecords.READ_ALL_OBJECT_RECORDS,
-          PermissionsOnAllObjectRecords.UPDATE_ALL_OBJECT_RECORDS,
-          PermissionsOnAllObjectRecords.SOFT_DELETE_ALL_OBJECT_RECORDS,
-          PermissionsOnAllObjectRecords.DESTROY_ALL_OBJECT_RECORDS,
-        ],
       },
       currentWorkspace: {
         id: 'test-workspace-id',

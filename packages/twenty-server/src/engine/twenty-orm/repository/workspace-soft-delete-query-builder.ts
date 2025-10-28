@@ -1,4 +1,4 @@
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import {
   type EntityTarget,
   type InsertQueryBuilder,
@@ -12,7 +12,6 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
@@ -23,12 +22,13 @@ import { type WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 export class WorkspaceSoftDeleteQueryBuilder<
   T extends ObjectLiteral,
 > extends SoftDeleteQueryBuilder<T> {
-  private objectRecordsPermissions: ObjectsPermissionsDeprecated;
+  private objectRecordsPermissions: ObjectsPermissions;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
@@ -36,7 +36,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
 
   constructor(
     queryBuilder: SoftDeleteQueryBuilder<T>,
-    objectRecordsPermissions: ObjectsPermissionsDeprecated,
+    objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -69,8 +69,6 @@ export class WorkspaceSoftDeleteQueryBuilder<
         objectsPermissions: this.objectRecordsPermissions,
         objectMetadataMaps: this.internalContext.objectMetadataMaps,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-        isFieldPermissionsEnabled:
-          this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
       });
 
       const mainAliasTarget = this.getMainAliasTarget();
@@ -88,13 +86,15 @@ export class WorkspaceSoftDeleteQueryBuilder<
         this.internalContext.objectMetadataMaps,
       );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.DELETED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedAfter,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.DELETED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          authContext: this.authContext,
+        }),
+      );
 
       return {
         raw: after.raw,

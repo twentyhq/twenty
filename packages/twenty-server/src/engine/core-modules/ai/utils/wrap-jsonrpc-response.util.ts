@@ -1,7 +1,7 @@
 import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.const';
 
 export const wrapJsonRpcResponse = (
-  id: string | number | null | undefined = null,
+  id: string | number,
   payload:
     | Record<'result', Record<string, unknown>>
     | Record<'error', Record<string, unknown>>,

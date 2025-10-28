@@ -1,4 +1,4 @@
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import {
   type EntityTarget,
   type ObjectLiteral,
@@ -10,7 +10,6 @@ import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interf
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -31,14 +30,14 @@ import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/g
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
 > extends SelectQueryBuilder<T> {
-  objectRecordsPermissions: ObjectsPermissionsDeprecated;
+  objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
   internalContext: WorkspaceInternalContext;
   authContext?: AuthContext;
   featureFlagMap?: FeatureFlagMap;
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
-    objectRecordsPermissions: ObjectsPermissionsDeprecated,
+    objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -156,6 +155,8 @@ export class WorkspaceSelectQueryBuilder<
         mainAliasTarget,
         this.internalContext,
       );
+
+      this.take(1);
 
       const result = await super.getOne();
 
@@ -321,15 +322,11 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   private validatePermissions(): void {
-    const isFieldPermissionsEnabled =
-      this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
-
     validateQueryIsPermittedOrThrow({
       expressionMap: this.expressionMap,
       objectsPermissions: this.objectRecordsPermissions,
       objectMetadataMaps: this.internalContext.objectMetadataMaps,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-      isFieldPermissionsEnabled,
     });
   }
 

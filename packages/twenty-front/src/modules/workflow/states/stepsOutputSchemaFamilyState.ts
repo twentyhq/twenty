@@ -1,8 +1,8 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
 export const stepsOutputSchemaFamilyState = createFamilyState<
-  StepOutputSchema | null,
+  StepOutputSchemaV2 | null,
   string | undefined
 >({
   key: 'stepsOutputSchemaFamilyState',

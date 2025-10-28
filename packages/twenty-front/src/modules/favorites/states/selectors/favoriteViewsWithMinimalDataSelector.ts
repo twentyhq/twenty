@@ -1,5 +1,6 @@
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { type View } from '@/views/types/View';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { selector } from 'recoil';
 
 export const favoriteViewsWithMinimalDataSelector = selector<
@@ -7,7 +8,9 @@ export const favoriteViewsWithMinimalDataSelector = selector<
 >({
   key: 'favoriteViewsWithMinimalDataSelector',
   get: ({ get }) => {
-    const views = get(prefetchViewsState);
+    const coreViews = get(coreViewsState);
+
+    const views = coreViews.map(convertCoreViewToView);
     return views.map((view) => ({
       id: view.id,
       name: view.name,

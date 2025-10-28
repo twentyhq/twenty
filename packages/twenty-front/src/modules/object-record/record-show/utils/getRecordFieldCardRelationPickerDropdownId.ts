@@ -1,5 +1,5 @@
-import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 type GetRecordFieldCardRelationPickerDropdownIdArgs = {
   fieldDefinition: FieldDefinition<FieldMetadata>;

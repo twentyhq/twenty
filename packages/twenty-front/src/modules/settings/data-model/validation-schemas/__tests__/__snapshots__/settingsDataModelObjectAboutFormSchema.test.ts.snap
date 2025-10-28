@@ -3,13 +3,12 @@
 exports[`settingsDataModelObjectAboutFormSchema fails when isLabelSyncedWithName is not a boolean 1`] = `
 [ZodError: [
   {
-    "code": "invalid_type",
     "expected": "boolean",
-    "received": "string",
+    "code": "invalid_type",
     "path": [
       "isLabelSyncedWithName"
     ],
-    "message": "Expected boolean, received string"
+    "message": "Invalid input: expected boolean, received string"
   }
 ]]
 `;
@@ -17,26 +16,24 @@ exports[`settingsDataModelObjectAboutFormSchema fails when isLabelSyncedWithName
 exports[`settingsDataModelObjectAboutFormSchema fails when labels are empty strings 1`] = `
 [ZodError: [
   {
+    "origin": "string",
     "code": "too_small",
     "minimum": 1,
-    "type": "string",
     "inclusive": true,
-    "exact": false,
-    "message": "String must contain at least 1 character(s)",
     "path": [
       "labelSingular"
-    ]
+    ],
+    "message": "Too small: expected string to have >=1 characters"
   },
   {
+    "origin": "string",
     "code": "too_small",
     "minimum": 1,
-    "type": "string",
     "inclusive": true,
-    "exact": false,
-    "message": "String must contain at least 1 character(s)",
     "path": [
       "labelPlural"
-    ]
+    ],
+    "message": "Too small: expected string to have >=1 characters"
   },
   {
     "code": "custom",
@@ -59,17 +56,17 @@ exports[`settingsDataModelObjectAboutFormSchema fails when names are not in came
 [ZodError: [
   {
     "code": "custom",
-    "message": "String should be camel case",
     "path": [
       "namePlural"
-    ]
+    ],
+    "message": "String should be camel case"
   },
   {
     "code": "custom",
-    "message": "String should be camel case",
     "path": [
       "nameSingular"
-    ]
+    ],
+    "message": "String should be camel case"
   }
 ]]
 `;
@@ -77,22 +74,20 @@ exports[`settingsDataModelObjectAboutFormSchema fails when names are not in came
 exports[`settingsDataModelObjectAboutFormSchema fails when required fields are missing 1`] = `
 [ZodError: [
   {
-    "code": "invalid_type",
     "expected": "string",
-    "received": "undefined",
+    "code": "invalid_type",
     "path": [
       "labelSingular"
     ],
-    "message": "Required"
+    "message": "Invalid input: expected string, received undefined"
   },
   {
-    "code": "invalid_type",
     "expected": "string",
-    "received": "undefined",
+    "code": "invalid_type",
     "path": [
       "labelPlural"
     ],
-    "message": "Required"
+    "message": "Invalid input: expected string, received undefined"
   }
 ]]
 `;
@@ -138,22 +133,20 @@ exports[`settingsDataModelObjectAboutFormSchema fails when singular and plural n
 exports[`settingsDataModelObjectAboutFormSchema fails with invalid types for optional fields 1`] = `
 [ZodError: [
   {
-    "code": "invalid_type",
     "expected": "string",
-    "received": "number",
+    "code": "invalid_type",
     "path": [
       "description"
     ],
-    "message": "Expected string, received number"
+    "message": "Invalid input: expected string, received number"
   },
   {
-    "code": "invalid_type",
     "expected": "string",
-    "received": "boolean",
+    "code": "invalid_type",
     "path": [
       "icon"
     ],
-    "message": "Expected string, received boolean"
+    "message": "Invalid input: expected string, received boolean"
   }
 ]]
 `;

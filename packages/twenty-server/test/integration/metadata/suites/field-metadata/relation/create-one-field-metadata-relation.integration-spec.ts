@@ -1,18 +1,17 @@
-import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
-import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { type EachTestingContext } from 'twenty-shared/testing';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 describe('createOne FieldMetadataService relation fields', () => {
-  let createdObjectMetadataPersonId = '';
-  let createdObjectMetadataOpportunityId = '';
+  let createdObjectMetadataPersonId: string;
+  let createdObjectMetadataOpportunityId: string;
 
   beforeEach(async () => {
     const {
@@ -20,6 +19,7 @@ describe('createOne FieldMetadataService relation fields', () => {
         createOneObject: { id: objectMetadataPersonId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'personForRelation',
         namePlural: 'peopleForRelation',
@@ -36,6 +36,7 @@ describe('createOne FieldMetadataService relation fields', () => {
         createOneObject: { id: objectMetadataOpportunityId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'opportunityForRelation',
         namePlural: 'opportunitiesForRelation',
@@ -48,72 +49,55 @@ describe('createOne FieldMetadataService relation fields', () => {
     createdObjectMetadataOpportunityId = objectMetadataOpportunityId;
   });
   afterEach(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: createdObjectMetadataPersonId },
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataPersonId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
     });
     await deleteOneObjectMetadata({
+      expectToFail: false,
+      input: { idToDelete: createdObjectMetadataPersonId },
+    });
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataOpportunityId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
+    await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: createdObjectMetadataOpportunityId },
     });
   });
 
-  type EachTestingContextArray = EachTestingContext<
-    (args: { objectMetadataId: string; targetObjectMetadataId: string }) => {
-      relationType: RelationType;
-      objectMetadataId: string;
-      targetObjectMetadataId: string;
-      type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
-    }
-  >[];
-
-  const eachTestingContextArray: EachTestingContextArray = [
-    {
-      title: 'should create a RELATION field type MANY_TO_ONE',
-      context: ({ objectMetadataId, targetObjectMetadataId }) => ({
-        relationType: RelationType.MANY_TO_ONE,
-        objectMetadataId,
-        targetObjectMetadataId,
-        type: FieldMetadataType.RELATION,
-      }),
-    },
-    {
-      title: 'should create a RELATION field type ONE_TO_MANY',
-      context: ({ objectMetadataId, targetObjectMetadataId }) => ({
-        relationType: RelationType.ONE_TO_MANY,
-        objectMetadataId,
-        targetObjectMetadataId,
-        type: FieldMetadataType.RELATION,
-      }),
-    },
-  ];
-
-  it.each(eachTestingContextArray)('$title', async ({ context }) => {
-    const contextPayload = context({
+  it('MANY TO ONE field relation creation', async () => {
+    const createdField = await createRelationBetweenObjects({
       objectMetadataId: createdObjectMetadataOpportunityId,
       targetObjectMetadataId: createdObjectMetadataPersonId,
+      relationType: RelationType.MANY_TO_ONE,
+      type: FieldMetadataType.RELATION,
+      name: 'person',
     });
 
-    const createdField = await createRelationBetweenObjects<
-      typeof contextPayload.type
-    >({
-      objectMetadataId: contextPayload.objectMetadataId,
-      targetObjectMetadataId: contextPayload.targetObjectMetadataId,
-      type: contextPayload.type,
-      relationType: contextPayload.relationType,
+    expect(createdField).toMatchObject({
+      name: 'person',
+      relation: {
+        type: RelationType.MANY_TO_ONE,
+      },
+      settings: {
+        joinColumnName: 'personId',
+      },
     });
-
     expect(createdField.id).toBeDefined();
-    expect(createdField.name).toBe('person');
-    expect(createdField.relation?.type).toBe(contextPayload.relationType);
     expect(createdField.relation?.targetFieldMetadata.id).toBeDefined();
-    // TODO: expect(createdField.morphRelations).toBeUndefined();
-    const isManyToOne =
-      contextPayload.relationType === RelationType.MANY_TO_ONE;
-
-    if (isManyToOne) {
-      expect(createdField.settings?.joinColumnName).toBe('personId');
-    } else {
-      expect(createdField.settings?.joinColumnName).toBeUndefined();
-    }
 
     if (!isDefined(createdField.relation?.targetFieldMetadata?.id)) {
       throw new Error('targetFieldMetadata.id is not defined');
@@ -123,30 +107,158 @@ describe('createOne FieldMetadataService relation fields', () => {
       fieldMetadataId: createdField.relation.targetFieldMetadata.id,
     });
 
-    expect(opportunityFieldOnPerson.object.nameSingular).toBe(
-      'personForRelation',
-    );
-    expect(opportunityFieldOnPerson.relation.type).toBe(
-      isManyToOne ? RelationType.ONE_TO_MANY : RelationType.MANY_TO_ONE,
-    );
+    expect(opportunityFieldOnPerson).toMatchObject({
+      object: {
+        nameSingular: 'personForRelation',
+      },
+      relation: {
+        type: RelationType.ONE_TO_MANY,
+      },
+    });
     expect(
       opportunityFieldOnPerson.relation.targetFieldMetadata.id,
     ).toBeDefined();
     expect(
       opportunityFieldOnPerson.relation.targetObjectMetadata.id,
     ).toBeDefined();
+    expect(opportunityFieldOnPerson.settings?.joinColumnName).toBeUndefined();
+  });
 
-    if (!isManyToOne) {
-      expect(opportunityFieldOnPerson.settings?.joinColumnName).toBe(
-        'opportunityId',
-      );
-    } else {
-      expect(opportunityFieldOnPerson.settings?.joinColumnName).toBeUndefined();
+  it('ONE TO MANY field relation creation', async () => {
+    const createdField = await createRelationBetweenObjects({
+      objectMetadataId: createdObjectMetadataOpportunityId,
+      targetObjectMetadataId: createdObjectMetadataPersonId,
+      relationType: RelationType.ONE_TO_MANY,
+      type: FieldMetadataType.RELATION,
+      name: 'person',
+    });
+
+    expect(createdField).toMatchObject({
+      name: 'person',
+      relation: {
+        type: RelationType.ONE_TO_MANY,
+      },
+    });
+    expect(createdField.id).toBeDefined();
+    expect(createdField.relation?.targetFieldMetadata.id).toBeDefined();
+    expect(createdField.settings?.joinColumnName).toBeUndefined();
+
+    if (!isDefined(createdField.relation?.targetFieldMetadata?.id)) {
+      throw new Error('targetFieldMetadata.id is not defined');
     }
 
-    await deleteOneFieldMetadata({
-      input: { idToDelete: createdField.id },
-    }).catch();
+    const opportunityFieldOnPerson = await findFieldMetadata({
+      fieldMetadataId: createdField.relation.targetFieldMetadata.id,
+    });
+
+    expect(opportunityFieldOnPerson).toMatchObject({
+      object: {
+        nameSingular: 'personForRelation',
+      },
+      relation: {
+        type: RelationType.MANY_TO_ONE,
+      },
+      settings: {
+        joinColumnName: 'opportunityId',
+      },
+    });
+    expect(
+      opportunityFieldOnPerson.relation.targetFieldMetadata.id,
+    ).toBeDefined();
+    expect(
+      opportunityFieldOnPerson.relation.targetObjectMetadata.id,
+    ).toBeDefined();
+  });
+
+  it('MANY TO ONE self-relation field creation', async () => {
+    const createdField = await createRelationBetweenObjects({
+      objectMetadataId: createdObjectMetadataPersonId,
+      targetObjectMetadataId: createdObjectMetadataPersonId,
+      relationType: RelationType.MANY_TO_ONE,
+      type: FieldMetadataType.RELATION,
+      name: 'manager',
+    });
+
+    expect(createdField).toMatchObject({
+      name: 'manager',
+      relation: {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          id: createdObjectMetadataPersonId,
+        },
+      },
+      settings: {
+        joinColumnName: 'managerId',
+      },
+    });
+    jestExpectToBeDefined(createdField.relation?.targetFieldMetadata.id);
+
+    const reportsFieldOnPerson = await findFieldMetadata({
+      fieldMetadataId: createdField.relation.targetFieldMetadata.id,
+    });
+
+    expect(reportsFieldOnPerson).toMatchObject({
+      object: {
+        nameSingular: 'personForRelation',
+        id: createdObjectMetadataPersonId,
+      },
+      relation: {
+        type: RelationType.ONE_TO_MANY,
+        targetObjectMetadata: {
+          id: createdObjectMetadataPersonId,
+        },
+      },
+    });
+    expect(reportsFieldOnPerson.relation.targetFieldMetadata.id).toBeDefined();
+    expect(reportsFieldOnPerson.settings?.joinColumnName).toBeUndefined();
+  });
+
+  it('ONE TO MANY self-relation field creation', async () => {
+    const createdField = await createRelationBetweenObjects({
+      objectMetadataId: createdObjectMetadataPersonId,
+      targetObjectMetadataId: createdObjectMetadataPersonId,
+      relationType: RelationType.ONE_TO_MANY,
+      type: FieldMetadataType.RELATION,
+      name: 'reports',
+      targetFieldLabel: 'reportTarget',
+    });
+
+    expect(createdField).toMatchObject({
+      name: 'reports',
+      relation: {
+        type: RelationType.ONE_TO_MANY,
+        targetObjectMetadata: {
+          id: createdObjectMetadataPersonId,
+        },
+      },
+    });
+    expect(createdField.relation?.targetFieldMetadata.id).toBeDefined();
+    expect(createdField.settings?.joinColumnName).toBeUndefined();
+
+    if (!isDefined(createdField.relation?.targetFieldMetadata?.id)) {
+      throw new Error('targetFieldMetadata.id is not defined');
+    }
+
+    const managerFieldOnPerson = await findFieldMetadata({
+      fieldMetadataId: createdField.relation.targetFieldMetadata.id,
+    });
+
+    expect(managerFieldOnPerson).toMatchObject({
+      object: {
+        nameSingular: 'personForRelation',
+        id: createdObjectMetadataPersonId,
+      },
+      relation: {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          id: createdObjectMetadataPersonId,
+        },
+      },
+      settings: {
+        joinColumnName: 'reporttargetId',
+      },
+    });
+    expect(managerFieldOnPerson.relation.targetFieldMetadata.id).toBeDefined();
   });
 });
 
@@ -155,7 +267,14 @@ const findFieldMetadata = async ({
 }: {
   fieldMetadataId: string;
 }) => {
-  const operation = findManyFieldsMetadataQueryFactory({
+  const { fields } = await findManyFieldsMetadata({
+    input: {
+      filter: {
+        id: { eq: fieldMetadataId },
+      },
+      paging: { first: 10 },
+    },
+    expectToFail: false,
     gqlFields: `
         id
         name
@@ -174,16 +293,10 @@ const findFieldMetadata = async ({
         }
         settings
     `,
-    input: {
-      filter: {
-        id: { eq: fieldMetadataId },
-      },
-      paging: { first: 10 },
-    },
   });
 
-  const fields = await makeMetadataAPIRequest(operation);
-  const field = fields.body.data.fields.edges?.[0]?.node;
+  expect(fields.length).toBe(1);
+  const field = fields[0]?.node;
 
   return field;
 };

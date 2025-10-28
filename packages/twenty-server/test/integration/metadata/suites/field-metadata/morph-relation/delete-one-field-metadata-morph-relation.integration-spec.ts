@@ -3,6 +3,7 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -63,11 +64,40 @@ describe('deleteOne FieldMetadataService morph relation fields', () => {
     createdObjectMetadataOpportunityId = objectMetadataOpportunityId;
   });
   afterEach(async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataPersonId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataPersonId },
     });
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataOpportunityId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataOpportunityId },
+    });
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataCompanyId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
     });
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataCompanyId },

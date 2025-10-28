@@ -44,6 +44,9 @@ export const getResolverName = (
     case 'mergeMany':
       return `merge${pascalCase(objectMetadata.namePlural)}`;
 
+    case 'groupBy':
+      return `${camelCase(objectMetadata.namePlural)}GroupBy`;
+
     default:
       throw new Error(`Unknown resolver type: ${type}`);
   }

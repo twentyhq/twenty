@@ -1,11 +1,11 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
+import { type DataSource, type Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -19,6 +19,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -28,57 +29,65 @@ describe('WorkspaceManagerService', () => {
   let objectMetadataService: ObjectMetadataService;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
-  let workspaceFieldMetadataRepository: Repository<FieldMetadataEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
   let roleTargetsRepository: Repository<RoleTargetsEntity>;
   let roleRepository: Repository<RoleEntity>;
+  let mockDataSource: jest.Mocked<DataSource>;
 
   beforeEach(async () => {
+    mockDataSource = {
+      transaction: jest.fn(),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkspaceManagerService,
         WorkspaceMigrationService,
         DataSourceService,
         {
-          provide: getRepositoryToken(Workspace, 'core'),
+          provide: getDataSourceToken(),
+          useValue: mockDataSource,
+        },
+        {
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {},
         },
         {
-          provide: getRepositoryToken(UserWorkspace, 'core'),
+          provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: {},
         },
         {
-          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
+          provide: getRepositoryToken(FieldMetadataEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
+          provide: getRepositoryToken(ObjectMetadataEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(WorkspaceMigrationEntity, 'core'),
+          provide: getRepositoryToken(WorkspaceMigrationEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(DataSourceEntity, 'core'),
+          provide: getRepositoryToken(DataSourceEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
+          provide: getRepositoryToken(RoleTargetsEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'core'),
+          provide: getRepositoryToken(RoleEntity),
           useValue: {
             delete: jest.fn(),
           },
@@ -124,6 +133,14 @@ describe('WorkspaceManagerService', () => {
               .mockResolvedValue({ id: 'mock-agent-id' }),
           },
         },
+        {
+          provide: TwentyORMGlobalManager,
+          useValue: {
+            getDataSourceForWorkspace: jest.fn().mockResolvedValue({
+              transaction: jest.fn(),
+            }),
+          },
+        },
       ],
     }).compile();
 
@@ -133,21 +150,18 @@ describe('WorkspaceManagerService', () => {
     );
     workspaceMigrationRepository = module.get<
       Repository<WorkspaceMigrationEntity>
-    >(getRepositoryToken(WorkspaceMigrationEntity, 'core'));
+    >(getRepositoryToken(WorkspaceMigrationEntity));
     dataSourceRepository = module.get<Repository<DataSourceEntity>>(
-      getRepositoryToken(DataSourceEntity, 'core'),
+      getRepositoryToken(DataSourceEntity),
     );
-    workspaceFieldMetadataRepository = module.get<
-      Repository<FieldMetadataEntity>
-    >(getRepositoryToken(FieldMetadataEntity, 'core'));
     workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
       WorkspaceDataSourceService,
     );
     roleTargetsRepository = module.get<Repository<RoleTargetsEntity>>(
-      getRepositoryToken(RoleTargetsEntity, 'core'),
+      getRepositoryToken(RoleTargetsEntity),
     );
     roleRepository = module.get<Repository<RoleEntity>>(
-      getRepositoryToken(RoleEntity, 'core'),
+      getRepositoryToken(RoleEntity),
     );
   });
 
@@ -159,9 +173,6 @@ describe('WorkspaceManagerService', () => {
     it('should delete all the workspace metadata tables and workspace schema', async () => {
       await service.delete('workspace-id');
       expect(objectMetadataService.deleteObjectsMetadata).toHaveBeenCalled();
-      expect(workspaceFieldMetadataRepository.delete).toHaveBeenCalledWith({
-        workspaceId: 'workspace-id',
-      });
       expect(workspaceMigrationRepository.delete).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
       });

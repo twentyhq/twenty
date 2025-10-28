@@ -1,6 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { type ObjectPermission } from '~/generated/graphql';
 import { createRequiredContext } from '~/utils/createRequiredContext';
 
@@ -9,8 +8,10 @@ type RecordTableContextValue = {
   viewBarId: string;
   objectNameSingular: string;
   objectMetadataItem: ObjectMetadataItem;
-  visibleTableColumns: ColumnDefinition<FieldMetadata>[];
   objectPermissions: ObjectPermission;
+  visibleRecordFields: RecordField[];
+  onRecordIdentifierClick?: (rowIndex: number, recordId: string) => void;
+  triggerEvent: 'CLICK' | 'MOUSE_DOWN';
 };
 
 export const [RecordTableContextProvider, useRecordTableContextOrThrow] =

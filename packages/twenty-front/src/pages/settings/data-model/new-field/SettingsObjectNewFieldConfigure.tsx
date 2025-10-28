@@ -10,9 +10,6 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
-import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { type View } from '@/views/types/View';
@@ -23,6 +20,12 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
+import {
+  AppPath,
+  type RelationCreationPayload,
+  SettingsPath,
+} from 'twenty-shared/types';
+import { CustomError, getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type z } from 'zod';
@@ -30,7 +33,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
@@ -48,7 +50,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   const { objectNamePlural = '' } = useParams();
   const [searchParams] = useSearchParams();
   const fieldType =
-    (searchParams.get('fieldType') as SettingsFieldType) ||
+    (searchParams.get('fieldType') as FieldMetadataType) ||
     FieldMetadataType.TEXT;
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -114,6 +116,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   if (!activeObjectMetadataItem) return null;
 
   const { isValid, isSubmitting } = formConfig.formState;
+
   const canSave = isValid && !isSubmitting;
 
   const handleSave = async (
@@ -121,21 +124,48 @@ export const SettingsObjectNewFieldConfigure = () => {
   ) => {
     try {
       setIsSaving(true);
-      if (
-        formValues.type === FieldMetadataType.RELATION &&
-        'relation' in formValues
-      ) {
-        const { relation: relationFormValues, ...fieldFormValues } = formValues;
-        await createMetadataField({
-          ...fieldFormValues,
-          objectMetadataId: activeObjectMetadataItem.id,
-          relationCreationPayload: {
-            type: relationFormValues.type,
-            targetObjectMetadataId: relationFormValues.objectMetadataId,
-            targetFieldLabel: relationFormValues.field.label,
-            targetFieldIcon: relationFormValues.field.icon,
-          },
-        });
+      if (formValues.type === FieldMetadataType.MORPH_RELATION) {
+        const {
+          morphRelationObjectMetadataIds,
+          targetFieldLabel,
+          iconOnDestination,
+          relationType,
+        } = formValues;
+        if (morphRelationObjectMetadataIds.length > 1) {
+          await createMetadataField({
+            ...formValues,
+            type: FieldMetadataType.MORPH_RELATION,
+            objectMetadataId: activeObjectMetadataItem.id,
+            isLabelSyncedWithName: false,
+            morphRelationsCreationPayload: morphRelationObjectMetadataIds.map(
+              (morphRelationObjectMetadataId: string) => ({
+                type: relationType,
+                targetObjectMetadataId: morphRelationObjectMetadataId,
+                targetFieldLabel,
+                targetFieldIcon: iconOnDestination,
+              }),
+            ),
+          });
+        } else if (morphRelationObjectMetadataIds.length === 1) {
+          const relationCreationPayload = {
+            type: relationType,
+            targetObjectMetadataId: morphRelationObjectMetadataIds[0],
+            targetFieldLabel,
+            targetFieldIcon: iconOnDestination,
+          } satisfies RelationCreationPayload;
+
+          await createMetadataField({
+            ...formValues,
+            type: FieldMetadataType.RELATION,
+            objectMetadataId: activeObjectMetadataItem.id,
+            relationCreationPayload,
+          });
+        } else {
+          throw new CustomError(
+            'Please select at least one destination object for this relation.',
+            'FIELD_METADATA_RELATION_MALFORMED',
+          );
+        }
       } else {
         await createMetadataField({
           ...formValues,
@@ -218,13 +248,9 @@ export const SettingsObjectNewFieldConfigure = () => {
               description={t`Customize field settings`}
             />
             <SettingsDataModelFieldSettingsFormCard
-              fieldMetadataItem={{
-                icon: formConfig.watch('icon'),
-                label: formConfig.watch('label') || 'New Field',
-                settings: formConfig.watch('settings') || null,
-                type: fieldType as FieldMetadataType,
-              }}
-              objectMetadataItem={activeObjectMetadataItem}
+              fieldType={fieldType}
+              existingFieldMetadataId=""
+              objectNameSingular={activeObjectMetadataItem.nameSingular}
             />
           </Section>
           <Section>

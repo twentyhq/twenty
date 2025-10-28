@@ -11,7 +11,7 @@ import {
 @Injectable()
 export class WorkspaceMigrationService {
   constructor(
-    @InjectRepository(WorkspaceMigrationEntity, 'core')
+    @InjectRepository(WorkspaceMigrationEntity)
     private readonly workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>,
   ) {}
 

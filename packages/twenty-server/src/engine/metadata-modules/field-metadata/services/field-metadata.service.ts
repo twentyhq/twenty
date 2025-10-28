@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -31,7 +31,7 @@ import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
-import { areFieldMetadatasTypeRelationOrMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/are-field-metadatas-type-relation-or-morph-relation.util';
+import { areFieldMetadatasOfType } from 'src/engine/metadata-modules/field-metadata/utils/are-field-metadatas-of-type.util';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
 import { buildUpdatableStandardFieldInput } from 'src/engine/metadata-modules/field-metadata/utils/build-updatable-standard-field-input.util';
 import { checkCanDeactivateFieldOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/check-can-deactivate-field-or-throw';
@@ -39,7 +39,7 @@ import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { createMigrationActions } from 'src/engine/metadata-modules/field-metadata/utils/create-migration-actions.util';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -49,6 +49,7 @@ import { isSelectOrMultiSelectFieldMetadata } from 'src/engine/metadata-modules/
 import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
 import { prepareCustomFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/utils/prepare-custom-field-metadata-for-options.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { computeUniqueIndexWhereClause } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-index-where-clause.util';
 import { validateCanCreateUniqueIndex } from 'src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util';
@@ -72,12 +73,11 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
-import { ViewService } from 'src/modules/view/services/view.service';
 
 type GenerateMigrationArgs = {
-  fieldMetadata: FieldMetadataEntity<
-    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-  >;
+  fieldMetadata:
+    | FieldMetadataEntity<FieldMetadataType.RELATION>
+    | FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
   workspaceId: string;
   queryRunner: QueryRunner;
 };
@@ -85,9 +85,9 @@ type GenerateMigrationArgs = {
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly coreDataSource: DataSource,
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -95,7 +95,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fieldMetadataRelatedRecordsService: FieldMetadataRelatedRecordsService,
-    private readonly viewService: ViewService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly fieldMetadataValidationService: FieldMetadataValidationService,
@@ -103,6 +102,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRelationService: FieldMetadataRelationService,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
     private readonly indexMetadataService: IndexMetadataService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -118,7 +118,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (isWorkspaceMigrationV2Enabled) {
       return this.fieldMetadataServiceV2.createOne({
-        fieldMetadataInput,
+        createFieldInput: fieldMetadataInput,
         workspaceId: fieldMetadataInput.workspaceId,
       });
     }
@@ -143,6 +143,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
         { workspaceId: fieldMetadataInput.workspaceId },
       );
+    const { workspaceId } = fieldMetadataInput;
 
     let existingFieldMetadata: FieldMetadataEntity | undefined;
 
@@ -189,7 +190,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         'Unique field cannot have a default value',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         {
-          userFriendlyMessage: t`Unique field cannot have a default value`,
+          userFriendlyMessage: msg`Unique field cannot have a default value`,
         },
       );
     }
@@ -364,21 +365,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       await queryRunner.commitTransaction();
 
-      if (fieldMetadataInput.isActive === false) {
-        const viewsRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-            fieldMetadataInput.workspaceId,
-            'view',
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
-
-        await viewsRepository.delete({
-          kanbanFieldMetadataId: id,
-        });
-      }
-
       if (
         updatedFieldMetadata.isActive &&
         isSelectOrMultiSelectFieldMetadata(updatedFieldMetadata) &&
@@ -399,12 +385,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.workspaceId,
       );
 
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatFieldMetadataMaps'],
+      });
+
       return updatedFieldMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();
@@ -459,73 +454,44 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'Cannot delete, please update the label identifier field first',
           FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
           {
-            userFriendlyMessage: t`Cannot delete, please update the label identifier field first`,
+            userFriendlyMessage: msg`Cannot delete, please update the label identifier field first`,
           },
         );
       }
 
+      await this.fieldMetadataRelatedRecordsService.resetViewKanbanAggregateOperation(
+        fieldMetadata,
+      );
+
       if (isFieldMetadataTypeRelation(fieldMetadata)) {
         const fieldMetadataIdsToDelete: string[] = [];
-        const isRelationTargetMorphRelation = isFieldMetadataTypeMorphRelation(
-          fieldMetadata.relationTargetFieldMetadata,
+
+        fieldMetadataIdsToDelete.push(
+          fieldMetadata.id,
+          fieldMetadata.relationTargetFieldMetadataId,
         );
 
-        if (isRelationTargetMorphRelation) {
-          const morphRelationsWithSameName =
-            await this.getMorphRelationsWithSameName({
-              fieldMetadataName: fieldMetadata.relationTargetFieldMetadata.name,
-              objectMetadataId:
-                fieldMetadata.relationTargetFieldMetadata.objectMetadataId,
-              workspaceId,
-              fieldMetadataRepository,
-            });
+        await fieldMetadataRepository.delete({
+          id: In(fieldMetadataIdsToDelete),
+        });
 
-          morphRelationsWithSameName.forEach((morphRelation) => {
-            fieldMetadataIdsToDelete.push(
-              morphRelation.id,
-              morphRelation.relationTargetFieldMetadataId,
-            );
-          });
-
-          await fieldMetadataRepository.delete({
-            id: In(fieldMetadataIdsToDelete),
-          });
-
-          for (const morphRelation of morphRelationsWithSameName) {
-            await this.generateDeleteRelationMigration({
-              fieldMetadata: morphRelation,
-              workspaceId,
-              queryRunner,
-            });
-          }
-        } else {
-          fieldMetadataIdsToDelete.push(
-            fieldMetadata.id,
-            fieldMetadata.relationTargetFieldMetadataId,
-          );
-
-          await fieldMetadataRepository.delete({
-            id: In(fieldMetadataIdsToDelete),
-          });
-
-          await this.generateDeleteRelationMigration({
-            fieldMetadata,
-            workspaceId,
-            queryRunner,
-          });
-        }
+        await this.generateDeleteRelationMigration({
+          fieldMetadata,
+          workspaceId,
+          queryRunner,
+        });
       } else if (isFieldMetadataTypeMorphRelation(fieldMetadata)) {
         const fieldMetadataIdsToDelete: string[] = [];
 
-        const morphRelationsWithSameName =
-          await this.getMorphRelationsWithSameName({
-            fieldMetadataName: fieldMetadata.name,
+        const allMophFieldMetadatas =
+          await this.getAllMorphFieldMetadatasByMorphId({
+            morphId: fieldMetadata.morphId,
             objectMetadataId: fieldMetadata.objectMetadataId,
             workspaceId,
             fieldMetadataRepository,
           });
 
-        morphRelationsWithSameName.forEach((morphRelation) => {
+        allMophFieldMetadatas.forEach((morphRelation) => {
           fieldMetadataIdsToDelete.push(
             morphRelation.id,
             morphRelation.relationTargetFieldMetadataId,
@@ -536,7 +502,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           id: In(fieldMetadataIdsToDelete),
         });
 
-        for (const morphRelation of morphRelationsWithSameName) {
+        for (const morphRelation of allMophFieldMetadatas) {
           await this.generateDeleteRelationMigration({
             fieldMetadata: morphRelation,
             workspaceId,
@@ -603,21 +569,25 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       await queryRunner.commitTransaction();
 
-      await this.viewService.resetKanbanAggregateOperationByFieldMetadataId({
-        workspaceId,
-        fieldMetadataId: fieldMetadata.id,
-      });
-
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
 
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
+
       return fieldMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();
@@ -670,7 +640,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (isWorkspaceMigrationV2Enabled) {
       return this.fieldMetadataServiceV2.createMany({
-        fieldMetadataInputs,
+        createFieldInputs: fieldMetadataInputs,
         workspaceId,
       });
     }
@@ -799,12 +769,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         workspaceId,
       );
 
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+      });
+
       return createdFieldMetadatas;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();
@@ -836,7 +815,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         'Unique field cannot have a default value',
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         {
-          userFriendlyMessage: t`Unique field cannot have a default value`,
+          userFriendlyMessage: msg`Unique field cannot have a default value`,
         },
       );
 
@@ -1027,7 +1006,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: fieldMetadataInput.relationCreationPayload,
-            joinColumnName: computeRelationFieldJoinColumnName({
+            joinColumnName: computeMorphOrRelationFieldJoinColumnName({
               name: fieldMetadataForCreate.name,
             }),
           },
@@ -1063,24 +1042,20 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     );
   }
 
-  private async getMorphRelationsWithSameName({
-    fieldMetadataName,
+  private async getAllMorphFieldMetadatasByMorphId({
+    morphId,
     objectMetadataId,
     workspaceId,
     fieldMetadataRepository,
   }: {
-    fieldMetadataName: string;
+    morphId: string;
     objectMetadataId: string;
     workspaceId: string;
     fieldMetadataRepository: Repository<FieldMetadataEntity>;
-  }): Promise<
-    FieldMetadataEntity<
-      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-    >[]
-  > {
+  }): Promise<FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>[]> {
     const fieldMetadatas = await fieldMetadataRepository.find({
       where: {
-        name: fieldMetadataName,
+        morphId,
         objectMetadataId,
         workspaceId,
       },
@@ -1091,9 +1066,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       ],
     });
 
-    if (!areFieldMetadatasTypeRelationOrMorphRelation(fieldMetadatas)) {
+    if (
+      !areFieldMetadatasOfType(fieldMetadatas, FieldMetadataType.MORPH_RELATION)
+    ) {
       throw new FieldMetadataException(
-        'At least one field metadata is not a relation or morph relation',
+        `Encountered a non morph relation morphId related flat field metadata type`,
         FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }

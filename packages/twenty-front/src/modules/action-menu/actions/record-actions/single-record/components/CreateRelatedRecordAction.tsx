@@ -10,6 +10,7 @@ import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useR
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isDefined } from 'twenty-shared/utils';
 
 interface CreateRelatedRecordActionProps {
@@ -106,7 +107,11 @@ export const CreateRelatedRecordAction = ({
       openRecordTitleCell({
         recordId: createdRecord.id,
         fieldName: labelIdentifierFieldMetadataItem.name,
-        containerType: RecordTitleCellContainerType.ShowPage,
+        instanceId: getRecordFieldInputInstanceId({
+          recordId: createdRecord.id,
+          fieldName: labelIdentifierFieldMetadataItem.name,
+          prefix: RecordTitleCellContainerType.ShowPage,
+        }),
       });
     }
   };
