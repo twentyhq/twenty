@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import type { ComponentPropsWithRef } from "react";
 
 const StyledButton = styled.button`
   --hover-bg-color: #378fe91a;
@@ -42,8 +43,8 @@ const StyledSpan = styled.span`
   justify-content: center;
   align-items: center;
 `
-type ButtonProps = {
-    children: React.ReactNode
+interface ButtonProps extends ComponentPropsWithRef<'button'> {
+  children: React.ReactNode
 }
 
 export const Button = ({children, ...rest}: ButtonProps) => {

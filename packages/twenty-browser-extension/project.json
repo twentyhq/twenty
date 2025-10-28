@@ -5,9 +5,6 @@
   "projectType": "application",
   "tags": ["scope:browser-extension"],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "start": {
       "executor": "nx:run-commands",
       "options": {

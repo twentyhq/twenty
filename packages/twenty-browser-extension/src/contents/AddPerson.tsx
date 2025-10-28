@@ -1,3 +1,4 @@
+import { sendToBackground } from '@plasmohq/messaging';
 import type {
   PlasmoCSConfig,
   PlasmoGetInlineAnchor,
@@ -14,7 +15,7 @@ export const config: PlasmoCSConfig = {
 
 const styleElement = document.createElement('style');
 
-export const getStyle: PlasmoGetStyle = () => styleElement
+export const getStyle: PlasmoGetStyle = () => styleElement;
 
 export const getInlineAnchor: PlasmoGetInlineAnchor = () => {
   const element = document.querySelector('[class$="pv-top-card-v2-ctas__custom"]') as Element;
@@ -22,7 +23,14 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () => {
 };
 
 const AddPerson = () => {
-  return <Button>Add to Twenty</Button>
+
+  const handleClick = async () => {
+    await sendToBackground({
+      name: "open-side-panel"
+    });
+  };
+
+  return <Button onClick={handleClick}>Add to Twenty</Button>
 };
 
 export default withTheme(AddPerson, styleElement);

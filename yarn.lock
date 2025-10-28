@@ -16403,6 +16403,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@plasmohq/messaging@npm:^0.7.2":
+  version: 0.7.2
+  resolution: "@plasmohq/messaging@npm:0.7.2"
+  dependencies:
+    nanoid: "npm:5.1.5"
+  peerDependencies:
+    react: ^16.8.6 || ^17 || ^18 || ^19.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 10c0/4628bd8e12bd02b8a5436a874d36201aaee5787b573edfaa3b5b6901a23b4a50355978c51df52ac271448d30e201b2ac9d7dba8f6a2aca671727a3939cf55e02
+  languageName: node
+  linkType: hard
+
 "@plasmohq/parcel-bundler@npm:0.5.6":
   version: 0.5.6
   resolution: "@plasmohq/parcel-bundler@npm:0.5.6"
@@ -47077,6 +47091,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:5.1.5":
+  version: 5.1.5
+  resolution: "nanoid@npm:5.1.5"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 10c0/e6004f1ad6c7123eeb037062c4441d44982037dc043aabb162457ef6986e99964ba98c63c975f96c547403beb0bf95bc537bd7bf9a09baf381656acdc2975c3c
+  languageName: node
+  linkType: hard
+
 "nanoid@npm:^3.3.11, nanoid@npm:^3.3.6, nanoid@npm:^3.3.7":
   version: 3.3.11
   resolution: "nanoid@npm:3.3.11"
@@ -56346,6 +56369,7 @@ __metadata:
   dependencies:
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
+    "@plasmohq/messaging": "npm:^0.7.2"
     "@types/chrome": "npm:^0.1.24"
     "@types/node": "npm:20.11.5"
     "@types/react": "npm:^18.2.39"
