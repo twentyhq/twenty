@@ -1,3 +1,5 @@
+import { type ApplicationConfig } from 'twenty-sdk';
+
 export interface TwentyConfig {
   apiUrl: string;
   apiKey?: string;
@@ -18,27 +20,11 @@ export type PackageJson = {
   devDependencies?: object;
 };
 
-export type ApplicationManifest = {
-  universalIdentifier: string;
-  displayName: string;
-  description?: string;
-  icon?: string;
-};
-
 export type AppManifest = {
-  application: ApplicationManifest;
+  application: ApplicationConfig;
   objects: ObjectManifest[];
   serverlessFunctions: ServerlessFunctionManifest[];
-  applicationVariables: ApplicationVariableManifest[];
   sources: Sources;
-};
-
-export type ApplicationVariableManifest = {
-  universalIdentifier: string;
-  key: string;
-  description?: string;
-  isSecret?: boolean;
-  value?: string;
 };
 
 export type ServerlessFunctionManifest = {

@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import * as chokidar from 'chokidar';
 import { ApiService } from '../services/api.service';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { loadManifest } from '../utils/app-manifest-loader';
+import { loadManifest } from '../utils/load-manifest';
 
 export class AppDevCommand {
   private apiService = new ApiService();
@@ -15,7 +15,7 @@ export class AppDevCommand {
 
       this.logStartupInfo(appPath, debounceMs);
 
-      const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
+      const { manifest, packageJson, yarnLock } = await loadManifest();
 
       await this.apiService.syncApplication({
         manifest,
@@ -61,7 +61,7 @@ export class AppDevCommand {
       timeout = setTimeout(async () => {
         console.log(chalk.blue('🔄 Changes detected, syncing...'));
 
-        const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
+        const { manifest, packageJson, yarnLock } = await loadManifest();
 
         await this.apiService.syncApplication({
           manifest,

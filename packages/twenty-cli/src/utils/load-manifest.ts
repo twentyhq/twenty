@@ -27,19 +27,22 @@ import {
   isVariableStatement,
   isArrowFunction,
   isFunctionExpression,
+  isExportAssignment,
 } from 'typescript';
 import {
-  ApplicationManifest,
-  ApplicationVariableManifest,
   AppManifest,
   CronTrigger,
   DatabaseEventTrigger,
   ObjectManifest,
+  PackageJson,
   RouteTrigger,
   ServerlessFunctionManifest,
   Sources,
 } from '../types/config.types';
 import { posix, relative, sep, resolve } from 'path';
+import type { ApplicationConfig } from 'twenty-sdk';
+import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
+import { findPathFile } from '../utils/find-path-file';
 
 type JSONValue =
   | string
@@ -234,50 +237,6 @@ const posixRelativeFromCwd = (absPath: string) => {
   return rel.split(sep).join(posix.sep);
 };
 
-const collectApplication = (program: Program) => {
-  for (const sf of program.getSourceFiles()) {
-    if (sf.isDeclarationFile) continue;
-
-    const visit = (
-      node: Node,
-    ):
-      | {
-          application: ApplicationManifest;
-          applicationVariables: ApplicationVariableManifest[];
-        }
-      | undefined => {
-      if (isClassDeclaration(node) && getDecorators(node)?.length) {
-        const decorators = getDecorators(node) ?? [];
-        const appDec = decorators.find((d) =>
-          isDecoratorNamed(d, 'Application'),
-        );
-
-        if (appDec) {
-          const applicationVariableDecs = decorators.filter((d) =>
-            isDecoratorNamed(d, 'ApplicationVariable'),
-          );
-
-          const applicationVariables = applicationVariableDecs
-            .map((d) => getFirstArgObject(d))
-            .filter(Boolean) as ApplicationVariableManifest[];
-
-          const application = (getFirstArgObject(appDec) ??
-            {}) as ApplicationManifest;
-
-          return { application, applicationVariables };
-        }
-      }
-
-      return forEachChild(node, visit);
-    };
-
-    const found = visit(sf);
-    if (found) return found;
-  }
-
-  throw new Error('No "@Application" decorator found in app');
-};
-
 const collectServerlessFunctions = (program: Program) => {
   const serverlessFunctions: ServerlessFunctionManifest[] = [];
 
@@ -437,16 +396,60 @@ const loadFolderContentIntoJson = async (
   return sources;
 };
 
-export const loadManifestFromDecorators = async (): Promise<
-  Pick<
-    AppManifest,
-    | 'application'
-    | 'objects'
-    | 'serverlessFunctions'
-    | 'applicationVariables'
-    | 'sources'
-  >
-> => {
+export const extractTwentyAppConfig = (program: Program): ApplicationConfig => {
+  for (const sf of program.getSourceFiles()) {
+    if (sf.isDeclarationFile || !sf.fileName.endsWith('application.config.ts'))
+      continue;
+
+    let found: ApplicationConfig | undefined;
+
+    const visit = (node: any): void => {
+      // Look for "export default twentyAppConfig"
+      if (isExportAssignment(node) && isIdentifier(node.expression)) {
+        const varName = node.expression.text;
+
+        // find the corresponding variable declaration
+        for (const stmt of sf.statements) {
+          if (isVariableStatement(stmt)) {
+            for (const decl of stmt.declarationList.declarations) {
+              if (isIdentifier(decl.name) && decl.name.text === varName) {
+                if (
+                  decl.initializer &&
+                  isObjectLiteralExpression(decl.initializer)
+                ) {
+                  found = exprToValue(decl.initializer) as ApplicationConfig;
+                }
+              }
+            }
+          }
+        }
+      }
+      if (!found) forEachChild(node, visit);
+    };
+
+    visit(sf);
+
+    if (found) return found;
+  }
+
+  throw new Error('Could not find default exported ApplicationConfig');
+};
+
+export const loadManifest = async (): Promise<{
+  packageJson: PackageJson;
+  yarnLock: string;
+  manifest: AppManifest;
+}> => {
+  const appPath = process.cwd();
+
+  const packageJson = await parseJsoncFile(
+    await findPathFile(appPath, 'package.json'),
+  );
+
+  const yarnLock = await parseTextFile(
+    await findPathFile(appPath, 'yarn.lock'),
+  );
+
   const program = getProgramFromTsconfig('tsconfig.json');
 
   validateProgram(program);
@@ -455,15 +458,18 @@ export const loadManifestFromDecorators = async (): Promise<
 
   const serverlessFunctions = collectServerlessFunctions(program);
 
-  const { application, applicationVariables } = collectApplication(program);
+  const application = extractTwentyAppConfig(program);
 
   const sources = await loadFolderContentIntoJson();
 
   return {
-    application,
-    objects,
-    serverlessFunctions,
-    applicationVariables,
-    sources,
+    packageJson,
+    yarnLock,
+    manifest: {
+      application,
+      objects,
+      serverlessFunctions,
+      sources,
+    },
   };
 };
