@@ -105,7 +105,12 @@ export const CustomBarItem = <D extends BarDatum>({
     hideTooltip();
   }, [hideTooltip]);
 
-  const isTopBar = useMemo(() => {
+  const isNegativeValue = useMemo(
+    () => isNumber(barData.value) && barData.value < 0,
+    [barData.value],
+  );
+
+  const shouldRoundFreeEnd = useMemo(() => {
     const isStackedAndValid =
       groupMode === 'stacked' &&
       isDefined(keys) &&
@@ -131,25 +136,43 @@ export const CustomBarItem = <D extends BarDatum>({
       return true;
     }
 
-    const keysAboveCurrentKey = keys.slice(currentKeyIndex + 1);
-    const hasBarAbove = keysAboveCurrentKey.some((key) => {
-      const value = dataPoint[key];
-      return isNumber(value) && value > 0;
-    });
-
-    return !hasBarAbove;
-  }, [groupMode, keys, barData, chartData, indexBy]);
+    if (isNegativeValue) {
+      const keysBelowCurrentKey = keys.slice(0, currentKeyIndex);
+      const hasBarBelow = keysBelowCurrentKey.some((key) => {
+        const value = dataPoint[key];
+        return isNumber(value) && value < 0;
+      });
+      return !hasBarBelow;
+    } else {
+      const keysAboveCurrentKey = keys.slice(currentKeyIndex + 1);
+      const hasBarAbove = keysAboveCurrentKey.some((key) => {
+        const value = dataPoint[key];
+        return isNumber(value) && value > 0;
+      });
+      return !hasBarAbove;
+    }
+  }, [groupMode, keys, barData, chartData, indexBy, isNegativeValue]);
 
   const isHorizontal = layout === 'horizontal';
 
+  const clipPathX = useMemo(() => {
+    if (!isHorizontal) return 0;
+    return isNegativeValue ? 0 : -borderRadius;
+  }, [isHorizontal, isNegativeValue, borderRadius]);
+
+  const clipPathY = useMemo(() => {
+    if (isHorizontal) return 0;
+    return isNegativeValue ? -borderRadius : 0;
+  }, [isHorizontal, isNegativeValue, borderRadius]);
+
   return (
     <animated.g transform={transform}>
-      {isTopBar && (
+      {shouldRoundFreeEnd && (
         <defs>
           <clipPath id={`round-corner-${barData.index}`}>
             <animated.rect
-              x={isHorizontal ? -borderRadius : 0}
-              y={0}
+              x={clipPathX}
+              y={clipPathY}
               rx={borderRadius}
               ry={borderRadius}
               width={to(width, (value) =>
@@ -165,7 +188,9 @@ export const CustomBarItem = <D extends BarDatum>({
 
       <StyledBarRect
         $isInteractive={isInteractive}
-        clipPath={isTopBar ? `url(#round-corner-${barData.index})` : undefined}
+        clipPath={
+          shouldRoundFreeEnd ? `url(#round-corner-${barData.index})` : undefined
+        }
         width={to(width, (value) => Math.max(value, 0))}
         height={to(height, (value) => Math.max(value, 0))}
         fill={color}
