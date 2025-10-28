@@ -7,6 +7,8 @@ import { deleteOneCoreView } from 'test/integration/metadata/suites/view/utils/d
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
 
+const TEST_NOT_EXISTING_VIEW_ID = '20202020-0000-0000-0000-000000000000';
+
 describe('Destroy core view', () => {
   let testObjectMetadataId: string;
 

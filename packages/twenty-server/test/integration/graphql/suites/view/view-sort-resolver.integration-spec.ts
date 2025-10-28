@@ -1,4 +1,3 @@
-import { TEST_NOT_EXISTING_VIEW_SORT_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createViewSortOperationFactory } from 'test/integration/graphql/utils/create-view-sort-operation-factory.util';
 import { deleteViewSortOperationFactory } from 'test/integration/graphql/utils/delete-view-sort-operation-factory.util';
 import { destroyViewSortOperationFactory } from 'test/integration/graphql/utils/destroy-view-sort-operation-factory.util';
@@ -28,6 +27,8 @@ import {
   generateViewSortExceptionMessage,
   ViewSortExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
+
+const TEST_NOT_EXISTING_VIEW_SORT_ID = '20202020-0000-0000-0000-000000000004';
 
 describe('View Sort Resolver', () => {
   let testViewId: string;

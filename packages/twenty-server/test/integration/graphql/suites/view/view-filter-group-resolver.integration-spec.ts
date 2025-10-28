@@ -27,6 +27,8 @@ import {
   ViewFilterGroupExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 
+const TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID = '20202020-0000-0000-0000-000000000002';
+
 describe('View Filter Group Resolver', () => {
   let testViewId: string;
 

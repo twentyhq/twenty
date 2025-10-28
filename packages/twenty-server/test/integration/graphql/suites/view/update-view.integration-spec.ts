@@ -7,6 +7,8 @@ import { updateOneCoreView } from 'test/integration/metadata/suites/view/utils/u
 
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 
+const TEST_NOT_EXISTING_VIEW_ID = '20202020-0000-0000-0000-000000000000';
+
 describe('Update core view', () => {
   let testObjectMetadataId: string;
 
