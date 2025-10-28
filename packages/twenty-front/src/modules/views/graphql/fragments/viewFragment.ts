@@ -27,6 +27,8 @@ export const VIEW_FRAGMENT = gql`
     anyFieldFilterValue
     calendarFieldMetadataId
     calendarLayout
+    visibility
+    createdById
     viewFields {
       ...ViewFieldFragment
     }
@@ -41,6 +43,15 @@ export const VIEW_FRAGMENT = gql`
     }
     viewGroups {
       ...ViewGroupFragment
+    }
+    viewRoles {
+      id
+      roleId
+      role {
+        id
+        label
+        icon
+      }
     }
   }
 `;

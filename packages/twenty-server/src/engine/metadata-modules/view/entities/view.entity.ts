@@ -16,6 +16,7 @@ import {
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -23,11 +24,13 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { ViewRoleEntity } from 'src/engine/metadata-modules/view/entities/view-role.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 
 // We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })
@@ -35,6 +38,7 @@ import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum'
   'workspaceId',
   'objectMetadataId',
 ])
+@Index('IDX_VIEW_VISIBILITY', ['visibility'])
 @Check(
   'CHK_VIEW_CALENDAR_INTEGRITY',
   `("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
@@ -150,6 +154,23 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   @Column({ nullable: true, type: 'text', default: null })
   anyFieldFilterValue: string | null;
 
+  @Column({
+    type: 'enum',
+    enum: Object.values(ViewVisibility),
+    nullable: false,
+    default: ViewVisibility.PUBLIC,
+  })
+  visibility: ViewVisibility;
+
+  @Column({ nullable: true, type: 'uuid' })
+  createdById: string | null;
+
+  @ManyToOne(() => UserWorkspaceEntity, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'createdById' })
+  createdBy: Relation<UserWorkspaceEntity>;
+
   @ManyToOne(() => WorkspaceEntity, {
     onDelete: 'CASCADE',
   })
@@ -173,4 +194,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     (viewFilterGroup) => viewFilterGroup.view,
   )
   viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
+
+  @OneToMany(() => ViewRoleEntity, (viewRole) => viewRole.view)
+  viewRoles: Relation<ViewRoleEntity[]>;
 }

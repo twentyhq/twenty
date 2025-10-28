@@ -18,6 +18,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -130,6 +131,7 @@ export class ViewResolver {
   async createCoreView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ViewDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -144,10 +146,23 @@ export class ViewResolver {
       });
     }
 
-    return this.viewService.create({
-      ...input,
+    const { roleIds, ...viewData } = input;
+
+    const createdView = await this.viewService.create({
+      ...viewData,
       workspaceId: workspace.id,
+      createdById: userWorkspaceId,
     });
+
+    if (roleIds) {
+      await this.viewService.syncViewRoles(
+        createdView.id,
+        workspace.id,
+        roleIds,
+      );
+    }
+
+    return createdView;
   }
 
   @Mutation(() => ViewDTO)
@@ -170,7 +185,19 @@ export class ViewResolver {
       });
     }
 
-    return this.viewService.update(id, workspace.id, input);
+    const { roleIds, ...updateData } = input;
+
+    const updatedView = await this.viewService.update(
+      id,
+      workspace.id,
+      updateData,
+    );
+
+    if (isDefined(roleIds)) {
+      await this.viewService.syncViewRoles(updatedView.id, workspace.id, roleIds);
+    }
+
+    return updatedView;
   }
 
   @Mutation(() => Boolean)

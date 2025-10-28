@@ -12,6 +12,7 @@ import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-f
 import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-group.module';
 import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewController } from 'src/engine/metadata-modules/view/controllers/view.controller';
+import { ViewRoleEntity } from 'src/engine/metadata-modules/view/entities/view-role.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
@@ -22,7 +23,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ViewEntity]),
+    TypeOrmModule.forFeature([ViewEntity, ViewRoleEntity]),
     ViewFieldModule,
     ViewFilterModule,
     ViewFilterGroupModule,
@@ -39,6 +40,10 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
   ],
   controllers: [ViewController],
   providers: [ViewService, ViewResolver, ViewV2Service],
-  exports: [ViewService, ViewV2Service, TypeOrmModule.forFeature([ViewEntity])],
+  exports: [
+    ViewService,
+    ViewV2Service,
+    TypeOrmModule.forFeature([ViewEntity, ViewRoleEntity]),
+  ],
 })
 export class ViewModule {}

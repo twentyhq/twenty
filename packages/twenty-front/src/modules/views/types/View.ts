@@ -7,7 +7,18 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { type ViewType } from '@/views/types/ViewType';
+import { type ViewVisibility } from '@/views/types/ViewVisibility';
 import { type ViewCalendarLayout } from '~/generated/graphql';
+
+export type ViewRole = {
+  id: string;
+  roleId: string;
+  role?: {
+    id: string;
+    label: string;
+    icon?: string;
+  };
+};
 
 export type View = {
   id: string;
@@ -33,5 +44,8 @@ export type View = {
   icon: string;
   openRecordIn: ViewOpenRecordInType;
   anyFieldFilterValue?: string | null;
+  visibility: ViewVisibility;
+  createdById?: string | null;
+  viewRoles?: ViewRole[];
   __typename: 'View';
 };

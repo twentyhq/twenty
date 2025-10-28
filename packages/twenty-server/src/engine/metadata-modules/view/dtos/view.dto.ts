@@ -8,16 +8,19 @@ import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-f
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import { ViewRoleDTO } from 'src/engine/metadata-modules/view/dtos/view-role.dto';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 registerEnumType(ViewType, { name: 'ViewType' });
 registerEnumType(ViewKey, { name: 'ViewKey' });
 registerEnumType(ViewCalendarLayout, { name: 'ViewCalendarLayout' });
+registerEnumType(ViewVisibility, { name: 'ViewVisibility' });
 
 @ObjectType('CoreView')
 export class ViewDTO {
@@ -95,4 +98,16 @@ export class ViewDTO {
 
   @Field(() => [ViewGroupDTO])
   viewGroups?: ViewGroupDTO[];
+
+  @Field(() => ViewVisibility, {
+    nullable: false,
+    defaultValue: ViewVisibility.PUBLIC,
+  })
+  visibility: ViewVisibility;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  createdById?: string | null;
+
+  @Field(() => [ViewRoleDTO])
+  viewRoles?: ViewRoleDTO[];
 }

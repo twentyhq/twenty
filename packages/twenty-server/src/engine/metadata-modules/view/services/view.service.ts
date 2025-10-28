@@ -3,11 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
+import { ViewRoleEntity } from 'src/engine/metadata-modules/view/entities/view-role.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import {
   ViewException,
@@ -23,6 +24,8 @@ export class ViewService {
   constructor(
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
+    @InjectRepository(ViewRoleEntity)
+    private readonly viewRoleRepository: Repository<ViewRoleEntity>,
     private readonly i18nService: I18nService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
@@ -41,6 +44,8 @@ export class ViewService {
         'viewSorts',
         'viewGroups',
         'viewFilterGroups',
+        'viewRoles',
+        'viewRoles.role',
       ],
     });
   }
@@ -63,6 +68,8 @@ export class ViewService {
         'viewSorts',
         'viewGroups',
         'viewFilterGroups',
+        'viewRoles',
+        'viewRoles.role',
       ],
     });
   }
@@ -81,6 +88,8 @@ export class ViewService {
         'viewSorts',
         'viewGroups',
         'viewFilterGroups',
+        'viewRoles',
+        'viewRoles.role',
       ],
     });
 
@@ -230,6 +239,48 @@ export class ViewService {
     }
 
     return viewName;
+  }
+
+  async syncViewRoles(
+    viewId: string,
+    workspaceId: string,
+    roleIds?: string[],
+  ): Promise<void> {
+    if (!isDefined(roleIds)) {
+      return;
+    }
+
+    // Get existing view roles
+    const existingViewRoles = await this.viewRoleRepository.find({
+      where: { viewId },
+    });
+
+    const existingRoleIds = existingViewRoles.map((vr) => vr.roleId);
+
+    // Determine which roles to add and remove
+    const roleIdsToAdd = roleIds.filter((id) => !existingRoleIds.includes(id));
+    const roleIdsToRemove = existingRoleIds.filter(
+      (id) => !roleIds.includes(id),
+    );
+
+    // Remove roles that are no longer assigned
+    if (roleIdsToRemove.length > 0) {
+      await this.viewRoleRepository.delete({
+        viewId,
+        roleId: In(roleIdsToRemove),
+      });
+    }
+
+    // Add new roles
+    if (roleIdsToAdd.length > 0) {
+      const newViewRoles = roleIdsToAdd.map((roleId) => ({
+        viewId,
+        roleId,
+        workspaceId,
+      }));
+
+      await this.viewRoleRepository.save(newViewRoles);
+    }
   }
 
   async flushGraphQLCache(workspaceId: string): Promise<void> {

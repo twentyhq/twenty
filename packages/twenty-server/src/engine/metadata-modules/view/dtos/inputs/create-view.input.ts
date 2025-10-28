@@ -91,6 +91,20 @@ export class CreateViewInput {
   @Field(() => UUIDScalarType, { nullable: true })
   calendarFieldMetadataId?: string;
 
+  @IsOptional()
+  @IsEnum(ViewVisibility)
+  @Field(() => ViewVisibility, {
+    nullable: true,
+    defaultValue: ViewVisibility.PUBLIC,
+  })
+  visibility?: ViewVisibility;
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  @Field(() => [UUIDScalarType], { nullable: true })
+  roleIds?: string[];
+
   @HideField()
   universalIdentifier?: string;
 
