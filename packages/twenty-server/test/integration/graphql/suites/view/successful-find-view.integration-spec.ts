@@ -67,6 +67,7 @@ describe.skip('successful find view with all sub-relations (e2e)', () => {
       const testView = viewsData.getCoreViews.find(
         (view) => view.key === ViewKey.INDEX,
       );
+
       jestExpectToBeDefined(testView);
 
       expect(testView).toMatchSnapshot(
