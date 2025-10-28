@@ -359,14 +359,14 @@ export abstract class CommonBaseQueryRunnerService<
         ),
       };
 
-      await this.throttlerService.tokenBucketThrottle(
+      await this.throttlerService.tokenBucketThrottleOrThrow(
         shortConfig.key,
         1,
         shortConfig.maxTokens,
         shortConfig.timeWindow,
       );
 
-      await this.throttlerService.tokenBucketThrottle(
+      await this.throttlerService.tokenBucketThrottleOrThrow(
         longConfig.key,
         1,
         longConfig.maxTokens,
