@@ -3632,6 +3632,8 @@ export type ServerlessFunction = {
   cronTriggers?: Maybe<Array<CronTrigger>>;
   databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
   description?: Maybe<Scalars['String']>;
+  handlerName: Scalars['String'];
+  handlerPath: Scalars['String'];
   id: Scalars['UUID'];
   latestVersion?: Maybe<Scalars['String']>;
   name: Scalars['String'];

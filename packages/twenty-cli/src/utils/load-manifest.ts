@@ -17,6 +17,8 @@ import {
   isStringLiteralLike,
   isShorthandPropertyAssignment,
   isIdentifier,
+  FunctionDeclaration,
+  VariableDeclaration,
   Program,
   Node,
   isClassDeclaration,
@@ -28,6 +30,7 @@ import {
   isArrowFunction,
   isFunctionExpression,
   isExportAssignment,
+  Modifier,
 } from 'typescript';
 import {
   AppManifest,
@@ -165,70 +168,136 @@ const collectObjects = (program: Program) => {
   return manifest;
 };
 
+// Add if you want a small guard for "export" presence on statements
+const hasExportModifier = (st: any) =>
+  st.modifiers?.some((m: Modifier) => m.kind === SyntaxKind.ExportKeyword) ??
+  false;
+
 /**
- * Finds an exported handler:
- *  - `export const <handlerName> = async (...) => { ... }`
- *  - `export const <handlerName> = function (...) { ... }`
- *  - `export function <handlerName>(...) { ... }`
- * Returns the exported identifier (handlerName) or undefined.
- * NOTE: Prefers a variable named "handler" if multiple matches are present.
+ * Finds (and validates) the new serverless file shape:
+ * - exactly 2 exported bindings
+ * - one must be `config` (typed ServerlessFunctionConfig)
+ * - the other must be a function (exported function declaration, or const initialized with arrow/function expression)
  */
-const findExportedHandlerNameForClass = (
+const findHandlerAndConfig = (
   sf: SourceFile,
-  _className: string, // no longer needed, kept for backwards compatibility
-): string | undefined => {
-  const candidates: string[] = [];
+): {
+  handlerName: ServerlessFunctionManifest['handlerName'];
+  configObject: Pick<
+    ServerlessFunctionManifest,
+    | 'universalIdentifier'
+    | 'name'
+    | 'description'
+    | 'timeoutSeconds'
+    | 'triggers'
+  >;
+} => {
+  type Exported = {
+    name: string;
+    kind: 'function' | 'const';
+    init?: Expression;
+    declNode: Node;
+  };
 
-  // 1) export const <name> = <arrow|function expression>
+  const exported: Exported[] = [];
+
+  // 1) export const X = <arrow|function expr>
   for (const st of sf.statements) {
-    if (!isVariableStatement(st)) continue;
-
-    const hasExport =
-      st.modifiers?.some((m) => m.kind === SyntaxKind.ExportKeyword) ?? false;
-    if (!hasExport) continue;
+    if (!isVariableStatement(st) || !hasExportModifier(st)) continue;
 
     for (const decl of st.declarationList.declarations) {
-      if (!isIdentifier(decl.name) || !decl.initializer) continue;
+      if (!isIdentifier(decl.name)) continue;
 
-      const init = decl.initializer;
-      if (isArrowFunction(init) || isFunctionExpression(init)) {
-        const name = decl.name.text;
-        if (name === 'handler') return name; // prefer canonical name
-        candidates.push(name);
-      }
+      const name = decl.name.text;
+      const init = decl.initializer ?? undefined;
+
+      exported.push({
+        name,
+        kind: 'const',
+        init,
+        declNode: decl,
+      });
     }
   }
 
-  // 2) export function <name>(...) { ... }
+  // 2) export function X() { ... }
   for (const st of sf.statements) {
-    if (
-      st.kind === SyntaxKind.FunctionDeclaration &&
-      (st as any).modifiers?.some(
-        (m: any) => m.kind === SyntaxKind.ExportKeyword,
-      )
-    ) {
-      const fd = st as import('typescript').FunctionDeclaration;
+    if (st.kind === SyntaxKind.FunctionDeclaration && hasExportModifier(st)) {
+      const fd = st as FunctionDeclaration;
       if (fd.name && isIdentifier(fd.name)) {
-        const name = fd.name.text;
-        if (name === 'handler') return name;
-        candidates.push(name);
+        exported.push({
+          name: fd.name.text,
+          kind: 'function',
+          init: undefined,
+          declNode: fd,
+        });
       }
     }
   }
 
-  if (!candidates.length) {
+  // Enforce exactly two exports
+  const unique = Array.from(new Map(exported.map((e) => [e.name, e])).values());
+  if (unique.length !== 2) {
     throw new Error(
-      `No exported serverlessFunction handler found in ${sf.fileName}`,
+      `Serverless file ${sf.fileName} must export exactly 2 bindings (handler + config). Found: ${unique.map((e) => e.name).join(', ')}`,
     );
   }
 
-  if (candidates.length !== 1) {
+  // Find config
+  const configExport = unique.find((e) => e.name === 'config');
+  if (!configExport) {
     throw new Error(
-      `Only one handler should be exported in serverlessFunction file ${sf.fileName}. Found ${candidates.length}: ${candidates.join(', ')}`,
+      `Serverless file ${sf.fileName} must export a binding named "config".`,
     );
   }
+  // Must be initialized to an object literal
+  if (!configExport.init || !isObjectLiteralExpression(configExport.init)) {
+    throw new Error(
+      `"config" in ${sf.fileName} must be initialized to an object literal.`,
+    );
+  }
+  // (Light) type guard: ensure declared type mentions ServerlessFunctionConfig if present
+  const maybeVarDecl = configExport.declNode as VariableDeclaration;
+  if ('type' in maybeVarDecl && maybeVarDecl.type) {
+    const typeText = maybeVarDecl.type.getText(sf);
+    if (!/\bServerlessFunctionConfig\b/.test(typeText)) {
+      throw new Error(
+        `"config" in ${sf.fileName} must be typed as ServerlessFunctionConfig (got: ${typeText}).`,
+      );
+    }
+  }
 
-  return candidates[0];
+  const configObject = exprToValue(configExport.init) as Pick<
+    ServerlessFunctionManifest,
+    | 'universalIdentifier'
+    | 'name'
+    | 'description'
+    | 'timeoutSeconds'
+    | 'triggers'
+  >;
+
+  // Identify the handler: the other export
+  const handlerExport = unique.find((e) => e.name !== 'config');
+  if (!handlerExport) {
+    throw new Error(`Could not find the handler export in ${sf.fileName}.`);
+  }
+
+  // If it's a const, make sure it’s a function-ish initializer
+  if (handlerExport.kind === 'const') {
+    const init = handlerExport.init;
+    const isFuncLike =
+      !!init && (isArrowFunction(init) || isFunctionExpression(init));
+    if (!isFuncLike) {
+      throw new Error(
+        `Handler "${handlerExport.name}" in ${sf.fileName} must be a function (arrow or function expression).`,
+      );
+    }
+  }
+
+  return {
+    handlerName: handlerExport.name,
+    configObject,
+  };
 };
 
 const posixRelativeFromCwd = (absPath: string) => {
@@ -241,92 +310,22 @@ const collectServerlessFunctions = (program: Program) => {
   const serverlessFunctions: ServerlessFunctionManifest[] = [];
 
   for (const sf of program.getSourceFiles()) {
-    if (sf.isDeclarationFile) {
-      continue;
-    }
+    if (sf.isDeclarationFile) continue;
 
-    const visit = (node: Node) => {
-      if (!isClassDeclaration(node) || !getDecorators(node)?.length) {
-        forEachChild(node, visit);
-        return;
-      }
-
-      const decorators = getDecorators(node) ?? [];
-
-      const sfnDec = decorators.find((d) =>
-        isDecoratorNamed(d, 'ServerlessFunction'),
-      );
-      if (!sfnDec) {
-        forEachChild(node, visit);
-        return;
-      }
-
-      const className = node.name?.escapedText ?? 'serverless-function';
-
-      // CronTrigger
-      const cronTrigDecs = decorators.filter((d) =>
-        isDecoratorNamed(d, 'CronTrigger'),
-      );
-
-      const cronTriggers: CronTrigger[] = cronTrigDecs
-        .map((d) => getFirstArgObject(d))
-        .filter(Boolean)
-        .map((cfg) => ({
-          universalIdentifier: String(cfg!.universalIdentifier ?? ''),
-          type: 'cron',
-          pattern: String(cfg!.pattern ?? ''),
-        }));
-
-      // DatabaseEventTrigger
-      const dbTrigDecs = decorators.filter((d) =>
-        isDecoratorNamed(d, 'DatabaseEventTrigger'),
-      );
-      const dbTriggers: DatabaseEventTrigger[] = dbTrigDecs
-        .map((d) => getFirstArgObject(d))
-        .filter(Boolean)
-        .map((cfg) => ({
-          universalIdentifier: String(cfg!.universalIdentifier ?? ''),
-          type: 'databaseEvent',
-          eventName: String(cfg!.eventName ?? ''),
-        }));
-
-      // RouteTrigger
-      const routeTrigDecs = decorators.filter((d) =>
-        isDecoratorNamed(d, 'RouteTrigger'),
-      );
-      const routeTriggers: RouteTrigger[] = routeTrigDecs
-        .map((d) => getFirstArgObject(d))
-        .filter(Boolean)
-        .map((cfg) => ({
-          universalIdentifier: String(cfg!.universalIdentifier ?? ''),
-          type: 'route',
-          path: String(cfg!.path ?? ''),
-          httpMethod: String(cfg!.httpMethod ?? ''),
-          isAuthRequired:
-            typeof cfg!.isAuthRequired === 'boolean'
-              ? (cfg!.isAuthRequired as boolean)
-              : false,
-        }));
+    try {
+      const { handlerName, configObject } = findHandlerAndConfig(sf);
 
       const handlerPath = posixRelativeFromCwd(sf.fileName);
 
-      const handlerName = findExportedHandlerNameForClass(sf, className) ?? ''; // empty string if not found
-
-      const serverlessFunctionInfo = (getFirstArgObject(sfnDec) ??
-        {}) as ServerlessFunctionManifest;
-
       serverlessFunctions.push({
-        name: className,
-        ...serverlessFunctionInfo,
-        triggers: [...cronTriggers, ...dbTriggers, ...routeTriggers],
+        ...configObject,
         handlerPath,
         handlerName,
       });
-
-      forEachChild(node, visit);
-    };
-
-    visit(sf);
+    } catch {
+      // Not a serverless file under the new format — ignore and continue scanning.
+      continue;
+    }
   }
 
   return serverlessFunctions;

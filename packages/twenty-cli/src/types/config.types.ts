@@ -67,10 +67,9 @@ export type RouteTrigger = {
   isAuthRequired: boolean;
 };
 
-export type ServerlessFunctionTriggerManifest =
-  | CronTrigger
-  | DatabaseEventTrigger
-  | RouteTrigger;
+export type ServerlessFunctionTriggerManifest = {
+  universalIdentifier: string;
+} & (CronTrigger | DatabaseEventTrigger | RouteTrigger);
 
 export type Sources = { [key: string]: string | Sources };
 
