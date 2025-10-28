@@ -781,7 +781,9 @@ export const Catalog: Story = {
         groupMode={args.groupMode}
         showLegend={true}
         showGrid={true}
-        id={args.id}
+        id={`bar-chart-catalog-${args.keys?.length ?? 0}-${
+          args.groupMode ?? 'grouped'
+        }`}
       />
     </Container>
   ),

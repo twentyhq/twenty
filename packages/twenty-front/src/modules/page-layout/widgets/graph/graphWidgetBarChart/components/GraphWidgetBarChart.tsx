@@ -10,6 +10,7 @@ import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartValueRange';
+import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -164,7 +165,10 @@ export const GraphWidgetBarChart = ({
     [keys, groupMode, data, indexBy, layout, id],
   );
 
-  const calculatedRange = calculateBarChartValueRange(data, keys);
+  const calculatedRange =
+    groupMode === 'stacked'
+      ? calculateStackedBarChartValueRange(data, keys)
+      : calculateBarChartValueRange(data, keys);
   const effectiveMin = rangeMin ?? calculatedRange.min;
   const effectiveMax = rangeMax ?? calculatedRange.max;
 
@@ -213,7 +217,7 @@ export const GraphWidgetBarChart = ({
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
-          layers={['grid', 'axes', 'bars', 'markers', 'legends']}
+          layers={['grid', 'markers', 'axes', 'bars', 'legends']}
           markers={zeroMarker}
           axisTop={null}
           axisRight={null}
