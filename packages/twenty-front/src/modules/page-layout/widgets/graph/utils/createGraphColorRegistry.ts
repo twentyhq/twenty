@@ -8,84 +8,81 @@ export const createGraphColorRegistry = (
   blue: {
     name: 'blue',
     gradient: {
-      normal: [theme.adaptiveColors.blue1, theme.adaptiveColors.blue2],
-      hover: [theme.adaptiveColors.blue3, theme.adaptiveColors.blue4],
+      normal: [theme.color.blue3, theme.color.blue5],
+      hover: [theme.color.blue7, theme.color.blue8],
     },
-    solid: theme.adaptiveColors.blue4,
+    solid: theme.color.blue8,
   },
   purple: {
     name: 'purple',
     gradient: {
-      normal: [theme.adaptiveColors.purple1, theme.adaptiveColors.purple2],
-      hover: [theme.adaptiveColors.purple3, theme.adaptiveColors.purple4],
+      normal: [theme.color.purple3, theme.color.purple5],
+      hover: [theme.color.purple7, theme.color.purple8],
     },
-    solid: theme.adaptiveColors.purple4,
+    solid: theme.color.purple8,
   },
   turquoise: {
     name: 'turquoise',
     gradient: {
-      normal: [
-        theme.adaptiveColors.turquoise1,
-        theme.adaptiveColors.turquoise2,
-      ],
-      hover: [theme.adaptiveColors.turquoise3, theme.adaptiveColors.turquoise4],
+      normal: [theme.color.turquoise3, theme.color.turquoise5],
+      hover: [theme.color.turquoise7, theme.color.turquoise8],
     },
-    solid: theme.adaptiveColors.turquoise4,
+    solid: theme.color.turquoise8,
   },
   orange: {
     name: 'orange',
     gradient: {
-      normal: [theme.adaptiveColors.orange1, theme.adaptiveColors.orange2],
-      hover: [theme.adaptiveColors.orange3, theme.adaptiveColors.orange4],
+      normal: [theme.color.orange3, theme.color.orange5],
+      hover: [theme.color.orange7, theme.color.orange8],
     },
-    solid: theme.adaptiveColors.orange4,
+    solid: theme.color.orange8,
   },
   pink: {
     name: 'pink',
     gradient: {
-      normal: [theme.adaptiveColors.pink1, theme.adaptiveColors.pink2],
-      hover: [theme.adaptiveColors.pink3, theme.adaptiveColors.pink4],
+      normal: [theme.color.pink3, theme.color.pink5],
+      hover: [theme.color.pink7, theme.color.pink8],
     },
-    solid: theme.adaptiveColors.pink4,
+    solid: theme.color.pink8,
   },
   yellow: {
     name: 'yellow',
     gradient: {
-      normal: [theme.adaptiveColors.yellow1, theme.adaptiveColors.yellow2],
-      hover: [theme.adaptiveColors.yellow3, theme.adaptiveColors.yellow4],
+      normal: [theme.color.yellow3, theme.color.yellow5],
+      hover: [theme.color.yellow7, theme.color.yellow8],
     },
-    solid: theme.adaptiveColors.yellow4,
+    solid: theme.color.yellow8,
   },
   red: {
     name: 'red',
     gradient: {
-      normal: [theme.adaptiveColors.red1, theme.adaptiveColors.red2],
-      hover: [theme.adaptiveColors.red3, theme.adaptiveColors.red4],
+      normal: [theme.color.red3, theme.color.red5],
+      hover: [theme.color.red7, theme.color.red8],
     },
-    solid: theme.adaptiveColors.red4,
+    solid: theme.color.red8,
   },
   green: {
     name: 'green',
     gradient: {
-      normal: [theme.adaptiveColors.green1, theme.adaptiveColors.green2],
-      hover: [theme.adaptiveColors.green3, theme.adaptiveColors.green4],
+      normal: [theme.color.green3, theme.color.green5],
+      hover: [theme.color.green7, theme.color.green8],
     },
-    solid: theme.adaptiveColors.green4,
+    solid: theme.color.green8,
   },
   sky: {
     name: 'sky',
     gradient: {
-      normal: [theme.adaptiveColors.sky1, theme.adaptiveColors.sky2],
-      hover: [theme.adaptiveColors.sky3, theme.adaptiveColors.sky4],
+      normal: [theme.color.sky3, theme.color.sky5],
+      hover: [theme.color.sky7, theme.color.sky8],
     },
-    solid: theme.adaptiveColors.sky4,
+    solid: theme.color.sky8,
   },
   gray: {
     name: 'gray',
     gradient: {
-      normal: [theme.adaptiveColors.gray1, theme.adaptiveColors.gray2],
-      hover: [theme.adaptiveColors.gray3, theme.adaptiveColors.gray4],
+      normal: [theme.color.gray3, theme.color.gray5],
+      hover: [theme.color.gray7, theme.color.gray8],
     },
-    solid: theme.adaptiveColors.gray4,
+    solid: theme.color.gray8,
   },
 });

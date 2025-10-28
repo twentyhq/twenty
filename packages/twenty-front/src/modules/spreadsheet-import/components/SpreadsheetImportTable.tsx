@@ -67,7 +67,7 @@ const StyledDataGrid = styled(DataGrid)`
   }
 
   .rdg-cell-error {
-    background-color: ${({ theme }) => theme.adaptiveColors.yellow1};
+    background-color: ${({ theme }) => theme.color.yellow3};
   }
 
   .rdg-cell-warning {

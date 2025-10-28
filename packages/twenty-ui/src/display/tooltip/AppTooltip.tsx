@@ -19,7 +19,7 @@ export enum TooltipDelay {
 
 const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
-  background-color: ${({ theme }) => RGBA(theme.color.gray80, 0.8)};
+  background-color: ${({ theme }) => RGBA(theme.color.gray11, 0.8)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
 
   box-shadow: ${({ theme }) => theme.boxShadow.light};

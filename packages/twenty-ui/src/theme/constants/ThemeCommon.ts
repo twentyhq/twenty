@@ -1,11 +1,9 @@
 import { ANIMATION } from './Animation';
-import { COLOR } from './Colors';
 import { ICON } from './Icon';
 import { MODAL } from './Modal';
 import { TEXT } from './Text';
 
 export const THEME_COMMON = {
-  color: COLOR,
   icon: ICON,
   modal: MODAL,
   text: TEXT,

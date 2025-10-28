@@ -49,7 +49,7 @@ const StyledEditorContainer = styled.div<{
     }
 
     .variable-tag {
-      background-color: ${({ theme }) => theme.color.blue10};
+      background-color: ${({ theme }) => theme.color.blue3};
       border-radius: ${({ theme }) => theme.border.radius.sm};
       color: ${({ theme }) => theme.color.blue};
       padding: ${({ theme }) => theme.spacing(1)};

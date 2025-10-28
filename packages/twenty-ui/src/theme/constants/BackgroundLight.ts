@@ -1,8 +1,8 @@
 import LightNoise from '@assets/themes/light-noise.png';
 import * as RadixColors from '@radix-ui/colors';
 
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 import { RGBA } from '@ui/theme/constants/Rgba';
-import { COLOR } from './Colors';
 import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 import { GRAY_SCALE_LIGHT_ALPHA } from './GrayScaleLightAlpha';
 
@@ -14,7 +14,7 @@ export const BACKGROUND_LIGHT = {
   quaternary: GRAY_SCALE_LIGHT.gray5,
   invertedPrimary: GRAY_SCALE_LIGHT.gray12,
   invertedSecondary: GRAY_SCALE_LIGHT.gray11,
-  danger: COLOR.red10,
+  danger: COLOR_LIGHT.red3,
   transparent: {
     primary: RGBA(GRAY_SCALE_LIGHT.gray1, 0.5),
     secondary: RGBA(GRAY_SCALE_LIGHT.gray2, 0.5),
@@ -25,6 +25,7 @@ export const BACKGROUND_LIGHT = {
     danger: RadixColors.redA.redA3,
     blue: RadixColors.blueA.blueA3,
     orange: RadixColors.orangeA.orangeA3,
+    success: RadixColors.tealA.tealA3,
   },
   overlayPrimary: GRAY_SCALE_LIGHT_ALPHA.gray11,
   overlaySecondary: GRAY_SCALE_LIGHT_ALPHA.gray9,

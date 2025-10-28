@@ -1,13 +1,13 @@
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
-import { COLOR } from './Colors';
 
 export const ILLUSTRATION_ICON_LIGHT = {
   color: {
-    blue: COLOR.blue40,
+    blue: COLOR_LIGHT.blue8,
     gray: GRAY_SCALE_LIGHT.gray9,
   },
   fill: {
-    blue: COLOR.blue20,
+    blue: COLOR_LIGHT.blue5,
     gray: GRAY_SCALE_LIGHT.gray5,
   },
 };

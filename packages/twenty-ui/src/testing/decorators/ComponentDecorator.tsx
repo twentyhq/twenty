@@ -1,6 +1,6 @@
 import { type Decorator } from '@storybook/react';
 
-import { GRAY_SCALE_LIGHT, MAIN_COLORS } from '@ui/theme';
+import { GRAY_SCALE_LIGHT, MAIN_COLORS_LIGHT } from '@ui/theme';
 
 import { ComponentStorybookLayout } from '../ComponentStorybookLayout';
 
@@ -11,9 +11,9 @@ const getBackgroundColor = (inverted: boolean, accent: string) => {
     case 'default':
       return GRAY_SCALE_LIGHT.gray11;
     case 'danger':
-      return MAIN_COLORS.red;
+      return MAIN_COLORS_LIGHT.red;
     case 'blue':
-      return MAIN_COLORS.blue;
+      return MAIN_COLORS_LIGHT.blue;
     default:
       return undefined;
   }

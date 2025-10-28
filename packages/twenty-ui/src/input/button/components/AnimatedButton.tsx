@@ -98,12 +98,12 @@ const StyledButton = styled.button<
                 : css`
                     &:hover {
                       background: ${!inverted
-                        ? theme.color.blue50
+                        ? theme.color.blue10
                         : theme.background.secondary};
                     }
                     &:active {
                       background: ${!inverted
-                        ? theme.color.blue60
+                        ? theme.color.blue12
                         : theme.background.tertiary};
                     }
                   `}
@@ -122,7 +122,7 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.color.red10
+                      ? theme.color.red3
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
@@ -132,12 +132,12 @@ const StyledButton = styled.button<
                 : css`
                     &:hover {
                       background: ${!inverted
-                        ? theme.color.red40
+                        ? theme.color.red8
                         : theme.background.secondary};
                     }
                     &:active {
                       background: ${!inverted
-                        ? theme.color.red50
+                        ? theme.color.red10
                         : theme.background.tertiary};
                     }
                   `}
@@ -261,7 +261,7 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.color.red10
+                      ? theme.color.red3
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
@@ -369,7 +369,7 @@ const StyledShortcutLabel = styled.div<{
       case 'danger':
         return variant === 'primary'
           ? theme.border.color.danger
-          : theme.color.red40;
+          : theme.color.red8;
       default:
         return theme.font.color.light;
     }
