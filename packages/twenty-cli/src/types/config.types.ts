@@ -5,35 +5,33 @@ export interface TwentyConfig {
 }
 
 export type PackageJson = {
-  $schema?: string;
-  universalIdentifier: string;
   name: string;
   license: string;
-  description?: string;
   engines: {
     node: string;
     npm: string;
     yarn: string;
   };
   packageManager: string;
-  icon?: string;
   version: string;
   dependencies?: object;
   devDependencies?: object;
 };
 
-export type AppManifest = PackageJson & {
-  agents: AgentManifest[];
+export type ApplicationManifest = {
+  universalIdentifier: string;
+  displayName: string;
+  description?: string;
+  icon?: string;
+};
+
+export type AppManifest = {
+  application: ApplicationManifest;
   objects: ObjectManifest[];
   serverlessFunctions: ServerlessFunctionManifest[];
   applicationVariables: ApplicationVariableManifest[];
   sources: Sources;
 };
-
-export type CoreEntityManifest =
-  | AgentManifest
-  | ObjectManifest
-  | ServerlessFunctionManifest;
 
 export type ApplicationVariableManifest = {
   universalIdentifier: string;
@@ -50,7 +48,6 @@ export type ServerlessFunctionManifest = {
   description?: string;
   timeoutSeconds?: number;
   triggers: ServerlessFunctionTriggerManifest[];
-  code: ServerlessFunctionCodeManifest;
   handlerPath: string;
   handlerName: string;
 };
@@ -77,13 +74,7 @@ export type ServerlessFunctionTriggerManifest =
   | DatabaseEventTrigger
   | RouteTrigger;
 
-type Sources = { [key: string]: string | Sources };
-
-export type ServerlessFunctionCodeManifest = {
-  src: {
-    'index.ts': string;
-  } & Sources;
-};
+export type Sources = { [key: string]: string | Sources };
 
 export type ObjectManifest = {
   $schema?: string;

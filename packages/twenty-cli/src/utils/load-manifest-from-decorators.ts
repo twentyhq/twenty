@@ -1,3 +1,4 @@
+import * as fs from 'fs-extra';
 import {
   sys,
   getDecorators,
@@ -24,11 +25,11 @@ import {
   forEachChild,
   SourceFile,
   isVariableStatement,
-  isNewExpression,
   isArrowFunction,
   isFunctionExpression,
 } from 'typescript';
 import {
+  ApplicationManifest,
   ApplicationVariableManifest,
   AppManifest,
   CronTrigger,
@@ -36,8 +37,9 @@ import {
   ObjectManifest,
   RouteTrigger,
   ServerlessFunctionManifest,
+  Sources,
 } from '../types/config.types';
-import { posix, relative, sep } from 'path';
+import { posix, relative, sep, resolve } from 'path';
 
 type JSONValue =
   | string
@@ -232,9 +234,52 @@ const posixRelativeFromCwd = (absPath: string) => {
   return rel.split(sep).join(posix.sep);
 };
 
+const collectApplication = (program: Program) => {
+  for (const sf of program.getSourceFiles()) {
+    if (sf.isDeclarationFile) continue;
+
+    const visit = (
+      node: Node,
+    ):
+      | {
+          application: ApplicationManifest;
+          applicationVariables: ApplicationVariableManifest[];
+        }
+      | undefined => {
+      if (isClassDeclaration(node) && getDecorators(node)?.length) {
+        const decorators = getDecorators(node) ?? [];
+        const appDec = decorators.find((d) =>
+          isDecoratorNamed(d, 'Application'),
+        );
+
+        if (appDec) {
+          const applicationVariableDecs = decorators.filter((d) =>
+            isDecoratorNamed(d, 'ApplicationVariable'),
+          );
+
+          const applicationVariables = applicationVariableDecs
+            .map((d) => getFirstArgObject(d))
+            .filter(Boolean) as ApplicationVariableManifest[];
+
+          const application = (getFirstArgObject(appDec) ??
+            {}) as ApplicationManifest;
+
+          return { application, applicationVariables };
+        }
+      }
+
+      return forEachChild(node, visit);
+    };
+
+    const found = visit(sf);
+    if (found) return found;
+  }
+
+  throw new Error('No "@Application" decorator found in app');
+};
+
 const collectServerlessFunctions = (program: Program) => {
   const serverlessFunctions: ServerlessFunctionManifest[] = [];
-  const applicationVariables: ApplicationVariableManifest[] = [];
 
   for (const sf of program.getSourceFiles()) {
     if (sf.isDeclarationFile) {
@@ -258,17 +303,6 @@ const collectServerlessFunctions = (program: Program) => {
       }
 
       const className = node.name?.escapedText ?? 'serverless-function';
-
-      // ApplicationVariables
-      const applicationVariableDecs = decorators.filter((d) =>
-        isDecoratorNamed(d, 'ApplicationVariable'),
-      );
-
-      const serverlessApplicationVariables = applicationVariableDecs
-        .map((d) => getFirstArgObject(d))
-        .filter(Boolean) as ApplicationVariableManifest[];
-
-      applicationVariables.push(...serverlessApplicationVariables);
 
       // CronTrigger
       const cronTrigDecs = decorators.filter((d) =>
@@ -328,7 +362,6 @@ const collectServerlessFunctions = (program: Program) => {
         triggers: [...cronTriggers, ...dbTriggers, ...routeTriggers],
         handlerPath,
         handlerName,
-        code: { src: { 'index.ts': '' } }, // added after
       });
 
       forEachChild(node, visit);
@@ -337,10 +370,7 @@ const collectServerlessFunctions = (program: Program) => {
     visit(sf);
   }
 
-  return {
-    serverlessFunctions,
-    applicationVariables,
-  };
+  return serverlessFunctions;
 };
 
 const validateProgram = (program: Program) => {
@@ -360,9 +390,62 @@ const validateProgram = (program: Program) => {
   }
 };
 
-export const loadManifestFromDecorators = (): Pick<
-  AppManifest,
-  'objects' | 'serverlessFunctions' | 'applicationVariables'
+const setNested = (root: Sources, parts: string[], value: string) => {
+  let cur: Sources = root;
+  for (let i = 0; i < parts.length; i++) {
+    const key = parts[i];
+    if (i === parts.length - 1) {
+      cur[key] = value;
+    } else {
+      cur[key] = (cur[key] ?? {}) as Sources;
+      cur = cur[key] as Sources;
+    }
+  }
+};
+
+const loadFolderContentIntoJson = async (
+  sourcePath = '.',
+  tsconfigPath = 'tsconfig.json',
+): Promise<Sources> => {
+  const sources: Sources = {};
+  const baseAbs = resolve(sourcePath);
+
+  // Build the program from tsconfig (uses your getProgramFromTsconfig)
+  const program: Program = getProgramFromTsconfig(tsconfigPath);
+
+  // Iterate only files the TS program knows about.
+  for (const sf of program.getSourceFiles()) {
+    const abs = sf.fileName;
+
+    // Skip .d.ts and anything outside sourcePath
+    if (sf.isDeclarationFile) continue;
+    if (!abs.startsWith(baseAbs + sep) && abs !== baseAbs) continue;
+
+    // Keep only TS/TSX files
+    if (!(abs.endsWith('.ts') || abs.endsWith('.tsx'))) continue;
+
+    // Optional extra guard (usually unnecessary if tsconfig excludes node_modules)
+    if (abs.includes(`${sep}node_modules${sep}`)) continue;
+
+    const relFromRoot = relative(baseAbs, abs);
+    const parts = relFromRoot.split(sep);
+
+    const content = await fs.readFile(abs, 'utf8');
+    setNested(sources, parts, content);
+  }
+
+  return sources;
+};
+
+export const loadManifestFromDecorators = async (): Promise<
+  Pick<
+    AppManifest,
+    | 'application'
+    | 'objects'
+    | 'serverlessFunctions'
+    | 'applicationVariables'
+    | 'sources'
+  >
 > => {
   const program = getProgramFromTsconfig('tsconfig.json');
 
@@ -370,8 +453,17 @@ export const loadManifestFromDecorators = (): Pick<
 
   const objects = collectObjects(program);
 
-  const { serverlessFunctions, applicationVariables } =
-    collectServerlessFunctions(program);
+  const serverlessFunctions = collectServerlessFunctions(program);
 
-  return { objects, serverlessFunctions, applicationVariables };
+  const { application, applicationVariables } = collectApplication(program);
+
+  const sources = await loadFolderContentIntoJson();
+
+  return {
+    application,
+    objects,
+    serverlessFunctions,
+    applicationVariables,
+    sources,
+  };
 };

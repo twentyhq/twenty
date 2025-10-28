@@ -128,7 +128,7 @@ export class ApiService {
       return {
         success: true,
         data: response.data.data.syncApplication,
-        message: `Successfully synced application: ${manifest.name}`,
+        message: `Successfully synced application: ${packageJson.name}`,
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
