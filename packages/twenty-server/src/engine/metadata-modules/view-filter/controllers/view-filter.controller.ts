@@ -91,7 +91,7 @@ export class ViewFilterController {
       );
 
     if (isWorkspaceMigrationV2Enabled) {
-      await this.viewFilterV2Service.createOne({
+      return await this.viewFilterV2Service.createOne({
         createViewFilterInput: input,
         workspaceId: workspace.id,
       });

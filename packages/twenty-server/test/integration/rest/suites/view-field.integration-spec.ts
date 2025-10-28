@@ -24,6 +24,7 @@ import {
   ViewFieldExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 
+// Infinite loop
 describe('View Field REST API', () => {
   let testObjectMetadataId: string;
   let testFieldMetadataId: string;
