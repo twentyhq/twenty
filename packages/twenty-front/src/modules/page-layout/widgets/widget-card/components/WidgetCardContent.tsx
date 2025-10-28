@@ -11,9 +11,7 @@ export type WidgetCardContentProps = {
   className?: string;
 };
 
-const StyledWidgetCardContent = styled.div<{
-  widgetCardContext: WidgetCardContext;
-}>`
+const StyledWidgetCardContent = styled.div<WidgetCardContentProps>`
   align-items: center;
   display: flex;
   height: 100%;
@@ -39,17 +37,4 @@ const StyledWidgetCardContent = styled.div<{
   }}
 `;
 
-export const WidgetCardContent = ({
-  children,
-  widgetCardContext,
-  className,
-}: WidgetCardContentProps) => {
-  return (
-    <StyledWidgetCardContent
-      widgetCardContext={widgetCardContext}
-      className={className}
-    >
-      {children}
-    </StyledWidgetCardContent>
-  );
-};
+export { StyledWidgetCardContent as WidgetCardContent };

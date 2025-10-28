@@ -69,23 +69,23 @@ const StyledWidgetCard = styled.div<{
 
           ${isDragging &&
           css`
-            border: 1px solid ${theme.color.blue} !important;
             background: linear-gradient(
-              0deg,
-              ${theme.background.transparent.lighter} 0%,
-              ${theme.background.transparent.lighter} 100%
-            ),
-            ${theme.background.secondary};
+                0deg,
+                ${theme.background.transparent.lighter} 0%,
+                ${theme.background.transparent.lighter} 100%
+              ),
+              ${theme.background.secondary};
+            border: 1px solid ${theme.color.blue} !important;
           `}
         `;
 
       case 'recordPage':
         return css`
-          padding: ${theme.spacing(2)};
-          gap: ${theme.spacing(2)};
+          background: ${theme.background.primary};
           border: 1px solid transparent;
           border-radius: ${theme.border.radius.md};
-          background: ${theme.background.primary};
+          gap: ${theme.spacing(2)};
+          padding: ${theme.spacing(2)};
 
           ${isPageLayoutInEditMode &&
           !isDragging &&
@@ -109,13 +109,13 @@ const StyledWidgetCard = styled.div<{
 
           ${isDragging &&
           css`
-            border: 1px solid ${theme.color.blue} !important;
             background: linear-gradient(
-              0deg,
-              ${theme.background.transparent.lighter} 0%,
-              ${theme.background.transparent.lighter} 100%
-            ),
-            ${theme.background.secondary};
+                0deg,
+                ${theme.background.transparent.lighter} 0%,
+                ${theme.background.transparent.lighter} 100%
+              ),
+              ${theme.background.secondary};
+            border: 1px solid ${theme.color.blue} !important;
           `}
         `;
 
