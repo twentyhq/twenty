@@ -31,7 +31,5 @@ export const generateGroupColor = ({
       ((effectiveGroupIndex + 1) / effectiveTotalGroups) * colorIndexRange,
     );
 
-  console.log('variationIndex', variationIndex);
-
   return colorScheme.variations[variationIndex];
 };

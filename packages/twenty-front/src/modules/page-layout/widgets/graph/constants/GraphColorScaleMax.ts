@@ -1,1 +1,1 @@
-export const GRAPH_COLOR_SCALE_MAX = 10;
+export const GRAPH_COLOR_SCALE_MAX = 8;
