@@ -28,7 +28,7 @@ import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-s
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -276,7 +276,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       repository.objectRecordsPermissions?.[objectMetadataItemWithFieldMaps.id]
         ?.restrictedFields;
 
-    const selectOptions = getAllSelectableFields({
+    const selectOptions = getAllSelectableColumnNames({
       restrictedFields: restrictedFields ?? {},
       objectMetadata: {
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,

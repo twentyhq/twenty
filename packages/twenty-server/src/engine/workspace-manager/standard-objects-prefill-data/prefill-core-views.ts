@@ -11,6 +11,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
@@ -27,7 +28,6 @@ import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
-import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;

@@ -1,7 +1,7 @@
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroupRecords';
+import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroup';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewFilterGroupsToCreate } from '@/views/utils/getViewFilterGroupsToCreate';
 import { getViewFilterGroupsToDelete } from '@/views/utils/getViewFilterGroupsToDelete';
@@ -12,9 +12,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
   const {
-    createViewFilterGroupRecords,
-    updateViewFilterGroupRecords,
-    deleteViewFilterGroupRecords,
+    createViewFilterGroups,
+    updateViewFilterGroups,
+    deleteViewFilterGroups,
   } = usePersistViewFilterGroupRecords();
 
   const { currentView } = useGetCurrentViewOnly();
@@ -63,19 +63,16 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
           (viewFilterGroup) => viewFilterGroup.id,
         );
 
-        await createViewFilterGroupRecords(
-          viewFilterGroupsToCreate,
-          currentView,
-        );
-        await updateViewFilterGroupRecords(viewFilterGroupsToUpdate);
-        await deleteViewFilterGroupRecords(viewFilterGroupIdsToDelete);
+        await createViewFilterGroups(viewFilterGroupsToCreate, currentView);
+        await updateViewFilterGroups(viewFilterGroupsToUpdate);
+        await deleteViewFilterGroups(viewFilterGroupIdsToDelete);
       },
     [
       currentView,
       currentRecordFilterGroupsCallbackState,
-      createViewFilterGroupRecords,
-      updateViewFilterGroupRecords,
-      deleteViewFilterGroupRecords,
+      createViewFilterGroups,
+      updateViewFilterGroups,
+      deleteViewFilterGroups,
     ],
   );
 

@@ -75,9 +75,7 @@ export class RestApiFindDuplicatesHandler extends RestApiBaseHandler {
   ) {
     return {
       data: duplicateConnections.map((connection) => ({
-        data: {
-          [`${objectNameSingular}Duplicates`]: connection.records,
-        },
+        [`${objectNameSingular}Duplicates`]: connection.records,
         totalCount: connection.totalCount,
         pageInfo: {
           hasNextPage: connection.hasNextPage,

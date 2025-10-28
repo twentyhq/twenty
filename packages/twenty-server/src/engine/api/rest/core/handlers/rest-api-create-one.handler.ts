@@ -15,7 +15,7 @@ import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers
 import { parseUpsertRestRequest } from 'src/engine/api/rest/input-request-parsers/upsert-parser-utils/parse-upsert-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 
 @Injectable()
 export class RestApiCreateOneHandler extends RestApiBaseHandler {
@@ -103,7 +103,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
     let selectedColumns = undefined;
 
     if (!isEmpty(restrictedFields)) {
-      const selectableFields = getAllSelectableFields({
+      const selectableFields = getAllSelectableColumnNames({
         restrictedFields,
         objectMetadata,
       });

@@ -94,6 +94,8 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
+    await this.throttleQueryExecution(authContext.workspace.id);
+
     await this.validate(args, queryRunnerContext);
 
     if (objectMetadataItemWithFieldMaps.isSystem === true) {
@@ -114,8 +116,6 @@ export abstract class CommonBaseQueryRunnerService<
       this.operationName,
       commonQueryParser,
     );
-
-    await this.throttleQueryExecution(authContext.workspace.id);
 
     const extendedQueryRunnerContext =
       await this.prepareExtendedQueryRunnerContext(
