@@ -1,4 +1,5 @@
-import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
 import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { type FlatEntityPropertyUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-property-update.type';

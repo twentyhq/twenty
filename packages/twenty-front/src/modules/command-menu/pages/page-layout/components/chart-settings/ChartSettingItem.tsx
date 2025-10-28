@@ -117,7 +117,7 @@ export const ChartSettingItem = ({
         id={item.id}
         dropdownId={item.id}
         dropdownComponents={
-          <DropdownContent>
+          <DropdownContent widthInPixels={item.dropdownWidth}>
             {item.DropdownContent && <item.DropdownContent />}
           </DropdownContent>
         }

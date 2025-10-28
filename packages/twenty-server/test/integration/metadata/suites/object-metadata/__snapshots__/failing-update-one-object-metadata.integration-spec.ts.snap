@@ -4,7 +4,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -79,7 +79,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a known 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -176,7 +176,7 @@ exports[`Object metadata update should fail when labelIdentifier is null 1`] = `
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],

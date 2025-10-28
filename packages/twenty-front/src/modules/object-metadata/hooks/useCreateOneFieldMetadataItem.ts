@@ -1,41 +1,67 @@
-import { useMutation } from '@apollo/client';
-
 import {
   type CreateFieldInput,
-  type CreateOneFieldMetadataItemMutation,
-  type CreateOneFieldMetadataItemMutationVariables,
+  useCreateOneFieldMetadataItemMutation,
 } from '~/generated-metadata/graphql';
 
-import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
-
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 
 export const useCreateOneFieldMetadataItem = () => {
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
 
-  const [mutate] = useMutation<
-    CreateOneFieldMetadataItemMutation,
-    CreateOneFieldMetadataItemMutationVariables
-  >(CREATE_ONE_FIELD_METADATA_ITEM);
+  const [createOneFieldMetadataItemMutation] =
+    useCreateOneFieldMetadataItemMutation();
 
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 
-  const createOneFieldMetadataItem = async (input: CreateFieldInput) => {
-    const result = await mutate({
-      variables: {
-        input: {
-          field: input,
+  const { handleMetadataError } = useMetadataErrorHandler();
+  const { enqueueErrorSnackBar } = useSnackBar();
+
+  const createOneFieldMetadataItem = async (
+    input: CreateFieldInput,
+  ): Promise<
+    MetadataRequestResult<
+      Awaited<ReturnType<typeof createOneFieldMetadataItemMutation>>
+    >
+  > => {
+    try {
+      const response = await createOneFieldMetadataItemMutation({
+        variables: {
+          input: {
+            field: input,
+          },
         },
-      },
-    });
+      });
 
-    await refreshObjectMetadataItems();
+      await refreshObjectMetadataItems();
 
-    await refreshCoreViewsByObjectMetadataId(input.objectMetadataId);
-    return result;
+      await refreshCoreViewsByObjectMetadataId(input.objectMetadataId);
+
+      return {
+        status: 'successful',
+        response,
+      };
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        handleMetadataError(error, {
+          primaryMetadataName: 'fieldMetadata',
+        });
+      } else {
+        enqueueErrorSnackBar({ message: t`An error occurred.` });
+      }
+
+      return {
+        status: 'failed',
+        error,
+      };
+    }
   };
 
   return {

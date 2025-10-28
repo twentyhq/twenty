@@ -4,7 +4,7 @@ exports[`Field metadata relation update should fail relation when name is change
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -78,7 +78,7 @@ exports[`Field metadata relation update should fail relation when name is not in
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],

@@ -11,7 +11,7 @@ export const createGraphColorRegistry = (
       normal: [theme.adaptiveColors.blue1, theme.adaptiveColors.blue2],
       hover: [theme.adaptiveColors.blue3, theme.adaptiveColors.blue4],
     },
-    solid: theme.color.blue,
+    solid: theme.adaptiveColors.blue4,
   },
   purple: {
     name: 'purple',
@@ -19,7 +19,7 @@ export const createGraphColorRegistry = (
       normal: [theme.adaptiveColors.purple1, theme.adaptiveColors.purple2],
       hover: [theme.adaptiveColors.purple3, theme.adaptiveColors.purple4],
     },
-    solid: theme.color.purple,
+    solid: theme.adaptiveColors.purple4,
   },
   turquoise: {
     name: 'turquoise',
@@ -30,7 +30,7 @@ export const createGraphColorRegistry = (
       ],
       hover: [theme.adaptiveColors.turquoise3, theme.adaptiveColors.turquoise4],
     },
-    solid: theme.color.turquoise,
+    solid: theme.adaptiveColors.turquoise4,
   },
   orange: {
     name: 'orange',
@@ -38,7 +38,7 @@ export const createGraphColorRegistry = (
       normal: [theme.adaptiveColors.orange1, theme.adaptiveColors.orange2],
       hover: [theme.adaptiveColors.orange3, theme.adaptiveColors.orange4],
     },
-    solid: theme.color.orange,
+    solid: theme.adaptiveColors.orange4,
   },
   pink: {
     name: 'pink',
@@ -46,7 +46,7 @@ export const createGraphColorRegistry = (
       normal: [theme.adaptiveColors.pink1, theme.adaptiveColors.pink2],
       hover: [theme.adaptiveColors.pink3, theme.adaptiveColors.pink4],
     },
-    solid: theme.color.pink,
+    solid: theme.adaptiveColors.pink4,
   },
   yellow: {
     name: 'yellow',
@@ -54,7 +54,7 @@ export const createGraphColorRegistry = (
       normal: [theme.adaptiveColors.yellow1, theme.adaptiveColors.yellow2],
       hover: [theme.adaptiveColors.yellow3, theme.adaptiveColors.yellow4],
     },
-    solid: theme.color.yellow,
+    solid: theme.adaptiveColors.yellow4,
   },
   red: {
     name: 'red',
@@ -62,7 +62,7 @@ export const createGraphColorRegistry = (
       normal: [theme.adaptiveColors.red1, theme.adaptiveColors.red2],
       hover: [theme.adaptiveColors.red3, theme.adaptiveColors.red4],
     },
-    solid: theme.color.red,
+    solid: theme.adaptiveColors.red4,
   },
   green: {
     name: 'green',
@@ -70,7 +70,7 @@ export const createGraphColorRegistry = (
       normal: [theme.adaptiveColors.green1, theme.adaptiveColors.green2],
       hover: [theme.adaptiveColors.green3, theme.adaptiveColors.green4],
     },
-    solid: theme.color.green,
+    solid: theme.adaptiveColors.green4,
   },
   sky: {
     name: 'sky',
@@ -78,7 +78,7 @@ export const createGraphColorRegistry = (
       normal: [theme.adaptiveColors.sky1, theme.adaptiveColors.sky2],
       hover: [theme.adaptiveColors.sky3, theme.adaptiveColors.sky4],
     },
-    solid: theme.color.sky,
+    solid: theme.adaptiveColors.sky4,
   },
   gray: {
     name: 'gray',
@@ -86,6 +86,6 @@ export const createGraphColorRegistry = (
       normal: [theme.adaptiveColors.gray1, theme.adaptiveColors.gray2],
       hover: [theme.adaptiveColors.gray3, theme.adaptiveColors.gray4],
     },
-    solid: theme.color.gray,
+    solid: theme.adaptiveColors.gray4,
   },
 });
