@@ -4,7 +4,7 @@ import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { IconArrowsSort, useIcons } from 'twenty-ui/display';
+import { IconArrowsSort, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated/graphql';
@@ -138,7 +138,7 @@ export const WorkflowFindRecordsSorts = ({
             {!readonly && (
               <Button
                 onClick={() => handleRemoveSort(sort.id)}
-                Icon={getIcon('IconTrash')}
+                Icon={IconTrash}
                 disabled={readonly}
               />
             )}
