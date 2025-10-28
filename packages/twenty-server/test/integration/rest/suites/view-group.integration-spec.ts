@@ -10,7 +10,7 @@ import {
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
   createTestViewGroupWithRestApi,
-  createTestViewWithRestApi
+  createTestViewWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { assertViewGroupStructure } from 'test/integration/utils/view-test.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';

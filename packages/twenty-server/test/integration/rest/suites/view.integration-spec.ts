@@ -7,9 +7,7 @@ import {
   assertRestApiErrorNotFoundResponse,
   assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
-import {
-  createTestViewWithRestApi
-} from 'test/integration/rest/utils/view-rest-api.util';
+import { createTestViewWithRestApi } from 'test/integration/rest/utils/view-rest-api.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { assertViewStructure } from 'test/integration/utils/view-test.util';
 

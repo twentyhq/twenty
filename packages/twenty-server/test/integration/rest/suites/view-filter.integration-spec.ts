@@ -10,7 +10,7 @@ import {
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
   createTestViewFilterWithRestApi,
-  createTestViewWithRestApi
+  createTestViewWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { assertViewFilterStructure } from 'test/integration/utils/view-test.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';

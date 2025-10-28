@@ -10,18 +10,18 @@ import {
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
   createTestViewFieldWithRestApi,
-  createTestViewWithRestApi
+  createTestViewWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { assertViewFieldStructure } from 'test/integration/utils/view-test.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 
 import { type ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
-import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 
 describe('View Field REST API', () => {
   let testObjectMetadataId: string;
@@ -139,6 +139,7 @@ describe('View Field REST API', () => {
         isVisible: true,
         size: 150,
       });
+
       testViewFieldId = viewField.id;
 
       const response = await makeRestAPIRequest({
@@ -218,6 +219,7 @@ describe('View Field REST API', () => {
         isVisible: true,
         size: 150,
       });
+
       testViewFieldId = viewField.id;
 
       const response = await makeRestAPIRequest({
@@ -254,6 +256,7 @@ describe('View Field REST API', () => {
         isVisible: true,
         size: 150,
       });
+
       testViewFieldId = viewField.id;
 
       const updateData = {
