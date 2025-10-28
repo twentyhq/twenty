@@ -113,8 +113,6 @@ export const createTestViewFilterWithRestApi = async (
   params: {
     viewId: string;
     fieldMetadataId: string;
-    operand?: string;
-    value?: string;
   } & Partial<Omit<ViewFilterEntity, 'viewId' | 'fieldMetadataId'>>,
 ): Promise<ViewFilterEntity> => {
   const { viewId, fieldMetadataId, operand, value, ...restParams } = params;
