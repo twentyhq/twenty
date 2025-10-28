@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type ServerlessFunctionConfig } from 'twenty-sdk';
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 export const main = async (params: { recipient: string }): Promise<string> => {
   const { recipient } = params;

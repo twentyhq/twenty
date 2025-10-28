@@ -1,4 +1,4 @@
-import { ObjectMetadata } from 'twenty-sdk';
+import { ObjectMetadata } from 'twenty-sdk/application';
 
 @ObjectMetadata({
   universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
