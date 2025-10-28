@@ -5,5 +5,4 @@ export enum GqlInputTypeDefinitionKind {
   OrderBy = 'OrderBy',
   GroupBy = 'GroupBy',
   OrderByWithGroupBy = 'OrderByWithGroupBy',
-  OrderByForRecordsWithGroupBy = 'OrderByForRecordsWithGroupBy',
 }
