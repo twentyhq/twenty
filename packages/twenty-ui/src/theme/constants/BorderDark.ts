@@ -1,7 +1,7 @@
 import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
-import { RGBA } from '@ui/theme/constants/Rgba';
 import { BORDER_COMMON } from './BorderCommon';
 import { GRAY_SCALE_DARK } from './GrayScaleDark';
+import { TRANSPARENT_COLORS_DARK } from './TransparentColorsDark';
 
 export const BORDER_DARK = {
   color: {
@@ -12,7 +12,7 @@ export const BORDER_DARK = {
     inverted: GRAY_SCALE_DARK.gray12,
     danger: COLOR_DARK.red5,
     blue: COLOR_DARK.blue7,
-    transparentStrong: RGBA(GRAY_SCALE_DARK.gray1, 0.16),
+    transparentStrong: TRANSPARENT_COLORS_DARK.gray4,
   },
   ...BORDER_COMMON,
 };

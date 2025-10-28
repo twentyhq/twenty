@@ -53,6 +53,8 @@ export { TEXT_INPUT_STYLE } from './constants/TextInputStyle';
 export { THEME_COMMON } from './constants/ThemeCommon';
 export { THEME_DARK } from './constants/ThemeDark';
 export { THEME_LIGHT } from './constants/ThemeLight';
+export { TRANSPARENT_COLORS_DARK } from './constants/TransparentColorsDark';
+export { TRANSPARENT_COLORS_LIGHT } from './constants/TransparentColorsLight';
 export type { ThemeContextType } from './provider/ThemeContextProvider';
 export {
   ThemeContext,

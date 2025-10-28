@@ -1,10 +1,8 @@
 import LightNoise from '@assets/themes/light-noise.png';
-import * as RadixColors from '@radix-ui/colors';
 
 import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
-import { RGBA } from '@ui/theme/constants/Rgba';
 import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
-import { GRAY_SCALE_LIGHT_ALPHA } from './GrayScaleLightAlpha';
+import { TRANSPARENT_COLORS_LIGHT } from './TransparentColorsLight';
 
 export const BACKGROUND_LIGHT = {
   noisy: `url(${LightNoise.toString()});`,
@@ -16,20 +14,20 @@ export const BACKGROUND_LIGHT = {
   invertedSecondary: GRAY_SCALE_LIGHT.gray11,
   danger: COLOR_LIGHT.red3,
   transparent: {
-    primary: RGBA(GRAY_SCALE_LIGHT.gray1, 0.5),
-    secondary: RGBA(GRAY_SCALE_LIGHT.gray2, 0.5),
-    strong: GRAY_SCALE_LIGHT_ALPHA.gray7,
-    medium: GRAY_SCALE_LIGHT_ALPHA.gray5,
-    light: GRAY_SCALE_LIGHT_ALPHA.gray2,
-    lighter: GRAY_SCALE_LIGHT_ALPHA.gray1,
-    danger: RadixColors.redA.redA3,
-    blue: RadixColors.blueA.blueA3,
-    orange: RadixColors.orangeA.orangeA3,
-    success: RadixColors.tealA.tealA3,
+    primary: TRANSPARENT_COLORS_LIGHT.gray1,
+    secondary: TRANSPARENT_COLORS_LIGHT.gray2,
+    strong: TRANSPARENT_COLORS_LIGHT.gray7,
+    medium: TRANSPARENT_COLORS_LIGHT.gray5,
+    light: TRANSPARENT_COLORS_LIGHT.gray2,
+    lighter: TRANSPARENT_COLORS_LIGHT.gray1,
+    danger: TRANSPARENT_COLORS_LIGHT.red3,
+    blue: TRANSPARENT_COLORS_LIGHT.blue3,
+    orange: TRANSPARENT_COLORS_LIGHT.orange3,
+    success: TRANSPARENT_COLORS_LIGHT.green3,
   },
-  overlayPrimary: GRAY_SCALE_LIGHT_ALPHA.gray11,
-  overlaySecondary: GRAY_SCALE_LIGHT_ALPHA.gray9,
-  overlayTertiary: GRAY_SCALE_LIGHT_ALPHA.gray4,
+  overlayPrimary: TRANSPARENT_COLORS_LIGHT.gray11,
+  overlaySecondary: TRANSPARENT_COLORS_LIGHT.gray9,
+  overlayTertiary: TRANSPARENT_COLORS_LIGHT.gray4,
   radialGradient: `radial-gradient(50% 62.62% at 50% 0%, ${GRAY_SCALE_LIGHT.gray9} 0%, ${GRAY_SCALE_LIGHT.gray10} 100%)`,
   radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, ${GRAY_SCALE_LIGHT.gray10} 0%, ${GRAY_SCALE_LIGHT.gray11} 100%)`,
   primaryInverted: GRAY_SCALE_LIGHT.gray12,

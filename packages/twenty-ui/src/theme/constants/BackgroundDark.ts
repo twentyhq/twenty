@@ -1,10 +1,8 @@
 import DarkNoise from '@assets/themes/dark-noise.jpg';
-import * as RadixColors from '@radix-ui/colors';
 
 import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
-import { RGBA } from '@ui/theme/constants/Rgba';
 import { GRAY_SCALE_DARK } from './GrayScaleDark';
-import { GRAY_SCALE_DARK_ALPHA } from './GrayScaleDarkAlpha';
+import { TRANSPARENT_COLORS_DARK } from './TransparentColorsDark';
 
 export const BACKGROUND_DARK = {
   noisy: `url(${DarkNoise.toString()});`,
@@ -16,16 +14,16 @@ export const BACKGROUND_DARK = {
   invertedSecondary: GRAY_SCALE_DARK.gray11,
   danger: COLOR_DARK.red12,
   transparent: {
-    primary: RGBA(GRAY_SCALE_DARK.gray1, 0.5),
-    secondary: RGBA(GRAY_SCALE_DARK.gray2, 0.5),
-    strong: GRAY_SCALE_DARK_ALPHA.gray7,
-    medium: GRAY_SCALE_DARK_ALPHA.gray5,
-    light: GRAY_SCALE_DARK_ALPHA.gray2,
-    lighter: GRAY_SCALE_DARK_ALPHA.gray1,
-    danger: RadixColors.redDarkA.redA3,
-    blue: RadixColors.blueDarkA.blueA4,
-    orange: RadixColors.orangeDarkA.orangeA4,
-    success: RadixColors.tealDarkA.tealA3,
+    primary: TRANSPARENT_COLORS_DARK.gray1,
+    secondary: TRANSPARENT_COLORS_DARK.gray2,
+    strong: TRANSPARENT_COLORS_DARK.gray7,
+    medium: TRANSPARENT_COLORS_DARK.gray5,
+    light: TRANSPARENT_COLORS_DARK.gray2,
+    lighter: TRANSPARENT_COLORS_DARK.gray1,
+    danger: TRANSPARENT_COLORS_DARK.red3,
+    blue: TRANSPARENT_COLORS_DARK.blue4,
+    orange: TRANSPARENT_COLORS_DARK.orange4,
+    success: TRANSPARENT_COLORS_DARK.green4,
   },
   overlayPrimary: '#000000b8',
   overlaySecondary: '#0000005c',

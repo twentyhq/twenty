@@ -1,7 +1,7 @@
 import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
-import { RGBA } from '@ui/theme/constants/Rgba';
 import { BORDER_COMMON } from './BorderCommon';
 import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
+import { TRANSPARENT_COLORS_LIGHT } from './TransparentColorsLight';
 
 export const BORDER_LIGHT = {
   color: {
@@ -12,7 +12,7 @@ export const BORDER_LIGHT = {
     inverted: GRAY_SCALE_LIGHT.gray12,
     danger: COLOR_LIGHT.red5,
     blue: COLOR_LIGHT.blue7,
-    transparentStrong: RGBA(GRAY_SCALE_LIGHT.gray12, 0.16),
+    transparentStrong: TRANSPARENT_COLORS_LIGHT.gray4,
   },
   ...BORDER_COMMON,
 };

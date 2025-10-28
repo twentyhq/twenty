@@ -35,7 +35,7 @@ export const ChartColorPaletteOption = ({
   const colorSamples = (
     <StyledColorSamplesContainer>
       {paletteColors.map((paletteColorName) => {
-        const baseColor = theme.color[paletteColorName];
+        const baseColor = theme.color[paletteColorName] as string;
         return <ColorSample key={paletteColorName} color={baseColor} />;
       })}
     </StyledColorSamplesContainer>
