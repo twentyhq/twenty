@@ -8,7 +8,8 @@ import { withTheme } from '~utils/emotion-cache';
 
 export const config: PlasmoCSConfig = {
   matches: ['https://www.linkedin.com/*'],
-  run_at: 'document_start',
+  run_at: 'document_end',
+  css: ['font.css']
 };
 
 const styleElement = document.createElement('style');
