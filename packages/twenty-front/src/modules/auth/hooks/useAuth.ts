@@ -55,6 +55,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
@@ -70,6 +71,7 @@ import { loginTokenState } from '../states/loginTokenState';
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setLoginToken = useSetRecoilState(loginTokenState);
+  const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(isAppWaitingForFreshObjectMetadataState);
 
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -317,13 +319,16 @@ export const useAuth = () => {
     async (authTokens: AuthTokenPair) => {
       handleSetAuthTokens(authTokens);
 
+      // Set waiting state to prevent race conditions during login
+      setIsAppWaitingForFreshObjectMetadata(true);
+
       // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
       // then UserProvider updates its children and PrefetchDataProvider is then triggered
       // which requires the correct metadata to be loaded (not the mocks)
       await loadCurrentUser();
       await refreshObjectMetadataItems();
     },
-    [loadCurrentUser, handleSetAuthTokens, refreshObjectMetadataItems],
+    [loadCurrentUser, handleSetAuthTokens, refreshObjectMetadataItems, setIsAppWaitingForFreshObjectMetadata],
   );
 
   const handleGetAuthTokensFromLoginToken = useCallback(
