@@ -66,7 +66,7 @@ export const ChartSettingItem = ({
               value={stringValue}
               onChange={onInputChange}
               onValidate={(value) =>
-                isDefined(value) &&
+                !isDefined(value) ||
                 isMinMaxRangeValid(
                   item.id as
                     | CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
