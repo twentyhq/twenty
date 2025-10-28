@@ -28,8 +28,8 @@ export const BACKGROUND_LIGHT = {
   overlayPrimary: GRAY_SCALE_LIGHT_ALPHA.gray11,
   overlaySecondary: GRAY_SCALE_LIGHT_ALPHA.gray9,
   overlayTertiary: GRAY_SCALE_LIGHT_ALPHA.gray4,
-  radialGradient: `radial-gradient(50% 62.62% at 50% 0%, ${RadixColors.gray.gray9} 0%, ${RadixColors.gray.gray10} 100%)`,
-  radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, ${RadixColors.gray.gray10} 0%, ${RadixColors.gray.gray11} 100%)`,
+  radialGradient: `radial-gradient(50% 62.62% at 50% 0%, ${GRAY_SCALE_LIGHT.gray9} 0%, ${GRAY_SCALE_LIGHT.gray10} 100%)`,
+  radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, ${GRAY_SCALE_LIGHT.gray10} 0%, ${GRAY_SCALE_LIGHT.gray11} 100%)`,
   primaryInverted: GRAY_SCALE_LIGHT.gray12,
   primaryInvertedHover: GRAY_SCALE_LIGHT.gray11,
 };
