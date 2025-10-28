@@ -15,6 +15,7 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   data?: readonly D[];
   indexBy?: string;
   layout?: 'vertical' | 'horizontal';
+  chartId?: string;
 };
 
 const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
@@ -62,6 +63,7 @@ export const CustomBarItem = <D extends BarDatum>({
   data: chartData,
   indexBy,
   layout = 'vertical',
+  chartId,
 }: CustomBarItemProps<D>) => {
   const theme = useTheme();
   const { showTooltipFromEvent, showTooltipAt, hideTooltip } = useTooltip();
@@ -169,7 +171,7 @@ export const CustomBarItem = <D extends BarDatum>({
     <animated.g transform={transform}>
       {shouldRoundFreeEnd && (
         <defs>
-          <clipPath id={`round-corner-${barData.index}`}>
+          <clipPath id={`round-corner-${chartId}-${barData.index}`}>
             <animated.rect
               x={clipPathX}
               y={clipPathY}
@@ -189,7 +191,9 @@ export const CustomBarItem = <D extends BarDatum>({
       <StyledBarRect
         $isInteractive={isInteractive}
         clipPath={
-          shouldRoundFreeEnd ? `url(#round-corner-${barData.index})` : undefined
+          shouldRoundFreeEnd
+            ? `url(#round-corner-${chartId}-${barData.index})`
+            : undefined
         }
         width={to(width, (value) => Math.max(value, 0))}
         height={to(height, (value) => Math.max(value, 0))}

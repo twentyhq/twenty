@@ -158,9 +158,10 @@ export const GraphWidgetBarChart = ({
         data={data}
         indexBy={indexBy}
         layout={layout}
+        chartId={id}
       />
     ),
-    [keys, groupMode, data, indexBy, layout],
+    [keys, groupMode, data, indexBy, layout, id],
   );
 
   const calculatedRange = calculateBarChartValueRange(data, keys);
