@@ -14,7 +14,6 @@ import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
-import { useEffect } from 'react';
 import { QUERY_DEFAULT_LIMIT_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -97,15 +96,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       client: apolloCoreClient,
     });
 
-  useEffect(() => {
-    if (isDefined(data)) {
-      handleFindManyRecordsCompleted(data);
-    }
-    if (isDefined(error)) {
-      handleFindManyRecordsError(error);
-    }
-  }, [data, error, handleFindManyRecordsCompleted, handleFindManyRecordsError]);
-
   const { fetchMoreRecordsLazy } = useLazyFetchMoreRecordsWithPagination<T>({
     objectNameSingular,
     filter,
@@ -134,6 +124,14 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         }
 
         const result = await findManyRecords();
+        if (isDefined(result?.error)) {
+          handleFindManyRecordsError(result.error);
+          return { error: result.error };
+        }
+
+        if (isDefined(result?.data)) {
+          handleFindManyRecordsCompleted(result.data);
+        }
 
         const hasNextPage =
           result?.data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ??
@@ -175,6 +173,8 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       findManyRecords,
       objectMetadataItem.namePlural,
       queryIdentifier,
+      handleFindManyRecordsError,
+      handleFindManyRecordsCompleted,
     ],
   );
 
