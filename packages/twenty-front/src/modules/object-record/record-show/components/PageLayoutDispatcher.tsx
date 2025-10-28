@@ -26,7 +26,11 @@ export const PageLayoutDispatcher = ({
     targetRecordIdentifier.targetObjectNameSingular ===
       CoreObjectNameSingular.WorkflowVersion;
 
-  if (isRecordPageEnabled && !isStandardObjectUnsupportingRecordPageLayouts) {
+  if (
+    targetRecordIdentifier.targetObjectNameSingular ===
+      CoreObjectNameSingular.Dashboard ||
+    (isRecordPageEnabled && !isStandardObjectUnsupportingRecordPageLayouts)
+  ) {
     return (
       <PageLayoutRecordPageRenderer
         targetRecordIdentifier={targetRecordIdentifier}
