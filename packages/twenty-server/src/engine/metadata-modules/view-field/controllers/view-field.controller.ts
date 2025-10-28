@@ -176,6 +176,7 @@ export class ViewFieldController {
         deleteViewFieldInput: { id },
         workspaceId: workspace.id,
       });
+
       return { success: isDefined(deletedViewField) };
     }
 

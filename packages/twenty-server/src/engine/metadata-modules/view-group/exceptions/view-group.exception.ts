@@ -43,7 +43,7 @@ export const generateViewGroupExceptionMessage = (
     case ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return 'FieldMetadataId is required';
     default:
-      return 'unknown'
+      return 'unknown';
   }
 };
 
@@ -58,7 +58,7 @@ export const generateViewGroupUserFriendlyExceptionMessage = (
     case ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return msg`FieldMetadataId is required to create a view group.`;
     default: {
-      return msg`unknown`
+      return msg`unknown`;
     }
   }
 };

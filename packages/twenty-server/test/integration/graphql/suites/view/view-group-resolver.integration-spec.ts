@@ -1,4 +1,3 @@
-import { TEST_NOT_EXISTING_VIEW_GROUP_ID } from 'test/integration/constants/test-view-ids.constants';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -11,9 +10,7 @@ import { destroyOneCoreViewGroup } from 'test/integration/metadata/suites/view-g
 import { findCoreViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-core-view-groups.util';
 import { updateOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/update-one-core-view-group.util';
 import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
-import {
-  assertViewGroupStructure
-} from 'test/integration/utils/view-test.util';
+import { assertViewGroupStructure } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('View Group Resolver', () => {

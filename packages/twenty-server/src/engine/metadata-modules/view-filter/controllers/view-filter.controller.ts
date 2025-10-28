@@ -152,6 +152,7 @@ export class ViewFilterController {
         deleteViewFilterInput: { id },
         workspaceId: workspace.id,
       });
+
       return { success: isDefined(deletedViewFilter) };
     }
 

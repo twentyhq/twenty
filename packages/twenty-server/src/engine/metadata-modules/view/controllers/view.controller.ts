@@ -110,6 +110,7 @@ export class ViewController {
       );
 
     let view: ViewDTO;
+
     if (isWorkspaceMigrationV2Enabled) {
       view = await this.viewV2Service.createOne({
         createViewInput: input,
@@ -145,6 +146,7 @@ export class ViewController {
       );
 
     let updatedView: ViewDTO;
+
     if (isWorkspaceMigrationV2Enabled) {
       updatedView = await this.viewV2Service.updateOne({
         updateViewInput: {
@@ -178,6 +180,7 @@ export class ViewController {
       );
 
     let deletedView: ViewDTO | null;
+
     if (isWorkspaceMigrationV2Enabled) {
       deletedView = await this.viewV2Service.deleteOne({
         deleteViewInput: { id },

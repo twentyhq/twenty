@@ -120,6 +120,7 @@ export class ViewGroupController {
         id,
         update: input.update ?? input,
       };
+
       return await this.viewGroupV2Service.updateOne({
         updateViewGroupInput: updateInput,
         workspaceId: workspace.id,
@@ -151,6 +152,7 @@ export class ViewGroupController {
         deleteViewGroupInput: { id },
         workspaceId: workspace.id,
       });
+
       return { success: isDefined(deletedViewGroup) };
     }
 

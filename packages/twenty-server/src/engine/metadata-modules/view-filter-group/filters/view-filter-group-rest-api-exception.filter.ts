@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 
 import { type Response } from 'express';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -15,8 +16,10 @@ import {
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
-import { type CustomException, UnknownException } from 'src/utils/custom-exception';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import {
+  type CustomException,
+  UnknownException,
+} from 'src/utils/custom-exception';
 
 @Injectable()
 @Catch(ViewFilterGroupException, WorkspaceMigrationBuilderExceptionV2)
@@ -26,7 +29,10 @@ export class ViewFilterGroupRestApiExceptionFilter implements ExceptionFilter {
     private readonly i18nService: I18nService,
   ) {}
 
-  catch(exception: ViewFilterGroupException | WorkspaceMigrationBuilderExceptionV2, host: ArgumentsHost) {
+  catch(
+    exception: ViewFilterGroupException | WorkspaceMigrationBuilderExceptionV2,
+    host: ArgumentsHost,
+  ) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
@@ -76,6 +82,7 @@ export class ViewFilterGroupRestApiExceptionFilter implements ExceptionFilter {
       'Internal server error',
       'INTERNAL_ERROR',
     );
+
     return this.httpExceptionHandlerService.handleError(
       unknownException as CustomException,
       response,
