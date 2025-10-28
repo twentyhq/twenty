@@ -1,5 +1,3 @@
-import { type ApplicationConfig } from 'twenty-sdk';
-
 export interface TwentyConfig {
   apiUrl: string;
   apiKey?: string;
@@ -20,15 +18,29 @@ export type PackageJson = {
   devDependencies?: object;
 };
 
+type ApplicationVariable = {
+  universalIdentifier: string;
+  value?: string;
+  description?: string;
+  isSecret?: boolean;
+};
+
+type Application = {
+  universalIdentifier: string;
+  displayName?: string;
+  description?: string;
+  icon?: string;
+  applicationVariables: Record<string, ApplicationVariable>;
+};
+
 export type AppManifest = {
-  application: ApplicationConfig;
+  application: Application;
   objects: ObjectManifest[];
   serverlessFunctions: ServerlessFunctionManifest[];
   sources: Sources;
 };
 
 export type ServerlessFunctionManifest = {
-  $schema?: string;
   universalIdentifier: string;
   name?: string;
   description?: string;
@@ -63,8 +75,6 @@ export type ServerlessFunctionTriggerManifest =
 export type Sources = { [key: string]: string | Sources };
 
 export type ObjectManifest = {
-  $schema?: string;
-  standardId: string;
   universalIdentifier: string;
   nameSingular: string;
   namePlural: string;
@@ -73,24 +83,6 @@ export type ObjectManifest = {
   description?: string;
   icon?: string;
 };
-
-export type AgentManifest = {
-  $schema?: string;
-  standardId: string;
-  universalIdentifier: string;
-  name: string;
-  label: string;
-  description?: string;
-  icon?: string;
-  prompt: string;
-  modelId: string;
-  responseFormat?: AgentResponseFormat;
-};
-
-export interface AgentResponseFormat {
-  type: 'json' | 'text';
-  schema?: Record<string, unknown>;
-}
 
 export interface ApiResponse<T = any> {
   success: boolean;
