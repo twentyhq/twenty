@@ -3,15 +3,19 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { authBypassProvidersState } from '@/client-config/states/authBypassProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
+import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ApolloError } from '@apollo/client';
+import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -40,10 +44,22 @@ export const SettingsSecurity = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const authBypassProviders = useRecoilValue(authBypassProvidersState);
+  const ssoIdentityProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
+
+  const shouldShowBypassSection = useMemo(() => {
+    const { google, microsoft, password } = authBypassProviders;
+    const hasAvailableBypassProviders = [google, microsoft, password].some(
+      Boolean,
+    );
+    const hasSsoIdentityProviders = ssoIdentityProviders.length > 0;
+
+    return hasAvailableBypassProviders && hasSsoIdentityProviders;
+  }, [authBypassProviders, ssoIdentityProviders]);
 
   const saveWorkspace = useDebouncedCallback(async (value: number) => {
     try {
@@ -120,6 +136,17 @@ export const SettingsSecurity = () => {
               <SettingsSecurityAuthProvidersOptionsList />
             </StyledContainer>
           </Section>
+          {shouldShowBypassSection && (
+            <Section>
+              <StyledContainer>
+                <H2Title
+                  title={t`SSO Bypass`}
+                  description={t`Configure fallback login methods for users with SSO bypass permissions`}
+                />
+                <SettingsSecurityAuthBypassOptionsList />
+              </StyledContainer>
+            </Section>
+          )}
           {isMultiWorkspaceEnabled && (
             <Section>
               <H2Title

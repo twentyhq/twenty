@@ -1,4 +1,5 @@
 import {
+  AuthBypassProviders,
   type ApiConfig,
   type AuthProviders,
   type Billing,
@@ -15,6 +16,7 @@ export type ClientConfig = {
   analyticsEnabled: boolean;
   api: ApiConfig;
   authProviders: AuthProviders;
+  authBypassProviders: AuthBypassProviders;
   billing: Billing;
   calendarBookingPageId?: string;
   canManageFeatureFlags: boolean;
