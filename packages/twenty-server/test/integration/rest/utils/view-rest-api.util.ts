@@ -45,7 +45,6 @@ export const findViewFilterWithRestApi = async (
 export const createTestViewWithRestApi = async (
   params: {
     objectMetadataId: string;
-    name?: string;
   } & Partial<Omit<ViewEntity, 'objectMetadataId'>>,
 ): Promise<ViewEntity> => {
   const { objectMetadataId, name, ...restParams } = params;
@@ -144,7 +143,6 @@ export const createTestViewSortWithRestApi = async (
   params: {
     viewId: string;
     fieldMetadataId: string;
-    direction?: string;
   } & Partial<Omit<ViewSortEntity, 'viewId' | 'fieldMetadataId'>>,
 ): Promise<ViewSortEntity> => {
   const { viewId, fieldMetadataId, direction, ...restParams } = params;
@@ -175,7 +173,6 @@ export const createTestViewGroupWithRestApi = async (
   params: {
     viewId: string;
     fieldMetadataId: string;
-    fieldValue?: string;
   } & Partial<Omit<ViewGroupEntity, 'viewId' | 'fieldMetadataId'>>,
 ): Promise<ViewGroupEntity> => {
   const { viewId, fieldMetadataId, fieldValue, ...restParams } = params;
@@ -207,7 +204,6 @@ export const createTestViewGroupWithRestApi = async (
 export const createTestViewFilterGroupWithRestApi = async (
   params: {
     viewId: string;
-    logicalOperator?: string;
   } & Partial<Omit<ViewFilterGroupEntity, 'viewId'>>,
 ): Promise<ViewFilterGroupEntity> => {
   const { viewId, logicalOperator, ...restParams } = params;
