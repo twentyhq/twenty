@@ -5,6 +5,7 @@ import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ButtonHotkeys } from '@ui/input/button/components/Button/internal/ButtonHotKeys';
 import { ButtonIcon } from '@ui/input/button/components/Button/internal/ButtonIcon';
 import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSoon';
+import { GRAY_SCALE_LIGHT } from '@ui/theme';
 import { useIsMobile } from '@ui/utilities';
 import { type ClickOutsideAttributes } from '@ui/utilities/types/ClickOutsideAttributes';
 import React, { useState } from 'react';
@@ -123,7 +124,7 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              color: ${!inverted ? theme.grayScale.gray1 : theme.color.blue};
+              color: ${!inverted ? GRAY_SCALE_LIGHT.gray1 : theme.color.blue};
               ${disabled
                 ? ''
                 : css`
