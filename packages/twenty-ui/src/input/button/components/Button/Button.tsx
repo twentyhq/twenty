@@ -192,10 +192,10 @@ const StyledButton = styled('button', {
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray1
+                    ? GRAY_SCALE_LIGHT.gray1
                     : theme.background.transparent.primary
                   : focus
-                    ? theme.grayScale.gray1
+                    ? GRAY_SCALE_LIGHT.gray1
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
@@ -238,10 +238,10 @@ const StyledButton = styled('button', {
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray1
+                    ? GRAY_SCALE_LIGHT.gray1
                     : theme.background.transparent.primary
                   : focus
-                    ? theme.grayScale.gray1
+                    ? GRAY_SCALE_LIGHT.gray1
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
@@ -284,10 +284,10 @@ const StyledButton = styled('button', {
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray1
+                    ? GRAY_SCALE_LIGHT.gray1
                     : theme.background.transparent.primary
                   : focus
-                    ? theme.grayScale.gray1
+                    ? GRAY_SCALE_LIGHT.gray1
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
@@ -387,7 +387,7 @@ const StyledButtonWrapper = styled.div<
                   : theme.font.color.extraLight
                 : theme.font.color.secondary;
             case 'blue':
-              return !inverted ? theme.grayScale.gray1 : theme.color.blue;
+              return !inverted ? GRAY_SCALE_LIGHT.gray1 : theme.color.blue;
             case 'danger':
               return !inverted ? theme.background.primary : theme.color.red;
           }
