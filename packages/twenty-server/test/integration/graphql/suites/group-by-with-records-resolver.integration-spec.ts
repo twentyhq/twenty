@@ -466,7 +466,7 @@ describe('basic group-by with records', () => {
           query OpportunitiesGroupBy(
             $groupBy: [OpportunityGroupByInput!]
             $filter: OpportunityFilterInput
-            $orderByForRecords: [OpportunityOrderByForRecordsWithGroupByInput!]
+            $orderByForRecords: [OpportunityOrderByInput!]
           ) {
             opportunitiesGroupBy(
               groupBy: $groupBy
