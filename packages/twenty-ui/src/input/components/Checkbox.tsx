@@ -113,8 +113,8 @@ const StyledInput = styled.input<InputProps>`
       if (!(indeterminate || isChecked)) return 'transparent';
       return disabled
         ? accent === CheckboxAccent.Blue
-          ? theme.adaptiveColors.blue3
-          : theme.adaptiveColors.orange3
+          ? theme.color.blue7
+          : theme.color.orange7
         : accent === CheckboxAccent.Blue
           ? theme.color.blue
           : theme.color.orange;
@@ -131,8 +131,8 @@ const StyledInput = styled.input<InputProps>`
         case indeterminate || isChecked:
           return disabled
             ? accent === CheckboxAccent.Blue
-              ? theme.adaptiveColors.blue3
-              : theme.adaptiveColors.orange3
+              ? theme.color.blue7
+              : theme.color.orange7
             : accent === CheckboxAccent.Blue
               ? theme.color.blue
               : theme.color.orange;

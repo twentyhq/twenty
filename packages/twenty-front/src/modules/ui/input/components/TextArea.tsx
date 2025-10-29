@@ -5,7 +5,6 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { RGBA } from 'twenty-ui/theme';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const MAX_ROWS = 5;
@@ -56,7 +55,7 @@ const StyledTextArea = styled(TextareaAutosize)`
   &:focus {
     outline: none;
     ${({ theme }) => {
-      return `box-shadow: 0px 0px 0px 3px ${RGBA(theme.color.blue, 0.1)};
+      return `box-shadow: 0px 0px 0px 3px ${theme.color.transparent.blue2};
       border-color: ${theme.color.blue};`;
     }};
   }

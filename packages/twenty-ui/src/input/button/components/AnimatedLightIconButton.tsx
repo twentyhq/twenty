@@ -33,7 +33,7 @@ const StyledButton = styled.button<
     !disabled && focus ? `1px solid ${theme.color.blue}` : 'none'};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ disabled, theme, focus }) =>
-    !disabled && focus ? `0 0 0 3px ${theme.color.blue10}` : 'none'};
+    !disabled && focus ? `0 0 0 3px ${theme.color.blue3}` : 'none'};
   color: ${({ theme, accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':

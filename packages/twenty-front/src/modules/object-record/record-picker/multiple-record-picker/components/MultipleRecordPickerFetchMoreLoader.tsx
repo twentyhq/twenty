@@ -16,12 +16,11 @@ import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilCallback } from 'recoil';
-import { GRAY_SCALE } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
   align-items: center;
   box-shadow: none;
-  color: ${GRAY_SCALE.gray40};
+  color: ${({ theme }) => theme.grayScale.gray9};
   display: flex;
   height: 32px;
   margin-left: ${({ theme }) => theme.spacing(8)};
