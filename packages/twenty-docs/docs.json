@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/schema.json",
   "name": "Twenty Documentation",
-  "theme": "mint",
+  "theme": "almond",
   "logo": {
     "light": "/logo.svg",
     "dark": "/logo.svg"
@@ -16,8 +16,11 @@
     "tabs": [
       {
         "tab": "User Guide",
-        "href": "/user-guide/introduction",
         "groups": [
+          {
+            "group": "Overview",
+            "pages": ["user-guide/introduction"]
+          },
           {
             "group": "Getting Started",
             "icon": "rocket",
@@ -129,8 +132,11 @@
       },
       {
         "tab": "Developers",
-        "href": "/developers/introduction",
         "groups": [
+          {
+            "group": "Overview",
+            "pages": ["developers/introduction"]
+          },
           {
             "group": "Getting Started",
             "icon": "rocket",
