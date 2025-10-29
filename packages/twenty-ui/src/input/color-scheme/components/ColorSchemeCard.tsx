@@ -26,10 +26,10 @@ const StyledColorSchemeBackground = styled.div<
   border: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${GRAY_SCALE_DARK.gray5};`;
+        return `1px solid ${GRAY_SCALE_DARK.gray6};`;
       case 'Light':
       default:
-        return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
+        return `1px solid ${GRAY_SCALE_LIGHT.gray6};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -50,7 +50,7 @@ const StyledColorSchemeContent = styled(motion.div)<
   background: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return GRAY_SCALE_DARK.gray4;
+        return GRAY_SCALE_DARK.gray1;
       case 'Light':
         return GRAY_SCALE_LIGHT.gray1;
     }
@@ -59,27 +59,27 @@ const StyledColorSchemeContent = styled(motion.div)<
   border-left: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${GRAY_SCALE_DARK.gray12};`;
+        return `1px solid ${GRAY_SCALE_DARK.gray6};`;
       case 'Light':
       default:
-        return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
+        return `1px solid ${GRAY_SCALE_LIGHT.gray6};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
   border-top: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${GRAY_SCALE_DARK.gray12};`;
+        return `1px solid ${GRAY_SCALE_DARK.gray6};`;
       case 'Light':
       default:
-        return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
+        return `1px solid ${GRAY_SCALE_LIGHT.gray6};`;
     }
   }};
   box-sizing: border-box;
   color: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return GRAY_SCALE_DARK.gray11;
+        return GRAY_SCALE_DARK.gray12;
       case 'Light':
       default:
         return GRAY_SCALE_LIGHT.gray12;
