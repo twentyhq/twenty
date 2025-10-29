@@ -1,6 +1,7 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type IconComponent } from '@ui/display';
+import { GRAY_SCALE_LIGHT } from '@ui/theme';
 import React from 'react';
 
 export type IconButtonSize = 'medium' | 'small';
@@ -70,7 +71,7 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.accent.tertiary}`
                 : 'none'};
-              color: ${theme.grayScale.gray1};
+              color: ${GRAY_SCALE_LIGHT.gray1};
               opacity: ${disabled ? 0.24 : 1};
 
               ${disabled
@@ -96,7 +97,7 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.color.red3}`
                 : 'none'};
-              color: ${theme.grayScale.gray1};
+              color: ${GRAY_SCALE_LIGHT.gray1};
               opacity: ${disabled ? 0.24 : 1};
 
               ${disabled
