@@ -14932,6 +14932,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/colors@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@radix-ui/colors@npm:3.0.0"
+  checksum: 10c0/612c6bb4efe987f2d49aaca2f785687d08150da59a248328bc2b4e187ece4ef731c1dc5c6a9430fffcac4af9e65cf2f89ceb9806f8809940c9eb238b79d2cf2f
+  languageName: node
+  linkType: hard
+
 "@radix-ui/primitive@npm:1.1.0":
   version: 1.1.0
   resolution: "@radix-ui/primitive@npm:1.1.0"
@@ -53021,6 +53028,7 @@ __metadata:
     "@nx/vite": "npm:21.3.11"
     "@nx/web": "npm:21.3.11"
     "@playwright/test": "npm:^1.46.0"
+    "@radix-ui/colors": "npm:^3.0.0"
     "@sentry/profiling-node": "npm:^9.26.0"
     "@sentry/react": "npm:^9.26.0"
     "@sentry/types": "npm:^8"

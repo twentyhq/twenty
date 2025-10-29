@@ -38,7 +38,7 @@ const StyledGridContainer = styled.div`
   user-select: none;
 
   .react-grid-placeholder {
-    background: ${({ theme }) => theme.adaptiveColors.blue3} !important;
+    background: ${({ theme }) => theme.color.blue7} !important;
 
     border-radius: ${({ theme }) => theme.border.radius.md};
   }

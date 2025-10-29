@@ -8,7 +8,7 @@ const StyledIconContainer = styled.div<{ background: string }>`
   align-items: center;
   background: ${({ background }) => background};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.grayScale.gray0};
+  color: ${({ theme }) => theme.grayScale.gray1};
   display: flex;
   flex-shrink: 0;
   justify-content: center;
