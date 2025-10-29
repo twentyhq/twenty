@@ -1,0 +1,135 @@
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
+import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
+import { ViewVisibility } from '@/views/types/ViewVisibility';
+import { useTheme } from '@emotion/react';
+import { useLingui } from '@lingui/react/macro';
+import {
+  IconChevronLeft,
+  IconCircle,
+  IconCircleDashed,
+  IconCopy,
+} from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+
+export const ObjectOptionsDropdownVisibilityContent = () => {
+  const { t } = useLingui();
+  const theme = useTheme();
+  const { resetContent } = useObjectOptionsDropdown();
+  const { currentView } = useGetCurrentViewOnly();
+  const { updateCurrentView } = useUpdateCurrentView();
+  const { enqueueSuccessSnackBar } = useSnackBar();
+
+  const selectedItemId = useRecoilComponentValue(
+    selectedItemIdComponentState,
+    OBJECT_OPTIONS_DROPDOWN_ID,
+  );
+
+  const selectableItemIdArray = [
+    ViewVisibility.WORKSPACE,
+    ViewVisibility.UNLISTED,
+  ];
+
+  const handleVisibilityChange = (visibility: ViewVisibility) => {
+    if (!currentView) return;
+    updateCurrentView({
+      visibility,
+    });
+    resetContent();
+  };
+
+  const currentVisibility = currentView?.visibility ?? ViewVisibility.WORKSPACE;
+
+  return (
+    <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
+      <DropdownMenuHeader
+        StartComponent={
+          <DropdownMenuHeaderLeftComponent
+            onClick={resetContent}
+            Icon={IconChevronLeft}
+          />
+        }
+      >
+        {t`Sharing`}
+      </DropdownMenuHeader>
+      <DropdownMenuItemsContainer>
+        <SelectableList
+          selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
+          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+          selectableItemIdArray={selectableItemIdArray}
+        >
+          <SelectableListItem
+            itemId={ViewVisibility.WORKSPACE}
+            onEnter={() => handleVisibilityChange(ViewVisibility.WORKSPACE)}
+          >
+            <MenuItemSelect
+              LeftIcon={IconCircle}
+              text={t`Workspace`}
+              contextualText={t`Everyone`}
+              selected={currentVisibility === ViewVisibility.WORKSPACE}
+              focused={selectedItemId === ViewVisibility.WORKSPACE}
+              onClick={() => handleVisibilityChange(ViewVisibility.WORKSPACE)}
+            />
+          </SelectableListItem>
+          <SelectableListItem
+            itemId={ViewVisibility.UNLISTED}
+            onEnter={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
+          >
+            <MenuItemSelect
+              LeftIcon={IconCircleDashed}
+              text={t`Unlisted`}
+              contextualText={t`Share by link`}
+              selected={currentVisibility === ViewVisibility.UNLISTED}
+              focused={selectedItemId === ViewVisibility.UNLISTED}
+              onClick={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
+            />
+          </SelectableListItem>
+          <SelectableListItem
+            itemId="Copy view link"
+            onEnter={() => {
+              const currentUrl = window.location.href;
+              navigator.clipboard.writeText(currentUrl);
+              enqueueSuccessSnackBar({
+                message: t`Link copied to clipboard`,
+                options: {
+                  icon: <IconCopy size={theme.icon.size.md} />,
+                  duration: 2000,
+                },
+              });
+            }}
+          >
+            <DropdownMenuSeparator />
+            <MenuItem
+              focused={selectedItemId === 'Copy view link'}
+              onClick={() => {
+                const currentUrl = window.location.href;
+                navigator.clipboard.writeText(currentUrl);
+                enqueueSuccessSnackBar({
+                  message: t`Link copied to clipboard`,
+                  options: {
+                    icon: <IconCopy size={theme.icon.size.md} />,
+                    duration: 2000,
+                  },
+                });
+              }}
+              LeftIcon={IconCopy}
+              text={t`Copy view link`}
+            />
+          </SelectableListItem>
+        </SelectableList>
+      </DropdownMenuItemsContainer>
+    </DropdownContent>
+  );
+};

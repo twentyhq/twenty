@@ -13,7 +13,7 @@ export const convertCoreViewVisibilityToViewVisibility = (
     ViewVisibility
   > = {
     [CoreViewVisibility.WORKSPACE]: ViewVisibility.WORKSPACE,
-    [CoreViewVisibility.USER]: ViewVisibility.USER,
+    [CoreViewVisibility.UNLISTED]: ViewVisibility.UNLISTED,
   };
 
   return (

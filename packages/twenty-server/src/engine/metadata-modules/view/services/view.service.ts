@@ -11,11 +11,11 @@ import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modul
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import {
-    ViewException,
-    ViewExceptionCode,
-    ViewExceptionMessageKey,
-    generateViewExceptionMessage,
-    generateViewUserFriendlyExceptionMessage,
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -235,15 +235,15 @@ export class ViewService {
 
   filterViewsByVisibility<T extends ViewEntity>(
     views: T[],
-    userWorkspaceId: string | undefined,
+    currentUserWorkspaceId?: string,
   ): T[] {
     return views.filter((view) => {
       if (view.visibility === ViewVisibility.WORKSPACE) {
         return true;
       }
 
-      if (view.visibility === ViewVisibility.USER) {
-        return view.createdById === userWorkspaceId;
+      if (view.visibility === ViewVisibility.UNLISTED) {
+        return view.createdById === currentUserWorkspaceId;
       }
 
       return false;

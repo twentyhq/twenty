@@ -9,6 +9,7 @@ import {
   ViewKey as CoreViewKey,
   ViewOpenRecordIn as CoreViewOpenRecordIn,
   ViewType as CoreViewType,
+  ViewVisibility as CoreViewVisibility,
 } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -124,6 +125,8 @@ export const mockedCoreViewsData: CoreViewWithRelations[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: CoreViewVisibility.WORKSPACE,
+    createdById: null,
     __typename: 'CoreView',
   },
   {
@@ -143,6 +146,8 @@ export const mockedCoreViewsData: CoreViewWithRelations[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: CoreViewVisibility.WORKSPACE,
+    createdById: null,
     __typename: 'CoreView',
   },
   {
@@ -162,6 +167,8 @@ export const mockedCoreViewsData: CoreViewWithRelations[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: CoreViewVisibility.WORKSPACE,
+    createdById: null,
     __typename: 'CoreView',
   },
   {
@@ -181,6 +188,8 @@ export const mockedCoreViewsData: CoreViewWithRelations[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: CoreViewVisibility.WORKSPACE,
+    createdById: null,
     __typename: 'CoreView',
   },
 ];

@@ -6,18 +6,15 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { type View } from '@/views/types/View';
-import { ViewVisibility } from '@/views/types/ViewVisibility';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import {
   IconHeart,
   IconLock,
   IconPencil,
   IconTrash,
-  IconUser,
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -40,7 +37,6 @@ export const ViewPickerOptionDropdown = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
-  const [isHovered, setIsHovered] = useState(false);
   const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetRecoilComponentState(
     viewPickerReferenceViewIdComponentState,
@@ -71,22 +67,15 @@ export const ViewPickerOptionDropdown = ({
     closeDropdown(dropdownId);
   };
 
-  // Determine visibility icon (only show for non-public views when not hovered)
   const getVisibilityIcon = () => {
-    if (isHovered) {
-      return null;
-    }
-
     if (isIndexView) {
       return IconLock;
     }
 
-    if (view.visibility === ViewVisibility.USER) {
-      return IconUser;
-    }
-
     return null;
   };
+
+  const shouldShowIconAlways = isIndexView;
 
   return (
     <>
@@ -94,12 +83,8 @@ export const ViewPickerOptionDropdown = ({
         text={view.name}
         LeftIcon={getIcon(view.icon)}
         onClick={() => handleViewSelect(view.id)}
-        isIconDisplayedOnHoverOnly={!isIndexView}
+        isIconDisplayedOnHoverOnly={!shouldShowIconAlways}
         RightIcon={getVisibilityIcon()}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => {
-          setIsHovered(false);
-        }}
         dropdownPlacement="bottom-start"
         dropdownId={`view-picker-options-${view.id}`}
         dropdownContent={

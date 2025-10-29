@@ -4367,8 +4367,8 @@ export enum ViewType {
 }
 
 export enum ViewVisibility {
-  PRIVATE = 'PRIVATE',
-  PUBLIC = 'PUBLIC'
+  UNLISTED = 'UNLISTED',
+  WORKSPACE = 'WORKSPACE'
 }
 
 export type Webhook = {

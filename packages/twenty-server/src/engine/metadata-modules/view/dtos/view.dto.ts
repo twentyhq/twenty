@@ -100,7 +100,6 @@ export class ViewDTO {
 
   @Field(() => ViewVisibility, {
     nullable: false,
-    defaultValue: ViewVisibility.WORKSPACE,
   })
   visibility: ViewVisibility;
 

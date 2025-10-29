@@ -2,6 +2,7 @@ import { type GraphQLView } from '@/views/types/GraphQLView';
 import { convertViewKeyToCore } from '@/views/utils/convertViewKeyToCore';
 import { convertViewOpenRecordInToCore } from '@/views/utils/convertViewOpenRecordInToCore';
 import { convertViewTypeToCore } from '@/views/utils/convertViewTypeToCore';
+import { convertViewVisibilityToCore } from '@/views/utils/convertViewVisibilityToCore';
 import { isDefined } from 'twenty-shared/utils';
 import { type UpdateViewInput } from '~/generated/graphql';
 
@@ -16,6 +17,9 @@ export const convertUpdateViewInputToCore = (
     : undefined;
   const convertedType = isDefined(view.type)
     ? convertViewTypeToCore(view.type)
+    : undefined;
+  const convertedVisibility = isDefined(view.visibility)
+    ? convertViewVisibilityToCore(view.visibility)
     : undefined;
 
   return {
@@ -45,5 +49,6 @@ export const convertUpdateViewInputToCore = (
     ...(isDefined(view.calendarFieldMetadataId) && {
       calendarFieldMetadataId: view.calendarFieldMetadataId,
     }),
+    ...(isDefined(convertedVisibility) && { visibility: convertedVisibility }),
   };
 };

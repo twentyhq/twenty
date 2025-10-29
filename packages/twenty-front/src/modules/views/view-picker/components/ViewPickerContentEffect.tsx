@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { viewTypeIconMapping } from '@/views/types/ViewType';
 import { ViewVisibility } from '@/views/types/ViewVisibility';
+import { PermissionFlagType } from '~/generated/graphql';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -71,6 +73,7 @@ export const ViewPickerContentEffect = () => {
 
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
+  const hasViewPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   useEffect(() => {
     if (
@@ -83,7 +86,11 @@ export const ViewPickerContentEffect = () => {
 
       if (viewPickerMode === 'create-empty') {
         setViewPickerSelectedIcon(defaultIcon);
-        setViewPickerVisibility(ViewVisibility.WORKSPACE);
+        setViewPickerVisibility(
+          hasViewPermission
+            ? ViewVisibility.WORKSPACE
+            : ViewVisibility.UNLISTED,
+        );
       } else {
         setViewPickerSelectedIcon(referenceView.icon);
         setViewPickerVisibility(referenceView.visibility);
@@ -101,6 +108,7 @@ export const ViewPickerContentEffect = () => {
     viewPickerIsDirty,
     viewPickerMode,
     viewPickerType,
+    hasViewPermission,
   ]);
 
   useEffect(() => {

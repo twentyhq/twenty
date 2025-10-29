@@ -1,12 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
-    Args,
-    Context,
-    Mutation,
-    Parent,
-    Query,
-    ResolveField,
-    Resolver,
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
@@ -130,7 +130,6 @@ export class ViewResolver {
   async getCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO | null> {
     const view = await this.viewService.findById(id, workspace.id);
 
@@ -138,12 +137,8 @@ export class ViewResolver {
       return null;
     }
 
-    const filteredViews = this.viewService.filterViewsByVisibility(
-      [view],
-      userWorkspaceId,
-    );
-
-    return filteredViews.length > 0 ? filteredViews[0] : null;
+    // Do not apply list visibility filtering here: unlisted views are accessible by link
+    return view;
   }
 
   @Mutation(() => ViewDTO)
