@@ -35,6 +35,8 @@ describe('View Filter Group Resolver', () => {
 
   let testObjectMetadataId: string;
 
+  let createdViewFilterGroup: string[] = [];
+
   beforeAll(async () => {
     const {
       data: {
@@ -80,6 +82,16 @@ describe('View Filter Group Resolver', () => {
   });
 
   afterEach(async () => {
+    // Clean up all created view filter groups
+    for (const filterGroupId of createdViewFilterGroup) {
+      const destroyOperation = destroyViewFilterGroupOperationFactory({
+        viewFilterGroupId: filterGroupId,
+      });
+
+      await makeGraphqlAPIRequest(destroyOperation);
+    }
+    createdViewFilterGroup = [];
+
     await destroyOneCoreView({
       viewId: testViewId,
       expectToFail: false,
@@ -105,7 +117,11 @@ describe('View Filter Group Resolver', () => {
         data: filterGroupData,
       });
 
-      await makeGraphqlAPIRequest(createOperation);
+      const createResponse = await makeGraphqlAPIRequest(createOperation);
+
+      createdViewFilterGroup.push(
+        createResponse.body.data.createCoreViewFilterGroup.id,
+      );
 
       const getOperation = findViewFilterGroupsOperationFactory();
       const response = await makeGraphqlAPIRequest(getOperation);
@@ -126,7 +142,11 @@ describe('View Filter Group Resolver', () => {
         data: filterGroupData,
       });
 
-      await makeGraphqlAPIRequest(createOperation);
+      const createResponse = await makeGraphqlAPIRequest(createOperation);
+
+      createdViewFilterGroup.push(
+        createResponse.body.data.createCoreViewFilterGroup.id,
+      );
 
       const getOperation = findViewFilterGroupsOperationFactory({
         viewId: testViewId,
@@ -154,6 +174,8 @@ describe('View Filter Group Resolver', () => {
       const parentResponse = await makeGraphqlAPIRequest(parentOperation);
       const parentId = parentResponse.body.data.createCoreViewFilterGroup.id;
 
+      createdViewFilterGroup.push(parentId);
+
       const childData = createViewFilterGroupData(testViewId, {
         parentViewFilterGroupId: parentId,
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
@@ -162,7 +184,11 @@ describe('View Filter Group Resolver', () => {
         data: childData,
       });
 
-      await makeGraphqlAPIRequest(childOperation);
+      const childResponse = await makeGraphqlAPIRequest(childOperation);
+
+      createdViewFilterGroup.push(
+        childResponse.body.data.createCoreViewFilterGroup.id,
+      );
 
       const getOperation = findViewFilterGroupsOperationFactory({
         viewId: testViewId,
@@ -213,6 +239,8 @@ describe('View Filter Group Resolver', () => {
       const filterGroupId =
         createResponse.body.data.createCoreViewFilterGroup.id;
 
+      createdViewFilterGroup.push(filterGroupId);
+
       const getOperation = findViewFilterGroupOperationFactory({
         viewFilterGroupId: filterGroupId,
       });
@@ -241,6 +269,10 @@ describe('View Filter Group Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
+
+      createdViewFilterGroup.push(
+        response.body.data.createCoreViewFilterGroup.id,
+      );
       assertViewFilterGroupStructure(
         response.body.data.createCoreViewFilterGroup,
         {
@@ -260,6 +292,10 @@ describe('View Filter Group Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
+
+      createdViewFilterGroup.push(
+        response.body.data.createCoreViewFilterGroup.id,
+      );
       assertViewFilterGroupStructure(
         response.body.data.createCoreViewFilterGroup,
         {
@@ -278,6 +314,10 @@ describe('View Filter Group Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
+
+      createdViewFilterGroup.push(
+        response.body.data.createCoreViewFilterGroup.id,
+      );
       assertViewFilterGroupStructure(
         response.body.data.createCoreViewFilterGroup,
         {
@@ -296,6 +336,8 @@ describe('View Filter Group Resolver', () => {
       const parentResponse = await makeGraphqlAPIRequest(parentOperation);
       const parentId = parentResponse.body.data.createCoreViewFilterGroup.id;
 
+      createdViewFilterGroup.push(parentId);
+
       const childData = createViewFilterGroupData(testViewId, {
         parentViewFilterGroupId: parentId,
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
@@ -306,6 +348,10 @@ describe('View Filter Group Resolver', () => {
       const childResponse = await makeGraphqlAPIRequest(childOperation);
 
       assertGraphQLSuccessfulResponse(childResponse);
+
+      createdViewFilterGroup.push(
+        childResponse.body.data.createCoreViewFilterGroup.id,
+      );
       assertViewFilterGroupStructure(
         childResponse.body.data.createCoreViewFilterGroup,
         {
@@ -327,6 +373,8 @@ describe('View Filter Group Resolver', () => {
       const createResponse = await makeGraphqlAPIRequest(createOperation);
       const filterGroupId =
         createResponse.body.data.createCoreViewFilterGroup.id;
+
+      createdViewFilterGroup.push(filterGroupId);
 
       const updateInput = updateViewFilterGroupData({
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
@@ -354,6 +402,8 @@ describe('View Filter Group Resolver', () => {
       const parentResponse = await makeGraphqlAPIRequest(parentOperation);
       const parentId = parentResponse.body.data.createCoreViewFilterGroup.id;
 
+      createdViewFilterGroup.push(parentId);
+
       const childData = createViewFilterGroupData(testViewId, {
         logicalOperator: ViewFilterGroupLogicalOperator.OR,
       });
@@ -362,6 +412,8 @@ describe('View Filter Group Resolver', () => {
       });
       const childResponse = await makeGraphqlAPIRequest(childOperation);
       const childId = childResponse.body.data.createCoreViewFilterGroup.id;
+
+      createdViewFilterGroup.push(childId);
 
       const updateInput = updateViewFilterGroupData({
         parentViewFilterGroupId: parentId,
@@ -412,6 +464,8 @@ describe('View Filter Group Resolver', () => {
       const filterGroupId =
         createResponse.body.data.createCoreViewFilterGroup.id;
 
+      createdViewFilterGroup.push(filterGroupId);
+
       const deleteOperation = deleteViewFilterGroupOperationFactory({
         viewFilterGroupId: filterGroupId,
       });
@@ -456,6 +510,8 @@ describe('View Filter Group Resolver', () => {
       const createResponse = await makeGraphqlAPIRequest(createOperation);
       const filterGroupId =
         createResponse.body.data.createCoreViewFilterGroup.id;
+
+      createdViewFilterGroup.push(filterGroupId);
 
       const destroyOperation = destroyViewFilterGroupOperationFactory({
         viewFilterGroupId: filterGroupId,

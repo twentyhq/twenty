@@ -19,3 +19,4 @@ export const findCoreViewQueryFactory = ({
     id: viewId,
   },
 });
+
