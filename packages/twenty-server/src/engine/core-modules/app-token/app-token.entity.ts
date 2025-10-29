@@ -52,7 +52,7 @@ export class AppTokenEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @Field()
