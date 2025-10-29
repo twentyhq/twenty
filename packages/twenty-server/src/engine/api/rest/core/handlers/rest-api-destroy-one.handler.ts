@@ -3,13 +3,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
-import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
-
 import { CommonDestroyOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service';
-import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
+import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiDestroyOneHandler extends RestApiBaseHandler {
@@ -19,7 +17,7 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
     super();
   }
 
-  async commonHandle(request: AuthenticatedRequest) {
+  async handle(request: AuthenticatedRequest) {
     try {
       const { id } = this.parseRequestArgs(request);
 
@@ -43,7 +41,7 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
         objectMetadataItemWithFieldMaps.nameSingular,
       );
     } catch (error) {
-      workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
@@ -61,38 +59,5 @@ export class RestApiDestroyOneHandler extends RestApiBaseHandler {
     return {
       id,
     };
-  }
-
-  async handle(request: AuthenticatedRequest) {
-    const { id: recordId } = parseCorePath(request);
-
-    if (!recordId) {
-      throw new BadRequestException('Record ID not found');
-    }
-
-    const { objectMetadata, repository, restrictedFields } =
-      await this.getRepositoryAndMetadataOrFail(request);
-
-    const selectOptions = getAllSelectableFields({
-      restrictedFields,
-      objectMetadata,
-    });
-
-    const recordToDelete = await repository.findOneOrFail({
-      where: { id: recordId },
-      select: selectOptions,
-    });
-
-    const columnsToReturnForDelete: string[] = [];
-
-    await repository.delete(recordId, undefined, columnsToReturnForDelete);
-
-    return this.formatResult({
-      operation: 'delete',
-      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
-      data: {
-        id: recordToDelete.id,
-      },
-    });
   }
 }
