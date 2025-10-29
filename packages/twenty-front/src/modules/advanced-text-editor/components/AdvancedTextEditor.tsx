@@ -21,8 +21,6 @@ const StyledEditorContainer = styled.div<{
     width: 100%;
     height: 100%;
     min-height: ${({ minHeight }) => minHeight}px;
-    max-width: ${({ maxWidth }) => maxWidth}px;
-    margin: 0 auto;
   }
 
   .tiptap {
@@ -56,15 +54,15 @@ const StyledEditorContainer = styled.div<{
     }
 
     h1 {
-      font-size: 36px;
+      font-size: 32px;
     }
 
     h2 {
-      font-size: 30px;
+      font-size: 24px;
     }
 
     h3 {
-      font-size: 24px;
+      font-size: 16px;
     }
 
     li {

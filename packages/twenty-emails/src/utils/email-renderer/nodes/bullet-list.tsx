@@ -6,7 +6,7 @@ export const bulletList = (node: JSONContent): ReactNode => {
   return (
     <ul
       style={{
-        marginBottom: '8px',
+        marginBottom: '16px',
         lineHeight: '1.5',
       }}
     >

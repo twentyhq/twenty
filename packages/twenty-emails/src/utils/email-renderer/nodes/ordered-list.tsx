@@ -6,7 +6,7 @@ export const orderedList = (node: JSONContent): ReactNode => {
   return (
     <ol
       style={{
-        marginBottom: '8px',
+        marginBottom: '16px',
         lineHeight: '1.5',
       }}
     >
