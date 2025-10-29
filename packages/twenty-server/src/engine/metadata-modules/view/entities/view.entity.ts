@@ -24,7 +24,6 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
-import { ViewRoleEntity } from 'src/engine/metadata-modules/view/entities/view-role.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
@@ -158,7 +157,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     type: 'enum',
     enum: Object.values(ViewVisibility),
     nullable: false,
-    default: ViewVisibility.PUBLIC,
+    default: ViewVisibility.WORKSPACE,
   })
   visibility: ViewVisibility;
 
@@ -194,7 +193,4 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     (viewFilterGroup) => viewFilterGroup.view,
   )
   viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
-
-  @OneToMany(() => ViewRoleEntity, (viewRole) => viewRole.view)
-  viewRoles: Relation<ViewRoleEntity[]>;
 }

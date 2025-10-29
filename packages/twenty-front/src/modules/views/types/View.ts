@@ -10,16 +10,6 @@ import { type ViewType } from '@/views/types/ViewType';
 import { type ViewVisibility } from '@/views/types/ViewVisibility';
 import { type ViewCalendarLayout } from '~/generated/graphql';
 
-export type ViewRole = {
-  id: string;
-  roleId: string;
-  role?: {
-    id: string;
-    label: string;
-    icon?: string;
-  };
-};
-
 export type View = {
   id: string;
   name: string;
@@ -46,6 +36,5 @@ export type View = {
   anyFieldFilterValue?: string | null;
   visibility: ViewVisibility;
   createdById?: string | null;
-  viewRoles?: ViewRole[];
   __typename: 'View';
 };

@@ -6,6 +6,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { type View } from '@/views/types/View';
+import { ViewVisibility } from '@/views/types/ViewVisibility';
 import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDeleteViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
@@ -16,13 +17,14 @@ import {
   IconLock,
   IconPencil,
   IconTrash,
+  IconUser,
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
-  view: Pick<View, 'id' | 'name' | 'icon' | '__typename'>;
+  view: Pick<View, 'id' | 'name' | 'icon' | '__typename' | 'visibility'>;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
 };
@@ -69,6 +71,23 @@ export const ViewPickerOptionDropdown = ({
     closeDropdown(dropdownId);
   };
 
+  // Determine visibility icon (only show for non-public views when not hovered)
+  const getVisibilityIcon = () => {
+    if (isHovered) {
+      return null;
+    }
+
+    if (isIndexView) {
+      return IconLock;
+    }
+
+    if (view.visibility === ViewVisibility.USER) {
+      return IconUser;
+    }
+
+    return null;
+  };
+
   return (
     <>
       <MenuItemWithOptionDropdown
@@ -76,7 +95,7 @@ export const ViewPickerOptionDropdown = ({
         LeftIcon={getIcon(view.icon)}
         onClick={() => handleViewSelect(view.id)}
         isIconDisplayedOnHoverOnly={!isIndexView}
-        RightIcon={!isHovered && isIndexView ? IconLock : null}
+        RightIcon={getVisibilityIcon()}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);

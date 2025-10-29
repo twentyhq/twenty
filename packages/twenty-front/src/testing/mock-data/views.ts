@@ -4,6 +4,7 @@ import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
+import { ViewVisibility } from '@/views/types/ViewVisibility';
 import {
   ViewKey as CoreViewKey,
   ViewOpenRecordIn as CoreViewOpenRecordIn,
@@ -37,6 +38,7 @@ export const mockedViewsData: View[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: ViewVisibility.WORKSPACE,
     __typename: 'View',
   },
   {
@@ -57,6 +59,7 @@ export const mockedViewsData: View[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: ViewVisibility.WORKSPACE,
     __typename: 'View',
   },
   {
@@ -77,6 +80,7 @@ export const mockedViewsData: View[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: ViewVisibility.WORKSPACE,
     __typename: 'View',
   },
   {
@@ -97,6 +101,7 @@ export const mockedViewsData: View[] = [
     viewFields: [],
     viewFilters: [],
     viewSorts: [],
+    visibility: ViewVisibility.WORKSPACE,
     __typename: 'View',
   },
 ];

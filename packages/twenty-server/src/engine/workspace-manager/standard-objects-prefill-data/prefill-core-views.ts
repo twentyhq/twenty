@@ -146,7 +146,7 @@ const createCoreViews = async (
       kanbanAggregateOperationFieldMetadataId,
       workspaceId,
       anyFieldFilterValue: null,
-      visibility: ViewVisibility.PUBLIC,
+      visibility: ViewVisibility.WORKSPACE,
     }),
   );
 

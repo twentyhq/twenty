@@ -8,7 +8,6 @@ import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-f
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
-import { ViewRoleDTO } from 'src/engine/metadata-modules/view/dtos/view-role.dto';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
@@ -101,13 +100,10 @@ export class ViewDTO {
 
   @Field(() => ViewVisibility, {
     nullable: false,
-    defaultValue: ViewVisibility.PUBLIC,
+    defaultValue: ViewVisibility.WORKSPACE,
   })
   visibility: ViewVisibility;
 
   @Field(() => UUIDScalarType, { nullable: true })
   createdById?: string | null;
-
-  @Field(() => [ViewRoleDTO])
-  viewRoles?: ViewRoleDTO[];
 }

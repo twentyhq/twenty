@@ -81,6 +81,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           kanbanFieldMetadataId,
           calendarFieldMetadataId,
           type,
+          visibility,
         }: Partial<
           Pick<
             GraphQLView,
@@ -90,6 +91,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             | 'kanbanFieldMetadataId'
             | 'calendarFieldMetadataId'
             | 'type'
+            | 'visibility'
           >
         >,
         shouldCopyFiltersAndSortsAndAggregate?: boolean,
@@ -146,6 +148,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               viewType === ViewType.Calendar
                 ? calendarFieldMetadataId
                 : undefined,
+            visibility: visibility,
           },
         });
 

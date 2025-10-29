@@ -1,12 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
+    Args,
+    Context,
+    Mutation,
+    Parent,
+    Query,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
@@ -24,6 +24,7 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -37,6 +38,7 @@ import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -55,6 +57,7 @@ export class ViewResolver {
     private readonly i18nService: I18nService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewV2Service: ViewV2Service,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   @ResolveField(() => String)
@@ -105,25 +108,42 @@ export class ViewResolver {
   @Query(() => [ViewDTO])
   async getCoreViews(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
-  ): Promise<ViewDTO[]> {
+  ): Promise<ViewEntity[]> {
+    let views: ViewEntity[];
+
     if (objectMetadataId) {
-      return this.viewService.findByObjectMetadataId(
+      views = await this.viewService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
       );
+    } else {
+      views = await this.viewService.findByWorkspaceId(workspace.id);
     }
 
-    return this.viewService.findByWorkspaceId(workspace.id);
+    return this.viewService.filterViewsByVisibility(views, userWorkspaceId);
   }
 
   @Query(() => ViewDTO, { nullable: true })
   async getCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO | null> {
-    return this.viewService.findById(id, workspace.id);
+    const view = await this.viewService.findById(id, workspace.id);
+
+    if (!view) {
+      return null;
+    }
+
+    const filteredViews = this.viewService.filterViewsByVisibility(
+      [view],
+      userWorkspaceId,
+    );
+
+    return filteredViews.length > 0 ? filteredViews[0] : null;
   }
 
   @Mutation(() => ViewDTO)
@@ -143,24 +163,15 @@ export class ViewResolver {
       return await this.viewV2Service.createOne({
         createViewInput: input,
         workspaceId: workspace.id,
+        createdById: userWorkspaceId,
       });
     }
 
-    const { roleIds, ...viewData } = input;
-
     const createdView = await this.viewService.create({
-      ...viewData,
+      ...input,
       workspaceId: workspace.id,
       createdById: userWorkspaceId,
     });
-
-    if (roleIds) {
-      await this.viewService.syncViewRoles(
-        createdView.id,
-        workspace.id,
-        roleIds,
-      );
-    }
 
     return createdView;
   }
@@ -185,17 +196,7 @@ export class ViewResolver {
       });
     }
 
-    const { roleIds, ...updateData } = input;
-
-    const updatedView = await this.viewService.update(
-      id,
-      workspace.id,
-      updateData,
-    );
-
-    if (isDefined(roleIds)) {
-      await this.viewService.syncViewRoles(updatedView.id, workspace.id, roleIds);
-    }
+    const updatedView = await this.viewService.update(id, workspace.id, input);
 
     return updatedView;
   }

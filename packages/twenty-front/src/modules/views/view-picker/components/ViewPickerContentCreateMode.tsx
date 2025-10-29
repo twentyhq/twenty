@@ -16,6 +16,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
+import { ViewVisibility } from '@/views/types/ViewVisibility';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
@@ -36,6 +37,7 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
+import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
@@ -87,6 +89,9 @@ export const ViewPickerContentCreateMode = () => {
   const [viewPickerType, setViewPickerType] = useRecoilComponentState(
     viewPickerTypeComponentState,
   );
+
+  const [viewPickerVisibility, setViewPickerVisibility] =
+    useRecoilComponentState(viewPickerVisibilityComponentState);
 
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
 
@@ -192,6 +197,22 @@ export const ViewPickerContentCreateMode = () => {
               label: t(option.label),
             }))}
             dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
+          />
+        </ViewPickerSelectContainer>
+        <ViewPickerSelectContainer>
+          <Select<ViewVisibility>
+            label={t`Who can see this`}
+            fullWidth
+            value={viewPickerVisibility}
+            onChange={(value) => {
+              setViewPickerIsDirty(true);
+              setViewPickerVisibility(value);
+            }}
+            options={[
+              { value: ViewVisibility.WORKSPACE, label: t`Everyone` },
+              { value: ViewVisibility.USER, label: t`Only me` },
+            ]}
+            dropdownId="view-picker-visibility-dropdown"
           />
         </ViewPickerSelectContainer>
         {viewPickerType === ViewType.Kanban && (

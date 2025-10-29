@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
@@ -88,10 +87,4 @@ export class UpdateViewInput {
   @IsEnum(ViewVisibility)
   @Field(() => ViewVisibility, { nullable: true })
   visibility?: ViewVisibility;
-
-  @IsOptional()
-  @IsArray()
-  @IsUUID('4', { each: true })
-  @Field(() => [UUIDScalarType], { nullable: true })
-  roleIds?: string[];
 }
