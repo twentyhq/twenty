@@ -9,6 +9,7 @@ import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
+import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
@@ -117,6 +118,11 @@ const PageLayoutTabListPlayground = ({
 
   return (
     <StyledContainer>
+      <PageLayoutTabListEffect
+        tabs={sortedTabs}
+        componentInstanceId="page-layout-tab-list-story"
+      />
+
       <PageLayoutTabList
         tabs={sortedTabs}
         componentInstanceId="page-layout-tab-list-story"

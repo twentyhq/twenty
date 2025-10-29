@@ -15,6 +15,7 @@ import {
   variables,
 } from '../__mocks__/useFieldMetadataItem';
 
+import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedUserData } from '~/testing/mock-data/users';
 import {
@@ -25,8 +26,11 @@ import {
 jest.mock('@/object-metadata/hooks/useUpdateOneFieldMetadataItem', () => ({
   useUpdateOneFieldMetadataItem: () => ({
     updateOneFieldMetadataItem: jest.fn().mockResolvedValue({
-      data: {
-        updateOneField: responseData.default,
+      status: 'successful',
+      response: {
+        data: {
+          updateOneField: responseData.default,
+        },
       },
     }),
   }),
@@ -140,13 +144,17 @@ describe('useFieldMetadataItem', () => {
     });
 
     await act(async () => {
-      const res = await result.current.activateMetadataField(
+      const response = await result.current.activateMetadataField(
         fieldMetadataItem.id,
         objectMetadataId,
       );
 
-      expect(res.data).toEqual({
-        updateOneField: responseData.default,
+      jestExpectSuccessfulMetadataRequestResult(response);
+
+      expect(response.response).toEqual({
+        data: {
+          updateOneField: responseData.default,
+        },
       });
     });
   });
@@ -164,9 +172,12 @@ describe('useFieldMetadataItem', () => {
         name: 'fieldName',
         isLabelSyncedWithName: true,
       });
+      jestExpectSuccessfulMetadataRequestResult(res);
 
-      expect(res.data).toEqual({
-        createOneField: responseData.createMetadataField,
+      expect(res.response).toEqual({
+        data: {
+          createOneField: responseData.createMetadataField,
+        },
       });
     });
   });
@@ -177,12 +188,13 @@ describe('useFieldMetadataItem', () => {
     });
 
     await act(async () => {
-      const res = await result.current.deactivateMetadataField(
+      const response = await result.current.deactivateMetadataField(
         fieldMetadataItem.id,
         objectMetadataId,
       );
 
-      expect(res.data).toEqual({
+      jestExpectSuccessfulMetadataRequestResult(response);
+      expect(response.response.data).toEqual({
         updateOneField: responseData.default,
       });
     });
@@ -198,9 +210,12 @@ describe('useFieldMetadataItem', () => {
         idToDelete: fieldMetadataItem.id,
         objectMetadataId,
       });
+      jestExpectSuccessfulMetadataRequestResult(res);
 
-      expect(res.data).toEqual({
-        deleteOneField: responseData.default,
+      expect(res.response).toEqual({
+        data: {
+          deleteOneField: responseData.default,
+        },
       });
     });
   });
@@ -215,9 +230,12 @@ describe('useFieldMetadataItem', () => {
         idToDelete: fieldRelationMetadataItem.id,
         objectMetadataId,
       });
+      jestExpectSuccessfulMetadataRequestResult(res);
 
-      expect(res.data).toEqual({
-        deleteOneField: responseData.fieldRelation,
+      expect(res.response).toEqual({
+        data: {
+          deleteOneField: responseData.fieldRelation,
+        },
       });
     });
   });

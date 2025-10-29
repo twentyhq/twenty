@@ -51,16 +51,13 @@ describe('Core REST API Delete One endpoint', () => {
   });
 
   it('should return a EntityNotFoundError when trying to delete a non-existing person', async () => {
-    await makeRestAPIRequest({
+    const response = await makeRestAPIRequest({
       method: 'delete',
       path: `/people/${NOT_EXISTING_TEST_PERSON_ID}`,
-    })
-      .expect(400)
-      .expect((res) => {
-        expect(res.body.messages[0]).toContain(
-          `Could not find any entity of type "person"`,
-        );
-        expect(res.body.error).toBe('EntityNotFoundError');
-      });
+    });
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('NotFoundException');
+    expect(response.body.messages[0]).toBe('Record not found');
   });
 });

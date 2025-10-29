@@ -168,15 +168,14 @@ export const KeyValuePairInput = ({
             />
 
             {!readonly &&
-            pair.id !== pairs[pairs.length - 1].id &&
-            !pair.isAutoSet ? (
-              <Button
-                onClick={() => handleRemovePair(pair.id)}
-                Icon={IconTrash}
-              />
-            ) : (
-              <Button Icon={IconTrash} disabled={true} />
-            )}
+              (pair.id !== pairs[pairs.length - 1].id && !pair.isAutoSet ? (
+                <Button
+                  onClick={() => handleRemovePair(pair.id)}
+                  Icon={IconTrash}
+                />
+              ) : (
+                <Button Icon={IconTrash} disabled={true} />
+              ))}
           </StyledKeyValueContainer>
         ))}
       </StyledContainer>

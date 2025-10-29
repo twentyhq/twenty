@@ -11,6 +11,7 @@ import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayo
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -39,11 +40,15 @@ const StyledGridContainer = styled.div`
   .react-grid-placeholder {
     background: ${({ theme }) => theme.adaptiveColors.blue3} !important;
 
-    border-radius: ${({ theme }) => theme.border.radius.sm};
+    border-radius: ${({ theme }) => theme.border.radius.md};
   }
 
   .react-grid-item:not(.react-draggable-dragging) {
     user-select: auto;
+  }
+
+  .react-grid-item:hover .widget-card-resize-handle {
+    display: block !important;
   }
 `;
 
@@ -73,6 +78,10 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
     pageLayoutCurrentBreakpointComponentState,
+  );
+
+  const setDraggingWidgetId = useSetRecoilComponentState(
+    pageLayoutDraggingWidgetIdComponentState,
   );
 
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
@@ -153,6 +162,12 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
               ) : undefined
             }
             resizeHandles={['se']}
+            onDragStart={(_layout, _oldItem, newItem) => {
+              setDraggingWidgetId(newItem.i);
+            }}
+            onDragStop={() => {
+              setDraggingWidgetId(null);
+            }}
             onLayoutChange={handleLayoutChange}
             onBreakpointChange={(newBreakpoint) =>
               setPageLayoutCurrentBreakpoint(

@@ -24,12 +24,8 @@ export const getTabsByDisplayMode = ({
     };
   }
 
-  const tabsToRenderInTabList = pageLayout.tabs.filter(
-    (tab) => tab.selfDisplayMode !== 'pinned-left',
-  );
-  const pinnedLeftTab = pageLayout.tabs.find(
-    (tab) => tab.selfDisplayMode === 'pinned-left',
-  );
+  const tabsToRenderInTabList = pageLayout.tabs.slice(1);
+  const pinnedLeftTab = pageLayout.tabs[0];
 
   return {
     tabsToRenderInTabList,

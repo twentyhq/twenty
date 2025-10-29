@@ -18,22 +18,18 @@ export const PageLayoutDispatcher = ({
     FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
   );
 
-  const isStandardObjectWithDefaultLayout =
+  const isStandardObjectUnsupportingRecordPageLayouts =
     targetRecordIdentifier.targetObjectNameSingular ===
-      CoreObjectNameSingular.Company ||
+      CoreObjectNameSingular.Workflow ||
     targetRecordIdentifier.targetObjectNameSingular ===
-      CoreObjectNameSingular.Person ||
+      CoreObjectNameSingular.WorkflowRun ||
     targetRecordIdentifier.targetObjectNameSingular ===
-      CoreObjectNameSingular.Opportunity ||
-    targetRecordIdentifier.targetObjectNameSingular ===
-      CoreObjectNameSingular.Note ||
-    targetRecordIdentifier.targetObjectNameSingular ===
-      CoreObjectNameSingular.Task;
+      CoreObjectNameSingular.WorkflowVersion;
 
   if (
     targetRecordIdentifier.targetObjectNameSingular ===
       CoreObjectNameSingular.Dashboard ||
-    (isRecordPageEnabled && isStandardObjectWithDefaultLayout)
+    (isRecordPageEnabled && !isStandardObjectUnsupportingRecordPageLayouts)
   ) {
     return (
       <PageLayoutRecordPageRenderer

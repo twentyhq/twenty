@@ -2,6 +2,7 @@ import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabHeader } from '@/page-layout/components/PageLayoutTabHeader';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
+import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useReorderPageLayoutTabs } from '@/page-layout/hooks/useReorderPageLayoutTabs';
@@ -35,7 +36,7 @@ const StyledShowPageRightContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledTabList = styled(PageLayoutTabList)`
+const StyledPageLayoutTabList = styled(PageLayoutTabList)`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -87,14 +88,21 @@ export const PageLayoutRendererContent = () => {
 
       <StyledShowPageRightContainer>
         <StyledTabsAndDashboardContainer>
-          <StyledTabList
+          <PageLayoutTabListEffect
             tabs={sortedTabs}
-            behaveAsLinks={false}
             componentInstanceId={tabListInstanceId}
-            onAddTab={handleAddTab}
-            isReorderEnabled={isPageLayoutInEditMode}
-            onReorder={isPageLayoutInEditMode ? reorderTabs : undefined}
           />
+          {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
+            <StyledPageLayoutTabList
+              tabs={sortedTabs}
+              behaveAsLinks={false}
+              componentInstanceId={tabListInstanceId}
+              onAddTab={handleAddTab}
+              isReorderEnabled={isPageLayoutInEditMode}
+              onReorder={isPageLayoutInEditMode ? reorderTabs : undefined}
+            />
+          )}
+
           <PageLayoutTabHeader />
           <StyledScrollWrapper
             componentInstanceId={`scroll-wrapper-page-layout-${currentPageLayout.id}`}
