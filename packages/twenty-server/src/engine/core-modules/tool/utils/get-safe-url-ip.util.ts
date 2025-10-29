@@ -2,7 +2,8 @@
 // Licensed under MIT License
 // https://github.com/indutny/node-ip
 
-import { URL } from 'url';
+import dns from 'dns/promises';
+import { type URL } from 'url';
 
 const ipv4Regex = /^(\d{1,3}\.){3,3}\d{1,3}$/;
 const ipv6Regex =
@@ -111,23 +112,39 @@ const isPrivateIP = (addr: string) => {
   );
 };
 
-export const isSafeURL = (urlString: string) => {
-  try {
-    const parsed = new URL(urlString);
+export const getSafeUrlIP = async (url: URL): Promise<string> => {
+  const hostname = url.hostname.toLowerCase();
+  let resolvedIPs = [];
 
-    if (!['http:', 'https:'].includes(parsed.protocol)) {
-      return false;
+  if (isIpV4(hostname) || isIpV6(hostname)) {
+    resolvedIPs = [hostname];
+  } else {
+    try {
+      const [ipv4Addresses, ipv6Addresses] = await Promise.allSettled([
+        dns.resolve4(hostname),
+        dns.resolve6(hostname),
+      ]);
+
+      if (ipv4Addresses.status === 'fulfilled') {
+        resolvedIPs.push(...ipv4Addresses.value);
+      }
+      if (ipv6Addresses.status === 'fulfilled') {
+        resolvedIPs.push(...ipv6Addresses.value);
+      }
+
+      if (resolvedIPs.length === 0) {
+        throw new Error('Could not resolve hostname');
+      }
+    } catch (err) {
+      throw new Error(`DNS resolution failed: ${err.message}`);
     }
-
-    // Check if hostname is an IP
-    if (isIpV4(parsed.hostname) || isIpV6(parsed.hostname)) {
-      // Check if IP is private/reserved
-      return !isPrivateIP(parsed.hostname);
-    }
-
-    // For domain names, you'd need DNS resolution to check the IP
-    return true;
-  } catch {
-    return false;
   }
+
+  for (const ip of resolvedIPs) {
+    if (isPrivateIP(ip)) {
+      throw new Error('Private IP address');
+    }
+  }
+
+  return resolvedIPs[0];
 };
