@@ -69,7 +69,7 @@ export class UserWorkspaceEntity {
   workspace: Relation<WorkspaceEntity>;
 
   @Field(() => UUIDScalarType, { nullable: false })
-  @Column()
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @Column({ nullable: true })
