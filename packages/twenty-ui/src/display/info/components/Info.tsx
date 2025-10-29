@@ -38,7 +38,7 @@ const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
     switch (accent) {
       case 'blue':
         return css`
-          background: ${theme.color.blueAccent5};
+          background: ${theme.color.blue5};
           color: ${theme.color.blue10};
         `;
       case 'danger':
