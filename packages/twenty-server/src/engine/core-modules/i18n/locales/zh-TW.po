@@ -3518,6 +3518,11 @@ msgstr "唯一欄位不能設置默認值"
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "無法為類型為{fieldType}的欄位{fieldName}建立唯一索引"
 
+#. js-lingui-id: rtir7c
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
+msgid "unknown"
+msgstr ""
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
