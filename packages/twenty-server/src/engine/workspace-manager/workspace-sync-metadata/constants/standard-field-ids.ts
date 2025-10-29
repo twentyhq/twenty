@@ -138,7 +138,6 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   favorites: '20202020-4d1d-41ac-b13b-621631298d55',
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
-  testRelatedPeople: '20202020-7a90-47e9-b31f-916a716fd212',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
 } as const;
 
@@ -338,7 +337,6 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   noteTargets: '20202020-dd3f-42d5-a382-db58aabf43d3',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
-  testRelatedPeople: '20202020-7a90-47e9-b31f-916a716fd213',
   searchVector: '428a0da5-4b2e-4ce3-b695-89a8b384e6e3',
 } as const;
 
@@ -367,9 +365,6 @@ export const PERSON_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
-  testRelatedRecordOpportunity: '20202020-5a90-47e9-b31f-916a716fd211',
-  testRelatedRecordCompany: '20202020-1eb2-4298-910b-66b015b36d72',
-  testRelatedRecordMorphId: '20202020-6ccf-48e3-bb92-bc9961bc011e',
 } as const;
 
 export const TASK_STANDARD_FIELD_IDS = {

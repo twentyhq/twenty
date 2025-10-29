@@ -76,8 +76,6 @@ export class WorkspaceSyncFieldMetadataRelationService {
 
     this.logger.log('Updating workspace metadata');
 
-    this.logger.log(storage.fieldRelationMetadataCreateCollection);
-    // this.logger.log(storage.fieldMetadataCreateCollection);
     // Save field metadata to DB
     const metadataFieldUpdaterResult =
       await this.workspaceMetadataUpdaterService.updateFieldRelationMetadata(
@@ -126,9 +124,6 @@ export class WorkspaceSyncFieldMetadataRelationService {
         createdFieldRelationMetadataCollection,
         WorkspaceMigrationBuilderAction.CREATE,
       );
-
-    this.logger.log('createFieldRelationWorkspaceMigrations');
-    // this.logger.log(createFieldRelationWorkspaceMigrations);
 
     const updateFieldRelationWorkspaceMigrations =
       await this.workspaceMigrationFieldRelationFactory.create(
@@ -192,16 +187,13 @@ export class WorkspaceSyncFieldMetadataRelationService {
       if (originalFieldRelationMetadataCollection.length === 0) {
         continue;
       }
-      this.logger.log('standardFieldMetadataRelationCollection');
-      this.logger.log(standardFieldMetadataRelationCollection);
+
       const fieldComparatorResults =
         this.workspaceFieldRelationComparator.compare(
           originalFieldRelationMetadataCollection,
           standardFieldMetadataRelationCollection,
         );
 
-      this.logger.log('fieldComparatorResults');
-      this.logger.log(fieldComparatorResults);
       this.storeComparatorResults(fieldComparatorResults, storage);
     }
   }
