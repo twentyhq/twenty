@@ -22,11 +22,6 @@ type MenuItemSelectColorProps = {
 
 export const colorLabels: Record<ThemeColor, string> = {
   gray: 'Gray',
-  mauve: 'Mauve',
-  slate: 'Slate',
-  sage: 'Sage',
-  olive: 'Olive',
-  sand: 'Sand',
   tomato: 'Tomato',
   red: 'Red',
   ruby: 'Ruby',

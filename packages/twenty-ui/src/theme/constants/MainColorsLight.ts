@@ -4,11 +4,6 @@ import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 export const MAIN_COLORS_LIGHT = {
   // Grays
   gray: GRAY_SCALE_LIGHT.gray7,
-  mauve: RadixColors.mauveP3.mauve9,
-  slate: RadixColors.slateP3.slate9,
-  sage: RadixColors.sageP3.sage9,
-  olive: RadixColors.oliveP3.olive9,
-  sand: RadixColors.sandP3.sand9,
 
   // Reds
   tomato: RadixColors.tomatoP3.tomato9,

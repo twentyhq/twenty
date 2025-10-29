@@ -4,11 +4,6 @@ import { GRAY_SCALE_DARK } from '@ui/theme/constants/GrayScaleDark';
 export const MAIN_COLORS_DARK = {
   // Grays
   gray: GRAY_SCALE_DARK.gray7,
-  mauve: RadixColors.mauveDarkP3.mauve9,
-  slate: RadixColors.slateDarkP3.slate9,
-  sage: RadixColors.sageDarkP3.sage9,
-  olive: RadixColors.oliveDarkP3.olive9,
-  sand: RadixColors.sandDarkP3.sand9,
 
   // Reds
   tomato: RadixColors.tomatoDarkP3.tomato9,
