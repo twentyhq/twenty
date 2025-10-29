@@ -2,7 +2,6 @@ import SlashCommandMenu from '@/advanced-text-editor/extensions/slash-command/Sl
 import { Extension, type Editor } from '@tiptap/core';
 import Suggestion from '@tiptap/suggestion';
 import { createElement } from 'react';
-import { createPortal } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
 import {
   IconBold,
@@ -25,32 +24,6 @@ export type SlashCommandItem = {
   isActive?: () => boolean;
   isVisible?: () => boolean;
   onSelect: () => void;
-};
-
-const calculateMenuPosition = (clientRect: DOMRect) => {
-  const menuHeight = 200; // estimated menu height
-  const menuWidth = 240; // menu width
-  const viewportHeight = window.innerHeight;
-  const viewportWidth = window.innerWidth;
-  const spaceBelow = viewportHeight - clientRect.bottom;
-  const spaceAbove = clientRect.top;
-
-  // Calculate vertical position
-  let top: number;
-  if (spaceBelow > menuHeight || spaceBelow > spaceAbove) {
-    // Show below cursor
-    top = clientRect.bottom + 4;
-  } else {
-    // Show above cursor
-    top = clientRect.top - menuHeight - 4;
-  }
-
-  const left = Math.max(
-    4,
-    Math.min(clientRect.left, viewportWidth - menuWidth - 4),
-  );
-
-  return { top, left };
 };
 
 const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
@@ -171,43 +144,30 @@ export const SlashCommand = Extension.create({
         },
         render: () => {
           let componentRoot: Root | null = null;
-          let container: HTMLElement | null = null;
           let selectedIndex = 0;
           let currentItems: SlashCommandItem[] = [];
           let currentCommand: (item: SlashCommandItem) => void = () => {};
-
-          const createContainer = (rect: DOMRect): HTMLElement => {
-            const newContainer = document.createElement('div');
-            newContainer.style.position = 'fixed';
-            newContainer.style.zIndex = '9999';
-            newContainer.style.pointerEvents = 'auto';
-
-            // Calculate and set position
-            const position = calculateMenuPosition(rect);
-            newContainer.style.top = `${position.top}px`;
-            newContainer.style.left = `${position.left}px`;
-
-            document.body.appendChild(newContainer);
-            return newContainer;
-          };
+          let currentRect: DOMRect | null = null;
 
           const renderComponent = (
-            containerElement: HTMLElement,
             items: SlashCommandItem[],
             command: (item: SlashCommandItem) => void,
             selectedIdx: number,
+            rect: DOMRect | null,
             root?: Root | null,
           ): Root => {
-            const reactRoot = root || createRoot(containerElement);
+            const reactRoot =
+              root ||
+              createRoot(
+                document.body.appendChild(document.createElement('div')),
+              );
             reactRoot.render(
-              createPortal(
-                createElement(SlashCommandMenu, {
-                  items,
-                  selectedIndex: selectedIdx,
-                  onSelect: command,
-                }),
-                containerElement,
-              ),
+              createElement(SlashCommandMenu, {
+                items,
+                selectedIndex: selectedIdx,
+                onSelect: command,
+                clientRect: rect,
+              }),
             );
             return reactRoot;
           };
@@ -217,11 +177,8 @@ export const SlashCommand = Extension.create({
               componentRoot.unmount();
               componentRoot = null;
             }
-            if (container !== null) {
-              container.remove();
-              container = null;
-            }
             selectedIndex = 0;
+            currentRect = null;
           };
 
           return {
@@ -231,32 +188,29 @@ export const SlashCommand = Extension.create({
 
               currentItems = props.items;
               currentCommand = props.command;
+              currentRect = rect;
 
-              container = createContainer(rect);
               componentRoot = renderComponent(
-                container,
                 currentItems,
                 currentCommand,
                 selectedIndex,
+                currentRect,
               );
             },
             onUpdate: (props) => {
               const rect = props.clientRect?.();
-              if (!rect || !container) return;
+              if (!rect) return;
 
               currentItems = props.items;
               currentCommand = props.command;
-
-              const position = calculateMenuPosition(rect);
-              container.style.top = `${position.top}px`;
-              container.style.left = `${position.left}px`;
+              currentRect = rect;
 
               if (componentRoot !== null) {
                 componentRoot = renderComponent(
-                  container,
                   currentItems,
                   currentCommand,
                   selectedIndex,
+                  currentRect,
                   componentRoot,
                 );
               }
@@ -273,12 +227,12 @@ export const SlashCommand = Extension.create({
                   selectedIndex + 1,
                   (currentItems?.length || 1) - 1,
                 );
-                if (componentRoot !== null && container !== null) {
+                if (componentRoot !== null) {
                   componentRoot = renderComponent(
-                    container,
                     currentItems,
                     currentCommand,
                     selectedIndex,
+                    currentRect,
                     componentRoot,
                   );
                 }
@@ -286,12 +240,12 @@ export const SlashCommand = Extension.create({
               }
               if (event.key === 'ArrowUp') {
                 selectedIndex = Math.max(selectedIndex - 1, 0);
-                if (componentRoot !== null && container !== null) {
+                if (componentRoot !== null) {
                   componentRoot = renderComponent(
-                    container,
                     currentItems,
                     currentCommand,
                     selectedIndex,
+                    currentRect,
                     componentRoot,
                   );
                 }
