@@ -6,12 +6,13 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 
 import type { ParsedQs } from 'qs';
 
-import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { addDefaultOrderById } from 'src/engine/api/rest/input-request-parsers/order-by-parser-utils/add-default-order-by-id.util';
 import {
   RestInputRequestParserException,
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
+
+const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
 export const parseOrderByRestRequestCommon = (
   orderByQuery: string | string[] | ParsedQs | ParsedQs[] | undefined,
