@@ -124,7 +124,7 @@ export const Avatar = ({
       stringToThemeColorValue({
         string: placeholderColorSeed ?? '',
         theme,
-        variant: 5,
+        variant: 4,
       }));
 
   const showBackgroundColor = showPlaceholder;
