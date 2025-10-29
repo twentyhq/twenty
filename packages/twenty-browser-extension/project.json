@@ -1,7 +1,7 @@
 {
-  "name": "twenty-chrome-extension",
+  "name": "twenty-browser-extension",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/twenty-chrome-extension/src",
+  "sourceRoot": "packages/twenty-browser-extension/src",
   "projectType": "application",
   "tags": ["scope:browser-extension"],
   "targets": {
@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "wxt",
-        "cwd": "packages/twenty-chrome-extension",
+        "cwd": "packages/twenty-browser-extension",
         "color": true
       },
       "configurations": {
@@ -22,7 +22,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "wxt build",
-        "cwd": "packages/twenty-chrome-extension",
+        "cwd": "packages/twenty-browser-extension",
         "color": true
       },
       "configurations": {
@@ -35,7 +35,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "wxt zip",
-        "cwd": "packages/twenty-chrome-extension",
+        "cwd": "packages/twenty-browser-extension",
         "color": true
       },
       "configurations": {
