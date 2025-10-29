@@ -26,7 +26,7 @@ export const getActionIconColorOrThrow = ({
     case 'EMPTY':
     case 'FILTER':
     case 'DELAY':
-      return theme.color.green60;
+      return theme.color.green12;
     case 'AI_AGENT':
       return theme.color.pink;
     default:

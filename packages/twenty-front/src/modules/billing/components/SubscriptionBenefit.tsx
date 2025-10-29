@@ -1,6 +1,6 @@
-import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import React from 'react';
 import { IconCheck } from 'twenty-ui/display';
 
 const StyledBenefitContainer = styled.div`
@@ -27,7 +27,7 @@ export const SubscriptionBenefit = ({ children }: SubscriptionBenefitProps) => {
   return (
     <StyledBenefitContainer>
       <StyledCheckContainer>
-        <IconCheck color={theme.grayScale.gray50} size={14} />
+        <IconCheck color={theme.grayScale.gray11} size={14} />
       </StyledCheckContainer>
       {children}
     </StyledBenefitContainer>

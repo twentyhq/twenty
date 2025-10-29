@@ -1917,11 +1917,6 @@ msgstr "Локација"
 msgid "March"
 msgstr "Март"
 
-#. js-lingui-id: hw7Mwk
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
-msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr "Максималан број записа за унос је {QUERY_MAX_RECORDS}."
-
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
@@ -2127,7 +2122,6 @@ msgid "Multi-select field default value must be an array"
 msgstr "Подразумевана вредност вишеструког избора мора бити низ"
 
 #. js-lingui-id: 6rLmLu
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "Пронађено је више записа са истим јединственим вредностима поља за {conflictingFieldsValues}. Не можемо утврдити који запис да ажурирамо."
@@ -3523,6 +3517,11 @@ msgstr "Јединствено поље не може имати подразу�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "Уникатан индекс не може бити креиран за поље {fieldName} типа {fieldType}"
+
+#. js-lingui-id: rtir7c
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
+msgid "unknown"
+msgstr ""
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts

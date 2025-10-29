@@ -63,7 +63,7 @@ const StyledButton = styled('button', { shouldForwardProp })<
     applyShadow
       ? theme.boxShadow.light
       : focus
-        ? `0 0 0 3px ${theme.color.blue10}`
+        ? `0 0 0 3px ${theme.color.blue3}`
         : 'none'};
   box-sizing: border-box;
   color: ${({ theme, disabled, focus }) => {

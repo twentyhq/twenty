@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import { type PlacesType, type PositionStrategy, Tooltip } from 'react-tooltip';
 
-import { RGBA } from '@ui/theme/constants/Rgba';
-
 export enum TooltipPosition {
   Top = 'top',
   Left = 'left',
@@ -19,11 +17,11 @@ export enum TooltipDelay {
 
 const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
-  background-color: ${({ theme }) => RGBA(theme.color.gray80, 0.8)};
+  background-color: ${({ theme }) => theme.color.transparent.gray11};
   border-radius: ${({ theme }) => theme.border.radius.sm};
 
   box-shadow: ${({ theme }) => theme.boxShadow.light};
-  color: ${({ theme }) => theme.grayScale.gray0};
+  color: ${({ theme }) => theme.grayScale.gray1};
 
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};

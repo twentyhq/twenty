@@ -3168,11 +3168,6 @@ msgstr "Konto bearbeiten"
 msgid "Edit Agent"
 msgstr "Agent bearbeiten"
 
-#. js-lingui-id: X8x8v5
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "Edit Connection"
-msgstr "Verbindung bearbeiten"
-
 #. js-lingui-id: 6vZ75d
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
@@ -3223,11 +3218,6 @@ msgstr "Zahlungsmethode bearbeiten, Rechnungen einsehen und mehr"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "Datensätze auf allen Objekten bearbeiten"
-
-#. js-lingui-id: vjOt/P
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "Edit the information to connect your database"
-msgstr "Bearbeiten Sie die Informationen, um Ihre Datenbank zu verbinden"
 
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -4652,7 +4642,6 @@ msgstr "Anweisungen für die KI"
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Integrationen"
@@ -9192,15 +9181,6 @@ msgstr "Sie dürfen keine Datensätze für dieses Objekt erstellen"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Sie können jede Kombination von IMAP (E-Mails empfangen), SMTP (E-Mails senden) und CalDAV (Kalendersynchronisation) einrichten."
-
-#. js-lingui-id: aiJY7y
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
-msgstr ""
-"Sie können diese Verbindung nicht bearbeiten, da sie verfolgte Tabellen enthält.\n"
-"Wenn Sie Änderungen vornehmen müssen, erstellen Sie bitte eine neue Verbindung oder trennen Sie zuerst die Tabellen."
 
 #. js-lingui-id: eqUj2Z
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx

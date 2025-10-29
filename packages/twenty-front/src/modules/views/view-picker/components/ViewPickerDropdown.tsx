@@ -21,7 +21,7 @@ import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
-  color: ${({ theme }) => theme.grayScale.gray35};
+  color: ${({ theme }) => theme.grayScale.gray8};
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(1)};
   margin-left: ${({ theme }) => theme.spacing(1)};
