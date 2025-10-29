@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
-
+import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { CommonDestroyManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-destroy-many-query-runner.service';
 import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
