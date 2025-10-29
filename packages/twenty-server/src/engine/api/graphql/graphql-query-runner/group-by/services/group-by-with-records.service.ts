@@ -221,10 +221,15 @@ export class GroupByWithRecordsService {
       const conditions = groupByDefinitions
         .map((def, defIndex) => {
           const paramName = `groupValue_${groupIndex}_${defIndex}`;
+          const paramValue = group[def.alias];
 
-          queryBuilder.setParameter(paramName, group[def.alias]);
+          if (paramValue === null || paramValue === undefined) {
+            return `${def.expression} IS NULL`;
+          } else {
+            queryBuilder.setParameter(paramName, paramValue);
 
-          return `${def.expression} = :${paramName}`;
+            return `${def.expression} = :${paramName}`;
+          }
         })
         .join(' AND ');
 
