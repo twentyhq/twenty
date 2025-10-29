@@ -33,16 +33,17 @@ type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
   workspaceId: string;
   objectMetadataItems: ObjectMetadataEntity[];
-  schemaName: string;
   featureFlags?: Record<string, boolean>;
+  workspaceSchemaName: string
 };
+
 
 export const prefillCoreViews = async ({
   coreDataSource,
   workspaceId,
   objectMetadataItems,
-  schemaName,
   featureFlags,
+  workspaceSchemaName
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
   const views = [
     companiesAllView(objectMetadataItems, true),
@@ -83,7 +84,7 @@ export const prefillCoreViews = async ({
         )
         .map((view) => view.id),
       queryRunner.manager as WorkspaceEntityManager,
-      schemaName,
+      workspaceSchemaName,
     );
 
     await queryRunner.commitTransaction();

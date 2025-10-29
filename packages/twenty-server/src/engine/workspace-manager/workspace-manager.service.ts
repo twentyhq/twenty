@@ -126,7 +126,7 @@ export class WorkspaceManagerService {
       coreDataSource: this.coreDataSource,
       workspaceId,
       objectMetadataItems: createdObjectMetadata,
-      schemaName: dataSourceMetadata.schema,
+      workspaceSchemaName: dataSourceMetadata.schema,
       featureFlags,
     });
   }
