@@ -52510,6 +52510,7 @@ __metadata:
     lodash.capitalize: "npm:^4.2.1"
     lodash.kebabcase: "npm:^4.1.1"
     tsx: "npm:^4.7.0"
+    twenty-sdk: "workspace:*"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
     wait-on: "npm:^7.2.0"
@@ -52664,7 +52665,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-sdk@workspace:packages/twenty-sdk":
+"twenty-sdk@workspace:*, twenty-sdk@workspace:packages/twenty-sdk":
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
