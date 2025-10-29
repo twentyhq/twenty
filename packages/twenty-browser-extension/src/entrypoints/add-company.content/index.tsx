@@ -1,16 +1,17 @@
+import { LINKEDIN_MATCHES } from '@/common';
 import { Button } from '@/ui/components/button';
 import { ThemeContext } from '@/ui/theme/context';
 import styled from '@emotion/styled';
 import ReactDOM from 'react-dom/client';
 
-const companyPattern = new MatchPattern('*://*.linkedin.com/company/*');
+const companyPattern = new MatchPattern(LINKEDIN_MATCHES.COMPANY);
 
 const StyledContainer = styled.div`
    margin: ${({theme}) => `${theme.spacing(1)} ${0} ${0} ${theme.spacing(2)}`};
 `
 
 export default defineContentScript({
-  matches: ['*://*.linkedin.com/*'],
+  matches: [LINKEDIN_MATCHES.BASE_URL],
   runAt: 'document_end',
   async main(ctx) {
 
@@ -35,13 +36,16 @@ export default defineContentScript({
         container.append(app);
 
         const root = ReactDOM.createRoot(app);
-        root.render(
-          <ThemeContext>
-            <StyledContainer>
-              <Button>Add to Twenty</Button>
-            </StyledContainer>
-          </ThemeContext>
+        const Main = () => (
+          <StyledContainer>
+            <Button>Add to Twenty</Button>
+          </StyledContainer>
+        );
 
+        root.render(
+           <ThemeContext>
+            <Main />
+           </ThemeContext>
         );
         return root;
       },
