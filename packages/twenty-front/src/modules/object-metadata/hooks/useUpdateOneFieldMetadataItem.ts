@@ -1,14 +1,15 @@
-import { useMutation } from '@apollo/client';
-
 import {
-  type UpdateOneFieldMetadataItemMutation,
   type UpdateOneFieldMetadataItemMutationVariables,
+  useUpdateOneFieldMetadataItemMutation,
 } from '~/generated-metadata/graphql';
 
-import { UPDATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
-
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 
 export const useUpdateOneFieldMetadataItem = () => {
   const { refreshObjectMetadataItems } =
@@ -17,10 +18,12 @@ export const useUpdateOneFieldMetadataItem = () => {
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 
-  const [mutate] = useMutation<
-    UpdateOneFieldMetadataItemMutation,
-    UpdateOneFieldMetadataItemMutationVariables
-  >(UPDATE_ONE_FIELD_METADATA_ITEM);
+  const [updateOneFieldMetadataItemMutation] =
+    useUpdateOneFieldMetadataItemMutation();
+
+  const { handleMetadataError } = useMetadataErrorHandler();
+
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const updateOneFieldMetadataItem = async ({
     objectMetadataId,
@@ -40,18 +43,40 @@ export const useUpdateOneFieldMetadataItem = () => {
       | 'options'
       | 'isLabelSyncedWithName'
     >;
-  }) => {
-    const result = await mutate({
-      variables: {
-        idToUpdate: fieldMetadataIdToUpdate,
-        updatePayload: updatePayload,
-      },
-    });
+  }): Promise<
+    MetadataRequestResult<
+      Awaited<ReturnType<typeof updateOneFieldMetadataItemMutation>>
+    >
+  > => {
+    try {
+      const response = await updateOneFieldMetadataItemMutation({
+        variables: {
+          idToUpdate: fieldMetadataIdToUpdate,
+          updatePayload: updatePayload,
+        },
+      });
 
-    await refreshObjectMetadataItems();
-    await refreshCoreViewsByObjectMetadataId(objectMetadataId);
+      await refreshObjectMetadataItems();
+      await refreshCoreViewsByObjectMetadataId(objectMetadataId);
 
-    return result;
+      return {
+        status: 'successful',
+        response,
+      };
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        handleMetadataError(error, {
+          primaryMetadataName: 'fieldMetadata',
+        });
+      } else {
+        enqueueErrorSnackBar({ message: t`An error occurred.` });
+      }
+
+      return {
+        status: 'failed',
+        error,
+      };
+    }
   };
 
   return {

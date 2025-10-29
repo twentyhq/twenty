@@ -4,6 +4,7 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
@@ -28,7 +29,6 @@ import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -127,10 +127,14 @@ export const SettingsObjectFieldItemTableRow = ({
       return;
     }
 
-    await deactivateMetadataField(
+    const deactivationResult = await deactivateMetadataField(
       activeFieldMetadatItem.id,
       objectMetadataItem.id,
     );
+
+    if (deactivationResult.status === 'failed') {
+      return;
+    }
 
     // TODO: Add optimistic rendering for core views
     const deletedViewIds: string[] = [];
@@ -159,6 +163,7 @@ export const SettingsObjectFieldItemTableRow = ({
     if (readonly) {
       return;
     }
+
     updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
       updatePayload: {

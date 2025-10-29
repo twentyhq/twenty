@@ -72,7 +72,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       commonQueryParser,
       objectMetadataItemWithFieldMaps,
       authContext,
-      objectMetadataMaps,
     } = queryRunnerContext;
 
     const objectMetadataNameSingular =
@@ -165,10 +164,8 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         queryBuilderWithFiltersAndWithoutGroupBy,
         queryBuilderWithGroupBy: queryBuilder,
         groupByDefinitions,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
-        repository,
         selectedFieldsResult: args.selectedFieldsResult,
+        queryRunnerContext,
       });
     }
 

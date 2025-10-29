@@ -1,643 +1,623 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel conflicts with an existing {name}Id on target object metadata id 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [
-          {
-            "errors": [
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "value": "fieldNameBisId",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "fieldNameBisId",
-              "objectMetadataId": Any<String>,
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "value": "fieldNameBisId",
             },
-            "status": "fail",
-            "type": "create_field",
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "fieldNameBisId",
+            "objectMetadataId": Any<String>,
           },
-        ],
-        "index": [],
-        "objectMetadata": [],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating fields",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [
-          {
-            "errors": [
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldName" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
-                "value": "fieldName",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "fieldName",
-              "objectMetadataId": Any<String>,
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldName" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldName" is not available as it is already used by another field",
+              "value": "fieldName",
             },
-            "status": "fail",
-            "type": "create_field",
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "fieldName",
+            "objectMetadataId": Any<String>,
           },
-        ],
-        "index": [],
-        "objectMetadata": [],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating fields",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel contains only whitespace 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Name is too short",
-                "userFriendlyMessage": "Name is too short",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-                "value": "",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "",
-              "objectMetadataId": Any<String>,
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
             },
-            "status": "fail",
-            "type": "create_field",
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "",
+            "objectMetadataId": Any<String>,
           },
-        ],
-        "index": [],
-        "objectMetadata": [],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating fields",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel exceeds maximum length 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Name is too long",
-                "userFriendlyMessage": "Name is too long",
-                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-              "objectMetadataId": Any<String>,
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
-            "status": "fail",
-            "type": "create_field",
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "objectMetadataId": Any<String>,
           },
-        ],
-        "index": [],
-        "objectMetadata": [],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating fields",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetFieldLabel is empty 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [
-          {
-            "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Name is too short",
-                "userFriendlyMessage": "Name is too short",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-                "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-                "value": "",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "",
-              "objectMetadataId": Any<String>,
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
             },
-            "status": "fail",
-            "type": "create_field",
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "",
+            "objectMetadataId": Any<String>,
           },
-        ],
-        "index": [],
-        "objectMetadata": [],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating fields",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when targetObjectMetadataId is unknown 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [],
-        "index": [],
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Object metadata relation target not found for relation creation payload",
-                "userFriendlyMessage": "Object targeted by field to create not found",
-                "value": {
-                  "targetFieldIcon": "IconBuildingSkyscraper",
-                  "targetFieldLabel": "defaultTargetFieldLabel",
-                  "targetObjectMetadataId": Any<String>,
-                  "type": "MANY_TO_ONE",
-                },
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Object metadata relation target not found for relation creation payload",
+              "userFriendlyMessage": "Object targeted by field to create not found",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "defaultTargetFieldLabel",
+                "targetObjectMetadataId": Any<String>,
+                "type": "MANY_TO_ONE",
               },
-            ],
-            "flatEntityMinimalInformation": {},
-            "type": "create_field",
-          },
-        ],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+            },
+          ],
+          "flatEntityMinimalInformation": {},
+          "type": "create_field",
+        },
+      ],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating field",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when type is a wrong value 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [],
-        "index": [],
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid",
-                "userFriendlyMessage": "Invalid relation creation payload",
-                "value": {
-                  "targetFieldIcon": "IconBuildingSkyscraper",
-                  "targetFieldLabel": "defaultTargetFieldLabel",
-                  "targetObjectMetadataId": Any<String>,
-                  "type": "wrong",
-                },
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Relation creation payload is invalid",
+              "userFriendlyMessage": "Invalid relation creation payload",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "defaultTargetFieldLabel",
+                "targetObjectMetadataId": Any<String>,
+                "type": "wrong",
               },
-            ],
-            "flatEntityMinimalInformation": {},
-            "type": "create_field",
-          },
-        ],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+            },
+          ],
+          "flatEntityMinimalInformation": {},
+          "type": "create_field",
+        },
+      ],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating field",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE (relationCreationPayload) when type is not provided 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [],
-        "index": [],
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid",
-                "userFriendlyMessage": "Invalid relation creation payload",
-                "value": {
-                  "targetFieldIcon": "IconBuildingSkyscraper",
-                  "targetFieldLabel": "defaultTargetFieldLabel",
-                  "targetObjectMetadataId": Any<String>,
-                },
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Relation creation payload is invalid",
+              "userFriendlyMessage": "Invalid relation creation payload",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "defaultTargetFieldLabel",
+                "targetObjectMetadataId": Any<String>,
               },
-            ],
-            "flatEntityMinimalInformation": {},
-            "type": "create_field",
-          },
-        ],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+            },
+          ],
+          "flatEntityMinimalInformation": {},
+          "type": "create_field",
+        },
+      ],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating field",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE when {name}Id is already used 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [
-          {
-            "errors": [
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
-                "value": "fieldNameBisId",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "fieldNameBisId",
-              "objectMetadataId": Any<String>,
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldNameBisId" is not available as it is already used by another field",
+              "value": "fieldNameBisId",
             },
-            "status": "fail",
-            "type": "create_field",
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "fieldNameBisId",
+            "objectMetadataId": Any<String>,
           },
-          {
-            "errors": [
-              {
-                "code": "FIELD_METADATA_NOT_FOUND",
-                "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
-                "userFriendlyMessage": "Relation field target metadata not found",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "defaulttargetfieldlabel",
-              "objectMetadataId": Any<String>,
+          "status": "fail",
+          "type": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Relation field target metadata not found in both existing and about to be created field metadatas",
+              "userFriendlyMessage": "Relation field target metadata not found",
             },
-            "status": "fail",
-            "type": "create_field",
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "defaulttargetfieldlabel",
+            "objectMetadataId": Any<String>,
           },
-        ],
-        "index": [
-          {
-            "errors": [
-              {
-                "code": "INDEX_FIELD_NOT_FOUND",
-                "message": "Could not find index field related field metadata",
-                "userFriendlyMessage": "Field referenced in index does not exist",
-              },
-            ],
-            "flatEntityMinimalInformation": {
-              "id": Any<String>,
-              "name": "IDX_747db609dd2bb7abe30d5d1926c",
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
             },
-            "status": "fail",
-            "type": "create_index",
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_747db609dd2bb7abe30d5d1926c",
           },
-        ],
-        "objectMetadata": [],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating fields",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation MANY_TO_ONE when target and source are the same object and name are the same 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
-        "fieldMetadata": [],
-        "index": [],
-        "objectMetadata": [
-          {
-            "errors": [
-              {
-                "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid",
-                "userFriendlyMessage": "Invalid relation creation payload",
-                "value": {
-                  "targetFieldIcon": "IconBuildingSkyscraper",
-                  "targetFieldLabel": "Relation Name",
-                  "targetObjectMetadataId": Any<String>,
-                  "type": "MANY_TO_ONE",
-                },
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [],
+      "index": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Relation creation payload is invalid",
+              "userFriendlyMessage": "Invalid relation creation payload",
+              "value": {
+                "targetFieldIcon": "IconBuildingSkyscraper",
+                "targetFieldLabel": "Relation Name",
+                "targetObjectMetadataId": Any<String>,
+                "type": "MANY_TO_ONE",
               },
-            ],
-            "flatEntityMinimalInformation": {},
-            "type": "create_field",
-          },
-        ],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
-      },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
-      "summary": {
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+            },
+          ],
+          "flatEntityMinimalInformation": {},
+          "type": "create_field",
+        },
+      ],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
     },
-    "message": "Multiple validation errors occurred while creating field",
-    "name": "GraphQLError",
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-]
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
 `;
 
 exports[`Field metadata relation creation should fail relation ONE_TO_MANY (relationCreationPayload) when targetFieldLabel conflicts with an existing {name}Id on target object metadata id 1`] = `
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -712,7 +692,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -787,7 +767,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -868,7 +848,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -943,7 +923,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1024,7 +1004,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1083,7 +1063,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1142,7 +1122,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1200,7 +1180,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1291,7 +1271,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1344,4 +1324,134 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
     "name": "GraphQLError",
   },
 ]
+`;
+
+exports[`Field metadata relation creation should fail should fail when creating MANY_TO_ONE self-relation with same field name and label 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "manager" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "manager" is not available as it is already used by another field",
+              "value": "manager",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "manager",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Field metadata relation creation should fail should fail when creating ONE_TO_MANY self-relation with same field name and label 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "cronTrigger": [],
+      "databaseEventTrigger": [],
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "manager" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "manager" is not available as it is already used by another field",
+              "value": "manager",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "manager",
+            "objectMetadataId": Any<String>,
+          },
+          "status": "fail",
+          "type": "create_field",
+        },
+      ],
+      "index": [
+        {
+          "errors": [
+            {
+              "code": "INDEX_FIELD_NOT_FOUND",
+              "message": "Could not find index field related field metadata",
+              "userFriendlyMessage": "Field referenced in index does not exist",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "IDX_772faa136925e6c4141fd45ac0e",
+          },
+          "status": "fail",
+          "type": "create_index",
+        },
+      ],
+      "objectMetadata": [],
+      "routeTrigger": [],
+      "serverlessFunction": [],
+      "view": [],
+      "viewField": [],
+      "viewFilter": [],
+      "viewGroup": [],
+    },
+    "message": "Validation failed for 0 object(s) and 0 field(s)",
+    "summary": {
+      "invalidCronTrigger": 0,
+      "invalidDatabaseEventTrigger": 0,
+      "invalidFieldMetadata": 0,
+      "invalidIndex": 0,
+      "invalidObjectMetadata": 0,
+      "invalidRouteTrigger": 0,
+      "invalidServerlessFunction": 0,
+      "invalidView": 0,
+      "invalidViewField": 0,
+      "invalidViewFilter": 0,
+      "invalidViewGroup": 0,
+      "totalErrors": 0,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
 `;

@@ -172,7 +172,7 @@ export class ImapSmtpCalDavAPIService {
           ? MessageChannelSyncStatus.ONGOING
           : MessageChannelSyncStatus.NOT_SYNCED,
         syncStage: shouldEnableSync
-          ? MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING
+          ? MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING
           : undefined,
         syncCursor: '',
         syncStageStartedAt: null,
@@ -202,8 +202,7 @@ export class ImapSmtpCalDavAPIService {
           handle: input.handle,
           isSyncEnabled: shouldEnableSync,
           syncStatus: CalendarChannelSyncStatus.ONGOING,
-          syncStage:
-            CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
           syncCursor: '',
           syncStageStartedAt: null,
         },

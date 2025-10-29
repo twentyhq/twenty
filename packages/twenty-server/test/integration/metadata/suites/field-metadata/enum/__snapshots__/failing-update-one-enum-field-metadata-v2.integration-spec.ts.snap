@@ -4,7 +4,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -63,7 +63,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -122,7 +122,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -180,7 +180,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -253,7 +253,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -326,7 +326,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -399,7 +399,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -472,7 +472,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -530,7 +530,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -589,7 +589,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -652,7 +652,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -710,7 +710,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -769,7 +769,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -827,7 +827,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -900,7 +900,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -958,7 +958,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1016,7 +1016,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1075,7 +1075,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1134,7 +1134,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1192,7 +1192,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1251,7 +1251,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1309,7 +1309,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1372,7 +1372,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1430,7 +1430,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1488,7 +1488,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1551,7 +1551,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1609,7 +1609,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1668,7 +1668,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1726,7 +1726,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1789,7 +1789,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1847,7 +1847,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1905,7 +1905,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -1968,7 +1968,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2026,7 +2026,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2084,7 +2084,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2142,7 +2142,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2200,7 +2200,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2263,7 +2263,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2321,7 +2321,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2379,7 +2379,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2452,7 +2452,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2525,7 +2525,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2598,7 +2598,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2671,7 +2671,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2730,7 +2730,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2793,7 +2793,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2851,7 +2851,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2910,7 +2910,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -2968,7 +2968,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3026,7 +3026,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3084,7 +3084,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3143,7 +3143,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3201,7 +3201,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3260,7 +3260,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3318,7 +3318,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3381,7 +3381,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3439,7 +3439,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3497,7 +3497,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3560,7 +3560,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3618,7 +3618,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3677,7 +3677,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3735,7 +3735,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3798,7 +3798,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3856,7 +3856,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3914,7 +3914,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -3977,7 +3977,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -4035,7 +4035,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
@@ -4093,7 +4093,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
 [
   {
     "extensions": {
-      "code": "BAD_USER_INPUT",
+      "code": "METADATA_VALIDATION_FAILED",
       "errors": {
         "cronTrigger": [],
         "databaseEventTrigger": [],
