@@ -5,7 +5,6 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
 import { FavoriteFolderModule } from 'src/modules/favorite-folder/favorite-folder.module';
 import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
-import { StandardViewModule } from 'src/modules/view/standard-view.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
@@ -13,7 +12,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     MessagingModule,
     CalendarModule,
     ConnectedAccountModule,
-    StandardViewModule,
     WorkflowModule,
     FavoriteFolderModule,
     FavoriteModule,

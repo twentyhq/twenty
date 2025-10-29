@@ -698,6 +698,7 @@ msgid "Add view"
 msgstr "Görünüm ekle"
 
 #. js-lingui-id: iRpDWj
+#: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Add Widget"
@@ -966,9 +967,43 @@ msgstr "Mesajınızı işlerken bir hata oluştu"
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
+#: src/modules/views/hooks/internal/usePersistViewGroup.ts
+#: src/modules/views/hooks/internal/usePersistViewGroup.ts
+#: src/modules/views/hooks/internal/usePersistViewGroup.ts
+#: src/modules/views/hooks/internal/usePersistViewGroup.ts
+#: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
+#: src/modules/views/hooks/internal/usePersistView.ts
+#: src/modules/views/hooks/internal/usePersistView.ts
+#: src/modules/views/hooks/internal/usePersistView.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+#: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
+#: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
+#: src/modules/settings/serverless-functions/hooks/usePersistServerlessFunction.ts
+#: src/modules/object-metadata/hooks/useUpdateOneObjectMetadataItem.ts
+#: src/modules/object-metadata/hooks/useUpdateOneFieldMetadataItem.ts
+#: src/modules/object-metadata/hooks/useDeleteOneObjectMetadataItem.ts
+#: src/modules/object-metadata/hooks/useDeleteOneFieldMetadataItem.ts
+#: src/modules/object-metadata/hooks/useCreateOneObjectMetadataItem.ts
+#: src/modules/object-metadata/hooks/useCreateOneFieldMetadataItem.ts
 msgid "An error occurred."
 msgstr "Hata oluştu."
+
+#. js-lingui-id: 2xLtB4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "An internal error occurred while applying your changes. Please contact support and try again later."
+msgstr ""
+
+#. js-lingui-id: oRksj8
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "An internal error occurred while validating your changes. Please contact support."
+msgstr ""
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -2375,6 +2410,11 @@ msgstr "Kullanılan Krediler"
 msgid "Cron"
 msgstr "Cron"
 
+#. js-lingui-id: t87/Oe
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "cron trigger"
+msgstr ""
+
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
 msgid "currencies"
@@ -2538,6 +2578,11 @@ msgstr "Veritabanı yapılandırması şu anda devre dışı."
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab.tsx
 msgid "Database event"
 msgstr "Veritabanı olayı"
+
+#. js-lingui-id: 3GUKXi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "database trigger"
+msgstr ""
 
 #. js-lingui-id: mYGY3B
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -3123,11 +3168,6 @@ msgstr "Hesap Düzenle"
 msgid "Edit Agent"
 msgstr "Temsilciyi Düzenle"
 
-#. js-lingui-id: X8x8v5
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "Edit Connection"
-msgstr "Bağlantıyı Düzenle"
-
 #. js-lingui-id: 6vZ75d
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
@@ -3178,11 +3218,6 @@ msgstr "Ödeme yöntemini düzenleyin, faturalarınızı görün ve daha fazlas�
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "Tüm Nesnelerdeki Kayıtları Düzenle"
-
-#. js-lingui-id: vjOt/P
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "Edit the information to connect your database"
-msgstr "Veritabanınıza bağlanmak için bilgileri düzenleyin"
 
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -3857,6 +3892,16 @@ msgstr "Ekstra Kredi Kullanıldı"
 msgid "Failed"
 msgstr "Başarısız"
 
+#. js-lingui-id: fsNGMi
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "Failed to create {translatedMetadataName}. Please try again."
+msgstr ""
+
+#. js-lingui-id: sOnoZ4
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "Failed to create {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
+msgstr ""
+
 #. js-lingui-id: w/6jdn
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
@@ -3942,6 +3987,11 @@ msgstr "Özellik Bayrağı"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Feature Flags & Impersonation"
 msgstr "Özellik Bayrakları ve Kişileştirme"
+
+#. js-lingui-id: 2lOBKV
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "field"
+msgstr ""
 
 #. js-lingui-id: AXjA78
 #: src/modules/command-menu/pages/page-layout/utils/getFieldLabelWithSubField.ts
@@ -4548,6 +4598,11 @@ msgstr "Aktif Olmayan"
 msgid "Inbox"
 msgstr "Gelen Kutusu"
 
+#. js-lingui-id: O5wNUa
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "index"
+msgstr ""
+
 #. js-lingui-id: pZ/USH
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Indexes"
@@ -4587,7 +4642,6 @@ msgstr "AI için Talimatlar"
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Entegrasyonlar"
@@ -6017,6 +6071,11 @@ msgstr "Her {recurringInterval} atanan yeni kredilerin sayısı"
 msgid "Number type"
 msgstr "Sayı türü"
 
+#. js-lingui-id: pNEViR
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "object"
+msgstr ""
+
 #. js-lingui-id: W0i24j
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -6446,6 +6505,11 @@ msgstr "Lütfen sayfayı yenileyin."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
 msgstr "Lütfen önce bir kullanıcı arayın"
+
+#. js-lingui-id: wCgL30
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+msgid "Please select at least one destination object for this relation."
+msgstr ""
 
 #. js-lingui-id: 8YnlGz
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -6949,6 +7013,11 @@ msgstr "Roller"
 msgid "Romanian"
 msgstr "Romence"
 
+#. js-lingui-id: gcbflV
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "route trigger"
+msgstr ""
+
 #. js-lingui-id: 4E5bBq
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "Router"
@@ -7447,6 +7516,11 @@ msgstr "Gönderildi ve Alındı"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Serbian (Cyrillic)"
 msgstr "Sırpça (Kiril)"
+
+#. js-lingui-id: QsydvO
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "serverless function"
+msgstr ""
 
 #. js-lingui-id: eGHP1w
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -8735,6 +8809,11 @@ msgstr "Dikey"
 msgid "Vietnamese"
 msgstr "Vietnamca"
 
+#. js-lingui-id: jUNY/d
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view"
+msgstr ""
+
 #. js-lingui-id: jpctdh
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 msgid "View"
@@ -8744,6 +8823,21 @@ msgstr "Görünüm"
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
 msgstr "Fatura detaylarını görüntüle"
+
+#. js-lingui-id: AdeX9A
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view field"
+msgstr ""
+
+#. js-lingui-id: BA3jId
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view filter"
+msgstr ""
+
+#. js-lingui-id: n7a9IR
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "view group"
+msgstr ""
 
 #. js-lingui-id: lh5BED
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection.tsx
@@ -9087,15 +9181,6 @@ msgstr "Bu nesne için kayıt oluşturmaya izin verilmiyor"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "IMAP (e-posta alma), SMTP (e-posta gönderme) ve CalDAV (takvim senkronizasyonu) çözümleri arasında herhangi bir kombinasyonu kurabilirsiniz."
-
-#. js-lingui-id: aiJY7y
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
-msgstr ""
-"Bağlantıyı düzenleyemezsiniz çünkü izlendiğini tablolara sahiptir.\n"
-"Değişiklik yapmanız gerekiyorsa, lütfen yeni bir bağlantı oluşturun veya önce tabloların eşzamanlılığını kaldırın."
 
 #. js-lingui-id: eqUj2Z
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx

@@ -12,6 +12,8 @@ export const useTextBubbleState = (editor: Editor) => {
         isUnderline: ctx.editor.isActive('underline'),
         isLink: ctx.editor.isActive('link'),
         linkHref: ctx.editor.getAttributes('link').href || '',
+        isBulletList: ctx.editor.isActive('bulletList'),
+        isOrderedList: ctx.editor.isActive('orderedList'),
       };
     },
   });

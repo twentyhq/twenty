@@ -4,9 +4,9 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 export interface CursorData {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,9 +17,9 @@ export const decodeCursor = <T = CursorData>(cursor: string): T => {
   try {
     return JSON.parse(Buffer.from(cursor, 'base64').toString());
   } catch {
-    throw new GraphqlQueryRunnerException(
+    throw new CommonQueryRunnerException(
       `Invalid cursor: ${cursor}`,
-      GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+      CommonQueryRunnerExceptionCode.INVALID_CURSOR,
     );
   }
 };
@@ -72,5 +72,6 @@ export const getPaginationInfo = (
   return {
     hasNextPage: isForwardPagination && hasMoreRecords,
     hasPreviousPage: !isForwardPagination && hasMoreRecords,
+    hasMoreRecords,
   };
 };

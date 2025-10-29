@@ -18,7 +18,6 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
       title: 'Fields',
       position: 100,
       layoutMode: 'vertical-list',
-      selfDisplayMode: 'pinned-left',
       pageLayoutId: DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

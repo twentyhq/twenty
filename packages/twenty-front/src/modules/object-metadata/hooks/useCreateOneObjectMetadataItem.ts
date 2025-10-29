@@ -1,15 +1,15 @@
-import { useMutation } from '@apollo/client';
-
 import {
   type CreateObjectInput,
-  type CreateOneObjectMetadataItemMutation,
-  type CreateOneObjectMetadataItemMutationVariables,
+  useCreateOneObjectMetadataItemMutation,
 } from '~/generated-metadata/graphql';
 
-import { CREATE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
-
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { ApolloError } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateOneObjectMetadataItem = () => {
@@ -18,27 +18,52 @@ export const useCreateOneObjectMetadataItem = () => {
   const { refreshCoreViewsByObjectMetadataId } =
     useRefreshCoreViewsByObjectMetadataId();
 
-  const [mutate] = useMutation<
-    CreateOneObjectMetadataItemMutation,
-    CreateOneObjectMetadataItemMutationVariables
-  >(CREATE_ONE_OBJECT_METADATA_ITEM);
+  const [createOneObjectMetadataItemMutation] =
+    useCreateOneObjectMetadataItemMutation();
 
-  const createOneObjectMetadataItem = async (input: CreateObjectInput) => {
-    const createdObjectMetadata = await mutate({
-      variables: {
-        input: { object: input },
-      },
-    });
+  const { handleMetadataError } = useMetadataErrorHandler();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
-    await refreshObjectMetadataItems();
+  const createOneObjectMetadataItem = async (
+    input: CreateObjectInput,
+  ): Promise<
+    MetadataRequestResult<
+      Awaited<ReturnType<typeof createOneObjectMetadataItemMutation>>
+    >
+  > => {
+    try {
+      const createdObjectMetadata = await createOneObjectMetadataItemMutation({
+        variables: {
+          input: { object: input },
+        },
+      });
 
-    if (isDefined(createdObjectMetadata.data?.createOneObject?.id)) {
-      await refreshCoreViewsByObjectMetadataId(
-        createdObjectMetadata.data.createOneObject.id,
-      );
+      await refreshObjectMetadataItems();
+
+      if (isDefined(createdObjectMetadata.data?.createOneObject?.id)) {
+        await refreshCoreViewsByObjectMetadataId(
+          createdObjectMetadata.data.createOneObject.id,
+        );
+      }
+
+      return {
+        status: 'successful',
+        response: createdObjectMetadata,
+      };
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        handleMetadataError(error, {
+          primaryMetadataName: 'objectMetadata',
+        });
+      } else {
+        enqueueErrorSnackBar({ message: t`An error occurred.` });
+      }
+
+      return {
+        status: 'failed',
+        error,
+      };
     }
-
-    return createdObjectMetadata;
   };
 
   return {
