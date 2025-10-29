@@ -58,19 +58,19 @@ export type GraphWidgetTooltipItem = {
 type GraphWidgetTooltipProps = {
   items: GraphWidgetTooltipItem[];
   showClickHint?: boolean;
-  title?: string;
+  indexLabel?: string;
 };
 
 export const GraphWidgetTooltip = ({
   items,
   showClickHint = false,
-  title,
+  indexLabel,
 }: GraphWidgetTooltipProps) => {
   const theme = useTheme();
 
   return (
     <StyledTooltipContent>
-      {title && <StyledTooltipHeader>{title}</StyledTooltipHeader>}
+      {indexLabel && <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>}
       {items.map((item, index) => (
         <StyledTooltipRow key={index}>
           <StyledDot $color={item.dotColor} />

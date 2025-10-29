@@ -25,6 +25,7 @@ export const Default: Story = {
       },
     ],
     showClickHint: false,
+    indexLabel: 'March 09, 2024',
   },
 };
 
@@ -45,21 +46,17 @@ export const MultipleItems: Story = {
   args: {
     items: [
       {
-        label: 'Q1',
-        formattedValue: '$12,345',
+        label: 'Last year',
+        formattedValue: '20k',
         dotColor: 'blue',
       },
       {
-        label: 'Q2',
-        formattedValue: '$23,456',
-        dotColor: 'green',
-      },
-      {
-        label: 'Q3',
-        formattedValue: '$34,567',
-        dotColor: 'red',
+        label: 'This year',
+        formattedValue: '20k',
+        dotColor: 'purple',
       },
     ],
-    showClickHint: false,
+    showClickHint: true,
+    indexLabel: 'February 2',
   },
 };

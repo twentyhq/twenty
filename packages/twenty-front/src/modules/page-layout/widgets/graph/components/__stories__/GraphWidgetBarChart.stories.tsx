@@ -253,6 +253,8 @@ export const Stacked: Story = {
         data={args.data}
         indexBy={args.indexBy}
         keys={args.keys}
+        groupMode={args.groupMode}
+        seriesLabels={args.seriesLabels}
         showLegend={args.showLegend}
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
@@ -486,6 +488,124 @@ export const Currency: Story = {
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
+export const GroupedWithAllBarsTooltip: Story = {
+  args: {
+    data: [
+      {
+        period: 'January',
+        lastYear: 18000,
+        thisYear: 19500,
+        to: '/comparison/january',
+      },
+      {
+        period: 'February',
+        lastYear: 20000,
+        thisYear: 20000,
+        to: '/comparison/february',
+      },
+      {
+        period: 'March',
+        lastYear: 22000,
+        thisYear: 24500,
+        to: '/comparison/march',
+      },
+      {
+        period: 'April',
+        lastYear: 21000,
+        thisYear: 23000,
+        to: '/comparison/april',
+      },
+    ],
+    indexBy: 'period',
+    keys: ['lastYear', 'thisYear'],
+    seriesLabels: {
+      lastYear: 'Last year',
+      thisYear: 'This year',
+    },
+    displayType: 'shortNumber',
+    showLegend: true,
+    showGrid: true,
+    xAxisLabel: 'Period',
+    yAxisLabel: 'Revenue',
+    groupMode: 'grouped',
+    id: 'bar-chart-grouped-all-tooltip',
+    enableGroupTooltip: true,
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        seriesLabels={args.seriesLabels}
+        displayType={args.displayType}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        groupMode={args.groupMode}
+        id={args.id}
+        enableGroupTooltip={args.enableGroupTooltip}
+      />
+    </Container>
+  ),
+};
+
+export const GroupedDefaultTooltip: Story = {
+  args: {
+    data: [
+      {
+        period: 'January',
+        lastYear: 18000,
+        thisYear: 19500,
+        to: '/comparison/january',
+      },
+      {
+        period: 'February',
+        lastYear: 20000,
+        thisYear: 20000,
+        to: '/comparison/february',
+      },
+      {
+        period: 'March',
+        lastYear: 22000,
+        thisYear: 24500,
+        to: '/comparison/march',
+      },
+    ],
+    indexBy: 'period',
+    keys: ['lastYear', 'thisYear'],
+    seriesLabels: {
+      lastYear: 'Last year',
+      thisYear: 'This year',
+    },
+    displayType: 'shortNumber',
+    showLegend: true,
+    showGrid: true,
+    xAxisLabel: 'Period',
+    yAxisLabel: 'Revenue',
+    groupMode: 'grouped',
+    id: 'bar-chart-grouped-default',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        seriesLabels={args.seriesLabels}
+        displayType={args.displayType}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        groupMode={args.groupMode}
         id={args.id}
       />
     </Container>

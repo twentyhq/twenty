@@ -13,6 +13,7 @@ type UseBarChartTooltipProps = {
   data: BarChartDataItem[];
   indexBy: string;
   formatOptions: GraphValueFormatOptions;
+  enableGroupTooltip?: boolean;
 };
 
 export const useBarChartTooltip = ({
@@ -21,27 +22,50 @@ export const useBarChartTooltip = ({
   data,
   indexBy,
   formatOptions,
+  enableGroupTooltip = true,
 }: UseBarChartTooltipProps) => {
   const renderTooltip = (datum: ComputedDatum<BarDatum>) => {
-    const hoveredKey = hoveredBar?.key;
-    if (!isDefined(hoveredKey)) return null;
-
-    const enrichedKey = enrichedKeys.find((item) => item.key === hoveredKey);
-    if (!enrichedKey) return null;
-
     const dataItem = data.find((d) => d[indexBy] === datum.indexValue);
-    const seriesValue = Number(datum.data[hoveredKey] || 0);
-    const tooltipItem = {
-      label: enrichedKey.label,
-      formattedValue: formatGraphValue(seriesValue, formatOptions),
-      dotColor: enrichedKey.colorScheme.solid,
-    };
 
-    return {
-      tooltipItem,
-      showClickHint: isDefined(dataItem?.to),
-      title: String(datum.indexValue),
-    };
+    if (enableGroupTooltip) {
+      // Show all bars in the group
+      const tooltipItems = enrichedKeys
+        .map((enrichedKey) => {
+          const seriesValue = Number(datum.data[enrichedKey.key] || 0);
+          return {
+            label: enrichedKey.label,
+            formattedValue: formatGraphValue(seriesValue, formatOptions),
+            dotColor: enrichedKey.colorScheme.solid,
+          };
+        })
+        .filter((item) => isDefined(item));
+
+      return {
+        tooltipItems,
+        showClickHint: isDefined(dataItem?.to),
+        indexLabel: String(datum.indexValue),
+      };
+    } else {
+      // Show only the hovered bar (legacy behavior)
+      const hoveredKey = hoveredBar?.key;
+      if (!isDefined(hoveredKey)) return null;
+
+      const enrichedKey = enrichedKeys.find((item) => item.key === hoveredKey);
+      if (!enrichedKey) return null;
+
+      const seriesValue = Number(datum.data[hoveredKey] || 0);
+      const tooltipItem = {
+        label: enrichedKey.label,
+        formattedValue: formatGraphValue(seriesValue, formatOptions),
+        dotColor: enrichedKey.colorScheme.solid,
+      };
+
+      return {
+        tooltipItems: [tooltipItem],
+        showClickHint: isDefined(dataItem?.to),
+        indexLabel: String(datum.indexValue),
+      };
+    }
   };
 
   return { renderTooltip };
