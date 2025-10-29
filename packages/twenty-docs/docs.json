@@ -1,190 +1,196 @@
 {
   "$schema": "https://mintlify.com/schema.json",
   "name": "Twenty Documentation",
+  "theme": "mint",
   "logo": {
     "light": "/logo.svg",
     "dark": "/logo.svg"
   },
   "favicon": "/favicon.png",
   "colors": {
-    "primary": "#5E5ADB",
-    "light": "#B3B1FF",
-    "dark": "#5E5ADB"
+    "primary": "#141414",
+    "light": "#fafafa",
+    "dark": "#141414"
   },
-  "topbarLinks": [
-    {
-      "name": "GitHub",
-      "url": "https://github.com/twentyhq/twenty"
-    }
-  ],
-  "tabs": [
-    {
-      "name": "User Guide",
-      "url": "user-guide"
-    },
-    {
-      "name": "Developers",
-      "url": "developers"
-    }
-  ],
-  "navigation": [
-    {
-      "group": "User Guide",
-      "pages": [
-        {
-          "group": "Getting Started",
-          "pages": [
-            "user-guide/getting-started/what-is-twenty",
-            "user-guide/getting-started/create-workspace",
-            "user-guide/getting-started/getting-around-twenty",
-            "user-guide/getting-started/configure-your-workspace",
-            "user-guide/getting-started/implementation-services",
-            "user-guide/getting-started/migrating-from-other-crms",
-            "user-guide/getting-started/import-export-data"
-          ]
-        },
-        {
-          "group": "Data Model",
-          "pages": [
-            "user-guide/data-model/customize-your-data-model",
-            "user-guide/data-model/objects",
-            "user-guide/data-model/fields",
-            "user-guide/data-model/creating-records",
-            "user-guide/data-model/relation-fields",
-            "user-guide/data-model/data-model-faq"
-          ]
-        },
-        {
-          "group": "CRM Essentials",
-          "pages": [
-            "user-guide/crm-essentials/contact-and-account-management",
-            "user-guide/crm-essentials/pipeline",
-            "user-guide/crm-essentials/view-management",
-            "user-guide/crm-essentials/sales-use-cases"
-          ]
-        },
-        {
-          "group": "Views",
-          "pages": [
-            "user-guide/views/kanban-views",
-            "user-guide/views/views-sort-filter"
-          ]
-        },
-        {
-          "group": "Workflows",
-          "pages": [
-            "user-guide/workflows/getting-started-workflows",
-            "user-guide/workflows/workflow-features",
-            "user-guide/workflows/internal-automations",
-            "user-guide/workflows/external-tool-integration",
-            "user-guide/workflows/workflow-troubleshooting",
-            "user-guide/workflows/workflow-credits",
-            "user-guide/workflows/professional-services"
-          ]
-        },
-        {
-          "group": "Collaboration",
-          "pages": [
-            "user-guide/collaboration/emails-and-calendars",
-            "user-guide/collaboration/notes",
-            "user-guide/collaboration/tasks"
-          ]
-        },
-        {
-          "group": "Integrations & API",
-          "pages": [
-            "user-guide/integrations-api/apis-overview",
-            "user-guide/integrations-api/api-webhooks",
-            "user-guide/integrations-api/integrations"
-          ]
-        },
-        {
-          "group": "Reporting",
-          "pages": ["user-guide/reporting/reporting-overview"]
-        },
-        {
-          "group": "Settings",
-          "pages": [
-            "user-guide/settings/profile-settings",
-            "user-guide/settings/experience-settings",
-            "user-guide/settings/email-calendar-setup",
-            "user-guide/settings/workspace-settings",
-            "user-guide/settings/member-management",
-            "user-guide/settings/permissions",
-            "user-guide/settings/domains-settings",
-            "user-guide/settings/releases-settings",
-            "user-guide/settings/settings-faq"
-          ]
-        },
-        {
-          "group": "Pricing",
-          "pages": ["user-guide/pricing/billing-and-pricing-faq"]
-        },
-        {
-          "group": "Resources",
-          "pages": [
-            "user-guide/resources/glossary",
-            "user-guide/resources/github"
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Developers",
-      "pages": [
-        {
-          "group": "Getting Started",
-          "pages": ["developers/local-setup"]
-        },
-        {
-          "group": "Self-Hosting",
-          "pages": [
-            "developers/self-hosting/docker-compose",
-            "developers/self-hosting/setup",
-            "developers/self-hosting/upgrade-guide",
-            "developers/self-hosting/cloud-providers",
-            "developers/self-hosting/troubleshooting"
-          ]
-        },
-        {
-          "group": "API and Webhooks",
-          "pages": [
-            "developers/api-and-webhooks/api",
-            "developers/api-and-webhooks/webhooks"
-          ]
-        },
-        {
-          "group": "Frontend Development",
-          "pages": [
-            "developers/frontend-development/storybook",
-            "developers/frontend-development/components",
-            "developers/frontend-development/frontend-commands",
-            "developers/frontend-development/work-with-figma",
-            "developers/frontend-development/best-practices-front",
-            "developers/frontend-development/style-guide",
-            "developers/frontend-development/folder-architecture-front",
-            "developers/frontend-development/hotkeys"
-          ]
-        },
-        {
-          "group": "Backend Development",
-          "pages": [
-            "developers/backend-development/server-commands",
-            "developers/backend-development/feature-flags",
-            "developers/backend-development/folder-architecture-server",
-            "developers/backend-development/zapier",
-            "developers/backend-development/best-practices-server",
-            "developers/backend-development/custom-objects",
-            "developers/backend-development/queue"
-          ]
-        },
-        {
-          "group": "Contributing",
-          "pages": ["developers/bug-and-requests"]
-        }
-      ]
-    }
-  ],
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "User Guide",
+        "href": "/user-guide/introduction",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
+              "user-guide/getting-started/what-is-twenty",
+              "user-guide/getting-started/create-workspace",
+              "user-guide/getting-started/getting-around-twenty",
+              "user-guide/getting-started/configure-your-workspace",
+              "user-guide/getting-started/implementation-services",
+              "user-guide/getting-started/migrating-from-other-crms",
+              "user-guide/getting-started/import-export-data"
+            ]
+          },
+          {
+            "group": "Data Model",
+            "icon": "database",
+            "pages": [
+              "user-guide/data-model/customize-your-data-model",
+              "user-guide/data-model/objects",
+              "user-guide/data-model/fields",
+              "user-guide/data-model/creating-records",
+              "user-guide/data-model/relation-fields",
+              "user-guide/data-model/data-model-faq"
+            ]
+          },
+          {
+            "group": "CRM Essentials",
+            "icon": "users",
+            "pages": [
+              "user-guide/crm-essentials/contact-and-account-management",
+              "user-guide/crm-essentials/pipeline",
+              "user-guide/crm-essentials/view-management",
+              "user-guide/crm-essentials/sales-use-cases"
+            ]
+          },
+          {
+            "group": "Views",
+            "icon": "table",
+            "pages": [
+              "user-guide/views/kanban-views",
+              "user-guide/views/views-sort-filter"
+            ]
+          },
+          {
+            "group": "Workflows",
+            "icon": "workflow",
+            "pages": [
+              "user-guide/workflows/getting-started-workflows",
+              "user-guide/workflows/workflow-features",
+              "user-guide/workflows/internal-automations",
+              "user-guide/workflows/external-tool-integration",
+              "user-guide/workflows/workflow-troubleshooting",
+              "user-guide/workflows/workflow-credits",
+              "user-guide/workflows/professional-services"
+            ]
+          },
+          {
+            "group": "Collaboration",
+            "icon": "message-circle",
+            "pages": [
+              "user-guide/collaboration/emails-and-calendars",
+              "user-guide/collaboration/notes",
+              "user-guide/collaboration/tasks"
+            ]
+          },
+          {
+            "group": "Integrations & API",
+            "icon": "plug",
+            "pages": [
+              "user-guide/integrations-api/apis-overview",
+              "user-guide/integrations-api/api-webhooks",
+              "user-guide/integrations-api/integrations"
+            ]
+          },
+          {
+            "group": "Reporting",
+            "icon": "chart-bar",
+            "pages": ["user-guide/reporting/reporting-overview"]
+          },
+          {
+            "group": "Settings",
+            "icon": "settings",
+            "pages": [
+              "user-guide/settings/profile-settings",
+              "user-guide/settings/experience-settings",
+              "user-guide/settings/email-calendar-setup",
+              "user-guide/settings/workspace-settings",
+              "user-guide/settings/member-management",
+              "user-guide/settings/permissions",
+              "user-guide/settings/domains-settings",
+              "user-guide/settings/releases-settings",
+              "user-guide/settings/settings-faq"
+            ]
+          },
+          {
+            "group": "Pricing",
+            "icon": "credit-card",
+            "pages": ["user-guide/pricing/billing-and-pricing-faq"]
+          },
+          {
+            "group": "Resources",
+            "icon": "book-open",
+            "pages": [
+              "user-guide/resources/glossary",
+              "user-guide/resources/github"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developers",
+        "href": "/developers/introduction",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": ["developers/local-setup"]
+          },
+          {
+            "group": "Self-Hosting",
+            "icon": "server",
+            "pages": [
+              "developers/self-hosting/docker-compose",
+              "developers/self-hosting/setup",
+              "developers/self-hosting/upgrade-guide",
+              "developers/self-hosting/cloud-providers",
+              "developers/self-hosting/troubleshooting"
+            ]
+          },
+          {
+            "group": "API and Webhooks",
+            "icon": "webhook",
+            "pages": [
+              "developers/api-and-webhooks/api",
+              "developers/api-and-webhooks/webhooks"
+            ]
+          },
+          {
+            "group": "Frontend Development",
+            "icon": "layout",
+            "pages": [
+              "developers/frontend-development/storybook",
+              "developers/frontend-development/components",
+              "developers/frontend-development/frontend-commands",
+              "developers/frontend-development/work-with-figma",
+              "developers/frontend-development/best-practices-front",
+              "developers/frontend-development/style-guide",
+              "developers/frontend-development/folder-architecture-front",
+              "developers/frontend-development/hotkeys"
+            ]
+          },
+          {
+            "group": "Backend Development",
+            "icon": "terminal",
+            "pages": [
+              "developers/backend-development/server-commands",
+              "developers/backend-development/feature-flags",
+              "developers/backend-development/folder-architecture-server",
+              "developers/backend-development/zapier",
+              "developers/backend-development/best-practices-server",
+              "developers/backend-development/custom-objects",
+              "developers/backend-development/queue"
+            ]
+          },
+          {
+            "group": "Contributing",
+            "icon": "git-pull-request",
+            "pages": ["developers/bug-and-requests"]
+          }
+        ]
+      }
+    ]
+  },
   "footerSocials": {
     "github": "https://github.com/twentyhq/twenty",
     "twitter": "https://twitter.com/twentycrm",
