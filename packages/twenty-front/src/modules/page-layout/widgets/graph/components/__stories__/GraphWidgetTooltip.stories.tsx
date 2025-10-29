@@ -60,3 +60,24 @@ export const MultipleItems: Story = {
     indexLabel: 'February 2',
   },
 };
+
+export const SuperLongText: Story = {
+  args: {
+    items: [
+      {
+        label:
+          'Total Annual Recurring Revenue (North America Region including Canada)',
+        formattedValue: '$2,450,000',
+        dotColor: 'blue',
+      },
+      {
+        label: 'Customer Acquisition Cost (Marketing & Sales Combined)',
+        formattedValue: '$125,500',
+        dotColor: 'purple',
+      },
+    ],
+    showClickHint: true,
+    indexLabel:
+      'Q4 2024 Financial Year End (October - December) - North America Regional Performance Summary',
+  },
+};

@@ -12,6 +12,7 @@ const StyledTooltip = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+  max-width: min(300px, calc(100vw - 40px));
   min-width: 160px;
   pointer-events: none;
 `;
@@ -70,6 +71,9 @@ const StyledTooltipHeader = styled.div`
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: 140%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledTooltipRowRightContent = styled.div`
@@ -79,7 +83,23 @@ const StyledTooltipRowRightContent = styled.div`
   font-size: ${({ theme }) => theme.font.size.xs};
   color: ${({ theme }) => theme.font.color.extraLight};
   font-weight: ${({ theme }) => theme.font.weight.regular};
+  gap: ${({ theme }) => theme.spacing(2)};
+  min-width: 0;
   width: 100%;
+`;
+
+const StyledTooltipLabel = styled.span`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledTooltipValue = styled.span`
+  flex-shrink: 0;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  white-space: nowrap;
 `;
 
 const StyledHorizontalSectionPadding = styled.div<{
@@ -123,8 +143,8 @@ export const GraphWidgetTooltip = ({
               <StyledTooltipRow key={index}>
                 <StyledDot $color={item.dotColor} />
                 <StyledTooltipRowRightContent>
-                  <span>{item.label}</span>
-                  <span>{item.formattedValue}</span>
+                  <StyledTooltipLabel>{item.label}</StyledTooltipLabel>
+                  <StyledTooltipValue>{item.formattedValue}</StyledTooltipValue>
                 </StyledTooltipRowRightContent>
               </StyledTooltipRow>
             ))}
