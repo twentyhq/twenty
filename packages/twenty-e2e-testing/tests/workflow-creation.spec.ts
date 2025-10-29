@@ -1,11 +1,10 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../lib/fixtures/screenshot';
 import { deleteWorkflow } from '../lib/requests/delete-workflow';
 import { destroyWorkflow } from '../lib/requests/destroy-workflow';
-
 test('Create workflow', async ({ page }) => {
   const NEW_WORKFLOW_NAME = 'Test Workflow';
 
-  await page.goto('/');
+  await page.goto(process.env.LINK);
 
   const workflowsLink = page.getByRole('link', { name: 'Workflows' });
   await workflowsLink.click();
@@ -14,18 +13,19 @@ test('Create workflow', async ({ page }) => {
     name: 'Create new workflow',
   });
 
+  await createWorkflowButton.click();
+
   const [createWorkflowResponse] = await Promise.all([
-    page.waitForResponse(async (response) => {
-      if (!response.url().endsWith('/graphql')) {
+    page.waitForResponse((response) => {
+      if (!response.url().endsWith('/graphql')) return false;
+      if (response.request().method() !== 'POST') return false; // exclut les SSE/websocket
+      try {
+        const body = response.request().postDataJSON();
+        return body?.operationName === 'CreateOneWorkflow';
+      } catch {
         return false;
       }
-
-      const requestBody = response.request().postDataJSON();
-
-      return requestBody.operationName === 'CreateOneWorkflow';
     }),
-
-    createWorkflowButton.click(),
   ]);
 
   const recordName = page.getByTestId('top-bar-title').getByText('Untitled');
