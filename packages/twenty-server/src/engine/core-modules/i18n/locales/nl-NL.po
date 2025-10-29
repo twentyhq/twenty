@@ -3518,6 +3518,11 @@ msgstr "Uniek veld kan geen standaardwaarde hebben"
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "Unieke index kan niet worden aangemaakt voor veld {fieldName} van type {fieldType}"
 
+#. js-lingui-id: rtir7c
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
+msgid "unknown"
+msgstr ""
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"

@@ -12,9 +12,9 @@ type HeadingStyle = {
 };
 
 const HEADING_STYLES: Record<HeadingLevel, HeadingStyle> = {
-  1: { element: 'h1', fontSize: '36px' },
-  2: { element: 'h2', fontSize: '30px' },
-  3: { element: 'h3', fontSize: '24px' },
+  1: { element: 'h1', fontSize: '32px' },
+  2: { element: 'h2', fontSize: '24px' },
+  3: { element: 'h3', fontSize: '16px' },
 };
 
 export const heading = (node: JSONContent): ReactNode => {

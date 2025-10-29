@@ -119,7 +119,6 @@ export class WorkspaceManagerService {
       this.coreDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
-      featureFlags,
     );
 
     await prefillCoreViews({

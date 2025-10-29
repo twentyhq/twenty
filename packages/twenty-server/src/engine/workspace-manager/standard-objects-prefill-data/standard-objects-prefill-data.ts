@@ -9,7 +9,6 @@ export const standardObjectsPrefillData = async (
   dataSource: DataSource,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
-  featureFlags?: Record<string, boolean>,
 ) => {
   dataSource.transaction(async (entityManager: EntityManager) => {
     await prefillCompanies(entityManager, schemaName);

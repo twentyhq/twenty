@@ -28,6 +28,9 @@ export enum ServerlessFunctionRuntime {
   NODE22 = 'nodejs22.x',
 }
 
+export const DEFAULT_HANDLER_PATH = 'src/index.ts';
+export const DEFAULT_HANDLER_NAME = 'main';
+
 export const SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES = [
   'cronTriggers',
   'databaseEventTriggers',
@@ -45,6 +48,12 @@ export class ServerlessFunctionEntity
 
   @Column({ nullable: false })
   name: string;
+
+  @Column({ nullable: false, default: DEFAULT_HANDLER_PATH })
+  handlerPath: string;
+
+  @Column({ nullable: false, default: DEFAULT_HANDLER_NAME })
+  handlerName: string;
 
   @Column({ nullable: true, type: 'varchar' })
   description: string | null;
