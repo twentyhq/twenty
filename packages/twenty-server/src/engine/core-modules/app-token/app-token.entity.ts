@@ -52,8 +52,8 @@ export class AppTokenEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
+  @Column({ nullable: true, type: 'uuid' })
+  workspaceId: string | null;
 
   @Field()
   @Column({ nullable: false, type: 'text', default: AppTokenType.RefreshToken })
