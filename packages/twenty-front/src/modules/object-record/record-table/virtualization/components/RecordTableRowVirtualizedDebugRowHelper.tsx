@@ -17,8 +17,8 @@ const StyledDebugRow = styled.div`
   top: ${({ theme }) => theme.spacing(1.25)};
   z-index: 20;
   color: ${({ theme }) => theme.font.color.primary};
-  background-color: ${({ theme }) => theme.adaptiveColors.gray1};
-  border: 1px solid ${({ theme }) => theme.adaptiveColors.blue4};
+  background-color: ${({ theme }) => theme.color.gray3};
+  border: 1px solid ${({ theme }) => theme.color.blue8};
   padding: ${({ theme }) => theme.spacing(0.5)};
   display: flex;
   max-height: ${({ theme }) => theme.spacing(4)};

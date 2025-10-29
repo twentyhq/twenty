@@ -9,7 +9,7 @@ import { deleteOneCoreViewFilter } from 'test/integration/metadata/suites/view-f
 import { destroyOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-core-view-filter.util';
 import { findCoreViewFilters } from 'test/integration/metadata/suites/view-filter/utils/find-core-view-filters.util';
 import { updateOneCoreViewFilter } from 'test/integration/metadata/suites/view-filter/utils/update-one-core-view-filter.util';
-import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
+import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 const TEST_NOT_EXISTING_VIEW_FILTER_ID = '20202020-52c5-4152-8c09-76a845fb8ece';
@@ -69,18 +69,22 @@ describe('View Filter Resolver', () => {
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupViewRecords();
   });
 
   beforeEach(async () => {
-    await cleanupViewRecords();
-
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Filters',
       objectMetadataId: testObjectMetadataId,
     });
 
     testViewId = view.id;
+  });
+
+  afterEach(async () => {
+    await destroyOneCoreView({
+      viewId: testViewId,
+      expectToFail: false,
+    });
   });
 
   describe('getCoreViewFilters', () => {

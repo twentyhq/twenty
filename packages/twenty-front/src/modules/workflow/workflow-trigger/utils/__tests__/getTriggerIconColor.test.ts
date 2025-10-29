@@ -1,12 +1,12 @@
 import { type Theme } from '@emotion/react';
-import { COLOR } from 'twenty-ui/theme';
+import { COLOR_LIGHT } from 'twenty-ui/theme';
 import { getTriggerIconColor } from '../getTriggerIconColor';
 
 describe('getTriggerIconColor', () => {
   const mockTheme: Theme = {
     color: {
-      blue: COLOR.blue,
-      purple: COLOR.purple,
+      blue: COLOR_LIGHT.blue,
+      purple: COLOR_LIGHT.purple,
     },
   } as unknown as Theme;
 
@@ -16,7 +16,7 @@ describe('getTriggerIconColor', () => {
       triggerType: 'DATABASE_EVENT',
     });
 
-    expect(result).toBe(COLOR.blue);
+    expect(result).toBe(COLOR_LIGHT.blue);
   });
 
   it('returns the purple color for cron from theme', () => {
@@ -25,14 +25,14 @@ describe('getTriggerIconColor', () => {
       triggerType: 'CRON',
     });
 
-    expect(result).toBe(COLOR.purple);
+    expect(result).toBe(COLOR_LIGHT.purple);
   });
 
   it('works with different theme configurations', () => {
     const differentTheme: Theme = {
       color: {
-        blue: COLOR.blue,
-        purple: COLOR.purple,
+        blue: COLOR_LIGHT.blue,
+        purple: COLOR_LIGHT.purple,
       },
     } as unknown as Theme;
 
@@ -41,14 +41,14 @@ describe('getTriggerIconColor', () => {
       triggerType: 'DATABASE_EVENT',
     });
 
-    expect(result).toBe(COLOR.blue);
+    expect(result).toBe(COLOR_LIGHT.blue);
   });
 
   it('maintains reference to theme.color.blue', () => {
     const customTheme: Theme = {
       color: {
-        blue: COLOR.blue,
-        purple: COLOR.purple,
+        blue: COLOR_LIGHT.blue,
+        purple: COLOR_LIGHT.purple,
       },
     } as unknown as Theme;
 
@@ -57,6 +57,6 @@ describe('getTriggerIconColor', () => {
       triggerType: 'DATABASE_EVENT',
     });
 
-    expect(result).toBe(COLOR.blue);
+    expect(result).toBe(COLOR_LIGHT.blue);
   });
 });

@@ -1,7 +1,3 @@
-import {
-  TEST_NOT_EXISTING_VIEW_SORT_ID,
-  TEST_VIEW_1_ID,
-} from 'test/integration/constants/test-view-ids.constants';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -15,14 +11,13 @@ import {
 import {
   createTestViewSortWithRestApi,
   createTestViewWithRestApi,
+  deleteTestViewSortWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
-import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import {
-  assertViewSortStructure,
-  cleanupViewRecords,
-} from 'test/integration/utils/view-test.util';
+import { assertViewSortStructure } from 'test/integration/utils/view-test.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import {
   generateViewSortExceptionMessage,
@@ -32,6 +27,8 @@ import {
 describe('View Sort REST API', () => {
   let testObjectMetadataId: string;
   let testFieldMetadataId: string;
+  let testViewId: string;
+  let testViewSortId: string | undefined;
 
   beforeAll(async () => {
     const {
@@ -40,11 +37,11 @@ describe('View Sort REST API', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
+        nameSingular: 'testViewSortObject',
+        namePlural: 'testViewSortObjects',
+        labelSingular: 'Test View Sort Object',
+        labelPlural: 'Test View Sort Objects',
+        icon: 'IconSort',
       },
     });
 
@@ -73,6 +70,13 @@ describe('View Sort REST API', () => {
     });
 
     testFieldMetadataId = fieldMetadataId;
+
+    const testView = await createTestViewWithRestApi({
+      name: 'Test View for Sort Integration',
+      objectMetadataId: testObjectMetadataId,
+    });
+
+    testViewId = testView.id;
   });
 
   afterAll(async () => {
@@ -90,24 +94,18 @@ describe('View Sort REST API', () => {
     });
   });
 
-  beforeEach(async () => {
-    await cleanupViewRecords();
+  afterEach(async () => {
+    if (!testViewSortId) return;
 
-    await createTestViewWithRestApi({
-      name: generateRecordName('Test View for Sorts'),
-      objectMetadataId: testObjectMetadataId,
-    });
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
+    await deleteTestViewSortWithRestApi(testViewSortId);
+    testViewSortId = undefined;
   });
 
   describe('GET /metadata/viewSorts', () => {
     it('should return empty array when no view sorts exist', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/viewSorts?viewId=${TEST_VIEW_1_ID}`,
+        path: `/metadata/viewSorts?viewId=${testViewId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
@@ -128,26 +126,32 @@ describe('View Sort REST API', () => {
 
     it('should return view sorts for a specific view after creating one', async () => {
       const viewSort = await createTestViewSortWithRestApi({
-        direction: ViewSortDirection.ASC,
+        viewId: testViewId,
         fieldMetadataId: testFieldMetadataId,
+        direction: ViewSortDirection.ASC,
       });
+
+      testViewSortId = viewSort.id;
 
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/viewSorts?viewId=${TEST_VIEW_1_ID}`,
+        path: `/metadata/viewSorts?viewId=${testViewId}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
       assertRestApiSuccessfulResponse(response);
       expect(Array.isArray(response.body)).toBe(true);
-      expect(response.body).toHaveLength(1);
 
-      const returnedViewSort = response.body[0];
+      const returnedViewSort = response.body.find(
+        (el: ViewSortDTO) => el.id === viewSort.id,
+      );
+
+      jestExpectToBeDefined(returnedViewSort);
 
       assertViewSortStructure(returnedViewSort, {
         id: viewSort.id,
         fieldMetadataId: testFieldMetadataId,
-        viewId: TEST_VIEW_1_ID,
+        viewId: testViewId,
         direction: ViewSortDirection.ASC,
       });
     });
@@ -156,26 +160,32 @@ describe('View Sort REST API', () => {
   describe('POST /metadata/viewSorts', () => {
     it('should create a new view sort with ASC direction', async () => {
       const viewSort = await createTestViewSortWithRestApi({
-        direction: ViewSortDirection.ASC,
+        viewId: testViewId,
         fieldMetadataId: testFieldMetadataId,
+        direction: ViewSortDirection.ASC,
       });
+
+      testViewSortId = viewSort.id;
 
       assertViewSortStructure(viewSort, {
         fieldMetadataId: testFieldMetadataId,
-        viewId: TEST_VIEW_1_ID,
+        viewId: testViewId,
         direction: ViewSortDirection.ASC,
       });
     });
 
     it('should create a view sort with DESC direction', async () => {
       const descSort = await createTestViewSortWithRestApi({
-        direction: ViewSortDirection.DESC,
+        viewId: testViewId,
         fieldMetadataId: testFieldMetadataId,
+        direction: ViewSortDirection.DESC,
       });
+
+      testViewSortId = descSort.id;
 
       assertViewSortStructure(descSort, {
         fieldMetadataId: testFieldMetadataId,
-        viewId: TEST_VIEW_1_ID,
+        viewId: testViewId,
         direction: ViewSortDirection.DESC,
       });
     });
@@ -184,9 +194,12 @@ describe('View Sort REST API', () => {
   describe('GET /metadata/viewSorts/:id', () => {
     it('should return a view sort by id', async () => {
       const viewSort = await createTestViewSortWithRestApi({
-        direction: ViewSortDirection.ASC,
+        viewId: testViewId,
         fieldMetadataId: testFieldMetadataId,
+        direction: ViewSortDirection.ASC,
       });
+
+      testViewSortId = viewSort.id;
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -198,7 +211,7 @@ describe('View Sort REST API', () => {
       assertViewSortStructure(response.body, {
         id: viewSort.id,
         fieldMetadataId: testFieldMetadataId,
-        viewId: TEST_VIEW_1_ID,
+        viewId: testViewId,
         direction: ViewSortDirection.ASC,
       });
     });
@@ -206,7 +219,7 @@ describe('View Sort REST API', () => {
     it('should return empty object for non-existent view sort', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/viewSorts/${TEST_NOT_EXISTING_VIEW_SORT_ID}`,
+        path: `/metadata/viewSorts/20202020-a1b2-4c3d-8e9f-123456789abc`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
@@ -217,9 +230,12 @@ describe('View Sort REST API', () => {
   describe('PATCH /metadata/viewSorts/:id', () => {
     it('should update an existing view sort', async () => {
       const viewSort = await createTestViewSortWithRestApi({
-        direction: ViewSortDirection.ASC,
+        viewId: testViewId,
         fieldMetadataId: testFieldMetadataId,
+        direction: ViewSortDirection.ASC,
       });
+
+      testViewSortId = viewSort.id;
 
       const updateData = {
         direction: ViewSortDirection.DESC,
@@ -237,7 +253,7 @@ describe('View Sort REST API', () => {
         id: viewSort.id,
         direction: ViewSortDirection.DESC,
         fieldMetadataId: testFieldMetadataId,
-        viewId: TEST_VIEW_1_ID,
+        viewId: testViewId,
       });
     });
 
@@ -248,7 +264,7 @@ describe('View Sort REST API', () => {
 
       const response = await makeRestAPIRequest({
         method: 'patch',
-        path: `/metadata/viewSorts/${TEST_NOT_EXISTING_VIEW_SORT_ID}`,
+        path: `/metadata/viewSorts/20202020-a1b2-4c3d-8e9f-123456789abc`,
         body: updateData,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
@@ -260,9 +276,12 @@ describe('View Sort REST API', () => {
   describe('DELETE /metadata/viewSorts/:id', () => {
     it('should delete an existing view sort', async () => {
       const viewSort = await createTestViewSortWithRestApi({
-        direction: ViewSortDirection.ASC,
+        viewId: testViewId,
         fieldMetadataId: testFieldMetadataId,
+        direction: ViewSortDirection.ASC,
       });
+
+      testViewSortId = viewSort.id;
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',
@@ -285,7 +304,7 @@ describe('View Sort REST API', () => {
     it('should return 404 error when deleting non-existent view sort', async () => {
       const response = await makeRestAPIRequest({
         method: 'delete',
-        path: `/metadata/viewSorts/${TEST_NOT_EXISTING_VIEW_SORT_ID}`,
+        path: `/metadata/viewSorts/20202020-a1b2-4c3d-8e9f-123456789abc`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
@@ -294,7 +313,7 @@ describe('View Sort REST API', () => {
         404,
         generateViewSortExceptionMessage(
           ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          TEST_NOT_EXISTING_VIEW_SORT_ID,
+          '20202020-a1b2-4c3d-8e9f-123456789abc',
         ),
       );
     });

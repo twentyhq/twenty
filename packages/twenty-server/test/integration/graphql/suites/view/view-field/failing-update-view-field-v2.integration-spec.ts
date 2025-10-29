@@ -1,4 +1,3 @@
-import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
 import {
   cleanupViewFieldTestV2,
   setupViewFieldTestV2,
@@ -12,6 +11,8 @@ import {
 } from 'twenty-shared/testing';
 
 import { type UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
+
+const TEST_NOT_EXISTING_VIEW_FIELD_ID = '20202020-0000-4000-8000-000000000001';
 
 describe('View Field Resolver - Failing Update Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;

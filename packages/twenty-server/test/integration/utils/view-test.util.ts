@@ -6,10 +6,6 @@ import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/ent
 import { type ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
-export const cleanupViewRecords = async (): Promise<void> => {
-  await global.testDataSource.query(`DELETE from "core"."view"`);
-};
-
 export const assertViewStructure = (
   view: ViewEntity,
   expectedFields?: Partial<ViewEntity>,

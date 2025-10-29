@@ -1,17 +1,17 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { type Theme } from '@emotion/react';
-import { COLOR, GRAY_SCALE } from 'twenty-ui/theme';
+import { COLOR_LIGHT, GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { getActionIconColorOrThrow } from '../getActionIconColorOrThrow';
 
 const mockTheme: Theme = {
   color: {
-    orange: COLOR.orange,
-    pink: COLOR.pink,
-    red: COLOR.red,
+    orange: COLOR_LIGHT.orange,
+    pink: COLOR_LIGHT.pink,
+    red: COLOR_LIGHT.red,
   },
   font: {
     color: {
-      tertiary: GRAY_SCALE.gray40,
+      tertiary: GRAY_SCALE_LIGHT.gray9,
     },
   },
 } as Theme;
@@ -85,7 +85,7 @@ describe('getActionIconColorOrThrow', () => {
         actionType: 'FILTER',
       });
 
-      expect(result).toBe(mockTheme.color.green60);
+      expect(result).toBe(mockTheme.color.green12);
     });
   });
 
@@ -93,13 +93,13 @@ describe('getActionIconColorOrThrow', () => {
     it('should use the provided theme colors correctly', () => {
       const customTheme: Theme = {
         color: {
-          red: COLOR.red,
-          orange: COLOR.orange,
-          pink: COLOR.turquoise,
+          red: COLOR_LIGHT.red,
+          orange: COLOR_LIGHT.orange,
+          pink: COLOR_LIGHT.turquoise,
         },
         font: {
           color: {
-            tertiary: GRAY_SCALE.gray50,
+            tertiary: GRAY_SCALE_LIGHT.gray11,
           },
         },
       } as Theme;
@@ -109,28 +109,28 @@ describe('getActionIconColorOrThrow', () => {
           theme: customTheme,
           actionType: 'CODE',
         }),
-      ).toBe(COLOR.red);
+      ).toBe(COLOR_LIGHT.red);
 
       expect(
         getActionIconColorOrThrow({
           theme: customTheme,
           actionType: 'SEND_EMAIL',
         }),
-      ).toBe(COLOR.red);
+      ).toBe(COLOR_LIGHT.red);
 
       expect(
         getActionIconColorOrThrow({
           theme: customTheme,
           actionType: 'AI_AGENT',
         }),
-      ).toBe(COLOR.turquoise);
+      ).toBe(COLOR_LIGHT.turquoise);
 
       expect(
         getActionIconColorOrThrow({
           theme: customTheme,
           actionType: 'CREATE_RECORD',
         }),
-      ).toBe(GRAY_SCALE.gray50);
+      ).toBe(GRAY_SCALE_LIGHT.gray11);
     });
   });
 
@@ -231,49 +231,49 @@ describe('getActionIconColorOrThrow', () => {
     it('should use the provided theme colors correctly', () => {
       const customTheme: Theme = {
         color: {
-          red: COLOR.red,
-          orange: COLOR.orange,
-          pink: COLOR.turquoise,
+          red: COLOR_LIGHT.red,
+          orange: COLOR_LIGHT.orange,
+          pink: COLOR_LIGHT.turquoise,
         },
         font: {
           color: {
-            tertiary: GRAY_SCALE.gray50,
+            tertiary: GRAY_SCALE_LIGHT.gray11,
           },
         },
       } as Theme;
 
       expect(
         getActionIconColorOrThrow({ theme: customTheme, actionType: 'CODE' }),
-      ).toBe(COLOR.red);
+      ).toBe(COLOR_LIGHT.red);
       expect(
         getActionIconColorOrThrow({
           theme: customTheme,
           actionType: 'SEND_EMAIL',
         }),
-      ).toBe(COLOR.red);
+      ).toBe(COLOR_LIGHT.red);
       expect(
         getActionIconColorOrThrow({
           theme: customTheme,
           actionType: 'AI_AGENT',
         }),
-      ).toBe(COLOR.turquoise);
+      ).toBe(COLOR_LIGHT.turquoise);
       expect(
         getActionIconColorOrThrow({
           theme: customTheme,
           actionType: 'CREATE_RECORD',
         }),
-      ).toBe(GRAY_SCALE.gray50);
+      ).toBe(GRAY_SCALE_LIGHT.gray11);
     });
 
     it('should return undefined when red color is missing for SEND_EMAIL action', () => {
       const themeWithoutBlue: Theme = {
         color: {
-          orange: COLOR.orange,
-          pink: COLOR.pink,
+          orange: COLOR_LIGHT.orange,
+          pink: COLOR_LIGHT.pink,
         },
         font: {
           color: {
-            tertiary: GRAY_SCALE.gray40,
+            tertiary: GRAY_SCALE_LIGHT.gray9,
           },
         },
       } as Theme;

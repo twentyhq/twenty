@@ -9,6 +9,8 @@ import { BubbleMenu } from '@tiptap/react/menus';
 import {
   IconBold,
   IconItalic,
+  IconList,
+  IconListNumbers,
   IconStrikethrough,
   IconUnderline,
 } from 'twenty-ui/display';
@@ -50,6 +52,16 @@ export const TextBubbleMenu = ({ editor }: TextBubbleMenuProps) => {
       Icon: IconStrikethrough,
       onClick: () => editor.chain().focus().toggleStrike().run(),
       isActive: state.isStrike,
+    },
+    {
+      Icon: IconList,
+      onClick: () => editor.chain().focus().wrapInList('bulletList').run(),
+      isActive: state.isBulletList,
+    },
+    {
+      Icon: IconListNumbers,
+      onClick: () => editor.chain().focus().wrapInList('orderedList').run(),
+      isActive: state.isOrderedList,
     },
   ];
 

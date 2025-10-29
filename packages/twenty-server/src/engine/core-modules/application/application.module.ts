@@ -8,7 +8,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
@@ -25,7 +24,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ObjectMetadataModule,
     DataSourceModule,
-    AgentModule,
     ApplicationVariableEntityModule,
     ServerlessFunctionLayerModule,
     ServerlessFunctionModule,
