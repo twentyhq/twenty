@@ -6,4 +6,3 @@ export const workspaceAuthBypassProvidersState =
     key: 'workspaceAuthBypassProvidersState',
     defaultValue: null,
   });
-

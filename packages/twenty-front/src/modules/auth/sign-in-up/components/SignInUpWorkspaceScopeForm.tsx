@@ -11,8 +11,8 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { workspaceBypassModeState } from '@/workspace/states/workspaceBypassModeState';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { FormProvider } from 'react-hook-form';
 import { useMemo } from 'react';
+import { FormProvider } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { HorizontalSeparator } from 'twenty-ui/display';
 import { ClickToActionLink } from 'twenty-ui/navigation';
@@ -28,7 +28,7 @@ export const SignInUpWorkspaceScopeForm = () => {
   const workspaceAuthBypassProviders = useRecoilValue(
     workspaceAuthBypassProvidersState,
   );
-  const isBypassMode = useRecoilValue(workspaceBypassModeState);
+  const workspaceBypassMode = useRecoilValue(workspaceBypassModeState);
 
   const { form } = useSignInUpForm();
 
@@ -41,13 +41,12 @@ export const SignInUpWorkspaceScopeForm = () => {
       return null;
     }
 
-    if (!isBypassMode) {
+    if (!workspaceBypassMode) {
       return workspaceAuthProviders;
     }
 
     const google =
-      workspaceAuthProviders.google ||
-      !!workspaceAuthBypassProviders?.google;
+      workspaceAuthProviders.google || !!workspaceAuthBypassProviders?.google;
     const microsoft =
       workspaceAuthProviders.microsoft ||
       !!workspaceAuthBypassProviders?.microsoft;
@@ -62,7 +61,11 @@ export const SignInUpWorkspaceScopeForm = () => {
       password,
       sso: [],
     };
-  }, [isBypassMode, workspaceAuthBypassProviders, workspaceAuthProviders]);
+  }, [
+    workspaceBypassMode,
+    workspaceAuthBypassProviders,
+    workspaceAuthProviders,
+  ]);
 
   if (!providers) {
     return null;
@@ -71,9 +74,7 @@ export const SignInUpWorkspaceScopeForm = () => {
   return (
     <>
       <StyledContentContainer>
-        {providers.google && (
-          <SignInUpWithGoogle action="join-workspace" />
-        )}
+        {providers.google && <SignInUpWithGoogle action="join-workspace" />}
 
         {providers.microsoft && (
           <SignInUpWithMicrosoft action="join-workspace" />

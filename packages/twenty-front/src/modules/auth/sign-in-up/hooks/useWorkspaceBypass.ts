@@ -3,8 +3,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
-import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { workspaceBypassModeState } from '@/workspace/states/workspaceBypassModeState';
 
 export const useWorkspaceBypass = () => {
@@ -12,13 +12,12 @@ export const useWorkspaceBypass = () => {
   const workspaceAuthBypassProviders = useRecoilValue(
     workspaceAuthBypassProvidersState,
   );
-  const [isBypassMode, setIsBypassMode] =
-    useRecoilState(workspaceBypassModeState);
+  const [workspaceBypassMode, setWorkspaceBypassMode] = useRecoilState(
+    workspaceBypassModeState,
+  );
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
-  const isMultiWorkspaceEnabled = useRecoilValue(
-    isMultiWorkspaceEnabledState,
-  );
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   const isWorkspaceContext =
     isOnAWorkspace || isMultiWorkspaceEnabled === false;
@@ -52,26 +51,26 @@ export const useWorkspaceBypass = () => {
     hasBypassProvidersAvailable;
 
   useEffect(() => {
-    if (!shouldOfferBypass && isBypassMode) {
-      setIsBypassMode(false);
+    if (!shouldOfferBypass && workspaceBypassMode) {
+      setWorkspaceBypassMode(false);
     }
-  }, [isBypassMode, setIsBypassMode, shouldOfferBypass]);
+  }, [workspaceBypassMode, setWorkspaceBypassMode, shouldOfferBypass]);
 
   const enableBypass = useCallback(() => {
     if (shouldOfferBypass) {
-      setIsBypassMode(true);
+      setWorkspaceBypassMode(true);
     }
-  }, [setIsBypassMode, shouldOfferBypass]);
+  }, [setWorkspaceBypassMode, shouldOfferBypass]);
 
   const resetBypass = useCallback(() => {
-    setIsBypassMode(false);
-  }, [setIsBypassMode]);
+    setWorkspaceBypassMode(false);
+  }, [setWorkspaceBypassMode]);
 
-  const shouldShowBypassLink = shouldOfferBypass && !isBypassMode;
+  const shouldShowBypassLink = shouldOfferBypass && !workspaceBypassMode;
 
   return {
     isWorkspaceContext,
-    isBypassMode,
+    workspaceBypassMode,
     shouldShowBypassLink,
     enableBypass,
     resetBypass,

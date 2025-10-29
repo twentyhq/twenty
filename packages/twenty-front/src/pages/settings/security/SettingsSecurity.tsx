@@ -8,8 +8,8 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
-import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
+import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -45,7 +45,7 @@ export const SettingsSecurity = () => {
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const authBypassProviders = useRecoilValue(authBypassProvidersState);
-  const ssoIdentityProviders = useRecoilValue(SSOIdentitiesProvidersState);
+  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
@@ -56,10 +56,10 @@ export const SettingsSecurity = () => {
     const hasAvailableBypassProviders = [google, microsoft, password].some(
       Boolean,
     );
-    const hasSsoIdentityProviders = ssoIdentityProviders.length > 0;
+    const hasSsoIdentityProviders = SSOIdentitiesProviders.length > 0;
 
     return hasAvailableBypassProviders && hasSsoIdentityProviders;
-  }, [authBypassProviders, ssoIdentityProviders]);
+  }, [authBypassProviders, SSOIdentitiesProviders]);
 
   const saveWorkspace = useDebouncedCallback(async (value: number) => {
     try {

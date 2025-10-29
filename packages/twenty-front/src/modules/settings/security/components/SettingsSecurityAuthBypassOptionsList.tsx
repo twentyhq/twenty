@@ -4,10 +4,10 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import styled from '@emotion/styled';
 import {
   type IconComponent,
   IconGoogle,
@@ -41,7 +41,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
     currentWorkspaceState,
   );
   const authBypassProviders = useRecoilValue(authBypassProvidersState);
-  const ssoIdentityProviders = useRecoilValue(SSOIdentitiesProvidersState);
+  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const bypassToggleDefinitions: BypassToggleDefinition[] = useMemo(
@@ -75,7 +75,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
     return null;
   }
 
-  const hasSSOIdentityProviders = (ssoIdentityProviders?.length ?? 0) > 0;
+  const hasSSOIdentityProviders = (SSOIdentitiesProviders?.length ?? 0) > 0;
 
   if (!hasSSOIdentityProviders) {
     return null;

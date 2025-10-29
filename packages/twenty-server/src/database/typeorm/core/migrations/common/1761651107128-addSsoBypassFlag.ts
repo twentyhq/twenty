@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddSsoBypassFlag1761651107128 implements MigrationInterface {
   name = 'AddSsoBypassFlag1761651107128';

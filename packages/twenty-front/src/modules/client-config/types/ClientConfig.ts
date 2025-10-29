@@ -1,5 +1,5 @@
 import {
-  AuthBypassProviders,
+  type AuthBypassProviders,
   type ApiConfig,
   type AuthProviders,
   type Billing,
