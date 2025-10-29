@@ -32,7 +32,7 @@ export const SlashCommandMenu: FC<SlashCommandMenuProps> = ({
       reference: clientRect
         ? {
             getBoundingClientRect: () => clientRect,
-
+          }
         : null,
     },
   });
@@ -68,6 +68,7 @@ export const SlashCommandMenu: FC<SlashCommandMenuProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.1 }}
+            data-slash-command-menu
           >
             <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
               <DropdownContent>

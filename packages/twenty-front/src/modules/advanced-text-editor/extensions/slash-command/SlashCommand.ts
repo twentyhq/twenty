@@ -150,6 +150,8 @@ export const SlashCommand = Extension.create({
           let currentCommand: (item: SlashCommandItem) => void = () => {};
           let currentRect: DOMRect | null = null;
           let scrollListener: (() => void) | null = null;
+          let clickOutsideListener: ((e: MouseEvent) => void) | null = null;
+          let dropdownElement: HTMLElement | null = null;
 
           const renderComponent = (
             items: SlashCommandItem[],
@@ -171,6 +173,13 @@ export const SlashCommand = Extension.create({
                 clientRect: rect,
               }),
             );
+
+            if (isDefined(reactRoot)) {
+              dropdownElement = document.querySelector(
+                '[data-slash-command-menu]',
+              ) as HTMLElement;
+            }
+
             return reactRoot;
           };
 
@@ -179,14 +188,18 @@ export const SlashCommand = Extension.create({
               componentRoot.unmount();
               componentRoot = null;
             }
+            if (scrollListener !== null) {
+              window.removeEventListener('scroll', scrollListener, true);
+              scrollListener = null;
+            }
+            if (clickOutsideListener !== null) {
+              document.removeEventListener('mousedown', clickOutsideListener);
+              clickOutsideListener = null;
+            }
             selectedIndex = 0;
             currentRect = null;
-            if (isDefined(scrollListener)) {
-              window.removeEventListener('scroll', scrollListener, true);
-            }
-            scrollListener = null;
+            dropdownElement = null;
           };
-
           return {
             onStart: (props) => {
               const rect = props.clientRect?.();
@@ -209,8 +222,18 @@ export const SlashCommand = Extension.create({
                   );
                 }
               };
+              clickOutsideListener = (e: MouseEvent) => {
+                const target = e.target as Node;
+                if (
+                  isDefined(dropdownElement) &&
+                  !dropdownElement.contains(target)
+                ) {
+                  cleanup();
+                }
+              };
 
               window.addEventListener('scroll', scrollListener, true);
+              document.addEventListener('mousedown', clickOutsideListener);
 
               componentRoot = renderComponent(
                 currentItems,
@@ -227,6 +250,11 @@ export const SlashCommand = Extension.create({
               currentCommand = props.command;
               currentRect = rect;
 
+              if (currentItems.length === 0) {
+                cleanup();
+                return;
+              }
+
               if (componentRoot !== null) {
                 componentRoot = renderComponent(
                   currentItems,
@@ -240,7 +268,6 @@ export const SlashCommand = Extension.create({
             onKeyDown: (props) => {
               const { event } = props;
               if (event.key === 'Escape') {
-                // Close menu by removing container
                 cleanup();
                 return true;
               }
