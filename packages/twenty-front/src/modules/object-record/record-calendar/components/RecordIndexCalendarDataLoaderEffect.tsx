@@ -34,7 +34,9 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const { records } = useRecordCalendarGroupByRecords(recordCalendarSelectedDate);
+  const { records } = useRecordCalendarGroupByRecords(
+    recordCalendarSelectedDate,
+  );
 
   useEffect(() => {
     upsertRecordsInStore(records);
