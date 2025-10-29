@@ -1,7 +1,6 @@
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { appVersionState } from '@/client-config/states/appVersionState';
-import { authBypassProvidersState } from '@/client-config/states/authBypassProvidersState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
@@ -42,7 +41,6 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
   const setAuthProviders = useSetRecoilState(authProvidersState);
-  const setAuthBypassProviders = useSetRecoilState(authBypassProvidersState);
   const setAiModels = useSetRecoilState(aiModelsState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
@@ -143,11 +141,6 @@ export const useClientConfig = (): UseClientConfigResult => {
         magicLink: false,
         sso: clientConfig.authProviders.sso,
       });
-      setAuthBypassProviders({
-        google: clientConfig.authBypassProviders.google,
-        microsoft: clientConfig.authBypassProviders.microsoft,
-        password: clientConfig.authBypassProviders.password,
-      });
       setAiModels(clientConfig.aiModels || []);
       setIsAnalyticsEnabled(clientConfig.analyticsEnabled);
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
@@ -206,7 +199,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     setAiModels,
     setApiConfig,
     setAppVersion,
-    setAuthBypassProviders,
     setAuthProviders,
     setBilling,
     setCalendarBookingPageId,

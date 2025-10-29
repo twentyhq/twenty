@@ -9,10 +9,7 @@ import {
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import {
-  AuthBypassProvidersDTO,
-  AuthProvidersDTO,
-} from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
+import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 
 registerEnumType(FeatureFlagKey, {
   name: 'FeatureFlagKey',
@@ -128,9 +125,6 @@ export class ClientConfig {
 
   @Field(() => AuthProvidersDTO, { nullable: false })
   authProviders: AuthProvidersDTO;
-
-  @Field(() => AuthBypassProvidersDTO, { nullable: false })
-  authBypassProviders: AuthBypassProvidersDTO;
 
   @Field(() => Billing, { nullable: false })
   billing: Billing;

@@ -64,11 +64,6 @@ describe('ClientConfigController', () => {
           microsoft: false,
           sso: [],
         },
-        authBypassProviders: {
-          google: false,
-          password: true,
-          microsoft: false,
-        },
         signInPrefilled: false,
         isMultiWorkspaceEnabled: true,
         isEmailVerificationRequired: false,

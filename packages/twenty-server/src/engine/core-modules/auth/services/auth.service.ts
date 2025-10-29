@@ -64,6 +64,8 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -81,6 +83,7 @@ export class AuthService {
     private readonly authSsoService: AuthSsoService,
     private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
+    private readonly permissionsService: PermissionsService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserEntity)
@@ -131,17 +134,53 @@ export class AuthService {
     );
   }
 
+  private async canUserBypassAuthProvider({
+    user,
+    workspace,
+    provider,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    provider: AuthProviderEnum;
+  }): Promise<boolean> {
+    const isBypassEnabledForProvider = (() => {
+      switch (provider) {
+        case AuthProviderEnum.Password:
+          return workspace.isPasswordAuthBypassEnabled;
+        case AuthProviderEnum.Google:
+          return workspace.isGoogleAuthBypassEnabled;
+        case AuthProviderEnum.Microsoft:
+          return workspace.isMicrosoftAuthBypassEnabled;
+        default:
+          return false;
+      }
+    })();
+
+    if (!isBypassEnabledForProvider) {
+      return false;
+    }
+
+    const userWorkspace =
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.id,
+        workspace.id,
+      );
+
+    if (!userWorkspace) {
+      return false;
+    }
+
+    return await this.permissionsService.userHasWorkspaceSettingPermission({
+      userWorkspaceId: userWorkspace.id,
+      workspaceId: workspace.id,
+      setting: PermissionFlagType.SSO_BYPASS,
+    });
+  }
+
   async validateLoginWithPassword(
     input: UserCredentialsInput,
     targetWorkspace?: WorkspaceEntity,
   ) {
-    if (targetWorkspace && !targetWorkspace.isPasswordAuthEnabled) {
-      throw new AuthException(
-        'Email/Password auth is not enabled for this workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
     const user = await this.userRepository.findOne({
       where: {
         email: input.email,
@@ -157,6 +196,21 @@ export class AuthService {
     }
 
     if (targetWorkspace) {
+      const canBypass =
+        !targetWorkspace.isPasswordAuthEnabled &&
+        (await this.canUserBypassAuthProvider({
+          user,
+          workspace: targetWorkspace,
+          provider: AuthProviderEnum.Password,
+        }));
+
+      if (!targetWorkspace.isPasswordAuthEnabled && !canBypass) {
+        throw new AuthException(
+          'Email/Password auth is not enabled for this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
       await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
     }
 
@@ -230,7 +284,28 @@ export class AuthService {
     }
 
     if (isDefined(workspace)) {
-      workspaceValidator.isAuthEnabledOrThrow(authParams.provider, workspace);
+      const isProviderEnabled = workspaceValidator.isAuthEnabled(
+        authParams.provider,
+        workspace,
+      );
+
+      if (!isProviderEnabled) {
+        const existingUser =
+          userData.type === 'existingUser' ? userData.existingUser : undefined;
+
+        if (
+          existingUser &&
+          (await this.canUserBypassAuthProvider({
+            user: existingUser,
+            workspace,
+            provider: authParams.provider,
+          }))
+        ) {
+          return;
+        }
+
+        workspaceValidator.isAuthEnabledOrThrow(authParams.provider, workspace);
+      }
     }
   }
 

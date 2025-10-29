@@ -99,11 +99,6 @@ export class ClientConfigService {
         microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
         sso: [],
       },
-      authBypassProviders: {
-        google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
-        password: this.twentyConfigService.get('AUTH_PASSWORD_ENABLED'),
-        microsoft: this.twentyConfigService.get('AUTH_MICROSOFT_ENABLED'),
-      },
       signInPrefilled: this.twentyConfigService.get('SIGN_IN_PREFILLED'),
       isMultiWorkspaceEnabled: this.twentyConfigService.get(
         'IS_MULTIWORKSPACE_ENABLED',

@@ -13,11 +13,6 @@ export const mockedClientConfig: ClientConfig = {
     microsoft: false,
     sso: [],
   },
-  authBypassProviders: {
-    google: false,
-    password: false,
-    microsoft: false,
-  },
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
   chromeExtensionId: 'MOCKED_EXTENSION_ID',
