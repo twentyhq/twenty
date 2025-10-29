@@ -4,17 +4,29 @@ import Suggestion from '@tiptap/suggestion';
 import { createElement } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot, type Root } from 'react-dom/client';
+import {
+  IconBold,
+  IconH1,
+  IconH2,
+  IconH3,
+  IconItalic,
+  IconPilcrow,
+  IconStrikethrough,
+  IconUnderline,
+  type IconComponent,
+} from 'twenty-ui/display';
 
 export type SlashCommandItem = {
   id: string;
   title: string;
+  description?: string;
+  icon?: IconComponent;
   keywords?: string[];
   isActive?: () => boolean;
   isVisible?: () => boolean;
   onSelect: () => void;
 };
 
-// Helper function to calculate menu position
 const calculateMenuPosition = (clientRect: DOMRect) => {
   const menuHeight = 200; // estimated menu height
   const menuWidth = 240; // menu width
@@ -33,7 +45,6 @@ const calculateMenuPosition = (clientRect: DOMRect) => {
     top = clientRect.top - menuHeight - 4;
   }
 
-  // Calculate horizontal position (keep menu in viewport)
   const left = Math.max(
     4,
     Math.min(clientRect.left, viewportWidth - menuWidth - 4),
@@ -48,7 +59,10 @@ const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
   const candidates: SlashCommandItem[] = [
     {
       id: 'paragraph',
-      title: 'Paragraph',
+      title: 'Text',
+      description: 'Plain text paragraph',
+      icon: IconPilcrow,
+      keywords: ['paragraph', 'text', 'p'],
       isActive: () => editor.isActive('paragraph'),
       isVisible: () => editor.can().setParagraph?.() ?? true,
       onSelect: () => editor.chain().focus().setParagraph().run(),
@@ -56,6 +70,9 @@ const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
     {
       id: 'h1',
       title: 'Heading 1',
+      description: 'Large section heading',
+      icon: IconH1,
+      keywords: ['heading', 'h1', 'title'],
       isActive: () => editor.isActive('heading', { level: 1 }),
       isVisible: () => editor.can().setHeading?.({ level: 1 }) ?? false,
       onSelect: () => editor.chain().focus().setHeading({ level: 1 }).run(),
@@ -63,6 +80,9 @@ const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
     {
       id: 'h2',
       title: 'Heading 2',
+      description: 'Medium section heading',
+      icon: IconH2,
+      keywords: ['heading', 'h2', 'subtitle'],
       isActive: () => editor.isActive('heading', { level: 2 }),
       isVisible: () => editor.can().setHeading?.({ level: 2 }) ?? false,
       onSelect: () => editor.chain().focus().setHeading({ level: 2 }).run(),
@@ -70,6 +90,9 @@ const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
     {
       id: 'h3',
       title: 'Heading 3',
+      description: 'Small section heading',
+      icon: IconH3,
+      keywords: ['heading', 'h3', 'subheading'],
       isActive: () => editor.isActive('heading', { level: 3 }),
       isVisible: () => editor.can().setHeading?.({ level: 3 }) ?? false,
       onSelect: () => editor.chain().focus().setHeading({ level: 3 }).run(),
@@ -77,6 +100,9 @@ const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
     {
       id: 'bold',
       title: 'Bold',
+      description: 'Make text bold',
+      icon: IconBold,
+      keywords: ['bold', 'strong', 'b'],
       isActive: () => editor.isActive('bold'),
       isVisible: () => editor.can().toggleBold?.() ?? false,
       onSelect: () => editor.chain().focus().toggleBold().run(),
@@ -84,6 +110,9 @@ const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
     {
       id: 'italic',
       title: 'Italic',
+      description: 'Make text italic',
+      icon: IconItalic,
+      keywords: ['italic', 'em', 'i'],
       isActive: () => editor.isActive('italic'),
       isVisible: () => editor.can().toggleItalic?.() ?? false,
       onSelect: () => editor.chain().focus().toggleItalic().run(),
@@ -91,6 +120,9 @@ const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
     {
       id: 'underline',
       title: 'Underline',
+      description: 'Underline text',
+      icon: IconUnderline,
+      keywords: ['underline', 'u'],
       isActive: () => editor.isActive('underline'),
       isVisible: () => editor.can().toggleUnderline?.() ?? false,
       onSelect: () => editor.chain().focus().toggleUnderline().run(),
@@ -98,14 +130,12 @@ const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
     {
       id: 'strike',
       title: 'Strikethrough',
+      description: 'Strike through text',
+      icon: IconStrikethrough,
+      keywords: ['strikethrough', 'strike', 'del'],
       isActive: () => editor.isActive('strike'),
       isVisible: () => editor.can().toggleStrike?.() ?? false,
       onSelect: () => editor.chain().focus().toggleStrike().run(),
-    },
-    {
-      id: 'hard-break',
-      title: 'Line break',
-      onSelect: () => editor.chain().focus().setHardBreak().run(),
     },
   ];
 
@@ -146,7 +176,6 @@ export const SlashCommand = Extension.create({
           let currentItems: SlashCommandItem[] = [];
           let currentCommand: (item: SlashCommandItem) => void = () => {};
 
-          // Helper function to create and position container
           const createContainer = (rect: DOMRect): HTMLElement => {
             const newContainer = document.createElement('div');
             newContainer.style.position = 'fixed';
@@ -162,7 +191,6 @@ export const SlashCommand = Extension.create({
             return newContainer;
           };
 
-          // Helper function to render the React component
           const renderComponent = (
             containerElement: HTMLElement,
             items: SlashCommandItem[],
@@ -184,7 +212,6 @@ export const SlashCommand = Extension.create({
             return reactRoot;
           };
 
-          // Helper function to cleanup container and component root
           const cleanup = () => {
             if (componentRoot !== null) {
               componentRoot.unmount();
@@ -205,7 +232,6 @@ export const SlashCommand = Extension.create({
               currentItems = props.items;
               currentCommand = props.command;
 
-              // Create container and render component
               container = createContainer(rect);
               componentRoot = renderComponent(
                 container,
@@ -221,12 +247,10 @@ export const SlashCommand = Extension.create({
               currentItems = props.items;
               currentCommand = props.command;
 
-              // Update position
               const position = calculateMenuPosition(rect);
               container.style.top = `${position.top}px`;
               container.style.left = `${position.left}px`;
 
-              // Update menu content
               if (componentRoot !== null) {
                 componentRoot = renderComponent(
                   container,

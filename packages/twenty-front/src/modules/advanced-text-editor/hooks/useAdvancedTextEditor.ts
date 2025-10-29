@@ -44,7 +44,6 @@ export const useAdvancedTextEditor = (
   }: UseAdvancedTextEditorProps,
   dependencies?: DependencyList,
 ) => {
-  console.log('enableSlashCommand', enableSlashCommand);
   const extensions = useMemo(
     () => [
       Document,
