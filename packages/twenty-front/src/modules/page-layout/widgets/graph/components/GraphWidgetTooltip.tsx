@@ -8,7 +8,7 @@ const StyledTooltip = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  backdrop-filter: blur(40px) saturate(200%) contrast(50%) brightness(130%);
+  backdrop-filter: ${({ theme }) => theme.blur.medium};
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -71,6 +71,7 @@ const StyledTooltipHeader = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: 140%;
 `;
+
 const StyledTooltipRowRightContent = styled.div`
   align-items: center;
   display: flex;
@@ -86,9 +87,9 @@ const StyledHorizontalSectionPadding = styled.div<{
   $addBottom?: boolean;
 }>`
   padding-inline: ${({ theme }) => theme.spacing(1)};
-  ${({ $addTop, theme }) => ($addTop ? `margin-top: ${theme.spacing(1)};` : '')}
-  ${({ $addBottom, theme }) =>
-    $addBottom ? `margin-bottom: ${theme.spacing(1)};` : ''}
+  margin-top: ${({ $addTop, theme }) => ($addTop ? theme.spacing(1) : 0)};
+  margin-bottom: ${({ $addBottom, theme }) =>
+    $addBottom ? theme.spacing(1) : 0};
 `;
 
 export type GraphWidgetTooltipItem = {
