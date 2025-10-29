@@ -1,5 +1,5 @@
 import { type MessageDescriptor } from '@lingui/core';
-import { isDefined } from 'class-validator';
+import { isDefined, isUUID } from 'class-validator';
 import { CustomError } from 'twenty-shared/utils';
 import { type ObjectType } from 'typeorm';
 
@@ -94,6 +94,13 @@ export function WorkspaceRelation<TClass extends object>(
       throw new CustomError(
         'Morph relation must have a morph id',
         'MORPH_RELATION_MUST_HAVE_MORPH_ID',
+      );
+    }
+
+    if (options.isMorphRelation && !isUUID(options.morphId)) {
+      throw new CustomError(
+        'Morph ID must be a valid UUID',
+        'INVALID_MORPH_ID_FORMAT',
       );
     }
 
