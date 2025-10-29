@@ -9,6 +9,8 @@ import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-t
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { isSafeURL } from 'src/engine/core-modules/tool/utils/is-safe-url.util';
+
 @Injectable()
 export class HttpTool implements Tool {
   description =
@@ -21,6 +23,10 @@ export class HttpTool implements Tool {
     const isMethodForBody = ['POST', 'PUT', 'PATCH'].includes(method);
 
     try {
+      if (!isSafeURL(url)) {
+        throw new Error('URL failed security validation');
+      }
+
       const axiosConfig: AxiosRequestConfig = {
         url,
         method: method,
