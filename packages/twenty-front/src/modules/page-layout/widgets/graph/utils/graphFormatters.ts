@@ -39,20 +39,23 @@ export const formatGraphValue = (
     return customFormatter(value);
   }
 
+  const sign = value < 0 ? '-' : '';
+  const absValue = Math.abs(value);
+
   switch (displayType) {
     case 'percentage':
       return `${formatNumber(value * 100, { decimals })}%`;
 
     case 'shortNumber':
-      return `${prefix}${formatToShortNumber(value)}${suffix}`;
+      return `${sign}${prefix}${formatToShortNumber(absValue)}${suffix}`;
 
     case 'currency': {
       const currencyPrefix = prefix || '$';
-      return `${currencyPrefix}${formatNumber(value, { decimals })}${suffix}`;
+      return `${sign}${currencyPrefix}${formatNumber(absValue, { decimals })}${suffix}`;
     }
 
     case 'number':
     default:
-      return `${prefix}${formatNumber(value, { decimals })}${suffix}`;
+      return `${sign}${prefix}${formatNumber(absValue, { decimals })}${suffix}`;
   }
 };
