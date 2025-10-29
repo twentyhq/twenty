@@ -1,3 +1,9 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import {
+  detectCalendarStartDay,
+  type NonSystemCalendarStartDay,
+} from '@/localization/utils/detection/detectCalendarStartDay';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useGetNowInUserTimezoneForRelativeFilter } from '@/object-record/object-filter-dropdown/hooks/useGetNowInUserTimezoneForRelativeFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -24,6 +30,7 @@ import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 export const ObjectFilterDropdownDateTimeInput = () => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
@@ -89,11 +96,24 @@ export const ObjectFilterDropdownDateTimeInput = () => {
     const { dayAsStringInUserTimezone } =
       getNowInUserTimezoneForRelativeFilter();
 
+    const userDefinedCalendarStartDay =
+      CalendarStartDay[
+        currentWorkspaceMember?.calendarStartDay ?? CalendarStartDay.SYSTEM
+      ];
+    const defaultSystemCalendarStartDay = detectCalendarStartDay();
+
+    const resolvedCalendarStartDay = (
+      userDefinedCalendarStartDay === CalendarStartDay[CalendarStartDay.SYSTEM]
+        ? defaultSystemCalendarStartDay
+        : userDefinedCalendarStartDay
+    ) as NonSystemCalendarStartDay;
+
     const newFilterValue = relativeDate
       ? computeVariableDateViewFilterValue({
           ...relativeDate,
           timezone: timeZone,
           referenceDayAsString: dayAsStringInUserTimezone,
+          firstDayOfTheWeek: resolvedCalendarStartDay,
         })
       : '';
 

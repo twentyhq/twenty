@@ -38,6 +38,7 @@ export type {
 export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
+export { computeTimezoneDifferenceInMinutes } from './filter/utils/computeTimezoneDifferenceInMinutes';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
 export { createAnyFieldRecordFilterBaseProperties } from './filter/utils/createAnyFieldRecordFilterBaseProperties';
@@ -52,12 +53,14 @@ export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordG
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
 export type {
+  FirstDayOfTheWeek,
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
   RelativeDateFilter,
   ResolvedDateViewFilterValue,
 } from './filter/utils/resolveDateViewFilterValue';
 export {
+  firstDayOfWeekSchema,
   variableDateViewFilterValueUnitSchema,
   variableDateViewFilterValuePartsSchema,
   resolveDateViewFilterValue,

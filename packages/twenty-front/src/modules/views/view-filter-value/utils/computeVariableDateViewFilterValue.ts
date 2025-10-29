@@ -22,6 +22,10 @@ export const computeVariableDateViewFilterValue = (
 
     if (isNonEmptyString(relativeDateFilter.referenceDayAsString)) {
       relativeFilterValue = `${relativeFilterValue}_${relativeDateFilter.referenceDayAsString}`;
+
+      if (isNonEmptyString(relativeDateFilter.firstDayOfTheWeek)) {
+        relativeFilterValue = `${relativeFilterValue}_${relativeDateFilter.firstDayOfTheWeek}`;
+      }
     }
   }
 
