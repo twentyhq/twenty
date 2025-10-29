@@ -3518,6 +3518,11 @@ msgstr "El camp únic no pot tenir un valor per defecte"
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "No es pot crear un índex únic per al camp {fieldName} de tipus {fieldType}"
 
+#. js-lingui-id: rtir7c
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
+msgid "unknown"
+msgstr ""
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"

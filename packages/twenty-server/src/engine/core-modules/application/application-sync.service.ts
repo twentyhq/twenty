@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { parse } from 'path';
+
 import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME, AllMetadataName } from 'twenty-shared/metadata';
 
@@ -11,13 +13,11 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import {
-  AgentManifest,
   ObjectManifest,
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -34,6 +34,7 @@ import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serv
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -47,7 +48,6 @@ export class ApplicationSyncService {
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
-    private readonly agentService: AgentService,
     private readonly databaseEventTriggerV2Service: DatabaseEventTriggerV2Service,
     private readonly cronTriggerV2Service: CronTriggerV2Service,
     private readonly routeTriggerV2Service: RouteTriggerV2Service,
@@ -69,12 +69,6 @@ export class ApplicationSyncService {
       yarnLock,
     });
 
-    await this.syncAgents({
-      agentsToSync: manifest.agents,
-      workspaceId,
-      applicationId: application.id,
-    });
-
     await this.syncObjects({
       objectsToSync: manifest.objects,
       workspaceId,
@@ -83,6 +77,7 @@ export class ApplicationSyncService {
 
     await this.syncServerlessFunctions({
       serverlessFunctionsToSync: manifest.serverlessFunctions,
+      code: manifest.sources,
       workspaceId,
       applicationId: application.id,
       serverlessFunctionLayerId: application.serverlessFunctionLayerId,
@@ -100,9 +95,11 @@ export class ApplicationSyncService {
     workspaceId: string;
   }): Promise<ApplicationEntity> {
     const application = await this.applicationService.findByUniversalIdentifier(
-      manifest.universalIdentifier,
+      manifest.application.universalIdentifier,
       workspaceId,
     );
+
+    const name = manifest.application.displayName ?? packageJson.name;
 
     if (!isDefined(application)) {
       const serverlessFunctionLayer =
@@ -115,18 +112,18 @@ export class ApplicationSyncService {
         );
 
       const application = await this.applicationService.create({
-        universalIdentifier: manifest.universalIdentifier,
-        name: manifest.name,
-        description: manifest.description,
-        version: manifest.version,
+        universalIdentifier: manifest.application.universalIdentifier,
+        name,
+        description: manifest.application.description,
+        version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
         serverlessFunctionLayerId: serverlessFunctionLayer.id,
         workspaceId,
       });
 
-      await this.applicationVariableService.upsertManyApplicationVariableEntitys(
+      await this.applicationVariableService.upsertManyApplicationVariableEntities(
         {
-          env: manifest.env,
+          applicationVariables: manifest.application.applicationVariables,
           applicationId: application.id,
         },
       );
@@ -143,60 +140,19 @@ export class ApplicationSyncService {
     );
 
     await this.applicationService.update(application.id, {
-      name: manifest.name,
-      description: manifest.description,
-      version: manifest.version,
+      name,
+      description: manifest.application.description,
+      version: packageJson.version,
     });
 
-    await this.applicationVariableService.upsertManyApplicationVariableEntitys({
-      env: manifest.env,
-      applicationId: application.id,
-    });
+    await this.applicationVariableService.upsertManyApplicationVariableEntities(
+      {
+        applicationVariables: manifest.application.applicationVariables,
+        applicationId: application.id,
+      },
+    );
 
     return application;
-  }
-
-  private async syncAgents({
-    agentsToSync,
-    workspaceId,
-    applicationId,
-  }: {
-    agentsToSync: AgentManifest[];
-    workspaceId: string;
-    applicationId: string;
-  }) {
-    for (const agentToSync of agentsToSync) {
-      const existingAgent =
-        await this.agentService.findOneByApplicationAndStandardId({
-          workspaceId,
-          applicationId,
-          standardId: agentToSync.standardId,
-        });
-
-      if (isDefined(existingAgent)) {
-        await this.agentService.updateOneAgent(
-          { id: existingAgent.id, ...agentToSync },
-          workspaceId,
-        );
-
-        return;
-      }
-
-      await this.agentService.createOneAgent(
-        {
-          name: agentToSync.name,
-          label: agentToSync.label,
-          description: agentToSync.description,
-          icon: agentToSync.icon,
-          prompt: agentToSync.prompt,
-          modelId: agentToSync.modelId,
-          standardId: agentToSync.standardId,
-          isCustom: true,
-          applicationId,
-        },
-        workspaceId,
-      );
-    }
   }
 
   private async syncObjects({
@@ -224,27 +180,31 @@ export class ApplicationSyncService {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any[];
 
-    const objectsToSyncStandardIds = objectsToSync.map((obj) => obj.standardId);
+    const objectsToSyncUniversalIds = objectsToSync.map(
+      (obj) => obj.universalIdentifier,
+    );
 
     const applicationObjectsStandardIds = applicationObjects.map(
-      (obj) => obj.standardId,
+      (obj) => obj.universalIdentifier,
     );
 
     const objectsToDelete = applicationObjects.filter(
       (obj) =>
-        isDefined(obj.standardId) &&
-        !objectsToSyncStandardIds.includes(obj.standardId),
+        isDefined(obj.universalIdentifier) &&
+        !objectsToSyncUniversalIds.includes(obj.universalIdentifier),
     );
 
     const objectsToUpdate = applicationObjects.filter(
       (obj) =>
-        isDefined(obj.standardId) &&
-        objectsToSyncStandardIds.includes(obj.standardId),
+        isDefined(obj.universalIdentifier) &&
+        objectsToSyncUniversalIds.includes(obj.universalIdentifier),
     );
 
     const objectsToCreate = objectsToSync.filter(
       (objectToSync) =>
-        !applicationObjectsStandardIds.includes(objectToSync.standardId),
+        !applicationObjectsStandardIds.includes(
+          objectToSync.universalIdentifier,
+        ),
     );
 
     for (const objectToDelete of objectsToDelete) {
@@ -257,12 +217,12 @@ export class ApplicationSyncService {
 
     for (const objectToUpdate of objectsToUpdate) {
       const objectToSync = objectsToSync.find(
-        (obj) => obj.standardId === objectToUpdate.standardId,
+        (obj) => obj.universalIdentifier === objectToUpdate.universalIdentifier,
       );
 
       if (!objectToSync) {
         throw new ApplicationException(
-          `Failed to find object to sync with standardId ${objectToUpdate.standardId}`,
+          `Failed to find object to sync with universalIdentifier ${objectToUpdate.universalIdentifier}`,
           ApplicationExceptionCode.OBJECT_NOT_FOUND,
         );
       }
@@ -298,7 +258,8 @@ export class ApplicationSyncService {
         labelPlural: objectToCreate.labelPlural,
         icon: objectToCreate.icon || undefined,
         description: objectToCreate.description || undefined,
-        standardId: objectToCreate.standardId || undefined,
+        standardId: objectToCreate.universalIdentifier,
+        universalIdentifier: objectToCreate.universalIdentifier,
         dataSourceId: dataSourceMetadata.id,
         applicationId,
       };
@@ -312,12 +273,14 @@ export class ApplicationSyncService {
 
   private async syncServerlessFunctions({
     serverlessFunctionsToSync,
+    code,
     workspaceId,
     applicationId,
     serverlessFunctionLayerId,
   }: {
     serverlessFunctionsToSync: ServerlessFunctionManifest[];
     workspaceId: string;
+    code: Sources;
     applicationId: string;
     serverlessFunctionLayerId: string;
   }) {
@@ -392,12 +355,18 @@ export class ApplicationSyncService {
         );
       }
 
+      const name =
+        serverlessFunctionToSync.name ??
+        parse(serverlessFunctionToSync.handlerName).name;
+
       const updateServerlessFunctionInput = {
         id: serverlessFunctionToUpdate.id,
         update: {
-          name: serverlessFunctionToSync.name,
+          name,
+          code,
           timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
-          code: serverlessFunctionToSync.code,
+          handlerPath: serverlessFunctionToSync.handlerPath,
+          handlerName: serverlessFunctionToSync.handlerName,
         },
       };
 
@@ -426,11 +395,17 @@ export class ApplicationSyncService {
     }
 
     for (const serverlessFunctionToCreate of serverlessFunctionsToCreate) {
+      const name =
+        serverlessFunctionToCreate.name ??
+        parse(serverlessFunctionToCreate.handlerName).name;
+
       const createServerlessFunctionInput = {
-        name: serverlessFunctionToCreate.name,
-        code: serverlessFunctionToCreate.code,
+        name,
+        code,
         universalIdentifier: serverlessFunctionToCreate.universalIdentifier,
         timeoutSeconds: serverlessFunctionToCreate.timeoutSeconds,
+        handlerPath: serverlessFunctionToCreate.handlerPath,
+        handlerName: serverlessFunctionToCreate.handlerName,
         applicationId,
         serverlessFunctionLayerId,
       };
@@ -659,7 +634,7 @@ export class ApplicationSyncService {
         id: triggerToUpdate.id,
         update: {
           settings: {
-            pattern: triggerToSync.schedule,
+            pattern: triggerToSync.pattern,
           },
         },
       };
@@ -677,7 +652,7 @@ export class ApplicationSyncService {
 
       const createCronTriggerInput = {
         settings: {
-          pattern: triggerToCreate.schedule,
+          pattern: triggerToCreate.pattern,
         },
         universalIdentifier: triggerToCreate.universalIdentifier,
         serverlessFunctionId,

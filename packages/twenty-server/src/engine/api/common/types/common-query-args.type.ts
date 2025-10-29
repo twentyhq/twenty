@@ -64,6 +64,7 @@ export interface CreateOneQueryArgs {
 export interface GroupByQueryArgs {
   filter?: ObjectRecordFilter;
   orderBy?: OrderByWithGroupBy;
+  orderByForRecords?: ObjectRecordOrderBy;
   groupBy: ObjectRecordGroupBy;
   viewId?: string;
   includeRecords?: boolean;
