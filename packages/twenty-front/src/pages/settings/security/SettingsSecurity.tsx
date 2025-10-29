@@ -3,7 +3,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { authBypassProvidersState } from '@/client-config/states/authBypassProvidersState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -44,7 +44,7 @@ export const SettingsSecurity = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const authBypassProviders = useRecoilValue(authBypassProvidersState);
+  const authProviders = useRecoilValue(authProvidersState);
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -52,14 +52,16 @@ export const SettingsSecurity = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const shouldShowBypassSection = useMemo(() => {
-    const { google, microsoft, password } = authBypassProviders;
-    const hasAvailableBypassProviders = [google, microsoft, password].some(
-      Boolean,
-    );
+    const availableProviders = [
+      authProviders?.google,
+      authProviders?.microsoft,
+      authProviders?.password,
+    ];
+    const hasAvailableBypassProviders = availableProviders.some(Boolean);
     const hasSsoIdentityProviders = SSOIdentitiesProviders.length > 0;
 
     return hasAvailableBypassProviders && hasSsoIdentityProviders;
-  }, [authBypassProviders, SSOIdentitiesProviders]);
+  }, [authProviders, SSOIdentitiesProviders]);
 
   const saveWorkspace = useDebouncedCallback(async (value: number) => {
     try {

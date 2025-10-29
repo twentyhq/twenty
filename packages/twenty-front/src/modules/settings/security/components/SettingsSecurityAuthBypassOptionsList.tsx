@@ -1,13 +1,13 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { authBypassProvidersState } from '@/client-config/states/authBypassProvidersState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useEffect, useMemo } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   type IconComponent,
   IconGoogle,
@@ -15,7 +15,12 @@ import {
   IconPassword,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
+import {
+  type AuthBypassProviders,
+  type AuthProviders,
+  useUpdateWorkspaceMutation,
+} from '~/generated-metadata/graphql';
+import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 
 type BypassToggleDefinition = {
   key:
@@ -34,14 +39,45 @@ const StyledSettingsSecurityOptionsList = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+const computeWorkspaceAuthBypassProviders = ({
+  workspace,
+  authProviders,
+}: {
+  workspace: {
+    isGoogleAuthBypassEnabled?: boolean;
+    isMicrosoftAuthBypassEnabled?: boolean;
+    isPasswordAuthBypassEnabled?: boolean;
+  } | null;
+  authProviders?: AuthProviders | null;
+}): AuthBypassProviders | null => {
+  if (!workspace || !authProviders) {
+    return null;
+  }
+
+  return {
+    google: Boolean(
+      authProviders.google && workspace.isGoogleAuthBypassEnabled,
+    ),
+    microsoft: Boolean(
+      authProviders.microsoft && workspace.isMicrosoftAuthBypassEnabled,
+    ),
+    password: Boolean(
+      authProviders.password && workspace.isPasswordAuthBypassEnabled,
+    ),
+  };
+};
+
 export const SettingsSecurityAuthBypassOptionsList = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  const authBypassProviders = useRecoilValue(authBypassProvidersState);
+  const authProviders = useRecoilValue(authProvidersState);
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
+  const setWorkspaceAuthBypassProviders = useSetRecoilState(
+    workspaceAuthBypassProvidersState,
+  );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const bypassToggleDefinitions: BypassToggleDefinition[] = useMemo(
@@ -81,40 +117,69 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
     return null;
   }
 
-  const handleToggle = async (key: BypassToggleDefinition['key']) => {
-    if (!currentWorkspace.id) {
+  useEffect(() => {
+    setWorkspaceAuthBypassProviders(
+      computeWorkspaceAuthBypassProviders({
+        workspace: currentWorkspace,
+        authProviders,
+      }),
+    );
+  }, [
+    authProviders,
+    currentWorkspace,
+    setWorkspaceAuthBypassProviders,
+  ]);
+
+  const handleToggle = async (definition: BypassToggleDefinition) => {
+    if (!currentWorkspace?.id) {
       throw new Error(t`User is not logged in`);
     }
 
-    const nextValue = !currentWorkspace[key];
+    const previousWorkspace = currentWorkspace;
+    const nextValue = !currentWorkspace[definition.key];
 
-    setCurrentWorkspace({
+    const updatedWorkspace = {
       ...currentWorkspace,
-      [key]: nextValue,
-    });
+      [definition.key]: nextValue,
+    };
+
+    setCurrentWorkspace(updatedWorkspace);
 
     try {
       await updateWorkspace({
         variables: {
           input: {
-            [key]: nextValue,
+            [definition.key]: nextValue,
           },
         },
       });
     } catch (err) {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        [key]: !nextValue,
-      });
+      setCurrentWorkspace(previousWorkspace);
       enqueueErrorSnackBar({
         apolloError: err instanceof ApolloError ? err : undefined,
       });
     }
   };
 
-  const visibleToggles = bypassToggleDefinitions.filter(
-    ({ providerKey }) => authBypassProviders[providerKey] === true,
-  );
+  const visibleToggles = useMemo(() => {
+    if (!authProviders) {
+      return [];
+    }
+
+    return bypassToggleDefinitions.filter(({ providerKey }) => {
+      if (providerKey === 'google') {
+        return authProviders.google === true;
+      }
+      if (providerKey === 'microsoft') {
+        return authProviders.microsoft === true;
+      }
+      if (providerKey === 'password') {
+        return authProviders.password === true;
+      }
+
+      return false;
+    });
+  }, [authProviders, bypassToggleDefinitions]);
 
   if (visibleToggles.length === 0) {
     return null;
@@ -123,18 +188,22 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
   return (
     <StyledSettingsSecurityOptionsList>
       <Card rounded>
-        {visibleToggles.map(({ Icon, key, description, title }, index) => (
-          <SettingsOptionCardContentToggle
-            key={key}
-            Icon={Icon}
-            title={title}
-            description={description}
-            checked={Boolean(currentWorkspace[key])}
-            advancedMode
-            divider={index !== visibleToggles.length - 1}
-            onChange={() => handleToggle(key)}
-          />
-        ))}
+        {visibleToggles.map((definition, index) => {
+          const { Icon, key, description, title } = definition;
+
+          return (
+            <SettingsOptionCardContentToggle
+              key={key}
+              Icon={Icon}
+              title={title}
+              description={description}
+              checked={Boolean(currentWorkspace[key])}
+              advancedMode
+              divider={index !== visibleToggles.length - 1}
+              onChange={() => handleToggle(definition)}
+            />
+          );
+        })}
       </Card>
     </StyledSettingsSecurityOptionsList>
   );

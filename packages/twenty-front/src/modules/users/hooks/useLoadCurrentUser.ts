@@ -7,9 +7,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,6 +21,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 
 export const useLoadCurrentUser = () => {
   const setCurrentUser = useSetRecoilState(currentUserState);
@@ -36,6 +38,10 @@ export const useLoadCurrentUser = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
   const setCoreViews = useSetRecoilState(coreViewsState);
+  const setWorkspaceAuthBypassProviders = useSetRecoilState(
+    workspaceAuthBypassProvidersState,
+  );
+  const authProviders = useRecoilValue(authProvidersState);
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
@@ -103,6 +109,22 @@ export const useLoadCurrentUser = () => {
 
     setCurrentWorkspace(workspace);
 
+    if (isDefined(workspace) && authProviders) {
+      setWorkspaceAuthBypassProviders({
+        google: Boolean(
+          authProviders.google && workspace.isGoogleAuthBypassEnabled,
+        ),
+        microsoft: Boolean(
+          authProviders.microsoft && workspace.isMicrosoftAuthBypassEnabled,
+        ),
+        password: Boolean(
+          authProviders.password && workspace.isPasswordAuthBypassEnabled,
+        ),
+      });
+    } else {
+      setWorkspaceAuthBypassProviders(null);
+    }
+
     if (isDefined(workspace) && isOnAWorkspace) {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
@@ -132,6 +154,8 @@ export const useLoadCurrentUser = () => {
     initializeFormatPreferences,
     setLastAuthenticateWorkspaceDomain,
     setCoreViews,
+    authProviders,
+    setWorkspaceAuthBypassProviders,
   ]);
 
   return {
