@@ -5,9 +5,9 @@ import { TRANSPARENT_COLORS_DARK } from './TransparentColorsDark';
 
 export const BORDER_DARK = {
   color: {
-    strong: GRAY_SCALE_DARK.gray7,
-    medium: GRAY_SCALE_DARK.gray6,
-    light: GRAY_SCALE_DARK.gray5,
+    strong: GRAY_SCALE_DARK.gray6,
+    medium: GRAY_SCALE_DARK.gray5,
+    light: GRAY_SCALE_DARK.gray4,
     secondaryInverted: GRAY_SCALE_DARK.gray11,
     inverted: GRAY_SCALE_DARK.gray12,
     danger: COLOR_DARK.red5,
