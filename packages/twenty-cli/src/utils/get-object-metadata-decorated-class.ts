@@ -1,6 +1,6 @@
 import camelcase from 'lodash.camelcase';
 
-export const getDecoratedClass = ({
+export const getObjectMetadataDecoratedClass = ({
   data,
   name,
 }: {
@@ -15,7 +15,7 @@ export const getDecoratedClass = ({
 
   const className = camelCaseName[0].toUpperCase() + camelCaseName.slice(1);
 
-  return `import { ObjectMetadata } from 'twenty-sdk';
+  return `import { ObjectMetadata } from 'twenty-sdk/application';
 
 @ObjectMetadata({
 ${decoratorOptions}

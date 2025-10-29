@@ -57,6 +57,14 @@ export class ServerlessFunctionDTO {
   @Field({ nullable: true })
   latestVersion?: string;
 
+  @IsString()
+  @Field()
+  handlerPath: string;
+
+  @IsString()
+  @Field()
+  handlerName: string;
+
   @IsArray()
   @Field(() => [String], { nullable: false })
   publishedVersions: string[];
