@@ -30,7 +30,7 @@ export type Application = {
   displayName?: string;
   description?: string;
   icon?: string;
-  applicationVariables: Record<string, ApplicationVariable>;
+  applicationVariables?: Record<string, ApplicationVariable>;
 };
 
 export type AppManifest = {

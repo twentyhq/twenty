@@ -455,13 +455,13 @@ export const loadManifest = async (
 
   validateProgram(program);
 
-  const objects = collectObjects(program);
-
-  const serverlessFunctions = collectServerlessFunctions(program);
-
-  const application = extractTwentyAppConfig(program);
-
-  const sources = await loadFolderContentIntoJson(appPath);
+  const [objects, serverlessFunctions, application, sources] =
+    await Promise.all([
+      Promise.resolve(collectObjects(program)),
+      Promise.resolve(collectServerlessFunctions(program)),
+      Promise.resolve(extractTwentyAppConfig(program)),
+      loadFolderContentIntoJson(appPath),
+    ]);
 
   return {
     packageJson,
