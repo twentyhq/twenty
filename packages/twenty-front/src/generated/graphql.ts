@@ -3802,10 +3802,16 @@ export type TestHttpRequestOutput = {
   __typename?: 'TestHttpRequestOutput';
   /** Error information */
   error?: Maybe<Scalars['JSON']>;
+  /** Response headers */
+  headers?: Maybe<Scalars['JSON']>;
   /** Message describing the result */
   message: Scalars['String'];
   /** Response data */
   result?: Maybe<Scalars['JSON']>;
+  /** HTTP status code */
+  status?: Maybe<Scalars['Float']>;
+  /** HTTP status text */
+  statusText?: Maybe<Scalars['String']>;
   /** Whether the request was successful */
   success: Scalars['Boolean'];
 };

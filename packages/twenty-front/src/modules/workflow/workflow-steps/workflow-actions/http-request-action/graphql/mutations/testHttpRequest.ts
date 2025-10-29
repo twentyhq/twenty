@@ -7,6 +7,9 @@ export const TEST_HTTP_REQUEST = gql`
       message
       result
       error
+      status
+      statusText
+      headers
     }
   }
 `;

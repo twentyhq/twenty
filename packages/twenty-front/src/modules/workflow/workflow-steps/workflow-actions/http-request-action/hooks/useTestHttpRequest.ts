@@ -108,9 +108,9 @@ export const useTestHttpRequest = (actionId: string) => {
           ...prev,
           output: {
             data: resultData,
-            status: 200,
-            statusText: 'OK',
-            headers: {},
+            status: response.status ?? 200,
+            statusText: response.statusText ?? 'OK',
+            headers: response.headers ?? {},
             duration,
             error: undefined,
           },

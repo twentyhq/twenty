@@ -56,6 +56,9 @@ export class HttpTool implements Tool {
             callback(null, safeUrlIP, options.family || 4);
           }
         },
+        ...(parsedUrl.protocol === 'https:' && {
+          servername: parsedUrl.hostname,
+        }),
       });
 
       const axiosConfig: AxiosRequestConfig = {
@@ -85,6 +88,9 @@ export class HttpTool implements Tool {
         success: true,
         message: `HTTP ${method} request to ${url} completed successfully`,
         result: response.data,
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers as Record<string, string>,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {

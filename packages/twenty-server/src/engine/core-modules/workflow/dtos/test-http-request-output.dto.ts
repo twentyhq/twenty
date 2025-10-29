@@ -25,4 +25,22 @@ export class TestHttpRequestOutput {
     nullable: true,
   })
   error?: string;
+
+  @Field(() => Number, {
+    description: 'HTTP status code',
+    nullable: true,
+  })
+  status?: number;
+
+  @Field(() => String, {
+    description: 'HTTP status text',
+    nullable: true,
+  })
+  statusText?: string;
+
+  @Field(() => graphqlTypeJson, {
+    description: 'Response headers',
+    nullable: true,
+  })
+  headers?: Record<string, string>;
 }
