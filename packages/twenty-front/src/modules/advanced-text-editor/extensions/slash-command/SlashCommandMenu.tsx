@@ -3,7 +3,7 @@ import { ThemeProvider } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type FC } from 'react';
 import { MenuItem } from 'twenty-ui/navigation';
-import { THEME_LIGHT } from 'twenty-ui/theme';
+import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
 import { type SlashCommandItem } from './SlashCommand';
 
 const StyledContainer = styled.div`
@@ -24,8 +24,13 @@ export const SlashCommandMenu: FC<SlashCommandMenuProps> = ({
   selectedIndex,
   onSelect,
 }) => {
+  const colorScheme = document.documentElement.className.includes('dark')
+    ? 'Dark'
+    : 'Light';
+  const theme = colorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
+
   return (
-    <ThemeProvider theme={THEME_LIGHT}>
+    <ThemeProvider theme={theme}>
       <StyledContainer>
         <DropdownMenuItemsContainer>
           {items.map((item, index) => (

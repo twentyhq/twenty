@@ -186,14 +186,15 @@ export const SlashCommand = Extension.create({
 
           // Helper function to cleanup container and component root
           const cleanup = () => {
-            if (container !== null) {
-              container.remove();
-              container = null;
-            }
             if (componentRoot !== null) {
               componentRoot.unmount();
               componentRoot = null;
             }
+            if (container !== null) {
+              container.remove();
+              container = null;
+            }
+            selectedIndex = 0;
           };
 
           return {
