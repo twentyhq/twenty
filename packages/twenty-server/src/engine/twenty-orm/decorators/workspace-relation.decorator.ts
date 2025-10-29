@@ -1,4 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
+import { isDefined } from 'class-validator';
+import { CustomError } from 'twenty-shared/utils';
 import { type ObjectType } from 'typeorm';
 
 import { type RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
@@ -74,6 +76,13 @@ export function WorkspaceRelation<TClass extends object>(
     const name = propertyKey.toString();
     const label = options.label.message ?? '';
     const isLabelSyncedWithName = computeMetadataNameFromLabel(label) === name;
+
+    if (options.isMorphRelation && !isDefined(options.morphId)) {
+      throw new CustomError(
+        'Morph relation must have a morph id',
+        'MORPH_RELATION_MUST_HAVE_MORPH_ID',
+      );
+    }
 
     metadataArgsStorage.addRelations({
       target: object.constructor,
