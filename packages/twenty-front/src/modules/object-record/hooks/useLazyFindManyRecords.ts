@@ -93,8 +93,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         orderBy,
       },
       fetchPolicy,
-      onCompleted: handleFindManyRecordsCompleted,
-      onError: handleFindManyRecordsError,
       client: apolloCoreClient,
     });
 
@@ -126,6 +124,13 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         }
 
         const result = await findManyRecords();
+        if (isDefined(result?.error)) {
+          handleFindManyRecordsError(result.error);
+        }
+
+        if (isDefined(result?.data)) {
+          handleFindManyRecordsCompleted(result.data);
+        }
 
         const hasNextPage =
           result?.data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ??
@@ -167,6 +172,8 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       findManyRecords,
       objectMetadataItem.namePlural,
       queryIdentifier,
+      handleFindManyRecordsError,
+      handleFindManyRecordsCompleted,
     ],
   );
 

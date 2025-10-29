@@ -1,4 +1,4 @@
-import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 
 const testUUID = '20202020-ef5a-4822-9e08-cf6e4a4dcd6b';
 
