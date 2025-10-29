@@ -38,6 +38,7 @@
     "lodash.camelcase": "^4.3.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.kebabcase": "^4.1.1",
+    "twenty-sdk": "0.0.3-alpha",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0"
   },
