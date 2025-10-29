@@ -67,8 +67,8 @@ export class KeyValuePairEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
 
-  @Column({ nullable: true, type: 'uuid' })
-  workspaceId: string | null;
+  @Column({ nullable: false, type: 'uuid' })
+  workspaceId: string;
 
   @Field(() => String)
   @Column({ nullable: false, type: 'text' })

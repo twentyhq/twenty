@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CoreMigrationCheck1761744664437 implements MigrationInterface {
-    name = 'CoreMigrationCheck1761744664437'
+export class NonNullableWorkspaceId1761747552402 implements MigrationInterface {
+    name = 'NonNullableWorkspaceId1761747552402'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE "core"."keyValuePair" DROP CONSTRAINT "FK_c137e3d8b3980901e114941daa2"`);
