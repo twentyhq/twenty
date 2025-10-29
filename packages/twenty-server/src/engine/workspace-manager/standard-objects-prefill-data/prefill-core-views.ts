@@ -34,16 +34,15 @@ type PrefillCoreViewsArgs = {
   workspaceId: string;
   objectMetadataItems: ObjectMetadataEntity[];
   featureFlags?: Record<string, boolean>;
-  workspaceSchemaName: string
+  workspaceSchemaName: string;
 };
-
 
 export const prefillCoreViews = async ({
   coreDataSource,
   workspaceId,
   objectMetadataItems,
   featureFlags,
-  workspaceSchemaName
+  workspaceSchemaName,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
   const views = [
     companiesAllView(objectMetadataItems, true),
