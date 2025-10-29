@@ -8,7 +8,7 @@ import { type AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import { type Nullable, stringToHslColor } from '@ui/utilities';
+import { type Nullable, stringToThemeColorValue } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
 import { useRecoilState } from 'recoil';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
@@ -112,10 +112,20 @@ export const Avatar = ({
 
   const fixedColor = isPlaceholderFirstCharEmpty
     ? theme.font.color.tertiary
-    : (color ?? stringToHslColor(placeholderColorSeed ?? '', 75, 25));
+    : (color ??
+      stringToThemeColorValue({
+        string: placeholderColorSeed ?? '',
+        theme,
+        variant: 12,
+      }));
   const fixedBackgroundColor = isPlaceholderFirstCharEmpty
     ? theme.background.transparent.light
-    : (backgroundColor ?? stringToHslColor(placeholderColorSeed ?? '', 75, 85));
+    : (backgroundColor ??
+      stringToThemeColorValue({
+        string: placeholderColorSeed ?? '',
+        theme,
+        variant: 5,
+      }));
 
   const showBackgroundColor = showPlaceholder;
 

@@ -15,7 +15,10 @@ export { AnimatedFadeOut } from './animation/components/AnimatedFadeOut';
 export { AnimatedRotate } from './animation/components/AnimatedRotate';
 export { AnimatedTextWord } from './animation/components/AnimatedTextWord';
 export { AnimatedTranslation } from './animation/components/AnimatedTranslation';
-export { stringToHslColor } from './color/utils/stringToHslColor';
+export {
+  stringToThemeColor,
+  stringToThemeColorValue,
+} from './color/utils/stringToThemeColor';
 export { REACT_APP_SERVER_BASE_URL } from './config';
 export { getOsControlSymbol } from './device/getOsControlSymbol';
 export { getOsShortcutSeparator } from './device/getOsShortcutSeparator';
