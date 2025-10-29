@@ -14,6 +14,7 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAppWindow,
@@ -36,19 +37,18 @@ export const CommandMenuPageLayoutTabSettings = () => {
     pageLayoutId,
   );
 
-  const tabsSorted = [...draft.tabs].sort((a, b) => a.position - b.position);
-  const currentIndex = tabsSorted.findIndex((t) => t.id === editingTabId);
-
-  const tab = tabsSorted[currentIndex];
-
   const { moveLeft, moveRight } = useMovePageLayoutTab(pageLayoutId);
   const { deleteTab } = useDeletePageLayoutTab(pageLayoutId);
   const { updatePageLayoutTab } = useUpdatePageLayoutTab(pageLayoutId);
+
   if (!isDefined(editingTabId)) {
     return null;
   }
-  if (currentIndex < 0) return null;
 
+  const tabsSorted = [...draft.tabs].sort((a, b) => a.position - b.position);
+  const currentIndex = tabsSorted.findIndex((t) => t.id === editingTabId);
+  if (currentIndex < 0) return null;
+  const tab = tabsSorted[currentIndex];
   const disableMoveLeft = currentIndex <= 0;
   const disableMoveRight = currentIndex >= tabsSorted.length - 1;
   const disableDelete = tabsSorted.length <= 1;
@@ -61,7 +61,7 @@ export const CommandMenuPageLayoutTabSettings = () => {
         initialTitle={tab.title}
         headerType={t`Tab`}
         onTitleChange={(newTitle) => {
-          if (isDefined(newTitle) && isDefined(newTitle.trim())) {
+          if (isDefined(newTitle) && isNonEmptyString(newTitle)) {
             updatePageLayoutTab(tab.id, { title: newTitle });
           }
         }}
