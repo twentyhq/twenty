@@ -64,6 +64,7 @@ export { StepStatus } from './types/WorkflowRunStateStepInfos';
 export { canObjectBeManagedByWorkflow } from './utils/canObjectBeManagedByWorkflow';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
+export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
 export type {
   LeafType,

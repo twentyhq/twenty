@@ -1,35 +1,46 @@
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWidget';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
-import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContainer';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
-import { WidgetHeader } from '@/page-layout/widgets/components/WidgetHeader';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
+import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
+import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
+import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
+import { type WidgetCardContext } from '@/page-layout/widgets/widget-card/types/WidgetCardContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
 import { type PageLayoutWidget } from '~/generated/graphql';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
+  widgetCardContext?: WidgetCardContext;
 };
 
-const StyledContent = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  width: 100%;
-  justify-content: center;
-`;
-
-export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
+export const WidgetRenderer = ({
+  widget,
+  widgetCardContext = 'dashboard',
+}: WidgetRendererProps) => {
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
+
+  const draggingWidgetId = useRecoilComponentValue(
+    pageLayoutDraggingWidgetIdComponentState,
+  );
+
+  const currentlyEditingWidgetId = useRecoilComponentValue(
+    pageLayoutEditingWidgetIdComponentState,
+  );
+
+  const isEditing = currentlyEditingWidgetId === widget.id;
+
+  const isDragging = draggingWidgetId === widget.id;
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
@@ -46,22 +57,28 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   };
 
   return (
-    <WidgetContainer onClick={isPageLayoutInEditMode ? handleClick : undefined}>
-      <WidgetHeader
+    <WidgetCard
+      onClick={isPageLayoutInEditMode ? handleClick : undefined}
+      isDragging={isDragging}
+      widgetCardContext={widgetCardContext}
+      isEditing={isEditing}
+    >
+      <WidgetCardHeader
         isInEditMode={isPageLayoutInEditMode}
         title={widget.title}
         onRemove={handleRemove}
+        forbiddenDisplay={
+          !hasAccess && (
+            <PageLayoutWidgetForbiddenDisplay
+              widgetId={widget.id}
+              restriction={restriction}
+            />
+          )
+        }
       />
-      <StyledContent>
-        {!hasAccess ? (
-          <PageLayoutWidgetForbiddenDisplay
-            widgetId={widget.id}
-            restriction={restriction}
-          />
-        ) : (
-          <WidgetContentRenderer widget={widget} />
-        )}
-      </StyledContent>
-    </WidgetContainer>
+      <WidgetCardContent widgetCardContext={widgetCardContext}>
+        {hasAccess && <WidgetContentRenderer widget={widget} />}
+      </WidgetCardContent>
+    </WidgetCard>
   );
 };

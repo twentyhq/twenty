@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { useState } from 'react';
 
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -23,6 +24,31 @@ const defaultPhoneValue: FieldPhonesValue = {
   primaryPhoneNumber: '0612345678',
   primaryPhoneCountryCode: 'FR',
   primaryPhoneCallingCode: '33',
+};
+
+const FormPhoneFieldInputWithState = ({
+  defaultValue,
+  label,
+  onChange,
+  readonly,
+  VariablePicker,
+}: React.ComponentProps<typeof FormPhoneFieldInput>) => {
+  const [value, setValue] = useState<FieldPhonesValue | undefined>(
+    defaultValue,
+  );
+
+  return (
+    <FormPhoneFieldInput
+      label={label}
+      defaultValue={value}
+      onChange={(newValue) => {
+        setValue(newValue);
+        onChange?.(newValue);
+      }}
+      readonly={readonly}
+      VariablePicker={VariablePicker}
+    />
+  );
 };
 
 export const Default: Story = {
@@ -78,6 +104,15 @@ export const SelectingVariables: Story = {
     },
     onChange: fn(),
   },
+  render: (args) => (
+    <FormPhoneFieldInputWithState
+      label={args.label}
+      defaultValue={args.defaultValue}
+      onChange={args.onChange}
+      readonly={args.readonly}
+      VariablePicker={args.VariablePicker}
+    />
+  ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 

@@ -7,7 +7,7 @@ import {
   type OnDragUpdateResponder,
   type ResponderProvided,
 } from '@hello-pangea/dnd';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
@@ -86,9 +86,6 @@ export const PageLayoutTabList = ({
     componentInstanceId,
   );
 
-  const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
-  const initialActiveTabId = activeTabExists ? activeTabId : visibleTabs[0]?.id;
-
   const {
     visibleTabCount,
     hiddenTabs,
@@ -117,11 +114,6 @@ export const PageLayoutTabList = ({
     if (!hasHiddenTabs) return false;
     return hiddenTabs.some((tab) => tab.id === activeTabId);
   }, [hasHiddenTabs, hiddenTabs, activeTabId]);
-
-  useEffect(() => {
-    setActiveTabId(initialActiveTabId);
-    onChangeTab?.(initialActiveTabId || '');
-  }, [initialActiveTabId, setActiveTabId, onChangeTab]);
 
   const selectTab = useCallback(
     (tabId: string) => {
