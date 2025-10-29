@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { IconArrowUpRight } from 'twenty-ui/display';
 
 const StyledTooltip = styled.div`
-  background: ${({ theme }) => theme.background.primary};
+  background: ${({ theme }) => theme.background.transparent.primary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
