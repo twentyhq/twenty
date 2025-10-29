@@ -107,16 +107,6 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
     [t],
   );
 
-  if (!currentWorkspace) {
-    return null;
-  }
-
-  const hasSSOIdentityProviders = (SSOIdentitiesProviders?.length ?? 0) > 0;
-
-  if (!hasSSOIdentityProviders) {
-    return null;
-  }
-
   useEffect(() => {
     setWorkspaceAuthBypassProviders(
       computeWorkspaceAuthBypassProviders({
@@ -124,11 +114,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
         authProviders,
       }),
     );
-  }, [
-    authProviders,
-    currentWorkspace,
-    setWorkspaceAuthBypassProviders,
-  ]);
+  }, [authProviders, currentWorkspace, setWorkspaceAuthBypassProviders]);
 
   const handleToggle = async (definition: BypassToggleDefinition) => {
     if (!currentWorkspace?.id) {
@@ -180,6 +166,16 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
       return false;
     });
   }, [authProviders, bypassToggleDefinitions]);
+
+  if (!currentWorkspace) {
+    return null;
+  }
+
+  const hasSSOIdentityProviders = (SSOIdentitiesProviders?.length ?? 0) > 0;
+
+  if (!hasSSOIdentityProviders) {
+    return null;
+  }
 
   if (visibleToggles.length === 0) {
     return null;

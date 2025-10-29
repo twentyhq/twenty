@@ -109,7 +109,9 @@ export const useLoadCurrentUser = () => {
 
     setCurrentWorkspace(workspace);
 
-    if (isDefined(workspace) && authProviders) {
+    if (!isDefined(workspace) || !authProviders) {
+      setWorkspaceAuthBypassProviders(null);
+    } else {
       setWorkspaceAuthBypassProviders({
         google: Boolean(
           authProviders.google && workspace.isGoogleAuthBypassEnabled,
@@ -121,8 +123,6 @@ export const useLoadCurrentUser = () => {
           authProviders.password && workspace.isPasswordAuthBypassEnabled,
         ),
       });
-    } else {
-      setWorkspaceAuthBypassProviders(null);
     }
 
     if (isDefined(workspace) && isOnAWorkspace) {
