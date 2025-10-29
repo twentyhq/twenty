@@ -5,5 +5,9 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "emitDeclarationOnly": false,
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    }
   }
 }

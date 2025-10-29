@@ -8,26 +8,26 @@
     "start": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "wxt",
+        "command": "wxt --mode development && vite build",
         "cwd": "packages/twenty-browser-extension",
         "color": true
       },
       "configurations": {
         "development": {
-          "command": "wxt"
+          "command": "wxt --mode development && vite build"
         }
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "wxt build",
+        "command": "wxt build && vite build",
         "cwd": "packages/twenty-browser-extension",
         "color": true
       },
       "configurations": {
         "production": {
-          "command": "wxt build"
+          "command": "wxt build && vite build"
         }
       }
     },

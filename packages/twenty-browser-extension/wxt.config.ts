@@ -5,4 +5,12 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   srcDir: 'src',
   outDir: 'dist',
+  manifest: {
+    web_accessible_resources: [
+      {
+        resources: ["iframe.html"],
+        matches: ['*://*.linkedin.com/*']
+      },
+    ],
+  },
 });
