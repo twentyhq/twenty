@@ -8,9 +8,10 @@ import { type AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import { type Nullable, stringToThemeColorValue } from '@ui/utilities';
+import { stringToThemeColorP3String } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
 import { useRecoilState } from 'recoil';
+import { type Nullable } from 'twenty-shared/types';
 import { getImageAbsoluteURI } from 'twenty-shared/utils';
 
 const StyledAvatar = styled.div<{
@@ -113,7 +114,7 @@ export const Avatar = ({
   const fixedColor = isPlaceholderFirstCharEmpty
     ? theme.font.color.tertiary
     : (color ??
-      stringToThemeColorValue({
+      stringToThemeColorP3String({
         string: placeholderColorSeed ?? '',
         theme,
         variant: 12,
@@ -121,7 +122,7 @@ export const Avatar = ({
   const fixedBackgroundColor = isPlaceholderFirstCharEmpty
     ? theme.background.transparent.light
     : (backgroundColor ??
-      stringToThemeColorValue({
+      stringToThemeColorP3String({
         string: placeholderColorSeed ?? '',
         theme,
         variant: 4,

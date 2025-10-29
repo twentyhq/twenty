@@ -10,7 +10,7 @@ export const stringToThemeColor = (string: string): ThemeColor => {
   return MAIN_COLOR_NAMES[colorIndex];
 };
 
-export const stringToThemeColorValue = ({
+export const stringToThemeColorP3String = ({
   string,
   theme,
   variant = 9,

@@ -1,4 +1,6 @@
-import { stringToThemeColor } from '../stringToThemeColor';
+import { THEME_LIGHT } from '@ui/theme';
+import { stringToThemeColor } from '@ui/utilities';
+import { stringToThemeColorP3String } from '@ui/utilities/color/utils/stringToThemeColorP3String';
 
 describe('stringToThemeColor', () => {
   it('should return a theme color based on a string', () => {
@@ -13,5 +15,18 @@ describe('stringToThemeColor', () => {
     const color1 = stringToThemeColor('test');
     const color2 = stringToThemeColor('test');
     expect(color1).toBe(color2);
+  });
+});
+
+describe('stringToThemeColorP3String', () => {
+  it('should return a theme color based on a string', () => {
+    const color = stringToThemeColorP3String({
+      string: 'test',
+      theme: THEME_LIGHT,
+      variant: 9,
+    });
+
+    expect(typeof color).toBe('string');
+    expect(Object.values(THEME_LIGHT.color)).toContain(color);
   });
 });
