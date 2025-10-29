@@ -67,6 +67,15 @@ export class ConfigVariables {
   IS_EMAIL_VERIFICATION_REQUIRED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    description:
+      'Disable SSRF protection checks for HTTP requests (allows private IPs and other security risks)',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  DISABLE_SSRF_PROTECTION = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the email verification token is valid',
     type: ConfigVariableType.STRING,

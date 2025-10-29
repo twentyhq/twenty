@@ -32,45 +32,45 @@ export class HttpTool implements Tool {
         throw new Error('Invalid URL protocol');
       }
 
-      const safeUrlIP = await getSafeUrlIP(parsedUrl);
-
-      const httpModule = parsedUrl.protocol === 'https:' ? https : http;
-
-      const agent = new httpModule.Agent({
-        lookup: (
-          _hostname: string,
-          options: { family?: number; hints?: number; all?: boolean },
-          callback: (
-            err: NodeJS.ErrnoException | null,
-            address: string | { address: string; family: number }[],
-            family?: number,
-          ) => void,
-        ) => {
-          // Skip DNS - use pre-validated IP
-
-          if (options.all) {
-            callback(null, [
-              { address: safeUrlIP, family: options.family || 4 },
-            ]);
-          } else {
-            callback(null, safeUrlIP, options.family || 4);
-          }
-        },
-        ...(parsedUrl.protocol === 'https:' && {
-          servername: parsedUrl.hostname,
-        }),
-      });
-
       const axiosConfig: AxiosRequestConfig = {
         url,
         method: method,
         headers: headersCopy,
       };
 
-      if (parsedUrl.protocol === 'http:') {
-        axiosConfig.httpAgent = agent;
-      } else {
-        axiosConfig.httpsAgent = agent;
+      if (!process.env.DISABLE_SSRF_PROTECTION) {
+        const safeUrlIP = await getSafeUrlIP(parsedUrl);
+        const httpModule = parsedUrl.protocol === 'https:' ? https : http;
+
+        const agent = new httpModule.Agent({
+          lookup: (
+            _hostname: string,
+            options: { family?: number; hints?: number; all?: boolean },
+            callback: (
+              err: NodeJS.ErrnoException | null,
+              address: string | { address: string; family: number }[],
+              family?: number,
+            ) => void,
+          ) => {
+            // Skip DNS - use pre-validated IP
+            if (options.all) {
+              callback(null, [
+                { address: safeUrlIP, family: options.family || 4 },
+              ]);
+            } else {
+              callback(null, safeUrlIP, options.family || 4);
+            }
+          },
+          ...(parsedUrl.protocol === 'https:' && {
+            servername: parsedUrl.hostname,
+          }),
+        });
+
+        if (parsedUrl.protocol === 'http:') {
+          axiosConfig.httpAgent = agent;
+        } else {
+          axiosConfig.httpsAgent = agent;
+        }
       }
 
       if (isMethodForBody && body) {
