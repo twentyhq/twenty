@@ -139,13 +139,12 @@ export class WorkspaceSyncMetadataService {
       // 4 - Sync standard indexes on standard objects
       const workspaceIndexMigrationsStart = performance.now();
 
-      const workspaceIndexMigrations: Partial<WorkspaceMigrationEntity>[] = [];
-      // const workspaceIndexMigrations =
-      //   await this.workspaceSyncIndexMetadataService.synchronize(
-      //     context,
-      //     manager,
-      //     storage,
-      //   );
+      const workspaceIndexMigrations =
+        await this.workspaceSyncIndexMetadataService.synchronize(
+          context,
+          manager,
+          storage,
+        );
       const workspaceIndexMigrationsEnd = performance.now();
 
       this.logger.log(

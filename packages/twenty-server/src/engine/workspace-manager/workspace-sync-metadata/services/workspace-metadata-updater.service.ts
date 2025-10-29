@@ -333,11 +333,24 @@ export class WorkspaceMetadataUpdaterService {
           .find((object) => object.id === indexMetadata.objectMetadataId)
           ?.fields.find((field) => {
             if (
-              isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)
+              isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+              isFieldMetadataEntityOfType(
+                field,
+                FieldMetadataType.MORPH_RELATION,
+              )
             ) {
               if (field.settings?.joinColumnName === column) {
                 return true;
               }
+            }
+
+            if (
+              isFieldMetadataEntityOfType(
+                field,
+                FieldMetadataType.MORPH_RELATION,
+              )
+            ) {
+              return;
             }
 
             if (field.name === column) {
