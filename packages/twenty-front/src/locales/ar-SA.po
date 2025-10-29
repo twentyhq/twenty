@@ -3168,11 +3168,6 @@ msgstr "تحرير الحساب"
 msgid "Edit Agent"
 msgstr "تعديل الوكيل"
 
-#. js-lingui-id: X8x8v5
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "Edit Connection"
-msgstr "تحرير الاتصال"
-
 #. js-lingui-id: 6vZ75d
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
@@ -3223,11 +3218,6 @@ msgstr "تعديل طريقة الدفع، ومشاهدة الفواتير وا�
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "تحرير السجلات في جميع العناصر"
-
-#. js-lingui-id: vjOt/P
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "Edit the information to connect your database"
-msgstr "قم بتعديل المعلومات لربط قاعدة البيانات الخاصة بك"
 
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -4652,7 +4642,6 @@ msgstr "تعليمات إلى الذكاء الاصطناعي"
 #. js-lingui-id: nbfdhU
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "التكاملات"
@@ -9192,15 +9181,6 @@ msgstr "غير مسموح لك بإنشاء سجلات لهذا الكائن"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "يمكنك إعداد أي مجموعة من IMAP (إستقبال رسائل البريد الإلكتروني)، وSMTP (إرسال رسائل البريد الإلكتروني)، وCalDAV (مزامنة التقويم)."
-
-#. js-lingui-id: aiJY7y
-#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid ""
-"You cannot edit this connection because it has tracked tables.\n"
-"If you need to make changes, please create a new connection or unsync the tables first."
-msgstr ""
-"لا يمكنك تحرير هذا الاتصال لأنه يحتوي على جداول المتابعة. \n"
-"إذا كنت بحاجة إلى إجراء تغييرات، يرجى إنشاء اتصال جديد أو فصل الجداول أولاً."
 
 #. js-lingui-id: eqUj2Z
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
