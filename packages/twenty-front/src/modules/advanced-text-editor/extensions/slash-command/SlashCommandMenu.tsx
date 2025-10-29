@@ -1,12 +1,11 @@
 import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
-import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/SlashMenuDropdownClickOutsideId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { ThemeProvider } from '@emotion/react';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
-import { type FC } from 'react';
+import { type FC, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
@@ -26,13 +25,14 @@ export const SlashCommandMenu: FC<SlashCommandMenuProps> = ({
 }) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
+    strategy: 'fixed',
     middleware: [offset(4), flip()],
     whileElementsMounted: autoUpdate,
     elements: {
       reference: clientRect
         ? {
             getBoundingClientRect: () => clientRect,
-          }
+
         : null,
     },
   });
@@ -41,6 +41,24 @@ export const SlashCommandMenu: FC<SlashCommandMenuProps> = ({
     ? 'Dark'
     : 'Light';
   const theme = colorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
+
+  useLayoutEffect(() => {
+    if (!refs.floating.current) {
+      return;
+    }
+
+    const floatingElement = refs.floating.current;
+    const selectedItem = floatingElement.querySelector(
+      `[data-slash-menu-item-index="${selectedIndex}"]`,
+    ) as HTMLElement | null;
+
+    if (selectedItem !== null) {
+      selectedItem.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [selectedIndex, refs]);
 
   return (
     <>
@@ -51,24 +69,21 @@ export const SlashCommandMenu: FC<SlashCommandMenuProps> = ({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.1 }}
           >
-            <OverlayContainer
-              ref={refs.setFloating}
-              style={floatingStyles}
-              data-click-outside-id={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
-            >
+            <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
               <DropdownContent>
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {items.map((item, index) => {
                     const isSelected = index === selectedIndex;
 
                     return (
-                      <MenuItemSuggestion
-                        key={item.id}
-                        LeftIcon={item.icon}
-                        text={item.title}
-                        selected={isSelected}
-                        onClick={() => onSelect(item)}
-                      />
+                      <div key={item.id} data-slash-menu-item-index={index}>
+                        <MenuItemSuggestion
+                          LeftIcon={item.icon}
+                          text={item.title}
+                          selected={isSelected}
+                          onClick={() => onSelect(item)}
+                        />
+                      </div>
                     );
                   })}
                 </DropdownMenuItemsContainer>

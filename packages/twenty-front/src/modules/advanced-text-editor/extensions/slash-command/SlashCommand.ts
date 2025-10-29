@@ -3,6 +3,7 @@ import { Extension, type Editor } from '@tiptap/core';
 import Suggestion from '@tiptap/suggestion';
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconBold,
   IconH1,
@@ -148,6 +149,7 @@ export const SlashCommand = Extension.create({
           let currentItems: SlashCommandItem[] = [];
           let currentCommand: (item: SlashCommandItem) => void = () => {};
           let currentRect: DOMRect | null = null;
+          let scrollListener: (() => void) | null = null;
 
           const renderComponent = (
             items: SlashCommandItem[],
@@ -179,6 +181,10 @@ export const SlashCommand = Extension.create({
             }
             selectedIndex = 0;
             currentRect = null;
+            if (isDefined(scrollListener)) {
+              window.removeEventListener('scroll', scrollListener, true);
+            }
+            scrollListener = null;
           };
 
           return {
@@ -189,6 +195,22 @@ export const SlashCommand = Extension.create({
               currentItems = props.items;
               currentCommand = props.command;
               currentRect = rect;
+
+              scrollListener = () => {
+                const updatedRect = props.clientRect?.();
+                if (isDefined(updatedRect) && componentRoot !== null) {
+                  currentRect = updatedRect;
+                  componentRoot = renderComponent(
+                    currentItems,
+                    currentCommand,
+                    selectedIndex,
+                    currentRect,
+                    componentRoot,
+                  );
+                }
+              };
+
+              window.addEventListener('scroll', scrollListener, true);
 
               componentRoot = renderComponent(
                 currentItems,
