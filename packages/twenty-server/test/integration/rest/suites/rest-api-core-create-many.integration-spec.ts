@@ -220,9 +220,7 @@ describe('Core REST API Create Many endpoint', () => {
     })
       .expect(400)
       .expect((res) => {
-        expect(res.body.messages[0]).toContain(
-          `A duplicate entry was detected`,
-        );
+        expect(res.body.messages[0]).toContain(`Record already exists`);
         expect(res.body.error).toBe('BadRequestException');
       });
   });

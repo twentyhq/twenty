@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 
+import { Conjunctions } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter.utils';
 import { type FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
 import { formatFieldValue } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/format-field-values.util';
 import { parseBaseFilter } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-base-filter.util';
@@ -9,13 +10,8 @@ import {
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 
-export enum Conjunctions {
-  or = 'or',
-  and = 'and',
-  not = 'not',
-}
-
-export const parseFilter = (
+//TODO : Refacto-common - Rename after deleting parseFilter
+export const parseFilterWithoutMetadataValidation = (
   filterQuery: string,
 ): Record<string, FieldValue> => {
   const result = {};
@@ -32,7 +28,7 @@ export const parseFilter = (
       );
     }
     const subResult = parseFilterContent(filterQuery).map((elem) =>
-      parseFilter(elem),
+      parseFilterWithoutMetadataValidation(elem),
     );
 
     if (conjunction === Conjunctions.not) {

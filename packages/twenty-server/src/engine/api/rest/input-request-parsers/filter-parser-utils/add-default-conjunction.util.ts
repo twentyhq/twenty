@@ -1,4 +1,4 @@
-import { Conjunctions } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util';
+import { Conjunctions } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter.utils';
 
 export const DEFAULT_CONJUNCTION = Conjunctions.and;
 
