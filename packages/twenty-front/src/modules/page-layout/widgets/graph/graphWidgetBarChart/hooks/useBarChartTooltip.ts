@@ -28,7 +28,6 @@ export const useBarChartTooltip = ({
     const dataItem = data.find((d) => d[indexBy] === datum.indexValue);
 
     if (enableGroupTooltip) {
-      // Show all bars in the group
       const tooltipItems = enrichedKeys
         .map((enrichedKey) => {
           const seriesValue = Number(datum.data[enrichedKey.key] || 0);
@@ -46,7 +45,6 @@ export const useBarChartTooltip = ({
         indexLabel: String(datum.indexValue),
       };
     } else {
-      // Show only the hovered bar (legacy behavior)
       const hoveredKey = hoveredBar?.key;
       if (!isDefined(hoveredKey)) return null;
 
