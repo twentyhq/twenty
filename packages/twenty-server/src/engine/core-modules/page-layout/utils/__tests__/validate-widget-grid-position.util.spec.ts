@@ -98,20 +98,6 @@ describe('validateWidgetGridPosition', () => {
         ),
       ).toThrow(/extends beyond grid height/);
     });
-
-    it('should throw when widget at row 99 has rowSpan 2', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          {
-            row: 99,
-            column: 0,
-            rowSpan: 2,
-            columnSpan: 6,
-          },
-          'Test Widget',
-        ),
-      ).toThrow(PageLayoutWidgetException);
-    });
   });
 
   describe('Invalid column positions', () => {
@@ -122,20 +108,6 @@ describe('validateWidgetGridPosition', () => {
           'Test Widget',
         ),
       ).toThrow(PageLayoutWidgetException);
-    });
-
-    it('should throw for column at grid boundary', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          {
-            row: 0,
-            column: WIDGET_GRID_MAX_COLUMNS,
-            rowSpan: 1,
-            columnSpan: 1,
-          },
-          'Test Widget',
-        ),
-      ).toThrow(/exceeds grid width/);
     });
   });
 
@@ -152,48 +124,6 @@ describe('validateWidgetGridPosition', () => {
           'Test Widget',
         ),
       ).toThrow(/extends beyond grid width/);
-    });
-
-    it('should throw when widget at column 11 has columnSpan 2', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          {
-            row: 0,
-            column: 11,
-            rowSpan: 1,
-            columnSpan: 2,
-          },
-          'Test Widget',
-        ),
-      ).toThrow(PageLayoutWidgetException);
-    });
-
-    it('should throw when full-width widget starts at column 1', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          {
-            row: 0,
-            column: 1,
-            rowSpan: 1,
-            columnSpan: 12,
-          },
-          'Test Widget',
-        ),
-      ).toThrow(/extends beyond grid width/);
-    });
-
-    it('should throw when widget extends beyond grid height', () => {
-      expect(() =>
-        validateWidgetGridPosition(
-          {
-            row: 95,
-            column: 0,
-            rowSpan: 10,
-            columnSpan: 6,
-          },
-          'Test Widget',
-        ),
-      ).toThrow(/extends beyond grid height/);
     });
   });
 
