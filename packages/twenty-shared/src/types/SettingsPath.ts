@@ -43,10 +43,6 @@ export enum SettingsPath {
   NewWebhook = 'api-webhooks/webhooks/new',
   WebhookDetail = 'api-webhooks/webhooks/:webhookId',
   Integrations = 'integrations',
-  IntegrationDatabase = 'integrations/:databaseKey',
-  IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionId',
-  IntegrationEditDatabaseConnection = 'integrations/:databaseKey/:connectionId/edit',
-  IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',
 
