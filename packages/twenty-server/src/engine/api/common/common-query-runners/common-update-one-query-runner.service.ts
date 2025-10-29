@@ -65,7 +65,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     return {
       ...args,
       data: (
-        await this.queryRunnerArgsFactory.overrideDataByFieldMetadata({
+        await this.dataArgHandler.overrideDataByFieldMetadata({
           partialRecordInputs: [args.data],
           authContext,
           objectMetadataItemWithFieldMaps,

@@ -171,7 +171,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           ),
         ) ?? [],
       ),
-      data: await this.queryRunnerArgsFactory.overrideDataByFieldMetadata({
+      data: await this.dataArgHandler.overrideDataByFieldMetadata({
         partialRecordInputs: args.data,
         authContext,
         objectMetadataItemWithFieldMaps,

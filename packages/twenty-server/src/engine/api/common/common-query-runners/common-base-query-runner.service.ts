@@ -6,7 +6,8 @@ import { Omit } from 'zod/v4/core/util.cjs';
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
-import { CommonSelectedFieldsHandler } from 'src/engine/api/common/common-args-handlers/common-query-selected-fields/common-selected-fields.handler';
+import { DataArgHandler } from 'src/engine/api/common/common-args-handlers/data-arg-handler/data-arg.handler';
+import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-handlers/query-runner-args.factory';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -25,8 +26,6 @@ import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
-import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
@@ -58,7 +57,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
   @Inject()
-  protected readonly queryResultGettersFactory: QueryResultGettersFactory;
+  protected readonly dataArgHandler: DataArgHandler;
   @Inject()
   protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
   @Inject()
@@ -69,8 +68,6 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly userRoleService: UserRoleService;
   @Inject()
   protected readonly apiKeyRoleService: ApiKeyRoleService;
-  @Inject()
-  protected readonly selectedFieldsHandler: CommonSelectedFieldsHandler;
   @Inject()
   protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService;
   @Inject()
