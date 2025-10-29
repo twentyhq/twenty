@@ -52510,7 +52510,6 @@ __metadata:
     lodash.capitalize: "npm:^4.2.1"
     lodash.kebabcase: "npm:^4.1.1"
     tsx: "npm:^4.7.0"
-    twenty-sdk: "npm:0.0.3-alpha"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
     wait-on: "npm:^7.2.0"
@@ -52664,13 +52663,6 @@ __metadata:
     vite-tsconfig-paths: "npm:^4.2.1"
   languageName: unknown
   linkType: soft
-
-"twenty-sdk@npm:0.0.3-alpha":
-  version: 0.0.3-alpha
-  resolution: "twenty-sdk@npm:0.0.3-alpha"
-  checksum: 10c0/e8028f47767e3fa6318100f26542e0477b68e36d363df5f3a6c20d8442951fecba60089d07e97224b0b3533a729bbd3526cca08728079577cfa204dbffaecb03
-  languageName: node
-  linkType: hard
 
 "twenty-sdk@workspace:packages/twenty-sdk":
   version: 0.0.0-use.local
