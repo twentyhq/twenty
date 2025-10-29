@@ -3,23 +3,36 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconArrowUpRight } from 'twenty-ui/display';
 
-const StyledTooltipContent = styled.div`
+const StyledTooltip = styled.div`
   background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  backdrop-filter: blur(40px) saturate(200%) contrast(50%) brightness(130%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 160px;
+  pointer-events: none;
+`;
+
+const StyledTooltipContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
-  padding: ${({ theme }) => theme.spacing(3)};
-  pointer-events: none;
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTooltipRow = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.extraLight};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.xs};
+
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTooltipRowContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -31,22 +44,51 @@ const StyledDot = styled.div<{ $color: string }>`
   flex-shrink: 0;
 `;
 
-const StyledTooltipValue = styled.span`
-  margin-left: auto;
-  white-space: nowrap;
-`;
-
 const StyledTooltipLink = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
   cursor: default;
   display: flex;
+  justify-content: space-between;
+  height: ${({ theme }) => theme.spacing(6)};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  padding-inline: ${({ theme }) => theme.spacing(2)};
+  line-height: 140%;
+`;
+
+const StyledTooltipSeparator = styled.div`
+  background-color: ${({ theme }) =>
+    theme.name === 'dark'
+      ? theme.background.transparent.light
+      : theme.border.color.light};
+  min-height: 1px;
+  width: 100%;
 `;
 
 const StyledTooltipHeader = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  line-height: 140%;
+`;
+const StyledTooltipRowRightContent = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  color: ${({ theme }) => theme.font.color.extraLight};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  width: 100%;
+`;
+
+const StyledHorizontalSectionPadding = styled.div<{
+  $addTop?: boolean;
+  $addBottom?: boolean;
+}>`
+  padding-inline: ${({ theme }) => theme.spacing(1)};
+  ${({ $addTop, theme }) => ($addTop ? `margin-top: ${theme.spacing(1)};` : '')}
+  ${({ $addBottom, theme }) =>
+    $addBottom ? `margin-bottom: ${theme.spacing(1)};` : ''}
 `;
 
 export type GraphWidgetTooltipItem = {
@@ -69,21 +111,36 @@ export const GraphWidgetTooltip = ({
   const theme = useTheme();
 
   return (
-    <StyledTooltipContent>
-      {indexLabel && <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>}
-      {items.map((item, index) => (
-        <StyledTooltipRow key={index}>
-          <StyledDot $color={item.dotColor} />
-          <span>{item.label}</span>
-          <StyledTooltipValue>{item.formattedValue}</StyledTooltipValue>
-        </StyledTooltipRow>
-      ))}
+    <StyledTooltip>
+      <StyledHorizontalSectionPadding $addTop $addBottom={!showClickHint}>
+        <StyledTooltipContent>
+          {indexLabel && (
+            <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
+          )}
+          <StyledTooltipRowContainer>
+            {items.map((item, index) => (
+              <StyledTooltipRow key={index}>
+                <StyledDot $color={item.dotColor} />
+                <StyledTooltipRowRightContent>
+                  <span>{item.label}</span>
+                  <span>{item.formattedValue}</span>
+                </StyledTooltipRowRightContent>
+              </StyledTooltipRow>
+            ))}
+          </StyledTooltipRowContainer>
+        </StyledTooltipContent>
+      </StyledHorizontalSectionPadding>
       {showClickHint && (
-        <StyledTooltipLink>
-          <span>{t`Click to see data`}</span>
-          <IconArrowUpRight size={theme.icon.size.sm} />
-        </StyledTooltipLink>
+        <>
+          <StyledTooltipSeparator />
+          <StyledHorizontalSectionPadding $addBottom>
+            <StyledTooltipLink>
+              <span>{t`Click to see data`}</span>
+              <IconArrowUpRight size={theme.icon.size.sm} />
+            </StyledTooltipLink>
+          </StyledHorizontalSectionPadding>
+        </>
       )}
-    </StyledTooltipContent>
+    </StyledTooltip>
   );
 };
