@@ -14,6 +14,8 @@ import {
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -31,6 +33,7 @@ import {
   ViewExceptionMessageKey,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-api-exception.filter';
+import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 
@@ -40,6 +43,8 @@ import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/works
 export class ViewController {
   constructor(
     private readonly viewService: ViewService,
+    private readonly viewV2Service: ViewV2Service,
+    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly i18nService: I18nService,
   ) {}
@@ -98,10 +103,25 @@ export class ViewController {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @RequestLocale() locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO> {
-    const view = await this.viewService.create({
-      ...input,
-      workspaceId: workspace.id,
-    });
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    let view: ViewDTO;
+
+    if (isWorkspaceMigrationV2Enabled) {
+      view = await this.viewV2Service.createOne({
+        createViewInput: input,
+        workspaceId: workspace.id,
+      });
+    } else {
+      view = await this.viewService.create({
+        ...input,
+        workspaceId: workspace.id,
+      });
+    }
 
     const processedViews = await this.processViewsWithTemplates(
       [view],
@@ -119,7 +139,25 @@ export class ViewController {
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewDTO> {
-    const updatedView = await this.viewService.update(id, workspace.id, input);
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    let updatedView: ViewDTO;
+
+    if (isWorkspaceMigrationV2Enabled) {
+      updatedView = await this.viewV2Service.updateOne({
+        updateViewInput: {
+          ...input,
+          id,
+        },
+        workspaceId: workspace.id,
+      });
+    } else {
+      updatedView = await this.viewService.update(id, workspace.id, input);
+    }
 
     const processedViews = await this.processViewsWithTemplates(
       [updatedView],
@@ -135,7 +173,22 @@ export class ViewController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<{ success: boolean }> {
-    const deletedView = await this.viewService.delete(id, workspace.id);
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspace.id,
+      );
+
+    let deletedView: ViewDTO | null;
+
+    if (isWorkspaceMigrationV2Enabled) {
+      deletedView = await this.viewV2Service.deleteOne({
+        deleteViewInput: { id },
+        workspaceId: workspace.id,
+      });
+    } else {
+      deletedView = await this.viewService.delete(id, workspace.id);
+    }
 
     return { success: isDefined(deletedView) };
   }

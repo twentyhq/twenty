@@ -66,6 +66,11 @@ const StyledEditorContainer = styled.div<{
     h3 {
       font-size: 24px;
     }
+
+    li {
+      margin-bottom: ${({ theme }) => theme.spacing(2)};
+      line-height: 1.5;
+    }
   }
 
   .ProseMirror-focused {
