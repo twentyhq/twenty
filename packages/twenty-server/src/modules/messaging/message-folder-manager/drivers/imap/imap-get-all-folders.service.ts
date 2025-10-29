@@ -55,22 +55,28 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     mailboxList: ListResponse[],
   ): Promise<MessageFolder[]> {
     const folders: MessageFolder[] = [];
-    const sentFolderPath =
+    const pathToExternalIdMap = new Map<string, string>();
+    const sentFolder =
       await this.imapFindSentFolderService.findSentFolder(client);
 
-    if (isDefined(sentFolderPath)) {
-      const sentMailbox = mailboxList.find((m) => m.path === sentFolderPath);
+    if (isDefined(sentFolder)) {
+      const sentMailbox = mailboxList.find((m) => m.path === sentFolder.path);
       const uidValidity = sentMailbox
         ? await this.getUidValidity(client, sentMailbox)
         : null;
 
+      const externalId = uidValidity
+        ? `${sentFolder.path}:${uidValidity.toString()}`
+        : sentFolder.path;
+
+      pathToExternalIdMap.set(sentFolder.path, externalId);
+
       folders.push({
-        externalId: uidValidity
-          ? `${sentFolderPath}:${uidValidity.toString()}`
-          : sentFolderPath,
-        name: sentFolderPath,
+        externalId,
+        name: sentFolder.name,
         isSynced: true,
         isSentFolder: true,
+        parentFolderId: sentMailbox?.parentPath || null,
       });
     }
 
@@ -88,14 +94,27 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
         isInbox,
       );
 
+      const externalId = uidValidity
+        ? `${mailbox.path}:${uidValidity}`
+        : mailbox.path;
+
+      pathToExternalIdMap.set(mailbox.path, externalId);
+
       folders.push({
-        externalId: uidValidity
-          ? `${mailbox.path}:${uidValidity}`
-          : mailbox.path,
-        name: mailbox.path,
+        externalId,
+        name: mailbox.name,
         isSynced,
         isSentFolder: false,
+        parentFolderId: mailbox.parentPath || null,
       });
+    }
+
+    for (const folder of folders) {
+      if (folder.parentFolderId) {
+        const parentExternalId = pathToExternalIdMap.get(folder.parentFolderId);
+
+        folder.parentFolderId = parentExternalId || null;
+      }
     }
 
     return folders;
