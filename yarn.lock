@@ -52510,7 +52510,9 @@ __metadata:
     lodash.capitalize: "npm:^4.2.1"
     lodash.kebabcase: "npm:^4.1.1"
     tsx: "npm:^4.7.0"
+    twenty-sdk: "workspace:*"
     typescript: "npm:^5.9.2"
+    uuid: "npm:^13.0.0"
     wait-on: "npm:^7.2.0"
   bin:
     twenty: dist/cli.js
@@ -52663,7 +52665,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-sdk@workspace:packages/twenty-sdk":
+"twenty-sdk@workspace:*, twenty-sdk@workspace:packages/twenty-sdk":
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
@@ -54389,6 +54391,15 @@ __metadata:
   bin:
     uuid: dist/bin/uuid
   checksum: 10c0/eab18c27fe4ab9fb9709a5d5f40119b45f2ec8314f8d4cf12ce27e4c6f4ffa4a6321dc7db6c515068fa373c075b49691ba969f0010bf37f44c37ca40cd6bf7fe
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "uuid@npm:13.0.0"
+  bin:
+    uuid: dist-node/bin/uuid
+  checksum: 10c0/950e4c18d57fef6c69675344f5700a08af21e26b9eff2bf2180427564297368c538ea11ac9fb2e6528b17fc3966a9fd2c5049361b0b63c7d654f3c550c9b3d67
   languageName: node
   linkType: hard
 
