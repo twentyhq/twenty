@@ -4,13 +4,14 @@ import { OrderByDirection } from 'twenty-shared/types';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/input-factories/order-by-input.factory';
 import { addDefaultOrderById } from 'src/engine/api/rest/input-request-parsers/order-by-parser-utils/add-default-order-by-id.util';
 import {
   RestInputRequestParserException,
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+
+export const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
 export const parseOrderByRestRequest = (
   request: AuthenticatedRequest,

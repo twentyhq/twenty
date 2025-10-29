@@ -1917,11 +1917,6 @@ msgstr "Posizione"
 msgid "March"
 msgstr "Marzo"
 
-#. js-lingui-id: hw7Mwk
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
-msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr "Il numero massimo di record da aggiornare o inserire mancando è {QUERY_MAX_RECORDS}."
-
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
@@ -2127,7 +2122,6 @@ msgid "Multi-select field default value must be an array"
 msgstr "Il valore predefinito del campo multi-selezione deve essere un array"
 
 #. js-lingui-id: 6rLmLu
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "Sono stati trovati più record con gli stessi valori di campo univoci per {conflictingFieldsValues}. Impossibile determinare quale record aggiornare."

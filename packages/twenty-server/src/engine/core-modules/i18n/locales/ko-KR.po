@@ -1917,11 +1917,6 @@ msgstr "위치"
 msgid "March"
 msgstr "3월"
 
-#. js-lingui-id: hw7Mwk
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
-msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr "업데이트 삽입할 최대 레코드 수는 {QUERY_MAX_RECORDS}입니다."
-
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
@@ -2127,7 +2122,6 @@ msgid "Multi-select field default value must be an array"
 msgstr "멀티 선택 필드 기본값은 배열이어야 합니다."
 
 #. js-lingui-id: 6rLmLu
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "{conflictingFieldsValues}에 대해 동일한 고유 필드 값이 있는 여러 레코드가 발견되었습니다. 업데이트할 레코드를 결정할 수 없습니다."
