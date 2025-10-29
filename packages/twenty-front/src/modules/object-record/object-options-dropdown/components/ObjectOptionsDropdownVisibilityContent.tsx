@@ -1,5 +1,6 @@
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -17,12 +18,14 @@ import { ViewVisibility } from '@/views/types/ViewVisibility';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import {
+  AppTooltip,
   IconChevronLeft,
   IconCircle,
   IconCircleDashed,
   IconCopy,
 } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { PermissionFlagType } from '~/generated/graphql';
 
 export const ObjectOptionsDropdownVisibilityContent = () => {
   const { t } = useLingui();
@@ -31,6 +34,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
   const { enqueueSuccessSnackBar } = useSnackBar();
+  const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
@@ -72,16 +76,25 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
         >
           <SelectableListItem
             itemId={ViewVisibility.WORKSPACE}
-            onEnter={() => handleVisibilityChange(ViewVisibility.WORKSPACE)}
+            onEnter={() => hasViewsPermission && handleVisibilityChange(ViewVisibility.WORKSPACE)}
           >
-            <MenuItemSelect
-              LeftIcon={IconCircle}
-              text={t`Workspace`}
-              contextualText={t`Everyone`}
-              selected={currentVisibility === ViewVisibility.WORKSPACE}
-              focused={selectedItemId === ViewVisibility.WORKSPACE}
-              onClick={() => handleVisibilityChange(ViewVisibility.WORKSPACE)}
-            />
+            <div id="workspace-visibility-option">
+              <MenuItemSelect
+                LeftIcon={IconCircle}
+                text={t`Workspace`}
+                contextualText={t`Everyone`}
+                selected={currentVisibility === ViewVisibility.WORKSPACE}
+                focused={selectedItemId === ViewVisibility.WORKSPACE}
+                onClick={() => hasViewsPermission && handleVisibilityChange(ViewVisibility.WORKSPACE)}
+                disabled={!hasViewsPermission}
+              />
+            </div>
+            {!hasViewsPermission && (
+              <AppTooltip
+                anchorSelect="#workspace-visibility-option"
+                content={t`Workspace views require manage views permission`}
+              />
+            )}
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewVisibility.UNLISTED}

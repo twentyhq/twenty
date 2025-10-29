@@ -24,6 +24,7 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
@@ -39,6 +40,7 @@ import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/cr
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -58,6 +60,7 @@ export class ViewResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewV2Service: ViewV2Service,
     private readonly userRoleService: UserRoleService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   @ResolveField(() => String)
@@ -142,12 +145,29 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async createCoreView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
+    // If creating a WORKSPACE view, require VIEWS permission
+    if (
+      isDefined(input.visibility) &&
+      input.visibility === ViewVisibility.WORKSPACE &&
+      isDefined(userWorkspaceId)
+    ) {
+      const permissions = await this.permissionsService.getUserWorkspacePermissions({
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+      if (!permissions.permissionFlags[PermissionFlagType.VIEWS]) {
+        throw new Error(
+          'You need manage views permission to create workspace-level views',
+        );
+      }
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -158,26 +178,61 @@ export class ViewResolver {
       return await this.viewV2Service.createOne({
         createViewInput: input,
         workspaceId: workspace.id,
-        createdById: userWorkspaceId,
+        createdById: userWorkspaceId ?? '',
       });
     }
 
     const createdView = await this.viewService.create({
       ...input,
       workspaceId: workspace.id,
-      createdById: userWorkspaceId,
+      createdById: userWorkspaceId ?? '',
     });
 
     return createdView;
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async updateCoreView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
+    // Fetch the existing view to check ownership
+    const existingView = await this.viewService.findById(id, workspace.id);
+
+    if (!isDefined(existingView)) {
+      throw new Error('View not found');
+    }
+
+    // Check if user can update the view
+    const canUpdate = this.viewService.canUserUpdateView(
+      existingView,
+      userWorkspaceId,
+    );
+
+    if (!canUpdate) {
+      throw new Error('You do not have permission to update this view');
+    }
+
+    // If updating visibility to WORKSPACE, require VIEWS permission
+    if (
+      isDefined(input.visibility) &&
+      input.visibility === ViewVisibility.WORKSPACE &&
+      isDefined(userWorkspaceId)
+    ) {
+      const permissions = await this.permissionsService.getUserWorkspacePermissions({
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+      if (!permissions.permissionFlags[PermissionFlagType.VIEWS]) {
+        throw new Error(
+          'You need manage views permission to create workspace-level views',
+        );
+      }
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,

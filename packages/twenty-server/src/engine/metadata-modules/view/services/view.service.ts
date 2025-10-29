@@ -250,6 +250,14 @@ export class ViewService {
     });
   }
 
+  canUserUpdateView(
+    view: ViewEntity,
+    userWorkspaceId?: string,
+  ): boolean {
+    // User can update if they own the view (created it)
+    return view.createdById === userWorkspaceId;
+  }
+
   async flushGraphQLCache(workspaceId: string): Promise<void> {
     await this.workspaceCacheStorageService.flushGraphQLOperation({
       operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,

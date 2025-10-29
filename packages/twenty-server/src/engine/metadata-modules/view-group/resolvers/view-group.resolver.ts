@@ -1,13 +1,15 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
 import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/delete-view-group.input';
 import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
@@ -15,6 +17,7 @@ import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dto
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewGroupDTO)
@@ -25,6 +28,7 @@ export class ViewGroupResolver {
     private readonly viewGroupService: ViewGroupService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewGroupV2Service: ViewGroupV2Service,
+    private readonly viewService: ViewService,
   ) {}
 
   @Query(() => [ViewGroupDTO])
@@ -49,11 +53,28 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(CustomPermissionGuard)
   async createCoreViewGroup(
     @Args('input') createViewGroupInput: CreateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
+    // Check view ownership before allowing create
+    const view = await this.viewService.findById(
+      createViewGroupInput.viewId,
+      workspaceId,
+    );
+
+    if (!isDefined(view)) {
+      throw new Error('View not found');
+    }
+
+    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
+
+    if (!canUpdate) {
+      throw new Error('You do not have permission to update this view');
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -74,11 +95,34 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(CustomPermissionGuard)
   async updateCoreViewGroup(
     @Args('input') updateViewGroupInput: UpdateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
+    // Check view ownership before allowing update
+    const viewGroup = await this.viewGroupService.findById(
+      updateViewGroupInput.id,
+      workspaceId,
+    );
+
+    if (!isDefined(viewGroup)) {
+      throw new Error('View group not found');
+    }
+
+    const view = await this.viewService.findById(viewGroup.viewId, workspaceId);
+
+    if (!isDefined(view)) {
+      throw new Error('View not found');
+    }
+
+    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
+
+    if (!canUpdate) {
+      throw new Error('You do not have permission to update this view');
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -100,11 +144,34 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(CustomPermissionGuard)
   async deleteCoreViewGroup(
     @Args('input') deleteViewGroupInput: DeleteViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
+    // Check view ownership before allowing delete
+    const viewGroup = await this.viewGroupService.findById(
+      deleteViewGroupInput.id,
+      workspaceId,
+    );
+
+    if (!isDefined(viewGroup)) {
+      throw new Error('View group not found');
+    }
+
+    const view = await this.viewService.findById(viewGroup.viewId, workspaceId);
+
+    if (!isDefined(view)) {
+      throw new Error('View not found');
+    }
+
+    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
+
+    if (!canUpdate) {
+      throw new Error('You do not have permission to update this view');
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -127,11 +194,34 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(CustomPermissionGuard)
   async destroyCoreViewGroup(
     @Args('input') destroyViewGroupInput: DestroyViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
+    // Check view ownership before allowing destroy
+    const viewGroup = await this.viewGroupService.findById(
+      destroyViewGroupInput.id,
+      workspaceId,
+    );
+
+    if (!isDefined(viewGroup)) {
+      throw new Error('View group not found');
+    }
+
+    const view = await this.viewService.findById(viewGroup.viewId, workspaceId);
+
+    if (!isDefined(view)) {
+      throw new Error('View not found');
+    }
+
+    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
+
+    if (!canUpdate) {
+      throw new Error('You do not have permission to update this view');
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,

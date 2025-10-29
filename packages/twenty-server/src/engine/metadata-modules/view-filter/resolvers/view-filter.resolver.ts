@@ -1,13 +1,15 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
@@ -15,6 +17,7 @@ import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterDTO)
@@ -25,6 +28,7 @@ export class ViewFilterResolver {
     private readonly viewFilterService: ViewFilterService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewFilterV2Service: ViewFilterV2Service,
+    private readonly viewService: ViewService,
   ) {}
 
   @Query(() => [ViewFilterDTO])
@@ -49,11 +53,28 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(CustomPermissionGuard)
   async createCoreViewFilter(
     @Args('input') createViewFilterInput: CreateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
+    // Check view ownership before allowing create
+    const view = await this.viewService.findById(
+      createViewFilterInput.viewId,
+      workspaceId,
+    );
+
+    if (!isDefined(view)) {
+      throw new Error('View not found');
+    }
+
+    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
+
+    if (!canUpdate) {
+      throw new Error('You do not have permission to update this view');
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -74,11 +95,34 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(CustomPermissionGuard)
   async updateCoreViewFilter(
     @Args('input') updateViewFilterInput: UpdateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
+    // Check view ownership before allowing update
+    const viewFilter = await this.viewFilterService.findById(
+      updateViewFilterInput.id,
+      workspaceId,
+    );
+
+    if (!isDefined(viewFilter)) {
+      throw new Error('View filter not found');
+    }
+
+    const view = await this.viewService.findById(viewFilter.viewId, workspaceId);
+
+    if (!isDefined(view)) {
+      throw new Error('View not found');
+    }
+
+    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
+
+    if (!canUpdate) {
+      throw new Error('You do not have permission to update this view');
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -100,11 +144,34 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(CustomPermissionGuard)
   async deleteCoreViewFilter(
     @Args('input') deleteViewFilterInput: DeleteViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
+    // Check view ownership before allowing delete
+    const viewFilter = await this.viewFilterService.findById(
+      deleteViewFilterInput.id,
+      workspaceId,
+    );
+
+    if (!isDefined(viewFilter)) {
+      throw new Error('View filter not found');
+    }
+
+    const view = await this.viewService.findById(viewFilter.viewId, workspaceId);
+
+    if (!isDefined(view)) {
+      throw new Error('View not found');
+    }
+
+    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
+
+    if (!canUpdate) {
+      throw new Error('You do not have permission to update this view');
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -127,11 +194,34 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(CustomPermissionGuard)
   async destroyCoreViewFilter(
     @Args('input') destroyViewFilterInput: DestroyViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
+    // Check view ownership before allowing destroy
+    const viewFilter = await this.viewFilterService.findById(
+      destroyViewFilterInput.id,
+      workspaceId,
+    );
+
+    if (!isDefined(viewFilter)) {
+      throw new Error('View filter not found');
+    }
+
+    const view = await this.viewService.findById(viewFilter.viewId, workspaceId);
+
+    if (!isDefined(view)) {
+      throw new Error('View not found');
+    }
+
+    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
+
+    if (!canUpdate) {
+      throw new Error('You do not have permission to update this view');
+    }
+
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
