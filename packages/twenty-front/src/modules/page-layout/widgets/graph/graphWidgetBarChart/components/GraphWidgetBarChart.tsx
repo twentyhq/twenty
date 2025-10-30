@@ -163,13 +163,14 @@ export const GraphWidgetBarChart = ({
     bars,
   }: {
     bars: readonly ComputedBarDatum<BarChartDataItem>[];
-  }) => (
-    <CustomTotalsLayer
-      bars={bars}
-      formatValue={(value) => formatGraphValue(value, formatOptions)}
-      offset={5}
-    />
-  );
+  }) =>
+    showValues && (
+      <CustomTotalsLayer
+        bars={bars}
+        formatValue={(value) => formatGraphValue(value, formatOptions)}
+        offset={5}
+      />
+    );
 
   return (
     <StyledContainer id={id}>
@@ -211,8 +212,6 @@ export const GraphWidgetBarChart = ({
           enableGridY={layout === 'vertical' && showGrid}
           gridXValues={layout === 'horizontal' ? 5 : undefined}
           gridYValues={layout === 'vertical' ? 5 : undefined}
-          enableTotals={showValues}
-          totalsOffset={10}
           enableLabel={false}
           labelSkipWidth={12}
           labelSkipHeight={12}
