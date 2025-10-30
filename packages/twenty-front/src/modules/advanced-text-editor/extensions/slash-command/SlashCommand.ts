@@ -169,7 +169,10 @@ export const SlashCommand = Extension.create({
               createElement(SlashCommandMenu, {
                 items,
                 selectedIndex: selectedIdx,
-                onSelect: command,
+                onSelect: (item) => {
+                  command(item);
+                  cleanup();
+                },
                 clientRect: rect,
               }),
             );

@@ -1,4 +1,5 @@
 import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -70,7 +71,13 @@ export const SlashCommandMenu: FC<SlashCommandMenuProps> = ({
             transition={{ duration: 0.1 }}
             data-slash-command-menu
           >
-            <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
+            <OverlayContainer
+              ref={refs.setFloating}
+              style={{
+                ...floatingStyles,
+                zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
+              }}
+            >
               <DropdownContent>
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {items.map((item, index) => {
