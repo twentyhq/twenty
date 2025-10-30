@@ -4,10 +4,7 @@
   "title": "Twenty Serverless Function Manifest",
   "description": "Schema for Twenty AI serverless function configuration files",
   "type": "object",
-  "required": [
-    "universalIdentifier",
-    "name"
-  ],
+  "required": ["universalIdentifier"],
   "properties": {
     "$schema": {
       "type": "string",

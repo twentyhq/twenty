@@ -1,4 +1,3 @@
-import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
 import { findViewFieldsOperationFactory } from 'test/integration/graphql/utils/find-view-fields-operation-factory.util';
 import {
   assertGraphQLErrorResponse,
@@ -19,10 +18,8 @@ import { createOneCoreViewField } from 'test/integration/metadata/suites/view-fi
 import { deleteOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/delete-one-core-view-field.util';
 import { destroyOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-core-view-field.util';
 import { updateOneCoreViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-core-view-field.util';
-import {
-  assertViewFieldStructure,
-  cleanupViewRecords,
-} from 'test/integration/utils/view-test.util';
+import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { assertViewFieldStructure } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -32,6 +29,8 @@ import {
   generateViewFieldExceptionMessage,
   ViewFieldExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
+
+const TEST_NOT_EXISTING_VIEW_FIELD_ID = '20202020-0000-4000-8000-000000000001';
 
 describe('View Field Resolver', () => {
   let testViewId: string;
@@ -104,7 +103,6 @@ describe('View Field Resolver', () => {
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupViewRecords();
   });
 
   afterAll(async () => {
@@ -116,14 +114,19 @@ describe('View Field Resolver', () => {
   });
 
   beforeEach(async () => {
-    await cleanupViewRecords();
-
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Fields',
       objectMetadataId: testObjectMetadataId,
     });
 
     testViewId = view.id;
+  });
+
+  afterEach(async () => {
+    await destroyOneCoreView({
+      viewId: testViewId,
+      expectToFail: false,
+    });
   });
 
   describe('getCoreViewFields', () => {

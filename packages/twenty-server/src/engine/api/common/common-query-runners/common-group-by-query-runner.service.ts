@@ -166,6 +166,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         groupByDefinitions,
         selectedFieldsResult: args.selectedFieldsResult,
         queryRunnerContext,
+        orderByForRecords: args.orderByForRecords ?? [],
       });
     }
 

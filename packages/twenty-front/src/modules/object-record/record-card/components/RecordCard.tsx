@@ -28,14 +28,14 @@ const StyledBoardCard = styled.div<{
 
   &[data-active='true'] {
     background-color: ${({ theme }) => theme.accent.quaternary};
-    border: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
+    border: 1px solid ${({ theme }) => theme.color.blue7};
   }
 
   &:hover {
     border: 1px solid ${({ theme }) => theme.border.color.strong};
 
     &[data-active='true'] {
-      border: 1px solid ${({ theme }) => theme.adaptiveColors.blue3};
+      border: 1px solid ${({ theme }) => theme.color.blue7};
     }
   }
 

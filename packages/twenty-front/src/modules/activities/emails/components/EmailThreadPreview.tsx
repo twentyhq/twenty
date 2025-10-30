@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useOpenEmailThreadInCommandMenu } from '@/command-menu/hooks/useOpenEmailThreadInCommandMenu';
+import { useTheme } from '@emotion/react';
 import { Avatar } from 'twenty-ui/display';
-import { GRAY_SCALE } from 'twenty-ui/theme';
 import {
   MessageChannelVisibility,
   type TimelineThread,
@@ -105,6 +105,7 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   };
 
   const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
+  const theme = useTheme();
 
   return (
     <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
@@ -135,8 +136,8 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
               avatarUrl={finalAvatarUrl}
               placeholder={finalDisplayedName}
               type="rounded"
-              color={isCountIcon ? GRAY_SCALE.gray50 : undefined}
-              backgroundColor={isCountIcon ? GRAY_SCALE.gray10 : undefined}
+              color={isCountIcon ? theme.grayScale.gray11 : undefined}
+              backgroundColor={isCountIcon ? theme.grayScale.gray2 : undefined}
             />
           )}
         </StyledParticipantsContainer>

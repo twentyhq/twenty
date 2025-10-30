@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
 import { IconReload } from 'twenty-ui/display';
-import { GRAY_SCALE, THEME_DARK } from 'twenty-ui/theme';
+import { THEME_DARK } from 'twenty-ui/theme';
 
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
 
@@ -17,8 +17,8 @@ const StyledContainer = styled.div`
 `;
 
 const StyledPanel = styled.div`
-  background: ${GRAY_SCALE.gray0};
-  border: 1px solid ${GRAY_SCALE.gray20};
+  background: ${({ theme }) => theme.grayScale.gray1};
+  border: 1px solid ${({ theme }) => theme.grayScale.gray5};
   border-radius: 8px;
   height: 100%;
   overflow-x: auto;
@@ -66,13 +66,13 @@ const StyledEmptyTextContainer = styled.div`
 `;
 
 const StyledEmptyTitle = styled.div`
-  color: ${GRAY_SCALE.gray60};
+  color: ${({ theme }) => theme.grayScale.gray12};
   font-size: 1.23rem;
   font-weight: 600;
 `;
 
 const StyledEmptySubTitle = styled.div`
-  color: ${GRAY_SCALE.gray50};
+  color: ${({ theme }) => theme.grayScale.gray11};
   font-size: 0.92rem;
   font-weight: 400;
   line-height: 1.5;
@@ -83,9 +83,9 @@ const StyledEmptySubTitle = styled.div`
 
 const StyledButton = styled.button`
   align-items: center;
-  background: ${GRAY_SCALE.gray0};
-  border: 1px solid ${GRAY_SCALE.gray20};
-  color: ${GRAY_SCALE.gray60};
+  background: ${({ theme }) => theme.grayScale.gray1};
+  border: 1px solid ${({ theme }) => theme.grayScale.gray5};
+  color: ${({ theme }) => theme.grayScale.gray12};
   border-radius: 8px;
   cursor: pointer;
   display: flex;
@@ -94,7 +94,7 @@ const StyledButton = styled.button`
 `;
 
 const StyledIcon = styled(IconReload)`
-  color: ${GRAY_SCALE.gray60};
+  color: ${({ theme }) => theme.grayScale.gray12};
   margin-right: 8px;
 `;
 

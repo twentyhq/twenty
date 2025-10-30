@@ -18,6 +18,8 @@ export const getPageLayoutIcon = (page: PageLayoutCommandMenuPage) => {
       return IconFrame;
     case CommandMenuPages.PageLayoutGraphFilter:
       return IconFilter;
+    case CommandMenuPages.PageLayoutTabSettings:
+      return IconAppWindow;
     default:
       assertUnreachable(page);
   }

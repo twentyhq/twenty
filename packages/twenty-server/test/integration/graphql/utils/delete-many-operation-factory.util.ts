@@ -16,7 +16,7 @@ export const deleteManyOperationFactory = ({
 }: DeleteManyOperationFactoryParams) => ({
   query: gql`
     mutation Delete${capitalize(objectMetadataPluralName)}(
-      $filter: ${capitalize(objectMetadataSingularName)}FilterInput
+      $filter: ${capitalize(objectMetadataSingularName)}FilterInput!
     ) {
       delete${capitalize(objectMetadataPluralName)}(filter: $filter) {
         ${gqlFields}

@@ -7,6 +7,7 @@ import { CommandMenuPageLayoutGraphFilter } from '@/command-menu/pages/page-layo
 import { CommandMenuPageLayoutGraphTypeSelect } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphTypeSelect';
 import { CommandMenuPageLayoutIframeConfig } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig';
 import { CommandMenuPageLayoutWidgetTypeSelect } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect';
+import { CommandMenuPageLayoutTabSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings';
 import { CommandMenuMergeRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuMergeRecordPage';
 import { CommandMenuRecordPage } from '@/command-menu/pages/record-page/components/CommandMenuRecordPage';
 import { CommandMenuEditRichTextPage } from '@/command-menu/pages/rich-text-page/components/CommandMenuEditRichTextPage';
@@ -56,5 +57,9 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [
     CommandMenuPages.PageLayoutIframeConfig,
     <CommandMenuPageLayoutIframeConfig />,
+  ],
+  [
+    CommandMenuPages.PageLayoutTabSettings,
+    <CommandMenuPageLayoutTabSettings />,
   ],
 ]);

@@ -1,6 +1,6 @@
 {
   "name": "twenty-cli",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Command-line interface for Twenty application development",
   "main": "dist/cli.js",
   "bin": {
@@ -38,7 +38,8 @@
     "lodash.camelcase": "^4.3.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.kebabcase": "^4.1.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.0",
@@ -50,6 +51,7 @@
     "@types/node": "^20.0.0",
     "jest": "^29.5.0",
     "tsx": "^4.7.0",
+    "twenty-sdk": "workspace:*",
     "wait-on": "^7.2.0"
   },
   "engines": {
