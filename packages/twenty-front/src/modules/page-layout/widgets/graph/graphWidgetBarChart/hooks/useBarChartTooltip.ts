@@ -27,43 +27,34 @@ export const useBarChartTooltip = ({
   const renderTooltip = (datum: ComputedDatum<BarDatum>) => {
     const dataItem = data.find((d) => d[indexBy] === datum.indexValue);
 
-    if (enableGroupTooltip) {
-      const tooltipItems = enrichedKeys
-        .map((enrichedKey) => {
-          const seriesValue = Number(datum.data[enrichedKey.key] || 0);
-          return {
-            label: enrichedKey.label,
-            formattedValue: formatGraphValue(seriesValue, formatOptions),
-            dotColor: enrichedKey.colorScheme.solid,
-          };
-        })
-        .filter((item) => isDefined(item));
+    let keysToShow: BarChartEnrichedKey[];
 
-      return {
-        tooltipItems,
-        showClickHint: isDefined(dataItem?.to),
-        indexLabel: String(datum.indexValue),
-      };
+    if (enableGroupTooltip) {
+      keysToShow = enrichedKeys;
     } else {
       const hoveredKey = hoveredBar?.key;
       if (!isDefined(hoveredKey)) return null;
 
       const enrichedKey = enrichedKeys.find((item) => item.key === hoveredKey);
-      if (!enrichedKey) return null;
+      if (!isDefined(enrichedKey)) return null;
 
-      const seriesValue = Number(datum.data[hoveredKey] || 0);
-      const tooltipItem = {
+      keysToShow = [enrichedKey];
+    }
+
+    const tooltipItems = keysToShow.map((enrichedKey) => {
+      const seriesValue = Number(datum.data[enrichedKey.key] ?? 0);
+      return {
         label: enrichedKey.label,
         formattedValue: formatGraphValue(seriesValue, formatOptions),
         dotColor: enrichedKey.colorScheme.solid,
       };
+    });
 
-      return {
-        tooltipItems: [tooltipItem],
-        showClickHint: isDefined(dataItem?.to),
-        indexLabel: String(datum.indexValue),
-      };
-    }
+    return {
+      tooltipItems,
+      showClickHint: isDefined(dataItem?.to),
+      indexLabel: String(datum.indexValue),
+    };
   };
 
   return { renderTooltip };

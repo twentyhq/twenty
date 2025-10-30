@@ -57,10 +57,7 @@ const StyledTooltipLink = styled.div`
 `;
 
 const StyledTooltipSeparator = styled.div`
-  background-color: ${({ theme }) =>
-    theme.name === 'dark'
-      ? theme.background.transparent.light
-      : theme.border.color.light};
+  background-color: ${({ theme }) => theme.border.color.light};
   min-height: 1px;
   width: 100%;
 `;
