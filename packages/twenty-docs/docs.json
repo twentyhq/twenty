@@ -207,7 +207,6 @@
           {
             "group": "Display",
             "pages": [
-              "twenty-ui/display",
               "twenty-ui/display/checkmark",
               "twenty-ui/display/chip",
               "twenty-ui/display/icons",
