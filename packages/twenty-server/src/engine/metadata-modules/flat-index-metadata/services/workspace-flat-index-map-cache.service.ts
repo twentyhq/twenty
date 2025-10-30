@@ -10,6 +10,7 @@ import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
@@ -25,6 +26,8 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceFlatMapCacheServ
     cacheStorageService: CacheStorageService,
     @InjectRepository(IndexMetadataEntity)
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
+    @InjectRepository(IndexFieldMetadataEntity)
+    private readonly indexFieldMetadataRepository: Repository<IndexFieldMetadataEntity>,
   ) {
     super(cacheStorageService);
   }
@@ -39,6 +42,7 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceFlatMapCacheServ
         workspaceId,
       },
       withDeleted: true,
+      relationLoadStrategy: 'join',
       select: {
         // Note: We need all IndexFieldMetadataEntity in order to build a FlatIndex
         indexFieldMetadatas: true,
