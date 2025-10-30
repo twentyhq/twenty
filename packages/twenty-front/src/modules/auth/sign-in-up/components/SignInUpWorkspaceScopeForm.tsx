@@ -5,13 +5,12 @@ import { SignInUpWithSSO } from '@/auth/sign-in-up/components/internal/SignInUpW
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useWorkspaceBypass } from '@/auth/sign-in-up/hooks/useWorkspaceBypass';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { workspaceBypassModeState } from '@/workspace/states/workspaceBypassModeState';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { HorizontalSeparator } from 'twenty-ui/display';
@@ -28,7 +27,7 @@ export const SignInUpWorkspaceScopeForm = () => {
   const workspaceAuthBypassProviders = useRecoilValue(
     workspaceAuthBypassProvidersState,
   );
-  const workspaceBypassMode = useRecoilValue(workspaceBypassModeState);
+  const { shouldOfferBypass, workspaceBypassMode } = useWorkspaceBypass();
 
   const { form } = useSignInUpForm();
 
@@ -36,40 +35,18 @@ export const SignInUpWorkspaceScopeForm = () => {
 
   const { signInUpStep } = useSignInUp(form);
 
-  const providers = useMemo(() => {
-    if (!workspaceAuthProviders) {
-      return null;
-    }
-
-    if (!workspaceBypassMode) {
-      return workspaceAuthProviders;
-    }
-
-    const google =
-      workspaceAuthProviders.google || !!workspaceAuthBypassProviders?.google;
-    const microsoft =
-      workspaceAuthProviders.microsoft ||
-      !!workspaceAuthBypassProviders?.microsoft;
-    const password =
-      workspaceAuthProviders.password ||
-      !!workspaceAuthBypassProviders?.password;
-
-    return {
-      ...workspaceAuthProviders,
-      google,
-      microsoft,
-      password,
-      sso: [],
-    };
-  }, [
-    workspaceBypassMode,
-    workspaceAuthBypassProviders,
-    workspaceAuthProviders,
-  ]);
-
-  if (!providers) {
+  if (!workspaceAuthProviders) {
     return null;
   }
+
+  const providers =
+    shouldOfferBypass && workspaceBypassMode
+      ? {
+          ...workspaceAuthProviders,
+          ...workspaceAuthBypassProviders,
+          sso: [],
+        }
+      : workspaceAuthProviders;
 
   return (
     <>

@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 
 import { useWorkspaceBypass } from '@/auth/sign-in-up/hooks/useWorkspaceBypass';
+import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 
 const StyledCopyContainer = styled.div`
   align-items: center;
@@ -53,10 +54,12 @@ const StyledSeparator = styled.span`
 `;
 
 export const FooterNote = () => {
-  const { isWorkspaceContext, shouldShowBypassLink, enableBypass } =
+  const isOnAWorkspace = useIsCurrentLocationOnAWorkspace()
+
+  const { shouldOfferBypass, workspaceBypassMode, enableBypass } =
     useWorkspaceBypass();
 
-  if (!isWorkspaceContext) {
+  if (!isOnAWorkspace) {
     return (
       <StyledCopyContainer>
         <Trans>By using Twenty, you agree to the</Trans>{' '}
@@ -82,7 +85,7 @@ export const FooterNote = () => {
 
   return (
     <StyledLinksContainer>
-      {shouldShowBypassLink && (
+      {shouldOfferBypass && !workspaceBypassMode && (
         <>
           <button type="button" onClick={enableBypass}>
             <Trans>Bypass SSO</Trans>

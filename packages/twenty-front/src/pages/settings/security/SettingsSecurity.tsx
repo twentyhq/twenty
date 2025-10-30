@@ -15,7 +15,6 @@ import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImperso
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ApolloError } from '@apollo/client';
-import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -50,18 +49,6 @@ export const SettingsSecurity = () => {
     currentWorkspaceState,
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
-
-  const shouldShowBypassSection = useMemo(() => {
-    const availableProviders = [
-      authProviders?.google,
-      authProviders?.microsoft,
-      authProviders?.password,
-    ];
-    const hasAvailableBypassProviders = availableProviders.some(Boolean);
-    const hasSsoIdentityProviders = SSOIdentitiesProviders.length > 0;
-
-    return hasAvailableBypassProviders && hasSsoIdentityProviders;
-  }, [authProviders, SSOIdentitiesProviders]);
 
   const saveWorkspace = useDebouncedCallback(async (value: number) => {
     try {
@@ -99,6 +86,20 @@ export const SettingsSecurity = () => {
 
     saveWorkspace(value);
   };
+
+  const hasSsoIdentityProviders = SSOIdentitiesProviders.length > 0;
+  const hasDirectAuthEnabled = Boolean(
+    currentWorkspace?.isGoogleAuthEnabled ||
+      currentWorkspace?.isMicrosoftAuthEnabled ||
+      currentWorkspace?.isPasswordAuthEnabled,
+  );
+  const hasBypassProviderAvailable = Boolean(
+    authProviders?.google ||
+      authProviders?.microsoft ||
+      authProviders?.password,
+  );
+  const shouldShowBypassSection =
+    hasSsoIdentityProviders && !hasDirectAuthEnabled && hasBypassProviderAvailable;
 
   return (
     <SubMenuTopBarContainer
