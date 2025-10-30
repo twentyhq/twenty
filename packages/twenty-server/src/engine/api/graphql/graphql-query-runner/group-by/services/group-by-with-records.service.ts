@@ -1,17 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
+import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
+
+import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { type GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
@@ -34,12 +40,14 @@ export class GroupByWithRecordsService {
     groupByDefinitions,
     selectedFieldsResult,
     queryRunnerContext,
+    orderByForRecords,
   }: {
     queryBuilderWithGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     groupByDefinitions: GroupByDefinition[];
     selectedFieldsResult: GraphqlQuerySelectedFieldsResult;
     queryRunnerContext: CommonExtendedQueryRunnerContext;
+    orderByForRecords: ObjectRecordOrderBy;
   }): Promise<CommonGroupByOutputItem[]> {
     const groupsResult = await queryBuilderWithGroupBy
       .limit(GROUPS_LIMIT)
@@ -60,7 +68,7 @@ export class GroupByWithRecordsService {
 
     const columnsToSelect = buildColumnsToSelect({
       select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations, // TODO - not handled for now
+      relations: selectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps: objectMetadataMaps,
     });
@@ -71,6 +79,9 @@ export class GroupByWithRecordsService {
       groupsResult,
       groupByDefinitions,
       repository,
+      orderByForRecords,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const recordsResult = await queryBuilderWithPartitionBy.getRawMany();
@@ -114,12 +125,18 @@ export class GroupByWithRecordsService {
     groupsResult,
     groupByDefinitions,
     repository,
+    orderByForRecords,
+    objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
   }: {
     queryBuilderForSubQuery: WorkspaceSelectQueryBuilder<ObjectLiteral>;
     columnsToSelect: Record<string, boolean>;
     groupsResult: Array<Record<string, unknown>>;
     groupByDefinitions: GroupByDefinition[];
     repository: WorkspaceRepository<ObjectLiteral>;
+    orderByForRecords: ObjectRecordOrderBy;
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+    objectMetadataMaps: ObjectMetadataMaps;
   }): WorkspaceSelectQueryBuilder<ObjectLiteral> {
     const groupByExpressions = groupByDefinitions
       .map((def) => def.expression)
@@ -148,6 +165,19 @@ export class GroupByWithRecordsService {
       .addSelect(groupBySelectWithAlias)
       .addSelect(`ROW_NUMBER() OVER (PARTITION BY ${groupByExpressions})`, 'rn')
       .andWhere(groupConditions);
+
+    if (!isEmpty(orderByForRecords)) {
+      const graphqlQueryParser = new GraphqlQueryParser(
+        objectMetadataItemWithFieldMaps,
+        objectMetadataMaps,
+      );
+
+      graphqlQueryParser.applyOrderToBuilder(
+        subQuery,
+        orderByForRecords,
+        objectMetadataItemWithFieldMaps.nameSingular,
+      );
+    }
 
     let mainQueryQueryBuilder = repository.createQueryBuilder();
 
@@ -191,8 +221,12 @@ export class GroupByWithRecordsService {
       const conditions = groupByDefinitions
         .map((def, defIndex) => {
           const paramName = `groupValue_${groupIndex}_${defIndex}`;
+          const paramValue = group[def.alias];
 
-          queryBuilder.setParameter(paramName, group[def.alias]);
+          if (!isDefined(paramValue)) {
+            return `${def.expression} IS NULL`;
+          }
+          queryBuilder.setParameter(paramName, paramValue);
 
           return `${def.expression} = :${paramName}`;
         })

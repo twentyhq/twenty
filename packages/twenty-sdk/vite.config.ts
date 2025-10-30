@@ -1,7 +1,14 @@
+// @ts-ignore
+import path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
   build: {
     lib: {
       entry: 'src/index.ts',
@@ -10,5 +17,9 @@ export default defineConfig({
       fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
     },
   },
-  plugins: [dts()],
+  plugins: [
+    dts({
+      entryRoot: 'src',
+    }),
+  ],
 });

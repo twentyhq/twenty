@@ -128,7 +128,7 @@ export class ApiService {
       return {
         success: true,
         data: response.data.data.syncApplication,
-        message: `Successfully synced application: ${manifest.name}`,
+        message: `Successfully synced application: ${packageJson.name}`,
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -141,15 +141,15 @@ export class ApiService {
     }
   }
 
-  async deleteApplication(packageJson: PackageJson): Promise<ApiResponse> {
+  async deleteApplication(universalIdentifier: string): Promise<ApiResponse> {
     try {
       const mutation = `
-        mutation DeleteApplication($packageJson: JSON!) {
-          deleteApplication(packageJson: $packageJson)
+        mutation DeleteApplication($universalIdentifier: String!) {
+          deleteApplication(universalIdentifier: $universalIdentifier)
         }
       `;
 
-      const variables = { packageJson };
+      const variables = { universalIdentifier };
 
       const response: AxiosResponse = await this.client.post(
         '/metadata',
@@ -176,7 +176,7 @@ export class ApiService {
       return {
         success: true,
         data: response.data.data.deleteApplication,
-        message: `Successfully deleted application: ${packageJson.name}`,
+        message: 'Successfully deleted application',
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

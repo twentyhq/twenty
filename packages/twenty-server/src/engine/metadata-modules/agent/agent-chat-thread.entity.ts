@@ -20,7 +20,7 @@ export class AgentChatThreadEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('uuid')
+  @Column({ nullable: false, type: 'uuid' })
   @Index()
   userWorkspaceId: string;
 

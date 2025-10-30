@@ -5,13 +5,16 @@ import { BASE_APPLICATION_PROJECT_PATH } from '../constants/constants-path';
 import { writeJsoncFile } from '../utils/jsonc-parser';
 import { join } from 'path';
 import path from 'path';
+import { v4 } from 'uuid';
 
 export const copyBaseApplicationProject = async ({
   appName,
+  appDisplayName,
   appDescription,
   appDirectory,
 }: {
   appName: string;
+  appDisplayName: string;
   appDescription: string;
   appDirectory: string;
 }) => {
@@ -26,24 +29,50 @@ export const copyBaseApplicationProject = async ({
 
   await createBasePackageJson({
     appName,
-    appDescription,
+    appDirectory,
+  });
+
+  await createApplicationConfig({
+    displayName: appDisplayName,
+    description: appDescription,
     appDirectory,
   });
 
   await createReadmeContent({
-    appName,
+    displayName: appDisplayName,
     appDescription,
     appDirectory,
   });
 };
 
+const createApplicationConfig = async ({
+  displayName,
+  description,
+  appDirectory,
+}: {
+  displayName: string;
+  description?: string;
+  appDirectory: string;
+}) => {
+  const content = `import { type ApplicationConfig } from 'twenty-sdk/application';
+
+const config: ApplicationConfig = {
+  universalIdentifier: '${v4()}',
+  displayName: '${displayName}',
+  description: '${description ?? ''}',
+};
+
+export default config;
+`;
+
+  await fs.writeFile(path.join(appDirectory, 'application.config.ts'), content);
+};
+
 const createBasePackageJson = async ({
   appName,
-  appDescription,
   appDirectory,
 }: {
   appName: string;
-  appDescription: string;
   appDirectory: string;
 }) => {
   const base = JSON.parse(await readBaseApplicationProjectFile('package.json'));
@@ -52,27 +81,23 @@ const createBasePackageJson = async ({
 
   base['$schema'] = schemas.appManifest;
   base['universalIdentifier'] = randomUUID();
-  base['name'] = appName
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-  base['description'] = appDescription;
+  base['name'] = appName;
 
   await writeJsoncFile(join(appDirectory, 'package.json'), base);
 };
 
 const createReadmeContent = async ({
-  appName,
+  displayName,
   appDescription,
   appDirectory,
 }: {
-  appName: string;
+  displayName: string;
   appDescription: string;
   appDirectory: string;
 }) => {
   let readmeContent = await readBaseApplicationProjectFile('README.md');
 
-  readmeContent = readmeContent.replace(/\{title}/g, appName);
+  readmeContent = readmeContent.replace(/\{title}/g, displayName);
 
   readmeContent = readmeContent.replace(/\{description}/g, appDescription);
 

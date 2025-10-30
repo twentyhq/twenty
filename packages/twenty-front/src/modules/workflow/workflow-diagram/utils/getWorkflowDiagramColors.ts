@@ -26,7 +26,7 @@ export const getWorkflowDiagramColors = ({
     case 'RUNNING': {
       return {
         selected: {
-          background: theme.adaptiveColors.yellow1,
+          background: theme.color.yellow3,
           borderColor: theme.color.yellow,
           color: theme.tag.text.yellow,
           titleColor: theme.font.color.primary,
@@ -44,7 +44,7 @@ export const getWorkflowDiagramColors = ({
     case 'FAILED': {
       return {
         selected: {
-          background: theme.adaptiveColors.red1,
+          background: theme.color.red3,
           borderColor: theme.color.red,
           color: theme.tag.text.red,
           titleColor: theme.font.color.primary,
@@ -63,7 +63,7 @@ export const getWorkflowDiagramColors = ({
     case 'SUCCESS': {
       return {
         selected: {
-          background: theme.adaptiveColors.turquoise1,
+          background: theme.color.turquoise3,
           borderColor: theme.color.turquoise,
           color: theme.tag.text.green,
           titleColor: theme.font.color.primary,
@@ -81,7 +81,7 @@ export const getWorkflowDiagramColors = ({
     default: {
       return {
         selected: {
-          background: theme.adaptiveColors.blue1,
+          background: theme.color.blue3,
           borderColor: theme.color.blue,
           color: theme.tag.text.blue,
           titleColor: theme.font.color.primary,

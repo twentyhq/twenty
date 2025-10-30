@@ -1,4 +1,3 @@
-import { TEST_NOT_EXISTING_VIEW_GROUP_ID } from 'test/integration/constants/test-view-ids.constants';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
@@ -10,11 +9,11 @@ import { deleteOneCoreViewGroup } from 'test/integration/metadata/suites/view-gr
 import { destroyOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/destroy-one-core-view-group.util';
 import { findCoreViewGroups } from 'test/integration/metadata/suites/view-group/utils/find-core-view-groups.util';
 import { updateOneCoreViewGroup } from 'test/integration/metadata/suites/view-group/utils/update-one-core-view-group.util';
-import {
-  assertViewGroupStructure,
-  cleanupViewRecords,
-} from 'test/integration/utils/view-test.util';
+import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { assertViewGroupStructure } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+
+const TEST_NOT_EXISTING_VIEW_GROUP_ID = '20202020-0000-4000-8000-000000000003';
 
 describe('View Group Resolver', () => {
   let testViewId: string;
@@ -71,18 +70,22 @@ describe('View Group Resolver', () => {
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupViewRecords();
   });
 
   beforeEach(async () => {
-    await cleanupViewRecords();
-
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Groups',
       objectMetadataId: testObjectMetadataId,
     });
 
     testViewId = view.id;
+  });
+
+  afterEach(async () => {
+    await destroyOneCoreView({
+      viewId: testViewId,
+      expectToFail: false,
+    });
   });
 
   describe('getCoreViewGroups', () => {

@@ -11,7 +11,9 @@ import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { type WidgetCardContext } from '@/page-layout/widgets/widget-card/types/WidgetCardContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useTheme } from '@emotion/react';
 import { type MouseEvent } from 'react';
+import { IconLock } from 'twenty-ui/display';
 import { type PageLayoutWidget } from '~/generated/graphql';
 
 type WidgetRendererProps = {
@@ -23,6 +25,7 @@ export const WidgetRenderer = ({
   widget,
   widgetCardContext = 'dashboard',
 }: WidgetRendererProps) => {
+  const theme = useTheme();
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
 
@@ -78,6 +81,12 @@ export const WidgetRenderer = ({
       />
       <WidgetCardContent widgetCardContext={widgetCardContext}>
         {hasAccess && <WidgetContentRenderer widget={widget} />}
+        {!hasAccess && widgetCardContext === 'dashboard' && (
+          <IconLock
+            color={theme.font.color.tertiary}
+            stroke={theme.icon.stroke.sm}
+          />
+        )}
       </WidgetCardContent>
     </WidgetCard>
   );

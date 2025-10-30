@@ -1,6 +1,5 @@
-import { RGBA } from 'twenty-ui/theme';
-
-import { GRAPH_GROUP_COLOR_MINIMUM_ALPHA } from '@/page-layout/widgets/graph/constants/GraphGroupColorMinimumAlpha.constant';
+import { GRAPH_COLOR_SCALE_MAX } from '@/page-layout/widgets/graph/constants/GraphColorScaleMax';
+import { GRAPH_COLOR_SCALE_MIN } from '@/page-layout/widgets/graph/constants/GraphColorScaleMinIndex';
 import { GRAPH_MAXIMUM_NUMBER_OF_GROUP_COLORS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroupColors';
 import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphColorScheme';
 
@@ -23,10 +22,14 @@ export const generateGroupColor = ({
     GRAPH_MAXIMUM_NUMBER_OF_GROUP_COLORS,
   );
 
-  const ratio = (effectiveGroupIndex + 1) / effectiveTotalGroups;
-  const alpha =
-    GRAPH_GROUP_COLOR_MINIMUM_ALPHA +
-    (1 - GRAPH_GROUP_COLOR_MINIMUM_ALPHA) * ratio;
+  const colorIndexRange = GRAPH_COLOR_SCALE_MAX - GRAPH_COLOR_SCALE_MIN;
 
-  return RGBA(colorScheme.solid, alpha);
+  const variationIndex =
+    GRAPH_COLOR_SCALE_MIN -
+    1 +
+    Math.floor(
+      ((effectiveGroupIndex + 1) / effectiveTotalGroups) * colorIndexRange,
+    );
+
+  return colorScheme.variations[variationIndex];
 };

@@ -15,7 +15,6 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
-import { WORKSPACE_CACHE_KEYS } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { parseArrayEnvVar } from 'src/utils/parse-array-env-var';
 
 const meterDrivers = parseArrayEnvVar(
@@ -30,12 +29,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     release: process.env.APP_VERSION,
     dsn: process.env.SENTRY_DSN,
     integrations: [
-      // TODO: Redis integration doesn't seem to work - investigate why
-      Sentry.redisIntegration({
-        cachePrefixes: Object.values(WORKSPACE_CACHE_KEYS).map(
-          (key) => `engine:${key}:`,
-        ),
-      }),
+      Sentry.redisIntegration(),
       Sentry.httpIntegration(),
       Sentry.expressIntegration(),
       Sentry.graphqlIntegration(),

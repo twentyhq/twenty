@@ -1,4 +1,6 @@
-export const parseBooleanFromStringValue = (value: unknown): boolean | unknown => {
+export const parseBooleanFromStringValue = (
+  value: unknown,
+): boolean | unknown => {
   if (value === 'true') {
     return true;
   }
