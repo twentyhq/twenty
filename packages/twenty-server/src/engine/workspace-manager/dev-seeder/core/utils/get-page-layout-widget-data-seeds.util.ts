@@ -174,7 +174,7 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
               secondaryAxisGroupByFieldMetadataId: opportunityStageFieldId,
               primaryAxisOrderBy: 'FIELD_ASC',
-              axisNameDisplay: AxisNameDisplay.BOTH,
+              axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
               color: 'auto',
             }
@@ -306,7 +306,7 @@ export const getPageLayoutWidgetDataSeeds = (
               secondaryAxisGroupByFieldMetadataId: companyAddressFieldId,
               secondaryAxisGroupBySubFieldName: 'addressCity',
               primaryAxisOrderBy: 'FIELD_ASC',
-              axisNameDisplay: AxisNameDisplay.BOTH,
+              axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
               color: 'auto',
             }

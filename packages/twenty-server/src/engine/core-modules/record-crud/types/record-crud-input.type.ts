@@ -43,5 +43,4 @@ export type FindRecordsInput = {
 export type UpsertRecordInput = {
   objectName: string;
   objectRecord: ObjectRecordProperties;
-  fieldsToUpdate?: string[];
 };
