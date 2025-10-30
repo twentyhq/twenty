@@ -51,25 +51,24 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
-    const updatedFlatFieldMetadataMaps =
-      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: {
-          ...flatFieldMetadata,
-          viewFieldIds: [
-            ...flatFieldMetadata.viewFieldIds,
-            flatViewFieldToValidate.id,
-          ],
-        },
-        flatEntityMaps:
-          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-      });
+    replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+      flatEntity: {
+        ...flatFieldMetadata,
+        viewFieldIds: [
+          ...flatFieldMetadata.viewFieldIds,
+          flatViewFieldToValidate.id,
+        ],
+      },
+      flatEntityMaps:
+        dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+    });
 
     const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFieldToValidate.viewId,
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewMaps = replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+    replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
       flatEntity: {
         ...flatView,
         viewFieldIds: [...flatView.viewFieldIds, flatViewFieldToValidate.id],
@@ -83,11 +82,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
         type: 'create_view_field',
         viewField: flatViewFieldToValidate,
       },
-      dependencyOptimisticFlatEntityMaps: {
-        ...dependencyOptimisticFlatEntityMaps,
-        flatViewMaps: updatedFlatViewMaps,
-        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
-      },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -119,35 +114,35 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
-    const updatedFlatFieldMetadataMaps = isDefined(flatFieldMetadata)
-      ? replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-          flatEntity: {
-            ...flatFieldMetadata,
-            viewFieldIds: flatFieldMetadata.viewFieldIds.filter(
-              (id) => id !== flatViewFieldToValidate.id,
-            ),
-          },
-          flatEntityMaps:
-            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-        })
-      : dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
+    if (isDefined(flatFieldMetadata)) {
+      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: {
+          ...flatFieldMetadata,
+          viewFieldIds: flatFieldMetadata.viewFieldIds.filter(
+            (id) => id !== flatViewFieldToValidate.id,
+          ),
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      });
+    }
 
     const flatView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.viewId,
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewMaps = isDefined(flatView)
-      ? replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-          flatEntity: {
-            ...flatView,
-            viewFieldIds: flatView.viewFieldIds.filter(
-              (id) => id !== flatViewFieldToValidate.id,
-            ),
-          },
-          flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
-        })
-      : dependencyOptimisticFlatEntityMaps.flatViewMaps;
+    if (isDefined(flatView)) {
+      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: {
+          ...flatView,
+          viewFieldIds: flatView.viewFieldIds.filter(
+            (id) => id !== flatViewFieldToValidate.id,
+          ),
+        },
+        flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
+      });
+    }
 
     return {
       status: 'success',
@@ -155,11 +150,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
         type: 'delete_view_field',
         viewFieldId: flatViewFieldToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps: {
-        ...dependencyOptimisticFlatEntityMaps,
-        flatViewMaps: updatedFlatViewMaps,
-        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
-      },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 

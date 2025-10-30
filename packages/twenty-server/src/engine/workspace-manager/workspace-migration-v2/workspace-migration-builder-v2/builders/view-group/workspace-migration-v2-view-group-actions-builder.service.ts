@@ -51,7 +51,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewMaps = replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+    replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
       flatEntity: {
         ...flatView,
         viewGroupIds: [...flatView.viewGroupIds, flatViewGroupToValidate.id],
@@ -64,18 +64,17 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
-    const updatedFlatFieldMetadataMaps =
-      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: {
-          ...flatFieldMetadata,
-          viewGroupIds: [
-            ...flatFieldMetadata.viewGroupIds,
-            flatViewGroupToValidate.id,
-          ],
-        },
-        flatEntityMaps:
-          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-      });
+    replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+      flatEntity: {
+        ...flatFieldMetadata,
+        viewGroupIds: [
+          ...flatFieldMetadata.viewGroupIds,
+          flatViewGroupToValidate.id,
+        ],
+      },
+      flatEntityMaps:
+        dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+    });
 
     return {
       status: 'success',
@@ -83,10 +82,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
         type: 'create_view_group',
         viewGroup: flatViewGroupToValidate,
       },
-      dependencyOptimisticFlatEntityMaps: {
-        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
-        flatViewMaps: updatedFlatViewMaps,
-      },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -118,35 +114,35 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewMaps = isDefined(flatView)
-      ? replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-          flatEntity: {
-            ...flatView,
-            viewGroupIds: flatView.viewGroupIds.filter(
-              (id) => id !== flatViewGroupToValidate.id,
-            ),
-          },
-          flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
-        })
-      : dependencyOptimisticFlatEntityMaps.flatViewMaps;
+    if (isDefined(flatView)) {
+      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: {
+          ...flatView,
+          viewGroupIds: flatView.viewGroupIds.filter(
+            (id) => id !== flatViewGroupToValidate.id,
+          ),
+        },
+        flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
+      });
+    }
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewGroupToValidate.fieldMetadataId,
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
-    const updatedFlatFieldMetadataMaps = isDefined(flatFieldMetadata)
-      ? replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-          flatEntity: {
-            ...flatFieldMetadata,
-            viewGroupIds: flatFieldMetadata.viewGroupIds.filter(
-              (id) => id !== flatViewGroupToValidate.id,
-            ),
-          },
-          flatEntityMaps:
-            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-        })
-      : dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
+    if (isDefined(flatFieldMetadata)) {
+      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: {
+          ...flatFieldMetadata,
+          viewGroupIds: flatFieldMetadata.viewGroupIds.filter(
+            (id) => id !== flatViewGroupToValidate.id,
+          ),
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      });
+    }
 
     return {
       status: 'success',
@@ -154,10 +150,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
         type: 'delete_view_group',
         viewGroupId: flatViewGroupToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps: {
-        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
-        flatViewMaps: updatedFlatViewMaps,
-      },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 

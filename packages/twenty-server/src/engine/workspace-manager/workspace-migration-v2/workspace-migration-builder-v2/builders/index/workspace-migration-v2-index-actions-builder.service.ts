@@ -64,19 +64,13 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
         dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
-    const updatedFlatObjectMetadataMaps =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
-
     return {
       status: 'success',
       action: {
         type: 'create_index',
         flatIndexMetadata: flatIndexToValidate,
       },
-      dependencyOptimisticFlatEntityMaps: {
-        ...dependencyOptimisticFlatEntityMaps,
-        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
-      },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -118,19 +112,13 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
       });
     }
 
-    const updatedFlatObjectMetadataMaps =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
-
     return {
       status: 'success',
       action: {
         type: 'delete_index',
         flatIndexMetadataId: flatIndexToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps: {
-        ...dependencyOptimisticFlatEntityMaps,
-        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
-      },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 

@@ -53,18 +53,17 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
-    const updatedFlatObjectMetadataMaps =
-      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: {
-          ...flatObjectMetadata,
-          fieldMetadataIds: [
-            ...flatObjectMetadata.fieldMetadataIds,
-            flatFieldMetadataToValidate.id,
-          ],
-        },
-        flatEntityMaps:
-          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
-      });
+    replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+      flatEntity: {
+        ...flatObjectMetadata,
+        fieldMetadataIds: [
+          ...flatObjectMetadata.fieldMetadataIds,
+          flatFieldMetadataToValidate.id,
+        ],
+      },
+      flatEntityMaps:
+        dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+    });
 
     return {
       status: 'success',
@@ -73,9 +72,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
         flatFieldMetadatas: [flatFieldMetadataToValidate],
       },
-      dependencyOptimisticFlatEntityMaps: {
-        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
-      },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -107,18 +104,18 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
-    const updatedFlatObjectMetadataMaps = isDefined(flatObjectMetadata)
-      ? replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-          flatEntity: {
-            ...flatObjectMetadata,
-            fieldMetadataIds: flatObjectMetadata.fieldMetadataIds.filter(
-              (id) => id !== flatFieldMetadataToValidate.id,
-            ),
-          },
-          flatEntityMaps:
-            dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
-        })
-      : dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
+    if (isDefined(flatObjectMetadata)) {
+      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: {
+          ...flatObjectMetadata,
+          fieldMetadataIds: flatObjectMetadata.fieldMetadataIds.filter(
+            (id) => id !== flatFieldMetadataToValidate.id,
+          ),
+        },
+        flatEntityMaps:
+          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      });
+    }
 
     return {
       status: 'success',
@@ -127,9 +124,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
         fieldMetadataId: flatFieldMetadataToValidate.id,
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
       },
-      dependencyOptimisticFlatEntityMaps: {
-        flatObjectMetadataMaps: updatedFlatObjectMetadataMaps,
-      },
+      dependencyOptimisticFlatEntityMaps,
     };
   }
 
