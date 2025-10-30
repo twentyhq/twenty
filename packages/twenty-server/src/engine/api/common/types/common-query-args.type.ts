@@ -50,6 +50,7 @@ export interface FindManyQueryArgs {
   last?: number;
   before?: string;
   after?: string;
+  offset?: number;
 }
 
 export interface CreateManyQueryArgs {
