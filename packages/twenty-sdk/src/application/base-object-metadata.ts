@@ -1,9 +1,9 @@
 export abstract class BaseObjectMetadata {
-  id!: string;
+  id: string;
 
-  createdAt!: string;
+  createdAt: string;
 
-  updatedAt!: string;
+  updatedAt: string;
 
-  deletedAt!: string | null;
+  deletedAt: string | null;
 }

@@ -9,6 +9,8 @@
 
 export type { ApplicationConfig } from './application-config';
 export { BaseObjectMetadata } from './base-object-metadata';
+export { FieldMetadataType } from './field-metadata-type';
+export { FieldMetadata } from './field.decorator';
 export { ObjectMetadata } from './object-metadata.decorator';
 export type { ServerlessFunctionConfig } from './serverless-function-config';
 export type { SyncableEntityOptions } from './syncable-entity-options.type';
