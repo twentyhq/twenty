@@ -12,11 +12,12 @@ import { FindRecordsService } from 'src/engine/core-modules/record-crud/services
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
-import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -63,6 +64,13 @@ export const createAgentToolTestModule =
         },
         {
           provide: getRepositoryToken(RoleEntity),
+          useValue: {
+            findOne: jest.fn(),
+            find: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(AgentEntity),
           useValue: {
             findOne: jest.fn(),
             find: jest.fn(),
@@ -143,6 +151,14 @@ export const createAgentToolTestModule =
           provide: SendEmailTool,
           useValue: {
             description: 'mock',
+            inputSchema: {},
+            execute: jest.fn(),
+          },
+        },
+        {
+          provide: SearchArticlesTool,
+          useValue: {
+            description: 'Search for articles and documentation',
             inputSchema: {},
             execute: jest.fn(),
           },
