@@ -59,5 +59,14 @@ export default defineContentScript({
     })
 
     ui.mount();
+
+    onMessage('getCompanyviaRelay', async () => {
+      const companyNameElement = document.querySelector('h1');
+      const companyName =  companyNameElement?.textContent ?? '';
+
+      return {
+        companyName
+      }
+    });
   },
 });

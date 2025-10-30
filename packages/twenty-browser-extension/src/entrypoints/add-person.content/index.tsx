@@ -40,7 +40,7 @@ export default defineContentScript({
       },
       onRemove: (root) => {
         root?.unmount();
-      }
+      },
     });
 
     ctx.addEventListener(window, 'wxt:locationchange', ({newUrl, }) => {
@@ -48,5 +48,18 @@ export default defineContentScript({
     });
 
     ui.mount();
+
+    onMessage('extractPerson', async () => {
+      const personNameElement = document.querySelector('h1');
+      const personName = personNameElement ? personNameElement.textContent : '';
+      const extractFirstAndLastName = (fullName: string) => {
+          const spaceIndex = fullName.lastIndexOf(' ');
+          const firstName = fullName.substring(0, spaceIndex);
+          const lastName = fullName.substring(spaceIndex + 1);
+          return { firstName, lastName };
+      };
+
+      return extractFirstAndLastName(personName);
+    });
   },
 });
