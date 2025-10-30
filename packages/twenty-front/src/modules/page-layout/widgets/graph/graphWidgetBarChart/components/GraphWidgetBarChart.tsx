@@ -169,6 +169,7 @@ export const GraphWidgetBarChart = ({
         bars={bars}
         formatValue={(value) => formatGraphValue(value, formatOptions)}
         offset={theme.spacingMultiplicator * 2}
+        layout={layout}
       />
     );
 

@@ -1,6 +1,7 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { useTheme } from '@emotion/react';
 import { type BarCustomLayerProps } from '@nivo/bar';
+import { animated } from '@react-spring/web';
 import { isDefined } from 'twenty-shared/utils';
 
 type CustomTotalsLayerProps = Pick<
@@ -9,18 +10,29 @@ type CustomTotalsLayerProps = Pick<
 > & {
   formatValue?: (value: number) => string;
   offset?: number;
+  layout?: 'vertical' | 'horizontal';
 };
 
 export const CustomTotalsLayer = ({
   bars,
   formatValue,
   offset = 0,
+  layout = 'vertical',
 }: CustomTotalsLayerProps) => {
   const theme = useTheme();
 
+  const isVertical = layout === 'vertical';
+
   const groupTotals = new Map<
     string,
-    { total: number; maxY: number; centerX: number; bars: typeof bars }
+    {
+      total: number;
+      maxY: number;
+      centerX: number;
+      maxX: number;
+      centerY: number;
+      bars: typeof bars;
+    }
   >();
 
   for (const bar of bars) {
@@ -30,6 +42,7 @@ export const CustomTotalsLayer = ({
     if (isDefined(existingGroup)) {
       existingGroup.total += Number(bar.data.value);
       existingGroup.maxY = Math.min(existingGroup.maxY, bar.y);
+      existingGroup.maxX = Math.max(existingGroup.maxX, bar.x + bar.width);
       existingGroup.bars = [...existingGroup.bars, bar];
       continue;
     }
@@ -38,6 +51,8 @@ export const CustomTotalsLayer = ({
       total: Number(bar.data.value),
       maxY: bar.y,
       centerX: bar.x + bar.width / 2,
+      maxX: bar.x + bar.width,
+      centerY: bar.y + bar.height / 2,
       bars: [bar],
     });
   }
@@ -45,27 +60,37 @@ export const CustomTotalsLayer = ({
   return (
     <>
       {Array.from(groupTotals.entries()).map(
-        ([groupKey, { total, maxY, bars: groupBars }]) => {
+        ([groupKey, { total, maxY, maxX, bars: groupBars }]) => {
           const minX = Math.min(...groupBars.map((bar) => bar.x));
-          const maxX = Math.max(...groupBars.map((bar) => bar.x + bar.width));
-          const centerX = (minX + maxX) / 2;
+          const maxXCalc = Math.max(
+            ...groupBars.map((bar) => bar.x + bar.width),
+          );
+          const centerX = (minX + maxXCalc) / 2;
+
+          const minY = Math.min(...groupBars.map((bar) => bar.y));
+          const maxYCalc = Math.max(
+            ...groupBars.map((bar) => bar.y + bar.height),
+          );
+          const centerY = (minY + maxYCalc) / 2;
 
           return (
-            <text
+            <animated.text
               key={`total-${groupKey}`}
-              x={centerX}
-              y={maxY}
-              textAnchor="middle"
-              dominantBaseline="auto"
+              x={isVertical ? centerX : maxX}
+              y={isVertical ? maxY : centerY}
+              textAnchor={isVertical ? 'middle' : 'start'}
+              dominantBaseline={isVertical ? 'auto' : 'central'}
               style={{
                 fill: theme.font.color.light,
                 fontSize: 11,
                 fontWeight: theme.font.weight.medium,
-                transform: `translateY(-${offset}px)`,
+                transform: isVertical
+                  ? `translateY(-${offset}px)`
+                  : `translateX(${offset}px)`,
               }}
             >
               {isDefined(formatValue) ? formatValue(total) : total}
-            </text>
+            </animated.text>
           );
         },
       )}
