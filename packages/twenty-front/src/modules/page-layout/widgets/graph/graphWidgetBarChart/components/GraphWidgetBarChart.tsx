@@ -24,7 +24,6 @@ import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const LEGEND_THRESHOLD = 10;
-const LABEL_THRESHOLD = 15;
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -114,10 +113,7 @@ export const GraphWidgetBarChart = ({
     formatOptions,
   });
 
-  const isLargeChart = data.length * keys.length > LABEL_THRESHOLD;
   const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
-
-  const shouldShowLabels = showValues && !isLargeChart;
 
   const shouldShowLegend = showLegend && !areThereTooManyKeys;
 
@@ -193,7 +189,7 @@ export const GraphWidgetBarChart = ({
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
-          layers={['grid', 'axes', 'bars', 'markers', 'legends']}
+          layers={['grid', 'axes', 'bars', 'markers', 'legends', 'totals']}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}
@@ -202,9 +198,14 @@ export const GraphWidgetBarChart = ({
           enableGridY={layout === 'vertical' && showGrid}
           gridXValues={layout === 'horizontal' ? 5 : undefined}
           gridYValues={layout === 'vertical' ? 5 : undefined}
-          enableLabel={shouldShowLabels}
+          enableTotals={showValues}
+          totalsOffset={10}
+          enableLabel={false}
           labelSkipWidth={12}
           labelSkipHeight={12}
+          valueFormat={(value) =>
+            formatGraphValue(Number(value), formatOptions)
+          }
           labelTextColor={theme.font.color.primary}
           label={(d) => formatGraphValue(Number(d.value), formatOptions)}
           tooltip={(props) => renderTooltip(props)}
