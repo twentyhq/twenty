@@ -25,7 +25,7 @@
         "tab": "User Guide",
         "groups": [
           {
-            "group": "Overview",
+            "group": "User Guide",
             "pages": ["user-guide/introduction"]
           },
           {
@@ -141,7 +141,7 @@
         "tab": "Developers",
         "groups": [
           {
-            "group": "Overview",
+            "group": "Developers",
             "pages": ["developers/introduction"]
           },
           {
@@ -203,6 +203,10 @@
       {
         "tab": "Twenty UI",
         "groups": [
+          {
+            "group": "Overview",
+            "pages": ["twenty-ui/introduction"]
+          },
           {
             "group": "Display",
             "pages": [
