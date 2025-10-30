@@ -24,26 +24,21 @@ export class SearchArticlesTool implements Tool {
       const MINTLIFY_SUBDOMAIN =
         this.twentyConfigService.get('MINTLIFY_SUBDOMAIN');
 
-      if (!MINTLIFY_API_KEY) {
-        return {
-          success: false,
-          message: 'Mintlify API key not configured',
-          error:
-            'The documentation search service is not properly configured. Please contact your administrator.',
-        };
-      }
+      const useDirectApi = MINTLIFY_API_KEY && MINTLIFY_SUBDOMAIN;
+
+      const endpoint = useDirectApi
+        ? `https://api-dsc.mintlify.com/v1/search/${MINTLIFY_SUBDOMAIN}`
+        : 'https://twenty-help-search.com/search/twenty';
+
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(useDirectApi && { Authorization: `Bearer ${MINTLIFY_API_KEY}` }),
+      };
+
       const response = await axios.post(
-        `https://api-dsc.mintlify.com/v1/search/${MINTLIFY_SUBDOMAIN}`,
-        {
-          query,
-          pageSize: 10,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${MINTLIFY_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-        },
+        endpoint,
+        { query, pageSize: 10 },
+        { headers },
       );
 
       const results = response.data;
