@@ -27,7 +27,7 @@ export const SignInUpWorkspaceScopeForm = () => {
   const workspaceAuthBypassProviders = useRecoilValue(
     workspaceAuthBypassProvidersState,
   );
-  const { shouldOfferBypass, workspaceBypassMode } = useWorkspaceBypass();
+  const { shouldOfferBypass, shouldUseBypass } = useWorkspaceBypass();
 
   const { form } = useSignInUpForm();
 
@@ -40,7 +40,7 @@ export const SignInUpWorkspaceScopeForm = () => {
   }
 
   const providers =
-    shouldOfferBypass && workspaceBypassMode
+    shouldOfferBypass && shouldUseBypass
       ? {
           ...workspaceAuthProviders,
           ...workspaceAuthBypassProviders,

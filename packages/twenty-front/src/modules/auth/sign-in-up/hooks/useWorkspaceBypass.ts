@@ -10,7 +10,7 @@ export const useWorkspaceBypass = () => {
   const workspaceAuthBypassProviders = useRecoilValue(
     workspaceAuthBypassProvidersState,
   );
-  const [storedWorkspaceBypassMode, setWorkspaceBypassMode] = useRecoilState(
+  const [workspaceBypassMode, setWorkspaceBypassMode] = useRecoilState(
     workspaceBypassModeState,
   );
 
@@ -37,13 +37,9 @@ export const useWorkspaceBypass = () => {
   })();
 
   const shouldOfferBypass =
-    isOnAWorkspace &&
-    hasOnlySSOProvidersEnabled &&
-    hasBypassProvidersAvailable;
+    isOnAWorkspace && hasOnlySSOProvidersEnabled && hasBypassProvidersAvailable;
 
-  const workspaceBypassMode = shouldOfferBypass
-    ? storedWorkspaceBypassMode
-    : false;
+  const shouldUseBypass = shouldOfferBypass ? workspaceBypassMode : false;
 
   const enableBypass = () => {
     if (shouldOfferBypass) {
@@ -53,7 +49,7 @@ export const useWorkspaceBypass = () => {
 
   return {
     shouldOfferBypass,
-    workspaceBypassMode,
+    shouldUseBypass,
     enableBypass,
   };
 };

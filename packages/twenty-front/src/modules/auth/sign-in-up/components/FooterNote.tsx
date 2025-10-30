@@ -54,9 +54,9 @@ const StyledSeparator = styled.span`
 `;
 
 export const FooterNote = () => {
-  const isOnAWorkspace = useIsCurrentLocationOnAWorkspace()
+  const isOnAWorkspace = useIsCurrentLocationOnAWorkspace();
 
-  const { shouldOfferBypass, workspaceBypassMode, enableBypass } =
+  const { shouldOfferBypass, shouldUseBypass, enableBypass } =
     useWorkspaceBypass();
 
   if (!isOnAWorkspace) {
@@ -85,7 +85,7 @@ export const FooterNote = () => {
 
   return (
     <StyledLinksContainer>
-      {shouldOfferBypass && !workspaceBypassMode && (
+      {shouldOfferBypass && !shouldUseBypass && (
         <>
           <button type="button" onClick={enableBypass}>
             <Trans>Bypass SSO</Trans>

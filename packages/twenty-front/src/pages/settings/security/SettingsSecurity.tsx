@@ -99,7 +99,9 @@ export const SettingsSecurity = () => {
       authProviders?.password,
   );
   const shouldShowBypassSection =
-    hasSsoIdentityProviders && !hasDirectAuthEnabled && hasBypassProviderAvailable;
+    hasSsoIdentityProviders &&
+    !hasDirectAuthEnabled &&
+    hasBypassProviderAvailable;
 
   return (
     <SubMenuTopBarContainer
