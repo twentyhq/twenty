@@ -28,9 +28,7 @@ export const CustomTotalsLayer = ({
     {
       total: number;
       maxY: number;
-      centerX: number;
       maxX: number;
-      centerY: number;
       bars: ComputedBarDatum<BarChartDataItem>[];
     }
   >();
@@ -44,17 +42,14 @@ export const CustomTotalsLayer = ({
       existingGroup.maxY = Math.min(existingGroup.maxY, bar.y);
       existingGroup.maxX = Math.max(existingGroup.maxX, bar.x + bar.width);
       existingGroup.bars.push(bar);
-      continue;
+    } else {
+      groupTotals.set(groupKey, {
+        total: Number(bar.data.value),
+        maxY: bar.y,
+        maxX: bar.x + bar.width,
+        bars: [bar],
+      });
     }
-
-    groupTotals.set(groupKey, {
-      total: Number(bar.data.value),
-      maxY: bar.y,
-      centerX: bar.x + bar.width / 2,
-      maxX: bar.x + bar.width,
-      centerY: bar.y + bar.height / 2,
-      bars: [bar],
-    });
   }
 
   return (
