@@ -40,7 +40,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     }
 
     const {
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityToValidate: flatCronTriggerToValidate,
     } = args;
 
@@ -50,7 +50,6 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         type: 'create_cron_trigger',
         cronTrigger: flatCronTriggerToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -76,7 +75,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
 
     const {
       flatEntityToValidate: flatCronTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -85,7 +84,6 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         type: 'delete_cron_trigger',
         cronTriggerId: flatCronTriggerToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -107,7 +105,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
       };
     }
     const {
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;
@@ -121,7 +119,6 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     return {
       status: 'success',
       action: updateCronTriggerAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

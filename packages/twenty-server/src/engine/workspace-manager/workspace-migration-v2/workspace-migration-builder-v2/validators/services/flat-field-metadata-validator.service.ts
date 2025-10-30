@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
@@ -31,7 +31,7 @@ export class FlatFieldMetadataValidatorService {
     flatEntityId,
     flatEntityUpdates: updates,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     workspaceId,
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
@@ -152,7 +152,7 @@ export class FlatFieldMetadataValidatorService {
     const fieldMetadataTypeValidationErrors =
       await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMaps: {
+          dependencyOptimisticFlatEntityMapsToMutate: {
             flatObjectMetadataMaps:
               dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
           },
@@ -174,7 +174,7 @@ export class FlatFieldMetadataValidatorService {
   validateFlatFieldMetadataDeletion({
     flatEntityToValidate: { id: flatFieldMetadataToDeleteId },
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<FlatFieldMetadata> {
@@ -265,7 +265,7 @@ export class FlatFieldMetadataValidatorService {
   async validateFlatFieldMetadataCreation({
     flatEntityToValidate: flatFieldMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
@@ -343,7 +343,7 @@ export class FlatFieldMetadataValidatorService {
     validationResult.errors.push(
       ...(await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMaps,
+          dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
           optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,

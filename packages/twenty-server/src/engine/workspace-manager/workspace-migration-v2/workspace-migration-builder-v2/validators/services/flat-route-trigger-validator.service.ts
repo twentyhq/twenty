@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RouteTriggerExceptionCode } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
@@ -19,7 +19,7 @@ export class FlatRouteTriggerValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.routeTrigger
   >): FailedFlatEntityValidation<FlatRouteTrigger> {
@@ -98,7 +98,7 @@ export class FlatRouteTriggerValidatorService {
   public async validateFlatRouteTriggerCreation({
     flatEntityToValidate: flatRouteTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>): Promise<
     FailedFlatEntityValidation<FlatRouteTrigger>
   > {

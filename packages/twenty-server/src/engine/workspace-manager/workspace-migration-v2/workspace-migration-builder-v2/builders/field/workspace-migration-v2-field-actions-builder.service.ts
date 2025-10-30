@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -45,7 +45,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
 
     const {
       flatEntityToValidate: flatFieldMetadataToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -72,7 +72,6 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
         flatFieldMetadatas: [flatFieldMetadataToValidate],
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -96,7 +95,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
 
     const {
       flatEntityToValidate: flatFieldMetadataToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -124,7 +123,6 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
         fieldMetadataId: flatFieldMetadataToValidate.id,
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -151,7 +149,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     }
 
     const {
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
       optimisticFlatEntityMaps,
@@ -172,7 +170,6 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     return {
       status: 'success',
       action: updateFieldAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

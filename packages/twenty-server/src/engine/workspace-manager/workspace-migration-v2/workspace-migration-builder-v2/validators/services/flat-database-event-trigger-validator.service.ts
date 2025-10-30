@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventTriggerExceptionCode } from 'src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
@@ -20,7 +20,7 @@ export class FlatDatabaseEventTriggerValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
   >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
@@ -103,7 +103,7 @@ export class FlatDatabaseEventTriggerValidatorService {
   public async validateFlatDatabaseEventTriggerCreation({
     flatEntityToValidate: flatDatabaseEventTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
   >): Promise<FailedFlatEntityValidation<FlatDatabaseEventTrigger>> {

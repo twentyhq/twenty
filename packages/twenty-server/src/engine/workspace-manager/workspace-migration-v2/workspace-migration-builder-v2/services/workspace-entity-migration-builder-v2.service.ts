@@ -1,8 +1,8 @@
 import { Inject } from '@nestjs/common';
 
+import { AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { AllMetadataName } from 'twenty-shared/metadata';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
@@ -14,9 +14,9 @@ import { MetadataValidationRelatedFlatEntityMaps } from 'src/engine/metadata-mod
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
+import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/failed-flat-entity-validate-and-build.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
@@ -48,11 +48,15 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
   public async validateAndBuild({
     buildOptions,
-    dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMaps: inputDependencyOptimisticFlatEntityMaps,
     from: fromFlatEntityMaps,
     to: toFlatEntityMaps,
     workspaceId,
   }: ValidateAndBuildArgs<T>): Promise<ValidateAndBuildReturnType<T>> {
+    const dependencyOptimisticFlatEntityMaps = structuredClone(
+      inputDependencyOptimisticFlatEntityMaps,
+    );
+
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'validateAndBuild');
     this.logger.time(
       `EntityBuilder ${this.metadataName}`,
@@ -114,7 +118,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
 
       const validationResult = await this.validateFlatEntityCreation({
-        dependencyOptimisticFlatEntityMaps,
+        dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
         flatEntityToValidate: flatEntityToCreate,
         optimisticFlatEntityMaps,
         workspaceId,
@@ -131,8 +135,6 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntity: flatEntityToCreate,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
-      dependencyOptimisticFlatEntityMaps =
-        validationResult.dependencyOptimisticFlatEntityMaps;
 
       actionsResult.created.push(
         ...(Array.isArray(validationResult.action)
@@ -174,7 +176,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
 
       const validationResult = await this.validateFlatEntityDeletion({
-        dependencyOptimisticFlatEntityMaps,
+        dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
         flatEntityToValidate: flatEntityToDelete,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
@@ -191,8 +193,6 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         entityToDeleteId: flatEntityToDelete.id,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
-      dependencyOptimisticFlatEntityMaps =
-        validationResult.dependencyOptimisticFlatEntityMaps;
 
       actionsResult.deleted.push(
         ...(Array.isArray(validationResult.action)
@@ -221,7 +221,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       const validationResult = await this.validateFlatEntityUpdate({
         flatEntityUpdates: flatEntityToUpdate.updates,
         flatEntityId: flatEntityToUpdateId,
-        dependencyOptimisticFlatEntityMaps,
+        dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
         buildOptions,
@@ -255,8 +255,6 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         flatEntity: updatedFlatEntity,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
-      dependencyOptimisticFlatEntityMaps =
-        validationResult.dependencyOptimisticFlatEntityMaps;
 
       actionsResult.updated.push(
         ...(Array.isArray(validationResult.action)

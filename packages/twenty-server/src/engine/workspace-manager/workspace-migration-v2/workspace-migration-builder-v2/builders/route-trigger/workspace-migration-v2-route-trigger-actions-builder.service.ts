@@ -41,7 +41,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
 
     const {
       flatEntityToValidate: flatRouteTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -50,7 +50,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
         type: 'create_route_trigger',
         routeTrigger: flatRouteTriggerToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -76,7 +75,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
 
     const {
       flatEntityToValidate: flatRouteTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -85,7 +84,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
         type: 'delete_route_trigger',
         routeTriggerId: flatRouteTriggerToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -110,7 +108,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     }
 
     const {
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;
@@ -124,7 +122,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     return {
       status: 'success',
       action: updateRouteTriggerAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

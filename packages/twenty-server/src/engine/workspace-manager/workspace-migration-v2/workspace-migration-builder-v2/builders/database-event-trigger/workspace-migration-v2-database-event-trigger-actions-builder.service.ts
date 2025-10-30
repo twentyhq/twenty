@@ -43,7 +43,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
 
     const {
       flatEntityToValidate: flatDatabaseEventTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -52,7 +52,6 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         type: 'create_database_event_trigger',
         databaseEventTrigger: flatDatabaseEventTriggerToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -80,7 +79,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
 
     const {
       flatEntityToValidate: flatDatabaseEventTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -89,7 +88,6 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         type: 'delete_database_event_trigger',
         databaseEventTriggerId: flatDatabaseEventTriggerToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -116,7 +114,7 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     }
 
     const {
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;
@@ -130,7 +128,6 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
     return {
       status: 'success',
       action: updateDatabaseEventTriggerAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

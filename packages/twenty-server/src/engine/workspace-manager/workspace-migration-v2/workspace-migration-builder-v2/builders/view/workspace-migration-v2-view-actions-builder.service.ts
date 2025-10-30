@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -40,7 +40,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
 
     const {
       flatEntityToValidate: flatViewToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -112,7 +112,6 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         type: 'create_view',
         view: flatViewToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -133,7 +132,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
 
     const {
       flatEntityToValidate: flatViewToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -208,7 +207,6 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         type: 'delete_view',
         viewId: flatViewToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -228,7 +226,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     }
 
     const {
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;
@@ -242,7 +240,6 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
     return {
       status: 'success',
       action: updateViewAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

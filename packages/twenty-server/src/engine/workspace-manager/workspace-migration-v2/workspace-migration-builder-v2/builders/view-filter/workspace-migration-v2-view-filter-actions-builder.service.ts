@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -43,7 +43,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
 
     const {
       flatEntityToValidate: flatViewFilterToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -82,7 +82,6 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
         type: 'create_view_filter',
         viewFilter: flatViewFilterToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -106,7 +105,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
 
     const {
       flatEntityToValidate: flatViewFilterToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatView = findFlatEntityByIdInFlatEntityMaps({
@@ -132,7 +131,6 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
         type: 'delete_view_filter',
         viewFilterId: flatViewFilterToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -155,7 +153,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     }
 
     const {
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;
@@ -169,7 +167,6 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: updateViewFilterAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

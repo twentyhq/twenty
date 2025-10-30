@@ -41,7 +41,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
 
     const {
       flatEntityToValidate: flatObjectMetadataToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -51,7 +51,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         flatFieldMetadatas: [],
         flatObjectMetadata: flatObjectMetadataToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -75,7 +74,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
 
     const {
       flatEntityToValidate: flatObjectMetadataToValidate,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -84,7 +83,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         type: 'delete_object',
         objectMetadataId: flatObjectMetadataToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -109,7 +107,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     }
 
     const {
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;
@@ -123,7 +121,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     return {
       status: 'success',
       action: updateObjectAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }
