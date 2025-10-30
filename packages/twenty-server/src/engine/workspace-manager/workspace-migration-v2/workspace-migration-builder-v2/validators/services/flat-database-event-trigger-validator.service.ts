@@ -54,9 +54,8 @@ export class FlatDatabaseEventTriggerValidatorService {
     };
 
     const serverlessFunction =
-      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
-        updatedFlatDatabaseEventTrigger.serverlessFunctionId
-      ];
+      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps
+        ?.byId?.[updatedFlatDatabaseEventTrigger.serverlessFunctionId];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({
@@ -131,9 +130,8 @@ export class FlatDatabaseEventTriggerValidatorService {
     }
 
     const serverlessFunction =
-      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
-        flatDatabaseEventTriggerToValidate.serverlessFunctionId
-      ];
+      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps
+        ?.byId?.[flatDatabaseEventTriggerToValidate.serverlessFunctionId];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({

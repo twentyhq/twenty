@@ -29,8 +29,9 @@ export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
 
   flatEntityMapsToMutate.byId[flatEntity.id] = flatEntity;
 
-  flatEntityMapsToMutate.idByUniversalIdentifier[flatEntity.universalIdentifier] =
-    flatEntity.id;
+  flatEntityMapsToMutate.idByUniversalIdentifier[
+    flatEntity.universalIdentifier
+  ] = flatEntity.id;
 
   if (isDefined(flatEntity.applicationId)) {
     const existingUniversalIdentifiers =

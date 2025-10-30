@@ -48,7 +48,8 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFieldToValidate.fieldMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -73,7 +74,8 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
         ...flatView,
         viewFieldIds: [...flatView.viewFieldIds, flatViewFieldToValidate.id],
       },
-      flatEntityMapsToMutate: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
+      flatEntityMapsToMutate:
+        mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     return {
@@ -110,7 +112,8 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.fieldMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (isDefined(flatFieldMetadata)) {
@@ -139,7 +142,8 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
             (id) => id !== flatViewFieldToValidate.id,
           ),
         },
-        flatEntityMapsToMutate: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
+        flatEntityMapsToMutate:
+          mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
       });
     }
 
@@ -170,10 +174,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       };
     }
 
-    const {
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewFieldAction: UpdateViewFieldAction = {
       type: 'update_view_field',

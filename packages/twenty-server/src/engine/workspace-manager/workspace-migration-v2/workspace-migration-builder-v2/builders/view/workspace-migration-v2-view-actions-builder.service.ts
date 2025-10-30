@@ -45,7 +45,8 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewToValidate.objectMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -137,7 +138,8 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewToValidate.objectMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (isDefined(flatObjectMetadata)) {
@@ -225,10 +227,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       };
     }
 
-    const {
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewAction: UpdateViewAction = {
       type: 'update_view',

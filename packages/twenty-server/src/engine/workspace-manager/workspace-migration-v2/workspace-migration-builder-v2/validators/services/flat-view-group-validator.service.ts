@@ -71,7 +71,8 @@ export class FlatViewGroupValidatorService {
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updatedFlatViewGroup.fieldMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (!isDefined(flatFieldMetadata)) {
@@ -145,7 +146,8 @@ export class FlatViewGroupValidatorService {
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewGroupToValidate.fieldMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (!isDefined(flatFieldMetadata)) {

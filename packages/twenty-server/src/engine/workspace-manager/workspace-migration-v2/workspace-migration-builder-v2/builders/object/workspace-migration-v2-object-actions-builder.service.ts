@@ -39,9 +39,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       };
     }
 
-    const {
-      flatEntityToValidate: flatObjectMetadataToValidate,
-    } = args;
+    const { flatEntityToValidate: flatObjectMetadataToValidate } = args;
 
     return {
       status: 'success',
@@ -71,9 +69,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       };
     }
 
-    const {
-      flatEntityToValidate: flatObjectMetadataToValidate,
-    } = args;
+    const { flatEntityToValidate: flatObjectMetadataToValidate } = args;
 
     return {
       status: 'success',
@@ -104,10 +100,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       };
     }
 
-    const {
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateObjectAction: UpdateObjectAction = {
       type: 'update_object',

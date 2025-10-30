@@ -56,12 +56,14 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
         ...flatView,
         viewFilterIds: [...flatView.viewFilterIds, flatViewFilterToValidate.id],
       },
-      flatEntityMapsToMutate: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
+      flatEntityMapsToMutate:
+        mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFilterToValidate.fieldMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -121,7 +123,8 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
             (id) => id !== flatViewFilterToValidate.id,
           ),
         },
-        flatEntityMapsToMutate: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
+        flatEntityMapsToMutate:
+          mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
       });
     }
 
@@ -152,10 +155,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       };
     }
 
-    const {
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewFilterAction: UpdateViewFilterAction = {
       type: 'update_view_filter',

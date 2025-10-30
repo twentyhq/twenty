@@ -78,7 +78,8 @@ export class FlatViewFieldValidatorService {
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatView.objectMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (!isDefined(flatObjectMetadata)) {
@@ -210,7 +211,8 @@ export class FlatViewFieldValidatorService {
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.fieldMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (!isDefined(flatFieldMetadata)) {
@@ -256,7 +258,8 @@ export class FlatViewFieldValidatorService {
     }
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
       flatEntityId: flatView.objectMetadataId,
     });
 

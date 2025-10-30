@@ -123,9 +123,8 @@ export class FlatCronTriggerValidatorService {
     }
 
     const serverlessFunction =
-      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
-        flatCronTriggerToValidate.serverlessFunctionId
-      ];
+      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps
+        ?.byId?.[flatCronTriggerToValidate.serverlessFunctionId];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({

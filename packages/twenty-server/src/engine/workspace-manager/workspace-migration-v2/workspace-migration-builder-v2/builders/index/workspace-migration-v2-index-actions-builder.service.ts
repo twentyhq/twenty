@@ -49,7 +49,8 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -95,7 +96,8 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (isDefined(flatObjectMetadata)) {

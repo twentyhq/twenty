@@ -59,7 +59,8 @@ export class FlatViewFilterValidatorService {
 
     const referencedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFilterToValidate.fieldMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (!isDefined(referencedFieldMetadata)) {
@@ -142,7 +143,8 @@ export class FlatViewFilterValidatorService {
 
     const referencedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updatedFlatViewFilter.fieldMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (!isDefined(referencedFieldMetadata)) {

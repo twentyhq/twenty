@@ -48,8 +48,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
 
     const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewGroupToValidate.viewId,
-      flatEntityMaps:
-        mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -175,10 +174,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
       };
     }
 
-    const {
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewGroupAction: UpdateViewGroupAction = {
       type: 'update_view_group',

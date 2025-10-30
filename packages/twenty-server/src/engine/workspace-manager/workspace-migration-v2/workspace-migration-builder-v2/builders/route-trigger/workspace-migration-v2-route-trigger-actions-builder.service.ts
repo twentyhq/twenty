@@ -39,9 +39,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const {
-      flatEntityToValidate: flatRouteTriggerToValidate,
-    } = args;
+    const { flatEntityToValidate: flatRouteTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -72,9 +70,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const {
-      flatEntityToValidate: flatRouteTriggerToValidate,
-    } = args;
+    const { flatEntityToValidate: flatRouteTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -105,10 +101,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const {
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateRouteTriggerAction: UpdateRouteTriggerAction = {
       type: 'update_route_trigger',

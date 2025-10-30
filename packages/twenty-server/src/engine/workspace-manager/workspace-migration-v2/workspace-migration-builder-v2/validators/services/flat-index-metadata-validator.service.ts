@@ -77,7 +77,8 @@ export class FlatIndexValidatorService {
 
     const relatedObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (!isDefined(relatedObjectMetadata)) {

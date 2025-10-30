@@ -81,9 +81,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
-    const {
-      flatEntityToValidate: flatServerlessFunctionToValidate,
-    } = args;
+    const { flatEntityToValidate: flatServerlessFunctionToValidate } = args;
 
     return {
       status: 'success',
@@ -114,9 +112,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
-    const {
-      flatEntityToValidate: flatServerlessFunctionToValidate,
-    } = args;
+    const { flatEntityToValidate: flatServerlessFunctionToValidate } = args;
 
     return {
       status: 'success',
@@ -149,10 +145,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
-    const {
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateServerlessFunctionAction: UpdateServerlessFunctionAction = {
       type: 'update_serverless_function',
