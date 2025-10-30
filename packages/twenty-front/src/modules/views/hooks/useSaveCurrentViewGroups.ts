@@ -23,7 +23,6 @@ export const useSaveCurrentViewGroups = () => {
   const saveViewGroup = useRecoilCallback(
     ({ snapshot }) =>
       async (viewGroupToSave: ViewGroup) => {
-        // Allow optimistic updates but don't persist if user cannot edit
         if (!canEditView) {
           return;
         }
@@ -82,13 +81,17 @@ export const useSaveCurrentViewGroups = () => {
           },
         ]);
       },
-    [canEditView, currentViewIdCallbackState, getViewFromPrefetchState, updateViewGroups],
+    [
+      canEditView,
+      currentViewIdCallbackState,
+      getViewFromPrefetchState,
+      updateViewGroups,
+    ],
   );
 
   const saveViewGroups = useRecoilCallback(
     ({ snapshot }) =>
       async (viewGroupsToSave: ViewGroup[]) => {
-        // Allow optimistic updates but don't persist if user cannot edit
         if (!canEditView) {
           return;
         }

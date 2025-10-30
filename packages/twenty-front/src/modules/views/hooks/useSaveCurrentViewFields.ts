@@ -28,7 +28,6 @@ export const useSaveCurrentViewFields = () => {
   const saveViewFields = useRecoilCallback(
     ({ set, snapshot }) =>
       async (viewFieldsToSave: Omit<ViewField, 'definition'>[]) => {
-        // Allow optimistic updates but don't persist if user cannot edit
         if (!canEditView) {
           return;
         }

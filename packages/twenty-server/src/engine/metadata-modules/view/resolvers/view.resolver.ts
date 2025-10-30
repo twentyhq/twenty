@@ -1,12 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
+    Args,
+    Context,
+    Mutation,
+    Parent,
+    Query,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
@@ -20,6 +20,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
@@ -145,21 +146,22 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
+  @UseGuards(CustomPermissionGuard)
   async createCoreView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    // If creating a WORKSPACE view, require VIEWS permission
     if (
       isDefined(input.visibility) &&
       input.visibility === ViewVisibility.WORKSPACE &&
       isDefined(userWorkspaceId)
     ) {
-      const permissions = await this.permissionsService.getUserWorkspacePermissions({
-        userWorkspaceId,
-        workspaceId: workspace.id,
-      });
+      const permissions =
+        await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        });
 
       if (!permissions.permissionFlags[PermissionFlagType.VIEWS]) {
         throw new Error(
@@ -192,20 +194,19 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
+  @UseGuards(CustomPermissionGuard)
   async updateCoreView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    // Fetch the existing view to check ownership
     const existingView = await this.viewService.findById(id, workspace.id);
 
     if (!isDefined(existingView)) {
       throw new Error('View not found');
     }
 
-    // Check if user can update the view
     const canUpdate = this.viewService.canUserUpdateView(
       existingView,
       userWorkspaceId,
@@ -215,16 +216,16 @@ export class ViewResolver {
       throw new Error('You do not have permission to update this view');
     }
 
-    // If updating visibility to WORKSPACE, require VIEWS permission
     if (
       isDefined(input.visibility) &&
       input.visibility === ViewVisibility.WORKSPACE &&
       isDefined(userWorkspaceId)
     ) {
-      const permissions = await this.permissionsService.getUserWorkspacePermissions({
-        userWorkspaceId,
-        workspaceId: workspace.id,
-      });
+      const permissions =
+        await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        });
 
       if (!permissions.permissionFlags[PermissionFlagType.VIEWS]) {
         throw new Error(

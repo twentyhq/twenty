@@ -1,7 +1,9 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -17,7 +19,7 @@ import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterDTO)
@@ -28,7 +30,8 @@ export class ViewFilterResolver {
     private readonly viewFilterService: ViewFilterService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewFilterV2Service: ViewFilterV2Service,
-    private readonly viewService: ViewService,
+    @InjectRepository(ViewEntity)
+    private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 
   @Query(() => [ViewFilterDTO])
@@ -59,19 +62,19 @@ export class ViewFilterResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
-    // Check view ownership before allowing create
-    const view = await this.viewService.findById(
-      createViewFilterInput.viewId,
-      workspaceId,
-    );
+    const view = await this.viewRepository.findOne({
+      where: {
+        id: createViewFilterInput.viewId,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+    });
 
     if (!isDefined(view)) {
       throw new Error('View not found');
     }
 
-    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
-
-    if (!canUpdate) {
+    if (view.createdById !== userWorkspaceId) {
       throw new Error('You do not have permission to update this view');
     }
 
@@ -101,7 +104,6 @@ export class ViewFilterResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
-    // Check view ownership before allowing update
     const viewFilter = await this.viewFilterService.findById(
       updateViewFilterInput.id,
       workspaceId,
@@ -111,15 +113,19 @@ export class ViewFilterResolver {
       throw new Error('View filter not found');
     }
 
-    const view = await this.viewService.findById(viewFilter.viewId, workspaceId);
+    const view = await this.viewRepository.findOne({
+      where: {
+        id: viewFilter.viewId,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+    });
 
     if (!isDefined(view)) {
       throw new Error('View not found');
     }
 
-    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
-
-    if (!canUpdate) {
+    if (view.createdById !== userWorkspaceId) {
       throw new Error('You do not have permission to update this view');
     }
 
@@ -150,7 +156,6 @@ export class ViewFilterResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
-    // Check view ownership before allowing delete
     const viewFilter = await this.viewFilterService.findById(
       deleteViewFilterInput.id,
       workspaceId,
@@ -160,15 +165,19 @@ export class ViewFilterResolver {
       throw new Error('View filter not found');
     }
 
-    const view = await this.viewService.findById(viewFilter.viewId, workspaceId);
+    const view = await this.viewRepository.findOne({
+      where: {
+        id: viewFilter.viewId,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+    });
 
     if (!isDefined(view)) {
       throw new Error('View not found');
     }
 
-    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
-
-    if (!canUpdate) {
+    if (view.createdById !== userWorkspaceId) {
       throw new Error('You do not have permission to update this view');
     }
 
@@ -200,7 +209,6 @@ export class ViewFilterResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
-    // Check view ownership before allowing destroy
     const viewFilter = await this.viewFilterService.findById(
       destroyViewFilterInput.id,
       workspaceId,
@@ -210,15 +218,19 @@ export class ViewFilterResolver {
       throw new Error('View filter not found');
     }
 
-    const view = await this.viewService.findById(viewFilter.viewId, workspaceId);
+    const view = await this.viewRepository.findOne({
+      where: {
+        id: viewFilter.viewId,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+    });
 
     if (!isDefined(view)) {
       throw new Error('View not found');
     }
 
-    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
-
-    if (!canUpdate) {
+    if (view.createdById !== userWorkspaceId) {
       throw new Error('You do not have permission to update this view');
     }
 

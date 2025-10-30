@@ -1,7 +1,9 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -17,7 +19,7 @@ import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dto
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewGroupDTO)
@@ -28,7 +30,8 @@ export class ViewGroupResolver {
     private readonly viewGroupService: ViewGroupService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewGroupV2Service: ViewGroupV2Service,
-    private readonly viewService: ViewService,
+    @InjectRepository(ViewEntity)
+    private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 
   @Query(() => [ViewGroupDTO])
@@ -59,19 +62,19 @@ export class ViewGroupResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
-    // Check view ownership before allowing create
-    const view = await this.viewService.findById(
-      createViewGroupInput.viewId,
-      workspaceId,
-    );
+    const view = await this.viewRepository.findOne({
+      where: {
+        id: createViewGroupInput.viewId,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+    });
 
     if (!isDefined(view)) {
       throw new Error('View not found');
     }
 
-    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
-
-    if (!canUpdate) {
+    if (view.createdById !== userWorkspaceId) {
       throw new Error('You do not have permission to update this view');
     }
 
@@ -101,7 +104,6 @@ export class ViewGroupResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
-    // Check view ownership before allowing update
     const viewGroup = await this.viewGroupService.findById(
       updateViewGroupInput.id,
       workspaceId,
@@ -111,15 +113,19 @@ export class ViewGroupResolver {
       throw new Error('View group not found');
     }
 
-    const view = await this.viewService.findById(viewGroup.viewId, workspaceId);
+    const view = await this.viewRepository.findOne({
+      where: {
+        id: viewGroup.viewId,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+    });
 
     if (!isDefined(view)) {
       throw new Error('View not found');
     }
 
-    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
-
-    if (!canUpdate) {
+    if (view.createdById !== userWorkspaceId) {
       throw new Error('You do not have permission to update this view');
     }
 
@@ -150,7 +156,6 @@ export class ViewGroupResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
-    // Check view ownership before allowing delete
     const viewGroup = await this.viewGroupService.findById(
       deleteViewGroupInput.id,
       workspaceId,
@@ -160,15 +165,19 @@ export class ViewGroupResolver {
       throw new Error('View group not found');
     }
 
-    const view = await this.viewService.findById(viewGroup.viewId, workspaceId);
+    const view = await this.viewRepository.findOne({
+      where: {
+        id: viewGroup.viewId,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+    });
 
     if (!isDefined(view)) {
       throw new Error('View not found');
     }
 
-    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
-
-    if (!canUpdate) {
+    if (view.createdById !== userWorkspaceId) {
       throw new Error('You do not have permission to update this view');
     }
 
@@ -200,7 +209,6 @@ export class ViewGroupResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
-    // Check view ownership before allowing destroy
     const viewGroup = await this.viewGroupService.findById(
       destroyViewGroupInput.id,
       workspaceId,
@@ -210,15 +218,19 @@ export class ViewGroupResolver {
       throw new Error('View group not found');
     }
 
-    const view = await this.viewService.findById(viewGroup.viewId, workspaceId);
+    const view = await this.viewRepository.findOne({
+      where: {
+        id: viewGroup.viewId,
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+    });
 
     if (!isDefined(view)) {
       throw new Error('View not found');
     }
 
-    const canUpdate = this.viewService.canUserUpdateView(view, userWorkspaceId);
-
-    if (!canUpdate) {
+    if (view.createdById !== userWorkspaceId) {
       throw new Error('You do not have permission to update this view');
     }
 

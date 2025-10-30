@@ -9,12 +9,13 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
 import { ViewGroupResolver } from 'src/engine/metadata-modules/view-group/resolvers/view-group.resolver';
 import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ViewGroupEntity]),
+    TypeOrmModule.forFeature([ViewGroupEntity, ViewEntity]),
     WorkspaceCacheStorageModule,
     FeatureFlagModule,
     PermissionsModule,

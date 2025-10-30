@@ -17,6 +17,7 @@ import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { ViewVisibility } from '@/views/types/ViewVisibility';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { createPortal } from 'react-dom';
 import {
   AppTooltip,
   IconChevronLeft,
@@ -66,7 +67,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
           />
         }
       >
-        {t`Sharing`}
+        {t`Visibility`}
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
@@ -76,25 +77,36 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
         >
           <SelectableListItem
             itemId={ViewVisibility.WORKSPACE}
-            onEnter={() => hasViewsPermission && handleVisibilityChange(ViewVisibility.WORKSPACE)}
+            onEnter={() =>
+              hasViewsPermission &&
+              handleVisibilityChange(ViewVisibility.WORKSPACE)
+            }
           >
-            <div id="workspace-visibility-option">
-              <MenuItemSelect
-                LeftIcon={IconCircle}
-                text={t`Workspace`}
-                contextualText={t`Everyone`}
-                selected={currentVisibility === ViewVisibility.WORKSPACE}
-                focused={selectedItemId === ViewVisibility.WORKSPACE}
-                onClick={() => hasViewsPermission && handleVisibilityChange(ViewVisibility.WORKSPACE)}
-                disabled={!hasViewsPermission}
-              />
-            </div>
-            {!hasViewsPermission && (
-              <AppTooltip
-                anchorSelect="#workspace-visibility-option"
-                content={t`Workspace views require manage views permission`}
-              />
-            )}
+            <>
+              <div id="workspace-visibility-option">
+                <MenuItemSelect
+                  LeftIcon={IconCircle}
+                  text={t`Workspace`}
+                  contextualText={t`Everyone`}
+                  selected={currentVisibility === ViewVisibility.WORKSPACE}
+                  focused={selectedItemId === ViewVisibility.WORKSPACE}
+                  onClick={() =>
+                    hasViewsPermission &&
+                    handleVisibilityChange(ViewVisibility.WORKSPACE)
+                  }
+                  disabled={!hasViewsPermission}
+                />
+              </div>
+              {!hasViewsPermission &&
+                createPortal(
+                  <AppTooltip
+                    anchorSelect="#workspace-visibility-option"
+                    content={t`Workspace views require manage views permission`}
+                    positionStrategy="fixed"
+                  />,
+                  document.body,
+                )}
+            </>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewVisibility.UNLISTED}
@@ -103,44 +115,48 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
             <MenuItemSelect
               LeftIcon={IconCircleDashed}
               text={t`Unlisted`}
-              contextualText={t`Share by link`}
+              contextualText={t`Visible to you`}
               selected={currentVisibility === ViewVisibility.UNLISTED}
               focused={selectedItemId === ViewVisibility.UNLISTED}
               onClick={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
             />
           </SelectableListItem>
-          <SelectableListItem
-            itemId="Copy view link"
-            onEnter={() => {
-              const currentUrl = window.location.href;
-              navigator.clipboard.writeText(currentUrl);
-              enqueueSuccessSnackBar({
-                message: t`Link copied to clipboard`,
-                options: {
-                  icon: <IconCopy size={theme.icon.size.md} />,
-                  duration: 2000,
-                },
-              });
-            }}
-          >
-            <DropdownMenuSeparator />
-            <MenuItem
-              focused={selectedItemId === 'Copy view link'}
-              onClick={() => {
-                const currentUrl = window.location.href;
-                navigator.clipboard.writeText(currentUrl);
-                enqueueSuccessSnackBar({
-                  message: t`Link copied to clipboard`,
-                  options: {
-                    icon: <IconCopy size={theme.icon.size.md} />,
-                    duration: 2000,
-                  },
-                });
-              }}
-              LeftIcon={IconCopy}
-              text={t`Copy view link`}
-            />
-          </SelectableListItem>
+          {currentVisibility === ViewVisibility.WORKSPACE && (
+            <>
+              <DropdownMenuSeparator />
+              <SelectableListItem
+                itemId="Copy view link"
+                onEnter={() => {
+                  const currentUrl = window.location.href;
+                  navigator.clipboard.writeText(currentUrl);
+                  enqueueSuccessSnackBar({
+                    message: t`Link copied to clipboard`,
+                    options: {
+                      icon: <IconCopy size={theme.icon.size.md} />,
+                      duration: 2000,
+                    },
+                  });
+                }}
+              >
+                <MenuItem
+                  focused={selectedItemId === 'Copy view link'}
+                  onClick={() => {
+                    const currentUrl = window.location.href;
+                    navigator.clipboard.writeText(currentUrl);
+                    enqueueSuccessSnackBar({
+                      message: t`Link copied to clipboard`,
+                      options: {
+                        icon: <IconCopy size={theme.icon.size.md} />,
+                        duration: 2000,
+                      },
+                    });
+                  }}
+                  LeftIcon={IconCopy}
+                  text={t`Copy view link`}
+                />
+              </SelectableListItem>
+            </>
+          )}
         </SelectableList>
       </DropdownMenuItemsContainer>
     </DropdownContent>

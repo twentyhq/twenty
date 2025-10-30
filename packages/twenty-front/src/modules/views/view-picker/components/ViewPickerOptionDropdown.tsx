@@ -23,7 +23,10 @@ import { MenuItem } from 'twenty-ui/navigation';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
-  view: Pick<View, 'id' | 'name' | 'icon' | '__typename' | 'visibility' | 'createdById'>;
+  view: Pick<
+    View,
+    'id' | 'name' | 'icon' | '__typename' | 'visibility' | 'createdById'
+  >;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
 };

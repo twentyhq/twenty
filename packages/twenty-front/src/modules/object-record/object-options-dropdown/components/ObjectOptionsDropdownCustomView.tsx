@@ -93,7 +93,7 @@ export const ObjectOptionsDropdownCustomView = ({
 
   const selectableItemIdArray = [
     'Layout',
-    'Sharing',
+    'Visibility',
     'Fields',
     ...(customViewData?.type === ViewType.Calendar
       ? ['CalendarDateField', 'CalendarView']
@@ -138,14 +138,14 @@ export const ObjectOptionsDropdownCustomView = ({
             />
           </SelectableListItem>
           <SelectableListItem
-            itemId="Sharing"
+            itemId="Visibility"
             onEnter={() => onContentChange('visibility')}
           >
             <MenuItem
-              focused={selectedItemId === 'Sharing'}
+              focused={selectedItemId === 'Visibility'}
               onClick={() => onContentChange('visibility')}
               LeftIcon={IconShare}
-              text={t`Sharing`}
+              text={t`Visibility`}
               contextualText={
                 customViewData?.visibility === 'UNLISTED'
                   ? t`Unlisted`
