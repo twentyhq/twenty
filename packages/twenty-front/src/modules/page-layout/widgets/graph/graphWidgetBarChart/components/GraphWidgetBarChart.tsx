@@ -163,15 +163,18 @@ export const GraphWidgetBarChart = ({
     bars,
   }: {
     bars: readonly ComputedBarDatum<BarChartDataItem>[];
-  }) =>
-    showValues && (
-      <CustomTotalsLayer
-        bars={bars}
-        formatValue={(value) => formatGraphValue(value, formatOptions)}
-        offset={theme.spacingMultiplicator * 2}
-        layout={layout}
-      />
-    );
+  }) => (
+    <>
+      {showValues && (
+        <CustomTotalsLayer
+          bars={bars}
+          formatValue={(value) => formatGraphValue(value, formatOptions)}
+          offset={theme.spacingMultiplicator * 2}
+          layout={layout}
+        />
+      )}
+    </>
+  );
 
   return (
     <StyledContainer id={id}>
