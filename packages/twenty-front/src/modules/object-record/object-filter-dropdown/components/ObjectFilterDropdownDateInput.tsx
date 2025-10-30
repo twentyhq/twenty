@@ -1,5 +1,4 @@
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
@@ -19,12 +18,8 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
 
 export const ObjectFilterDropdownDateInput = () => {
-  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { dateFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
-
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
 
   const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
@@ -36,10 +31,6 @@ export const ObjectFilterDropdownDateInput = () => {
 
   const { applyObjectFilterDropdownFilterValue } =
     useApplyObjectFilterDropdownFilterValue();
-
-  const filterValue = isDefined(objectFilterDropdownCurrentRecordFilter)
-    ? resolveDateFilter(objectFilterDropdownCurrentRecordFilter)
-    : null;
 
   const handleAbsoluteDateChange = (newPlainDate: string | null) => {
     const newFilterValue = newPlainDate ?? '';

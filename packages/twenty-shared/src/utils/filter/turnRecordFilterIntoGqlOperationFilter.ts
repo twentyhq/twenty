@@ -177,26 +177,26 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     case 'DATE': {
       const resolvedFilterValue = resolveDateFilter(recordFilter);
+
       const now = new Date();
-      const date =
-        resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
 
-      const dateAsDayString = getPlainDateFromDate(date);
+      const plainDateFilter =
+        typeof resolvedFilterValue === 'string' ? resolvedFilterValue : null;
 
-      const nowAsDayString = getPlainDateFromDate(now);
+      const nowAsPlainDate = getPlainDateFromDate(now);
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS_AFTER: {
           return {
             [correspondingFieldMetadataItem.name]: {
-              gt: dateAsDayString,
+              gt: plainDateFilter,
             } as DateFilter,
           };
         }
         case RecordFilterOperand.IS_BEFORE: {
           return {
             [correspondingFieldMetadataItem.name]: {
-              lt: dateAsDayString,
+              lt: plainDateFilter,
             } as DateFilter,
           };
         }
@@ -235,26 +235,26 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         case RecordFilterOperand.IS: {
           return {
             [correspondingFieldMetadataItem.name]: {
-              eq: dateAsDayString,
+              eq: plainDateFilter,
             } as DateFilter,
           };
         }
         case RecordFilterOperand.IS_IN_PAST:
           return {
             [correspondingFieldMetadataItem.name]: {
-              lte: nowAsDayString,
+              lte: nowAsPlainDate,
             } as DateFilter,
           };
         case RecordFilterOperand.IS_IN_FUTURE:
           return {
             [correspondingFieldMetadataItem.name]: {
-              gte: nowAsDayString,
+              gte: nowAsPlainDate,
             } as DateFilter,
           };
         case RecordFilterOperand.IS_TODAY: {
           return {
             [correspondingFieldMetadataItem.name]: {
-              eq: nowAsDayString,
+              eq: nowAsPlainDate,
             } as DateFilter,
           };
         }

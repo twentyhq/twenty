@@ -3,6 +3,7 @@ import { getEndUnitOfDateTime } from '@/utils/filter/dates/utils/getEndUnitOfDat
 import { getStartUnitOfDateTime } from '@/utils/filter/dates/utils/getStartUnitOfDateTime';
 import { type RelativeDateFilter } from '@/utils/filter/dates/utils/relativeDateFilterSchema';
 import { subUnitFromDateTime } from '@/utils/filter/dates/utils/subUnitFromDateTime';
+import { isDefined } from '@/utils/validation';
 import { TZDate } from '@date-fns/tz';
 import { isNonEmptyString } from '@sniptt/guards';
 import { roundToNearestMinutes } from 'date-fns';
@@ -21,7 +22,9 @@ export const resolveRelativeDateTimeFilter = (
 
   switch (direction) {
     case 'NEXT':
-      if (amount === undefined) throw new Error('Amount is required');
+      if (!isDefined(amount)) {
+        throw new Error('Amount is required');
+      }
 
       return {
         ...relativeDateFilter,
@@ -29,7 +32,9 @@ export const resolveRelativeDateTimeFilter = (
         end: addUnitToDateTime(referenceDate, amount, unit),
       };
     case 'PAST':
-      if (amount === undefined) throw new Error('Amount is required');
+      if (!isDefined(amount)) {
+        throw new Error('Amount is required');
+      }
 
       return {
         ...relativeDateFilter,

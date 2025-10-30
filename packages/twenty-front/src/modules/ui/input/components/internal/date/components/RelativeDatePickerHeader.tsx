@@ -4,7 +4,7 @@ import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/in
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 
 import styled from '@emotion/styled';
-import { Nullable } from 'twenty-shared/types';
+import { type Nullable } from 'twenty-shared/types';
 import {
   relativeDateFilterSchema,
   type RelativeDateFilter,
