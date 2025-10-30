@@ -8,7 +8,7 @@ import z from 'zod';
 export const relativeDateFilterSchema = z
   .object({
     direction: relativeDateFilterDirectionSchema,
-    amount: relativeDateFilterAmountSchema,
+    amount: relativeDateFilterAmountSchema.nullish(),
     unit: relativeDateFilterUnitSchema,
     timezone: z.string().nullish(),
     referenceDayAsString: z.string().nullish(),

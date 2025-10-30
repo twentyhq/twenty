@@ -4,6 +4,7 @@ import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/in
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
 
 import styled from '@emotion/styled';
+import { Nullable } from 'twenty-shared/types';
 import {
   relativeDateFilterSchema,
   type RelativeDateFilter,
@@ -21,7 +22,7 @@ const StyledContainer = styled.div<{ noPadding: boolean }>`
 
 type RelativeDatePickerHeaderProps = {
   direction: RelativeDateFilterDirection;
-  amount?: number;
+  amount?: Nullable<number>;
   unit: RelativeDateFilterUnit;
   onChange?: (value: RelativeDateFilter) => void;
   isFormField?: boolean;

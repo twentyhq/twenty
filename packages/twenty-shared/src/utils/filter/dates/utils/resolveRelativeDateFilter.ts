@@ -4,6 +4,7 @@ import { getPlainDateFromDate } from '@/utils/filter/dates/utils/getPlainDateFro
 import { getStartUnitOfDateTime } from '@/utils/filter/dates/utils/getStartUnitOfDateTime';
 import { type RelativeDateFilter } from '@/utils/filter/dates/utils/relativeDateFilterSchema';
 import { subUnitFromDateTime } from '@/utils/filter/dates/utils/subUnitFromDateTime';
+import { isDefined } from '@/utils/validation';
 import { TZDate } from '@date-fns/tz';
 
 export const resolveRelativeDateFilter = (
@@ -15,7 +16,9 @@ export const resolveRelativeDateFilter = (
 
   switch (direction) {
     case 'NEXT':
-      if (amount === undefined) throw new Error('Amount is required');
+      if (!isDefined(amount)) {
+        throw new Error('Amount is required');
+      }
 
       return {
         ...relativeDateFilter,
@@ -25,7 +28,9 @@ export const resolveRelativeDateFilter = (
         ),
       };
     case 'PAST':
-      if (amount === undefined) throw new Error('Amount is required');
+      if (!isDefined(amount)) {
+        throw new Error('Amount is required');
+      }
 
       return {
         ...relativeDateFilter,

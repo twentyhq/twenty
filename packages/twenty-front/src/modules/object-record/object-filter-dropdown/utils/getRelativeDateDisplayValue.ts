@@ -1,17 +1,9 @@
 import { plural } from 'pluralize';
 
-import {
-  capitalize,
-  type RelativeDateFilterDirection,
-  type RelativeDateFilterUnit,
-} from 'twenty-shared/utils';
+import { capitalize, type RelativeDateFilter } from 'twenty-shared/utils';
 
 export const getRelativeDateDisplayValue = (
-  relativeDate: {
-    direction: RelativeDateFilterDirection;
-    amount?: number;
-    unit: RelativeDateFilterUnit;
-  } | null,
+  relativeDate: RelativeDateFilter | null,
 ) => {
   if (!relativeDate) return '';
   const { direction, amount, unit } = relativeDate;

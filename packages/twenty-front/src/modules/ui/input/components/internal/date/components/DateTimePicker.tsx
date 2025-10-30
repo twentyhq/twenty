@@ -25,11 +25,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useTurnPointInTimeIntoReactDatePickerShiftedDate } from '@/ui/input/components/internal/date/hooks/useTurnPointInTimeIntoReactDatePickerShiftedDate';
 import { useTurnReactDatePickerShiftedDateBackIntoPointInTime } from '@/ui/input/components/internal/date/hooks/useTurnReactDatePickerShiftedDateBackIntoPointInTime';
 import { useRecoilValue } from 'recoil';
-import {
-  type RelativeDateFilter,
-  type RelativeDateFilterDirection,
-  type RelativeDateFilterUnit,
-} from 'twenty-shared/utils';
+import { type RelativeDateFilter } from 'twenty-shared/utils';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -306,11 +302,7 @@ type DateTimePickerProps = {
   isRelative?: boolean;
   hideHeaderInput?: boolean;
   date: Date | null;
-  relativeDate?: {
-    direction: RelativeDateFilterDirection;
-    amount?: number;
-    unit: RelativeDateFilterUnit;
-  };
+  relativeDate?: RelativeDateFilter;
   highlightedDateRange?: {
     start: Date;
     end: Date;

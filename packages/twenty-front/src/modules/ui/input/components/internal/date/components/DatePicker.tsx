@@ -21,8 +21,6 @@ import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
 import {
   getPlainDateFromDate,
   type RelativeDateFilter,
-  type RelativeDateFilterDirection,
-  type RelativeDateFilterUnit,
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
 import {
@@ -304,11 +302,7 @@ type DatePickerProps = {
   isRelative?: boolean;
   hideHeaderInput?: boolean;
   date: string | null;
-  relativeDate?: {
-    direction: RelativeDateFilterDirection;
-    amount?: number;
-    unit: RelativeDateFilterUnit;
-  };
+  relativeDate?: RelativeDateFilter;
   highlightedDateRange?: {
     start: string;
     end: string;

@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type RelativeDateFilter } from 'twenty-shared/utils';
+import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
 
 export const stringifyRelativeDateFilter = (
   relativeDateFilter: RelativeDateFilter,
@@ -9,7 +9,7 @@ export const stringifyRelativeDateFilter = (
   if (relativeDateFilter.direction === 'THIS') {
     relativeDateFilterStringified = `THIS_1_${relativeDateFilter.unit}`;
   } else if (
-    relativeDateFilter.amount === undefined ||
+    !isDefined(relativeDateFilter.amount) ||
     relativeDateFilter.amount <= 0
   ) {
     throw new Error(
