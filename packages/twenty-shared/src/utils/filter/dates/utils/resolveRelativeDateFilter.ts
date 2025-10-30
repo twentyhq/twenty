@@ -14,6 +14,20 @@ export const resolveRelativeDateFilter = (
 
   const referenceDate = new TZDate();
 
+  console.log({
+    referenceDate,
+    startUnit: getStartUnitOfDateTime(referenceDate, unit, firstDayOfTheWeek),
+    endUnit: getEndUnitOfDateTime(referenceDate, unit, firstDayOfTheWeek),
+
+    ...relativeDateFilter,
+    start: getPlainDateFromDate(
+      getStartUnitOfDateTime(referenceDate, unit, firstDayOfTheWeek),
+    ),
+    end: getPlainDateFromDate(
+      getEndUnitOfDateTime(referenceDate, unit, firstDayOfTheWeek),
+    ),
+  });
+
   switch (direction) {
     case 'NEXT':
       if (!isDefined(amount)) {

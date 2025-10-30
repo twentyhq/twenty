@@ -18,8 +18,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useRecoilValue } from 'recoil';
 import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
 
+import { useTurnPointInTimeIntoReactDatePickerShiftedDate } from '@/ui/input/components/internal/date/hooks/useTurnPointInTimeIntoReactDatePickerShiftedDate';
+import { useTurnReactDatePickerShiftedDateBackIntoPointInTime } from '@/ui/input/components/internal/date/hooks/useTurnReactDatePickerShiftedDateBackIntoPointInTime';
 import {
+  getDateFromPlainDate,
   getPlainDateFromDate,
+  isDefined,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
@@ -302,8 +306,7 @@ type DatePickerProps = {
   isRelative?: boolean;
   hideHeaderInput?: boolean;
   date: string | null;
-  relativeDate?: RelativeDateFilter;
-  highlightedDateRange?: {
+  relativeDate?: RelativeDateFilter & {
     start: string;
     end: string;
   };
@@ -339,13 +342,17 @@ export const DatePicker = ({
   isRelative,
   relativeDate,
   onRelativeDateChange,
-  highlightedDateRange,
   hideHeaderInput,
 }: DatePickerProps) => {
   const dateOrToday = date ?? getPlainDateFromDate(new Date());
   const localDate = parse(dateOrToday, DATE_TYPE_FORMAT, new Date());
 
   const theme = useTheme();
+
+  const { turnReactDatePickerShiftedDateBackIntoPointInTime } =
+    useTurnReactDatePickerShiftedDateBackIntoPointInTime();
+  const { turnPointInTimeIntoReactDatePickerShiftedDate } =
+    useTurnPointInTimeIntoReactDatePickerShiftedDate();
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
@@ -409,11 +416,32 @@ export const DatePicker = ({
     handleClose?.(plainDate);
   };
 
-  const highlightedDates = getHighlightedDates();
+  console.log({
+    relativeDate,
+    start: relativeDate?.start,
+    intoDate: relativeDate?.start && getDateFromPlainDate(relativeDate?.start),
+    turned:
+      relativeDate?.end &&
+      turnPointInTimeIntoReactDatePickerShiftedDate(
+        getDateFromPlainDate(relativeDate?.end),
+      ),
+  });
 
-  const hasDate = date !== null;
+  const highlightedDates =
+    isRelative && isDefined(relativeDate?.end) && isDefined(relativeDate?.start)
+      ? getHighlightedDates({
+          start: getDateFromPlainDate(relativeDate.start),
+          end: getDateFromPlainDate(relativeDate.end),
+        })
+      : [];
 
-  const selectedDates = isRelative ? highlightedDates : hasDate ? [] : [];
+  const dateAsDate = isDefined(date) ? getDateFromPlainDate(date) : undefined;
+
+  const selectedDates = isRelative
+    ? highlightedDates
+    : isDefined(dateAsDate)
+      ? [dateAsDate]
+      : [];
 
   const calendarStartDay =
     currentWorkspaceMember?.calendarStartDay === CalendarStartDay.SYSTEM

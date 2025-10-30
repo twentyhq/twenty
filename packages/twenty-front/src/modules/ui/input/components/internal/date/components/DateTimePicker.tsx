@@ -25,7 +25,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useTurnPointInTimeIntoReactDatePickerShiftedDate } from '@/ui/input/components/internal/date/hooks/useTurnPointInTimeIntoReactDatePickerShiftedDate';
 import { useTurnReactDatePickerShiftedDateBackIntoPointInTime } from '@/ui/input/components/internal/date/hooks/useTurnReactDatePickerShiftedDateBackIntoPointInTime';
 import { useRecoilValue } from 'recoil';
-import { type RelativeDateFilter } from 'twenty-shared/utils';
+import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -302,8 +302,7 @@ type DateTimePickerProps = {
   isRelative?: boolean;
   hideHeaderInput?: boolean;
   date: Date | null;
-  relativeDate?: RelativeDateFilter;
-  highlightedDateRange?: {
+  relativeDate?: RelativeDateFilter & {
     start: Date;
     end: Date;
   };
@@ -339,7 +338,6 @@ export const DateTimePicker = ({
   isRelative,
   relativeDate,
   onRelativeDateChange,
-  highlightedDateRange,
   hideHeaderInput,
 }: DateTimePickerProps) => {
   const theme = useTheme();
@@ -419,16 +417,15 @@ export const DateTimePicker = ({
     handleClose?.(normalDate);
   };
 
-  const highlightedDates = highlightedDateRange
-    ? getHighlightedDates({
-        end: turnPointInTimeIntoReactDatePickerShiftedDate(
-          highlightedDateRange.end,
-        ),
-        start: turnPointInTimeIntoReactDatePickerShiftedDate(
-          highlightedDateRange.start,
-        ),
-      })
-    : [];
+  const highlightedDates =
+    isRelative && isDefined(relativeDate?.end) && isDefined(relativeDate?.start)
+      ? getHighlightedDates({
+          end: turnPointInTimeIntoReactDatePickerShiftedDate(relativeDate?.end),
+          start: turnPointInTimeIntoReactDatePickerShiftedDate(
+            relativeDate?.start,
+          ),
+        })
+      : [];
 
   const reactPickerShiftedDate = turnPointInTimeIntoReactDatePickerShiftedDate(
     date ?? new Date(),

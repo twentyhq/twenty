@@ -1,4 +1,11 @@
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import {
+  detectCalendarStartDay,
+  type NonSystemCalendarStartDay,
+} from '@/localization/utils/detection/detectCalendarStartDay';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
+import { useGetNowInUserTimezoneForRelativeFilter } from '@/object-record/object-filter-dropdown/hooks/useGetNowInUserTimezoneForRelativeFilter';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
@@ -20,10 +27,14 @@ import { formatDateString } from '~/utils/string/formatDateString';
 export const ObjectFilterDropdownDateInput = () => {
   const { dateFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
   );
+
+  const { getNowInUserTimezoneForRelativeFilter } =
+    useGetNowInUserTimezoneForRelativeFilter();
 
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
     objectFilterDropdownCurrentRecordFilterComponentState,
@@ -50,8 +61,28 @@ export const ObjectFilterDropdownDateInput = () => {
   const handleRelativeDateChange = (
     relativeDate: RelativeDateFilter | null,
   ) => {
+    const { dayAsStringInUserTimezone } =
+      getNowInUserTimezoneForRelativeFilter();
+
+    const userDefinedCalendarStartDay =
+      CalendarStartDay[
+        currentWorkspaceMember?.calendarStartDay ?? CalendarStartDay.SYSTEM
+      ];
+    const defaultSystemCalendarStartDay = detectCalendarStartDay();
+
+    const resolvedCalendarStartDay = (
+      userDefinedCalendarStartDay === CalendarStartDay[CalendarStartDay.SYSTEM]
+        ? defaultSystemCalendarStartDay
+        : userDefinedCalendarStartDay
+    ) as NonSystemCalendarStartDay;
+
     const newFilterValue = relativeDate
-      ? stringifyRelativeDateFilter(relativeDate)
+      ? stringifyRelativeDateFilter({
+          ...relativeDate,
+          timezone: timeZone,
+          referenceDayAsString: dayAsStringInUserTimezone,
+          firstDayOfTheWeek: resolvedCalendarStartDay,
+        })
       : '';
 
     const newDisplayValue = relativeDate
@@ -86,7 +117,6 @@ export const ObjectFilterDropdownDateInput = () => {
   return (
     <DatePicker
       relativeDate={relativeDate}
-      highlightedDateRange={relativeDate}
       isRelative={isRelativeOperand}
       date={plainDateValue ?? null}
       onChange={handleAbsoluteDateChange}

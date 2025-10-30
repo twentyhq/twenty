@@ -145,7 +145,6 @@ export const ObjectFilterDropdownDateTimeInput = () => {
   return (
     <DateTimePicker
       relativeDate={relativeDate}
-      highlightedDateRange={relativeDate}
       isRelative={isRelativeOperand}
       date={internalDate}
       onChange={handleAbsoluteDateChange}

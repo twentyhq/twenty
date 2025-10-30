@@ -32,6 +32,7 @@ export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperat
 export { addUnitToDateTime } from './filter/dates/utils/addUnitToDateTime';
 export type { FirstDayOfTheWeek } from './filter/dates/utils/firstDayOfWeekSchema';
 export { firstDayOfWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema';
+export { getDateFromPlainDate } from './filter/dates/utils/getDateFromPlainDate';
 export { getEndUnitOfDateTime } from './filter/dates/utils/getEndUnitOfDateTime';
 export { getFirstDayOfTheWeekAsANumberForDateFNS } from './filter/dates/utils/getFirstDayOfTheWeekAsANumberForDateFNS';
 export { getPlainDateFromDate } from './filter/dates/utils/getPlainDateFromDate';
