@@ -8,12 +8,12 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceFlatMapCache('flatIndexMaps')
@@ -46,13 +46,17 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceFlatMapCacheServ
       relations: ['indexFieldMetadatas'],
     });
 
-    return indexes.reduce((flatIndexMaps, indexEntity) => {
+    const flatIndexMaps = EMPTY_FLAT_ENTITY_MAPS();
+
+    for (const indexEntity of indexes) {
       const flatIndex = fromIndexMetadataEntityToFlatIndexMetadata(indexEntity);
 
-      return addFlatEntityToFlatEntityMapsOrThrow({
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatIndex,
-        flatEntityMaps: flatIndexMaps,
+        flatEntityMapsToMutate: flatIndexMaps,
       });
-    }, EMPTY_FLAT_ENTITY_MAPS());
+    }
+
+    return flatIndexMaps;
   }
 }

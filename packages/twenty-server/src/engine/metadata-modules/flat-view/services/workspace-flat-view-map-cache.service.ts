@@ -7,12 +7,12 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { fromViewEntityToFlatView } from 'src/engine/metadata-modules/flat-view/utils/from-view-entity-to-flat-view.util';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceFlatMapCache('flatViewMaps')
@@ -47,13 +47,17 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheServi
       withDeleted: true,
     });
 
-    return views.reduce((flatViewMaps, viewEntity) => {
+    const flatViewMaps = EMPTY_FLAT_ENTITY_MAPS();
+
+    for (const viewEntity of views) {
       const flatView = fromViewEntityToFlatView(viewEntity);
 
-      return addFlatEntityToFlatEntityMapsOrThrow({
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatView,
-        flatEntityMaps: flatViewMaps,
+        flatEntityMapsToMutate: flatViewMaps,
       });
-    }, EMPTY_FLAT_ENTITY_MAPS());
+    }
+
+    return flatViewMaps;
   }
 }

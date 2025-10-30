@@ -9,11 +9,11 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceFlatMapCache('flatFieldMetadataMaps')
@@ -65,17 +65,18 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
       ],
     });
 
-    return fieldMetadatas.reduce(
-      (flatFieldMetadataMaps, fieldMetadataEntity) => {
-        const flatFieldMetadata =
-          fromFieldMetadataEntityToFlatFieldMetadata(fieldMetadataEntity);
+    const flatFieldMetadataMaps = EMPTY_FLAT_ENTITY_MAPS();
 
-        return addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: flatFieldMetadata,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-      },
-      EMPTY_FLAT_ENTITY_MAPS(),
-    );
+    for (const fieldMetadataEntity of fieldMetadatas) {
+      const flatFieldMetadata =
+        fromFieldMetadataEntityToFlatFieldMetadata(fieldMetadataEntity);
+
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: flatFieldMetadata,
+        flatEntityMapsToMutate: flatFieldMetadataMaps,
+      });
+    }
+
+    return flatFieldMetadataMaps;
   }
 }
