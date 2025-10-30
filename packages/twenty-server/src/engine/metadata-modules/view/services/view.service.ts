@@ -9,12 +9,13 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import {
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
+    ViewException,
+    ViewExceptionCode,
+    ViewExceptionMessageKey,
+    generateViewExceptionMessage,
+    generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -230,6 +231,27 @@ export class ViewService {
     }
 
     return viewName;
+  }
+
+  filterViewsByVisibility<T extends ViewEntity>(
+    views: T[],
+    currentUserWorkspaceId?: string,
+  ): T[] {
+    return views.filter((view) => {
+      if (view.visibility === ViewVisibility.WORKSPACE) {
+        return true;
+      }
+
+      if (view.visibility === ViewVisibility.UNLISTED) {
+        return view.createdById === currentUserWorkspaceId;
+      }
+
+      return false;
+    });
+  }
+
+  canUserUpdateView(view: ViewEntity, userWorkspaceId?: string): boolean {
+    return view.createdById === userWorkspaceId;
   }
 
   async flushGraphQLCache(workspaceId: string): Promise<void> {

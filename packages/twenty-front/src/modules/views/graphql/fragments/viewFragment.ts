@@ -27,6 +27,8 @@ export const VIEW_FRAGMENT = gql`
     anyFieldFilterValue
     calendarFieldMetadataId
     calendarLayout
+    visibility
+    createdById
     viewFields {
       ...ViewFieldFragment
     }

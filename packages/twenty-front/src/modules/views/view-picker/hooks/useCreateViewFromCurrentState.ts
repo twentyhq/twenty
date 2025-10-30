@@ -11,6 +11,7 @@ import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-pick
 import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
+import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -51,6 +52,10 @@ export const useCreateViewFromCurrentState = () => {
     viewPickerModeComponentState,
   );
 
+  const viewPickerVisibilityCallbackState = useRecoilComponentCallbackState(
+    viewPickerVisibilityComponentState,
+  );
+
   const { createViewFromCurrentView } = useCreateViewFromCurrentView();
   const { changeView } = useChangeView();
 
@@ -78,6 +83,10 @@ export const useCreateViewFromCurrentState = () => {
           snapshot,
           viewPickerModeCallbackState,
         );
+        const visibility = getSnapshotValue(
+          snapshot,
+          viewPickerVisibilityCallbackState,
+        );
 
         const shouldCopyFiltersAndSortsAndAggregate =
           viewPickerMode === 'create-from-current';
@@ -92,6 +101,7 @@ export const useCreateViewFromCurrentState = () => {
             type,
             kanbanFieldMetadataId,
             calendarFieldMetadataId,
+            visibility,
           },
           shouldCopyFiltersAndSortsAndAggregate,
         );
@@ -113,6 +123,7 @@ export const useCreateViewFromCurrentState = () => {
       viewPickerSelectedIconCallbackState,
       viewPickerTypeCallbackState,
       viewPickerModeCallbackState,
+      viewPickerVisibilityCallbackState,
     ],
   );
 

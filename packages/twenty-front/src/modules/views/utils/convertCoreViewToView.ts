@@ -7,6 +7,7 @@ import { convertCoreViewGroupToViewGroup } from '@/views/utils/convertCoreViewGr
 import { convertCoreViewKeyToViewKey } from '@/views/utils/convertCoreViewKeyToViewKey';
 import { convertCoreViewOpenRecordInToViewOpenRecordIn } from '@/views/utils/convertCoreViewOpenRecordInToViewOpenRecordIn';
 import { convertCoreViewTypeToViewType } from '@/views/utils/convertCoreViewTypeToViewType';
+import { convertCoreViewVisibilityToViewVisibility } from '@/views/utils/convertCoreViewVisibilityToViewVisibility';
 
 export const convertCoreViewToView = (
   coreView: CoreViewWithRelations,
@@ -16,6 +17,9 @@ export const convertCoreViewToView = (
     coreView.openRecordIn,
   );
   const convertedType = convertCoreViewTypeToViewType(coreView.type);
+  const convertedVisibility = convertCoreViewVisibilityToViewVisibility(
+    coreView.visibility,
+  );
 
   return {
     id: coreView.id,
@@ -47,6 +51,8 @@ export const convertCoreViewToView = (
     icon: coreView.icon,
     openRecordIn: convertedOpenRecordIn,
     anyFieldFilterValue: coreView.anyFieldFilterValue ?? null,
+    visibility: convertedVisibility,
+    createdById: coreView.createdById,
     __typename: 'View',
   };
 };

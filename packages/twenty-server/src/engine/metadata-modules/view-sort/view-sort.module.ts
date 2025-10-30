@@ -6,11 +6,12 @@ import { ViewSortController } from 'src/engine/metadata-modules/view-sort/contro
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewSortResolver } from 'src/engine/metadata-modules/view-sort/resolvers/view-sort.resolver';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ViewSortEntity]),
+    TypeOrmModule.forFeature([ViewSortEntity, ViewEntity]),
     PermissionsModule,
     WorkspaceCacheStorageModule,
   ],

@@ -1,3 +1,4 @@
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -10,7 +11,7 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   IconHeart,
   IconLock,
@@ -22,7 +23,10 @@ import { MenuItem } from 'twenty-ui/navigation';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
-  view: Pick<View, 'id' | 'name' | 'icon' | '__typename'>;
+  view: Pick<
+    View,
+    'id' | 'name' | 'icon' | '__typename' | 'visibility' | 'createdById'
+  >;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
 };
@@ -38,15 +42,18 @@ export const ViewPickerOptionDropdown = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
-  const [isHovered, setIsHovered] = useState(false);
   const { deleteViewFromCurrentState } = useDeleteViewFromCurrentState();
   const setViewPickerReferenceViewId = useSetRecoilComponentState(
     viewPickerReferenceViewIdComponentState,
   );
   const { setViewPickerMode } = useViewPickerMode();
+  const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 
   const { sortedFavorites: favorites } = useFavorites();
   const { createFavorite } = useCreateFavorite();
+
+  // Check if user can edit this view (they must be the creator)
+  const canEditView = view.createdById === currentUserWorkspace?.id;
 
   const isFavorite = favorites.some(
     (favorite) =>
@@ -69,18 +76,24 @@ export const ViewPickerOptionDropdown = ({
     closeDropdown(dropdownId);
   };
 
+  const getVisibilityIcon = () => {
+    if (isIndexView) {
+      return IconLock;
+    }
+
+    return null;
+  };
+
+  const shouldShowIconAlways = isIndexView;
+
   return (
     <>
       <MenuItemWithOptionDropdown
         text={view.name}
         LeftIcon={getIcon(view.icon)}
         onClick={() => handleViewSelect(view.id)}
-        isIconDisplayedOnHoverOnly={!isIndexView}
-        RightIcon={!isHovered && isIndexView ? IconLock : null}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => {
-          setIsHovered(false);
-        }}
+        isIconDisplayedOnHoverOnly={!shouldShowIconAlways}
+        RightIcon={getVisibilityIcon()}
         dropdownPlacement="bottom-start"
         dropdownId={`view-picker-options-${view.id}`}
         dropdownContent={
@@ -100,20 +113,24 @@ export const ViewPickerOptionDropdown = ({
                     onClick={handleAddToFavorites}
                   />
 
-                  <MenuItem
-                    LeftIcon={IconPencil}
-                    text={t`Edit`}
-                    onClick={(event) => {
-                      onEdit(event, view.id);
-                      closeDropdown(dropdownId);
-                    }}
-                  />
-                  <MenuItem
-                    LeftIcon={IconTrash}
-                    text={t`Delete`}
-                    onClick={handleDelete}
-                    accent="danger"
-                  />
+                  {canEditView && (
+                    <>
+                      <MenuItem
+                        LeftIcon={IconPencil}
+                        text={t`Edit`}
+                        onClick={(event) => {
+                          onEdit(event, view.id);
+                          closeDropdown(dropdownId);
+                        }}
+                      />
+                      <MenuItem
+                        LeftIcon={IconTrash}
+                        text={t`Delete`}
+                        onClick={handleDelete}
+                        accent="danger"
+                      />
+                    </>
+                  )}
                 </>
               )}
             </DropdownMenuItemsContainer>

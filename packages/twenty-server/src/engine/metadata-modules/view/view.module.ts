@@ -6,6 +6,7 @@ import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatViewModule } from 'src/engine/metadata-modules/flat-view/flat-view.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
 import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-group/view-filter-group.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
@@ -31,6 +32,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     I18nModule,
     FeatureFlagModule,
     PermissionsModule,
+    UserRoleModule,
     WorkspaceMetadataCacheModule,
     WorkspaceCacheStorageModule,
     WorkspaceMigrationV2Module,

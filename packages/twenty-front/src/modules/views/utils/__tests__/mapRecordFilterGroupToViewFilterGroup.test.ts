@@ -5,6 +5,7 @@ import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
+import { ViewVisibility } from '@/views/types/ViewVisibility';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -41,6 +42,7 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
     icon: '',
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
+    visibility: ViewVisibility.WORKSPACE,
     __typename: 'View',
   };
 
