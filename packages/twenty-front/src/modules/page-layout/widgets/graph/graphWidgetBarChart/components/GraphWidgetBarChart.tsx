@@ -2,6 +2,7 @@ import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/component
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
+import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
@@ -19,7 +20,7 @@ import {
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ResponsiveBar } from '@nivo/bar';
+import { type ComputedBarDatum, ResponsiveBar } from '@nivo/bar';
 import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -158,6 +159,18 @@ export const GraphWidgetBarChart = ({
     [keys, groupMode, data, indexBy, layout],
   );
 
+  const TotalsLayer = ({
+    bars,
+  }: {
+    bars: readonly ComputedBarDatum<BarChartDataItem>[];
+  }) => (
+    <CustomTotalsLayer
+      bars={bars}
+      formatValue={(value) => formatGraphValue(value, formatOptions)}
+      offset={5}
+    />
+  );
+
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
@@ -189,7 +202,7 @@ export const GraphWidgetBarChart = ({
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
-          layers={['grid', 'axes', 'bars', 'markers', 'legends', 'totals']}
+          layers={['grid', 'axes', 'bars', 'markers', 'legends', TotalsLayer]}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}
