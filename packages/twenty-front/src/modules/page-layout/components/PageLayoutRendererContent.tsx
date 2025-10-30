@@ -10,6 +10,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
+import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -92,9 +93,7 @@ export const PageLayoutRendererContent = () => {
     currentPageLayout.id,
   );
 
-  const sortedTabs = [...tabsToRenderInTabList].sort(
-    (a, b) => a.position - b.position,
-  );
+  const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
 
   return (
     <ShowPageContainer>

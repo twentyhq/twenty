@@ -1,6 +1,7 @@
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
@@ -20,7 +21,7 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     ({ set }) =>
       (tabId: string) => {
         set(pageLayoutDraftState, (prev) => {
-          const sorted = [...prev.tabs].sort((a, b) => a.position - b.position);
+          const sorted = sortTabsByPosition(prev.tabs);
           const index = sorted.findIndex((t) => t.id === tabId);
           if (index <= 0) return prev;
 
@@ -49,7 +50,7 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
     ({ set }) =>
       (tabId: string) => {
         set(pageLayoutDraftState, (prev) => {
-          const sorted = [...prev.tabs].sort((a, b) => a.position - b.position);
+          const sorted = sortTabsByPosition(prev.tabs);
           const index = sorted.findIndex((t) => t.id === tabId);
           if (index < 0 || index >= sorted.length - 1) return prev;
 

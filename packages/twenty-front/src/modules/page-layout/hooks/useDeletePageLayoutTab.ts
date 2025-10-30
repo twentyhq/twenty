@@ -3,6 +3,7 @@ import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pag
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { removeTabLayouts } from '@/page-layout/utils/removeTabLayouts';
+import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -38,7 +39,7 @@ export const useDeletePageLayoutTab = (pageLayoutIdFromProps?: string) => {
           return;
         }
 
-        const sorted = [...draft.tabs].sort((a, b) => a.position - b.position);
+        const sorted = sortTabsByPosition(draft.tabs);
         const index = sorted.findIndex((t) => t.id === tabId);
 
         const activeTabId = snapshot.getLoadable(activeTabIdState).getValue();
