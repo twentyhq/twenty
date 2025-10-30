@@ -22,22 +22,26 @@ type LabelData = {
   verticalY: number;
   horizontalX: number;
   horizontalY: number;
+  isNegative: boolean;
 };
 
 const computeGroupedLabels = (
   bars: readonly ComputedBarDatum<BarChartDataItem>[],
 ): LabelData[] => {
   return bars.map((bar) => {
+    const value = Number(bar.data.value);
+    const isNegative = value < 0;
     const centerX = bar.x + bar.width / 2;
     const centerY = bar.y + bar.height / 2;
 
     return {
       key: `value-${bar.data.id}-${bar.data.indexValue}`,
-      value: Number(bar.data.value),
+      value,
       verticalX: centerX,
-      verticalY: bar.y,
-      horizontalX: bar.x + bar.width,
+      verticalY: isNegative ? bar.y + bar.height : bar.y,
+      horizontalX: isNegative ? bar.x : bar.x + bar.width,
       horizontalY: centerY,
+      isNegative,
     };
   });
 };
@@ -90,6 +94,7 @@ const computeStackedLabels = (
         verticalY: maxY,
         horizontalX: maxX,
         horizontalY: centerY,
+        isNegative: false,
       };
     },
   );
@@ -117,25 +122,45 @@ export const CustomTotalsLayer = ({
 
   return (
     <>
-      {labelsToRender.map((label) => (
-        <animated.text
-          key={label.key}
-          x={isVertical ? label.verticalX : label.horizontalX}
-          y={isVertical ? label.verticalY : label.horizontalY}
-          textAnchor={isVertical ? 'middle' : 'start'}
-          dominantBaseline={isVertical ? 'auto' : 'central'}
-          style={{
-            fill: theme.font.color.light,
-            fontSize: 11,
-            fontWeight: theme.font.weight.medium,
-            transform: isVertical
-              ? `translateY(-${offset}px)`
-              : `translateX(${offset}px)`,
-          }}
-        >
-          {isDefined(formatValue) ? formatValue(label.value) : label.value}
-        </animated.text>
-      ))}
+      {labelsToRender.map((label) => {
+        const transformOffset = isVertical
+          ? label.isNegative
+            ? `translateY(${offset}px)`
+            : `translateY(-${offset}px)`
+          : label.isNegative
+            ? `translateX(-${offset}px)`
+            : `translateX(${offset}px)`;
+
+        const textAnchor = isVertical
+          ? 'middle'
+          : label.isNegative
+            ? 'end'
+            : 'start';
+
+        const dominantBaseline = isVertical
+          ? label.isNegative
+            ? 'hanging'
+            : 'auto'
+          : 'central';
+
+        return (
+          <animated.text
+            key={label.key}
+            x={isVertical ? label.verticalX : label.horizontalX}
+            y={isVertical ? label.verticalY : label.horizontalY}
+            textAnchor={textAnchor}
+            dominantBaseline={dominantBaseline}
+            style={{
+              fill: theme.font.color.light,
+              fontSize: 11,
+              fontWeight: theme.font.weight.medium,
+              transform: transformOffset,
+            }}
+          >
+            {isDefined(formatValue) ? formatValue(label.value) : label.value}
+          </animated.text>
+        );
+      })}
     </>
   );
 };
