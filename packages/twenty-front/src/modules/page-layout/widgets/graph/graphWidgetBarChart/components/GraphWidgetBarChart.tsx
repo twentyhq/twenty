@@ -2,6 +2,7 @@ import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/component
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
+import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
@@ -21,12 +22,11 @@ import {
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ResponsiveBar } from '@nivo/bar';
+import { type ComputedBarDatum, ResponsiveBar } from '@nivo/bar';
 import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const LEGEND_THRESHOLD = 10;
-const LABEL_THRESHOLD = 15;
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -45,6 +45,7 @@ type GraphWidgetBarChartProps = {
   rangeMin?: number;
   rangeMax?: number;
   enableGroupTooltip?: boolean;
+  omitNullValues?: boolean;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -73,6 +74,7 @@ export const GraphWidgetBarChart = ({
   rangeMin,
   rangeMax,
   enableGroupTooltip,
+  omitNullValues = false,
   displayType,
   decimals,
   prefix,
@@ -122,10 +124,7 @@ export const GraphWidgetBarChart = ({
     enableGroupTooltip: shouldEnableGroupTooltip,
   });
 
-  const isLargeChart = data.length * keys.length > LABEL_THRESHOLD;
   const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
-
-  const shouldShowLabels = showValues && !isLargeChart;
 
   const shouldShowLegend = showLegend && !areThereTooManyKeys;
 
@@ -169,6 +168,25 @@ export const GraphWidgetBarChart = ({
       />
     ),
     [keys, groupMode, data, indexBy, layout, id],
+  );
+
+  const TotalsLayer = ({
+    bars,
+  }: {
+    bars: readonly ComputedBarDatum<BarChartDataItem>[];
+  }) => (
+    <>
+      {showValues && (
+        <CustomTotalsLayer
+          bars={bars}
+          formatValue={(value) => formatGraphValue(value, formatOptions)}
+          offset={theme.spacingMultiplicator * 2}
+          layout={layout}
+          groupMode={groupMode}
+          omitNullValues={omitNullValues}
+        />
+      )}
+    </>
   );
 
   const calculatedRange =
@@ -223,7 +241,7 @@ export const GraphWidgetBarChart = ({
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
-          layers={['grid', 'markers', 'axes', 'bars', 'legends']}
+          layers={['grid', 'markers', 'axes', 'bars', 'legends', TotalsLayer]}
           markers={zeroMarker}
           axisTop={null}
           axisRight={null}
@@ -233,9 +251,12 @@ export const GraphWidgetBarChart = ({
           enableGridY={layout === 'vertical' && showGrid}
           gridXValues={layout === 'horizontal' ? 5 : undefined}
           gridYValues={layout === 'vertical' ? 5 : undefined}
-          enableLabel={shouldShowLabels}
+          enableLabel={false}
           labelSkipWidth={12}
           labelSkipHeight={12}
+          valueFormat={(value) =>
+            formatGraphValue(Number(value), formatOptions)
+          }
           labelTextColor={theme.font.color.primary}
           label={(d) => formatGraphValue(Number(d.value), formatOptions)}
           tooltip={(props) => renderTooltip(props)}
