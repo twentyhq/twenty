@@ -168,7 +168,7 @@ export const GraphWidgetBarChart = ({
       <CustomTotalsLayer
         bars={bars}
         formatValue={(value) => formatGraphValue(value, formatOptions)}
-        offset={5}
+        offset={theme.spacingMultiplicator * 2}
       />
     );
 
