@@ -1,6 +1,9 @@
 import { Draggable } from '@hello-pangea/dnd';
 
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import styled from '@emotion/styled';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 
 type PageLayoutTabListReorderableTabProps = {
@@ -11,6 +14,15 @@ type PageLayoutTabListReorderableTabProps = {
   onSelect: () => void;
 };
 
+const StyledTabContent = styled(TabContent)<{ isBeingEdited: boolean }>`
+  ${({ isBeingEdited, theme }) =>
+    isBeingEdited &&
+    `
+  border: 1px solid ${theme.color.blue};
+  border-radius: ${theme.border.radius.sm};
+  `}
+`;
+
 export const PageLayoutTabListReorderableTab = ({
   tab,
   index,
@@ -18,6 +30,11 @@ export const PageLayoutTabListReorderableTab = ({
   disabled,
   onSelect,
 }: PageLayoutTabListReorderableTabProps) => {
+  const tabSettingsOpenTabId = useRecoilComponentValue(
+    pageLayoutTabSettingsOpenTabIdComponentState,
+  );
+
+  const isSettingsOpenForThisTab = tabSettingsOpenTabId === tab.id;
   return (
     <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
       {(draggableProvided, draggableSnapshot) => (
@@ -35,7 +52,7 @@ export const PageLayoutTabListReorderableTab = ({
             cursor: draggableSnapshot.isDragging ? 'grabbing' : 'pointer',
           }}
         >
-          <TabContent
+          <StyledTabContent
             id={tab.id}
             active={isActive}
             disabled={disabled}
@@ -43,6 +60,7 @@ export const PageLayoutTabListReorderableTab = ({
             title={tab.title}
             logo={tab.logo}
             pill={tab.pill}
+            isBeingEdited={isSettingsOpenForThisTab}
           />
         </StyledTabContainer>
       )}

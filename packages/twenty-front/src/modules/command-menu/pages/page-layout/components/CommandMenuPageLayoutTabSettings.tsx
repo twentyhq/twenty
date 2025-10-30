@@ -8,7 +8,7 @@ import { useDeletePageLayoutTab } from '@/page-layout/hooks/useDeletePageLayoutT
 import { useMovePageLayoutTab } from '@/page-layout/hooks/useMovePageLayoutTab';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutEditingTabIdComponentState } from '@/page-layout/states/pageLayoutEditingTabIdComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -32,8 +32,8 @@ export const CommandMenuPageLayoutTabSettings = () => {
     pageLayoutDraftComponentState,
     pageLayoutId,
   );
-  const [editingTabId, setEditingTabId] = useRecoilComponentState(
-    pageLayoutEditingTabIdComponentState,
+  const [openTabId, setOpenTabId] = useRecoilComponentState(
+    pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
 
@@ -41,12 +41,12 @@ export const CommandMenuPageLayoutTabSettings = () => {
   const { deleteTab } = useDeletePageLayoutTab(pageLayoutId);
   const { updatePageLayoutTab } = useUpdatePageLayoutTab(pageLayoutId);
 
-  if (!isDefined(editingTabId)) {
+  if (!isDefined(openTabId)) {
     return null;
   }
 
   const tabsSorted = [...draft.tabs].sort((a, b) => a.position - b.position);
-  const currentIndex = tabsSorted.findIndex((t) => t.id === editingTabId);
+  const currentIndex = tabsSorted.findIndex((t) => t.id === openTabId);
   if (currentIndex < 0) return null;
   const tab = tabsSorted[currentIndex];
   const disableMoveLeft = currentIndex <= 0;
@@ -100,7 +100,7 @@ export const CommandMenuPageLayoutTabSettings = () => {
             onEnter={() => {
               if (!disableDelete) {
                 deleteTab(tab.id);
-                setEditingTabId(null);
+                setOpenTabId(null);
                 closeCommandMenu();
               }
             }}
@@ -112,7 +112,7 @@ export const CommandMenuPageLayoutTabSettings = () => {
               onClick={() => {
                 if (!disableDelete) {
                   deleteTab(tab.id);
-                  setEditingTabId(null);
+                  setOpenTabId(null);
                   closeCommandMenu();
                 }
               }}

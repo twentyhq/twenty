@@ -7,7 +7,7 @@ import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutT
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useReorderPageLayoutTabs } from '@/page-layout/hooks/useReorderPageLayoutTabs';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { pageLayoutEditingTabIdComponentState } from '@/page-layout/states/pageLayoutEditingTabIdComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -61,15 +61,15 @@ export const PageLayoutRendererContent = () => {
 
   const { createPageLayoutTab } = useCreatePageLayoutTab(currentPageLayout?.id);
   const { reorderTabs } = useReorderPageLayoutTabs(currentPageLayout?.id ?? '');
-  const setEditingTabId = useSetRecoilComponentState(
-    pageLayoutEditingTabIdComponentState,
+  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+    pageLayoutTabSettingsOpenTabIdComponentState,
   );
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const handleAddTab = isPageLayoutInEditMode
     ? () => {
         const newTabId = createPageLayoutTab('Untitled');
-        setEditingTabId(newTabId);
+        setTabSettingsOpenTabId(newTabId);
         navigatePageLayoutCommandMenu({
           commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
         });

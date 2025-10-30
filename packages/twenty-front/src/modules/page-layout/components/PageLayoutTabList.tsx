@@ -35,7 +35,7 @@ import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/component
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { pageLayoutEditingTabIdComponentState } from '@/page-layout/states/pageLayoutEditingTabIdComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -193,20 +193,20 @@ export const PageLayoutTabList = ({
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
   );
-  const setEditingTabId = useSetRecoilComponentState(
-    pageLayoutEditingTabIdComponentState,
+  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+    pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const openTabSettings = useCallback(
     (tabId: string) => {
-      setEditingTabId(tabId);
+      setTabSettingsOpenTabId(tabId);
       navigatePageLayoutCommandMenu({
         commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
       });
     },
-    [setEditingTabId, navigatePageLayoutCommandMenu],
+    [setTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
   );
 
   const handleSelectTab = useCallback(
