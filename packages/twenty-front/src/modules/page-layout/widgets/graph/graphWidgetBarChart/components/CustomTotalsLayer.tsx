@@ -100,6 +100,39 @@ const computeStackedLabels = (
   );
 };
 
+const getLabelStyles = (
+  label: LabelData,
+  isVertical: boolean,
+  offset: number,
+) => {
+  const offsetSign = isVertical
+    ? label.isNegative
+      ? 1
+      : -1
+    : label.isNegative
+      ? -1
+      : 1;
+
+  const axis = isVertical ? 'Y' : 'X';
+  const transformOffset = `translate${axis}(${offsetSign * offset}px)`;
+
+  const textAnchor = isVertical ? 'middle' : label.isNegative ? 'end' : 'start';
+
+  const dominantBaseline = isVertical
+    ? label.isNegative
+      ? 'hanging'
+      : 'auto'
+    : 'central';
+
+  return {
+    x: isVertical ? label.verticalX : label.horizontalX,
+    y: isVertical ? label.verticalY : label.horizontalY,
+    textAnchor,
+    dominantBaseline,
+    transformOffset,
+  };
+};
+
 export const CustomTotalsLayer = ({
   bars,
   formatValue,
@@ -123,38 +156,20 @@ export const CustomTotalsLayer = ({
   return (
     <>
       {labelsToRender.map((label) => {
-        const transformOffset = isVertical
-          ? label.isNegative
-            ? `translateY(${offset}px)`
-            : `translateY(-${offset}px)`
-          : label.isNegative
-            ? `translateX(-${offset}px)`
-            : `translateX(${offset}px)`;
-
-        const textAnchor = isVertical
-          ? 'middle'
-          : label.isNegative
-            ? 'end'
-            : 'start';
-
-        const dominantBaseline = isVertical
-          ? label.isNegative
-            ? 'hanging'
-            : 'auto'
-          : 'central';
+        const styles = getLabelStyles(label, isVertical, offset);
 
         return (
           <animated.text
             key={label.key}
-            x={isVertical ? label.verticalX : label.horizontalX}
-            y={isVertical ? label.verticalY : label.horizontalY}
-            textAnchor={textAnchor}
-            dominantBaseline={dominantBaseline}
+            x={styles.x}
+            y={styles.y}
+            textAnchor={styles.textAnchor}
+            dominantBaseline={styles.dominantBaseline}
             style={{
               fill: theme.font.color.light,
               fontSize: 11,
               fontWeight: theme.font.weight.medium,
-              transform: transformOffset,
+              transform: styles.transformOffset,
             }}
           >
             {isDefined(formatValue) ? formatValue(label.value) : label.value}
