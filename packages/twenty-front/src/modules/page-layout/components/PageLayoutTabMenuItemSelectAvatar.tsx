@@ -51,12 +51,6 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleEditClick = (event: MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    onEditClick?.(tab.id);
-  };
-
   return (
     <StyledHoverableMenuItemBase
       onClick={onClick}
@@ -87,7 +81,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
               Icon={IconPencil}
               size="small"
               accent="tertiary"
-              onClick={handleEditClick}
+              onClick={() => onEditClick?.(tab.id)}
             />
           </div>
         )}
