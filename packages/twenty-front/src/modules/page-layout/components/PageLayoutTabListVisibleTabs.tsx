@@ -34,10 +34,6 @@ const StyledTabContainer = styled.div`
   > *:not(:last-child) {
     margin-right: ${TAB_LIST_GAP}px;
   }
-
-  // > div[data-rbd-placeholder-context-id] {
-    margin-right: ${TAB_LIST_GAP}px;
-  }
 `;
 
 export const PageLayoutTabListVisibleTabs = ({

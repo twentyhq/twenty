@@ -1,4 +1,3 @@
-import { INDEX_FILE_NAME } from '@/serverless-functions/constants/IndexFileName';
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
@@ -6,9 +5,10 @@ import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { type FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
-import { SOURCE_FOLDER_NAME } from '@/serverless-functions/constants/SourceFolderName';
 import { type ServerlessFunction } from '~/generated/graphql';
 import { type Sources } from '@/serverless-functions/types/sources.type';
+import { flattenSources } from '@/serverless-functions/utils/flattenSources';
+import { isDefined } from 'twenty-shared/utils';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -68,19 +68,23 @@ export const useServerlessFunctionUpdateFormState = ({
         }));
 
         if (serverlessFunctionTestData.shouldInitInput) {
-          const sourceCode =
-            data?.getServerlessFunctionSourceCode?.[SOURCE_FOLDER_NAME]?.[
-              INDEX_FILE_NAME
-            ];
+          const flattenedCode = flattenSources(code);
 
-          const functionInput =
-            await getFunctionInputFromSourceCode(sourceCode);
+          const sourceCode = flattenedCode.find(
+            (flatCode) => flatCode.path === serverlessFunction?.handlerPath,
+          );
 
-          setServerlessFunctionTestData((prev) => ({
-            ...prev,
-            input: functionInput,
-            shouldInitInput: false,
-          }));
+          if (isDefined(sourceCode)) {
+            const functionInput = await getFunctionInputFromSourceCode(
+              sourceCode.content,
+            );
+
+            setServerlessFunctionTestData((prev) => ({
+              ...prev,
+              input: functionInput,
+              shouldInitInput: false,
+            }));
+          }
         }
       },
     });

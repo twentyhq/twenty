@@ -9,9 +9,9 @@ const StyledText = styled.span<{
   box-sizing: border-box;
   color: ${({ theme, highlighting }) =>
     highlighting === 'blue'
-      ? theme.adaptiveColors.blue4
+      ? theme.color.blue8
       : highlighting === 'red'
-        ? theme.adaptiveColors.red4
+        ? theme.color.red8
         : theme.font.color.tertiary};
   display: inline-flex;
   height: 24px;

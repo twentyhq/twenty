@@ -1208,7 +1208,6 @@ export enum FeatureFlagKey {
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
   IS_CALENDAR_VIEW_ENABLED = 'IS_CALENDAR_VIEW_ENABLED',
-  IS_COMMON_API_ENABLED = 'IS_COMMON_API_ENABLED',
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_DYNAMIC_SEARCH_FIELDS_ENABLED = 'IS_DYNAMIC_SEARCH_FIELDS_ENABLED',
@@ -2068,7 +2067,7 @@ export type MutationDeactivateWorkflowVersionArgs = {
 
 
 export type MutationDeleteApplicationArgs = {
-  packageJson: Scalars['JSON'];
+  universalIdentifier: Scalars['String'];
 };
 
 
@@ -3633,6 +3632,8 @@ export type ServerlessFunction = {
   cronTriggers?: Maybe<Array<CronTrigger>>;
   databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
   description?: Maybe<Scalars['String']>;
+  handlerName: Scalars['String'];
+  handlerPath: Scalars['String'];
   id: Scalars['UUID'];
   latestVersion?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -4061,6 +4062,8 @@ export type UpdateServerlessFunctionInput = {
 export type UpdateServerlessFunctionInputUpdates = {
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
+  handlerName?: InputMaybe<Scalars['String']>;
+  handlerPath?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };

@@ -95,10 +95,13 @@ export const WorkflowEditTriggerWebhookForm = ({
             return;
           }
 
-          triggerOptions.onTriggerUpdate({
-            ...trigger,
-            name: newName,
-          });
+          triggerOptions.onTriggerUpdate(
+            {
+              ...trigger,
+              name: newName,
+            },
+            { computeOutputSchema: false },
+          );
         }}
         Icon={getIcon(headerIcon)}
         iconColor={getTriggerIconColor({ theme, triggerType: trigger.type })}
