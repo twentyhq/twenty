@@ -17,6 +17,7 @@ import { type PartialFieldMetadata } from 'src/engine/workspace-manager/workspac
 import { type PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 import { type UpdaterOptions } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/updater-options.interface';
 
+import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -332,13 +333,7 @@ export class WorkspaceMetadataUpdaterService {
         const fieldMetadata = originalObjectMetadataCollection
           .find((object) => object.id === indexMetadata.objectMetadataId)
           ?.fields.find((field) => {
-            if (
-              isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
-              isFieldMetadataEntityOfType(
-                field,
-                FieldMetadataType.MORPH_RELATION,
-              )
-            ) {
+            if (isFieldMetadataRelationOrMorphRelation(field)) {
               if (field.settings?.joinColumnName === column) {
                 return true;
               }
