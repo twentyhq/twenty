@@ -2,7 +2,7 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layou
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const isChartSettingDisabled = (
+export const shouldHideChartSetting = (
   item: ChartSettingsItem,
   objectMetadataId: string,
   isGroupByEnabled: boolean,
