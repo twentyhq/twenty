@@ -12,6 +12,9 @@
     "light": "#fafafa",
     "dark": "#141414"
   },
+  "interaction": {
+    "drilldown": false
+  },
   "navbar": {
     "primary": {
       "type": "button",
@@ -247,15 +250,11 @@
       }
     ]
   },
-  "topbarLinks": [
-    {
-      "name": "Storybook",
-      "url": "https://storybook.twenty.com"
+  "footer": {
+    "socials": {
+      "github": "https://github.com/twentyhq/twenty",
+      "twitter": "https://twitter.com/twentycrm",
+      "discord": "https://discord.gg/cx5n4Jzs57"
     }
-  ],
-  "footerSocials": {
-    "github": "https://github.com/twentyhq/twenty",
-    "twitter": "https://twitter.com/twentycrm",
-    "discord": "https://discord.gg/cx5n4Jzs57"
   }
 }
