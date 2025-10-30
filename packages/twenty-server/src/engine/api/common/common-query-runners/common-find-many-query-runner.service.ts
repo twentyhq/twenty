@@ -126,6 +126,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       objectMetadataMaps,
     });
 
+    if (isDefined(args.offset)) {
+      queryBuilder.skip(args.offset);
+    }
+
     const objectRecords = (await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
