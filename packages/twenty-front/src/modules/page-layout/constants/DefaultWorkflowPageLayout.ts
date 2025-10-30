@@ -23,7 +23,6 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
       title: 'Flow',
       position: 100,
       layoutMode: 'vertical-list',
-      selfDisplayMode: 'pinned-left',
       pageLayoutId: DEFAULT_WORKFLOW_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
