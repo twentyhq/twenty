@@ -71,7 +71,9 @@ import { loginTokenState } from '../states/loginTokenState';
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setLoginToken = useSetRecoilState(loginTokenState);
-  const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(isAppWaitingForFreshObjectMetadataState);
+  const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
+    isAppWaitingForFreshObjectMetadataState,
+  );
 
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -328,7 +330,12 @@ export const useAuth = () => {
       await loadCurrentUser();
       await refreshObjectMetadataItems();
     },
-    [loadCurrentUser, handleSetAuthTokens, refreshObjectMetadataItems, setIsAppWaitingForFreshObjectMetadata],
+    [
+      loadCurrentUser,
+      handleSetAuthTokens,
+      refreshObjectMetadataItems,
+      setIsAppWaitingForFreshObjectMetadata,
+    ],
   );
 
   const handleGetAuthTokensFromLoginToken = useCallback(
