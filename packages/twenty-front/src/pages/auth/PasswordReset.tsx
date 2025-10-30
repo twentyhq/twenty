@@ -170,7 +170,6 @@ export const PasswordReset = () => {
         token,
       );
 
-      // Use redirect instead of navigate to avoid race conditions with signInWithCredentialsInWorkspace
       redirect(AppPath.Index);
     } catch (err) {
       logError(err);
