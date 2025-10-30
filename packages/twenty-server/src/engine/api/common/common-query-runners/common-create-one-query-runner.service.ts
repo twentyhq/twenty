@@ -49,9 +49,20 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
 
   async computeArgs(
     args: CommonInput<CreateOneQueryArgs>,
-    _queryRunnerContext: CommonBaseQueryRunnerContext,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<CreateOneQueryArgs>> {
-    return args;
+    const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
+
+    return {
+      ...args,
+      data: (
+        await this.queryRunnerArgsFactory.overrideDataByFieldMetadata({
+          partialRecordInputs: [args.data],
+          authContext,
+          objectMetadataItemWithFieldMaps,
+        })
+      )[0],
+    };
   }
 
   async processQueryResult(

@@ -13,10 +13,10 @@ type PermissionIconProps = {
 const StyledIconWrapper = styled.div<{ isRevoked?: boolean }>`
   align-items: center;
   background: ${({ theme, isRevoked }) =>
-    isRevoked ? theme.adaptiveColors.orange1 : theme.adaptiveColors.blue1};
+    isRevoked ? theme.color.orange3 : theme.color.blue3};
   border: 1px solid
     ${({ theme, isRevoked }) =>
-      isRevoked ? theme.adaptiveColors.orange3 : theme.adaptiveColors.blue3};
+      isRevoked ? theme.color.orange7 : theme.color.blue7};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   height: ${({ theme }) => theme.spacing(4)};

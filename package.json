@@ -7,6 +7,7 @@
     "@floating-ui/react": "^0.24.3",
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
+    "@radix-ui/colors": "^3.0.0",
     "@sentry/profiling-node": "^9.26.0",
     "@sentry/react": "^9.26.0",
     "@sniptt/guards": "^0.2.0",
@@ -144,7 +145,6 @@
     "@typescript-eslint/parser": "^8.39.0",
     "@typescript-eslint/utils": "^8.39.0",
     "@vitejs/plugin-react-swc": "3.11.0",
-    "@vitest/ui": "1.4.0",
     "@yarnpkg/types": "^4.0.0",
     "chromatic": "^6.18.0",
     "concurrently": "^8.2.2",
@@ -194,8 +194,7 @@
     "vite-plugin-checker": "^0.10.2",
     "vite-plugin-cjs-interop": "^2.2.0",
     "vite-plugin-dts": "3.8.1",
-    "vite-plugin-svgr": "^4.2.0",
-    "vitest": "1.4.0"
+    "vite-plugin-svgr": "^4.2.0"
   },
   "engines": {
     "node": "^24.5.0",

@@ -1,7 +1,7 @@
 import isEmpty from 'lodash.isempty';
 import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const getSelectedColumnsFromRestrictedFields = (
@@ -12,12 +12,12 @@ export const getSelectedColumnsFromRestrictedFields = (
     return undefined;
   }
 
-  const selectableFields = getAllSelectableFields({
+  const selectableFields = getAllSelectableColumnNames({
     restrictedFields,
     objectMetadata: {
       objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
     },
   });
 
-  return Object.keys(selectableFields).filter((key) => selectableFields[key]);
+  return Object.keys(selectableFields);
 };

@@ -14,6 +14,9 @@ export const TIPTAP_NODE_TYPES = {
   HEADING: 'heading',
   VARIABLE_TAG: 'variableTag',
   IMAGE: 'image',
+  BULLET_LIST: 'bulletList',
+  ORDERED_LIST: 'orderedList',
+  LIST_ITEM: 'listItem',
 } as const;
 
 export type TipTapMarkType =

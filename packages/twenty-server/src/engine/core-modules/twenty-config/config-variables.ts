@@ -975,7 +975,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  API_RATE_LIMITING_LONG_LIMIT = 1000;
+  API_RATE_LIMITING_LONG_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SSL,

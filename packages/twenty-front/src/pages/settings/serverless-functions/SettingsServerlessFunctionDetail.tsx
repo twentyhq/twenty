@@ -1,29 +1,29 @@
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
+import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
+import { flattenSources } from '@/serverless-functions/utils/flattenSources';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
 import { SettingsServerlessFunctionTriggersTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTriggersTab';
+import { usePersistServerlessFunction } from '@/settings/serverless-functions/hooks/usePersistServerlessFunction';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
-import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
+  IconBolt,
   IconCode,
   IconSettings,
   IconTestPipe,
-  IconBolt,
 } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
-import { t } from '@lingui/core/macro';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
-import { computeNewSources } from '@/serverless-functions/utils/computeNewSources';
-import { flattenSources } from '@/serverless-functions/utils/flattenSources';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const SERVERLESS_FUNCTION_DETAIL_ID = 'serverless-function-detail';
 
@@ -45,8 +45,7 @@ export const SettingsServerlessFunctionDetail = () => {
     activeTabIdComponentState,
     instanceId,
   );
-  const { updateOneServerlessFunction } =
-    useUpdateOneServerlessFunction(serverlessFunctionId);
+  const { updateServerlessFunction } = usePersistServerlessFunction();
 
   const { formValues, setFormValues, serverlessFunction, loading } =
     useServerlessFunctionUpdateFormState({ serverlessFunctionId });
@@ -56,10 +55,15 @@ export const SettingsServerlessFunctionDetail = () => {
   });
 
   const handleSave = useDebouncedCallback(async () => {
-    await updateOneServerlessFunction({
-      name: formValues.name,
-      description: formValues.description,
-      code: formValues.code,
+    await updateServerlessFunction({
+      input: {
+        id: serverlessFunctionId,
+        update: {
+          name: formValues.name,
+          description: formValues.description,
+          code: formValues.code,
+        },
+      },
     });
   }, 500);
 
@@ -101,11 +105,19 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const flattenedCode = flattenSources(formValues.code);
 
-  const files = flattenedCode.map((file) => ({
-    path: file.path,
-    language: 'typescript',
-    content: file.content,
-  }));
+  const files = flattenedCode
+    .map((file) => ({
+      path: file.path,
+      language: 'typescript',
+      content: file.content,
+    }))
+    .sort((a, b) =>
+      a.path === serverlessFunction?.handlerPath
+        ? -1
+        : b.path === serverlessFunction?.handlerPath
+          ? 1
+          : 0,
+    );
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {

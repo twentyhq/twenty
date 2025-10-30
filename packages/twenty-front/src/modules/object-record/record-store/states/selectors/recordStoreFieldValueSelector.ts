@@ -58,7 +58,10 @@ export const recordStoreFieldValueSelector = selectorFamily({
       const relationType = morphRelations[0].type;
 
       if (relationType === RelationType.ONE_TO_MANY) {
-        return morphValuesWithObjectName as {
+        return morphValuesWithObjectName.map((morphValue) => ({
+          ...morphValue,
+          value: morphValue.value ? morphValue.value : [],
+        })) as {
           objectNameSingular: string;
           value: ObjectRecord[];
         }[];

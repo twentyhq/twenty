@@ -1,4 +1,3 @@
-import { TEST_NOT_EXISTING_VIEW_SORT_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createViewSortOperationFactory } from 'test/integration/graphql/utils/create-view-sort-operation-factory.util';
 import { deleteViewSortOperationFactory } from 'test/integration/graphql/utils/delete-view-sort-operation-factory.util';
 import { destroyViewSortOperationFactory } from 'test/integration/graphql/utils/destroy-view-sort-operation-factory.util';
@@ -18,10 +17,8 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import {
-  assertViewSortStructure,
-  cleanupViewRecords,
-} from 'test/integration/utils/view-test.util';
+import { destroyOneCoreView } from 'test/integration/metadata/suites/view/utils/destroy-one-core-view.util';
+import { assertViewSortStructure } from 'test/integration/utils/view-test.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -30,6 +27,8 @@ import {
   generateViewSortExceptionMessage,
   ViewSortExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
+
+const TEST_NOT_EXISTING_VIEW_SORT_ID = '20202020-0000-4000-8000-000000000004';
 
 describe('View Sort Resolver', () => {
   let testViewId: string;
@@ -86,18 +85,22 @@ describe('View Sort Resolver', () => {
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupViewRecords();
   });
 
   beforeEach(async () => {
-    await cleanupViewRecords();
-
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Sorts',
       objectMetadataId: testObjectMetadataId,
     });
 
     testViewId = view.id;
+  });
+
+  afterEach(async () => {
+    await destroyOneCoreView({
+      viewId: testViewId,
+      expectToFail: false,
+    });
   });
 
   describe('getCoreViewSorts', () => {

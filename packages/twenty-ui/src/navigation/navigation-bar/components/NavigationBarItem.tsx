@@ -35,7 +35,7 @@ export const NavigationBarItem = ({
 
   return (
     <StyledIconButton isActive={isActive} onClick={onClick}>
-      <Icon color={theme.color.gray50} size={theme.icon.size.lg} />
+      <Icon color={theme.color.gray10} size={theme.icon.size.lg} />
     </StyledIconButton>
   );
 };

@@ -5,8 +5,8 @@ import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/typ
 import { type RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { type ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { type ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
 import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
+import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 
 export type ServerlessFunctionEntityRelationProperties =
   ExtractRecordTypeOrmRelationProperties<
@@ -22,5 +22,5 @@ export type FlatServerlessFunction = FlatEntityFrom<
   ServerlessFunctionEntity,
   ServerlessFunctionEntityRelationProperties
 > & {
-  code?: ServerlessFunctionCode;
+  code?: Sources;
 };

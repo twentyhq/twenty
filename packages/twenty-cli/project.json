@@ -4,14 +4,13 @@
   "projectType": "application",
   "tags": ["scope:cli"],
   "targets": {
-    "after-build": {
+    "before-build": {
       "executor": "nx:run-commands",
       "cache": true,
       "options": {
         "cwd": "packages/twenty-cli",
         "commands": ["rimraf dist", "tsc --project tsconfig.lib.json"]
-      },
-      "dependsOn": ["^after-build"]
+      }
     },
     "build": {
       "executor": "nx:run-commands",
@@ -23,7 +22,7 @@
           "cp -R src/constants/schemas dist/constants"
         ]
       },
-      "dependsOn": ["after-build"]
+      "dependsOn": ["^build", "before-build"]
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -86,6 +85,7 @@
       },
       "parallel": false,
       "dependsOn": [
+        "build",
         {
           "target": "database:reset",
           "projects": "twenty-server"

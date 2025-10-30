@@ -1,13 +1,13 @@
-import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-ids.constants';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
 import { updateOneCoreView } from 'test/integration/metadata/suites/view/utils/update-one-core-view.util';
-import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+
+const TEST_NOT_EXISTING_VIEW_ID = '20202020-0000-4000-8000-000000000000';
 
 describe('Update core view', () => {
   let testObjectMetadataId: string;
@@ -45,11 +45,6 @@ describe('Update core view', () => {
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupViewRecords();
-  });
-
-  beforeEach(async () => {
-    await cleanupViewRecords();
   });
 
   it('should update an existing view', async () => {

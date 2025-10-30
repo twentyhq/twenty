@@ -174,8 +174,9 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
               secondaryAxisGroupByFieldMetadataId: opportunityStageFieldId,
               primaryAxisOrderBy: 'FIELD_ASC',
-              axisNameDisplay: AxisNameDisplay.BOTH,
+              axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -204,6 +205,7 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
             }
           : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -304,8 +306,9 @@ export const getPageLayoutWidgetDataSeeds = (
               secondaryAxisGroupByFieldMetadataId: companyAddressFieldId,
               secondaryAxisGroupBySubFieldName: 'addressCity',
               primaryAxisOrderBy: 'FIELD_ASC',
-              axisNameDisplay: AxisNameDisplay.BOTH,
+              axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -471,6 +474,7 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisOrderBy: 'VALUE_DESC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
