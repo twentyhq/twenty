@@ -13,15 +13,16 @@ import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropd
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { UserContext } from '@/users/contexts/UserContext';
-import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   isDefined,
+  resolveDateTimeFilter,
   type RelativeDateFilter,
-  resolveDateViewFilterValue,
 } from 'twenty-shared/utils';
+
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
@@ -48,7 +49,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
     useApplyObjectFilterDropdownFilterValue();
 
   const initialFilterValue = isDefined(objectFilterDropdownCurrentRecordFilter)
-    ? resolveDateViewFilterValue(objectFilterDropdownCurrentRecordFilter)
+    ? resolveDateTimeFilter(objectFilterDropdownCurrentRecordFilter)
     : null;
 
   const { getNowInUserTimezoneForRelativeFilter } =
@@ -109,15 +110,13 @@ export const ObjectFilterDropdownDateTimeInput = () => {
     ) as NonSystemCalendarStartDay;
 
     const newFilterValue = relativeDate
-      ? computeVariableDateViewFilterValue({
+      ? stringifyRelativeDateFilter({
           ...relativeDate,
           timezone: timeZone,
           referenceDayAsString: dayAsStringInUserTimezone,
           firstDayOfTheWeek: resolvedCalendarStartDay,
         })
       : '';
-
-    console.log({ newFilterValue });
 
     const newDisplayValue = relativeDate
       ? getRelativeDateDisplayValue(relativeDate)
@@ -135,7 +134,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
       : handleAbsoluteDateChange(null);
   };
   const resolvedValue = objectFilterDropdownCurrentRecordFilter
-    ? resolveDateViewFilterValue(objectFilterDropdownCurrentRecordFilter)
+    ? resolveDateTimeFilter(objectFilterDropdownCurrentRecordFilter)
     : null;
 
   const relativeDate =

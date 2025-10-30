@@ -15,7 +15,8 @@ export const parseDateTimeToString = ({
   userTimezone,
   dateFormat = DateFormat.MONTH_FIRST,
 }: ParseDateTimeToStringArgs) => {
-  const parsingFormat = getDateTimeFormatStringFoDatePickerInputMask(dateFormat);
+  const parsingFormat =
+    getDateTimeFormatStringFoDatePickerInputMask(dateFormat);
 
   if (isDefined(userTimezone)) {
     return formatInTimeZone(date, userTimezone, parsingFormat);

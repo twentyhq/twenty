@@ -34,11 +34,6 @@ export const DateTimeDisplay = ({
     localeCatalog: dateLocale.localeCatalog,
   });
 
-  console.log({
-    formattedDate,
-    date: value && new Date(value),
-  });
-
   return (
     <EllipsisDisplay>
       {formattedDate}

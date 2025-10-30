@@ -44,7 +44,6 @@ export const DateTimeInput = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (newDateTime: Date | null) => {
-    console.log({ newDateTime });
     setInternalValue(newDateTime);
     onChange?.(newDateTime);
   };
@@ -105,10 +104,6 @@ export const DateTimeInput = ({
     onEnter: handleEnter,
     onEscape: handleEscape,
     onClickOutside: handleClickOutside,
-  });
-
-  console.log({
-    internalValue,
   });
 
   return (

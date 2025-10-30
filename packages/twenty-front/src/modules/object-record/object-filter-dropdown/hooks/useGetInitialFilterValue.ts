@@ -31,10 +31,6 @@ export const useGetInitialFilterValue = () => {
     newOperand: RecordFilterOperand,
     alreadyExistingISODate?: string,
   ): Pick<RecordFilter, 'value' | 'displayValue'> | Record<string, never> => {
-    console.log({
-      newType,
-      alreadyExistingISODate,
-    });
     switch (newType) {
       case 'DATE': {
         if (activeDatePickerOperands.includes(newOperand)) {
@@ -57,12 +53,6 @@ export const useGetInitialFilterValue = () => {
 
           const value = format(shiftedDate, DATE_TYPE_FORMAT);
           const displayValue = format(shiftedDate, dateFormatString);
-
-          console.log({
-            shiftedDate,
-            value,
-            displayValue,
-          });
 
           return { value, displayValue };
         }
@@ -101,14 +91,6 @@ export const useGetInitialFilterValue = () => {
 
           const value = shiftedDate.toISOString();
           const displayValue = `${format(shiftedDate, formatToUse)}${timezoneSuffix}`;
-
-          console.log({
-            isSystemTimezone,
-            timezoneSuffix,
-            shiftedDate,
-            value,
-            displayValue,
-          });
 
           return { value, displayValue };
         }

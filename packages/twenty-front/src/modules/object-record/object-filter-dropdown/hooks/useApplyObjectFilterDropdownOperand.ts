@@ -13,12 +13,14 @@ import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUs
 
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+
 import {
-  type VariableDateViewFilterValueDirection,
-  type VariableDateViewFilterValueUnit,
-} from 'twenty-shared/types';
-import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
+  isDefined,
+  type RelativeDateFilter,
+  type RelativeDateFilterDirection,
+  type RelativeDateFilterUnit,
+} from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownOperand = () => {
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
@@ -104,23 +106,19 @@ export const useApplyObjectFilterDropdownOperand = () => {
 
         recordFilterToUpsert.displayValue = displayValue;
       } else if (newOperand === RecordFilterOperand.IS_RELATIVE) {
-        const { dayAsStringInUserTimezone, nowInUserTimezone } =
+        const { dayAsStringInUserTimezone } =
           getNowInUserTimezoneForRelativeFilter();
 
         const defaultRelativeDate: RelativeDateFilter = {
-          direction: 'THIS' as VariableDateViewFilterValueDirection,
+          direction: 'THIS' as RelativeDateFilterDirection,
           amount: 1,
-          unit: 'DAY' as VariableDateViewFilterValueUnit,
+          unit: 'DAY' as RelativeDateFilterUnit,
           timezone: userTimezone,
           referenceDayAsString: dayAsStringInUserTimezone,
         };
 
-        console.log({
-          defaultRelativeDate,
-        });
-
         recordFilterToUpsert.value =
-          computeVariableDateViewFilterValue(defaultRelativeDate);
+          stringifyRelativeDateFilter(defaultRelativeDate);
 
         recordFilterToUpsert.displayValue =
           getRelativeDateDisplayValue(defaultRelativeDate);

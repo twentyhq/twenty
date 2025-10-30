@@ -1,13 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
 
-export const computeVariableDateViewFilterValue = (
+export const stringifyRelativeDateFilter = (
   relativeDateFilter: RelativeDateFilter,
 ) => {
-  let relativeFilterValue = `${relativeDateFilter.direction}_${relativeDateFilter.amount?.toString() ?? '1'}_${relativeDateFilter.unit}`;
+  let relativeDateFilterStringified = `${relativeDateFilter.direction}_${relativeDateFilter.amount?.toString() ?? '1'}_${relativeDateFilter.unit}`;
 
   if (relativeDateFilter.direction === 'THIS') {
-    relativeFilterValue = `THIS_1_${relativeDateFilter.unit}`;
+    relativeDateFilterStringified = `THIS_1_${relativeDateFilter.unit}`;
   } else if (
     relativeDateFilter.amount === undefined ||
     relativeDateFilter.amount <= 0
@@ -18,16 +18,16 @@ export const computeVariableDateViewFilterValue = (
   }
 
   if (isNonEmptyString(relativeDateFilter.timezone)) {
-    relativeFilterValue = `${relativeFilterValue}_${relativeDateFilter.timezone}`;
+    relativeDateFilterStringified = `${relativeDateFilterStringified}_${relativeDateFilter.timezone}`;
 
     if (isNonEmptyString(relativeDateFilter.referenceDayAsString)) {
-      relativeFilterValue = `${relativeFilterValue}_${relativeDateFilter.referenceDayAsString}`;
+      relativeDateFilterStringified = `${relativeDateFilterStringified}_${relativeDateFilter.referenceDayAsString}`;
 
       if (isNonEmptyString(relativeDateFilter.firstDayOfTheWeek)) {
-        relativeFilterValue = `${relativeFilterValue}_${relativeDateFilter.firstDayOfTheWeek}`;
+        relativeDateFilterStringified = `${relativeDateFilterStringified}_${relativeDateFilter.firstDayOfTheWeek}`;
       }
     }
   }
 
-  return relativeFilterValue;
+  return relativeDateFilterStringified;
 };

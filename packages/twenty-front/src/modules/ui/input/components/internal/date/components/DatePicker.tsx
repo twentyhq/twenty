@@ -13,14 +13,17 @@ import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/g
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { addMonths, format, parse, setYear, subMonths } from 'date-fns';
+import { addMonths, parse, setYear, subMonths } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRecoilValue } from 'recoil';
 import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
+
 import {
-  type VariableDateViewFilterValueDirection,
-  type VariableDateViewFilterValueUnit,
-} from 'twenty-shared/types';
+  getPlainDateFromDate,
+  type RelativeDateFilter,
+  type RelativeDateFilterDirection,
+  type RelativeDateFilterUnit,
+} from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
 import {
   MenuItemLeftContent,
@@ -302,9 +305,9 @@ type DatePickerProps = {
   hideHeaderInput?: boolean;
   date: string | null;
   relativeDate?: {
-    direction: VariableDateViewFilterValueDirection;
+    direction: RelativeDateFilterDirection;
     amount?: number;
-    unit: VariableDateViewFilterValueUnit;
+    unit: RelativeDateFilterUnit;
   };
   highlightedDateRange?: {
     start: string;
@@ -313,11 +316,7 @@ type DatePickerProps = {
   onClose?: (date: string | null) => void;
   onChange?: (date: string | null) => void;
   onRelativeDateChange?: (
-    relativeDate: {
-      direction: VariableDateViewFilterValueDirection;
-      amount?: number;
-      unit: VariableDateViewFilterValueUnit;
-    } | null,
+    relativeDateFilter: RelativeDateFilter | null,
   ) => void;
   clearable?: boolean;
   onEnter?: (date: string | null) => void;
@@ -349,7 +348,7 @@ export const DatePicker = ({
   highlightedDateRange,
   hideHeaderInput,
 }: DatePickerProps) => {
-  const dateOrToday = date ?? format(new Date(), DATE_TYPE_FORMAT);
+  const dateOrToday = date ?? getPlainDateFromDate(new Date());
   const localDate = parse(dateOrToday, DATE_TYPE_FORMAT, new Date());
 
   const theme = useTheme();
@@ -375,7 +374,7 @@ export const DatePicker = ({
   const handleChangeMonth = (month: number) => {
     localDate.setMonth(month);
 
-    const plainDate = format(localDate, DATE_TYPE_FORMAT);
+    const plainDate = getPlainDateFromDate(localDate);
 
     onChange?.(plainDate);
   };
@@ -383,7 +382,7 @@ export const DatePicker = ({
   const handleAddMonth = () => {
     const dateParsed = addMonths(localDate, 1);
 
-    const plainDate = format(dateParsed, DATE_TYPE_FORMAT);
+    const plainDate = getPlainDateFromDate(dateParsed);
 
     onChange?.(plainDate);
   };
@@ -391,7 +390,7 @@ export const DatePicker = ({
   const handleSubtractMonth = () => {
     const dateParsed = subMonths(localDate, 1);
 
-    const plainDate = format(dateParsed, DATE_TYPE_FORMAT);
+    const plainDate = getPlainDateFromDate(dateParsed);
 
     onChange?.(plainDate);
   };
@@ -399,19 +398,19 @@ export const DatePicker = ({
   const handleChangeYear = (year: number) => {
     const dateParsed = setYear(localDate, year);
 
-    const plainDate = format(dateParsed, DATE_TYPE_FORMAT);
+    const plainDate = getPlainDateFromDate(dateParsed);
 
     onChange?.(plainDate);
   };
 
   const handleDateChange = (date: Date) => {
-    const plainDate = format(date, DATE_TYPE_FORMAT);
+    const plainDate = getPlainDateFromDate(date);
 
     onChange?.(plainDate);
   };
 
   const handleDateSelect = (date: Date) => {
-    const plainDate = format(date, DATE_TYPE_FORMAT);
+    const plainDate = getPlainDateFromDate(date);
 
     handleClose?.(plainDate);
   };

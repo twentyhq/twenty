@@ -34,25 +34,25 @@ import {
   isExpectedSubFieldName,
 } from '@/utils/filter';
 
-import { resolveDateViewFilterValue } from '@/utils/filter/utils/resolveDateViewFilterValue';
 import {
   endOfDay,
   endOfMinute,
-  format,
   roundToNearestMinutes,
   startOfDay,
   startOfMinute,
 } from 'date-fns';
 import { z } from 'zod';
 
-import { DATE_TYPE_FORMAT } from '@/constants';
 import { type DateTimeFilter } from '@/types/RecordGqlOperationFilter';
 import {
   checkIfShouldComputeEmptinessFilter,
   checkIfShouldSkipFiltering,
   CustomError,
   getFilterTypeFromFieldType,
+  getPlainDateFromDate,
   isDefined,
+  resolveDateFilter,
+  resolveDateTimeFilter,
   type RecordFilter,
 } from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
@@ -176,14 +176,14 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           );
       }
     case 'DATE': {
-      const resolvedFilterValue = resolveDateViewFilterValue(recordFilter);
-      const now = roundToNearestMinutes(new Date());
+      const resolvedFilterValue = resolveDateFilter(recordFilter);
+      const now = new Date();
       const date =
         resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
 
-      const dateAsDayString = format(date, DATE_TYPE_FORMAT);
+      const dateAsDayString = getPlainDateFromDate(date);
 
-      const nowAsDayString = format(now, DATE_TYPE_FORMAT);
+      const nowAsDayString = getPlainDateFromDate(now);
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS_AFTER: {
@@ -202,10 +202,10 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
         case RecordFilterOperand.IS_RELATIVE: {
           const dateRange = z
-            .object({ start: z.date(), end: z.date() })
+            .object({ start: z.string(), end: z.string() })
             .safeParse(resolvedFilterValue).data;
 
-          const defaultDateRange = resolveDateViewFilterValue({
+          const defaultDateRange = resolveDateFilter({
             value: 'PAST_1_DAY',
             operand: RecordFilterOperand.IS_RELATIVE,
           });
@@ -214,31 +214,25 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             throw new Error('Failed to resolve default date range');
           }
 
-          const { start, end } = dateRange ?? defaultDateRange;
-
-          const startAsDayString = format(start, DATE_TYPE_FORMAT);
-          const endAsDayString = format(end, DATE_TYPE_FORMAT);
+          const { start: startPlainDate, end: endPlainDate } =
+            dateRange ?? defaultDateRange;
 
           return {
             and: [
               {
                 [correspondingFieldMetadataItem.name]: {
-                  gte: startAsDayString,
+                  gte: startPlainDate,
                 } as DateFilter,
               },
               {
                 [correspondingFieldMetadataItem.name]: {
-                  lte: endAsDayString,
+                  lte: endPlainDate,
                 } as DateFilter,
               },
             ],
           };
         }
         case RecordFilterOperand.IS: {
-          const isValid = resolvedFilterValue instanceof Date;
-          const date = isValid ? resolvedFilterValue : now;
-          const dateAsDayString = format(date, DATE_TYPE_FORMAT);
-
           return {
             [correspondingFieldMetadataItem.name]: {
               eq: dateAsDayString,
@@ -271,7 +265,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       }
     }
     case 'DATE_TIME': {
-      const resolvedFilterValue = resolveDateViewFilterValue(recordFilter);
+      const resolvedFilterValue = resolveDateTimeFilter(recordFilter);
       const now = roundToNearestMinutes(new Date());
       const date =
         resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
@@ -296,7 +290,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
             .object({ start: z.date(), end: z.date() })
             .safeParse(resolvedFilterValue).data;
 
-          const defaultDateRange = resolveDateViewFilterValue({
+          const defaultDateRange = resolveDateTimeFilter({
             value: 'PAST_1_DAY',
             operand: RecordFilterOperand.IS_RELATIVE,
           });
@@ -304,11 +298,6 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           if (!defaultDateRange) {
             throw new Error('Failed to resolve default date range');
           }
-
-          console.log({
-            dateRange,
-            defaultDateRange,
-          });
 
           const { start, end } = dateRange ?? defaultDateRange;
 

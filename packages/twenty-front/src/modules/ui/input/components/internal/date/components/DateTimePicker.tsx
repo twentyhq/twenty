@@ -14,10 +14,7 @@ import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-date
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import {
-  type VariableDateViewFilterValueDirection,
-  type VariableDateViewFilterValueUnit,
-} from 'twenty-shared/types';
+
 import { IconCalendarX } from 'twenty-ui/display';
 import {
   MenuItemLeftContent,
@@ -28,7 +25,11 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useTurnPointInTimeIntoReactDatePickerShiftedDate } from '@/ui/input/components/internal/date/hooks/useTurnPointInTimeIntoReactDatePickerShiftedDate';
 import { useTurnReactDatePickerShiftedDateBackIntoPointInTime } from '@/ui/input/components/internal/date/hooks/useTurnReactDatePickerShiftedDateBackIntoPointInTime';
 import { useRecoilValue } from 'recoil';
-import { type RelativeDateFilter } from 'twenty-shared/utils';
+import {
+  type RelativeDateFilter,
+  type RelativeDateFilterDirection,
+  type RelativeDateFilterUnit,
+} from 'twenty-shared/utils';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -306,9 +307,9 @@ type DateTimePickerProps = {
   hideHeaderInput?: boolean;
   date: Date | null;
   relativeDate?: {
-    direction: VariableDateViewFilterValueDirection;
+    direction: RelativeDateFilterDirection;
     amount?: number;
-    unit: VariableDateViewFilterValueUnit;
+    unit: RelativeDateFilterUnit;
   };
   highlightedDateRange?: {
     start: Date;
@@ -444,11 +445,6 @@ export const DateTimePicker = ({
   const selectedDates = isRelative
     ? highlightedDates
     : [reactPickerShiftedDate];
-
-  console.log({
-    date,
-    forcedDate: reactPickerShiftedDate,
-  });
 
   return (
     <StyledContainer calendarDisabled={isRelative}>

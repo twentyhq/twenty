@@ -2,15 +2,13 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
-import {
-  type VariableDateViewFilterValueDirection,
-  type VariableDateViewFilterValueUnit,
-} from 'twenty-shared/types';
 
 import styled from '@emotion/styled';
 import {
+  relativeDateFilterSchema,
   type RelativeDateFilter,
-  variableDateViewFilterValuePartsSchema,
+  type RelativeDateFilterDirection,
+  type RelativeDateFilterUnit,
 } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ noPadding: boolean }>`
@@ -22,9 +20,9 @@ const StyledContainer = styled.div<{ noPadding: boolean }>`
 `;
 
 type RelativeDatePickerHeaderProps = {
-  direction: VariableDateViewFilterValueDirection;
+  direction: RelativeDateFilterDirection;
   amount?: number;
-  unit: VariableDateViewFilterValueUnit;
+  unit: RelativeDateFilterUnit;
   onChange?: (value: RelativeDateFilter) => void;
   isFormField?: boolean;
   readonly?: boolean;
@@ -85,10 +83,7 @@ export const RelativeDatePickerHeader = ({
             unit,
           };
 
-          if (
-            variableDateViewFilterValuePartsSchema.safeParse(valueParts)
-              .success === true
-          ) {
+          if (relativeDateFilterSchema.safeParse(valueParts).success === true) {
             onChange?.(valueParts);
           }
         }}

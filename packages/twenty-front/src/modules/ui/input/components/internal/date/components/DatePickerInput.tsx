@@ -88,11 +88,7 @@ export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
     {
       defaultValue,
       onComplete: (newValue) => {
-        console.log({ newValue });
-
         const parsedDate = parseDateInputStringToPlainDate(newValue);
-
-        console.log({ parsedDate });
 
         onChange?.(parsedDate);
       },

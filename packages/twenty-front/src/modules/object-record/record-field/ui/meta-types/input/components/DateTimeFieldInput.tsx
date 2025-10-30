@@ -43,7 +43,6 @@ export const DateTimeFieldInput = () => {
   };
 
   const handleChange = (newDate: Nullable<Date>) => {
-    console.log({ newDate });
     setDraftValue(newDate?.toDateString() ?? '');
   };
 

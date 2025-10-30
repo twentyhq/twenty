@@ -96,8 +96,10 @@ export const FormDateTimeFieldInput = ({
 }: FormDateTimeFieldInputProps) => {
   const instanceId = useId();
 
-  const { parseJSDateToDateTimeInputString: parseDateTimeToString } = useParseJSDateToIMaskDateTimeInputString();
-  const { parseDateTimeInputStringToJSDate: parseStringToDateTime } = useParseDateTimeInputStringToJSDate();
+  const { parseJSDateToDateTimeInputString: parseDateTimeToString } =
+    useParseJSDateToIMaskDateTimeInputString();
+  const { parseDateTimeInputStringToJSDate: parseStringToDateTime } =
+    useParseDateTimeInputStringToJSDate();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)

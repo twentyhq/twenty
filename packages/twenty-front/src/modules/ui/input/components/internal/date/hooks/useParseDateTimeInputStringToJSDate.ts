@@ -6,7 +6,8 @@ export const useParseDateTimeInputStringToJSDate = () => {
   const { dateFormat } = useDateTimeFormat();
 
   const parseDateTimeInputStringToJSDate = (dateAsString: string) => {
-    const parsingFormat = getDateTimeFormatStringFoDatePickerInputMask(dateFormat);
+    const parsingFormat =
+      getDateTimeFormatStringFoDatePickerInputMask(dateFormat);
     const referenceDate = new Date();
 
     const parsedDate = parse(dateAsString, parsingFormat, referenceDate);

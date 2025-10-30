@@ -95,10 +95,6 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
               duplicateFilterInCurrentRecordFilters,
             );
 
-            console.log({
-              filterIsAlreadyInCurrentRecordFilters,
-            });
-
             if (filterIsAlreadyInCurrentRecordFilters) {
               set(
                 objectFilterDropdownCurrentRecordFilterCallbackState,
@@ -111,10 +107,6 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
               );
             } else {
               set(selectedOperandInDropdownCallbackState, defaultOperand);
-
-              console.log({
-                filterType,
-              });
 
               if (filterType === 'DATE' || filterType === 'DATE_TIME') {
                 const { displayValue, value } = getInitialFilterValue(
