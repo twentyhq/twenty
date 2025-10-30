@@ -25143,6 +25143,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@webext-core/messaging@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@webext-core/messaging@npm:2.3.0"
+  dependencies:
+    serialize-error: "npm:^11.0.0"
+    uid: "npm:^2.0.2"
+    webextension-polyfill: "npm:^0.10.0"
+  checksum: 10c0/9ec51725d09c74209def5c92c699d30fe35ce323f7e21dc7d5f3e367a897e497a95aca6d8d544e054f5bdc1059e5fa77e76b2c89a33829be0c56cc9431288af2
+  languageName: node
+  linkType: hard
+
 "@whatwg-node/events@npm:^0.0.3":
   version: 0.0.3
   resolution: "@whatwg-node/events@npm:0.0.3"
@@ -51262,6 +51273,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"serialize-error@npm:^11.0.0":
+  version: 11.0.3
+  resolution: "serialize-error@npm:11.0.3"
+  dependencies:
+    type-fest: "npm:^2.12.2"
+  checksum: 10c0/7263603883b8936650819f0fd5150d41427b317432678b21722c54b85367ae15b8552865eb7f3f39ba71a32a003730a2e2e971e6909431eb54db70a3ef8eca17
+  languageName: node
+  linkType: hard
+
 "serialize-javascript@npm:^6.0.2":
   version: 6.0.2
   resolution: "serialize-javascript@npm:6.0.2"
@@ -55346,7 +55366,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uid@npm:2.0.2":
+"uid@npm:2.0.2, uid@npm:^2.0.2":
   version: 2.0.2
   resolution: "uid@npm:2.0.2"
   dependencies:
@@ -57085,6 +57105,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"webextension-polyfill@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "webextension-polyfill@npm:0.10.0"
+  checksum: 10c0/6a45278f1fed8fbd5355f9b19a7b0b3fadc91fa3a6eef69125a1706bb3efa2181235eefbfb3f538443bb396cfcb97512361551888ce8465c08914431cb2d5b6d
+  languageName: node
+  linkType: hard
+
 "webidl-conversions@npm:^3.0.0":
   version: 3.0.1
   resolution: "webidl-conversions@npm:3.0.1"
@@ -57691,6 +57718,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@types/react": "npm:^18.2.39"
     "@types/react-dom": "npm:^18.2.15"
+    "@webext-core/messaging": "npm:^2.3.0"
     "@wxt-dev/module-react": "npm:^1.1.3"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
