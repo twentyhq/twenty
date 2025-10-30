@@ -65,7 +65,7 @@ export const TEST_HORIZONTAL_BAR_CHART_CONFIG = {
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
   displayDataLabel: true,
-  axisNameDisplay: AxisNameDisplay.BOTH,
+  axisNameDisplay: AxisNameDisplay.NONE,
   color: 'blue',
   description: 'Horizontal revenue breakdown',
   omitNullValues: true,
