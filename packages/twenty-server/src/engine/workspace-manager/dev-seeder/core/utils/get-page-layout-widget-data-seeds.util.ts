@@ -174,7 +174,7 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
               secondaryAxisGroupByFieldMetadataId: opportunityStageFieldId,
               primaryAxisOrderBy: 'FIELD_ASC',
-              axisNameDisplay: AxisNameDisplay.BOTH,
+              axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
               color: 'auto',
             }
