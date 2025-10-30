@@ -8,4 +8,3 @@ export const pageLayoutTabSettingsOpenTabIdComponentState =
     defaultValue: null,
     componentInstanceContext: PageLayoutComponentInstanceContext,
   });
-
