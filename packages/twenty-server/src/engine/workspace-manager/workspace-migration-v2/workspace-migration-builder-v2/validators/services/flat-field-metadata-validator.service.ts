@@ -31,7 +31,7 @@ export class FlatFieldMetadataValidatorService {
     flatEntityId,
     flatEntityUpdates: updates,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate,
     workspaceId,
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
@@ -70,7 +70,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const flatObjectMetadata =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+      dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
         flatFieldMetadataToValidate.objectMetadataId
       ];
 
@@ -154,7 +154,7 @@ export class FlatFieldMetadataValidatorService {
         {
           dependencyOptimisticFlatEntityMapsToMutate: {
             flatObjectMetadataMaps:
-              dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+              dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
           },
           optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
           flatEntityToValidate: flatFieldMetadataToValidate,
@@ -174,7 +174,7 @@ export class FlatFieldMetadataValidatorService {
   validateFlatFieldMetadataDeletion({
     flatEntityToValidate: { id: flatFieldMetadataToDeleteId },
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<FlatFieldMetadata> {
@@ -205,7 +205,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const relatedFlatObjectMetadata =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+      dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
         flatFieldMetadataToDelete.objectMetadataId
       ];
 
@@ -225,12 +225,12 @@ export class FlatFieldMetadataValidatorService {
     const relationTargetObjectMetadataHasBeenDeleted =
       isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
       !isDefined(
-        dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+        dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
         ],
       );
     const parentObjectMetadataHasBeenDeleted = !isDefined(
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+      dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
         flatFieldMetadataToDelete.objectMetadataId
       ],
     );
@@ -265,7 +265,7 @@ export class FlatFieldMetadataValidatorService {
   async validateFlatFieldMetadataCreation({
     flatEntityToValidate: flatFieldMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate,
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
@@ -283,7 +283,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const parentFlatObjectMetadata =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+      dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
         flatFieldMetadataToValidate.objectMetadataId
       ];
 
@@ -343,7 +343,7 @@ export class FlatFieldMetadataValidatorService {
     validationResult.errors.push(
       ...(await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+          dependencyOptimisticFlatEntityMapsToMutate,
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
           optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,

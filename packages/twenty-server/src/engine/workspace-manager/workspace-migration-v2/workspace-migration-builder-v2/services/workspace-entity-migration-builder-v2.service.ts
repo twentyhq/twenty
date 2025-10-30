@@ -53,7 +53,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     to: toFlatEntityMaps,
     workspaceId,
   }: ValidateAndBuildArgs<T>): Promise<ValidateAndBuildReturnType<T>> {
-    const dependencyOptimisticFlatEntityMaps = structuredClone(
+    const dependencyOptimisticFlatEntityMapsToMutate = structuredClone(
       inputDependencyOptimisticFlatEntityMaps,
     );
 
@@ -114,11 +114,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
       deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
         entityToDeleteId: flatEntityToCreateId,
-        flatEntityMaps: remainingFlatEntityMapsToCreate,
+        flatEntityMapsToMutate: remainingFlatEntityMapsToCreate,
       });
 
       const validationResult = await this.validateFlatEntityCreation({
-        dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+        dependencyOptimisticFlatEntityMapsToMutate,
         flatEntityToValidate: flatEntityToCreate,
         optimisticFlatEntityMaps,
         workspaceId,
@@ -133,7 +133,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatEntityToCreate,
-        flatEntityMaps: optimisticFlatEntityMaps,
+        flatEntityMapsToMutate: optimisticFlatEntityMaps,
       });
 
       actionsResult.created.push(
@@ -172,11 +172,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
       deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
         entityToDeleteId: flatEntityToDeleteId,
-        flatEntityMaps: remainingFlatEntityMapsToDelete,
+        flatEntityMapsToMutate: remainingFlatEntityMapsToDelete,
       });
 
       const validationResult = await this.validateFlatEntityDeletion({
-        dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+        dependencyOptimisticFlatEntityMapsToMutate,
         flatEntityToValidate: flatEntityToDelete,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
@@ -191,7 +191,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
       deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
         entityToDeleteId: flatEntityToDelete.id,
-        flatEntityMaps: optimisticFlatEntityMaps,
+        flatEntityMapsToMutate: optimisticFlatEntityMaps,
       });
 
       actionsResult.deleted.push(
@@ -221,7 +221,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       const validationResult = await this.validateFlatEntityUpdate({
         flatEntityUpdates: flatEntityToUpdate.updates,
         flatEntityId: flatEntityToUpdateId,
-        dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+        dependencyOptimisticFlatEntityMapsToMutate,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
         buildOptions,
@@ -253,7 +253,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
 
       replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
         flatEntity: updatedFlatEntity,
-        flatEntityMaps: optimisticFlatEntityMaps,
+        flatEntityMapsToMutate: optimisticFlatEntityMaps,
       });
 
       actionsResult.updated.push(
@@ -277,7 +277,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         status: 'fail',
         errors: allValidationResult,
         optimisticFlatEntityMaps,
-        dependencyOptimisticFlatEntityMaps,
+        dependencyOptimisticFlatEntityMaps:
+          dependencyOptimisticFlatEntityMapsToMutate,
       };
     }
 
@@ -290,7 +291,8 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       status: 'success',
       actions: actionsResult,
       optimisticFlatEntityMaps,
-      dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMaps:
+        dependencyOptimisticFlatEntityMapsToMutate,
     };
   }
 

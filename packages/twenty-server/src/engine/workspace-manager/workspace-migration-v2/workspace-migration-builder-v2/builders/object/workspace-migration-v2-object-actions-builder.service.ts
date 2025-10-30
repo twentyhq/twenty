@@ -41,7 +41,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
 
     const {
       flatEntityToValidate: flatObjectMetadataToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -74,7 +73,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
 
     const {
       flatEntityToValidate: flatObjectMetadataToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -107,7 +105,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     }
 
     const {
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;

@@ -11,16 +11,16 @@ export type DeleteFlatEntityFromFlatEntityMapsThroughMutationOrThrowArgs<
   T extends FlatEntity,
 > = {
   entityToDeleteId: string;
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMapsToMutate: FlatEntityMaps<T>;
 };
 
 export const deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow = <
   T extends FlatEntity,
 >({
-  flatEntityMaps,
+  flatEntityMapsToMutate,
   entityToDeleteId,
 }: DeleteFlatEntityFromFlatEntityMapsThroughMutationOrThrowArgs<T>): void => {
-  const entityToDelete = flatEntityMaps.byId[entityToDeleteId];
+  const entityToDelete = flatEntityMapsToMutate.byId[entityToDeleteId];
 
   if (!isDefined(entityToDelete)) {
     throw new FlatEntityMapsException(
@@ -29,15 +29,15 @@ export const deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow = <
     );
   }
 
-  delete flatEntityMaps.byId[entityToDeleteId];
+  delete flatEntityMapsToMutate.byId[entityToDeleteId];
 
-  delete flatEntityMaps.idByUniversalIdentifier[
+  delete flatEntityMapsToMutate.idByUniversalIdentifier[
     entityToDelete.universalIdentifier
   ];
 
   if (isDefined(entityToDelete.applicationId)) {
     const universalIdentifiers =
-      flatEntityMaps.universalIdentifiersByApplicationId[
+      flatEntityMapsToMutate.universalIdentifiersByApplicationId[
         entityToDelete.applicationId
       ];
 
@@ -51,7 +51,7 @@ export const deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow = <
       }
 
       if (universalIdentifiers.length === 0) {
-        delete flatEntityMaps.universalIdentifiersByApplicationId[
+        delete flatEntityMapsToMutate.universalIdentifiersByApplicationId[
           entityToDelete.applicationId
         ];
       }

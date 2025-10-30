@@ -41,7 +41,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
 
     const {
       flatEntityToValidate: flatRouteTriggerToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -75,7 +74,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
 
     const {
       flatEntityToValidate: flatRouteTriggerToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -108,7 +106,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     }
 
     const {
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;

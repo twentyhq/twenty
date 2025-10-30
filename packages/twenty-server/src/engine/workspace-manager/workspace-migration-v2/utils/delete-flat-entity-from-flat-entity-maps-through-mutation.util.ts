@@ -6,18 +6,18 @@ export type DeleteFlatEntityFromFlatEntityMapsThroughMutationArgs<
   T extends FlatEntity,
 > = {
   entityToDeleteId: string;
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMapsToMutate: FlatEntityMaps<T>;
 };
 
 export const deleteFlatEntityFromFlatEntityMapsThroughMutation = <
   T extends FlatEntity,
 >({
-  flatEntityMaps,
+  flatEntityMapsToMutate,
   entityToDeleteId,
 }: DeleteFlatEntityFromFlatEntityMapsThroughMutationArgs<T>): boolean => {
   try {
     deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
-      flatEntityMaps,
+      flatEntityMapsToMutate,
       entityToDeleteId,
     });
 

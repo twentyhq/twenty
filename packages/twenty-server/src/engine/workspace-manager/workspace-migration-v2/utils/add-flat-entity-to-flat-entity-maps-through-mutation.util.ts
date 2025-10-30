@@ -4,19 +4,19 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 
 type AddFlatEntityToFlatEntityMapsThroughMutationArgs<T extends FlatEntity> = {
   flatEntity: T;
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMapsToMutate: FlatEntityMaps<T>;
 };
 
 export const addFlatEntityToFlatEntityMapsThroughMutation = <
   T extends FlatEntity,
 >({
   flatEntity,
-  flatEntityMaps,
+  flatEntityMapsToMutate,
 }: AddFlatEntityToFlatEntityMapsThroughMutationArgs<T>): boolean => {
   try {
     addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
       flatEntity,
-      flatEntityMaps,
+      flatEntityMapsToMutate,
     });
 
     return true;

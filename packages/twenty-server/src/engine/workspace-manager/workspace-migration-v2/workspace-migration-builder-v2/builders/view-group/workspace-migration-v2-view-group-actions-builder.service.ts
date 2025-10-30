@@ -43,12 +43,13 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
 
     const {
       flatEntityToValidate: flatViewGroupToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate,
     } = args;
 
     const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewGroupToValidate.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
+      flatEntityMaps:
+        dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -56,12 +57,14 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
         ...flatView,
         viewGroupIds: [...flatView.viewGroupIds, flatViewGroupToValidate.id],
       },
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
+      flatEntityMapsToMutate:
+        dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
     });
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewGroupToValidate.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -72,8 +75,8 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
           flatViewGroupToValidate.id,
         ],
       },
-      flatEntityMaps:
-        dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMapsToMutate:
+        dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
     });
 
     return {
@@ -105,12 +108,12 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
 
     const {
       flatEntityToValidate: flatViewGroupToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate,
     } = args;
 
     const flatView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewGroupToValidate.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
+      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
     });
 
     if (isDefined(flatView)) {
@@ -121,13 +124,15 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
             (id) => id !== flatViewGroupToValidate.id,
           ),
         },
-        flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
+        flatEntityMapsToMutate:
+          dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
       });
     }
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewGroupToValidate.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
     });
 
     if (isDefined(flatFieldMetadata)) {
@@ -138,8 +143,8 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
             (id) => id !== flatViewGroupToValidate.id,
           ),
         },
-        flatEntityMaps:
-          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        flatEntityMapsToMutate:
+          dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
       });
     }
 
@@ -171,7 +176,6 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     }
 
     const {
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;

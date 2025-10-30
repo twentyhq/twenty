@@ -5,9 +5,9 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
 import {
-    ValidateAndBuildArgs,
-    ValidateAndBuildReturnType,
-    WorkspaceEntityMigrationBuilderV2Service,
+  ValidateAndBuildArgs,
+  ValidateAndBuildReturnType,
+  WorkspaceEntityMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
@@ -83,7 +83,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
 
     const {
       flatEntityToValidate: flatServerlessFunctionToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -117,7 +116,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
 
     const {
       flatEntityToValidate: flatServerlessFunctionToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
     } = args;
 
     return {
@@ -152,7 +150,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     }
 
     const {
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
       flatEntityId,
       flatEntityUpdates,
     } = args;

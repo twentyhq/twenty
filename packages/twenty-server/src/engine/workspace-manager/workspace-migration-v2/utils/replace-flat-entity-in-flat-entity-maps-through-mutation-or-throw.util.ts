@@ -7,22 +7,22 @@ export type ReplaceFlatEntityInFlatEntityMapsThroughMutationOrThrowArgs<
   T extends FlatEntity,
 > = {
   flatEntity: T;
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMapsToMutate: FlatEntityMaps<T>;
 };
 
 export const replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow = <
   T extends FlatEntity,
 >({
   flatEntity,
-  flatEntityMaps,
+  flatEntityMapsToMutate,
 }: ReplaceFlatEntityInFlatEntityMapsThroughMutationOrThrowArgs<T>): void => {
   deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
-    flatEntityMaps,
+    flatEntityMapsToMutate,
     entityToDeleteId: flatEntity.id,
   });
 
   addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
     flatEntity,
-    flatEntityMaps,
+    flatEntityMapsToMutate,
   });
 };

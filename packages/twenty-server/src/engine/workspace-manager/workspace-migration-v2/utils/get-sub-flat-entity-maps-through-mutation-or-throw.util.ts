@@ -13,7 +13,9 @@ export const getSubFlatEntityMapsThroughMutationOrThrow = <
   flatEntityMaps: FlatEntityMaps<T>;
   flatEntityIds: string[];
 }): FlatEntityMaps<T> => {
-  return flatEntityIds.reduce<FlatEntityMaps<T>>((acc, flatEntityId) => {
+  const resultToMutate = EMPTY_FLAT_ENTITY_MAPS();
+
+  for (const flatEntityId of flatEntityIds) {
     const flatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId,
       flatEntityMaps,
@@ -21,9 +23,9 @@ export const getSubFlatEntityMapsThroughMutationOrThrow = <
 
     addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
       flatEntity,
-      flatEntityMaps: acc,
+      flatEntityMapsToMutate: resultToMutate,
     });
+  }
 
-    return acc;
-  }, EMPTY_FLAT_ENTITY_MAPS());
+  return resultToMutate;
 };

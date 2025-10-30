@@ -45,12 +45,12 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
 
     const {
       flatEntityToValidate: flatFieldMetadataToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -61,8 +61,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
           flatFieldMetadataToValidate.id,
         ],
       },
-      flatEntityMaps:
-        dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMapsToMutate:
+        dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
     });
 
     return {
@@ -95,12 +95,12 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
 
     const {
       flatEntityToValidate: flatFieldMetadataToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
     });
 
     if (isDefined(flatObjectMetadata)) {
@@ -111,8 +111,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
             (id) => id !== flatFieldMetadataToValidate.id,
           ),
         },
-        flatEntityMaps:
-          dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+        flatEntityMapsToMutate:
+          dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
       });
     }
 
@@ -149,7 +149,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     }
 
     const {
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+      dependencyOptimisticFlatEntityMapsToMutate,
       flatEntityId,
       flatEntityUpdates,
       optimisticFlatEntityMaps,

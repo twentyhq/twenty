@@ -19,7 +19,7 @@ export class FlatCronTriggerValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
@@ -52,7 +52,7 @@ export class FlatCronTriggerValidatorService {
     };
 
     const serverlessFunction =
-      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
+      dependencyOptimisticFlatEntityMapsToMutate.flatServerlessFunctionMaps.byId[
         updatedFlatCronTrigger.serverlessFunctionId
       ];
 
@@ -98,7 +98,7 @@ export class FlatCronTriggerValidatorService {
   public async validateFlatCronTriggerCreation({
     flatEntityToValidate: flatCronTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate,
   }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>): Promise<
     FailedFlatEntityValidation<FlatCronTrigger>
   > {
@@ -123,7 +123,7 @@ export class FlatCronTriggerValidatorService {
     }
 
     const serverlessFunction =
-      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
+      dependencyOptimisticFlatEntityMapsToMutate.flatServerlessFunctionMaps?.byId?.[
         flatCronTriggerToValidate.serverlessFunctionId
       ];
 

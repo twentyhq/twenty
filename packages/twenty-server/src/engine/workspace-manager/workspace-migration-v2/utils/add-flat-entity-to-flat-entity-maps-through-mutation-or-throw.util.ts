@@ -11,30 +11,30 @@ type AddFlatEntityToFlatEntityMapsThroughMutationOrThrowArgs<
   T extends FlatEntity,
 > = {
   flatEntity: T;
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMapsToMutate: FlatEntityMaps<T>;
 };
 
 export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
   T extends FlatEntity,
 >({
   flatEntity,
-  flatEntityMaps,
+  flatEntityMapsToMutate,
 }: AddFlatEntityToFlatEntityMapsThroughMutationOrThrowArgs<T>): void => {
-  if (isDefined(flatEntityMaps.byId[flatEntity.id])) {
+  if (isDefined(flatEntityMapsToMutate.byId[flatEntity.id])) {
     throw new FlatEntityMapsException(
       'addFlatEntityToFlatEntityMapsThroughMutationOrThrow: flat entity to add already exists',
       FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS,
     );
   }
 
-  flatEntityMaps.byId[flatEntity.id] = flatEntity;
+  flatEntityMapsToMutate.byId[flatEntity.id] = flatEntity;
 
-  flatEntityMaps.idByUniversalIdentifier[flatEntity.universalIdentifier] =
+  flatEntityMapsToMutate.idByUniversalIdentifier[flatEntity.universalIdentifier] =
     flatEntity.id;
 
   if (isDefined(flatEntity.applicationId)) {
     const existingUniversalIdentifiers =
-      flatEntityMaps.universalIdentifiersByApplicationId[
+      flatEntityMapsToMutate.universalIdentifiersByApplicationId[
         flatEntity.applicationId
       ];
 
@@ -45,7 +45,7 @@ export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
         existingUniversalIdentifiers.push(flatEntity.universalIdentifier);
       }
     } else {
-      flatEntityMaps.universalIdentifiersByApplicationId[
+      flatEntityMapsToMutate.universalIdentifiersByApplicationId[
         flatEntity.applicationId
       ] = [flatEntity.universalIdentifier];
     }

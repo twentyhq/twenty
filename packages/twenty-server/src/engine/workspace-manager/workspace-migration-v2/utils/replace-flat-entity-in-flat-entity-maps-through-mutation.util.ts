@@ -6,19 +6,19 @@ export type ReplaceFlatEntityInFlatEntityMapsThroughMutationArgs<
   T extends FlatEntity,
 > = {
   flatEntity: T;
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMapsToMutate: FlatEntityMaps<T>;
 };
 
 export const replaceFlatEntityInFlatEntityMapsThroughMutation = <
   T extends FlatEntity,
 >({
   flatEntity,
-  flatEntityMaps,
+  flatEntityMapsToMutate,
 }: ReplaceFlatEntityInFlatEntityMapsThroughMutationArgs<T>): boolean => {
   try {
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
       flatEntity,
-      flatEntityMaps,
+      flatEntityMapsToMutate,
     });
 
     return true;

@@ -19,7 +19,7 @@ export class FlatViewFilterValidatorService {
   validateFlatViewFilterCreation({
     flatEntityToValidate: flatViewFilterToValidate,
     optimisticFlatEntityMaps: optimisticFlatViewFilterMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
   >): FailedFlatEntityValidation<FlatViewFilter> {
@@ -46,7 +46,7 @@ export class FlatViewFilterValidatorService {
 
     const referencedView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFilterToValidate.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
+      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
     });
 
     if (!isDefined(referencedView)) {
@@ -59,7 +59,7 @@ export class FlatViewFilterValidatorService {
 
     const referencedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFilterToValidate.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
     });
 
     if (!isDefined(referencedFieldMetadata)) {
@@ -109,7 +109,7 @@ export class FlatViewFilterValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatViewFilterMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
+    dependencyOptimisticFlatEntityMapsToMutate,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
   >): FailedFlatEntityValidation<FlatViewFilter> {
@@ -142,7 +142,7 @@ export class FlatViewFilterValidatorService {
 
     const referencedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updatedFlatViewFilter.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
     });
 
     if (!isDefined(referencedFieldMetadata)) {

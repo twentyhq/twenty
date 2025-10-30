@@ -39,10 +39,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
       };
     }
 
-    const {
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
-      flatEntityToValidate: flatCronTriggerToValidate,
-    } = args;
+    const { flatEntityToValidate: flatCronTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -73,10 +70,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
       };
     }
 
-    const {
-      flatEntityToValidate: flatCronTriggerToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatCronTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -104,11 +98,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         ...validationResult,
       };
     }
-    const {
-      dependencyOptimisticFlatEntityMapsToMutate: dependencyOptimisticFlatEntityMaps,
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateCronTriggerAction: UpdateCronTriggerAction = {
       type: 'update_cron_trigger',
