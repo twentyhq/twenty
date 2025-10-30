@@ -19,7 +19,7 @@ export class FlatRouteTriggerValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
-    dependencyOptimisticFlatEntityMapsToMutate,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.routeTrigger
   >): FailedFlatEntityValidation<FlatRouteTrigger> {
@@ -52,7 +52,7 @@ export class FlatRouteTriggerValidatorService {
     };
 
     const serverlessFunction =
-      dependencyOptimisticFlatEntityMapsToMutate.flatServerlessFunctionMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
         updatedFlatRouteTrigger.serverlessFunctionId
       ];
 
@@ -98,7 +98,7 @@ export class FlatRouteTriggerValidatorService {
   public async validateFlatRouteTriggerCreation({
     flatEntityToValidate: flatRouteTriggerToValidate,
     optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
-    dependencyOptimisticFlatEntityMapsToMutate,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>): Promise<
     FailedFlatEntityValidation<FlatRouteTrigger>
   > {
@@ -140,7 +140,7 @@ export class FlatRouteTriggerValidatorService {
     }
 
     const serverlessFunction =
-      dependencyOptimisticFlatEntityMapsToMutate.flatServerlessFunctionMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
         flatRouteTriggerToValidate.serverlessFunctionId
       ];
 

@@ -43,12 +43,12 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
 
     const {
       flatEntityToValidate: flatViewFieldToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFieldToValidate.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -60,12 +60,12 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
         ],
       },
       flatEntityMapsToMutate:
-        dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFieldToValidate.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -73,7 +73,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
         ...flatView,
         viewFieldIds: [...flatView.viewFieldIds, flatViewFieldToValidate.id],
       },
-      flatEntityMapsToMutate: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
+      flatEntityMapsToMutate: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     return {
@@ -105,12 +105,12 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
 
     const {
       flatEntityToValidate: flatViewFieldToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (isDefined(flatFieldMetadata)) {
@@ -122,13 +122,13 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
           ),
         },
         flatEntityMapsToMutate:
-          dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
       });
     }
 
     const flatView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     if (isDefined(flatView)) {
@@ -139,7 +139,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
             (id) => id !== flatViewFieldToValidate.id,
           ),
         },
-        flatEntityMapsToMutate: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
+        flatEntityMapsToMutate: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
       });
     }
 

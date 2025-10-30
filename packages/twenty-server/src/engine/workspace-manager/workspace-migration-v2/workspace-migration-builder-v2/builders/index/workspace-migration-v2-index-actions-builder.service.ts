@@ -44,12 +44,12 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
 
     const {
       flatEntityToValidate: flatIndexToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -61,7 +61,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
         ],
       },
       flatEntityMapsToMutate:
-        dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     return {
@@ -90,12 +90,12 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
 
     const {
       flatEntityToValidate: flatIndexToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (isDefined(flatObjectMetadata)) {
@@ -107,7 +107,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
           ),
         },
         flatEntityMapsToMutate:
-          dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
       });
     }
 
@@ -124,7 +124,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-    dependencyOptimisticFlatEntityMapsToMutate,
+    mutableDependencyOptimisticFlatEntityMaps,
     buildOptions,
     workspaceId,
   }: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.index>): Promise<
@@ -151,7 +151,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     const deletionValidationResult =
       this.flatIndexValidatorService.validateFlatIndexDeletion({
         buildOptions,
-        dependencyOptimisticFlatEntityMapsToMutate,
+        mutableDependencyOptimisticFlatEntityMaps,
         optimisticFlatEntityMaps: optimisticFlatIndexMaps,
         workspaceId,
         flatEntityToValidate: flatEntity,
@@ -184,7 +184,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
     const creationValidationResult =
       this.flatIndexValidatorService.validateFlatIndexCreation({
         buildOptions,
-        dependencyOptimisticFlatEntityMapsToMutate,
+        mutableDependencyOptimisticFlatEntityMaps,
         workspaceId,
         flatEntityToValidate: updatedFlatIndex,
         optimisticFlatEntityMaps: tempOptimisticFlatIndexMaps,

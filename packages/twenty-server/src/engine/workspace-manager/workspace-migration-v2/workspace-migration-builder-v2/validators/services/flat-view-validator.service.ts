@@ -17,7 +17,7 @@ export class FlatViewValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatViewMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: { flatFieldMetadataMaps },
+    mutableDependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<FlatView> {
@@ -95,7 +95,7 @@ export class FlatViewValidatorService {
   public async validateFlatViewCreation({
     flatEntityToValidate: flatViewToValidate,
     optimisticFlatEntityMaps: optimisticFlatViewMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: {
+    mutableDependencyOptimisticFlatEntityMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     },

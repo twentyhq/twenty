@@ -49,7 +49,7 @@ export class FlatIndexValidatorService {
   public validateFlatIndexCreation({
     flatEntityToValidate: flatIndexToValidate,
     optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-    dependencyOptimisticFlatEntityMapsToMutate,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.index
   >): FailedFlatEntityValidation<FlatIndexMetadata> {
@@ -77,7 +77,7 @@ export class FlatIndexValidatorService {
 
     const relatedObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (!isDefined(relatedObjectMetadata)) {
@@ -117,7 +117,7 @@ export class FlatIndexValidatorService {
         const relatedFlatField = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: flatIndexField.fieldMetadataId,
           flatEntityMaps:
-            dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         });
 
         if (!isDefined(relatedFlatField)) {

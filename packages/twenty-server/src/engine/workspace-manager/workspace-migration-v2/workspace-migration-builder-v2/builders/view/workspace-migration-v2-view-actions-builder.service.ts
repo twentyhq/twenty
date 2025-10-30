@@ -40,12 +40,12 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
 
     const {
       flatEntityToValidate: flatViewToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -54,7 +54,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
         viewIds: [...flatObjectMetadata.viewIds, flatViewToValidate.id],
       },
       flatEntityMapsToMutate:
-        dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     const kanbanFieldMetadata = isDefined(
@@ -64,7 +64,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
           flatEntityId:
             flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
           flatEntityMaps:
-            dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         })
       : undefined;
 
@@ -78,7 +78,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
           ],
         },
         flatEntityMapsToMutate:
-          dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
       });
     }
 
@@ -88,7 +88,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       ? findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityId: flatViewToValidate.calendarFieldMetadataId,
           flatEntityMaps:
-            dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         })
       : undefined;
 
@@ -102,7 +102,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
           ],
         },
         flatEntityMapsToMutate:
-          dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
       });
     }
 
@@ -132,12 +132,12 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
 
     const {
       flatEntityToValidate: flatViewToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (isDefined(flatObjectMetadata)) {
@@ -149,7 +149,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
           ),
         },
         flatEntityMapsToMutate:
-          dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
       });
     }
 
@@ -160,7 +160,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
           flatEntityId:
             flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
           flatEntityMaps:
-            dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         })
       : undefined;
 
@@ -174,7 +174,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
             ),
         },
         flatEntityMapsToMutate:
-          dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
       });
     }
 
@@ -184,7 +184,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       ? findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: flatViewToValidate.calendarFieldMetadataId,
           flatEntityMaps:
-            dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         })
       : undefined;
 
@@ -197,7 +197,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
           ),
         },
         flatEntityMapsToMutate:
-          dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
       });
     }
 

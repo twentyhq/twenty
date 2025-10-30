@@ -8,7 +8,7 @@ import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-mana
 export type FlatEntityValidationArgs<T extends AllMetadataName> = {
   flatEntityToValidate: MetadataFlatEntity<T>;
   optimisticFlatEntityMaps: MetadataFlatEntityMaps<T>;
-  dependencyOptimisticFlatEntityMapsToMutate: MetadataValidationRelatedFlatEntityMaps<T>;
+  mutableDependencyOptimisticFlatEntityMaps: MetadataValidationRelatedFlatEntityMaps<T>;
   workspaceId: string;
   remainingFlatEntityMapsToValidate: MetadataFlatEntityMaps<T>;
   buildOptions: WorkspaceMigrationBuilderOptions;

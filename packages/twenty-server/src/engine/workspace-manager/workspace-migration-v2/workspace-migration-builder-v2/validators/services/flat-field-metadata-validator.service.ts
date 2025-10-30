@@ -31,7 +31,7 @@ export class FlatFieldMetadataValidatorService {
     flatEntityId,
     flatEntityUpdates: updates,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMapsToMutate,
+    mutableDependencyOptimisticFlatEntityMaps,
     workspaceId,
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
@@ -70,7 +70,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const flatObjectMetadata =
-      dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
         flatFieldMetadataToValidate.objectMetadataId
       ];
 
@@ -152,9 +152,9 @@ export class FlatFieldMetadataValidatorService {
     const fieldMetadataTypeValidationErrors =
       await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMapsToMutate: {
+          mutableDependencyOptimisticFlatEntityMaps: {
             flatObjectMetadataMaps:
-              dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+              mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
           },
           optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
           flatEntityToValidate: flatFieldMetadataToValidate,
@@ -174,7 +174,7 @@ export class FlatFieldMetadataValidatorService {
   validateFlatFieldMetadataDeletion({
     flatEntityToValidate: { id: flatFieldMetadataToDeleteId },
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMapsToMutate,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<FlatFieldMetadata> {
@@ -205,7 +205,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const relatedFlatObjectMetadata =
-      dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
         flatFieldMetadataToDelete.objectMetadataId
       ];
 
@@ -225,12 +225,12 @@ export class FlatFieldMetadataValidatorService {
     const relationTargetObjectMetadataHasBeenDeleted =
       isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
       !isDefined(
-        dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
         ],
       );
     const parentObjectMetadataHasBeenDeleted = !isDefined(
-      dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
         flatFieldMetadataToDelete.objectMetadataId
       ],
     );
@@ -265,7 +265,7 @@ export class FlatFieldMetadataValidatorService {
   async validateFlatFieldMetadataCreation({
     flatEntityToValidate: flatFieldMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMapsToMutate,
+    mutableDependencyOptimisticFlatEntityMaps,
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
@@ -283,7 +283,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const parentFlatObjectMetadata =
-      dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
         flatFieldMetadataToValidate.objectMetadataId
       ];
 
@@ -343,7 +343,7 @@ export class FlatFieldMetadataValidatorService {
     validationResult.errors.push(
       ...(await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMapsToMutate,
+          mutableDependencyOptimisticFlatEntityMaps,
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
           optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,

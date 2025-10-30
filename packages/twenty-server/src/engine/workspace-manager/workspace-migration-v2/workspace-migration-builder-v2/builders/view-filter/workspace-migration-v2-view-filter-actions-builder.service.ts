@@ -43,12 +43,12 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
 
     const {
       flatEntityToValidate: flatViewFilterToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFilterToValidate.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -56,12 +56,12 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
         ...flatView,
         viewFilterIds: [...flatView.viewFilterIds, flatViewFilterToValidate.id],
       },
-      flatEntityMapsToMutate: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
+      flatEntityMapsToMutate: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatViewFilterToValidate.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -73,7 +73,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
         ],
       },
       flatEntityMapsToMutate:
-        dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     return {
@@ -105,12 +105,12 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
 
     const {
       flatEntityToValidate: flatViewFilterToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFilterToValidate.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     if (isDefined(flatView)) {
@@ -121,7 +121,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
             (id) => id !== flatViewFilterToValidate.id,
           ),
         },
-        flatEntityMapsToMutate: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
+        flatEntityMapsToMutate: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
       });
     }
 

@@ -45,12 +45,12 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
 
     const {
       flatEntityToValidate: flatFieldMetadataToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -62,7 +62,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
         ],
       },
       flatEntityMapsToMutate:
-        dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     return {
@@ -95,12 +95,12 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
 
     const {
       flatEntityToValidate: flatFieldMetadataToValidate,
-      dependencyOptimisticFlatEntityMapsToMutate,
+      mutableDependencyOptimisticFlatEntityMaps,
     } = args;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatFieldMetadataToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (isDefined(flatObjectMetadata)) {
@@ -112,7 +112,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
           ),
         },
         flatEntityMapsToMutate:
-          dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
       });
     }
 
@@ -149,7 +149,6 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     }
 
     const {
-      dependencyOptimisticFlatEntityMapsToMutate,
       flatEntityId,
       flatEntityUpdates,
       optimisticFlatEntityMaps,

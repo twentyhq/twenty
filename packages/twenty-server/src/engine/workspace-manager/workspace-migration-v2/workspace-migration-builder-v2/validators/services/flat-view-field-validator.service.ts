@@ -23,7 +23,7 @@ export class FlatViewFieldValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
-    dependencyOptimisticFlatEntityMapsToMutate,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<FlatViewField> {
@@ -63,7 +63,7 @@ export class FlatViewFieldValidatorService {
 
     const flatView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updatedFlatViewField.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     if (!isDefined(flatView)) {
@@ -78,7 +78,7 @@ export class FlatViewFieldValidatorService {
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatView.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (!isDefined(flatObjectMetadata)) {
@@ -118,7 +118,7 @@ export class FlatViewFieldValidatorService {
   public validateFlatViewFieldDeletion({
     flatEntityToValidate: { id: viewFieldIdToDelete },
     optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
-    dependencyOptimisticFlatEntityMapsToMutate: {
+    mutableDependencyOptimisticFlatEntityMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     },
@@ -181,7 +181,7 @@ export class FlatViewFieldValidatorService {
   public validateFlatViewFieldCreation({
     flatEntityToValidate: flatViewFieldToValidate,
     optimisticFlatEntityMaps: optimisticFlatViewFieldMaps,
-    dependencyOptimisticFlatEntityMapsToMutate,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<FlatViewField> {
@@ -210,7 +210,7 @@ export class FlatViewFieldValidatorService {
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewFieldToValidate.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatFieldMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (!isDefined(flatFieldMetadata)) {
@@ -222,7 +222,7 @@ export class FlatViewFieldValidatorService {
     }
 
     const flatView =
-      dependencyOptimisticFlatEntityMapsToMutate.flatViewMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatViewMaps.byId[
         flatViewFieldToValidate.viewId
       ];
 
@@ -256,7 +256,7 @@ export class FlatViewFieldValidatorService {
     }
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: dependencyOptimisticFlatEntityMapsToMutate.flatObjectMetadataMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
       flatEntityId: flatView.objectMetadataId,
     });
 

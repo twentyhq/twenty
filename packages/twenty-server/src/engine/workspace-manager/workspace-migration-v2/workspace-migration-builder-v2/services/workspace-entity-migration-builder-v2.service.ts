@@ -53,7 +53,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     to: toFlatEntityMaps,
     workspaceId,
   }: ValidateAndBuildArgs<T>): Promise<ValidateAndBuildReturnType<T>> {
-    const dependencyOptimisticFlatEntityMapsToMutate = structuredClone(
+    const mutableDependencyOptimisticFlatEntityMaps = structuredClone(
       inputDependencyOptimisticFlatEntityMaps,
     );
 
@@ -118,7 +118,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
 
       const validationResult = await this.validateFlatEntityCreation({
-        dependencyOptimisticFlatEntityMapsToMutate,
+        mutableDependencyOptimisticFlatEntityMaps,
         flatEntityToValidate: flatEntityToCreate,
         optimisticFlatEntityMaps,
         workspaceId,
@@ -176,7 +176,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       });
 
       const validationResult = await this.validateFlatEntityDeletion({
-        dependencyOptimisticFlatEntityMapsToMutate,
+        mutableDependencyOptimisticFlatEntityMaps,
         flatEntityToValidate: flatEntityToDelete,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
@@ -221,7 +221,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       const validationResult = await this.validateFlatEntityUpdate({
         flatEntityUpdates: flatEntityToUpdate.updates,
         flatEntityId: flatEntityToUpdateId,
-        dependencyOptimisticFlatEntityMapsToMutate,
+        mutableDependencyOptimisticFlatEntityMaps,
         optimisticFlatEntityMaps: optimisticFlatEntityMaps,
         workspaceId,
         buildOptions,
@@ -278,7 +278,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         errors: allValidationResult,
         optimisticFlatEntityMaps,
         dependencyOptimisticFlatEntityMaps:
-          dependencyOptimisticFlatEntityMapsToMutate,
+          mutableDependencyOptimisticFlatEntityMaps,
       };
     }
 
@@ -292,7 +292,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       actions: actionsResult,
       optimisticFlatEntityMaps,
       dependencyOptimisticFlatEntityMaps:
-        dependencyOptimisticFlatEntityMapsToMutate,
+        mutableDependencyOptimisticFlatEntityMaps,
     };
   }
 
