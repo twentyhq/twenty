@@ -60,7 +60,7 @@ export type TransientTokenJwtPayload = CommonPropertiesJwtPayload & {
 
 export type RefreshTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.REFRESH;
-  workspaceId?: string;
+  workspaceId?: string | null;
   userId: string;
   jti?: string;
   authProvider?: AuthProviderEnum;

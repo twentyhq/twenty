@@ -60,7 +60,7 @@ export class EmailingDomainEntity {
   @Column({ type: 'timestamptz', nullable: true })
   verifiedAt: Date | null;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.emailingDomains, {

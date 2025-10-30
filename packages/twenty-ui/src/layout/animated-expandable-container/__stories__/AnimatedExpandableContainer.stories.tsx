@@ -6,7 +6,7 @@ import { AnimatedExpandableContainer } from '../components/AnimatedExpandableCon
 
 const StyledButton = styled.button`
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(4)};
-  background-color: ${({ theme }) => theme.color.blue50};
+  background-color: ${({ theme }) => theme.color.blue10};
   color: ${({ theme }) => theme.font.color.primary};
   border: none;
   border-radius: ${({ theme }) => theme.spacing(1)};
@@ -14,7 +14,7 @@ const StyledButton = styled.button`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 
   &:hover {
-    background-color: ${({ theme }) => theme.color.blue40};
+    background-color: ${({ theme }) => theme.color.blue8};
   }
 `;
 

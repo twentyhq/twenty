@@ -4,6 +4,7 @@ import { capitalize } from 'twenty-shared/utils';
 type GroupByOperationFactoryParams = {
   objectMetadataSingularName: string;
   objectMetadataPluralName: string;
+  orderByForRecords?: object[];
   groupBy: object[];
   filter?: object;
   orderBy?: object[];
@@ -17,6 +18,7 @@ export const groupByOperationFactory = ({
   groupBy,
   filter = {},
   orderBy = [],
+  orderByForRecords = [],
   viewId,
   gqlFields,
 }: GroupByOperationFactoryParams) => ({
@@ -33,6 +35,7 @@ export const groupByOperationFactory = ({
     groupBy,
     filter,
     orderBy,
+    orderByForRecords,
     ...(viewId && { viewId }),
   },
 });

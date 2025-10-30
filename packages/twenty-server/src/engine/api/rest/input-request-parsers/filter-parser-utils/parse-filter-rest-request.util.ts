@@ -2,7 +2,7 @@
 import { type FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
 import { addDefaultConjunctionIfMissing } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/add-default-conjunction.util';
 import { checkFilterQuery } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-query.util';
-import { parseFilterWithoutMetadataValidation } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-without-metadata-validation.util';
+import { parseFilter } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 
 export const parseFilterRestRequest = (
@@ -18,5 +18,5 @@ export const parseFilterRestRequest = (
 
   filterQuery = addDefaultConjunctionIfMissing(filterQuery);
 
-  return parseFilterWithoutMetadataValidation(filterQuery);
+  return parseFilter(filterQuery);
 };

@@ -112,8 +112,8 @@ describe('Core REST API Update One endpoint', () => {
       path: `/people/${NOT_EXISTING_TEST_PERSON_ID}`,
     });
 
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe('EntityNotFoundError');
-    // expect(response.body.message).toBe('Record not found');
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('NotFoundException');
+    expect(response.body.messages[0]).toBe('Record not found');
   });
 });

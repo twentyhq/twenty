@@ -4,7 +4,6 @@ import GraphQLJSON from 'graphql-type-json';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
-import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -31,13 +30,6 @@ export const metadataModuleFactory = async (
     },
     resolvers: { JSON: GraphQLJSON },
     plugins: [
-      useThrottler({
-        ttl: twentyConfigService.get('API_RATE_LIMITING_LONG_TTL_IN_MS') / 1000,
-        limit: twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
-        identifyFn: (context) => {
-          return context.req.user?.id ?? context.req.ip ?? 'anonymous';
-        },
-      }),
       useGraphQLErrorHandlerHook({
         metricsService: metricsService,
         exceptionHandlerService,

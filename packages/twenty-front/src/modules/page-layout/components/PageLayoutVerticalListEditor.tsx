@@ -1,4 +1,6 @@
+import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
   DragDropContext,
@@ -33,8 +35,20 @@ export const PageLayoutVerticalListEditor = ({
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
+  const setDraggingWidgetId = useSetRecoilComponentState(
+    pageLayoutDraggingWidgetIdComponentState,
+  );
+
   return (
-    <DragDropContext onDragEnd={onReorder}>
+    <DragDropContext
+      onDragStart={(result) => {
+        setDraggingWidgetId(result.draggableId);
+      }}
+      onDragEnd={(result) => {
+        setDraggingWidgetId(null);
+        onReorder(result);
+      }}
+    >
       <Droppable droppableId={droppableId}>
         {(provided) => (
           <StyledVerticalListContainer
@@ -53,7 +67,10 @@ export const PageLayoutVerticalListEditor = ({
                   >
                     {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                     <div {...provided.dragHandleProps}>
-                      <WidgetRenderer widget={widget} />
+                      <WidgetRenderer
+                        widget={widget}
+                        widgetCardContext="recordPage"
+                      />
                     </div>
                   </StyledDraggableWrapper>
                 )}

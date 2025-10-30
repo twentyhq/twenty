@@ -1,7 +1,5 @@
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
@@ -12,8 +10,6 @@ import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fi
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { type View } from '@/views/types/View';
-import { ViewType } from '@/views/types/ViewType';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
@@ -84,27 +80,6 @@ export const SettingsObjectNewFieldConfigure = () => {
   }, [fieldType, formConfig]);
 
   const [isSaving, setIsSaving] = useState(false);
-
-  useFindManyRecords<View>({
-    objectNameSingular: CoreObjectNameSingular.View,
-    filter: {
-      type: { eq: ViewType.Table },
-      objectMetadataId: { eq: activeObjectMetadataItem?.id },
-    },
-  });
-
-  const relationObjectMetadataId = formConfig.watch(
-    'relation.objectMetadataId',
-  );
-
-  useFindManyRecords<View>({
-    objectNameSingular: CoreObjectNameSingular.View,
-    skip: !relationObjectMetadataId,
-    filter: {
-      type: { eq: ViewType.Table },
-      objectMetadataId: { eq: relationObjectMetadataId },
-    },
-  });
 
   useEffect(() => {
     if (!activeObjectMetadataItem) {

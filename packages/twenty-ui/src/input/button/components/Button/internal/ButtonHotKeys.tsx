@@ -37,7 +37,7 @@ const StyledShortcutLabel = styled.div<{
       case 'danger':
         return variant === 'primary'
           ? theme.border.color.danger
-          : theme.color.red40;
+          : theme.color.red8;
       default:
         return theme.font.color.light;
     }

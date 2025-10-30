@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import {
   RestInputRequestParserException,
@@ -9,6 +11,8 @@ export const parseAggregateFieldsRestRequest = (
   request: AuthenticatedRequest,
 ): CommonSelectedFields => {
   const aggregateFieldsQuery = request.query.aggregate;
+
+  if (!isDefined(aggregateFieldsQuery)) return {};
 
   if (typeof aggregateFieldsQuery !== 'string') {
     throw new RestInputRequestParserException(

@@ -21,8 +21,6 @@ const StyledEditorContainer = styled.div<{
     width: 100%;
     height: 100%;
     min-height: ${({ minHeight }) => minHeight}px;
-    max-width: ${({ maxWidth }) => maxWidth}px;
-    margin: 0 auto;
   }
 
   .tiptap {
@@ -49,22 +47,27 @@ const StyledEditorContainer = styled.div<{
     }
 
     .variable-tag {
-      background-color: ${({ theme }) => theme.color.blue10};
+      background-color: ${({ theme }) => theme.color.blue3};
       border-radius: ${({ theme }) => theme.border.radius.sm};
       color: ${({ theme }) => theme.color.blue};
       padding: ${({ theme }) => theme.spacing(1)};
     }
 
     h1 {
-      font-size: 36px;
+      font-size: 32px;
     }
 
     h2 {
-      font-size: 30px;
+      font-size: 24px;
     }
 
     h3 {
-      font-size: 24px;
+      font-size: 16px;
+    }
+
+    li {
+      margin-bottom: ${({ theme }) => theme.spacing(2)};
+      line-height: 1.5;
     }
   }
 

@@ -1,13 +1,13 @@
-import { getDecoratedClass } from '../../utils/get-decorated-class';
+import { getObjectMetadataDecoratedClass } from '../../utils/get-object-metadata-decorated-class';
 
 describe('getDecoratedClass', () => {
   it('should return properly formatted class', () => {
-    const result = getDecoratedClass({
+    const result = getObjectMetadataDecoratedClass({
       data: { nameSingular: 'Name', namePlural: 'Names' },
       name: 'MyNewObject',
     });
 
-    const expectedResult = `import { ObjectMetadata } from 'twenty-sdk';
+    const expectedResult = `import { ObjectMetadata } from 'twenty-sdk/application';
 
 @ObjectMetadata({
   nameSingular: 'Name',

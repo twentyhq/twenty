@@ -13,8 +13,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 
-// TODO prastoin deprecate cleanupViewRecords that breaks this test suite
-describe.skip('successful find view with all sub-relations (e2e)', () => {
+describe('successful find view with all sub-relations (e2e)', () => {
   let companyObjectMetadataId: string;
 
   const COMPREHENSIVE_VIEW_GQL_FIELDS = `

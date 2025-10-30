@@ -1,4 +1,4 @@
-import { Body, Container, Head, Html } from '@react-email/components';
+import { Body, Head, Html } from '@react-email/components';
 import { type JSONContent } from '@tiptap/core';
 import { mappedNodeContent } from 'src/utils/email-renderer/renderers/render-node';
 
@@ -17,18 +17,7 @@ export const reactMarkupFromJSON = (json: JSONContent | string) => {
           }}
         />
       </Head>
-      <Body>
-        <Container
-          style={{
-            width: '100%',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            borderStyle: 'solid',
-          }}
-        >
-          {jsxNodes}
-        </Container>
-      </Body>
+      <Body>{jsxNodes}</Body>
     </Html>
   );
 };

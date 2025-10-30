@@ -1,6 +1,5 @@
-import { msg } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { msg } from '@lingui/core/macro';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -44,7 +43,7 @@ export const generateViewGroupExceptionMessage = (
     case ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return 'FieldMetadataId is required';
     default:
-      assertUnreachable(key);
+      return 'unknown';
   }
 };
 
@@ -58,5 +57,8 @@ export const generateViewGroupUserFriendlyExceptionMessage = (
       return msg`ViewId is required to create a view group.`;
     case ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return msg`FieldMetadataId is required to create a view group.`;
+    default: {
+      return msg`unknown`;
+    }
   }
 };
