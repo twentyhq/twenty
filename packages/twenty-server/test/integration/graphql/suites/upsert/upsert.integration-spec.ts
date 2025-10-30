@@ -8,7 +8,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 const createRecordsQuery = gql`
   mutation CreateRecords(
-    $data: [TestRecordObjectCreateInput!]
+    $data: [TestRecordObjectCreateInput!]!
     $upsert: Boolean
   ) {
     createTestRecordObjects(data: $data, upsert: $upsert) {
