@@ -2,9 +2,9 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layou
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 import { msg } from '@lingui/core/macro';
 import { IconChartBar } from 'twenty-ui/display';
-import { isChartSettingDisabled } from '../isChartSettingDisabled';
+import { shouldHideChartSetting } from '../shouldHideChartSetting';
 
-describe('isChartSettingDisabled', () => {
+describe('shouldHideChartSetting', () => {
   const mockItemWithoutDependencies: ChartSettingsItem = {
     id: CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS,
     label: msg`Data Labels`,
@@ -45,7 +45,7 @@ describe('isChartSettingDisabled', () => {
 
   describe('item without dependencies', () => {
     it('should return false when item has no dependencies', () => {
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         mockItemWithoutDependencies,
         'valid-object-id',
         true,
@@ -55,7 +55,7 @@ describe('isChartSettingDisabled', () => {
     });
 
     it('should return false when item has no dependencies even with no object metadata', () => {
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         mockItemWithoutDependencies,
         '',
         false,
@@ -67,7 +67,7 @@ describe('isChartSettingDisabled', () => {
 
   describe('item depending on SOURCE', () => {
     it('should return true when no object metadata and item depends on SOURCE', () => {
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         mockItemDependingOnSource,
         '',
         true,
@@ -77,7 +77,7 @@ describe('isChartSettingDisabled', () => {
     });
 
     it('should return false when object metadata exists and item depends on SOURCE', () => {
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         mockItemDependingOnSource,
         'valid-object-id',
         true,
@@ -89,7 +89,7 @@ describe('isChartSettingDisabled', () => {
 
   describe('item depending on GROUP_BY', () => {
     it('should return true when group by is not enabled and item depends on GROUP_BY', () => {
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         mockItemDependingOnGroupBy,
         'valid-object-id',
         false,
@@ -99,7 +99,7 @@ describe('isChartSettingDisabled', () => {
     });
 
     it('should return false when group by is enabled and item depends on GROUP_BY', () => {
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         mockItemDependingOnGroupBy,
         'valid-object-id',
         true,
@@ -111,7 +111,7 @@ describe('isChartSettingDisabled', () => {
 
   describe('item with multiple dependencies', () => {
     it('should return true if any dependency is not met (no object metadata)', () => {
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         mockItemWithMultipleDependencies,
         '',
         true,
@@ -121,7 +121,7 @@ describe('isChartSettingDisabled', () => {
     });
 
     it('should return true if any dependency is not met (group by disabled)', () => {
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         mockItemWithMultipleDependencies,
         'valid-object-id',
         false,
@@ -131,7 +131,7 @@ describe('isChartSettingDisabled', () => {
     });
 
     it('should return false if all dependencies are met', () => {
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         mockItemWithMultipleDependencies,
         'valid-object-id',
         true,
@@ -152,7 +152,7 @@ describe('isChartSettingDisabled', () => {
         dependsOn: undefined,
       };
 
-      const result = isChartSettingDisabled(
+      const result = shouldHideChartSetting(
         itemWithUndefinedDependsOn,
         '',
         false,
@@ -171,7 +171,7 @@ describe('isChartSettingDisabled', () => {
         dependsOn: [],
       };
 
-      const result = isChartSettingDisabled(itemWithEmptyDependsOn, '', false);
+      const result = shouldHideChartSetting(itemWithEmptyDependsOn, '', false);
 
       expect(result).toBe(false);
     });
