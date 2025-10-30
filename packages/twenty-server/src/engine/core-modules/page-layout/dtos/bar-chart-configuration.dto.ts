@@ -76,7 +76,7 @@ export class BarChartConfigurationDTO {
 
   @Field(() => AxisNameDisplay, {
     nullable: true,
-    defaultValue: AxisNameDisplay.BOTH,
+    defaultValue: AxisNameDisplay.NONE,
   })
   @IsEnum(AxisNameDisplay)
   @IsOptional()
