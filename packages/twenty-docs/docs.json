@@ -73,7 +73,7 @@
           },
           {
             "group": "Workflows",
-            "icon": "workflow",
+            "icon": "bolt",
             "pages": [
               "user-guide/workflows/getting-started-workflows",
               "user-guide/workflows/workflow-features",
@@ -86,7 +86,7 @@
           },
           {
             "group": "Collaboration",
-            "icon": "message-circle",
+            "icon": "envelope",
             "pages": [
               "user-guide/collaboration/emails-and-calendars",
               "user-guide/collaboration/notes",
@@ -109,7 +109,7 @@
           },
           {
             "group": "Settings",
-            "icon": "settings",
+            "icon": "gear",
             "pages": [
               "user-guide/settings/profile-settings",
               "user-guide/settings/experience-settings",
