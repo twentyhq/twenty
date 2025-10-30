@@ -89,6 +89,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     if (availableFieldsForKanban.length === 0) {
       navigateToSelectSettings();
       closeDropdown(dropdownId);
+      return;
     }
     if (currentView?.type !== ViewType.Kanban) {
       await setAndPersistViewType(ViewType.Kanban);
@@ -102,6 +103,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     if (availableFieldsForCalendar.length === 0) {
       navigateToDateFieldSettings();
       closeDropdown(dropdownId);
+      return;
     }
     if (currentView?.type !== ViewType.Calendar) {
       await setAndPersistViewType(ViewType.Calendar);

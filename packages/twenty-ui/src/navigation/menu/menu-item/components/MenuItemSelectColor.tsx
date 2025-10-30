@@ -21,16 +21,31 @@ type MenuItemSelectColorProps = {
 };
 
 export const colorLabels: Record<ThemeColor, string> = {
-  green: 'Green',
+  gray: 'Gray',
+  tomato: 'Tomato',
+  red: 'Red',
+  ruby: 'Ruby',
+  crimson: 'Crimson',
+  pink: 'Pink',
+  plum: 'Plum',
+  purple: 'Purple',
+  violet: 'Violet',
+  iris: 'Iris',
+  cyan: 'Cyan',
   turquoise: 'Turquoise',
   sky: 'Sky',
   blue: 'Blue',
-  purple: 'Purple',
-  pink: 'Pink',
-  red: 'Red',
+  jade: 'Jade',
+  green: 'Green',
+  grass: 'Grass',
+  mint: 'Mint',
+  lime: 'Lime',
+  bronze: 'Bronze',
+  gold: 'Gold',
+  brown: 'Brown',
   orange: 'Orange',
+  amber: 'Amber',
   yellow: 'Yellow',
-  gray: 'Gray',
 };
 
 export const MenuItemSelectColor = ({

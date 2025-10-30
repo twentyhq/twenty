@@ -42,7 +42,7 @@ export class WebhookEntity {
   secret: string;
 
   @Field(() => UUIDScalarType)
-  @Column('uuid')
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @Field()

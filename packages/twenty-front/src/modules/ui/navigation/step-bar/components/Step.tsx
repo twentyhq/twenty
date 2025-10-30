@@ -118,7 +118,7 @@ export const Step = ({
         {isInPreviousSteps && (
           <AnimatedCheckmark
             isAnimating={isInPreviousSteps}
-            color={theme.grayScale.gray60}
+            color={theme.grayScale.gray12}
           />
         )}
         {!isInPreviousSteps && (

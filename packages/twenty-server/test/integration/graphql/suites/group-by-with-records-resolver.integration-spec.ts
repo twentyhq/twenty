@@ -170,7 +170,7 @@ describe('basic group-by with records', () => {
     const response = await makeGraphqlAPIRequest({
       query: gql`
         query OpportunitiesGroupBy(
-          $groupBy: [OpportunityGroupByInput!]
+          $groupBy: [OpportunityGroupByInput!]!
           $filter: OpportunityFilterInput
         ) {
           opportunitiesGroupBy(groupBy: $groupBy, filter: $filter) {
@@ -293,7 +293,7 @@ describe('basic group-by with records', () => {
     const response = await makeGraphqlAPIRequest({
       query: gql`
         query OpportunitiesGroupBy(
-          $groupBy: [OpportunityGroupByInput!]
+          $groupBy: [OpportunityGroupByInput!]!
           $filter: OpportunityFilterInput
         ) {
           opportunitiesGroupBy(groupBy: $groupBy, filter: $filter) {
@@ -374,7 +374,7 @@ describe('basic group-by with records', () => {
     const response = await makeGraphqlAPIRequest({
       query: gql`
         query CompaniesGroupBy(
-          $groupBy: [CompanyGroupByInput!]
+          $groupBy: [CompanyGroupByInput!]!
           $filter: CompanyFilterInput
         ) {
           companiesGroupBy(groupBy: $groupBy, filter: $filter) {
@@ -464,7 +464,7 @@ describe('basic group-by with records', () => {
       return {
         query: gql`
           query OpportunitiesGroupBy(
-            $groupBy: [OpportunityGroupByInput!]
+            $groupBy: [OpportunityGroupByInput!]!
             $filter: OpportunityFilterInput
             $orderByForRecords: [OpportunityOrderByInput!]
           ) {
