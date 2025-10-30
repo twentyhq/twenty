@@ -11,10 +11,10 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { MetadataValidationRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { flatEntityDeletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-entity-deleted-created-updated-matrix-dispatcher.util';
 import { getMetadataEmptyWorkspaceMigrationActionRecord } from 'src/engine/workspace-manager/workspace-migration-v2/utils/get-metadata-empty-workspace-migration-action-record.util';
 import { FailedFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/failed-flat-entity-validate-and-build.type';
@@ -83,13 +83,13 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     );
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'entity processing');
 
-    let optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
+    const optimisticFlatEntityMaps = structuredClone(fromFlatEntityMaps);
     const actionsResult = getMetadataEmptyWorkspaceMigrationActionRecord(
       this.metadataName,
     );
     const allValidationResult: FailedFlatEntityValidateAndBuild<T>['errors'] =
       [];
-    let remainingFlatEntityMapsToCreate = structuredClone(
+    const remainingFlatEntityMapsToCreate = structuredClone(
       createdFlatEntityMaps,
     );
 
@@ -108,11 +108,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         );
       }
 
-      remainingFlatEntityMapsToCreate =
-        deleteFlatEntityFromFlatEntityMapsOrThrow({
-          entityToDeleteId: flatEntityToCreateId,
-          flatEntityMaps: remainingFlatEntityMapsToCreate,
-        });
+      deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
+        entityToDeleteId: flatEntityToCreateId,
+        flatEntityMaps: remainingFlatEntityMapsToCreate,
+      });
 
       const validationResult = await this.validateFlatEntityCreation({
         dependencyOptimisticFlatEntityMaps,
@@ -128,7 +127,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         continue;
       }
 
-      optimisticFlatEntityMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatEntityToCreate,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
@@ -151,7 +150,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
       'deletion validation',
     );
 
-    let remainingFlatEntityMapsToDelete = structuredClone(
+    const remainingFlatEntityMapsToDelete = structuredClone(
       deletedFlatEntityMaps,
     );
 
@@ -169,11 +168,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         );
       }
 
-      remainingFlatEntityMapsToDelete =
-        deleteFlatEntityFromFlatEntityMapsOrThrow({
-          entityToDeleteId: flatEntityToDeleteId,
-          flatEntityMaps: remainingFlatEntityMapsToDelete,
-        });
+      deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
+        entityToDeleteId: flatEntityToDeleteId,
+        flatEntityMaps: remainingFlatEntityMapsToDelete,
+      });
 
       const validationResult = await this.validateFlatEntityDeletion({
         dependencyOptimisticFlatEntityMaps,
@@ -189,7 +187,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         continue;
       }
 
-      optimisticFlatEntityMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
+      deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
         entityToDeleteId: flatEntityToDelete.id,
         flatEntityMaps: optimisticFlatEntityMaps,
       });
@@ -253,7 +251,7 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
         }),
       };
 
-      optimisticFlatEntityMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
+      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
         flatEntity: updatedFlatEntity,
         flatEntityMaps: optimisticFlatEntityMaps,
       });

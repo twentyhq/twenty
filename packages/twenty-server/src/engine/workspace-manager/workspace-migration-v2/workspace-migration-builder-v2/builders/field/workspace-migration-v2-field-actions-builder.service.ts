@@ -5,7 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -54,7 +54,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     });
 
     const updatedFlatObjectMetadataMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
+      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
         flatEntity: {
           ...flatObjectMetadata,
           fieldMetadataIds: [
@@ -108,7 +108,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService extends WorkspaceEnt
     });
 
     const updatedFlatObjectMetadataMaps = isDefined(flatObjectMetadata)
-      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+      ? replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
           flatEntity: {
             ...flatObjectMetadata,
             fieldMetadataIds: flatObjectMetadata.fieldMetadataIds.filter(

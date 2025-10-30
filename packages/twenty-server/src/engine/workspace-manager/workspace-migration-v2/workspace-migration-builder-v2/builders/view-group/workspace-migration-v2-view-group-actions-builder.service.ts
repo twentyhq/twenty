@@ -5,7 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { UpdateViewGroupAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-group/types/workspace-migration-view-group-action-v2.type';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -51,7 +51,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
       flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
-    const updatedFlatViewMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
+    const updatedFlatViewMaps = replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
       flatEntity: {
         ...flatView,
         viewGroupIds: [...flatView.viewGroupIds, flatViewGroupToValidate.id],
@@ -65,7 +65,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     });
 
     const updatedFlatFieldMetadataMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
+      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
         flatEntity: {
           ...flatFieldMetadata,
           viewGroupIds: [
@@ -119,7 +119,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     });
 
     const updatedFlatViewMaps = isDefined(flatView)
-      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+      ? replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
           flatEntity: {
             ...flatView,
             viewGroupIds: flatView.viewGroupIds.filter(
@@ -136,7 +136,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
     });
 
     const updatedFlatFieldMetadataMaps = isDefined(flatFieldMetadata)
-      ? replaceFlatEntityInFlatEntityMapsOrThrow({
+      ? replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
           flatEntity: {
             ...flatFieldMetadata,
             viewGroupIds: flatFieldMetadata.viewGroupIds.filter(
