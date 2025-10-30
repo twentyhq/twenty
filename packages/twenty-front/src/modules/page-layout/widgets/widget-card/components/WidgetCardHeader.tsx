@@ -19,7 +19,6 @@ export type WidgetCardHeaderProps = {
 const StyledWidgetCardHeader = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(6)};
   flex-shrink: 0;
 `;
