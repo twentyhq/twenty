@@ -25,13 +25,10 @@
         "tab": "User Guide",
         "groups": [
           {
-            "group": "User Guide",
-            "pages": ["user-guide/introduction"]
-          },
-          {
             "group": "Getting Started",
             "icon": "rocket",
             "pages": [
+              "user-guide/introduction",
               "user-guide/getting-started/what-is-twenty",
               "user-guide/getting-started/create-workspace",
               "user-guide/getting-started/getting-around-twenty",
@@ -141,13 +138,13 @@
         "tab": "Developers",
         "groups": [
           {
-            "group": "Developers",
-            "pages": ["developers/introduction"]
+            "group": "Developers"
           },
           {
             "group": "Getting Started",
             "icon": "rocket",
             "pages": [
+              "developers/introduction",
               "developers/local-setup",
               {
                 "group": "Self-Hosting",
@@ -204,7 +201,7 @@
         "tab": "Twenty UI",
         "groups": [
           {
-            "group": "Overview",
+            "group": "Twenty UI",
             "pages": ["twenty-ui/introduction"]
           },
           {
