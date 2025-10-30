@@ -15834,6 +15834,8 @@ __metadata:
   bin:
     browsers: lib/cjs/main-cli.js
   checksum: 10c0/8665a7d5be5e1489855780b7684bf94a55647b54a8391474cbdc1defdb2e4e6642722ef1d20bfabe49d3aed3eec2c8db41d6eabc24440f4a16d071effc5a1049
+  languageName: node
+  linkType: hard
 
 "@radix-ui/colors@npm:^3.0.0":
   version: 3.0.0
@@ -35872,7 +35874,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fdir@npm:^6.4.4, fdir@npm:^6.4.6":
+"fdir@npm:^6.4.4":
   version: 6.4.6
   resolution: "fdir@npm:6.4.6"
   peerDependencies:
@@ -36834,14 +36836,6 @@ __metadata:
   checksum: 10c0/4e481d418e5a32061c36fbb90d1b225a254cc5b2df5f0b25da215dcd335a3c111f0c2023ffda43140727a9cafb62dac41d022da82c08f31083ee89f714ee3b83
   languageName: node
   linkType: hard
-
-"get-func-name@npm:^2.0.1, get-func-name@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "get-func-name@npm:2.0.2"
-  checksum: 10c0/89830fd07623fa73429a711b9daecdb304386d237c71268007f788f113505ef1d4cc2d0b9680e072c5082490aec9df5d7758bf5ac6f1c37062855e8e3dc0b9df
-  languageName: node
-  linkType: hard
-
 
 "get-intrinsic@npm:^1.1.3, get-intrinsic@npm:^1.2.2, get-intrinsic@npm:^1.2.4, get-intrinsic@npm:^1.2.5, get-intrinsic@npm:^1.2.6, get-intrinsic@npm:^1.2.7, get-intrinsic@npm:^1.3.0":
   version: 1.3.0
@@ -47010,15 +47004,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"onetime@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "onetime@npm:6.0.0"
-  dependencies:
-    mimic-fn: "npm:^4.0.0"
-  checksum: 10c0/4eef7c6abfef697dd4479345a4100c382d73c149d2d56170a54a07418c50816937ad09500e1ed1e79d235989d073a9bade8557122aee24f0576ecde0f392bb6c
-  languageName: node
-  linkType: hard
-
 "oniguruma-parser@npm:^0.12.1":
   version: 0.12.1
   resolution: "oniguruma-parser@npm:0.12.1"
@@ -47036,7 +47021,6 @@ __metadata:
   checksum: 10c0/bc034e84dfee4dbc061cf6364023e66e1667fb8dc3afcad3b7d6a2c77e2d4a4809396ee2fb8c1fd3d6f00f76f7ca14b773586bf862c5f0c0074c059e2a219252
   languageName: node
   linkType: hard
-
 
 "only@npm:~0.0.2":
   version: 0.0.2
@@ -48592,7 +48576,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.40, postcss@npm:^8.4.47, postcss@npm:^8.4.48, postcss@npm:^8.5.6":
+"postcss@npm:^8.4.47, postcss@npm:^8.4.48, postcss@npm:^8.5.6":
   version: 8.5.6
   resolution: "postcss@npm:8.5.6"
   dependencies:
@@ -57361,6 +57345,8 @@ __metadata:
   bin:
     uuid: dist/esm/bin/uuid
   checksum: 10c0/34aa51b9874ae398c2b799c88a127701408cd581ee89ec3baa53509dd8728cbb25826f2a038f9465f8b7be446f0fbf11558862965b18d21c993684297628d4d3
+  languageName: node
+  linkType: hard
 
 "uuid@npm:^13.0.0":
   version: 13.0.0
