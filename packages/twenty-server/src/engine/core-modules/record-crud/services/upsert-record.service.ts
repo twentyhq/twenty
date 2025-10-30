@@ -30,13 +30,8 @@ export class UpsertRecordService {
   ) {}
 
   async execute(params: UpsertRecordParams): Promise<ToolOutput> {
-    const {
-      objectName,
-      objectRecord,
-      fieldsToUpdate,
-      workspaceId,
-      rolePermissionConfig,
-    } = params;
+    const { objectName, objectRecord, workspaceId, rolePermissionConfig } =
+      params;
 
     if (!workspaceId) {
       return {
@@ -54,7 +49,9 @@ export class UpsertRecordService {
           rolePermissionConfig,
         );
 
-      const fieldsToUpdateArray = fieldsToUpdate || Object.keys(objectRecord);
+      const fieldsToUpdateArray = Object.keys(objectRecord).filter((field) =>
+        isDefined(objectRecord[field]),
+      );
 
       const { objectMetadataItemWithFieldsMaps } =
         await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(

@@ -42,6 +42,7 @@ type GraphWidgetBarChartProps = {
   seriesLabels?: Record<string, string>;
   rangeMin?: number;
   rangeMax?: number;
+  enableGroupTooltip?: boolean;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -69,6 +70,7 @@ export const GraphWidgetBarChart = ({
   seriesLabels,
   rangeMin,
   rangeMax,
+  enableGroupTooltip,
   displayType,
   decimals,
   prefix,
@@ -80,6 +82,9 @@ export const GraphWidgetBarChart = ({
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const shouldEnableGroupTooltip =
+    enableGroupTooltip ?? groupMode === 'stacked';
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -112,6 +117,7 @@ export const GraphWidgetBarChart = ({
     data,
     indexBy,
     formatOptions,
+    enableGroupTooltip: shouldEnableGroupTooltip,
   });
 
   const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
@@ -137,9 +143,9 @@ export const GraphWidgetBarChart = ({
 
     return (
       <GraphWidgetTooltip
-        items={[tooltipData.tooltipItem]}
+        items={tooltipData.tooltipItems}
         showClickHint={tooltipData.showClickHint}
-        title={tooltipData.title}
+        indexLabel={tooltipData.indexLabel}
       />
     );
   };
