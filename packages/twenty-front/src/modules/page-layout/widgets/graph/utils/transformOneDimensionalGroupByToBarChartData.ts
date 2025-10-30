@@ -45,6 +45,11 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     subFieldName: primaryAxisSubFieldName ?? undefined,
   });
 
+  const aggregateValueKey =
+    indexByKey === aggregateField.name
+      ? `${aggregateField.name}-aggregate`
+      : aggregateField.name;
+
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
   const limitedResults = rawResults.slice(0, GRAPH_MAXIMUM_NUMBER_OF_GROUPS);
 
@@ -71,13 +76,13 @@ export const transformOneDimensionalGroupByToBarChartData = ({
 
     return {
       [indexByKey]: xValue,
-      [aggregateField.name]: aggregateValue,
+      [aggregateValueKey]: aggregateValue,
     };
   });
 
   const series: BarChartSeries[] = [
     {
-      key: aggregateField.name,
+      key: aggregateValueKey,
       label: aggregateField.label,
       color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
     },
@@ -86,7 +91,7 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   return {
     data,
     indexBy: indexByKey,
-    keys: [aggregateField.name],
+    keys: [aggregateValueKey],
     series,
     hasTooManyGroups: rawResults.length > GRAPH_MAXIMUM_NUMBER_OF_GROUPS,
   };
