@@ -29,10 +29,12 @@ import {
   type AggregationField,
   getAvailableAggregationsFromObjectFields,
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 export type OrderByCondition = {
@@ -81,7 +83,16 @@ export class GraphqlQueryOrderFieldParser {
             const orderByCasting =
               this.getOptionalOrderByCasting(fieldMetadata);
 
-            acc[`"${objectNameSingular}"."${fieldName}"${orderByCasting}`] =
+            const columnName = isFieldMetadataRelationOrMorphRelation(
+              fieldMetadata,
+            )
+              ? formatColumnNameForRelationField(
+                  fieldMetadata.name,
+                  fieldMetadata.settings,
+                )
+              : fieldName;
+
+            acc[`"${objectNameSingular}"."${columnName}"${orderByCasting}`] =
               convertOrderByToFindOptionsOrder(
                 orderByDirection as OrderByDirection,
                 isForwardPagination,
