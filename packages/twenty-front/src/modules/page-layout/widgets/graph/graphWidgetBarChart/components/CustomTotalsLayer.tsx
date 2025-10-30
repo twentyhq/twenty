@@ -17,19 +17,28 @@ type CustomTotalsLayerProps = Pick<
 type LabelData = {
   key: string;
   value: number;
-  x: number;
-  y: number;
+  verticalX: number;
+  verticalY: number;
+  horizontalX: number;
+  horizontalY: number;
 };
 
 const computeGroupedLabels = (
   bars: readonly ComputedBarDatum<BarChartDataItem>[],
 ): LabelData[] => {
-  return bars.map((bar) => ({
-    key: `value-${bar.data.id}-${bar.data.indexValue}`,
-    value: Number(bar.data.value),
-    x: bar.x + bar.width / 2,
-    y: bar.y,
-  }));
+  return bars.map((bar) => {
+    const centerX = bar.x + bar.width / 2;
+    const centerY = bar.y + bar.height / 2;
+
+    return {
+      key: `value-${bar.data.id}-${bar.data.indexValue}`,
+      value: Number(bar.data.value),
+      verticalX: centerX,
+      verticalY: bar.y,
+      horizontalX: bar.x + bar.width,
+      horizontalY: centerY,
+    };
+  });
 };
 
 const computeStackedLabels = (
@@ -40,6 +49,7 @@ const computeStackedLabels = (
     {
       total: number;
       maxY: number;
+      maxX: number;
       bars: ComputedBarDatum<BarChartDataItem>[];
     }
   >();
@@ -51,27 +61,34 @@ const computeStackedLabels = (
     if (isDefined(existingGroup)) {
       existingGroup.total += Number(bar.data.value);
       existingGroup.maxY = Math.min(existingGroup.maxY, bar.y);
+      existingGroup.maxX = Math.max(existingGroup.maxX, bar.x + bar.width);
       existingGroup.bars.push(bar);
     } else {
       groupTotals.set(groupKey, {
         total: Number(bar.data.value),
         maxY: bar.y,
+        maxX: bar.x + bar.width,
         bars: [bar],
       });
     }
   }
 
   return Array.from(groupTotals.entries()).map(
-    ([groupKey, { total, maxY, bars: groupBars }]) => {
+    ([groupKey, { total, maxY, maxX, bars: groupBars }]) => {
       const centerX =
         groupBars.reduce((acc, bar) => acc + bar.x + bar.width / 2, 0) /
+        groupBars.length;
+      const centerY =
+        groupBars.reduce((acc, bar) => acc + bar.y + bar.height / 2, 0) /
         groupBars.length;
 
       return {
         key: `total-${groupKey}`,
         value: total,
-        x: centerX,
-        y: maxY,
+        verticalX: centerX,
+        verticalY: maxY,
+        horizontalX: maxX,
+        horizontalY: centerY,
       };
     },
   );
@@ -97,8 +114,8 @@ export const CustomTotalsLayer = ({
       {labels.map((label) => (
         <animated.text
           key={label.key}
-          x={label.x}
-          y={label.y}
+          x={isVertical ? label.verticalX : label.horizontalX}
+          y={isVertical ? label.verticalY : label.horizontalY}
           textAnchor={isVertical ? 'middle' : 'start'}
           dominantBaseline={isVertical ? 'auto' : 'central'}
           style={{
