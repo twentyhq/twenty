@@ -76,11 +76,11 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     );
 
     if (args.dryRun) {
-      return this.createDryRunResponse(
+      return await this.createDryRunResponse(
+        args,
+        queryRunnerContext,
         priorityRecord,
         mergedData,
-        objectMetadataItemWithFieldMaps,
-        objectMetadataMaps,
       );
     }
 
@@ -239,25 +239,34 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     return fieldMetadata?.isSystem ?? false;
   }
 
-  private createDryRunResponse(
+  private async createDryRunResponse(
+    args: CommonExtendedInput<MergeManyQueryArgs>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
     priorityRecord: ObjectRecord,
     mergedData: Partial<ObjectRecord>,
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
-  ): ObjectRecord {
-    const dryRunRecord = {
+  ): Promise<ObjectRecord> {
+    const dryRunRecord: ObjectRecord = {
       ...priorityRecord,
       ...mergedData,
       id: uuidv4(),
       deletedAt: new Date().toISOString(),
-    } as ObjectRecord;
+    };
+
+    await this.processNestedRelations({
+      args,
+      queryRunnerContext,
+      updatedRecords: [dryRunRecord],
+    });
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
+      new ObjectRecordsToGraphqlConnectionHelper(
+        queryRunnerContext.objectMetadataMaps,
+      );
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: dryRunRecord,
-      objectName: objectMetadataItemWithFieldMaps.nameSingular,
+      objectName:
+        queryRunnerContext.objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,
     });
