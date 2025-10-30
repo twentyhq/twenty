@@ -29,7 +29,6 @@ import {
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { tokenPairState } from '../states/tokenPairState';
 
-import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import {
@@ -67,6 +66,7 @@ import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { loginTokenState } from '../states/loginTokenState';
+import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
