@@ -1917,6 +1917,11 @@ msgstr "Локација"
 msgid "March"
 msgstr "Март"
 
+#. js-lingui-id: hw7Mwk
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
+msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr ""
+
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
