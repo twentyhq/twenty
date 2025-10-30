@@ -45,6 +45,7 @@ type GraphWidgetBarChartProps = {
   rangeMin?: number;
   rangeMax?: number;
   enableGroupTooltip?: boolean;
+  omitNullValues?: boolean;
 } & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
@@ -73,6 +74,7 @@ export const GraphWidgetBarChart = ({
   rangeMin,
   rangeMax,
   enableGroupTooltip,
+  omitNullValues = false,
   displayType,
   decimals,
   prefix,
@@ -181,6 +183,7 @@ export const GraphWidgetBarChart = ({
           offset={theme.spacingMultiplicator * 2}
           layout={layout}
           groupMode={groupMode}
+          omitNullValues={omitNullValues}
         />
       )}
     </>

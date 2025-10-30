@@ -12,6 +12,7 @@ type CustomTotalsLayerProps = Pick<
   offset?: number;
   layout?: 'vertical' | 'horizontal';
   groupMode?: 'grouped' | 'stacked';
+  omitNullValues?: boolean;
 };
 
 type LabelData = {
@@ -100,6 +101,7 @@ export const CustomTotalsLayer = ({
   offset = 0,
   layout = 'vertical',
   groupMode = 'grouped',
+  omitNullValues = false,
 }: CustomTotalsLayerProps) => {
   const theme = useTheme();
   const isVertical = layout === 'vertical';
@@ -109,9 +111,13 @@ export const CustomTotalsLayer = ({
       ? computeStackedLabels(bars)
       : computeGroupedLabels(bars);
 
+  const labelsToRender = labels.filter(
+    (label) => !omitNullValues || label.value !== 0,
+  );
+
   return (
     <>
-      {labels.map((label) => (
+      {labelsToRender.map((label) => (
         <animated.text
           key={label.key}
           x={isVertical ? label.verticalX : label.horizontalX}
