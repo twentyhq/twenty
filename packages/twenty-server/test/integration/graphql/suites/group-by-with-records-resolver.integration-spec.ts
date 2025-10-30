@@ -170,7 +170,7 @@ describe('basic group-by with records', () => {
     const response = await makeGraphqlAPIRequest({
       query: gql`
         query OpportunitiesGroupBy(
-          $groupBy: [OpportunityGroupByInput!]
+          $groupBy: [OpportunityGroupByInput!]!
           $filter: OpportunityFilterInput
         ) {
           opportunitiesGroupBy(groupBy: $groupBy, filter: $filter) {
@@ -206,6 +206,9 @@ describe('basic group-by with records', () => {
             stage: true,
           },
         ],
+        orderByForRecords: {
+          name: 'AscNullsFirst',
+        },
         filter: FILTER_2020,
       },
     });
@@ -218,7 +221,6 @@ describe('basic group-by with records', () => {
     expect(groups).toBeDefined();
     expect(groups).toHaveLength(3);
 
-    // Check that each group has the expected structure
     groups.forEach((group: any) => {
       expect(group.groupByDimensionValues).toBeDefined();
       expect(Array.isArray(group.groupByDimensionValues)).toBe(true);
@@ -226,7 +228,6 @@ describe('basic group-by with records', () => {
       expect(Array.isArray(group.edges)).toBe(true);
     });
 
-    // Find specific groups and verify their content
     const wednesdayNewGroup = groups.find(
       (group: any) =>
         group.groupByDimensionValues.includes('Wednesday') &&
@@ -292,7 +293,7 @@ describe('basic group-by with records', () => {
     const response = await makeGraphqlAPIRequest({
       query: gql`
         query OpportunitiesGroupBy(
-          $groupBy: [OpportunityGroupByInput!]
+          $groupBy: [OpportunityGroupByInput!]!
           $filter: OpportunityFilterInput
         ) {
           opportunitiesGroupBy(groupBy: $groupBy, filter: $filter) {
@@ -373,7 +374,7 @@ describe('basic group-by with records', () => {
     const response = await makeGraphqlAPIRequest({
       query: gql`
         query CompaniesGroupBy(
-          $groupBy: [CompanyGroupByInput!]
+          $groupBy: [CompanyGroupByInput!]!
           $filter: CompanyFilterInput
         ) {
           companiesGroupBy(groupBy: $groupBy, filter: $filter) {
@@ -456,5 +457,96 @@ describe('basic group-by with records', () => {
 
     expect(opportunity4Edge.name).toBe('Opportunity 4');
     expect(opportunity4Edge.stage).toBe('SCREENING');
+  });
+
+  describe('order by for records', () => {
+    const getQueryWithOrderByForRecords = (orderByForRecords: string) => {
+      return {
+        query: gql`
+          query OpportunitiesGroupBy(
+            $groupBy: [OpportunityGroupByInput!]!
+            $filter: OpportunityFilterInput
+            $orderByForRecords: [OpportunityOrderByInput!]
+          ) {
+            opportunitiesGroupBy(
+              groupBy: $groupBy
+              filter: $filter
+              orderByForRecords: $orderByForRecords
+            ) {
+              groupByDimensionValues
+              __typename
+              edges {
+                node {
+                  stage
+                  name
+                }
+              }
+            }
+          }
+        `,
+        variables: {
+          groupBy: [
+            {
+              closeDate: {
+                granularity: 'DAY_OF_THE_WEEK',
+              },
+            },
+            {
+              stage: true,
+            },
+          ],
+          orderByForRecords: [
+            {
+              name: orderByForRecords,
+            },
+          ],
+          filter: FILTER_2020,
+        },
+      };
+    };
+
+    it('sorts by name in ascending order', async () => {
+      const response = await makeGraphqlAPIRequest(
+        getQueryWithOrderByForRecords('AscNullsFirst'),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data).toBeDefined();
+
+      const groups = response.body.data.opportunitiesGroupBy;
+
+      const thursdayNewGroup = groups.find(
+        (group: any) =>
+          group.groupByDimensionValues.includes('Thursday') &&
+          group.groupByDimensionValues.includes('NEW'),
+      );
+
+      expect(thursdayNewGroup).toBeDefined();
+      expect(thursdayNewGroup.edges).toHaveLength(2);
+      expect(thursdayNewGroup.edges[0].node.name).toBe('Opportunity 2');
+      expect(thursdayNewGroup.edges[1].node.name).toBe('Opportunity 3');
+    });
+
+    it('sorts by name in descending order', async () => {
+      const response = await makeGraphqlAPIRequest(
+        getQueryWithOrderByForRecords('DescNullsFirst'),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data).toBeDefined();
+
+      const groups = response.body.data.opportunitiesGroupBy;
+
+      const thursdayNewGroup = groups.find(
+        (group: any) =>
+          group.groupByDimensionValues.includes('Thursday') &&
+          group.groupByDimensionValues.includes('NEW'),
+      );
+
+      expect(thursdayNewGroup).toBeDefined();
+      expect(thursdayNewGroup.edges).toHaveLength(2);
+      expect(thursdayNewGroup.edges[0].node.name).toBe('Opportunity 3');
+      expect(thursdayNewGroup.edges[1].node.name).toBe('Opportunity 2');
+    });
   });
 });

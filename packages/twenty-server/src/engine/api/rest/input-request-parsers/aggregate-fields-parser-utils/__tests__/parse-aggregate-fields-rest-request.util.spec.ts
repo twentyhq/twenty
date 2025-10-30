@@ -62,16 +62,11 @@ describe('parseAggregateFieldsRestRequest', () => {
     );
   });
 
-  it('should throw if aggregate parameter is undefined', () => {
+  it('should early return if aggregate parameter is undefined', () => {
     const request: any = {
       query: {},
     };
 
-    expect(() => parseAggregateFieldsRestRequest(request)).toThrow(
-      new RestInputRequestParserException(
-        'Invalid aggregate query parameter - should be a valid array of string - ex: ["countNotEmptyId", "countEmptyField"]',
-        RestInputRequestParserExceptionCode.INVALID_AGGREGATE_FIELDS_QUERY_PARAM,
-      ),
-    );
+    expect(parseAggregateFieldsRestRequest(request)).toEqual({});
   });
 });

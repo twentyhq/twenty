@@ -28,9 +28,9 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
+import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 import { type AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { type AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 import { type UpdatePasswordOutput } from 'src/engine/core-modules/auth/dto/update-password.dto';
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
 import { type CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.dto';

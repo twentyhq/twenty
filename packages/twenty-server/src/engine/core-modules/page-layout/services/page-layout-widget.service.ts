@@ -21,6 +21,7 @@ import {
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { validateAndTransformWidgetConfiguration } from 'src/engine/core-modules/page-layout/utils/validate-and-transform-widget-configuration.util';
+import { validateWidgetGridPosition } from 'src/engine/core-modules/page-layout/utils/validate-widget-grid-position.util';
 
 @Injectable()
 export class PageLayoutWidgetService {
@@ -115,6 +116,11 @@ export class PageLayoutWidgetService {
       );
     }
 
+    validateWidgetGridPosition(
+      pageLayoutWidgetData.gridPosition,
+      pageLayoutWidgetData.title,
+    );
+
     try {
       await this.pageLayoutTabService.findByIdOrThrow(
         pageLayoutWidgetData.pageLayoutTabId,
@@ -207,6 +213,12 @@ export class PageLayoutWidgetService {
         ),
         PageLayoutWidgetExceptionCode.PAGE_LAYOUT_WIDGET_NOT_FOUND,
       );
+    }
+
+    if (updateData.gridPosition) {
+      const titleForValidation = updateData.title ?? existingWidget.title;
+
+      validateWidgetGridPosition(updateData.gridPosition, titleForValidation);
     }
 
     let validatedConfig: WidgetConfigurationInterface | null = null;

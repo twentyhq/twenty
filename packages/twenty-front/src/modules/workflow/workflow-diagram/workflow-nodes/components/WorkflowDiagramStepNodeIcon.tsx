@@ -52,7 +52,7 @@ export const WorkflowDiagramStepNodeIcon = ({
         case 'DELAY':
         case 'FILTER':
         case 'ITERATOR':
-          return <Icon size={theme.icon.size.md} color={theme.color.green60} />;
+          return <Icon size={theme.icon.size.md} color={theme.color.green12} />;
         default: {
           return (
             <Icon

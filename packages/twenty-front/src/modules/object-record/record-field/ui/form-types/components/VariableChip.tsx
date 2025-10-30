@@ -8,11 +8,11 @@ import { IconAlertTriangle, IconX } from 'twenty-ui/display';
 
 const StyledChip = styled.div<{ deletable: boolean; danger: boolean }>`
   background-color: ${({ theme, danger }) =>
-    danger ? theme.adaptiveColors.red1 : theme.adaptiveColors.blue1};
+    danger ? theme.color.red3 : theme.color.blue3};
   border-width: 1px;
   border-style: solid;
   border-color: ${({ theme, danger }) =>
-    danger ? theme.adaptiveColors.red2 : theme.adaptiveColors.blue2};
+    danger ? theme.color.red5 : theme.color.blue5};
   border-radius: 4px;
   height: 20px;
   box-sizing: border-box;
@@ -62,7 +62,7 @@ const StyledDelete = styled.button<{ danger: boolean }>`
 
   &:hover {
     background-color: ${({ theme, danger }) =>
-      danger ? theme.adaptiveColors.red2 : theme.adaptiveColors.blue2};
+      danger ? theme.color.red5 : theme.color.blue5};
   }
 `;
 

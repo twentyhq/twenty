@@ -3518,6 +3518,11 @@ msgstr "Le champ unique ne peut pas avoir de valeur par défaut"
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "Un index unique ne peut pas être créé pour le champ {fieldName} de type {fieldType}"
 
+#. js-lingui-id: rtir7c
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
+msgid "unknown"
+msgstr ""
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"

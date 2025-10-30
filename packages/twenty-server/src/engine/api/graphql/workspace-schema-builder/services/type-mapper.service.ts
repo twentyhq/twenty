@@ -15,6 +15,7 @@ import {
 } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
@@ -204,7 +205,7 @@ export class TypeMapperService {
       );
     }
 
-    if (options.nullable === false && options.defaultValue === null) {
+    if (options.nullable === false && !isDefined(options.defaultValue)) {
       graphqlType = new GraphQLNonNull(graphqlType) as unknown as T;
     }
 

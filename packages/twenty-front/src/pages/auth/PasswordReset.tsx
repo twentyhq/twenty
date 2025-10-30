@@ -7,6 +7,7 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -84,6 +85,7 @@ export const PasswordReset = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
   const navigate = useNavigateApp();
+  const { redirect } = useRedirect();
 
   const [email, setEmail] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);
@@ -167,7 +169,8 @@ export const PasswordReset = () => {
         formData.newPassword,
         token,
       );
-      navigate(AppPath.Index);
+
+      redirect(AppPath.Index);
     } catch (err) {
       logError(err);
       enqueueErrorSnackBar({

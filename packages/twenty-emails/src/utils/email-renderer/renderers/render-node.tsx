@@ -6,6 +6,9 @@ import { image } from '../nodes/image';
 import { paragraph } from '../nodes/paragraph';
 import { text } from '../nodes/text';
 import { variableTag } from '../nodes/variable-tag';
+import { bulletList } from '../nodes/bullet-list';
+import { listItem } from '../nodes/list-item';
+import { orderedList } from '../nodes/ordered-list';
 
 const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.PARAGRAPH]: paragraph,
@@ -13,6 +16,9 @@ const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.HEADING]: heading,
   [TIPTAP_NODE_TYPES.VARIABLE_TAG]: variableTag,
   [TIPTAP_NODE_TYPES.IMAGE]: image,
+  [TIPTAP_NODE_TYPES.BULLET_LIST]: bulletList,
+  [TIPTAP_NODE_TYPES.ORDERED_LIST]: orderedList,
+  [TIPTAP_NODE_TYPES.LIST_ITEM]: listItem,
 };
 
 const renderNode = (node: JSONContent): ReactNode => {
