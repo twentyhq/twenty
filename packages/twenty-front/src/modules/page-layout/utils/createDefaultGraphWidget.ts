@@ -50,7 +50,7 @@ const createDefaultGraphConfiguration = (
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
+        axisNameDisplay: AxisNameDisplay.NONE,
       };
 
     case GraphType.HORIZONTAL_BAR:
@@ -70,7 +70,7 @@ const createDefaultGraphConfiguration = (
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
+        axisNameDisplay: AxisNameDisplay.NONE,
       };
 
     case GraphType.LINE:

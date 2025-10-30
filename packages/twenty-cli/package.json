@@ -1,6 +1,6 @@
 {
   "name": "twenty-cli",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Command-line interface for Twenty application development",
   "main": "dist/cli.js",
   "bin": {

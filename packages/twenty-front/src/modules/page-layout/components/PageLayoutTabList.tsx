@@ -27,11 +27,18 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListReorderableOverflowDropdown } from '@/page-layout/components/PageLayoutTabListReorderableOverflowDropdown';
 import { PageLayoutTabListStaticOverflowDropdown } from '@/page-layout/components/PageLayoutTabListStaticOverflowDropdown';
 import { PageLayoutTabListVisibleTabs } from '@/page-layout/components/PageLayoutTabListVisibleTabs';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -180,6 +187,57 @@ export const PageLayoutTabList = ({
     [onReorder, setIsTabDragging, toggleClickOutside, openDropdown, dropdownId],
   );
 
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+  );
+  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+    pageLayoutTabSettingsOpenTabIdComponentState,
+    pageLayoutId,
+  );
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+
+  const openTabSettings = useCallback(
+    (tabId: string) => {
+      setTabSettingsOpenTabId(tabId);
+      navigatePageLayoutCommandMenu({
+        commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+      });
+    },
+    [setTabSettingsOpenTabId, navigatePageLayoutCommandMenu],
+  );
+
+  const handleSelectTab = useCallback(
+    (tabId: string) => {
+      if (isPageLayoutInEditMode && activeTabId === tabId) {
+        openTabSettings(tabId);
+        return;
+      }
+      selectTab(tabId);
+    },
+    [isPageLayoutInEditMode, activeTabId, openTabSettings, selectTab],
+  );
+
+  const handleSelectTabFromDropdown = useCallback(
+    (tabId: string) => {
+      if (isPageLayoutInEditMode && activeTabId === tabId) {
+        openTabSettings(tabId);
+        closeOverflowDropdown();
+        return;
+      }
+      selectTabFromDropdown(tabId);
+    },
+    [
+      isPageLayoutInEditMode,
+      activeTabId,
+      openTabSettings,
+      closeOverflowDropdown,
+      selectTabFromDropdown,
+    ],
+  );
+
   if (visibleTabs.length === 0) {
     return null;
   }
@@ -232,7 +290,7 @@ export const PageLayoutTabList = ({
                 behaveAsLinks={behaveAsLinks}
                 loading={loading}
                 onChangeTab={onChangeTab}
-                onSelectTab={selectTab}
+                onSelectTab={handleSelectTab}
                 canReorder={canReorderTabs}
               />
 
@@ -244,7 +302,7 @@ export const PageLayoutTabList = ({
                   isActiveTabHidden={isActiveTabHidden}
                   activeTabId={activeTabId || ''}
                   loading={loading}
-                  onSelect={selectTabFromDropdown}
+                  onSelect={handleSelectTabFromDropdown}
                   visibleTabCount={visibleTabCount}
                   onClose={closeOverflowDropdown}
                 />
@@ -271,7 +329,7 @@ export const PageLayoutTabList = ({
               behaveAsLinks={behaveAsLinks}
               loading={loading}
               onChangeTab={onChangeTab}
-              onSelectTab={selectTab}
+              onSelectTab={handleSelectTab}
               canReorder={canReorderTabs}
             />
             {shouldRenderStaticDropdown && (
@@ -282,7 +340,7 @@ export const PageLayoutTabList = ({
                 isActiveTabHidden={isActiveTabHidden}
                 activeTabId={activeTabId || ''}
                 loading={loading}
-                onSelect={selectTabFromDropdown}
+                onSelect={handleSelectTabFromDropdown}
                 onClose={closeOverflowDropdown}
               />
             )}
