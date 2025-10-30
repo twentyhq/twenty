@@ -1,6 +1,6 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { useTheme } from '@emotion/react';
-import { type BarCustomLayerProps } from '@nivo/bar';
+import { type BarCustomLayerProps, type ComputedBarDatum } from '@nivo/bar';
 import { animated } from '@react-spring/web';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,7 +31,7 @@ export const CustomTotalsLayer = ({
       centerX: number;
       maxX: number;
       centerY: number;
-      bars: typeof bars;
+      bars: ComputedBarDatum<BarChartDataItem>[];
     }
   >();
 
@@ -43,7 +43,7 @@ export const CustomTotalsLayer = ({
       existingGroup.total += Number(bar.data.value);
       existingGroup.maxY = Math.min(existingGroup.maxY, bar.y);
       existingGroup.maxX = Math.max(existingGroup.maxX, bar.x + bar.width);
-      existingGroup.bars = [...existingGroup.bars, bar];
+      existingGroup.bars.push(bar);
       continue;
     }
 
@@ -61,17 +61,12 @@ export const CustomTotalsLayer = ({
     <>
       {Array.from(groupTotals.entries()).map(
         ([groupKey, { total, maxY, maxX, bars: groupBars }]) => {
-          const minX = Math.min(...groupBars.map((bar) => bar.x));
-          const maxXCalc = Math.max(
-            ...groupBars.map((bar) => bar.x + bar.width),
-          );
-          const centerX = (minX + maxXCalc) / 2;
-
-          const minY = Math.min(...groupBars.map((bar) => bar.y));
-          const maxYCalc = Math.max(
-            ...groupBars.map((bar) => bar.y + bar.height),
-          );
-          const centerY = (minY + maxYCalc) / 2;
+          const centerX =
+            groupBars.reduce((acc, bar) => acc + bar.x + bar.width / 2, 0) /
+            groupBars.length;
+          const centerY =
+            groupBars.reduce((acc, bar) => acc + bar.y + bar.height / 2, 0) /
+            groupBars.length;
 
           return (
             <animated.text
