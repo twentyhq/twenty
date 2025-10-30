@@ -2527,9 +2527,9 @@ msgid "Data labels"
 msgstr "Data labels"
 
 #. js-lingui-id: BCllhB
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Data Labels"
 msgstr "Data Labels"
 
@@ -7780,7 +7780,7 @@ msgid "Sort by"
 msgstr "Sort by"
 
 #. js-lingui-id: vKy//U
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Sort By Group"
 msgstr "Sort By Group"
 
@@ -9128,8 +9128,8 @@ msgid "X axis"
 msgstr "X axis"
 
 #. js-lingui-id: sbYPEJ
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "X Axis Data"
 msgstr "X Axis Data"
 

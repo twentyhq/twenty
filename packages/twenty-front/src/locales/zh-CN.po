@@ -2532,9 +2532,9 @@ msgid "Data labels"
 msgstr "数据标签"
 
 #. js-lingui-id: BCllhB
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Data Labels"
 msgstr "数据标签"
 
@@ -7785,7 +7785,7 @@ msgid "Sort by"
 msgstr "排序"
 
 #. js-lingui-id: vKy//U
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Sort By Group"
 msgstr "按组排序"
 
@@ -9133,8 +9133,8 @@ msgid "X axis"
 msgstr "X 轴"
 
 #. js-lingui-id: sbYPEJ
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "X Axis Data"
 msgstr "X轴数据"
 

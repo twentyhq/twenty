@@ -2532,9 +2532,9 @@ msgid "Data labels"
 msgstr "데이터 레이블"
 
 #. js-lingui-id: BCllhB
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Data Labels"
 msgstr "데이터 레이블"
 
@@ -7785,7 +7785,7 @@ msgid "Sort by"
 msgstr "정렬 기준"
 
 #. js-lingui-id: vKy//U
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Sort By Group"
 msgstr "그룹별 정렬"
 
@@ -9133,8 +9133,8 @@ msgid "X axis"
 msgstr "X 축"
 
 #. js-lingui-id: sbYPEJ
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "X Axis Data"
 msgstr "X 축 데이터"
 
