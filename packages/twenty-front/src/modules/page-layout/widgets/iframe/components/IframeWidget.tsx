@@ -1,9 +1,12 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
-import { type PageLayoutWidget } from '~/generated-metadata/graphql';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
+import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
+import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ $isEditMode: boolean }>`
   background: ${({ theme }) => theme.background.transparent.lighter};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
@@ -12,13 +15,15 @@ const StyledContainer = styled.div`
   overflow: hidden;
   position: relative;
   width: 100%;
+  pointer-events: ${({ $isEditMode }) => ($isEditMode ? 'none' : 'auto')};
 `;
 
-const StyledIframe = styled.iframe`
+const StyledIframe = styled.iframe<{ $isEditMode: boolean }>`
   border: none;
   flex: 1;
   height: 100%;
   width: 100%;
+  pointer-events: ${({ $isEditMode }) => ($isEditMode ? 'none' : 'auto')};
 `;
 
 const StyledLoadingContainer = styled.div`
@@ -62,6 +67,10 @@ export type IframeWidgetProps = {
 };
 
 export const IframeWidget = ({ widget }: IframeWidgetProps) => {
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
+
   const configuration = widget.configuration;
 
   if (!configuration || !('url' in configuration)) {
@@ -87,9 +96,11 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
 
   if (hasError) {
     return (
-      <StyledContainer>
+      <StyledContainer $isEditMode={isPageLayoutInEditMode}>
         <StyledErrorContainer>
-          <StyledErrorMessage>Failed to load content</StyledErrorMessage>
+          <StyledErrorMessage>
+            <Trans>Failed to load content</Trans>
+          </StyledErrorMessage>
           <StyledErrorUrl>{url}</StyledErrorUrl>
         </StyledErrorContainer>
       </StyledContainer>
@@ -97,13 +108,14 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer $isEditMode={isPageLayoutInEditMode}>
       {isLoading && (
         <StyledLoadingContainer>
           <ChartSkeletonLoader />
         </StyledLoadingContainer>
       )}
       <StyledIframe
+        $isEditMode={isPageLayoutInEditMode}
         src={url}
         title={title}
         onLoad={handleIframeLoad}

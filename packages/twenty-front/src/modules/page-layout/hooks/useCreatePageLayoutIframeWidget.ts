@@ -13,8 +13,9 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import { WidgetType } from '~/generated/graphql';
+import { type PageLayoutWidget, WidgetType } from '~/generated/graphql';
 
 export const useCreatePageLayoutIframeWidget = (
   pageLayoutIdFromProps?: string,
@@ -46,7 +47,7 @@ export const useCreatePageLayoutIframeWidget = (
 
   const createPageLayoutIframeWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (title: string, url: string) => {
+      (title: string, url: string): PageLayoutWidget => {
         const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
@@ -55,8 +56,10 @@ export const useCreatePageLayoutIframeWidget = (
           .getLoadable(pageLayoutDraggedAreaState)
           .getValue();
 
-        if (!activeTabId) {
-          return;
+        if (!isDefined(activeTabId)) {
+          throw new Error(
+            'A tab must be selected to create a new iframe widget',
+          );
         }
 
         const widgetId = uuidv4();
@@ -106,6 +109,8 @@ export const useCreatePageLayoutIframeWidget = (
         }));
 
         set(pageLayoutDraggedAreaState, null);
+
+        return newWidget;
       },
     [
       activeTabId,
