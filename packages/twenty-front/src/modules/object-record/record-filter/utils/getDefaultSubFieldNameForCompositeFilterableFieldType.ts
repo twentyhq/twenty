@@ -27,7 +27,7 @@ export const getDefaultSubFieldNameForCompositeFilterableFieldType = (
     case 'ACTOR':
       return 'name';
     case 'FULL_NAME':
-      return undefined;
+      return 'firstName';
     default:
       assertUnreachable(compositeFieldType);
   }
