@@ -22,6 +22,9 @@
       "href": "https://app.twenty.com/welcome"
     }
   },
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
   "navigation": {
     "tabs": [
       {
