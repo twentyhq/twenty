@@ -25,7 +25,7 @@ const flatObjectMetadataMaps = [
     flatEntity: flatObjectMetadata,
     flatEntityMaps: flatObjectMetadataMaps,
   });
-}, EMPTY_FLAT_ENTITY_MAPS);
+}, EMPTY_FLAT_ENTITY_MAPS());
 
 type TestCase = EachTestingContext<{
   input: FromCreateFieldInputToFlatObjectMetadataArgs;

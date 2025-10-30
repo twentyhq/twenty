@@ -10,5 +10,5 @@ export const FLAT_OBJECT_METADATA_MAPS_MOCKS = [
       flatEntity: flatObjectMetadata,
       flatEntityMaps: flatObjectMaps,
     }),
-  EMPTY_FLAT_ENTITY_MAPS,
+  EMPTY_FLAT_ENTITY_MAPS(),
 );

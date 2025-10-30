@@ -46,8 +46,8 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
   buildOptions,
 }: FlatEntityDeletedCreatedUpdatedMatrixDispatcherArgs<T>): DeletedCreatedUpdatedMatrix<T> => {
   const initialDispatcher: DeletedCreatedUpdatedMatrix<T> = {
-    createdFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
-    deletedFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
+    createdFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS(),
+    deletedFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS(),
     updatedFlatEntityMaps: { byId: {} },
   };
 

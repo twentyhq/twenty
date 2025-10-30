@@ -60,7 +60,7 @@ export class WorkspaceFlatDatabaseEventTriggerMapCacheService extends WorkspaceF
           flatEntityMaps: flatDatabaseEventTriggerMaps,
         });
       },
-      EMPTY_FLAT_ENTITY_MAPS,
+      EMPTY_FLAT_ENTITY_MAPS(),
     );
   }
 }

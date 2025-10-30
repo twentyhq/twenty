@@ -159,7 +159,7 @@ export class FlatFieldMetadataValidatorService {
           optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
-          remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS,
+          remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS(),
           workspaceId,
         },
       );

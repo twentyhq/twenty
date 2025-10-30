@@ -45,6 +45,6 @@ export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceFlatMapCache
         flatEntity: flatViewField,
         flatEntityMaps: flatViewFieldMaps,
       });
-    }, EMPTY_FLAT_ENTITY_MAPS);
+    }, EMPTY_FLAT_ENTITY_MAPS());
   }
 }

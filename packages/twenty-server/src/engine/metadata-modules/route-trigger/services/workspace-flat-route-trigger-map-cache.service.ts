@@ -56,6 +56,6 @@ export class WorkspaceFlatRouteTriggerMapCacheService extends WorkspaceFlatMapCa
         flatEntity: flatRouteTrigger,
         flatEntityMaps: flatRouteTriggerMaps,
       });
-    }, EMPTY_FLAT_ENTITY_MAPS);
+    }, EMPTY_FLAT_ENTITY_MAPS());
   }
 }

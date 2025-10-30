@@ -56,6 +56,6 @@ export class WorkspaceFlatCronTriggerMapCacheService extends WorkspaceFlatMapCac
         flatEntity: flatCronTrigger,
         flatEntityMaps: flatCronTriggerMaps,
       });
-    }, EMPTY_FLAT_ENTITY_MAPS);
+    }, EMPTY_FLAT_ENTITY_MAPS());
   }
 }

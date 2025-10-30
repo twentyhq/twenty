@@ -25,5 +25,5 @@ export const getSubFlatEntityMapsThroughMutationOrThrow = <
     });
 
     return acc;
-  }, EMPTY_FLAT_ENTITY_MAPS);
+  }, EMPTY_FLAT_ENTITY_MAPS());
 };

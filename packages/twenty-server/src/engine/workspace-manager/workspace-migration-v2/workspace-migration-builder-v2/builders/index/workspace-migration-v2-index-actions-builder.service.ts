@@ -164,7 +164,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
         optimisticFlatEntityMaps: optimisticFlatIndexMaps,
         workspaceId,
         flatEntityToValidate: flatEntity,
-        remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS,
+        remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS(),
       });
 
     if (deletionValidationResult.errors.length > 0) {
@@ -191,7 +191,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
           entityToDeleteId: flatEntity.id,
           flatEntityMaps: optimisticFlatIndexMaps,
         }),
-        remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS,
+        remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS(),
       });
 
     if (creationValidationResult.errors.length > 0) {

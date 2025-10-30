@@ -65,7 +65,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         };
       },
       {
-        ...EMPTY_ALL_FLAT_ENTITY_MAPS,
+        ...EMPTY_ALL_FLAT_ENTITY_MAPS(),
         ...dependencyAllFlatEntityMaps,
       },
     );
@@ -81,10 +81,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
     | WorkspaceMigrationOrchestratorSuccessfulResult
   > {
     const orchestratorActionsReport = structuredClone({
-      ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+      ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
     });
     const orchestratorFailureReport = structuredClone(
-      EMPTY_ORCHESTRATOR_FAILURE_REPORT,
+      EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
     );
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({

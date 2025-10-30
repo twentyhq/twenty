@@ -26,7 +26,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         'should aggregate single object with multiple fields into one object action',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
           objectMetadata: {
             created: [
               {
@@ -83,7 +83,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         'should keep separate field actions when no matching object action exists',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -147,7 +147,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
       title: 'should handle multiple objects with their respective fields',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
           objectMetadata: {
             created: [
               {
@@ -228,7 +228,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         'should handle mixed scenario with some fields merged and some kept separate',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
           objectMetadata: {
             created: [
               {
@@ -293,7 +293,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         'should aggregate multiple field actions for the same object when no create object action exists',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -356,7 +356,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
     {
       title: 'should handle empty actions report',
       context: {
-        input: EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+        input: EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
         expected: {
           expectCreateFieldActionPerObjectMetadataId: {},
           expectCreateObjectActionPerObjectMetadataId: {},

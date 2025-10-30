@@ -21,5 +21,5 @@ export const getSubFlatEntityMapsOrThrow = <T extends FlatEntity>({
       flatEntity,
       flatEntityMaps: acc,
     });
-  }, EMPTY_FLAT_ENTITY_MAPS);
+  }, EMPTY_FLAT_ENTITY_MAPS());
 };

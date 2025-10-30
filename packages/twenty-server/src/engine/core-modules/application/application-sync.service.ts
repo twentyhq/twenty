@@ -851,15 +851,15 @@ export class ApplicationSyncService {
         fromToAllFlatEntityMaps: {
           flatObjectMetadataMaps: {
             from: fromFlatObjectMetadataMaps,
-            to: EMPTY_FLAT_ENTITY_MAPS,
+            to: EMPTY_FLAT_ENTITY_MAPS(),
           },
           flatIndexMaps: {
             from: fromFlatIndexMetadataMaps,
-            to: EMPTY_FLAT_ENTITY_MAPS,
+            to: EMPTY_FLAT_ENTITY_MAPS(),
           },
           flatFieldMetadataMaps: {
             from: fromFlatFieldMetadataMaps,
-            to: EMPTY_FLAT_ENTITY_MAPS,
+            to: EMPTY_FLAT_ENTITY_MAPS(),
           },
         },
         workspaceId,

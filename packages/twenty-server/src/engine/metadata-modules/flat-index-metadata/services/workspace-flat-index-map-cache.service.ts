@@ -53,6 +53,6 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceFlatMapCacheServ
         flatEntity: flatIndex,
         flatEntityMaps: flatIndexMaps,
       });
-    }, EMPTY_FLAT_ENTITY_MAPS);
+    }, EMPTY_FLAT_ENTITY_MAPS());
   }
 }

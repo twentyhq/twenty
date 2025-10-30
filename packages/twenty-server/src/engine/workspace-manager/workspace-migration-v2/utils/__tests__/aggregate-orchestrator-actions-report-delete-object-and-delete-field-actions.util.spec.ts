@@ -23,7 +23,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
       title: 'should remove field actions when parent object is being deleted',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -63,7 +63,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
       title: 'should keep field actions when no parent object is being deleted',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -94,7 +94,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
         'should handle mixed scenario with some fields removed and some kept',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -136,7 +136,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
       title: 'should handle multiple objects with mixed field deletions',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -187,7 +187,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
     {
       title: 'should handle empty actions report',
       context: {
-        input: EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+        input: EMPTY_ORCHESTRATOR_ACTIONS_REPORT(),
         expected: {
           expectDeleteFieldActionPerObjectMetadataId: {},
           expectDeleteObjectActionPerObjectMetadataId: {},

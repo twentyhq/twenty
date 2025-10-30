@@ -60,7 +60,7 @@ export class WorkspaceFlatServerlessFunctionMapCacheService extends WorkspaceFla
           flatEntityMaps: flatServerlessFunctionMaps,
         });
       },
-      EMPTY_FLAT_ENTITY_MAPS,
+      EMPTY_FLAT_ENTITY_MAPS(),
     );
   }
 }

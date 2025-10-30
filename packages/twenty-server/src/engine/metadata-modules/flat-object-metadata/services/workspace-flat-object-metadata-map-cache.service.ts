@@ -64,7 +64,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
           flatEntityMaps: flatObjectMetadataMaps,
         });
       },
-      EMPTY_FLAT_ENTITY_MAPS,
+      EMPTY_FLAT_ENTITY_MAPS(),
     );
   }
 }
