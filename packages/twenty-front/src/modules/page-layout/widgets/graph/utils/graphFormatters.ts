@@ -40,22 +40,22 @@ export const formatGraphValue = (
   }
 
   const sign = value < 0 ? '-' : '';
-  const absValue = Math.abs(value);
+  const absoluteValue = Math.abs(value);
 
   switch (displayType) {
     case 'percentage':
       return `${formatNumber(value * 100, { decimals })}%`;
 
     case 'shortNumber':
-      return `${sign}${prefix}${formatToShortNumber(absValue)}${suffix}`;
+      return `${sign}${prefix}${formatToShortNumber(absoluteValue)}${suffix}`;
 
     case 'currency': {
       const currencyPrefix = prefix || '$';
-      return `${sign}${currencyPrefix}${formatNumber(absValue, { decimals })}${suffix}`;
+      return `${sign}${currencyPrefix}${formatNumber(absoluteValue, { decimals })}${suffix}`;
     }
 
     case 'number':
     default:
-      return `${sign}${prefix}${formatNumber(absValue, { decimals })}${suffix}`;
+      return `${sign}${prefix}${formatNumber(absoluteValue, { decimals })}${suffix}`;
   }
 };
