@@ -119,6 +119,11 @@ const StyledWidgetCard = styled.div<{
           `}
         `;
 
+      case 'canvas':
+        return css`
+          height: 100%;
+        `;
+
       default:
         return assertUnreachable(widgetCardContext);
     }

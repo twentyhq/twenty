@@ -29,7 +29,12 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentProps>`
         `;
 
       case 'dashboard':
-        return '';
+        return css``;
+
+      case 'canvas':
+        return css`
+          padding: 0;
+        `;
 
       default:
         return assertUnreachable(widgetCardContext);

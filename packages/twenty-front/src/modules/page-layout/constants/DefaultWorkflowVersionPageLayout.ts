@@ -55,7 +55,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
       id: 'workflow-version-tab-flow',
       title: 'Flow',
       position: 200,
-      layoutMode: 'vertical-list',
+      layoutMode: 'canvas',
       pageLayoutId: DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

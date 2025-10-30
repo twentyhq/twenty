@@ -63,19 +63,22 @@ export const WidgetRenderer = ({
       widgetCardContext={widgetCardContext}
       isEditing={isEditing}
     >
-      <WidgetCardHeader
-        isInEditMode={isPageLayoutInEditMode}
-        title={widget.title}
-        onRemove={handleRemove}
-        forbiddenDisplay={
-          !hasAccess && (
-            <PageLayoutWidgetForbiddenDisplay
-              widgetId={widget.id}
-              restriction={restriction}
-            />
-          )
-        }
-      />
+      {widgetCardContext !== 'canvas' && (
+        <WidgetCardHeader
+          isInEditMode={isPageLayoutInEditMode}
+          title={widget.title}
+          onRemove={handleRemove}
+          forbiddenDisplay={
+            !hasAccess && (
+              <PageLayoutWidgetForbiddenDisplay
+                widgetId={widget.id}
+                restriction={restriction}
+              />
+            )
+          }
+        />
+      )}
+
       <WidgetCardContent widgetCardContext={widgetCardContext}>
         {hasAccess && <WidgetContentRenderer widget={widget} />}
       </WidgetCardContent>

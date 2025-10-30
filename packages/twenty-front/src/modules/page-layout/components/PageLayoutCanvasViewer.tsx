@@ -1,0 +1,32 @@
+import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
+import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
+import { type PageLayoutWidget } from '~/generated/graphql';
+
+const StyledCanvasContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
+  box-sizing: border-box;
+  display: grid;
+  height: 100%;
+  width: 100%;
+`;
+
+type PageLayoutCanvasViewerProps = {
+  widgets: PageLayoutWidget[];
+};
+
+export const PageLayoutCanvasViewer = ({
+  widgets,
+}: PageLayoutCanvasViewerProps) => {
+  const widget = widgets.at(0);
+
+  if (!isDefined(widget)) {
+    throw new Error('No widget found in canvas layout');
+  }
+
+  return (
+    <StyledCanvasContainer>
+      <WidgetRenderer widget={widget} widgetCardContext="canvas" />
+    </StyledCanvasContainer>
+  );
+};

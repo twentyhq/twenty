@@ -1,1 +1,1 @@
-export type WidgetCardContext = 'dashboard' | 'recordPage';
+export type WidgetCardContext = 'dashboard' | 'recordPage' | 'canvas';
