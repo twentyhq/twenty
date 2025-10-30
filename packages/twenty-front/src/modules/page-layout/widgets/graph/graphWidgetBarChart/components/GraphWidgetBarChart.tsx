@@ -9,6 +9,8 @@ import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChar
 import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { calculateBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartValueRange';
+import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -163,10 +165,32 @@ export const GraphWidgetBarChart = ({
         data={data}
         indexBy={indexBy}
         layout={layout}
+        chartId={id}
       />
     ),
-    [keys, groupMode, data, indexBy, layout],
+    [keys, groupMode, data, indexBy, layout, id],
   );
+
+  const calculatedRange =
+    groupMode === 'stacked'
+      ? calculateStackedBarChartValueRange(data, keys)
+      : calculateBarChartValueRange(data, keys);
+  const effectiveMin = rangeMin ?? calculatedRange.min;
+  const effectiveMax = rangeMax ?? calculatedRange.max;
+
+  const hasNegativeValues = calculatedRange.min < 0;
+  const zeroMarker = hasNegativeValues
+    ? [
+        {
+          axis: (layout === 'vertical' ? 'y' : 'x') as 'y' | 'x',
+          value: 0,
+          lineStyle: {
+            stroke: theme.border.color.medium,
+            strokeWidth: 1,
+          },
+        },
+      ]
+    : undefined;
 
   return (
     <StyledContainer id={id}>
@@ -193,13 +217,14 @@ export const GraphWidgetBarChart = ({
           layout={layout}
           valueScale={{
             type: 'linear',
-            min: rangeMin ?? 'auto',
-            max: rangeMax ?? 'auto',
+            min: effectiveMin,
+            max: effectiveMax,
             clamp: true,
           }}
           indexScale={{ type: 'band', round: true }}
           colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
-          layers={['grid', 'axes', 'bars', 'markers', 'legends']}
+          layers={['grid', 'markers', 'axes', 'bars', 'legends']}
+          markers={zeroMarker}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}
