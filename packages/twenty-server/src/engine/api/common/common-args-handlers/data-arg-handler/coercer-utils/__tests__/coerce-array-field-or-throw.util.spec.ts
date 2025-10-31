@@ -1,5 +1,5 @@
 import { coerceArrayFieldOrThrow } from 'src/engine/api/common/common-args-handlers/data-arg-handler/coercer-utils/coerce-array-field-or-throw.util';
-import { CommonDataCoercerException } from 'src/engine/api/common/common-args-handlers/data-arg-handler/common-data-coercer.exception';
+import { CommonDataCoercerException } from 'src/engine/api/common/common-args-handlers/data-arg-handler/errors/common-data-coercer.exception';
 
 describe('coerceArrayFieldOrThrow', () => {
   describe('valid inputs', () => {

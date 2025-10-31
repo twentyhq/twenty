@@ -4,7 +4,7 @@ import { coerceArrayFieldOrThrow } from 'src/engine/api/common/common-args-handl
 import {
   CommonDataCoercerException,
   CommonDataCoercerExceptionCode,
-} from 'src/engine/api/common/common-args-handlers/data-arg-handler/common-data-coercer.exception';
+} from 'src/engine/api/common/common-args-handlers/data-arg-handler/errors/common-data-coercer.exception';
 
 export const coerceMultiSelectFieldOrThrow = (
   value: unknown,

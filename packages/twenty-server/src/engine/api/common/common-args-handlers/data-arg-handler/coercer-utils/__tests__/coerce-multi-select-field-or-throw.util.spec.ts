@@ -1,5 +1,5 @@
 import { coerceMultiSelectFieldOrThrow } from 'src/engine/api/common/common-args-handlers/data-arg-handler/coercer-utils/coerce-multi-select-field-or-throw.util';
-import { CommonDataCoercerException } from 'src/engine/api/common/common-args-handlers/data-arg-handler/common-data-coercer.exception';
+import { CommonDataCoercerException } from 'src/engine/api/common/common-args-handlers/data-arg-handler/errors/common-data-coercer.exception';
 
 describe('coerceMultiSelectFieldOrThrow', () => {
   const validOptions = ['option1', 'option2', 'option3'];

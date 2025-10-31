@@ -1,5 +1,7 @@
 import { type QueryFailedError } from 'typeorm';
 
+import { CommonDataCoercerException } from 'src/engine/api/common/common-args-handlers/data-arg-handler/errors/common-data-coercer.exception';
+import { commonDataCoercerToGraphqlApiExceptionHandler } from 'src/engine/api/common/common-args-handlers/data-arg-handler/utils/common-data-coercer-to-graphql-api-exception-handler.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { commonQueryRunnerToGraphqlApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-graphql-api-exception-handler.util';
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
@@ -39,6 +41,8 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return twentyORMGraphqlApiExceptionHandler(error);
     case error instanceof CommonQueryRunnerException:
       return commonQueryRunnerToGraphqlApiExceptionHandler(error);
+    case error instanceof CommonDataCoercerException:
+      return commonDataCoercerToGraphqlApiExceptionHandler(error);
     case error instanceof AuthException:
       return authGraphqlApiExceptionHandler(error);
     case error instanceof ApiKeyException:
