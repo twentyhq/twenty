@@ -9,11 +9,16 @@ import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-t
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
 @Injectable()
 export class HttpTool implements Tool {
   description =
     'Make an HTTP request to any URL with configurable method, headers, and body.';
   inputSchema = HttpToolParametersZodSchema;
+
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   async execute(parameters: ToolInput): Promise<ToolOutput> {
     const { url, method, headers, body } = parameters as HttpRequestInput;
@@ -36,12 +41,25 @@ export class HttpTool implements Tool {
         }
       }
 
-      const response = await axios(axiosConfig);
+      const isSafeModeEnabled = this.twentyConfigService.get(
+        'HTTP_TOOL_SAFE_MODE_ENABLED',
+      );
+
+      const axiosClient = isSafeModeEnabled
+        ? axios.create({
+            adapter: getSecureAdapter(),
+          })
+        : axios.create();
+
+      const response = await axiosClient(axiosConfig);
 
       return {
         success: true,
         message: `HTTP ${method} request to ${url} completed successfully`,
         result: response.data,
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers as Record<string, string>,
       };
     } catch (error) {
       if (axios.isAxiosError(error)) {
