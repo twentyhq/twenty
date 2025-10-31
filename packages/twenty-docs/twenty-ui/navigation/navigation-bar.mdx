@@ -1,0 +1,56 @@
+---
+title: Navigation Bar
+image: /images/user-guide/table-views/table.png
+---
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Renders a navigation bar that contains multiple `NavigationBarItem` components.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+export const MyComponent = () => {
+
+   const navigationItems = [
+     {
+       name: "Home",
+       Icon: IconHome,
+       onClick: () => console.log("Home clicked"),
+     },
+     {
+       name: "Profile",
+       Icon: IconUser,
+       onClick: () => console.log("Profile clicked"),
+     },
+     {
+       name: "Settings",
+       Icon: IconSettings,
+       onClick: () => console.log("Settings clicked"),
+     },
+   ];
+
+  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| activeItemName | string | The name of the currently active navigation item |
+| items | array | An array of objects representing each navigation item. Each object contains the `name` of the item, the `Icon` component to display, and an `onClick` function to be called when the item is clicked |
+
+
+
+
+</Tab>
+</Tabs>
+

@@ -11,8 +11,11 @@ import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-ada
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -22,8 +25,6 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileModule } from 'src/engine/core-modules/file/file.module';
 
 @Global()
 @Module({
@@ -51,6 +52,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
     AIBillingService,
     McpService,
     SendEmailTool,
+    SearchArticlesTool,
   ],
   exports: [
     AiService,
@@ -61,6 +63,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
     ToolRegistryService,
     McpService,
     SendEmailTool,
+    SearchArticlesTool,
   ],
 })
 export class AiModule {}
