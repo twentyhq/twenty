@@ -8,6 +8,7 @@ import SlashCommandMenu from './SlashCommandMenu';
 
 export class SlashCommandState {
   componentRoot: Root | null = null;
+  containerElement: HTMLElement | null = null;
   selectedIndex: number = 0;
   currentItems: SlashCommandItem[] = [];
   currentCommand: (item: SlashCommandItem) => void = () => {};
@@ -46,6 +47,11 @@ export class SlashCommandState {
       this.componentRoot = null;
     }
 
+    if (this.containerElement !== null) {
+      this.containerElement.remove();
+      this.containerElement = null;
+    }
+
     if (this.scrollListener !== null) {
       window.removeEventListener('scroll', this.scrollListener, true);
       this.scrollListener = null;
@@ -66,11 +72,17 @@ export class SlashCommandState {
 
 // Render the React component to the DOM
 export const renderComponent = (state: SlashCommandState): void => {
-  const reactRoot =
-    state.componentRoot ||
-    createRoot(document.body.appendChild(document.createElement('div')));
+  if (!state.containerElement) {
+    state.containerElement = document.createElement('div');
+    document.body.appendChild(state.containerElement);
+  }
 
-  reactRoot.render(
+  // Create React root only once
+  if (!state.componentRoot) {
+    state.componentRoot = createRoot(state.containerElement);
+  }
+
+  state.componentRoot.render(
     createElement(SlashCommandMenu, {
       items: state.currentItems,
       selectedIndex: state.selectedIndex,
@@ -81,8 +93,6 @@ export const renderComponent = (state: SlashCommandState): void => {
       clientRect: state.currentRect,
     }),
   );
-
-  state.componentRoot = reactRoot;
 };
 
 export const findDropdownElement = (): HTMLElement | null => {

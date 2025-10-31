@@ -1,6 +1,5 @@
 import { Extension, type Editor } from '@tiptap/core';
 import Suggestion from '@tiptap/suggestion';
-// Root type intentionally not used directly here; kept via state module
 import {
   IconBold,
   IconH1,
@@ -178,7 +177,7 @@ const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
 const createSlashCommandRenderer = () => {
   const state = new SlashCommandState();
 
-  // Set up update callback to re-render component when state changes
+  // Setting up update callback to re-render component when state changes
   state.setUpdateCallback(() => {
     if (state.componentRoot !== null) {
       updateComponentRoot(state);
