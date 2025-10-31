@@ -4,11 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledCanvasContainer = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  box-sizing: border-box;
   display: grid;
   height: 100%;
-  width: 100%;
 `;
 
 type PageLayoutCanvasViewerProps = {
