@@ -17,7 +17,7 @@ export const generateGroupByQuery = ({
 
   return gql`
     query ${queryName}(
-      $groupBy: [${capitalizedSingular}GroupByInput!]
+      $groupBy: [${capitalizedSingular}GroupByInput!]!
       $filter: ${capitalizedSingular}FilterInput
       $orderBy: [${capitalizedSingular}OrderByWithGroupByInput!]
       $viewId: UUID
