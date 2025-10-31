@@ -6,11 +6,11 @@ export const addPendingPlaceholderToLayouts = (
   draggedArea: { x: number; y: number; w: number; h: number },
 ): Layouts => ({
   desktop: [
-    ...baseLayouts.desktop,
+    ...(baseLayouts.desktop ?? []),
     createPendingWidgetPlaceholderLayoutItem(draggedArea, 'desktop'),
   ],
   mobile: [
-    ...baseLayouts.mobile,
+    ...(baseLayouts.mobile ?? []),
     createPendingWidgetPlaceholderLayoutItem(draggedArea, 'mobile'),
   ],
 });
