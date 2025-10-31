@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 export type GraphWidgetLegendItem = {
   id: string;
   label: string;
-  formattedValue: string;
   color: string;
 };
 
@@ -17,7 +16,6 @@ const StyledLegendContainer = styled.div`
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2)} 0;
 `;
 
 const StyledLegendItem = styled.div`
@@ -30,10 +28,6 @@ const StyledLegendItem = styled.div`
 
 const StyledLegendLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
-`;
-
-const StyledLegendValue = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 const StyledDot = styled.div<{ color: string }>`
@@ -58,7 +52,6 @@ export const GraphWidgetLegend = ({
         <StyledLegendItem key={item.id}>
           <StyledDot color={item.color} />
           <StyledLegendLabel>{item.label}</StyledLegendLabel>
-          <StyledLegendValue>{item.formattedValue}</StyledLegendValue>
         </StyledLegendItem>
       ))}
     </StyledLegendContainer>
