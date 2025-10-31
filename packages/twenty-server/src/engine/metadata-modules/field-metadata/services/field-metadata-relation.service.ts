@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { IsEnum, IsString, IsUUID } from 'class-validator';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  type FieldMetadataSettings,
+  FieldMetadataType,
+  RelationOnDeleteAction,
+} from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { type FieldMetadataSettings } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 

@@ -14,9 +14,9 @@ import {
   type GraphQLType,
 } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  FieldMetadataType,
   type FieldMetadataSettings,
   NumberDataType,
 } from 'twenty-shared/types';

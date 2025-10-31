@@ -1,5 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  FieldMetadataType,
   type FieldMetadataSettings,
   NumberDataType,
 } from 'twenty-shared/types';
