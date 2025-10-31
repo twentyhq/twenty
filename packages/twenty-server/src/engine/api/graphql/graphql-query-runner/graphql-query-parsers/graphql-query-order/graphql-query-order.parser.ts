@@ -54,14 +54,16 @@ export class GraphqlQueryOrderFieldParser {
   ): Record<string, OrderByCondition> {
     return orderBy.reduce(
       (acc, item) => {
-        Object.entries(item).forEach(([key, value]) => {
-          const fieldMetadataId = this.objectMetadataMapItem.fieldIdByName[key];
+        Object.entries(item).forEach(([fieldName, orderByDirection]) => {
+          const fieldMetadataId =
+            this.objectMetadataMapItem.fieldIdByName[fieldName] ||
+            this.objectMetadataMapItem.fieldIdByJoinColumnName[fieldName];
           const fieldMetadata =
             this.objectMetadataMapItem.fieldsById[fieldMetadataId];
 
-          if (!fieldMetadata || value === undefined) {
+          if (!fieldMetadata || orderByDirection === undefined) {
             throw new GraphqlQueryRunnerException(
-              `Field "${key}" does not exist or is not sortable`,
+              `Field "${fieldName}" does not exist or is not sortable`,
               GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
             );
           }
@@ -69,7 +71,7 @@ export class GraphqlQueryOrderFieldParser {
           if (isCompositeFieldMetadataType(fieldMetadata.type)) {
             const compositeOrder = parseCompositeFieldForOrder(
               fieldMetadata,
-              value,
+              orderByDirection,
               objectNameSingular,
               isForwardPagination,
             );
@@ -79,9 +81,9 @@ export class GraphqlQueryOrderFieldParser {
             const orderByCasting =
               this.getOptionalOrderByCasting(fieldMetadata);
 
-            acc[`"${objectNameSingular}"."${key}"${orderByCasting}`] =
+            acc[`"${objectNameSingular}"."${fieldName}"${orderByCasting}`] =
               convertOrderByToFindOptionsOrder(
-                value as OrderByDirection,
+                orderByDirection as OrderByDirection,
                 isForwardPagination,
               );
           }
