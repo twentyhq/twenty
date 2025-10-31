@@ -22,7 +22,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -92,15 +92,15 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
 
-  const handleLayoutChangeWithoutPendingPlaceholder = useCallback(
-    (currentLayout: Layout[], allLayouts: Layouts) => {
-      handleLayoutChange(
-        currentLayout,
-        filterPendingPlaceholderFromLayouts(allLayouts),
-      );
-    },
-    [handleLayoutChange],
-  );
+  const handleLayoutChangeWithoutPendingPlaceholder = (
+    currentLayout: Layout[],
+    allLayouts: Layouts,
+  ) => {
+    handleLayoutChange(
+      currentLayout,
+      filterPendingPlaceholderFromLayouts(allLayouts),
+    );
+  };
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
@@ -140,29 +140,34 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     ? addPendingPlaceholderToLayouts(baseLayouts, pageLayoutDraggedArea)
     : baseLayouts;
 
-  const widgetsArray = isLayoutEmpty
-    ? [
-        <div key="empty-placeholder" data-select-disable="true">
+  const widgets = [];
+
+  if (isLayoutEmpty) {
+    widgets.push(
+      <div key="empty-placeholder" data-select-disable="true">
+        <WidgetPlaceholder />
+      </div>,
+    );
+  } else {
+    activeTabWidgets?.forEach((widget) => {
+      widgets.push(
+        <div key={widget.id} data-select-disable="true">
+          <WidgetRenderer widget={widget} />
+        </div>,
+      );
+    });
+
+    if (hasPendingPlaceholder) {
+      widgets.push(
+        <div
+          key={PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY}
+          data-select-disable="true"
+        >
           <WidgetPlaceholder />
         </div>,
-      ]
-    : [
-        ...(activeTabWidgets?.map((widget) => (
-          <div key={widget.id} data-select-disable="true">
-            <WidgetRenderer widget={widget} />
-          </div>
-        )) || []),
-        ...(hasPendingPlaceholder
-          ? [
-              <div
-                key={PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY}
-                data-select-disable="true"
-              >
-                <WidgetPlaceholder />
-              </div>,
-            ]
-          : []),
-      ];
+      );
+    }
+  }
 
   return (
     <>
@@ -179,9 +184,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
         {isRecordPageEnabled &&
         !isPageLayoutInEditMode &&
         activeTab.layoutMode === 'vertical-list' ? (
-          <StyledVerticalListContainer>
-            {widgetsArray}
-          </StyledVerticalListContainer>
+          <StyledVerticalListContainer>{widgets}</StyledVerticalListContainer>
         ) : (
           <ResponsiveGridLayout
             className="layout"
@@ -216,7 +219,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
               )
             }
           >
-            {widgetsArray}
+            {widgets}
           </ResponsiveGridLayout>
         )}
       </StyledGridContainer>
