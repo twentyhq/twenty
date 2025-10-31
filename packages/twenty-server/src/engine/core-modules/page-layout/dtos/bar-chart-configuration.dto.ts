@@ -19,6 +19,7 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
 import { BarChartGroupMode } from 'src/engine/core-modules/page-layout/enums/bar-chart-group-mode.enum';
+import { ObjectRecordGroupByDateGranularity } from 'src/engine/core-modules/page-layout/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -49,6 +50,14 @@ export class BarChartConfigurationDTO {
   @IsOptional()
   primaryAxisGroupBySubFieldName?: string;
 
+  @Field(() => ObjectRecordGroupByDateGranularity, {
+    nullable: true,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
+  })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
+  primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
+
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
   @IsOptional()
@@ -63,6 +72,14 @@ export class BarChartConfigurationDTO {
   @IsString()
   @IsOptional()
   secondaryAxisGroupBySubFieldName?: string;
+
+  @Field(() => ObjectRecordGroupByDateGranularity, {
+    nullable: true,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
+  })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
+  secondaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)

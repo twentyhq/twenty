@@ -15,6 +15,7 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ObjectRecordGroupByDateGranularity } from 'src/engine/core-modules/page-layout/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -44,6 +45,14 @@ export class PieChartConfigurationDTO {
   @IsString()
   @IsOptional()
   groupBySubFieldName?: string;
+
+  @Field(() => ObjectRecordGroupByDateGranularity, {
+    nullable: true,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
+  })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
+  dateGranularity?: ObjectRecordGroupByDateGranularity;
 
   @Field(() => GraphOrderBy, {
     nullable: true,

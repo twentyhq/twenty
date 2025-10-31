@@ -322,11 +322,13 @@ export type BarChartConfiguration = {
   graphType: GraphType;
   groupMode?: Maybe<BarChartGroupMode>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
+  primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
   primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
+  secondaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
@@ -1668,11 +1670,13 @@ export type LineChartConfiguration = {
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
   omitNullValues?: Maybe<Scalars['Boolean']>;
+  primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
   primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
   rangeMax?: Maybe<Scalars['Float']>;
   rangeMin?: Maybe<Scalars['Float']>;
+  secondaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
@@ -2914,6 +2918,18 @@ export type ObjectRecordFilterInput = {
   updatedAt?: InputMaybe<DateFilter>;
 };
 
+/** Date granularity options (e.g. DAY, MONTH, QUARTER, YEAR, DAY_OF_THE_WEEK, MONTH_OF_THE_YEAR, QUARTER_OF_THE_YEAR) */
+export enum ObjectRecordGroupByDateGranularity {
+  DAY = 'DAY',
+  DAY_OF_THE_WEEK = 'DAY_OF_THE_WEEK',
+  MONTH = 'MONTH',
+  MONTH_OF_THE_YEAR = 'MONTH_OF_THE_YEAR',
+  NONE = 'NONE',
+  QUARTER = 'QUARTER',
+  QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
+  YEAR = 'YEAR'
+}
+
 export type ObjectStandardOverrides = {
   __typename?: 'ObjectStandardOverrides';
   description?: Maybe<Scalars['String']>;
@@ -3038,6 +3054,7 @@ export type PieChartConfiguration = {
   aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
   color?: Maybe<Scalars['String']>;
+  dateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;

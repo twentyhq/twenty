@@ -4,6 +4,8 @@ import { COLORS_SETTING } from '@/command-menu/pages/page-layout/constants/setti
 import { DATA_DISPLAY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayXSetting';
 import { DATA_DISPLAY_Y_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataDisplayYSetting';
 import { DATA_LABELS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DataLabelsSetting';
+import { DATE_GRANULARITY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DateGranularityXSetting';
+import { DATE_GRANULARITY_Y_SETTING } from '@/command-menu/pages/page-layout/constants/settings/DateGranularityYSetting';
 import { FILTER_SETTING } from '@/command-menu/pages/page-layout/constants/settings/FilterSetting';
 import { GROUP_BY_SETTING } from '@/command-menu/pages/page-layout/constants/settings/GroupBySetting';
 import { OMIT_NULL_VALUES_SETTING } from '@/command-menu/pages/page-layout/constants/settings/OmitNullValuesSetting';
@@ -26,12 +28,14 @@ export const getBarChartSettings = (
 
   const primaryAxisItems = [
     { ...DATA_DISPLAY_X_SETTING, Icon: dataDisplayXIcon },
+    DATE_GRANULARITY_X_SETTING,
     SORT_BY_X_SETTING,
     OMIT_NULL_VALUES_SETTING,
   ];
 
   const secondaryAxisItems = [
     { ...DATA_DISPLAY_Y_SETTING, Icon: dataDisplayYIcon },
+    DATE_GRANULARITY_Y_SETTING,
     GROUP_BY_SETTING,
     SORT_BY_GROUP_BY_FIELD_SETTING,
     RANGE_MIN_SETTING,
