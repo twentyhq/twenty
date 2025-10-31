@@ -124,6 +124,8 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
       return {};
 
+    const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
+
     const type = this.typeMapperService.mapToOrderByType(fieldMetadata.type);
 
     if (!isDefined(type)) {
@@ -142,7 +144,7 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     );
 
     return {
-      [fieldMetadata.name]: {
+      [joinColumnName]: {
         type: modifiedType,
         description: fieldMetadata.description,
       },
@@ -157,10 +159,12 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
       return {};
 
+    const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
+
     const type = this.typeMapperService.applyTypeOptions(GraphQLBoolean, {});
 
     return {
-      [fieldMetadata.name]: {
+      [joinColumnName]: {
         type,
         description: fieldMetadata.description,
       },
