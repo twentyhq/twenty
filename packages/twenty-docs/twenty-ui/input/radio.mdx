@@ -1,0 +1,114 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+Used when users may only choose one option from a series of options. 
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+
+</Tab>
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| style | `React.CSS` properties | Additional inline styles for the component |
+| className | string | Optional CSS class for additional styling |
+| checked | boolean | Indicates whether the radio button is checked |
+| value | string | The label or text associated with the radio button |
+| onChange | function | The function called when the selected radio button is changed |
+| onCheckedChange | function | The function called when the `checked` state of the radio button changes |
+| size | string | The size of the radio button. Options include: `large` and `small` |
+| disabled | boolean | If `true`, the radio button is disabled and not clickable |
+| labelPosition | string | The position of the label text relative to the radio button. Has two options: `left` and `right` |
+
+
+
+
+</Tab>
+</Tabs>
+
+
+## Radio Group
+
+Groups together related radio buttons. 
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| value | string | The value of the currently selected radio button |
+| onChange | function | The callback function triggered when the radio button is changed |
+| onValueChange | function | The callback function triggered when the selected value in the group changes. |
+| children | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group |
+
+
+
+
+</Tab>
+
+</Tabs>
+

@@ -114,4 +114,100 @@ describe('isMinMaxRangeValid', () => {
       expect(result).toBe(true);
     });
   });
+
+  describe('setting first value (empty configuration)', () => {
+    it('should be valid when setting rangeMin on configuration without any range values', () => {
+      const emptyConfig = {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.VERTICAL_BAR,
+      } as ChartConfiguration;
+
+      const result = isMinMaxRangeValid(
+        CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE,
+        50,
+        emptyConfig,
+      );
+
+      expect(result).toBe(true);
+    });
+
+    it('should be valid when setting rangeMax on configuration without any range values', () => {
+      const emptyConfig = {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.VERTICAL_BAR,
+      } as ChartConfiguration;
+
+      const result = isMinMaxRangeValid(
+        CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
+        100,
+        emptyConfig,
+      );
+
+      expect(result).toBe(true);
+    });
+
+    it('should be valid when setting rangeMin without existing rangeMax', () => {
+      const configWithOnlyMin = {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.VERTICAL_BAR,
+        rangeMin: 10,
+      } as ChartConfiguration;
+
+      const result = isMinMaxRangeValid(
+        CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE,
+        20,
+        configWithOnlyMin,
+      );
+
+      expect(result).toBe(true);
+    });
+
+    it('should be valid when setting rangeMax without existing rangeMin', () => {
+      const configWithOnlyMax = {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.VERTICAL_BAR,
+        rangeMax: 100,
+      } as ChartConfiguration;
+
+      const result = isMinMaxRangeValid(
+        CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
+        150,
+        configWithOnlyMax,
+      );
+
+      expect(result).toBe(true);
+    });
+
+    it('should be invalid when setting rangeMin that would exceed existing rangeMax', () => {
+      const configWithOnlyMax = {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.VERTICAL_BAR,
+        rangeMax: 100,
+      } as ChartConfiguration;
+
+      const result = isMinMaxRangeValid(
+        CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE,
+        150,
+        configWithOnlyMax,
+      );
+
+      expect(result).toBe(false);
+    });
+
+    it('should be invalid when setting rangeMax that would be less than existing rangeMin', () => {
+      const configWithOnlyMin = {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.VERTICAL_BAR,
+        rangeMin: 50,
+      } as ChartConfiguration;
+
+      const result = isMinMaxRangeValid(
+        CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE,
+        10,
+        configWithOnlyMin,
+      );
+
+      expect(result).toBe(false);
+    });
+  });
 });

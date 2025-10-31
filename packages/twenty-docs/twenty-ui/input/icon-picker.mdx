@@ -1,0 +1,61 @@
+---
+title: Icon Picker
+image: /images/user-guide/github/github-header.png
+---
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+A dropdown-based icon picker that allows users to select an icon from a list. 
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+
+</Tab>
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| disabled | boolean | Disables the icon picker if set to `true` |
+| onChange | function | The callback function triggered when the user selects an icon. It receives an object with `iconKey` and `Icon` properties |
+| selectedIconKey | string | The key of the initially selected icon |
+| onClickOutside | function | Callback function triggered when the user clicks outside the dropdown |
+| onClose | function | Callback function triggered when the dropdown is closed |
+| onOpen | function | Callback function triggered when the dropdown is opened |
+| variant | string | The visual style variant of the clickable icon. Options include: `primary`, `secondary`, and `tertiary` |
+
+
+
+
+</Tab>
+</Tabs>
+

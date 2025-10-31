@@ -12,6 +12,7 @@ import {
   useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
 import { useExecuteTasksOnAnyLocationChange } from '@/app/hooks/useExecuteTasksOnAnyLocationChange';
+import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isCaptchaRequiredForPath } from '@/captcha/utils/isCaptchaRequiredForPath';
@@ -88,6 +89,10 @@ export const PageChangeEffect = () => {
   const { executeTasksOnAnyLocationChange } =
     useExecuteTasksOnAnyLocationChange();
 
+  const isAppEffectRedirectEnabled = useRecoilValue(
+    isAppEffectRedirectEnabledState,
+  );
+
   const { closeCommandMenu } = useCommandMenu();
 
   const { resetFocusStackToFocusItem } = useResetFocusStackToFocusItem();
@@ -110,10 +115,18 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     initializeQueryParamState();
 
-    if (isDefined(pageChangeEffectNavigateLocation)) {
+    if (
+      isDefined(pageChangeEffectNavigateLocation) &&
+      isAppEffectRedirectEnabled
+    ) {
       navigate(pageChangeEffectNavigateLocation);
     }
-  }, [navigate, pageChangeEffectNavigateLocation, initializeQueryParamState]);
+  }, [
+    navigate,
+    pageChangeEffectNavigateLocation,
+    initializeQueryParamState,
+    isAppEffectRedirectEnabled,
+  ]);
 
   useEffect(() => {
     const isLeavingRecordIndexPage = !!matchPath(
