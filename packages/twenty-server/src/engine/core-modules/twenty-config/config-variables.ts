@@ -69,11 +69,11 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
     description:
-      'Disable SSRF protection checks for HTTP requests (allows private IPs and other security risks)',
+      'Enable safe mode for HTTP requests (prevents private IPs and other security risks)',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  DISABLE_SSRF_PROTECTION = false;
+  HTTP_TOOL_SAFE_MODE_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,

@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import http from 'http';
-import https from 'https';
-
 import axios, { type AxiosRequestConfig } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 import { parseDataFromContentType } from 'twenty-shared/workflow';
@@ -12,7 +9,7 @@ import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-t
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { getSafeUrlIP } from 'src/engine/core-modules/tool/utils/get-safe-url-ip.util';
+import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
 
 @Injectable()
 export class HttpTool implements Tool {
@@ -26,52 +23,11 @@ export class HttpTool implements Tool {
     const isMethodForBody = ['POST', 'PUT', 'PATCH'].includes(method);
 
     try {
-      const parsedUrl = new URL(url);
-
-      if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-        throw new Error('Invalid URL protocol');
-      }
-
       const axiosConfig: AxiosRequestConfig = {
         url,
         method: method,
         headers: headersCopy,
       };
-
-      if (!process.env.DISABLE_SSRF_PROTECTION) {
-        const safeUrlIP = await getSafeUrlIP(parsedUrl);
-        const httpModule = parsedUrl.protocol === 'https:' ? https : http;
-
-        const agent = new httpModule.Agent({
-          lookup: (
-            _hostname: string,
-            options: { family?: number; hints?: number; all?: boolean },
-            callback: (
-              err: NodeJS.ErrnoException | null,
-              address: string | { address: string; family: number }[],
-              family?: number,
-            ) => void,
-          ) => {
-            // Skip DNS - use pre-validated IP
-            if (options.all) {
-              callback(null, [
-                { address: safeUrlIP, family: options.family || 4 },
-              ]);
-            } else {
-              callback(null, safeUrlIP, options.family || 4);
-            }
-          },
-          ...(parsedUrl.protocol === 'https:' && {
-            servername: parsedUrl.hostname,
-          }),
-        });
-
-        if (parsedUrl.protocol === 'http:') {
-          axiosConfig.httpAgent = agent;
-        } else {
-          axiosConfig.httpsAgent = agent;
-        }
-      }
 
       if (isMethodForBody && body) {
         const contentType = headers?.['content-type'];
@@ -82,7 +38,11 @@ export class HttpTool implements Tool {
         }
       }
 
-      const response = await axios(axiosConfig);
+      const safeAxiosClient = axios.create({
+        adapter: getSecureAdapter(),
+      });
+
+      const response = await safeAxiosClient(axiosConfig);
 
       return {
         success: true,

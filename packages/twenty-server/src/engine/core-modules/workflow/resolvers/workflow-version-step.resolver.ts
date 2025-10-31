@@ -153,31 +153,11 @@ export class WorkflowVersionStepResolver {
     @Args('input')
     { url, method, headers, body }: TestHttpRequestInput,
   ): Promise<TestHttpRequestOutput> {
-    try {
-      const result = await this.toolRegistryService
-        .getTool(ToolType.HTTP_REQUEST)
-        .execute({
-          url,
-          method,
-          headers,
-          body,
-        });
-
-      return {
-        success: result.success,
-        message: result.message,
-        result: result.result,
-        error: result.error,
-        status: result.status,
-        statusText: result.statusText,
-        headers: result.headers,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: 'HTTP request failed',
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+    return this.toolRegistryService.getTool(ToolType.HTTP_REQUEST).execute({
+      url,
+      method,
+      headers,
+      body,
+    });
   }
 }
