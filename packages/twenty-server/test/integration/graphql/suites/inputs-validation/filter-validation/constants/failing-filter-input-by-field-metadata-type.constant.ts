@@ -158,7 +158,7 @@ export const failingFilterInputByFieldMetadataType: {
   [FieldMetadataType.DATE]: [
     {
       gqlFilterInput: { dateField: { eq: 'not-a-date' } },
-      gqlErrorMessage: 'invalid input syntax for type date: "{}"',
+      gqlErrorMessage: 'invalid input syntax for type date: "not-a-date"',
       restFilterInput: 'dateField[eq]:"{}"',
       restErrorMessage: 'invalid input syntax for type date',
     },
