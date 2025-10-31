@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
@@ -49,7 +49,7 @@ export class FlatIndexValidatorService {
   public validateFlatIndexCreation({
     flatEntityToValidate: flatIndexToValidate,
     optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.index
   >): FailedFlatEntityValidation<FlatIndexMetadata> {
@@ -77,7 +77,8 @@ export class FlatIndexValidatorService {
 
     const relatedObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (!isDefined(relatedObjectMetadata)) {
@@ -117,7 +118,7 @@ export class FlatIndexValidatorService {
         const relatedFlatField = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: flatIndexField.fieldMetadataId,
           flatEntityMaps:
-            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         });
 
         if (!isDefined(relatedFlatField)) {

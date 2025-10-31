@@ -1,4 +1,4 @@
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -21,5 +21,5 @@ export const getSubFlatEntityMapsOrThrow = <T extends FlatEntity>({
       flatEntity,
       flatEntityMaps: acc,
     });
-  }, EMPTY_FLAT_ENTITY_MAPS);
+  }, createEmptyFlatEntityMaps());
 };
