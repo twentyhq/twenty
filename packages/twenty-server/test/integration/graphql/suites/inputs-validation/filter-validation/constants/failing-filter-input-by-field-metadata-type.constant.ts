@@ -24,8 +24,7 @@ export const failingFilterInputByFieldMetadataType: {
       gqlErrorMessage: 'is not defined by type',
       restFilterInput:
         'manyToOneRelationField[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"',
-      restErrorMessage:
-        'column apiInputValidationTestObject.manyToOneRelationField does not exist',
+      restErrorMessage: "'manyToOneRelationField' does not exist",
     },
     {
       gqlFilterInput: {
@@ -46,8 +45,7 @@ export const failingFilterInputByFieldMetadataType: {
       gqlErrorMessage: 'is not defined by type',
       restFilterInput:
         'oneToManyRelationFieldId[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"',
-      restErrorMessage:
-        'Field metadata not found for field: oneToManyRelationFieldId',
+      restErrorMessage: "'oneToManyRelationFieldId' does not exist",
     },
     // {
     //   gqlFilterInput: {
@@ -316,32 +314,31 @@ export const failingFilterInputByFieldMetadataType: {
       gqlFilterInput: { multiSelectField: { eq: 'not-a-multi-select' } },
       gqlErrorMessage: 'Value "not-a-multi-select" does not exist ',
       restFilterInput: 'multiSelectField[eq]:"not-a-multi-select"',
-      restErrorMessage: 'malformed array literal',
+      restErrorMessage: "not available in 'multiSelectField'",
     },
-    // TODO - fix this, should throw
-    // {
-    //   gqlFilterInput: { multiSelectField: { eq: {} } },
-    //   gqlErrorMessage: 'cannot represent non-string value: {}.',
-    //   restFilterInput: 'multiSelectField[eq]:"{}"',
-    //   restErrorMessage: "not available in 'multiSelectField'",
-    // },
+    {
+      gqlFilterInput: { multiSelectField: { eq: {} } },
+      gqlErrorMessage: 'cannot represent non-string value: {}.',
+      restFilterInput: 'multiSelectField[eq]:"{}"',
+      restErrorMessage: "not available in 'multiSelectField'",
+    },
     {
       gqlFilterInput: { multiSelectField: { eq: [] } },
       gqlErrorMessage: 'cannot represent non-string value: [].',
       restFilterInput: 'multiSelectField[eq]:"[]"',
-      restErrorMessage: 'malformed array literal',
+      restErrorMessage: "not available in 'multiSelectField'",
     },
     {
       gqlFilterInput: { multiSelectField: { eq: true } },
       gqlErrorMessage: 'cannot represent non-string value: true.',
       restFilterInput: 'multiSelectField[eq]:"true"',
-      restErrorMessage: 'malformed array literal',
+      restErrorMessage: "not available in 'multiSelectField'",
     },
     {
       gqlFilterInput: { multiSelectField: { eq: 2 } },
       gqlErrorMessage: 'cannot represent non-string value: 2.',
       restFilterInput: 'multiSelectField[eq]:2',
-      restErrorMessage: 'malformed array literal',
+      restErrorMessage: "enum value '2' not available in 'multiSelectField' ",
     },
     // TODO - ensure it should throw
     // {
