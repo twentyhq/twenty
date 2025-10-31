@@ -60,7 +60,8 @@ export const parseGroupByArgs = (
     }
     for (const fieldName of Object.keys(fieldNames)) {
       const fieldMetadataId =
-        objectMetadataItemWithFieldMaps.fieldIdByName[fieldName];
+        objectMetadataItemWithFieldMaps.fieldIdByName[fieldName] ||
+        objectMetadataItemWithFieldMaps.fieldIdByJoinColumnName[fieldName];
       const fieldMetadata =
         objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
