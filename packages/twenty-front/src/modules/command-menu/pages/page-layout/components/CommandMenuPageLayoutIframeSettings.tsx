@@ -78,7 +78,6 @@ export const CommandMenuPageLayoutIframeSettings = () => {
 
   const handleUrlChange = (value: string) => {
     setUrl(value);
-    validateUrl(value);
 
     if (validateUrl(value)) {
       updatePageLayoutWidget(widgetInEditMode.id, {
