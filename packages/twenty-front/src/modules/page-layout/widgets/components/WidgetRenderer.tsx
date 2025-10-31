@@ -3,27 +3,29 @@ import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWi
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { type PageLayoutTabLayoutMode } from '@/page-layout/types/PageLayoutTabLayoutMode';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
-import { type WidgetCardContext } from '@/page-layout/widgets/widget-card/types/WidgetCardContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
-  widgetCardContext?: WidgetCardContext;
+  pageLayoutType: PageLayoutType;
+  layoutMode: PageLayoutTabLayoutMode;
 };
 
 export const WidgetRenderer = ({
   widget,
-  widgetCardContext = 'dashboard',
+  pageLayoutType,
+  layoutMode,
 }: WidgetRendererProps) => {
   const theme = useTheme();
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
@@ -63,10 +65,11 @@ export const WidgetRenderer = ({
     <WidgetCard
       onClick={isPageLayoutInEditMode ? handleClick : undefined}
       isDragging={isDragging}
-      widgetCardContext={widgetCardContext}
+      pageLayoutType={pageLayoutType}
+      layoutMode={layoutMode}
       isEditing={isEditing}
     >
-      {widgetCardContext !== 'canvas' && (
+      {layoutMode !== 'canvas' && (
         <WidgetCardHeader
           isInEditMode={isPageLayoutInEditMode}
           title={widget.title}
@@ -82,9 +85,12 @@ export const WidgetRenderer = ({
         />
       )}
 
-      <WidgetCardContent widgetCardContext={widgetCardContext}>
+      <WidgetCardContent
+        pageLayoutType={pageLayoutType}
+        layoutMode={layoutMode}
+      >
         {hasAccess && <WidgetContentRenderer widget={widget} />}
-        {!hasAccess && widgetCardContext === 'dashboard' && (
+        {!hasAccess && pageLayoutType === PageLayoutType.DASHBOARD && (
           <IconLock
             color={theme.font.color.tertiary}
             stroke={theme.icon.stroke.sm}
