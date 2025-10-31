@@ -2,7 +2,9 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
+import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { FormRelativeDatePicker } from '@/object-record/record-field/ui/form-types/components/FormRelativeDatePicker';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -21,6 +23,7 @@ import {
   type StepFilter,
 } from 'twenty-shared/types';
 import { isDefined, parseJson } from 'twenty-shared/utils';
+import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 import { type JsonValue } from 'type-fest';
 
 type WorkflowStepFilterValueInputProps = {
@@ -35,9 +38,9 @@ const COMPOSITE_FIELD_METADATA_TYPES = [
   FieldMetadataType.CURRENCY,
 ];
 
-const isFilterableFieldMetadataType = (
+const isFilterableFieldType = (
   type: string,
-): type is FieldMetadataType => {
+): type is FieldMetadataType | 'array' | 'boolean' | 'number' => {
   return [
     FieldMetadataType.TEXT,
     FieldMetadataType.NUMBER,
@@ -53,6 +56,9 @@ const isFilterableFieldMetadataType = (
     FieldMetadataType.UUID,
     FieldMetadataType.RELATION,
     ...COMPOSITE_FIELD_METADATA_TYPES,
+    'array',
+    'boolean',
+    'number',
   ].includes(type as FieldMetadataType);
 };
 
@@ -123,11 +129,7 @@ export const WorkflowStepFilterValueInput = ({
     );
   }
 
-  if (
-    !isDefined(variableType) ||
-    !isFilterableFieldMetadataType(variableType) ||
-    !isDefined(selectedFieldMetadataItem)
-  ) {
+  if (!isDefined(variableType) || !isFilterableFieldType(variableType)) {
     return (
       <FormTextFieldInput
         defaultValue={stepFilter.value}
@@ -174,7 +176,7 @@ export const WorkflowStepFilterValueInput = ({
     );
   }
 
-  if (variableType === FieldMetadataType.ARRAY) {
+  if (variableType === FieldMetadataType.ARRAY || variableType === 'array') {
     const arrayValue = parseJson<string[]>(stepFilter.value) ?? [];
 
     return (
@@ -182,6 +184,36 @@ export const WorkflowStepFilterValueInput = ({
         defaultValue={arrayValue}
         onChange={handleValueChange}
         readonly={readonly}
+      />
+    );
+  }
+
+  if (
+    variableType === FieldMetadataType.BOOLEAN ||
+    variableType === 'boolean'
+  ) {
+    const parsedValue = parseBooleanFromStringValue(stepFilter.value) as
+      | boolean
+      | undefined
+      | string;
+
+    return (
+      <FormBooleanFieldInput
+        defaultValue={parsedValue}
+        onChange={handleValueChange}
+        readonly={readonly}
+        VariablePicker={WorkflowVariablePicker}
+      />
+    );
+  }
+
+  if (variableType === 'number') {
+    return (
+      <FormNumberFieldInput
+        defaultValue={stepFilter.value}
+        onChange={handleValueChange}
+        readonly={readonly}
+        VariablePicker={WorkflowVariablePicker}
       />
     );
   }

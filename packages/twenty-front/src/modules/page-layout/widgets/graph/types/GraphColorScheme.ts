@@ -5,4 +5,18 @@ export type GraphColorScheme = {
     hover: [string, string];
   };
   solid: string;
+  variations: [
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+  ];
 };

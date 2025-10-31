@@ -8,6 +8,7 @@ import { HardBreak } from '@tiptap/extension-hard-break';
 import { Heading } from '@tiptap/extension-heading';
 import { Italic } from '@tiptap/extension-italic';
 import { Link } from '@tiptap/extension-link';
+import { ListKit } from '@tiptap/extension-list';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Strike } from '@tiptap/extension-strike';
 import { Text } from '@tiptap/extension-text';
@@ -66,6 +67,7 @@ export const useAdvancedTextEditor = (
       }),
       ResizableImage,
       Dropcursor,
+      ListKit,
       UploadImageExtension.configure({
         onImageUpload,
         onImageUploadError,

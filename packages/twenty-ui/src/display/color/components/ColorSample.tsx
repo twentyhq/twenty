@@ -1,24 +1,36 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { type ThemeColor } from '@ui/theme';
+import { type ThemeColor, type ThemeType } from '@ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 
 export type ColorSampleVariant = 'default' | 'pipeline';
 
 export type ColorSampleProps = {
-  colorName: ThemeColor;
+  colorName?: ThemeColor;
+  color?: string;
   variant?: ColorSampleVariant;
 };
 
+const getColor = (theme: ThemeType, colorName?: ThemeColor, color?: string) => {
+  if (isDefined(color)) {
+    return color;
+  }
+  if (isDefined(colorName)) {
+    return theme.tag.background[colorName];
+  }
+  return 'transparent';
+};
+
 const StyledColorSample = styled.div<ColorSampleProps>`
-  background-color: ${({ theme, colorName }) =>
-    theme.tag.background[colorName]};
-  border: 1px solid ${({ theme, colorName }) => theme.tag.text[colorName]};
+  background-color: ${({ theme, colorName, color }) =>
+    getColor(theme, colorName, color)};
+  border: 1px solid ${({ theme }) => theme.border.color.transparentStrong};
   border-radius: 60px;
   height: ${({ theme }) => theme.spacing(4)};
   width: ${({ theme }) => theme.spacing(3)};
 
-  ${({ colorName, theme, variant }) => {
+  ${({ colorName, color, theme, variant }) => {
     if (variant === 'pipeline')
       return css`
         align-items: center;
@@ -27,7 +39,7 @@ const StyledColorSample = styled.div<ColorSampleProps>`
         justify-content: center;
 
         &:after {
-          background-color: ${theme.tag.text[colorName]};
+          background-color: ${getColor(theme, colorName, color)};
           border-radius: ${theme.border.radius.rounded};
           content: '';
           display: block;

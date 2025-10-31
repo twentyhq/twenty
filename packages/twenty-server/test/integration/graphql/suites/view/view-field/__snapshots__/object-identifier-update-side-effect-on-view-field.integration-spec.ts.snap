@@ -3,7 +3,7 @@
 exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow creating a view field with a position lower than the label identifier view field 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -59,7 +59,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
 exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow deleting a label identifier view field 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -115,7 +115,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
 exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow destroying a label identifier view field 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -169,7 +169,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
 exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow updating a label identifier view field visibility to false 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],
@@ -225,7 +225,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
 exports[`View Field Resolver - Successful object metadata identifier update side effect on view field Should not allow updating labelIdentifier view field with a position higher than existing other view field 1`] = `
 {
   "extensions": {
-    "code": "BAD_USER_INPUT",
+    "code": "METADATA_VALIDATION_FAILED",
     "errors": {
       "cronTrigger": [],
       "databaseEventTrigger": [],

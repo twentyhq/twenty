@@ -5,8 +5,7 @@ import { ObjectRecord } from 'twenty-shared/types';
 import {
   PageInfo,
   RestApiBaseHandler,
-} from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
-
+} from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
 import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
@@ -26,74 +25,6 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
   }
 
   async handle(request: AuthenticatedRequest) {
-    const {
-      repository,
-      objectMetadata,
-      objectMetadataItemWithFieldsMaps,
-      restrictedFields,
-    } = await this.getRepositoryAndMetadataOrFail(request);
-
-    const {
-      records,
-      isForwardPagination,
-      hasMoreRecords,
-      totalCount,
-      startCursor,
-      endCursor,
-    } = await this.findRecords({
-      request,
-      repository,
-      objectMetadata,
-      objectMetadataItemWithFieldsMaps,
-      restrictedFields,
-    });
-
-    return this.formatPaginatedResult({
-      finalRecords: records,
-      objectMetadataNamePlural: objectMetadata.objectMetadataMapItem.namePlural,
-      isForwardPagination,
-      hasMoreRecords,
-      totalCount,
-      startCursor,
-      endCursor,
-    });
-  }
-
-  formatPaginatedResult({
-    finalRecords,
-    objectMetadataNamePlural,
-    isForwardPagination,
-    hasMoreRecords,
-    totalCount,
-    startCursor,
-    endCursor,
-  }: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    finalRecords: any[];
-    objectMetadataNamePlural: string;
-    isForwardPagination: boolean;
-    hasMoreRecords: boolean;
-    totalCount: number;
-    startCursor: string | null;
-    endCursor: string | null;
-  }) {
-    const hasPreviousPage = !isForwardPagination && hasMoreRecords;
-
-    return this.formatResult({
-      operation: 'findMany',
-      objectNamePlural: objectMetadataNamePlural,
-      data: isForwardPagination ? finalRecords : finalRecords.reverse(),
-      pageInfo: {
-        hasNextPage: isForwardPagination && hasMoreRecords,
-        ...(hasPreviousPage ? { hasPreviousPage } : {}),
-        startCursor,
-        endCursor,
-      },
-      totalCount,
-    });
-  }
-
-  async commonHandle(request: AuthenticatedRequest) {
     try {
       const parsedArgs = this.parseRequestArgs(request);
       const {
@@ -111,7 +42,10 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
 
       const { records, aggregatedValues, pageInfo } =
         await this.commonFindManyQueryRunnerService.execute(
-          { ...parsedArgs, selectedFields },
+          {
+            ...parsedArgs,
+            selectedFields: { ...selectedFields, totalCount: true },
+          },
           {
             authContext,
             objectMetadataMaps,
@@ -126,7 +60,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
         pageInfo,
       );
     } catch (error) {
-      workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
@@ -140,7 +74,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
       data: {
         [objectNamePlural]: records,
       },
-      totalCount: aggregatedValues.totalCount,
+      totalCount: Number(aggregatedValues.totalCount),
       pageInfo,
     };
   }

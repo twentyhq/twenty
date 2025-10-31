@@ -15,7 +15,7 @@ export const updateOneOperationFactory = ({
   recordId,
 }: UpdateOneOperationFactoryParams) => ({
   query: gql`
-    mutation Update${capitalize(objectMetadataSingularName)}($${objectMetadataSingularName}Id: UUID, $data: ${capitalize(objectMetadataSingularName)}UpdateInput) {
+    mutation Update${capitalize(objectMetadataSingularName)}($${objectMetadataSingularName}Id: UUID!, $data: ${capitalize(objectMetadataSingularName)}UpdateInput!) {
       update${capitalize(objectMetadataSingularName)}(id: $${objectMetadataSingularName}Id, data: $data) {
         ${gqlFields}
       }

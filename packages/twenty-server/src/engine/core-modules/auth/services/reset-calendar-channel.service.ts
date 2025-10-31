@@ -35,8 +35,7 @@ export class ResetCalendarChannelService {
         connectedAccountId,
       },
       {
-        syncStage:
-          CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
         syncStatus: null,
         syncCursor: '',
         syncStageStartedAt: null,

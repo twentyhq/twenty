@@ -18,8 +18,7 @@ import {
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 export enum CalendarEventImportSyncStep {
-  FULL_CALENDAR_EVENT_LIST_FETCH = 'FULL_CALENDAR_EVENT_LIST_FETCH',
-  PARTIAL_CALENDAR_EVENT_LIST_FETCH = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH',
+  CALENDAR_EVENT_LIST_FETCH = 'CALENDAR_EVENT_LIST_FETCH',
   CALENDAR_EVENTS_IMPORT = 'CALENDAR_EVENTS_IMPORT',
 }
 
@@ -129,13 +128,7 @@ export class CalendarEventImportErrorHandlerService {
     );
 
     switch (syncStep) {
-      case CalendarEventImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH:
-        await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
-          [calendarChannel.id],
-        );
-        break;
-
-      case CalendarEventImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH:
+      case CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH:
         await this.calendarChannelSyncStatusService.scheduleCalendarEventListFetch(
           [calendarChannel.id],
         );
@@ -199,9 +192,7 @@ export class CalendarEventImportErrorHandlerService {
     calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    if (
-      syncStep === CalendarEventImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH
-    ) {
+    if (syncStep === CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH) {
       return;
     }
 

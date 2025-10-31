@@ -8,6 +8,7 @@ import {
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { UpsertRecordParams } from 'src/engine/core-modules/record-crud/types/upsert-record-params.type';
+import { getSelectedColumnsFromRestrictedFields } from 'src/engine/core-modules/record-crud/utils/get-selected-columns-from-restricted-fields.util';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -29,13 +30,8 @@ export class UpsertRecordService {
   ) {}
 
   async execute(params: UpsertRecordParams): Promise<ToolOutput> {
-    const {
-      objectName,
-      objectRecord,
-      fieldsToUpdate,
-      workspaceId,
-      rolePermissionConfig,
-    } = params;
+    const { objectName, objectRecord, workspaceId, rolePermissionConfig } =
+      params;
 
     if (!workspaceId) {
       return {
@@ -53,7 +49,9 @@ export class UpsertRecordService {
           rolePermissionConfig,
         );
 
-      const fieldsToUpdateArray = fieldsToUpdate || Object.keys(objectRecord);
+      const fieldsToUpdateArray = Object.keys(objectRecord).filter((field) =>
+        isDefined(objectRecord[field]),
+      );
 
       const { objectMetadataItemWithFieldsMaps } =
         await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
@@ -135,13 +133,28 @@ export class UpsertRecordService {
         )
         .filter(isDefined);
 
-      const upsertResult = await repository.upsert(transformedObjectRecord, {
-        conflictPaths: conflictPaths,
-        indexPredicate:
-          indexPredicate.length > 0
-            ? `${indexPredicate.join(' AND ')}`
-            : undefined,
-      });
+      const restrictedFields =
+        repository.objectRecordsPermissions?.[
+          objectMetadataItemWithFieldsMaps.id
+        ]?.restrictedFields;
+
+      const selectedColumns = getSelectedColumnsFromRestrictedFields(
+        restrictedFields,
+        objectMetadataItemWithFieldsMaps,
+      );
+
+      const upsertResult = await repository.upsert(
+        transformedObjectRecord,
+        {
+          conflictPaths: conflictPaths,
+          indexPredicate:
+            indexPredicate.length > 0
+              ? `${indexPredicate.join(' AND ')}`
+              : undefined,
+        },
+        undefined,
+        selectedColumns,
+      );
 
       const upsertedRecordId = upsertResult.identifiers?.[0].id;
 
@@ -156,6 +169,7 @@ export class UpsertRecordService {
         where: {
           id: upsertedRecordId,
         },
+        select: selectedColumns,
       });
 
       if (!upsertedRecord) {

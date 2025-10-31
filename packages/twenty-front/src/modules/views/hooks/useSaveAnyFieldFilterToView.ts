@@ -1,12 +1,13 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { useUpdateView } from '@/views/hooks/useUpdateView';
+import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveAnyFieldFilterToView = () => {
-  const { updateView } = useUpdateView();
+  const { updateView } = usePersistView();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -28,9 +29,16 @@ export const useSaveAnyFieldFilterToView = () => {
           .getValue();
 
         if (currentAnyFieldFilterValue !== currentViewAnyFieldFilterValue) {
-          await updateView({
+          const formattedCurrentView = convertUpdateViewInputToCore({
             ...currentView,
             anyFieldFilterValue: currentAnyFieldFilterValue,
+          });
+          await updateView({
+            id: currentView.id,
+            input: {
+              ...formattedCurrentView,
+              anyFieldFilterValue: currentAnyFieldFilterValue,
+            },
           });
         }
       },

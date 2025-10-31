@@ -58,33 +58,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
-  const handleFindManyRecordsCompleted = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (data: RecordGqlOperationFindManyResult) => {
-        const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
-
-        const existingCursor = snapshot
-          .getLoadable(cursorFamilyState(queryIdentifier))
-          .getValue();
-        const existingHasNextPage = snapshot
-          .getLoadable(hasNextPageFamilyState(queryIdentifier))
-          .getValue();
-
-        if (isDefined(data?.[objectMetadataItem.namePlural])) {
-          if (existingCursor !== pageInfo.endCursor) {
-            set(cursorFamilyState(queryIdentifier), pageInfo.endCursor ?? '');
-          }
-          if (existingHasNextPage !== pageInfo.hasNextPage) {
-            set(
-              hasNextPageFamilyState(queryIdentifier),
-              pageInfo.hasNextPage ?? false,
-            );
-          }
-        }
-      },
-    [objectMetadataItem.namePlural, queryIdentifier],
-  );
-
   const [findManyRecords, { data, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       variables: {
@@ -93,8 +66,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         orderBy,
       },
       fetchPolicy,
-      onCompleted: handleFindManyRecordsCompleted,
-      onError: handleFindManyRecordsError,
       client: apolloCoreClient,
     });
 
@@ -126,6 +97,9 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         }
 
         const result = await findManyRecords();
+        if (isDefined(result?.error)) {
+          handleFindManyRecordsError(result.error);
+        }
 
         const hasNextPage =
           result?.data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ??
@@ -167,6 +141,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       findManyRecords,
       objectMetadataItem.namePlural,
       queryIdentifier,
+      handleFindManyRecordsError,
     ],
   );
 
