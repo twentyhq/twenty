@@ -1,9 +1,13 @@
 import { doesRecordBelongToGroup } from '@/apollo/optimistic-effect/group-by/utils/doesRecordBelongToGroup';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
-import { createCacheRef } from '@/object-record/cache/utils/createCacheRef';
+import { createCacheEdgeWithRecordRef } from '@/object-record/cache/utils/createCacheEdgeWithRecordRef';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
+import {
+  type ReadFieldFunction,
+  type ToReferenceFunction,
+} from '@apollo/client/cache/core/types/common';
 import { isDefined } from 'twenty-shared/utils';
 
 type ProcessGroupByConnectionWithRecordsArgs = {
@@ -21,8 +25,8 @@ type ProcessGroupByConnectionWithRecordsArgs = {
   groupByDimensionValues: readonly string[];
   groupByConfig?: Array<Record<string, boolean | Record<string, string>>>;
   objectMetadataItem: ObjectMetadataItem;
-  readField: (fieldName: string, ref?: any) => any;
-  toReference: (record: RecordGqlNode) => any;
+  readField: ReadFieldFunction;
+  toReference: ToReferenceFunction;
 };
 
 export const processGroupByConnectionWithRecords = ({
@@ -82,7 +86,7 @@ export const processGroupByConnectionWithRecords = ({
         !recordExistsInEdges;
 
       if (shouldAdd) {
-        const edge = createCacheRef({
+        const edge = createCacheEdgeWithRecordRef({
           record,
           objectMetadataItem,
           toReference,
@@ -100,7 +104,7 @@ export const processGroupByConnectionWithRecords = ({
       const shouldBeInGroup = recordMatchesFilter && belongsToGroup;
 
       if (shouldBeInGroup && !recordExistsInEdges) {
-        const edge = createCacheRef({
+        const edge = createCacheEdgeWithRecordRef({
           record,
           objectMetadataItem,
           toReference,

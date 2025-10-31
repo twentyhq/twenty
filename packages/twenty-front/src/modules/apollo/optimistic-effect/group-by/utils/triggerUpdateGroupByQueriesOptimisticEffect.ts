@@ -5,7 +5,7 @@ import { processGroupByConnectionWithRecords } from '@/apollo/optimistic-effect/
 import { type CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
-import { createCacheRef } from '@/object-record/cache/utils/createCacheRef';
+import { createCacheEdgeWithRecordRef } from '@/object-record/cache/utils/createCacheEdgeWithRecordRef';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type RecordGqlGroupByConnection } from '@/object-record/graphql/types/RecordGqlOperationGroupByResult';
 import { type RecordGqlOperationGroupByVariables } from '@/object-record/graphql/types/RecordGqlOperationGroupByVariables';
@@ -168,7 +168,7 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
               !dimensionExists &&
               recordDimensionValues.length === groupByFieldNames.length
             ) {
-              const edge = createCacheRef({
+              const edge = createCacheEdgeWithRecordRef({
                 record,
                 objectMetadataItem,
                 toReference,
