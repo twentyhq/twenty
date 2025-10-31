@@ -117,7 +117,6 @@ export const GraphWidgetLineChart = ({
     instanceId,
     enableArea,
     theme,
-    formatOptions,
   });
 
   const { createSliceTooltipData, createPointTooltipData } =
@@ -144,7 +143,7 @@ export const GraphWidgetLineChart = ({
       <GraphWidgetTooltip
         items={tooltipData.items}
         showClickHint={tooltipData.showClickHint}
-        title={tooltipData.title}
+        indexLabel={tooltipData.indexLabel}
       />
     );
   };
@@ -158,7 +157,7 @@ export const GraphWidgetLineChart = ({
       <GraphWidgetTooltip
         items={tooltipData.items}
         showClickHint={tooltipData.showClickHint}
-        title={tooltipData.title}
+        indexLabel={tooltipData.indexLabel}
       />
     );
   };

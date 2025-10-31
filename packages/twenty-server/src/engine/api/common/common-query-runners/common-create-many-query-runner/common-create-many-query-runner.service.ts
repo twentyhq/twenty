@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -47,6 +48,16 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
+    if (args.data.length > QUERY_MAX_RECORDS) {
+      throw new CommonQueryRunnerException(
+        `Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        CommonQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED,
+        {
+          userFriendlyMessage: msg`Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        },
+      );
+    }
+
     const {
       repository,
       authContext,

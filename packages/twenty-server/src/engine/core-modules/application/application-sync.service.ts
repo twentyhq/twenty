@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { parse } from 'path';
 
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME, AllMetadataName } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -24,7 +24,7 @@ import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
@@ -996,15 +996,15 @@ export class ApplicationSyncService {
         fromToAllFlatEntityMaps: {
           flatObjectMetadataMaps: {
             from: fromFlatObjectMetadataMaps,
-            to: EMPTY_FLAT_ENTITY_MAPS,
+            to: createEmptyFlatEntityMaps(),
           },
           flatIndexMaps: {
             from: fromFlatIndexMetadataMaps,
-            to: EMPTY_FLAT_ENTITY_MAPS,
+            to: createEmptyFlatEntityMaps(),
           },
           flatFieldMetadataMaps: {
             from: fromFlatFieldMetadataMaps,
-            to: EMPTY_FLAT_ENTITY_MAPS,
+            to: createEmptyFlatEntityMaps(),
           },
         },
         workspaceId,

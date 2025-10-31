@@ -2532,9 +2532,9 @@ msgid "Data labels"
 msgstr "Etykiety danych"
 
 #. js-lingui-id: BCllhB
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Data Labels"
 msgstr "Etykiety danych"
 
@@ -2756,6 +2756,7 @@ msgstr "usuń"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/mock/action-menu-actions.mock.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5245,10 +5246,10 @@ msgstr "Dopasuj kolumny"
 msgid "Max"
 msgstr "Maks"
 
-#. js-lingui-id: y2rk49
+#. js-lingui-id: Zgn/wP
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Max {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter"
-msgstr "Maksymalnie {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} prętów na wykres. Rozważ dodanie filtra"
+msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
+msgstr ""
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -5447,12 +5448,14 @@ msgstr "Więcej opcji"
 #. js-lingui-id: iSLA/r
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 msgid "Move left"
 msgstr "Przenieś w lewo"
 
 #. js-lingui-id: Ubl2by
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 msgid "Move right"
 msgstr "Przenieś w prawo"
 
@@ -7582,6 +7585,7 @@ msgstr "Ustawianie twojej bazy danych..."
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/navigation/components/MainNavigationDrawerFixedItems.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Settings"
 msgstr "Ustawienia"
@@ -7781,7 +7785,7 @@ msgid "Sort by"
 msgstr "Sortuj według"
 
 #. js-lingui-id: vKy//U
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Sort By Group"
 msgstr "Sortuj według grupy"
 
@@ -8081,6 +8085,16 @@ msgstr "Ustawienia systemowe - Sobota"
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "System settings - Sunday"
 msgstr "Ustawienia systemowe - Niedziela"
+
+#. js-lingui-id: HuA3RU
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
+msgid "Tab"
+msgstr ""
+
+#. js-lingui-id: zr20ox
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Tab Settings"
+msgstr ""
 
 #. js-lingui-id: 4hJhzz
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -9119,8 +9133,8 @@ msgid "X axis"
 msgstr "Oś X"
 
 #. js-lingui-id: sbYPEJ
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
-#: src/modules/command-menu/pages/page-layout/utils/__tests__/isChartSettingDisabled.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "X Axis Data"
 msgstr "Dane osi X"
 

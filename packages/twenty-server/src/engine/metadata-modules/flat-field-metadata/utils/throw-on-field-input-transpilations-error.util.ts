@@ -25,7 +25,7 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
       throw new WorkspaceMigrationBuilderExceptionV2(
         {
           report: {
-            ...EMPTY_ORCHESTRATOR_FAILURE_REPORT,
+            ...EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
             objectMetadata: [
               {
                 errors: failedInputTranspilationErrors,
