@@ -199,6 +199,7 @@ export class WorkspaceMigrationRunnerV2Service {
       const invalidationFailures = invalidationResults.filter(
         (result) => result.status === 'rejected',
       );
+
       if (invalidationFailures.length > 0) {
         throw new Error(
           `Failed to invalidate ${invalidationFailures.length} cache operations`,

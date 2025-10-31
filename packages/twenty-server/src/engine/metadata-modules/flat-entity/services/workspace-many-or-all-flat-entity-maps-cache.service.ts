@@ -55,6 +55,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
     );
 
     const failures = results.filter((r) => r.status === 'rejected');
+
     if (failures.length > 0) {
       this.logger.error(`${failures.length} operations failed`);
       throw new Error(`Failed to process ${failures.length} flat entity maps`);
