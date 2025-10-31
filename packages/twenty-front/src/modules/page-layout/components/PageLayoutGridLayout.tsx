@@ -1,12 +1,12 @@
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import { PageLayoutGridResizeHandle } from '@/page-layout/components/PageLayoutGridResizeHandle';
-import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
+import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
@@ -14,6 +14,8 @@ import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { addPendingPlaceholderToLayouts } from '@/page-layout/utils/addPendingPlaceholderToLayouts';
+import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterPendingPlaceholderFromLayouts';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -90,22 +92,12 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
 
-  const PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY =
-    '__pending-widget-placeholder__';
-
   const handleLayoutChangeWithoutPendingPlaceholder = useCallback(
     (currentLayout: Layout[], allLayouts: Layouts) => {
-      const layoutsWithoutPendingPlaceholder: Layouts = {
-        desktop: allLayouts.desktop?.filter(
-          (layoutItem) =>
-            layoutItem.i !== PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
-        ),
-        mobile: allLayouts.mobile?.filter(
-          (layoutItem) =>
-            layoutItem.i !== PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
-        ),
-      };
-      handleLayoutChange(currentLayout, layoutsWithoutPendingPlaceholder);
+      handleLayoutChange(
+        currentLayout,
+        filterPendingPlaceholderFromLayouts(allLayouts),
+      );
     },
     [handleLayoutChange],
   );
@@ -145,34 +137,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     : (pageLayoutCurrentLayouts[tabId] ?? EMPTY_LAYOUT);
 
   const layouts = hasPendingPlaceholder
-    ? {
-        desktop: [
-          ...baseLayouts.desktop,
-          {
-            i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
-            x: pageLayoutDraggedArea.x,
-            y: pageLayoutDraggedArea.y,
-            w: pageLayoutDraggedArea.w,
-            h: pageLayoutDraggedArea.h,
-            minW: DEFAULT_WIDGET_SIZE.minimum.w,
-            minH: DEFAULT_WIDGET_SIZE.minimum.h,
-            static: true,
-          },
-        ],
-        mobile: [
-          ...baseLayouts.mobile,
-          {
-            i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
-            x: 0,
-            y: pageLayoutDraggedArea.y,
-            w: 1,
-            h: pageLayoutDraggedArea.h,
-            minW: DEFAULT_WIDGET_SIZE.minimum.w,
-            minH: DEFAULT_WIDGET_SIZE.minimum.h,
-            static: true,
-          },
-        ],
-      }
+    ? addPendingPlaceholderToLayouts(baseLayouts, pageLayoutDraggedArea)
     : baseLayouts;
 
   const widgetsArray = isLayoutEmpty
