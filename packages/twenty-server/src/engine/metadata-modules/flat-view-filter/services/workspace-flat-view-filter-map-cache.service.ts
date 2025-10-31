@@ -6,13 +6,13 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
 import { fromViewFilterEntityToFlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/utils/from-view-filter-entity-to-flat-view-filter.util';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceFlatMapCache('flatViewFilterMaps')
@@ -38,14 +38,18 @@ export class WorkspaceFlatViewFilterMapCacheService extends WorkspaceFlatMapCach
       withDeleted: true,
     });
 
-    return viewFilters.reduce((flatViewFilterMaps, viewFilterEntity) => {
+    const flatViewFilterMaps = createEmptyFlatEntityMaps();
+
+    for (const viewFilterEntity of viewFilters) {
       const flatViewFilter =
         fromViewFilterEntityToFlatViewFilter(viewFilterEntity);
 
-      return addFlatEntityToFlatEntityMapsOrThrow({
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatViewFilter,
-        flatEntityMaps: flatViewFilterMaps,
+        flatEntityMapsToMutate: flatViewFilterMaps,
       });
-    }, EMPTY_FLAT_ENTITY_MAPS);
+    }
+
+    return flatViewFilterMaps;
   }
 }

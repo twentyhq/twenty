@@ -7,9 +7,8 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import {
   SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES,
   ServerlessFunctionEntity,
@@ -17,6 +16,7 @@ import {
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceFlatMapCache('flatServerlessFunctionMaps')
@@ -44,23 +44,24 @@ export class WorkspaceFlatServerlessFunctionMapCacheService extends WorkspaceFla
       withDeleted: true,
     });
 
-    return serverlessFunctions.reduce(
-      (flatServerlessFunctionMaps, serverlessFunctionEntity) => {
-        const flatServerlessFunction = {
-          ...removePropertiesFromRecord(serverlessFunctionEntity, [
-            ...SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES,
-          ]),
-          universalIdentifier:
-            serverlessFunctionEntity.universalIdentifier ??
-            serverlessFunctionEntity.id,
-        } satisfies FlatServerlessFunction;
+    const flatServerlessFunctionMaps = createEmptyFlatEntityMaps();
 
-        return addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: flatServerlessFunction,
-          flatEntityMaps: flatServerlessFunctionMaps,
-        });
-      },
-      EMPTY_FLAT_ENTITY_MAPS,
-    );
+    for (const serverlessFunctionEntity of serverlessFunctions) {
+      const flatServerlessFunction = {
+        ...removePropertiesFromRecord(serverlessFunctionEntity, [
+          ...SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES,
+        ]),
+        universalIdentifier:
+          serverlessFunctionEntity.universalIdentifier ??
+          serverlessFunctionEntity.id,
+      } satisfies FlatServerlessFunction;
+
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: flatServerlessFunction,
+        flatEntityMapsToMutate: flatServerlessFunctionMaps,
+      });
+    }
+
+    return flatServerlessFunctionMaps;
   }
 }

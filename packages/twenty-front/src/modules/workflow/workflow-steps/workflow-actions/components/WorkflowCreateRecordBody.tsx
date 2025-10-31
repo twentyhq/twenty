@@ -6,10 +6,12 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useViewOrDefaultViewFromPrefetchedViews } from '@/views/hooks/useViewOrDefaultViewFromPrefetchedViews';
+import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
@@ -96,6 +98,8 @@ export const WorkflowCreateRecordBody = ({
     (item) => item.nameSingular === objectNameSingular,
   );
 
+  const objectLabelSingular = objectMetadataItem?.labelSingular;
+
   const { view: indexView } = useViewOrDefaultViewFromPrefetchedViews({
     objectMetadataItemId: objectMetadataItem?.id ?? '',
   });
@@ -116,6 +120,10 @@ export const WorkflowCreateRecordBody = ({
       };
     })
     .sort(sortByViewFieldPosition);
+
+  const uniqueFieldMetadataItems = inlineFieldMetadataItems?.filter(
+    (fieldMetadataItem) => fieldMetadataItem.isUnique,
+  );
 
   const inlineFieldDefinitions = isDefined(objectMetadataItem)
     ? inlineFieldMetadataItems?.map((fieldMetadataItem) =>
@@ -205,6 +213,25 @@ export const WorkflowCreateRecordBody = ({
         dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
         dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
       />
+
+      {actionType === 'UPSERT_RECORD' &&
+        isDefined(objectMetadataItem) &&
+        isDefined(uniqueFieldMetadataItems) &&
+        uniqueFieldMetadataItems.length > 0 && (
+          <WorkflowFieldsMultiSelect
+            label={t`Unique fields`}
+            objectMetadataItem={objectMetadataItem}
+            handleFieldsChange={() => {}}
+            defaultFields={
+              uniqueFieldMetadataItems?.map(
+                (fieldMetadataItem) => fieldMetadataItem.name,
+              ) ?? []
+            }
+            placeholder={t`Object unique fields`}
+            readonly
+            hint={t`We match on these fields. If a ${objectLabelSingular} already exists, we update it. Otherwise, we create a new one.`}
+          />
+        )}
 
       <HorizontalSeparator noMargin />
 

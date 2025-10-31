@@ -1,22 +1,18 @@
-import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { InformationBannerBillingSubscriptionPaused } from '@/information-banner/components/billing/InformationBannerBillingSubscriptionPaused';
 import { InformationBannerEndTrialPeriod } from '@/information-banner/components/billing/InformationBannerEndTrialPeriod';
 import { InformationBannerFailPaymentInfo } from '@/information-banner/components/billing/InformationBannerFailPaymentInfo';
 import { InformationBannerNoBillingSubscription } from '@/information-banner/components/billing/InformationBannerNoBillingSubscription';
-import { InformationBannerIsImpersonating } from '@/information-banner/components/impersonate/InformationBannerIsImpersonating';
 import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
 import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
 import { useIsSomeMeteredProductCapReached } from '@/workspace/hooks/useIsSomeMeteredProductCapReached';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledInformationBannerWrapper = styled.div`
-  height: 40px;
   position: relative;
 
   &:empty {
@@ -30,7 +26,6 @@ export const InformationBannerWrapper = () => {
     WorkspaceActivationStatus.SUSPENDED,
   );
   const isSomeMeteredProductCapReached = useIsSomeMeteredProductCapReached();
-  const isImpersonating = useRecoilValue(isImpersonatingState);
 
   const displayBillingSubscriptionPausedBanner =
     isWorkspaceSuspended && subscriptionStatus === SubscriptionStatus.Paused;
@@ -58,7 +53,6 @@ export const InformationBannerWrapper = () => {
       )}
       {displayFailPaymentInfoBanner && <InformationBannerFailPaymentInfo />}
       {displayEndTrialPeriodBanner && <InformationBannerEndTrialPeriod />}
-      {isImpersonating && <InformationBannerIsImpersonating />}
     </StyledInformationBannerWrapper>
   );
 };
