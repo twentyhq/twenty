@@ -5246,10 +5246,10 @@ msgstr "התאם עמודות"
 msgid "Max"
 msgstr "מקס"
 
-#. js-lingui-id: y2rk49
+#. js-lingui-id: Zgn/wP
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Max {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter"
-msgstr "מקסימום {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} עמודות לכל תרשים. שקול להוסיף מסנן"
+msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
+msgstr ""
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx

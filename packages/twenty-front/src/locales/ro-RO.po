@@ -5246,10 +5246,10 @@ msgstr "Potrivește coloanele"
 msgid "Max"
 msgstr "Maxim"
 
-#. js-lingui-id: y2rk49
+#. js-lingui-id: Zgn/wP
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Max {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter"
-msgstr "Maxim {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bare pe diagramă. Luați în considerare adăugarea unui filtru"
+msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
+msgstr ""
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
