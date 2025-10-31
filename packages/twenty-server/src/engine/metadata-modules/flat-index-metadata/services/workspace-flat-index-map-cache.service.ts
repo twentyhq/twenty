@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { fromIndexMetadataEntityToFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-index-metadata-entity-to-flat-index-metadata.util';
@@ -47,7 +47,7 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceFlatMapCacheServ
       relations: ['indexFieldMetadatas'],
     });
 
-    const flatIndexMaps = EMPTY_FLAT_ENTITY_MAPS();
+    const flatIndexMaps = createEmptyFlatEntityMaps();
 
     for (const indexEntity of indexes) {
       const flatIndex = fromIndexMetadataEntityToFlatIndexMetadata(indexEntity);

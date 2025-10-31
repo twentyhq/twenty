@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -157,7 +157,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
         optimisticFlatEntityMaps: optimisticFlatIndexMaps,
         workspaceId,
         flatEntityToValidate: flatEntity,
-        remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS(),
+        remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
       });
 
     if (deletionValidationResult.errors.length > 0) {
@@ -190,7 +190,7 @@ export class WorkspaceMigrationV2IndexActionsBuilderService extends WorkspaceEnt
         workspaceId,
         flatEntityToValidate: updatedFlatIndex,
         optimisticFlatEntityMaps: tempOptimisticFlatIndexMaps,
-        remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS(),
+        remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
       });
 
     if (creationValidationResult.errors.length > 0) {

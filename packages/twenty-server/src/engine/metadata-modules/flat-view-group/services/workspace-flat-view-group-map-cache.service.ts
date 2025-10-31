@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
 import { fromViewGroupEntityToFlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/utils/from-view-group-entity-to-flat-view-group.util';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
@@ -38,7 +38,7 @@ export class WorkspaceFlatViewGroupMapCacheService extends WorkspaceFlatMapCache
       withDeleted: true,
     });
 
-    const flatViewGroupMaps = EMPTY_FLAT_ENTITY_MAPS();
+    const flatViewGroupMaps = createEmptyFlatEntityMaps();
 
     for (const viewGroupEntity of existingViewGroups) {
       const flatViewGroup = fromViewGroupEntityToFlatViewGroup(viewGroupEntity);

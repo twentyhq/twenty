@@ -12,7 +12,7 @@ import {
   CronTriggerEntity,
 } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
@@ -43,7 +43,7 @@ export class WorkspaceFlatCronTriggerMapCacheService extends WorkspaceFlatMapCac
       },
     });
 
-    const flatCronTriggerMaps = EMPTY_FLAT_ENTITY_MAPS();
+    const flatCronTriggerMaps = createEmptyFlatEntityMaps();
 
     for (const cronTriggerEntity of cronTriggers) {
       const flatCronTrigger = {

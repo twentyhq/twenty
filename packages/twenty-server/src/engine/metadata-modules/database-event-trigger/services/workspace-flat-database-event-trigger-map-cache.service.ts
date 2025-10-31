@@ -12,7 +12,7 @@ import {
   DatabaseEventTriggerEntity,
 } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
@@ -44,7 +44,7 @@ export class WorkspaceFlatDatabaseEventTriggerMapCacheService extends WorkspaceF
         },
       });
 
-    const flatDatabaseEventTriggerMaps = EMPTY_FLAT_ENTITY_MAPS();
+    const flatDatabaseEventTriggerMaps = createEmptyFlatEntityMaps();
 
     for (const databaseEventTriggerEntity of databaseEventTriggers) {
       const flatDatabaseEventTrigger = {

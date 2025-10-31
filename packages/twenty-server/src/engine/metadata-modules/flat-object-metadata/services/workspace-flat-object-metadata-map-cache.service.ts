@@ -7,7 +7,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromObjectMetadataEntityToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-entity-to-flat-object-metadata.util';
@@ -84,7 +84,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
       ] as const
     ).map(regroupEntitiesByRelatedEntityId);
 
-    const flatObjectMetadataMaps = EMPTY_FLAT_ENTITY_MAPS();
+    const flatObjectMetadataMaps = createEmptyFlatEntityMaps();
 
     for (const objectMetadataEntity of objectMetadatas) {
       const flatObjectMetadata = fromObjectMetadataEntityToFlatObjectMetadata({

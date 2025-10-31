@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
 import { fromViewFieldEntityToFlatViewField } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-entity-to-flat-view-field.util';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -38,7 +38,7 @@ export class WorkspaceFlatViewFieldMapCacheService extends WorkspaceFlatMapCache
       withDeleted: true,
     });
 
-    const flatViewFieldMaps = EMPTY_FLAT_ENTITY_MAPS();
+    const flatViewFieldMaps = createEmptyFlatEntityMaps();
 
     for (const viewFieldEntity of existingViewFields) {
       const flatViewField = fromViewFieldEntityToFlatViewField(viewFieldEntity);

@@ -3,7 +3,7 @@ import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { type FlatEntityPropertiesToStringify } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-stringify.type';
 import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
@@ -46,8 +46,8 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
   buildOptions,
 }: FlatEntityDeletedCreatedUpdatedMatrixDispatcherArgs<T>): DeletedCreatedUpdatedMatrix<T> => {
   const initialDispatcher: DeletedCreatedUpdatedMatrix<T> = {
-    createdFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS(),
-    deletedFlatEntityMaps: EMPTY_FLAT_ENTITY_MAPS(),
+    createdFlatEntityMaps: createEmptyFlatEntityMaps(),
+    deletedFlatEntityMaps: createEmptyFlatEntityMaps(),
     updatedFlatEntityMaps: { byId: {} },
   };
 
