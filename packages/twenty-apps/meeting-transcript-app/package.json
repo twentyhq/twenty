@@ -1,0 +1,51 @@
+{
+  "version": "0.0.1",
+   "type": "module", 
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "devDependencies": {
+    "@types/node": "^24.9.2"
+  },
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/appManifest.schema.json",
+  "universalIdentifier": "f15a0c72-f7b4-4d20-9e97-ade1122d4bd7",
+  "name": "Meeting Transcript",
+  "description": "AI Meeting Transcript Integration for Hacktoberfest",
+  "env": {
+    "TWENTY_API_KEY": {
+      "isSecret": true,
+      "value": "",
+      "description": "API key for the Twenty CRM instance (used for authentication)."
+    },
+    "OPENAI_API_KEY": {
+      "isSecret": true,
+      "value": "",
+      "description": "API key for authenticating with the OpenAI service."
+    },
+    "TWENTY_API_URL": {
+      "isSecret": false,
+      "value": "https://unpaid-interns.twenty.com",
+      "description": "The base URL for the Twenty CRM server (e.g., https://your-instance.twenty.com)."
+    },
+    "WEBHOOK_SECRET_TOKEN": {
+      "isSecret": true,
+      "value": "",
+      "description": "Secret token used to authenticate incoming webhook requests."
+    },
+    "GROQ_API_BASE_URL": {
+      "isSecret": true,
+      "value": "",
+      "description": "Groq API base URL."
+    }
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "openai": "^6.7.0",
+    "typescript": "^5.9.3"
+  }
+  
+}
