@@ -5246,10 +5246,10 @@ msgstr "مطابقة الأعمدة"
 msgid "Max"
 msgstr "الأقصى"
 
-#. js-lingui-id: y2rk49
+#. js-lingui-id: Zgn/wP
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Max {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter"
-msgstr "الحد الأقصى {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} من الأشرطة لكل مخطط. فكر في إضافة عامل تصفية"
+msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
+msgstr ""
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
