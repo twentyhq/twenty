@@ -131,6 +131,13 @@ const objectMock = `import {
   FieldMetadataType
 } from 'twenty-sdk/application';
 
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
 @ObjectMetadata({
   universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
   nameSingular: 'postCard',
@@ -167,12 +174,32 @@ export class PostCard extends BaseObjectMetadata {
     universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
     type: FieldMetadataType.SELECT,
     label: 'Status',
-    defaultValue: 'draft',
+    defaultValue: \`'\${PostCardStatus.DRAFT}'\`,
     options: [
-      { value: 'draft', label: 'Draft', position: 0, color: 'gray' },
-      { value: 'sent', label: 'Sent', position: 1, color: 'orange' },
-      { value: 'delivered', label: 'Delivered', position: 2, color: 'green' },
-      { value: 'returned', label: 'Returned', position: 3, color: 'orange' },
+      {
+        value: PostCardStatus.DRAFT,
+        label: 'Draft',
+        position: 0,
+        color: 'gray',
+      },
+      {
+        value: PostCardStatus.SENT,
+        label: 'Sent',
+        position: 1,
+        color: 'orange',
+      },
+      {
+        value: PostCardStatus.DELIVERED,
+        label: 'Delivered',
+        position: 2,
+        color: 'green',
+      },
+      {
+        value: PostCardStatus.RETURNED,
+        label: 'Returned',
+        position: 3,
+        color: 'orange',
+      },
     ],
   })
   status: 'draft' | 'sent' | 'delivered' | 'returned';
@@ -281,18 +308,18 @@ describe('loadManifest (integration)', () => {
           universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
           type: 'SELECT',
           label: 'Status',
-          defaultValue: 'draft',
+          defaultValue: "'DRAFT'",
           options: [
-            { value: 'draft', label: 'Draft', position: 0, color: 'gray' },
-            { value: 'sent', label: 'Sent', position: 1, color: 'orange' },
+            { value: 'DRAFT', label: 'Draft', position: 0, color: 'gray' },
+            { value: 'SENT', label: 'Sent', position: 1, color: 'orange' },
             {
-              value: 'delivered',
+              value: 'DELIVERED',
               label: 'Delivered',
               position: 2,
               color: 'green',
             },
             {
-              value: 'returned',
+              value: 'RETURNED',
               label: 'Returned',
               position: 3,
               color: 'orange',

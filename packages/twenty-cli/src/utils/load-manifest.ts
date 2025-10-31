@@ -32,6 +32,8 @@ import {
   isExportAssignment,
   Modifier,
   isPropertyDeclaration,
+  isNoSubstitutionTemplateLiteral,
+  isTemplateExpression,
 } from 'typescript';
 import {
   AppManifest,
@@ -103,6 +105,18 @@ const exprToValue = (expr: Expression): JSONValue => {
       return expr.name.text;
     }
     return String(expr.getText());
+  }
+
+  if (isNoSubstitutionTemplateLiteral(expr)) {
+    return expr.text;
+  }
+  if (isTemplateExpression(expr)) {
+    let out = expr.head.text;
+    for (const span of expr.templateSpans) {
+      const v = exprToValue(span.expression);
+      out += String(v) + span.literal.text;
+    }
+    return out;
   }
 
   if (isArrayLiteralExpression(expr)) {

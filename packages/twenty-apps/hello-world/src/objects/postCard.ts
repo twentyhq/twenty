@@ -5,6 +5,13 @@ import {
   FieldMetadataType,
 } from 'twenty-sdk/application';
 
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
 @ObjectMetadata({
   universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
   nameSingular: 'postCard',
@@ -20,6 +27,7 @@ export class PostCard extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Content',
     description: "Postcard's content",
+    icon: 'IconAbc',
   })
   content: string;
 
@@ -27,6 +35,7 @@ export class PostCard extends BaseObjectMetadata {
     universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
     type: FieldMetadataType.FULL_NAME,
     label: 'Recipient name',
+    icon: 'IconUser',
   })
   recipientName: string;
 
@@ -34,6 +43,7 @@ export class PostCard extends BaseObjectMetadata {
     universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
     type: FieldMetadataType.ADDRESS,
     label: 'Recipient address',
+    icon: 'IconHome',
   })
   recipientAddress: string;
 
@@ -41,35 +51,36 @@ export class PostCard extends BaseObjectMetadata {
     universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
     type: FieldMetadataType.SELECT,
     label: 'Status',
-    defaultValue: 'draft',
+    icon: 'IconSend',
+    defaultValue: `'${PostCardStatus.DRAFT}'`,
     options: [
       {
-        value: 'draft',
+        value: PostCardStatus.DRAFT,
         label: 'Draft',
         position: 0,
         color: 'gray',
       },
       {
-        value: 'sent',
+        value: PostCardStatus.SENT,
         label: 'Sent',
         position: 1,
         color: 'orange',
       },
       {
-        value: 'delivered',
+        value: PostCardStatus.DELIVERED,
         label: 'Delivered',
         position: 2,
         color: 'green',
       },
       {
-        value: 'returned',
+        value: PostCardStatus.RETURNED,
         label: 'Returned',
         position: 3,
         color: 'orange',
       },
     ],
   })
-  status: 'draft' | 'sent' | 'delivered' | 'returned';
+  status: PostCardStatus;
 
   //  notes?: string // optional internal notes or comments
 
@@ -77,6 +88,7 @@ export class PostCard extends BaseObjectMetadata {
     universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
     type: FieldMetadataType.DATE_TIME,
     label: 'Delivered at',
+    icon: 'IconCheck',
     isNullable: true,
     defaultValue: null,
   })
