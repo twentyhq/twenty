@@ -67,6 +67,15 @@ export class ConfigVariables {
   IS_EMAIL_VERIFICATION_REQUIRED = false;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    description:
+      'Enable safe mode for HTTP requests (prevents private IPs and other security risks)',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  HTTP_TOOL_SAFE_MODE_ENABLED = true;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the email verification token is valid',
     type: ConfigVariableType.STRING,
