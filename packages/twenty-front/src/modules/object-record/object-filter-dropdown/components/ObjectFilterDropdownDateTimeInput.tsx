@@ -6,7 +6,6 @@ import {
 } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useGetNowInUserTimezoneForRelativeFilter } from '@/object-record/object-filter-dropdown/hooks/useGetNowInUserTimezoneForRelativeFilter';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
@@ -23,19 +22,13 @@ import {
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateString } from '~/utils/string/formatDateString';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 export const ObjectFilterDropdownDateTimeInput = () => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const fieldMetadataItemUsedInDropdown = useRecoilComponentValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
 
   const selectedOperandInDropdown = useRecoilComponentValue(
     selectedOperandInDropdownComponentState,
@@ -59,9 +52,6 @@ export const ObjectFilterDropdownDateTimeInput = () => {
     initialFilterValue instanceof Date ? initialFilterValue : null,
   );
 
-  const isDateTimeInput =
-    fieldMetadataItemUsedInDropdown?.type === FieldMetadataType.DATE_TIME;
-
   const handleAbsoluteDateChange = (newDate: Date | null) => {
     setInternalDate(newDate);
 
@@ -75,18 +65,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
       localeCatalog: dateLocale.localeCatalog,
     });
 
-    const formattedDate = formatDateString({
-      value: newDate?.toISOString(),
-      timeZone,
-      dateFormat,
-      localeCatalog: dateLocale.localeCatalog,
-    });
-
-    const newDisplayValue = isDefined(newDate)
-      ? isDateTimeInput
-        ? formattedDateTime
-        : formattedDate
-      : '';
+    const newDisplayValue = isDefined(newDate) ? formattedDateTime : '';
 
     applyObjectFilterDropdownFilterValue(newFilterValue, newDisplayValue);
   };

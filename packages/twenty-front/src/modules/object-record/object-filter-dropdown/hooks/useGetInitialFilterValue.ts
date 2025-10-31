@@ -51,6 +51,12 @@ export const useGetInitialFilterValue = () => {
           shiftedDate.setSeconds(0);
           shiftedDate.setMilliseconds(0);
 
+          console.log({
+            alreadyExistingISODate,
+            referenceDate,
+            shiftedDate,
+          });
+
           const value = format(shiftedDate, DATE_TYPE_FORMAT);
           const displayValue = format(shiftedDate, dateFormatString);
 
@@ -91,6 +97,14 @@ export const useGetInitialFilterValue = () => {
 
           const value = shiftedDate.toISOString();
           const displayValue = `${format(shiftedDate, formatToUse)}${timezoneSuffix}`;
+
+          console.log({
+            value,
+            displayValue,
+            shiftedDate,
+            referenceDate,
+            alreadyExistingISODate,
+          });
 
           return { value, displayValue };
         }

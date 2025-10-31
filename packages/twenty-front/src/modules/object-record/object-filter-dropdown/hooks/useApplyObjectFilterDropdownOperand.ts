@@ -96,10 +96,15 @@ export const useApplyObjectFilterDropdownOperand = () => {
       if (
         DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW.includes(newOperand)
       ) {
+        // TODO: allow to keep same value when switching between is after, is before, is and is not
+        // For now we reset with now each time we switch operand
+
+        const dateToUseAsISOString = new Date().toISOString();
+
         const { displayValue, value } = getInitialFilterValue(
           recordFilterToUpsert.type,
           newOperand,
-          recordFilterToUpsert.value,
+          dateToUseAsISOString,
         );
 
         recordFilterToUpsert.value = value;

@@ -53,6 +53,7 @@ export { resolveRelativeDateFilter } from './filter/dates/utils/resolveRelativeD
 export { resolveRelativeDateFilterStringified } from './filter/dates/utils/resolveRelativeDateFilterStringified';
 export { resolveRelativeDateTimeFilter } from './filter/dates/utils/resolveRelativeDateTimeFilter';
 export { resolveRelativeDateTimeFilterStringified } from './filter/dates/utils/resolveRelativeDateTimeFilterStringified';
+export { shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone } from './filter/dates/utils/shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone';
 export { subUnitFromDateTime } from './filter/dates/utils/subUnitFromDateTime';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
@@ -97,7 +98,7 @@ export { getSettingsPath } from './navigation/getSettingsPath';
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
-export { safeParseRelativeDateFilterValue } from './safeParseRelativeDateFilterValue';
+export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeDateFilterJSONStringified';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';

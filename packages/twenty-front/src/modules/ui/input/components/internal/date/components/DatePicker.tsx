@@ -13,13 +13,10 @@ import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/g
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
-import { addMonths, parse, setYear, subMonths } from 'date-fns';
+import { addMonths, setMonth, setYear, subMonths } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRecoilValue } from 'recoil';
-import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
 
-import { useTurnPointInTimeIntoReactDatePickerShiftedDate } from '@/ui/input/components/internal/date/hooks/useTurnPointInTimeIntoReactDatePickerShiftedDate';
-import { useTurnReactDatePickerShiftedDateBackIntoPointInTime } from '@/ui/input/components/internal/date/hooks/useTurnReactDatePickerShiftedDateBackIntoPointInTime';
 import {
   getDateFromPlainDate,
   getPlainDateFromDate,
@@ -345,14 +342,9 @@ export const DatePicker = ({
   hideHeaderInput,
 }: DatePickerProps) => {
   const dateOrToday = date ?? getPlainDateFromDate(new Date());
-  const localDate = parse(dateOrToday, DATE_TYPE_FORMAT, new Date());
+  const shiftedDateForReactPicker = getDateFromPlainDate(dateOrToday);
 
   const theme = useTheme();
-
-  const { turnReactDatePickerShiftedDateBackIntoPointInTime } =
-    useTurnReactDatePickerShiftedDateBackIntoPointInTime();
-  const { turnPointInTimeIntoReactDatePickerShiftedDate } =
-    useTurnPointInTimeIntoReactDatePickerShiftedDate();
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
@@ -373,15 +365,15 @@ export const DatePicker = ({
   };
 
   const handleChangeMonth = (month: number) => {
-    localDate.setMonth(month);
+    const newDate = setMonth(shiftedDateForReactPicker, month);
 
-    const plainDate = getPlainDateFromDate(localDate);
+    const plainDate = getPlainDateFromDate(newDate);
 
     onChange?.(plainDate);
   };
 
   const handleAddMonth = () => {
-    const dateParsed = addMonths(localDate, 1);
+    const dateParsed = addMonths(shiftedDateForReactPicker, 1);
 
     const plainDate = getPlainDateFromDate(dateParsed);
 
@@ -389,7 +381,7 @@ export const DatePicker = ({
   };
 
   const handleSubtractMonth = () => {
-    const dateParsed = subMonths(localDate, 1);
+    const dateParsed = subMonths(shiftedDateForReactPicker, 1);
 
     const plainDate = getPlainDateFromDate(dateParsed);
 
@@ -397,7 +389,7 @@ export const DatePicker = ({
   };
 
   const handleChangeYear = (year: number) => {
-    const dateParsed = setYear(localDate, year);
+    const dateParsed = setYear(shiftedDateForReactPicker, year);
 
     const plainDate = getPlainDateFromDate(dateParsed);
 
@@ -415,17 +407,6 @@ export const DatePicker = ({
 
     handleClose?.(plainDate);
   };
-
-  console.log({
-    relativeDate,
-    start: relativeDate?.start,
-    intoDate: relativeDate?.start && getDateFromPlainDate(relativeDate?.start),
-    turned:
-      relativeDate?.end &&
-      turnPointInTimeIntoReactDatePickerShiftedDate(
-        getDateFromPlainDate(relativeDate?.end),
-      ),
-  });
 
   const highlightedDates =
     isRelative && isDefined(relativeDate?.end) && isDefined(relativeDate?.start)
@@ -481,9 +462,9 @@ export const DatePicker = ({
         >
           <ReactDatePicker
             open={true}
-            selected={localDate}
+            selected={shiftedDateForReactPicker}
             selectedDates={selectedDates}
-            openToDate={localDate}
+            openToDate={shiftedDateForReactPicker}
             disabledKeyboardNavigation
             onChange={handleDateChange}
             calendarStartDay={calendarStartDay}

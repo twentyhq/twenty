@@ -106,10 +106,6 @@ export const DateInput = ({
     onClickOutside: handleClickOutside,
   });
 
-  console.log({
-    internalValue,
-  });
-
   return (
     <div ref={wrapperRef}>
       <DatePicker

@@ -6,6 +6,7 @@ export const useTurnPointInTimeIntoReactDatePickerShiftedDate = () => {
 
   const { userTimezone } = useUserTimezone();
 
+  // TODO: replace here with shiftPointInTimeToFromTimezoneDifference
   const turnPointInTimeIntoReactDatePickerShiftedDate = (pointInTime: Date) => {
     const dateSure = new TZDate(pointInTime).withTimeZone(userTimezone);
 

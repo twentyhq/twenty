@@ -33,7 +33,7 @@ import {
 
 // TODO: test this
 
-export const safeParseRelativeDateFilterValue = (
+export const safeParseRelativeDateFilterJSONStringified = (
   value: string,
 ): RelativeDateFilter | undefined => {
   try {

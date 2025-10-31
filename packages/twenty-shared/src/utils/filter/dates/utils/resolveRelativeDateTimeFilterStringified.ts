@@ -1,9 +1,8 @@
 import { relativeDateFilterStringifiedSchema } from '@/utils/filter/dates/utils/relativeDateFilterStringifiedSchema';
 import { resolveRelativeDateTimeFilter } from '@/utils/filter/dates/utils/resolveRelativeDateTimeFilter';
-import { computeTimezoneDifferenceInMinutes } from '@/utils/filter/utils/computeTimezoneDifferenceInMinutes';
+import { shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone } from '@/utils/filter/dates/utils/shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone';
 import { isDefined } from '@/utils/validation';
 import { isNonEmptyString } from '@sniptt/guards';
-import { addMinutes } from 'date-fns';
 
 export const resolveRelativeDateTimeFilterStringified = (
   relativeDateTimeFilterStringified?: string | null,
@@ -20,31 +19,19 @@ export const resolveRelativeDateTimeFilterStringified = (
     resolveRelativeDateTimeFilter(relativeDateFilter);
 
   if (isDefined(relativeDateFilter.timezone)) {
-    const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    const timezoneDifferenceInMinutesForStartDateToPreventDST =
-      computeTimezoneDifferenceInMinutes(
-        relativeDateFilter.timezone,
-        systemTimeZone,
+    const shiftedStartDate =
+      shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone(
         relativeDateFilterWithDateRange.start,
-      );
-
-    const timezoneDifferenceInMinutesForEndDateToPreventDST =
-      computeTimezoneDifferenceInMinutes(
         relativeDateFilter.timezone,
-        systemTimeZone,
-        relativeDateFilterWithDateRange.end,
+        'add',
       );
 
-    const shiftedStartDate = addMinutes(
-      relativeDateFilterWithDateRange.start,
-      timezoneDifferenceInMinutesForStartDateToPreventDST,
-    );
-
-    const shiftedEndDate = addMinutes(
-      relativeDateFilterWithDateRange.end,
-      timezoneDifferenceInMinutesForEndDateToPreventDST,
-    );
+    const shiftedEndDate =
+      shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone(
+        relativeDateFilterWithDateRange.end,
+        relativeDateFilter.timezone,
+        'add',
+      );
 
     return {
       ...relativeDateFilterWithDateRange,

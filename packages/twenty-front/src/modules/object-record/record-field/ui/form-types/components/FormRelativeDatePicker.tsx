@@ -5,7 +5,7 @@ import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 
 import {
   type RelativeDateFilter,
-  safeParseRelativeDateFilterValue,
+  safeParseRelativeDateFilterJSONStringified,
 } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 
@@ -23,7 +23,7 @@ export const FormRelativeDatePicker = ({
 }: FormRelativeDatePickerProps) => {
   const value =
     isString(defaultValue) && isNonEmptyString(defaultValue)
-      ? safeParseRelativeDateFilterValue(defaultValue)
+      ? safeParseRelativeDateFilterJSONStringified(defaultValue)
       : DEFAULT_RELATIVE_DATE_FILTER_VALUE;
 
   const handleValueChange = (newValue: RelativeDateFilter) => {
