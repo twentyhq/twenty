@@ -120,7 +120,6 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     color: configuration.color as GraphColor,
   }));
 
-  // TODO: Move to backend once we have a strategy for ordering by primary dimension aggregate totals in multi-dimensional groupBy queries
   const unsortedData = Array.from(dataMap.values());
   const data = isDefined(configuration.primaryAxisOrderBy)
     ? sortBarChartDataBySecondaryDimensionSum({

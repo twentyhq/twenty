@@ -8,10 +8,6 @@ type SortBarChartDataBySecondaryDimensionSumParams = {
   orderBy: GraphOrderBy;
 };
 
-// Sums secondary dimension values (e.g., all statuses per city) and sorts by those totals.
-// The backend orders by individual (X, Y) combinations, but for grouped/stacked bars we want to
-// order by the total across secondary dimension. This follows the same pattern as omitNullValues
-// and range filters which are also handled client-side for visualization purposes.
 export const sortBarChartDataBySecondaryDimensionSum = ({
   data,
   keys,
