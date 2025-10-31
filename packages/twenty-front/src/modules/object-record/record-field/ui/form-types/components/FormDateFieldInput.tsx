@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -31,6 +32,7 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { type Nullable } from 'twenty-ui/utilities';
+import { getDateFormatStringForDatePickerInputMask } from '~/utils/date-utils';
 
 const StyledInputContainer = styled(FormFieldInputInnerContainer)`
   display: grid;
@@ -93,6 +95,7 @@ export const FormDateFieldInput = ({
   placeholder,
 }: FormDateFieldInputProps) => {
   const instanceId = useId();
+  const { dateFormat } = useDateTimeFormat();
 
   const { parsePlainDateToDateInputString } =
     useParsePlainDateToDateInputString();
@@ -144,7 +147,10 @@ export const FormDateFieldInput = ({
   const displayDatePicker =
     draftValue.type === 'static' && draftValue.mode === 'edit';
 
-  const placeholderToDisplay = placeholder ?? 'mm/dd/yyyy';
+  const defaultPlaceHolder =
+    getDateFormatStringForDatePickerInputMask(dateFormat);
+
+  const placeholderToDisplay = placeholder ?? defaultPlaceHolder;
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
