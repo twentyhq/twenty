@@ -24,9 +24,7 @@ export const getSecureAdapter = (): AxiosAdapter => {
 
     const { address: resolvedIp } = await dns.lookup(hostname);
 
-    const isSafeModeEnabled = process.env.HTTP_TOOL_SAFE_MODE_ENABLED ?? true;
-
-    if (isSafeModeEnabled && isPrivateIp(resolvedIp)) {
+    if (isPrivateIp(resolvedIp)) {
       throw new Error(
         `Request to internal IP address ${resolvedIp} is not allowed.`,
       );
