@@ -26,7 +26,9 @@ export class WorkspaceMigrationFieldRelationFactory {
 
   async create(
     originalObjectMetadataCollection: ObjectMetadataEntity[],
-    fieldMetadataCollection: FieldMetadataEntity<FieldMetadataType.RELATION>[],
+    fieldMetadataCollection: FieldMetadataEntity<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >[],
     action:
       | WorkspaceMigrationBuilderAction.CREATE
       | WorkspaceMigrationBuilderAction.DELETE,
@@ -34,7 +36,9 @@ export class WorkspaceMigrationFieldRelationFactory {
 
   async create(
     originalObjectMetadataCollection: ObjectMetadataEntity[],
-    fieldMetadataUpdateCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[],
+    fieldMetadataUpdateCollection: FieldMetadataUpdate<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >[],
     action: WorkspaceMigrationBuilderAction.UPDATE,
   ): Promise<Partial<WorkspaceMigrationEntity>[]>;
 
@@ -44,8 +48,12 @@ export class WorkspaceMigrationFieldRelationFactory {
   async create(
     originalObjectMetadataCollection: ObjectMetadataEntity[],
     fieldMetadataCollectionOrFieldMetadataUpdateCollection:
-      | FieldMetadataEntity<FieldMetadataType.RELATION>[]
-      | FieldMetadataUpdate<FieldMetadataType.RELATION>[],
+      | FieldMetadataEntity<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >[]
+      | FieldMetadataUpdate<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >[],
     action: WorkspaceMigrationBuilderAction,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const originalObjectMetadataMap = originalObjectMetadataCollection.reduce(

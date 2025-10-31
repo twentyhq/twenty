@@ -30,17 +30,24 @@ export class WorkspaceSyncStorage {
 
   // Field relation metadata
   private readonly _fieldRelationMetadataCreateCollection: (Partial<
-    ComputedPartialFieldMetadata<FieldMetadataType.RELATION>
+    ComputedPartialFieldMetadata<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >
   > & {
     id: string;
+    type?: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
   })[] = [];
   private readonly _fieldRelationMetadataUpdateCollection: (Partial<
-    ComputedPartialFieldMetadata<FieldMetadataType.RELATION>
+    ComputedPartialFieldMetadata<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >
   > & {
     id: string;
+    type?: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
   })[] = [];
-  private readonly _fieldRelationMetadataDeleteCollection: FieldMetadataEntity<FieldMetadataType.RELATION>[] =
-    [];
+  private readonly _fieldRelationMetadataDeleteCollection: FieldMetadataEntity<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >[] = [];
 
   // Index metadata
   private readonly _indexMetadataCreateCollection: Partial<IndexMetadataEntity>[] =
@@ -124,23 +131,35 @@ export class WorkspaceSyncStorage {
   }
 
   addCreateFieldRelationMetadata(
-    field: Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+    field: Partial<
+      ComputedPartialFieldMetadata<
+        FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+      >
+    > & {
       id: string;
+      type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
     },
   ) {
     this._fieldRelationMetadataCreateCollection.push(field);
   }
 
   addUpdateFieldRelationMetadata(
-    field: Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+    field: Partial<
+      ComputedPartialFieldMetadata<
+        FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+      >
+    > & {
       id: string;
+      type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
     },
   ) {
     this._fieldRelationMetadataUpdateCollection.push(field);
   }
 
   addDeleteFieldRelationMetadata(
-    field: FieldMetadataEntity<FieldMetadataType.RELATION>,
+    field: FieldMetadataEntity<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >,
   ) {
     this._fieldRelationMetadataDeleteCollection.push(field);
   }
