@@ -15,6 +15,7 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   data?: readonly D[];
   indexBy?: string;
   layout?: 'vertical' | 'horizontal';
+  chartId?: string;
 };
 
 const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
@@ -62,6 +63,7 @@ export const CustomBarItem = <D extends BarDatum>({
   data: chartData,
   indexBy,
   layout = 'vertical',
+  chartId,
 }: CustomBarItemProps<D>) => {
   const theme = useTheme();
   const { showTooltipFromEvent, showTooltipAt, hideTooltip } = useTooltip();
@@ -105,7 +107,17 @@ export const CustomBarItem = <D extends BarDatum>({
     hideTooltip();
   }, [hideTooltip]);
 
-  const isTopBar = useMemo(() => {
+  const isNegativeValue = useMemo(
+    () => isNumber(barData.value) && barData.value < 0,
+    [barData.value],
+  );
+
+  const seriesIndex = useMemo(
+    () => (isDefined(keys) ? keys.findIndex((k) => k === barData.id) : -1),
+    [keys, barData.id],
+  );
+
+  const shouldRoundFreeEnd = useMemo(() => {
     const isStackedAndValid =
       groupMode === 'stacked' &&
       isDefined(keys) &&
@@ -125,39 +137,58 @@ export const CustomBarItem = <D extends BarDatum>({
       return true;
     }
 
-    const currentKeyIndex = keys.findIndex((key) => key === barData.id);
-
-    if (currentKeyIndex === -1) {
+    if (seriesIndex === -1) {
       return true;
     }
 
-    const keysAboveCurrentKey = keys.slice(currentKeyIndex + 1);
-    const hasBarAbove = keysAboveCurrentKey.some((key) => {
+    const keysAfterCurrentKey = keys.slice(seriesIndex + 1);
+    const hasSameSignBarAfter = keysAfterCurrentKey.some((key) => {
       const value = dataPoint[key];
-      return isNumber(value) && value > 0;
+      return isNumber(value) && (isNegativeValue ? value < 0 : value > 0);
     });
-
-    return !hasBarAbove;
-  }, [groupMode, keys, barData, chartData, indexBy]);
+    return !hasSameSignBarAfter;
+  }, [
+    groupMode,
+    keys,
+    chartData,
+    indexBy,
+    isNegativeValue,
+    seriesIndex,
+    barData.indexValue,
+  ]);
 
   const isHorizontal = layout === 'horizontal';
+  const clipPathId = `round-corner-${chartId ?? 'chart'}-${barData.index}-${
+    seriesIndex >= 0 ? seriesIndex : 'x'
+  }`;
+
+  const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
+
+  const clipPathY = isHorizontal ? 0 : isNegativeValue ? -borderRadius : 0;
+
+  const widthWithOffset = (v: number) =>
+    Math.max(v + (isHorizontal ? borderRadius : 0), 0);
+  const heightWithOffset = (v: number) =>
+    Math.max(v + (isHorizontal ? 0 : borderRadius), 0);
+  const clampRadius = (v: number) => Math.min(borderRadius, v / 2);
+
+  const clipRectWidth = to(width, (v) => widthWithOffset(v));
+  const clipRectHeight = to(height, (v) => heightWithOffset(v));
+  const clipRx = to(width, (v) => clampRadius(widthWithOffset(v)));
+  const clipRy = to(height, (v) => clampRadius(heightWithOffset(v)));
 
   return (
     <animated.g transform={transform}>
-      {isTopBar && (
+      {shouldRoundFreeEnd && (
         <defs>
-          <clipPath id={`round-corner-${barData.index}`}>
+          <clipPath id={clipPathId}>
             <animated.rect
-              x={isHorizontal ? -borderRadius : 0}
-              y={0}
-              rx={borderRadius}
-              ry={borderRadius}
-              width={to(width, (value) =>
-                Math.max(value + (isHorizontal ? borderRadius : 0), 0),
-              )}
-              height={to(height, (value) =>
-                Math.max(value + (isHorizontal ? 0 : borderRadius), 0),
-              )}
+              x={clipPathX}
+              y={clipPathY}
+              rx={clipRx}
+              ry={clipRy}
+              width={clipRectWidth}
+              height={clipRectHeight}
             />
           </clipPath>
         </defs>
@@ -165,7 +196,7 @@ export const CustomBarItem = <D extends BarDatum>({
 
       <StyledBarRect
         $isInteractive={isInteractive}
-        clipPath={isTopBar ? `url(#round-corner-${barData.index})` : undefined}
+        clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
         width={to(width, (value) => Math.max(value, 0))}
         height={to(height, (value) => Math.max(value, 0))}
         fill={color}

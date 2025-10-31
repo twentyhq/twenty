@@ -10,10 +10,11 @@ import {
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
-import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
 
 export interface AiRouterContext {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
@@ -90,13 +91,12 @@ export class AiRouterService {
         (agent) => agent.id === result.object.agentId,
       );
     } catch (error) {
-      this.logger.error('Routing to agent failed:', error);
-
-      const availableAgents = await this.getAvailableAgents(
-        context.workspaceId,
+      this.logger.error(
+        'Routing to agent failed, falling back to Helper agent:',
+        error,
       );
 
-      return availableAgents[0] || null;
+      return this.getHelperAgent(context.workspaceId);
     }
   }
 
@@ -107,6 +107,17 @@ export class AiRouterService {
       where: { workspaceId, deletedAt: undefined },
       order: { createdAt: 'ASC' },
     });
+  }
+
+  private async getHelperAgent(workspaceId: string) {
+    const helperAgent = await this.agentRepository.findOne({
+      where: {
+        workspaceId,
+        standardId: HELPER_AGENT.standardId,
+      },
+    });
+
+    return helperAgent;
   }
 
   private getRouterModel(modelId: ModelId) {

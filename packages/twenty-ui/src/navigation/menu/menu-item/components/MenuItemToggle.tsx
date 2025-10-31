@@ -25,6 +25,7 @@ export type MenuItemToggleProps = {
   className?: string;
   onToggleChange?: (toggled: boolean) => void;
   toggleSize?: ToggleSize;
+  disabled?: boolean;
 };
 
 export const MenuItemToggle = ({
@@ -36,22 +37,29 @@ export const MenuItemToggle = ({
   className,
   onToggleChange,
   toggleSize,
+  disabled = false,
 }: MenuItemToggleProps) => {
   const instanceId = useId();
   return (
-    <StyledMenuItemBase className={className} focused={focused}>
+    <StyledMenuItemBase
+      className={className}
+      focused={focused}
+      disabled={disabled}
+    >
       <StyledToggleContainer htmlFor={instanceId}>
         <MenuItemLeftContent
           LeftIcon={LeftIcon}
           text={text}
           withIconContainer={withIconContainer}
+          disabled={disabled}
         />
         <StyledMenuItemRightContent>
           <Toggle
             id={instanceId}
             value={toggled}
-            onChange={onToggleChange}
+            onChange={disabled ? undefined : onToggleChange}
             toggleSize={toggleSize}
+            disabled={disabled}
           />
         </StyledMenuItemRightContent>
       </StyledToggleContainer>
