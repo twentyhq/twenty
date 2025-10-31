@@ -169,7 +169,6 @@ export const GraphWidgetGaugeChart = ({
           {
             id: 'gauge',
             label: data.label || t`Value`,
-            formattedValue: formattedValue,
             color: colorScheme.solid,
           },
         ]}
