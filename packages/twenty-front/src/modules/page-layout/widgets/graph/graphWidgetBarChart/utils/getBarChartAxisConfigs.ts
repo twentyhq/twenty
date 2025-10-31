@@ -84,8 +84,11 @@ export const getBarChartAxisConfigs = ({
         legend: yAxisLabel,
         legendPosition: 'middle' as const,
         legendOffset: -BAR_CHART_MARGINS.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
-        format: (value: string | number) =>
-          truncateTickLabel(String(value), MAX_LEFT_AXIS_LABEL_LENGTH),
+        format: (value: number) =>
+          truncateTickLabel(
+            formatGraphValue(value, formatOptions ?? {}),
+            MAX_LEFT_AXIS_LABEL_LENGTH,
+          ),
       },
     };
   }
