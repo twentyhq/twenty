@@ -20,7 +20,6 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import {
   PermissionsException,
@@ -55,8 +54,6 @@ export interface FormatResult {
 }
 
 export abstract class RestApiBaseHandler {
-  @Inject()
-  protected readonly recordInputTransformerService: RecordInputTransformerService;
   @Inject()
   protected readonly twentyORMManager: TwentyORMManager;
   @Inject()

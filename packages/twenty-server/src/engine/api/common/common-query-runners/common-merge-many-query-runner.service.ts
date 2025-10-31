@@ -29,10 +29,6 @@ import {
   CommonQueryNames,
   MergeManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
@@ -162,9 +158,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     );
 
     if (!priorityRecord) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         'Priority record not found',
-        GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
 

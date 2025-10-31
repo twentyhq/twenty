@@ -2,6 +2,8 @@ import { BadRequestException } from '@nestjs/common';
 
 import { type QueryFailedError } from 'typeorm';
 
+import { CommonDataCoercerException } from 'src/engine/api/common/common-args-handlers/data-arg-handler/errors/common-data-coercer.exception';
+import { commonDataCoercerToRestApiExceptionHandler } from 'src/engine/api/common/common-args-handlers/data-arg-handler/utils/common-data-coercer-to-rest-api-exception-handler.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { commonQueryRunnerToRestApiExceptionHandler } from 'src/engine/api/common/common-query-runners/utils/common-query-runner-to-rest-api-exception-handler.util';
 import { RestInputRequestParserException } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
@@ -18,6 +20,8 @@ export const workspaceQueryRunnerRestApiExceptionHandler = (
   switch (true) {
     case error instanceof CommonQueryRunnerException:
       return commonQueryRunnerToRestApiExceptionHandler(error);
+    case error instanceof CommonDataCoercerException:
+      return commonDataCoercerToRestApiExceptionHandler(error);
     case error instanceof RestInputRequestParserException:
       throw new BadRequestException(error.message);
     case error instanceof ThrottlerException:

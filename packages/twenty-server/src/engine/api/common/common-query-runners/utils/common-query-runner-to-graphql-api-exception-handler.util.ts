@@ -20,6 +20,7 @@ export const commonQueryRunnerToGraphqlApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.INVALID_ARGS_FIRST:
     case CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST:
     case CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
+    case CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA:
     case CommonQueryRunnerExceptionCode.UPSERT_MULTIPLE_MATCHING_RECORDS_CONFLICT:
     case CommonQueryRunnerExceptionCode.INVALID_CURSOR:
     case CommonQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED:

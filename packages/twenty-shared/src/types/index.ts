@@ -19,6 +19,7 @@ export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
+export type { AtomicFieldMetadataType } from './FieldMetadataType';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldRatingValue } from './FieldRatingValue';
 export type {
