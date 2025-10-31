@@ -15,6 +15,7 @@ import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorato
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 import { getDateFormatStringForDatePickerInputMask } from '~/utils/date-utils';
 
+// TODO: review formatting, placeholder and date format when refactoring FormInputs with other date pickers in the app.
 const meta: Meta<typeof FormDateFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormDateFieldInput',
   component: FormDateFieldInput,
@@ -30,19 +31,20 @@ type Story = StoryObj<typeof FormDateFieldInput>;
 const currentYear = new Date().getFullYear();
 
 const formatPlaceholder = getDateFormatStringForDatePickerInputMask(
-  DateFormat.DAY_FIRST,
+  DateFormat.MONTH_FIRST,
 );
 
 export const Default: Story = {
   args: {
     label: 'Created At',
     defaultValue: `${currentYear}-09-12`,
+    placeholder: formatPlaceholder,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByText('Created At');
-    await canvas.findByDisplayValue('12/09/' + currentYear);
+    await canvas.findByDisplayValue('09/12/' + currentYear);
   },
 };
 
@@ -50,6 +52,7 @@ export const WithDefaultEmptyValue: Story = {
   args: {
     label: 'Created At',
     defaultValue: undefined,
+    placeholder: formatPlaceholder,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -65,6 +68,7 @@ export const SetsDateWithInput: Story = {
     label: 'Created At',
     defaultValue: undefined,
     onChange: fn(),
+    placeholder: formatPlaceholder,
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -91,6 +95,7 @@ export const SetsDateWithDatePicker: Story = {
     label: 'Created At',
     defaultValue: `2024-12-09`,
     onChange: fn(),
+    placeholder: formatPlaceholder,
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -128,6 +133,7 @@ export const ResetsDateByClickingButton: Story = {
     label: 'Created At',
     defaultValue: `${currentYear}-12-09`,
     onChange: fn(),
+    placeholder: formatPlaceholder,
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -161,6 +167,7 @@ export const ResetsDateByErasingInputContent: Story = {
     label: 'Created At',
     defaultValue: `${currentYear}-09-12`,
     onChange: fn(),
+    placeholder: formatPlaceholder,
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -184,6 +191,7 @@ export const SwitchesToStandaloneVariable: Story = {
     label: 'Created At',
     defaultValue: undefined,
     onChange: fn(),
+    placeholder: formatPlaceholder,
     VariablePicker: ({ onVariableSelect }) => {
       return (
         <button
@@ -222,6 +230,7 @@ export const SwitchesToStandaloneVariable: Story = {
 export const ClickingOutsideDoesNotResetInputState: Story = {
   args: {
     label: 'Created At',
+    placeholder: formatPlaceholder,
     defaultValue: `${currentYear}-12-09`,
     onChange: fn(),
   },
@@ -253,6 +262,7 @@ export const ClickingOutsideDoesNotResetInputState: Story = {
 export const Disabled: Story = {
   args: {
     label: 'Created At',
+    placeholder: formatPlaceholder,
     defaultValue: `${currentYear}-09-12`,
     onChange: fn(),
     readonly: true,
@@ -268,6 +278,7 @@ export const Disabled: Story = {
 export const DisabledWithVariable: Story = {
   args: {
     label: 'Created At',
+    placeholder: formatPlaceholder,
     defaultValue: `{{${MOCKED_STEP_ID}.createdAt}}`,
     onChange: fn(),
     readonly: true,
