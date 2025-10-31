@@ -59,11 +59,14 @@ After syncing, configure the environment variables in your Twenty workspace:
 
 ### Webhook Endpoint
 
-The app exposes a webhook endpoint at:
+The app exposes a public serverless route trigger.
+```
+POST /s/webhook/transcript
+```
 
-```
-POST /webhook/transcript
-```
+Examples:
+- Local: `POST http://localhost:3000/s/webhook/transcript`
+- Hosted: `POST https://your-twenty-instance.com/s/webhook/transcript`
 
 ### Webhook Payload Format
 
@@ -94,7 +97,7 @@ Send a POST request with the following JSON structure:
 ### Example Webhook Call
 
 ```bash
-curl -X POST https://your-twenty-instance.com/webhook/transcript \
+curl -X POST https://your-twenty-instance.com/s/webhook/transcript \
   -H "Content-Type: application/json" \
   -d '{
     "transcript": "John: Let'\''s start the meeting. Today we need to discuss Q4 goals. Jane: I agree. We should focus on customer retention. John: Great point. Can you prepare a report by Friday? Jane: Yes, I will have it ready.",
@@ -128,7 +131,7 @@ twenty app dev
 To integrate with Granola or similar transcription tools:
 
 1. Set up a webhook in your transcription service
-2. Configure it to POST to: `https://your-twenty-instance.com/webhook/transcript`
+2. Configure it to POST to: `https://your-twenty-instance.com/s/webhook/transcript`
 3. Map the transcription service's payload format to the expected format above
 
 ### Granola Webhook Setup
