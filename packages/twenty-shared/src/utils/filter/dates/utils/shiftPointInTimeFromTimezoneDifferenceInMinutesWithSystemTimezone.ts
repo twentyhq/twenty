@@ -5,7 +5,7 @@ export const shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone =
   (pointInTime: Date, targetTimezone: string, direction: 'add' | 'sub') => {
     const systemTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const timezoneDifferenceInMinutesForStartDateToPreventDST =
+    const timezoneDifferenceInMinutesFromSystemTimezone =
       computeTimezoneDifferenceInMinutes(
         targetTimezone,
         systemTimeZone,
@@ -15,12 +15,12 @@ export const shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone =
     if (direction === 'add') {
       return addMinutes(
         pointInTime,
-        timezoneDifferenceInMinutesForStartDateToPreventDST,
+        timezoneDifferenceInMinutesFromSystemTimezone,
       );
     } else {
       return subMinutes(
         pointInTime,
-        timezoneDifferenceInMinutesForStartDateToPreventDST,
+        timezoneDifferenceInMinutesFromSystemTimezone,
       );
     }
   };

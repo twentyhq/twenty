@@ -10,7 +10,7 @@ import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 const StyledTimeZoneSpacer = styled.span`
-  width: ${({ theme }) => theme.spacing(1)};
+  min-width: ${({ theme }) => theme.spacing(1)};
 `;
 
 type DateTimeDisplayProps = {
