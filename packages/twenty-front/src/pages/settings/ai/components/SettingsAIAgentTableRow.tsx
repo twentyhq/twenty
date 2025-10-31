@@ -2,11 +2,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { type Agent } from '~/generated-metadata/graphql';
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 
 export type SettingsAIAgentTableRowProps = {
   action: ReactNode;
@@ -32,6 +32,7 @@ const StyledActionTableCell = styled(TableCell)`
 
 const StyledIconContainer = styled.div`
   flex-shrink: 0;
+  height: ${({ theme }) => theme.spacing(4)};
 `;
 
 export const SettingsAIAgentTableRow = ({

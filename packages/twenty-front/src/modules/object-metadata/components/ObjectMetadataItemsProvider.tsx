@@ -2,8 +2,8 @@ import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { UserOrMetadataLoader } from '~/loading/components/UserOrMetadataLoader';
 
 export const ObjectMetadataItemsProvider = ({
@@ -11,12 +11,10 @@ export const ObjectMetadataItemsProvider = ({
 }: React.PropsWithChildren) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const isAppWaitingForFreshObjectMetadata = useRecoilValue(
-    isAppWaitingForFreshObjectMetadataState,
-  );
+  const shouldAppBeLoading = useRecoilValue(shouldAppBeLoadingState);
 
   const shouldDisplayChildren =
-    !isAppWaitingForFreshObjectMetadata && objectMetadataItems.length > 0;
+    !shouldAppBeLoading && objectMetadataItems.length > 0;
 
   return (
     <>

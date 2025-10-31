@@ -9,8 +9,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
 
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
@@ -122,7 +122,7 @@ const meta: Meta<typeof WidgetRenderer> = {
           objectMetadataItemsState,
           generatedMockObjectMetadataItems,
         );
-        snapshot.set(isAppWaitingForFreshObjectMetadataState, false);
+        snapshot.set(shouldAppBeLoadingState, false);
       };
 
       return (

@@ -1,7 +1,8 @@
+import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { enrichObjectMetadataItemsWithPermissions } from '@/object-metadata/utils/enrichObjectMetadataItemsWithPermissions';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
@@ -75,7 +76,17 @@ export const useRefreshObjectMetadataItems = (
           newObjectMetadataItems.length > 0
         ) {
           set(objectMetadataItemsState, newObjectMetadataItems);
-          set(isAppWaitingForFreshObjectMetadataState, false);
+        }
+
+        if (snapshot.getLoadable(shouldAppBeLoadingState).getValue() === true) {
+          set(shouldAppBeLoadingState, false);
+        }
+
+        if (
+          snapshot.getLoadable(isAppEffectRedirectEnabledState).getValue() ===
+          false
+        ) {
+          set(isAppEffectRedirectEnabledState, true);
         }
 
         return newObjectMetadataItems;
