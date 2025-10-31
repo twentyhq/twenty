@@ -10,7 +10,7 @@ import {
 
 const AVERAGE_CHARACTER_WIDTH_RATIO = 0.6;
 const MIN_TICK_LABEL_LENGTH = 5;
-const MAX_LEFT_AXIS_LABEL_LENGTH = 20;
+const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
 
 type GetBarChartAxisConfigsProps = {
   width: number;
@@ -80,8 +80,9 @@ export const getBarChartAxisConfigs = ({
         tickValues: numberOfValueTicks,
         legend: yAxisLabel,
         legendPosition: 'middle' as const,
-        legendOffset: -50,
-        format: (value: number) => formatGraphValue(value, formatOptions || {}),
+        legendOffset: -BAR_CHART_MARGINS.left + 5,
+        format: (value: string | number) =>
+          truncateTickLabel(String(value), MAX_LEFT_AXIS_LABEL_LENGTH),
       },
     };
   }
@@ -104,7 +105,7 @@ export const getBarChartAxisConfigs = ({
       tickValues: categoryTickValues,
       legend: xAxisLabel,
       legendPosition: 'middle' as const,
-      legendOffset: -50,
+      legendOffset: -BAR_CHART_MARGINS.left + 5,
       format: (value: string | number) =>
         truncateTickLabel(String(value), MAX_LEFT_AXIS_LABEL_LENGTH),
     },
