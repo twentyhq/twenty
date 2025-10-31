@@ -1,7 +1,8 @@
 import { isDefined } from 'class-validator';
-import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
-import { MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
-import { AllMetadataName } from 'twenty-shared/metadata';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
+import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 
 export type RegroupEntitiesByRelatedEntityIdArgs<T extends AllMetadataName> =
   MetadataManyToOneJoinColumn<T> extends never
@@ -20,6 +21,7 @@ export const regroupEntitiesByRelatedEntityId = <T extends AllMetadataName>({
     const currentRelatedEntityId = entity[
       foreignKey as keyof MetadataEntity<T>
     ] as string;
+
     if (!isDefined(currentRelatedEntityId)) {
       continue;
     }
