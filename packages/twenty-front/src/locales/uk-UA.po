@@ -5246,10 +5246,10 @@ msgstr "Відповідність стовпців"
 msgid "Max"
 msgstr "Максимум"
 
-#. js-lingui-id: y2rk49
+#. js-lingui-id: Zgn/wP
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
-msgid "Max {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter"
-msgstr "Максимум {GRAPH_MAXIMUM_NUMBER_OF_GROUPS} стовпців на діаграмі. Розгляньте можливість додання фільтра"
+msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
+msgstr ""
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx

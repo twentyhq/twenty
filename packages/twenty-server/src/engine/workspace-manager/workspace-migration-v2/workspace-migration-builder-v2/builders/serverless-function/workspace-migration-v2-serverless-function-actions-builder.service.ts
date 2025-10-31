@@ -81,10 +81,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
-    const {
-      flatEntityToValidate: flatServerlessFunctionToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatServerlessFunctionToValidate } = args;
 
     return {
       status: 'success',
@@ -92,7 +89,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         type: 'create_serverless_function',
         serverlessFunction: flatServerlessFunctionToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -116,10 +112,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
-    const {
-      flatEntityToValidate: flatServerlessFunctionToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatServerlessFunctionToValidate } = args;
 
     return {
       status: 'success',
@@ -127,7 +120,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         type: 'delete_serverless_function',
         serverlessFunctionId: flatServerlessFunctionToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -153,11 +145,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
-    const {
-      dependencyOptimisticFlatEntityMaps,
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateServerlessFunctionAction: UpdateServerlessFunctionAction = {
       type: 'update_serverless_function',
@@ -168,7 +156,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     return {
       status: 'success',
       action: updateServerlessFunctionAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

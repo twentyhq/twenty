@@ -39,10 +39,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const {
-      flatEntityToValidate: flatRouteTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatRouteTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -50,7 +47,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
         type: 'create_route_trigger',
         routeTrigger: flatRouteTriggerToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -74,10 +70,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const {
-      flatEntityToValidate: flatRouteTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatRouteTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -85,7 +78,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
         type: 'delete_route_trigger',
         routeTriggerId: flatRouteTriggerToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -109,11 +101,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const {
-      dependencyOptimisticFlatEntityMaps,
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateRouteTriggerAction: UpdateRouteTriggerAction = {
       type: 'update_route_trigger',
@@ -124,7 +112,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     return {
       status: 'success',
       action: updateRouteTriggerAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }
