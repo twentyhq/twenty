@@ -54,7 +54,7 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
       }),
     );
 
-    const failures = results.filter((r) => r.status === 'rejected');
+    const failures = results.filter((result) => result.status === 'rejected');
 
     if (failures.length > 0) {
       this.logger.error(`${failures.length} operations failed`);
