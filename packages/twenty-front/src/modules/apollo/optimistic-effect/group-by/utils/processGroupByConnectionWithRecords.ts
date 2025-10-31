@@ -1,7 +1,7 @@
-import { createEdgeRefForGroupBy } from '@/apollo/optimistic-effect/group-by/utils/createEdgeRefForGroupBy';
 import { doesRecordBelongToGroup } from '@/apollo/optimistic-effect/group-by/utils/doesRecordBelongToGroup';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+import { createCacheRef } from '@/object-record/cache/utils/createCacheRef';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { isDefined } from 'twenty-shared/utils';
@@ -82,7 +82,7 @@ export const processGroupByConnectionWithRecords = ({
         !recordExistsInEdges;
 
       if (shouldAdd) {
-        const edge = createEdgeRefForGroupBy({
+        const edge = createCacheRef({
           record,
           objectMetadataItem,
           toReference,
@@ -100,7 +100,7 @@ export const processGroupByConnectionWithRecords = ({
       const shouldBeInGroup = recordMatchesFilter && belongsToGroup;
 
       if (shouldBeInGroup && !recordExistsInEdges) {
-        const edge = createEdgeRefForGroupBy({
+        const edge = createCacheRef({
           record,
           objectMetadataItem,
           toReference,

@@ -4,7 +4,7 @@ import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefE
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isDefined } from 'twenty-shared/utils';
 
-export const createEdgeRefForGroupBy = ({
+export const createCacheRef = ({
   record,
   objectMetadataItem,
   toReference,

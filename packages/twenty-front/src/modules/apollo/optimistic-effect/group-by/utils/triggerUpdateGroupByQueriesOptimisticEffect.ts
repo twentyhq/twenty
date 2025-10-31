@@ -1,11 +1,11 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
-import { createEdgeRefForGroupBy } from '@/apollo/optimistic-effect/group-by/utils/createEdgeRefForGroupBy';
 import { normalizeGroupByDimensionValue } from '@/apollo/optimistic-effect/group-by/utils/normalizeGroupByDimensionValue';
 import { processGroupByConnectionWithRecords } from '@/apollo/optimistic-effect/group-by/utils/processGroupByConnectionWithRecords';
 import { type CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+import { createCacheRef } from '@/object-record/cache/utils/createCacheRef';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type RecordGqlGroupByConnection } from '@/object-record/graphql/types/RecordGqlOperationGroupByResult';
 import { type RecordGqlOperationGroupByVariables } from '@/object-record/graphql/types/RecordGqlOperationGroupByVariables';
@@ -168,7 +168,7 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
               !dimensionExists &&
               recordDimensionValues.length === groupByFieldNames.length
             ) {
-              const edge = createEdgeRefForGroupBy({
+              const edge = createCacheRef({
                 record,
                 objectMetadataItem,
                 toReference,
