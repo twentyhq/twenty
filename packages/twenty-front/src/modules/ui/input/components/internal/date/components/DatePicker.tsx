@@ -17,6 +17,7 @@ import { addMonths, setMonth, setYear, subMonths } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRecoilValue } from 'recoil';
 
+import { type Nullable } from 'twenty-shared/types';
 import {
   getDateFromPlainDate,
   getPlainDateFromDate,
@@ -302,7 +303,7 @@ const StyledDatePickerFallback = styled.div`
 type DatePickerProps = {
   isRelative?: boolean;
   hideHeaderInput?: boolean;
-  date: string | null;
+  date: Nullable<string>;
   relativeDate?: RelativeDateFilter & {
     start: string;
     end: string;

@@ -1,15 +1,15 @@
-import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
 import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
-import { useParseDateInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToJSDate';
+import { useParseDateInputStringToPlainDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToPlainDate';
 import { useParsePlainDateToDateInputString } from '@/ui/input/components/internal/date/hooks/useParsePlainDateToDateInputString';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -94,10 +94,10 @@ export const FormDateFieldInput = ({
 }: FormDateFieldInputProps) => {
   const instanceId = useId();
 
-  const { parsePlainDateToDateInputString: parseDateToString } =
+  const { parsePlainDateToDateInputString } =
     useParsePlainDateToDateInputString();
-  const { parseDateInputStringToJSDate: parseStringToDate } =
-    useParseDateInputStringToJSDate();
+  const { parseDateInputStringToPlainDate } =
+    useParseDateInputStringToPlainDate();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)
@@ -126,7 +126,7 @@ export const FormDateFieldInput = ({
 
   const [inputDate, setInputDate] = useState(
     isDefined(draftValueAsDate) && !isStandaloneVariableString(defaultValue)
-      ? parseDateToString(draftValueAsDate)
+      ? parsePlainDateToDateInputString(draftValueAsDate)
       : '',
   );
 
@@ -145,8 +145,6 @@ export const FormDateFieldInput = ({
     draftValue.type === 'static' && draftValue.mode === 'edit';
 
   const placeholderToDisplay = placeholder ?? 'mm/dd/yyyy';
-
-  const { getInitialFilterValue } = useGetInitialFilterValue();
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
@@ -172,7 +170,9 @@ export const FormDateFieldInput = ({
       value: newDate ?? null,
     });
 
-    setInputDate(isDefined(newDate) ? parseDateToString(newDate) : '');
+    setInputDate(
+      isDefined(newDate) ? parsePlainDateToDateInputString(newDate) : '',
+    );
 
     setPickerDate(newDate);
 
@@ -222,7 +222,9 @@ export const FormDateFieldInput = ({
 
     setPickerDate(newDate);
 
-    setInputDate(isDefined(newDate) ? parseDateToString(newDate) : '');
+    setInputDate(
+      isDefined(newDate) ? parsePlainDateToDateInputString(newDate) : '',
+    );
 
     persistDate(newDate);
   };
@@ -251,30 +253,25 @@ export const FormDateFieldInput = ({
       return;
     }
 
-    const parsedInputDateTime = parseStringToDate(inputDateTime);
+    const parsedInputPlainDate = parseDateInputStringToPlainDate(inputDateTime);
 
-    if (!isDefined(parsedInputDateTime)) {
+    if (!isDefined(parsedInputPlainDate)) {
       return;
     }
 
-    let validatedDate = parsedInputDateTime;
-    // if (parsedInputDateTime < MIN_DATE) {
-    //   validatedDate = MIN_DATE;
-    // } else if (parsedInputDateTime > MAX_DATE) {
-    //   validatedDate = MAX_DATE;
-    // }
+    let validatedDate = parsedInputPlainDate;
 
-    // setDraftValue({
-    //   type: 'static',
-    //   value: validatedDate,
-    //   mode: 'edit',
-    // });
+    setDraftValue({
+      type: 'static',
+      value: validatedDate,
+      mode: 'edit',
+    });
 
-    // setPickerDate(validatedDate);
+    setPickerDate(validatedDate);
 
-    // setInputDate(parseDateToString(validatedDate));
+    setInputDate(parsePlainDateToDateInputString(validatedDate));
 
-    // persistDate(validatedDate);
+    persistDate(validatedDate);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -333,16 +330,15 @@ export const FormDateFieldInput = ({
                 <StyledDateInputContainer>
                   <StyledDateInputAbsoluteContainer>
                     <OverlayContainer>
-                      {/* <DateTimePicker
-                        // date={pickerDate ?? new Date()}
-                        isDateTimeInput={false}
-                        // onChange={handlePickerChange}
-                        // onClose={handlePickerMouseSelect}
+                      <DatePicker
+                        date={pickerDate}
+                        onChange={handlePickerChange}
+                        onClose={handlePickerMouseSelect}
                         onEnter={handlePickerEnter}
                         onEscape={handlePickerEscape}
                         onClear={handlePickerClear}
                         hideHeaderInput
-                      /> */}
+                      />
                     </OverlayContainer>
                   </StyledDateInputAbsoluteContainer>
                 </StyledDateInputContainer>

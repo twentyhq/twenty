@@ -17,10 +17,6 @@ export const useUpsertObjectFilterDropdownCurrentFilter = () => {
       (recordFilterToUpsert: RecordFilter) => {
         upsertRecordFilter(recordFilterToUpsert);
 
-        console.log({
-          recordFilterToUpsert,
-        });
-
         set(
           objectFilterDropdownCurrentRecordFilterCallbackState,
           recordFilterToUpsert,
