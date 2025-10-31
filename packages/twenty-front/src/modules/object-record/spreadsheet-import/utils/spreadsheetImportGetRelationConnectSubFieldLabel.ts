@@ -9,9 +9,9 @@ export const getRelationConnectSubFieldLabel = (
   compositeSubFieldKey?: string,
 ) => {
   const compositeSubFieldLabel =
-    isCompositeFieldType(fieldMetadataItem.type) &&
+    isCompositeFieldType(uniqueFieldMetadataItem.type) &&
     isDefined(compositeSubFieldKey)
-      ? COMPOSITE_FIELD_SUB_FIELD_LABELS[fieldMetadataItem.type][
+      ? COMPOSITE_FIELD_SUB_FIELD_LABELS[uniqueFieldMetadataItem.type][
           compositeSubFieldKey
         ]
       : undefined;

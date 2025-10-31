@@ -1,4 +1,5 @@
 import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
+import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { Text } from '@nivo/text';
 import { useTheme } from '@nivo/theming';
@@ -162,8 +163,33 @@ export const CustomBarItem = <D extends BarDatum>({
     seriesIndex >= 0 ? seriesIndex : 'x'
   }`;
 
-  const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
+  const unconstrainedThicknessDimension = isHorizontal ? height : width;
+  const unconstrainedValueDimension = isHorizontal ? width : height;
 
+  const constrainedThicknessDimension = to(
+    unconstrainedThicknessDimension,
+    (dimension) => Math.min(dimension, BAR_CHART_MAXIMUM_WIDTH),
+  );
+
+  const centeringOffset = to(unconstrainedThicknessDimension, (dimension) =>
+    dimension > BAR_CHART_MAXIMUM_WIDTH
+      ? (dimension - BAR_CHART_MAXIMUM_WIDTH) / 2
+      : 0,
+  );
+
+  const centeringTransform = to(centeringOffset, (offset) =>
+    isHorizontal ? `translate(0, ${offset})` : `translate(${offset}, 0)`,
+  );
+
+  const finalBarWidthDimension = isHorizontal
+    ? unconstrainedValueDimension
+    : constrainedThicknessDimension;
+
+  const finalBarHeightDimension = isHorizontal
+    ? constrainedThicknessDimension
+    : unconstrainedValueDimension;
+
+  const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
   const clipPathY = isHorizontal ? 0 : isNegativeValue ? -borderRadius : 0;
 
   const widthWithOffset = (v: number) =>
@@ -172,71 +198,79 @@ export const CustomBarItem = <D extends BarDatum>({
     Math.max(v + (isHorizontal ? 0 : borderRadius), 0);
   const clampRadius = (v: number) => Math.min(borderRadius, v / 2);
 
-  const clipRectWidth = to(width, (v) => widthWithOffset(v));
-  const clipRectHeight = to(height, (v) => heightWithOffset(v));
-  const clipRx = to(width, (v) => clampRadius(widthWithOffset(v)));
-  const clipRy = to(height, (v) => clampRadius(heightWithOffset(v)));
+  const clipRectWidth = to(finalBarWidthDimension, (v) => widthWithOffset(v));
+  const clipRectHeight = to(finalBarHeightDimension, (v) =>
+    heightWithOffset(v),
+  );
+  const clipRx = to(finalBarWidthDimension, (v) =>
+    clampRadius(widthWithOffset(v)),
+  );
+  const clipRy = to(finalBarHeightDimension, (v) =>
+    clampRadius(heightWithOffset(v)),
+  );
 
   return (
     <animated.g transform={transform}>
-      {shouldRoundFreeEnd && (
-        <defs>
-          <clipPath id={clipPathId}>
-            <animated.rect
-              x={clipPathX}
-              y={clipPathY}
-              rx={clipRx}
-              ry={clipRy}
-              width={clipRectWidth}
-              height={clipRectHeight}
-            />
-          </clipPath>
-        </defs>
-      )}
+      <animated.g transform={centeringTransform}>
+        {shouldRoundFreeEnd && (
+          <defs>
+            <clipPath id={clipPathId}>
+              <animated.rect
+                x={clipPathX}
+                y={clipPathY}
+                rx={clipRx}
+                ry={clipRy}
+                width={clipRectWidth}
+                height={clipRectHeight}
+              />
+            </clipPath>
+          </defs>
+        )}
 
-      <StyledBarRect
-        $isInteractive={isInteractive}
-        clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
-        width={to(width, (value) => Math.max(value, 0))}
-        height={to(height, (value) => Math.max(value, 0))}
-        fill={color}
-        strokeWidth={borderWidth}
-        stroke={borderColor}
-        focusable={isFocusable}
-        tabIndex={isFocusable ? 0 : undefined}
-        aria-label={ariaLabel ? ariaLabel(barData) : undefined}
-        aria-labelledby={ariaLabelledBy ? ariaLabelledBy(barData) : undefined}
-        aria-describedby={
-          ariaDescribedBy ? ariaDescribedBy(barData) : undefined
-        }
-        aria-disabled={ariaDisabled ? ariaDisabled(barData) : undefined}
-        aria-hidden={ariaHidden ? ariaHidden(barData) : undefined}
-        onMouseEnter={isInteractive ? handleMouseEnter : undefined}
-        onMouseMove={isInteractive ? handleTooltip : undefined}
-        onMouseLeave={isInteractive ? handleMouseLeave : undefined}
-        onClick={isInteractive ? handleClick : undefined}
-        onFocus={isInteractive && isFocusable ? handleFocus : undefined}
-        onBlur={isInteractive && isFocusable ? handleBlur : undefined}
-        data-testid={`bar.item.${barData.id}.${barData.index}`}
-      />
+        <StyledBarRect
+          $isInteractive={isInteractive}
+          clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
+          width={to(finalBarWidthDimension, (value) => Math.max(value, 0))}
+          height={to(finalBarHeightDimension, (value) => Math.max(value, 0))}
+          fill={color}
+          strokeWidth={borderWidth}
+          stroke={borderColor}
+          focusable={isFocusable}
+          tabIndex={isFocusable ? 0 : undefined}
+          aria-label={ariaLabel ? ariaLabel(barData) : undefined}
+          aria-labelledby={ariaLabelledBy ? ariaLabelledBy(barData) : undefined}
+          aria-describedby={
+            ariaDescribedBy ? ariaDescribedBy(barData) : undefined
+          }
+          aria-disabled={ariaDisabled ? ariaDisabled(barData) : undefined}
+          aria-hidden={ariaHidden ? ariaHidden(barData) : undefined}
+          onMouseEnter={isInteractive ? handleMouseEnter : undefined}
+          onMouseMove={isInteractive ? handleTooltip : undefined}
+          onMouseLeave={isInteractive ? handleMouseLeave : undefined}
+          onClick={isInteractive ? handleClick : undefined}
+          onFocus={isInteractive && isFocusable ? handleFocus : undefined}
+          onBlur={isInteractive && isFocusable ? handleBlur : undefined}
+          data-testid={`bar.item.${barData.id}.${barData.index}`}
+        />
 
-      {shouldRenderLabel && (
-        <Text
-          x={labelX}
-          y={labelY}
-          textAnchor={textAnchor}
-          dominantBaseline="central"
-          fillOpacity={labelOpacity}
-          style={{
-            ...theme.labels.text,
-            // We don't want the label to intercept mouse events
-            pointerEvents: 'none',
-            fill: labelColor,
-          }}
-        >
-          {label}
-        </Text>
-      )}
+        {shouldRenderLabel && (
+          <Text
+            x={labelX}
+            y={labelY}
+            textAnchor={textAnchor}
+            dominantBaseline="central"
+            fillOpacity={labelOpacity}
+            style={{
+              ...theme.labels.text,
+              // We don't want the label to intercept mouse events
+              pointerEvents: 'none',
+              fill: labelColor,
+            }}
+          >
+            {label}
+          </Text>
+        )}
+      </animated.g>
     </animated.g>
   );
 };
