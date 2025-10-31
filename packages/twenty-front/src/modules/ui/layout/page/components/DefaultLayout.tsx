@@ -1,8 +1,10 @@
 import { AuthModal } from '@/auth/components/AuthModal';
+import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { CommandMenuRouter } from '@/command-menu/components/CommandMenuRouter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
+import { InformationBannerIsImpersonating } from '@/information-banner/components/impersonate/InformationBannerIsImpersonating';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
@@ -18,6 +20,7 @@ import { Global, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useScreenSize } from 'twenty-ui/utilities';
 
 const StyledLayout = styled.div`
@@ -63,6 +66,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
+  const isImpersonating = useRecoilValue(isImpersonatingState);
 
   return (
     <>
@@ -75,6 +79,7 @@ export const DefaultLayout = () => {
       />
       <StyledLayout>
         <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
+          {isImpersonating && <InformationBannerIsImpersonating />}
           <StyledPageContainer
             animate={{
               marginLeft:
