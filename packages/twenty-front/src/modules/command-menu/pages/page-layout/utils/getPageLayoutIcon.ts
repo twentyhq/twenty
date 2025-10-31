@@ -14,7 +14,7 @@ export const getPageLayoutIcon = (page: PageLayoutCommandMenuPage) => {
       return IconAppWindow;
     case CommandMenuPages.PageLayoutGraphTypeSelect:
       return IconChartPie;
-    case CommandMenuPages.PageLayoutIframeConfig:
+    case CommandMenuPages.PageLayoutIframeSettings:
       return IconFrame;
     case CommandMenuPages.PageLayoutGraphFilter:
       return IconFilter;

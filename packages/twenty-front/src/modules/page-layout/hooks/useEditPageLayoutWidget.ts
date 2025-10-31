@@ -35,7 +35,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
       if (widgetType === WidgetType.IFRAME) {
         navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutIframeConfig,
+          commandMenuPage: CommandMenuPages.PageLayoutIframeSettings,
           pageTitle: t`Edit iFrame`,
         });
       }

@@ -51,7 +51,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         const isPageLayoutEditingPage =
           currentPage === CommandMenuPages.PageLayoutWidgetTypeSelect ||
           currentPage === CommandMenuPages.PageLayoutGraphTypeSelect ||
-          currentPage === CommandMenuPages.PageLayoutIframeConfig ||
+          currentPage === CommandMenuPages.PageLayoutIframeSettings ||
           currentPage === CommandMenuPages.PageLayoutTabSettings;
 
         if (isPageLayoutEditingPage) {
