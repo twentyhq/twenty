@@ -1,3 +1,4 @@
+import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, type RelativeDateFilter } from 'twenty-shared/utils';
 
@@ -18,13 +19,16 @@ export const stringifyRelativeDateFilter = (
   }
 
   if (isNonEmptyString(relativeDateFilter.timezone)) {
-    relativeDateFilterStringified = `${relativeDateFilterStringified}_${relativeDateFilter.timezone}`;
+    relativeDateFilterStringified = `${relativeDateFilterStringified};;${relativeDateFilter.timezone};;`;
 
     if (isNonEmptyString(relativeDateFilter.referenceDayAsString)) {
-      relativeDateFilterStringified = `${relativeDateFilterStringified}_${relativeDateFilter.referenceDayAsString}`;
+      relativeDateFilterStringified = `${relativeDateFilterStringified}${relativeDateFilter.referenceDayAsString};;`;
 
-      if (isNonEmptyString(relativeDateFilter.firstDayOfTheWeek)) {
-        relativeDateFilterStringified = `${relativeDateFilterStringified}_${relativeDateFilter.firstDayOfTheWeek}`;
+      const firstDayOfTheWeek =
+        relativeDateFilter.firstDayOfTheWeek ?? detectCalendarStartDay();
+
+      if (isNonEmptyString(firstDayOfTheWeek)) {
+        relativeDateFilterStringified = `${relativeDateFilterStringified}${firstDayOfTheWeek};;`;
       }
     }
   }
