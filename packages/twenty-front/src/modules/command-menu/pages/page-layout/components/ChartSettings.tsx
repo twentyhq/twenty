@@ -5,18 +5,17 @@ import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateComm
 import { ChartSettingItem } from '@/command-menu/pages/page-layout/components/chart-settings/ChartSettingItem';
 import { ChartTypeSelectionSection } from '@/command-menu/pages/page-layout/components/ChartTypeSelectionSection';
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
-import { GRAPH_TYPE_TO_CONFIG_TYPENAME } from '@/command-menu/pages/page-layout/constants/GraphTypeToConfigTypename';
 import { useChartSettingsValues } from '@/command-menu/pages/page-layout/hooks/useChartSettingsValues';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateChartSettingInput } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingInput';
 import { useUpdateChartSettingToggle } from '@/command-menu/pages/page-layout/hooks/useUpdateChartSettingToggle';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
+import { useUpdateGraphTypeConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateGraphTypeConfig';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -24,14 +23,9 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { SidePanelInformationBanner } from 'twenty-ui/display';
 
-import {
-  AggregateOperations,
-  GraphType,
-  type PageLayoutWidget,
-} from '~/generated/graphql';
+import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledSidePanelInformationBanner = styled(SidePanelInformationBanner)`
   margin-top: ${({ theme }) => theme.spacing(2)};
@@ -47,7 +41,6 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { setSelectedItemId } = useSelectableList(
     COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
   );
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   if (widget.configuration?.__typename === 'IframeConfiguration') {
     throw new Error(t`IframeConfiguration is not supported`);
@@ -69,6 +62,12 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const { updateChartSettingInput } = useUpdateChartSettingInput(pageLayoutId);
 
+  const { updateGraphTypeConfig } = useUpdateGraphTypeConfig({
+    pageLayoutId,
+    widget,
+    configuration,
+  });
+
   const isGroupByEnabled = getChartSettingsValues(
     CHART_CONFIGURATION_SETTING_IDS.GROUP_BY,
   );
@@ -76,34 +75,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
     useRecoilComponentState(hasWidgetTooManyGroupsComponentState);
 
   const handleGraphTypeChange = (graphType: GraphType) => {
-    const configToUpdate: Record<string, any> = {
-      __typename: GRAPH_TYPE_TO_CONFIG_TYPENAME[graphType],
-      graphType,
-    };
-
-    if (graphType !== GraphType.AGGREGATE && graphType !== GraphType.GAUGE) {
-      const currentAggregateFieldMetadataId =
-        configuration.aggregateFieldMetadataId;
-
-      const objectMetadataItem = objectMetadataItems.find(
-        (item) => item.id === widget.objectMetadataId,
-      );
-
-      if (isDefined(objectMetadataItem)) {
-        const aggregateField = objectMetadataItem.fields.find(
-          (field) => field.id === currentAggregateFieldMetadataId,
-        );
-
-        if (
-          isDefined(aggregateField) &&
-          isFieldMetadataDateKind(aggregateField.type) &&
-          (configuration.aggregateOperation === AggregateOperations.MIN ||
-            configuration.aggregateOperation === AggregateOperations.MAX)
-        ) {
-          configToUpdate.aggregateOperation = AggregateOperations.COUNT;
-        }
-      }
-    }
+    const configToUpdate = updateGraphTypeConfig(graphType);
 
     updateCurrentWidgetConfig({
       configToUpdate,

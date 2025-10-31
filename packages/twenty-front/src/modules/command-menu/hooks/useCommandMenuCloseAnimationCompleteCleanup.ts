@@ -15,6 +15,7 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -81,6 +82,12 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
               );
               set(
                 pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
+                  instanceId: record.pageLayoutId,
+                }),
+                null,
+              );
+              set(
+                pageLayoutDraggedAreaComponentState.atomFamily({
                   instanceId: record.pageLayoutId,
                 }),
                 null,
