@@ -1,8 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import {
+  type FieldMetadataSettings,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 import { FieldMetadataException } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataEnumValidationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service';

@@ -1,4 +1,4 @@
-import { Field, InputType, OmitType } from '@nestjs/graphql';
+import { Field, HideField, InputType, OmitType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import { IsOptional, IsUUID, ValidateNested } from 'class-validator';
@@ -17,6 +17,15 @@ export class CreateFieldInput extends OmitType(
   @IsUUID()
   @Field(() => UUIDScalarType)
   objectMetadataId: string;
+
+  @HideField()
+  universalIdentifier?: string;
+
+  @HideField()
+  standardId?: string;
+
+  @HideField()
+  applicationId?: string;
 
   @Field(() => Boolean, { nullable: true })
   @IsOptional()

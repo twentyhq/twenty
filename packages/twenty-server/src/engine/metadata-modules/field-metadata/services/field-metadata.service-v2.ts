@@ -57,9 +57,11 @@ export class FieldMetadataServiceV2 {
   public async deleteOneField({
     deleteOneFieldInput,
     workspaceId,
+    isSystemBuild = false,
   }: {
     deleteOneFieldInput: DeleteOneFieldInput;
     workspaceId: string;
+    isSystemBuild?: boolean;
   }): Promise<FieldMetadataDTO> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -94,7 +96,7 @@ export class FieldMetadataServiceV2 {
             flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           },
           buildOptions: {
-            isSystemBuild: false,
+            isSystemBuild,
             inferDeletionFromMissingEntities: {
               fieldMetadata: true,
               index: true,
@@ -134,7 +136,7 @@ export class FieldMetadataServiceV2 {
     updateFieldInput,
     workspaceId,
   }: {
-    updateFieldInput: UpdateFieldInput;
+    updateFieldInput: Omit<UpdateFieldInput, 'workspaceId'>;
     workspaceId: string;
   }): Promise<FieldMetadataEntity> {
     const {
@@ -164,7 +166,7 @@ export class FieldMetadataServiceV2 {
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      updateFieldInput,
+      updateFieldInput: { ...updateFieldInput, workspaceId },
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,

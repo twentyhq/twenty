@@ -65,7 +65,7 @@ describe('isObjectMetadataReadOnly', () => {
     expect(result).toBe(true);
   });
 
-  it('should return true if object is managed by application', () => {
+  it('should return false if object is managed by application', () => {
     const result = isObjectMetadataReadOnly({
       objectMetadataItem: {
         applicationId: 'applicationId',
@@ -74,7 +74,7 @@ describe('isObjectMetadataReadOnly', () => {
       },
     });
 
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
   it('should return false if object is custom', () => {

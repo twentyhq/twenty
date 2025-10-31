@@ -1,7 +1,8 @@
-import { RelationType } from 'twenty-shared/types';
+import {
+  type FieldMetadataRelationSettings,
+  RelationType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { type FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 export const formatColumnNameForRelationField = (
   fieldName: string,

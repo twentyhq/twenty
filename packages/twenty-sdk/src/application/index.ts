@@ -7,7 +7,10 @@
  *                              |___/
  */
 
-export { ObjectMetadata } from './decorators/object-metadata.decorator';
-export type { ApplicationConfig } from './types/application-config';
-export type { ServerlessFunctionConfig } from './types/serverless-function-config';
-export type { SyncableEntityOptions } from './types/syncable-entity-options.type';
+export type { ApplicationConfig } from './application-config';
+export { BaseObjectMetadata } from './base-object-metadata';
+export { FieldMetadataType } from './field-metadata-type';
+export { FieldMetadata } from './field-metadata.decorator';
+export { ObjectMetadata } from './object-metadata.decorator';
+export type { ServerlessFunctionConfig } from './serverless-function-config';
+export type { SyncableEntityOptions } from './syncable-entity-options.type';

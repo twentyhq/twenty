@@ -60,7 +60,7 @@ export default [
             },
             {
               sourceTag: 'scope:sdk',
-              onlyDependOnLibsWithTags: ['scope:sdk'],
+              onlyDependOnLibsWithTags: ['scope:sdk', 'scope:shared'],
             },
             {
               sourceTag: 'scope:shared',

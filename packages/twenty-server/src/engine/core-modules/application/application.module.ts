@@ -17,12 +17,14 @@ import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/ro
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ApplicationEntity, AgentEntity, WorkspaceEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ObjectMetadataModule,
+    FieldMetadataModule,
     DataSourceModule,
     ApplicationVariableEntityModule,
     ServerlessFunctionLayerModule,

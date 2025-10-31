@@ -73,6 +73,19 @@ export type ServerlessFunctionTriggerManifest = {
 
 export type Sources = { [key: string]: string | Sources };
 
+export type FieldMetadata = {
+  universalIdentifier: string;
+  type: string;
+  label: string;
+  description?: string;
+  icon?: string;
+  defaultValue?: any;
+  options?: any;
+  settings?: any;
+  isNullable?: boolean;
+  isFieldUiReadOnly?: boolean;
+};
+
 export type ObjectManifest = {
   universalIdentifier: string;
   nameSingular: string;
@@ -81,6 +94,7 @@ export type ObjectManifest = {
   labelPlural: string;
   description?: string;
   icon?: string;
+  fields: FieldMetadata[];
 };
 
 export interface ApiResponse<T = any> {

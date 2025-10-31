@@ -13,12 +13,12 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import {
+  FieldManifest,
   ObjectManifest,
   ServerlessFunctionManifest,
   ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -35,6 +35,11 @@ import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serv
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -45,6 +50,7 @@ export class ApplicationSyncService {
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
+    private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
     private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
@@ -155,6 +161,131 @@ export class ApplicationSyncService {
     return application;
   }
 
+  private async syncFields({
+    objectId,
+    fieldsToSync,
+    workspaceId,
+    applicationId,
+  }: {
+    objectId: string;
+    workspaceId: string;
+    applicationId: string;
+    fieldsToSync?: FieldManifest[];
+  }) {
+    if (!isDefined(fieldsToSync)) {
+      return;
+    }
+
+    const { flatFieldMetadataMaps: existingFlatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps'],
+        },
+      );
+
+    const existingFields = Object.values(
+      existingFlatFieldMetadataMaps.byId,
+    ).filter(
+      (field) => isDefined(field) && field.objectMetadataId === objectId,
+    ) as FlatFieldMetadata[];
+
+    const fieldsToSyncUniversalIds = fieldsToSync.map(
+      (field) => field.universalIdentifier,
+    );
+
+    const existingFieldsStandardIds = existingFields.map(
+      (field) => field.universalIdentifier,
+    );
+
+    const fieldsToDelete = existingFields.filter(
+      (field) =>
+        isDefined(field.universalIdentifier) &&
+        !fieldsToSyncUniversalIds.includes(field.universalIdentifier) &&
+        field.isCustom === true,
+    );
+
+    const fieldsToUpdate = existingFields.filter(
+      (field) =>
+        isDefined(field.universalIdentifier) &&
+        fieldsToSyncUniversalIds.includes(field.universalIdentifier),
+    );
+
+    const fieldsToCreate = fieldsToSync.filter(
+      (fieldToSync) =>
+        !existingFieldsStandardIds.includes(fieldToSync.universalIdentifier),
+    );
+
+    for (const fieldToDelete of fieldsToDelete) {
+      await this.fieldMetadataServiceV2.updateOne({
+        updateFieldInput: {
+          id: fieldToDelete.id,
+          isActive: false,
+        },
+        workspaceId,
+      });
+      await this.fieldMetadataServiceV2.deleteOneField({
+        deleteOneFieldInput: { id: fieldToDelete.id },
+        workspaceId,
+      });
+    }
+
+    for (const fieldToUpdate of fieldsToUpdate) {
+      const fieldToSync = fieldsToSync.find(
+        (field) =>
+          field.universalIdentifier === fieldToUpdate.universalIdentifier,
+      );
+
+      if (!fieldToSync) {
+        throw new ApplicationException(
+          `Failed to find field to sync with universalIdentifier ${fieldToUpdate.universalIdentifier}`,
+          ApplicationExceptionCode.FIELD_NOT_FOUND,
+        );
+      }
+
+      const updateFieldInput = {
+        id: fieldToUpdate.id,
+        label: fieldToSync.label,
+        description: fieldToSync.description ?? undefined,
+        icon: fieldToSync.icon ?? undefined,
+        defaultValue: fieldToSync.defaultValue ?? undefined,
+        options: fieldToSync.options ?? undefined,
+        settings: fieldToSync.settings ?? undefined,
+        isNullable: fieldToSync.isNullable ?? true,
+      };
+
+      await this.fieldMetadataServiceV2.updateOne({
+        updateFieldInput,
+        workspaceId,
+      });
+    }
+
+    for (const fieldToCreate of fieldsToCreate) {
+      const createFieldInput: CreateFieldInput = {
+        name: computeMetadataNameFromLabel(fieldToCreate.label),
+        type: fieldToCreate.type,
+        label: fieldToCreate.label,
+        description: fieldToCreate.description ?? undefined,
+        icon: fieldToCreate.icon ?? undefined,
+        defaultValue: fieldToCreate.defaultValue ?? undefined,
+        options: fieldToCreate.options ?? undefined,
+        settings: fieldToCreate.settings ?? undefined,
+        isNullable: fieldToCreate.isNullable ?? true,
+        objectMetadataId: objectId,
+        universalIdentifier: fieldToCreate.universalIdentifier,
+        standardId: fieldToCreate.universalIdentifier,
+        applicationId,
+        isCustom: true,
+        workspaceId,
+      };
+
+      await this.fieldMetadataServiceV2.createOne({
+        createFieldInput,
+        workspaceId,
+      });
+    }
+  }
+
   private async syncObjects({
     objectsToSync,
     workspaceId,
@@ -243,6 +374,13 @@ export class ApplicationSyncService {
         updateObjectInput,
         workspaceId,
       });
+
+      await this.syncFields({
+        fieldsToSync: objectToSync.fields,
+        objectId: objectToUpdate.id,
+        workspaceId,
+        applicationId,
+      });
     }
 
     const dataSourceMetadata =
@@ -264,9 +402,16 @@ export class ApplicationSyncService {
         applicationId,
       };
 
-      await this.objectMetadataServiceV2.createOne({
+      const createdObject = await this.objectMetadataServiceV2.createOne({
         createObjectInput,
         workspaceId,
+      });
+
+      await this.syncFields({
+        fieldsToSync: objectToCreate.fields,
+        objectId: createdObject.id,
+        workspaceId,
+        applicationId,
       });
     }
   }

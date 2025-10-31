@@ -31,6 +31,9 @@ import {
   isFunctionExpression,
   isExportAssignment,
   Modifier,
+  isPropertyDeclaration,
+  isNoSubstitutionTemplateLiteral,
+  isTemplateExpression,
 } from 'typescript';
 import {
   AppManifest,
@@ -39,6 +42,7 @@ import {
   PackageJson,
   ServerlessFunctionManifest,
   Sources,
+  FieldMetadata,
 } from '../types/config.types';
 import { posix, relative, sep, resolve, join } from 'path';
 import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
@@ -95,6 +99,25 @@ const exprToValue = (expr: Expression): JSONValue => {
   if (expr.kind === SyntaxKind.TrueKeyword) return true;
   if (expr.kind === SyntaxKind.FalseKeyword) return false;
   if (expr.kind === SyntaxKind.NullKeyword) return null;
+
+  if (isPropertyAccessExpression(expr)) {
+    if (isIdentifier(expr.expression) && isIdentifier(expr.name)) {
+      return expr.name.text;
+    }
+    return String(expr.getText());
+  }
+
+  if (isNoSubstitutionTemplateLiteral(expr)) {
+    return expr.text;
+  }
+  if (isTemplateExpression(expr)) {
+    let out = expr.head.text;
+    for (const span of expr.templateSpans) {
+      const v = exprToValue(span.expression);
+      out += String(v) + span.literal.text;
+    }
+    return out;
+  }
 
   if (isArrayLiteralExpression(expr)) {
     return expr.elements.map((e) =>
@@ -155,7 +178,42 @@ const collectObjects = (program: Program) => {
         if (objectDec) {
           const cfg = getFirstArgObject(objectDec);
           if (cfg && typeof cfg === 'object' && !Array.isArray(cfg)) {
-            manifest.push({ ...(cfg as any) } as ObjectManifest);
+            const fields: Array<Record<string, JSONValue>> = [];
+
+            for (const member of node.members) {
+              if (!isPropertyDeclaration(member)) {
+                continue;
+              }
+
+              const fieldDec = getDecorators(member)?.find((d) =>
+                isDecoratorNamed(d, 'FieldMetadata'),
+              );
+
+              if (!fieldDec) {
+                continue;
+              }
+
+              const fieldCfg = getFirstArgObject(fieldDec);
+
+              if (!fieldCfg) {
+                continue;
+              }
+
+              // Try to attach the TypeScript property name as "name"
+              let name: string | undefined;
+              if (member.name && isIdentifier(member.name)) {
+                name = member.name.text;
+              } else {
+                // fallback to AST text if not a simple identifier
+                name = member.name?.getText?.() ?? undefined;
+              }
+
+              fields.push({
+                ...(fieldCfg as FieldMetadata),
+                ...(name ? { name } : {}),
+              });
+            }
+            manifest.push({ ...(cfg as any), fields } as ObjectManifest);
           }
         }
       }

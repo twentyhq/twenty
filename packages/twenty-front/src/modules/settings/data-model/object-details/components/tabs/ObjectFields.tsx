@@ -9,7 +9,7 @@ import { H2Title, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -22,7 +22,7 @@ type ObjectFieldsProps = {
 };
 
 export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
-  const readonly = isObjectMetadataReadOnly({
+  const readonly = isObjectMetadataSettingsReadOnly({
     objectMetadataItem,
   });
 
