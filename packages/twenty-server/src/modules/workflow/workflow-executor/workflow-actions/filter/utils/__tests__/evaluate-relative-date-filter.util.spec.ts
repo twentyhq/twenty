@@ -8,7 +8,10 @@ import {
   subWeeks,
   subYears,
 } from 'date-fns';
-import { type RelativeDateFilter } from 'twenty-shared/utils';
+import {
+  getPlainDateFromDate,
+  type RelativeDateFilter,
+} from 'twenty-shared/utils';
 
 import {
   evaluateRelativeDateFilter,
@@ -468,6 +471,8 @@ describe('Relative Date Filter Utils', () => {
         const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'THIS',
           unit: 'WEEK',
+          firstDayOfTheWeek: 'MONDAY',
+          referenceDayAsString: getPlainDateFromDate(now),
         };
 
         expect(
@@ -476,12 +481,14 @@ describe('Relative Date Filter Utils', () => {
             relativeDateFilterValue,
           }),
         ).toBe(true);
+
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: new Date('2024-01-14T12:00:00Z'),
+            dateToCheck: new Date('2024-01-16T12:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(true);
+
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-01-20T12:00:00Z'),
@@ -498,7 +505,7 @@ describe('Relative Date Filter Utils', () => {
         ).toBe(false);
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: new Date('2024-01-21T12:00:00Z'),
+            dateToCheck: new Date('2024-01-22T12:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(false);
