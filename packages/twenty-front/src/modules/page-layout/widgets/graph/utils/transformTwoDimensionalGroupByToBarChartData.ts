@@ -10,6 +10,7 @@ import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/gr
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { getSortedKeys } from '@/page-layout/widgets/graph/utils/getSortedKeys';
+import { sortBarChartDataBySecondaryDimensionSum } from '@/page-layout/widgets/graph/utils/sortBarChartDataBySecondaryDimensionSum';
 import { isDefined } from 'twenty-shared/utils';
 import { type BarChartConfiguration } from '~/generated/graphql';
 
@@ -119,8 +120,18 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     color: configuration.color as GraphColor,
   }));
 
+  // TODO: Move to backend once we have a strategy for ordering by primary dimension aggregate totals in multi-dimensional groupBy queries
+  const unsortedData = Array.from(dataMap.values());
+  const data = isDefined(configuration.primaryAxisOrderBy)
+    ? sortBarChartDataBySecondaryDimensionSum({
+        data: unsortedData,
+        keys,
+        orderBy: configuration.primaryAxisOrderBy,
+      })
+    : unsortedData;
+
   return {
-    data: Array.from(dataMap.values()),
+    data,
     indexBy: indexByKey,
     keys,
     series,
