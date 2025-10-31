@@ -106,7 +106,7 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
           objectMetadataItemWithFieldMaps,
         ) || {},
       data: (
-        await this.dataArgHandler.overrideDataByFieldMetadata({
+        await this.dataArgHandler.coerce({
           partialRecordInputs: [args.data],
           authContext,
           objectMetadataItemWithFieldMaps,
