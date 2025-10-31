@@ -127,7 +127,7 @@ export const failingFilterInputByFieldMetadataType: {
     {
       gqlFilterInput: { dateTimeField: { eq: 'not-a-date-time' } },
       gqlErrorMessage:
-        'invalid input syntax for type timestamp with time zone: "not-a-date-time"',
+        'invalid input syntax for type timestamp with time zone: "{}"',
       restFilterInput: 'dateTimeField[eq]:"not-a-date-time"',
       restErrorMessage:
         'invalid input syntax for type timestamp with time zone',
