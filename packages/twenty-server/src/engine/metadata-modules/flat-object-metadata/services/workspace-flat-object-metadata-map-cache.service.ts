@@ -92,7 +92,6 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceFlatMap
         fields: fieldsByObjectId.get(objectMetadataEntity.id) || [],
         indexMetadatas: indexesByObjectId.get(objectMetadataEntity.id) || [],
         views: viewsByObjectId.get(objectMetadataEntity.id) || [],
-        // TODO prastoin
       } as ObjectMetadataEntity);
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

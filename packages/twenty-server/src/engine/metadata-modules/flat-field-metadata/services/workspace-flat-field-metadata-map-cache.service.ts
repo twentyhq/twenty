@@ -119,7 +119,6 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceFlatMapC
         kanbanAggregateOperationViews:
           kanbanViewsByFieldId.get(fieldMetadataEntity.id) || [],
         calendarViews: calendarViewsByFieldId.get(fieldMetadataEntity.id) || [],
-        // Todo prastoin tmp
       } as FieldMetadataEntity);
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

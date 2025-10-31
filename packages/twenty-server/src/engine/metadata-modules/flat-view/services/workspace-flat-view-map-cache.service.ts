@@ -88,7 +88,6 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceFlatMapCacheServi
         viewFields: viewFieldsByViewId.get(viewEntity.id) || [],
         viewFilters: viewFiltersByViewId.get(viewEntity.id) || [],
         viewGroups: viewGroupsByViewId.get(viewEntity.id) || [],
-        // TODO prastoin
       } as ViewEntity);
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
