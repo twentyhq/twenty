@@ -1,6 +1,5 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
-import { format, isValid, parse } from 'date-fns';
-import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
+import { isValid, parse } from 'date-fns';
 import { getDateFormatStringForDatePickerInputMask } from '~/utils/date-utils';
 
 export const useParseDateInputStringToJSDate = () => {
@@ -14,9 +13,6 @@ export const useParseDateInputStringToJSDate = () => {
     if (!isValid(parsedDate)) {
       return null;
     }
-
-    // TODO: verify this
-    const formattedDate = format(parsedDate, DATE_TYPE_FORMAT);
 
     return parsedDate;
   };
