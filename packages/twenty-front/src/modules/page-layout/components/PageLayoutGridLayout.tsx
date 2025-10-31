@@ -1,6 +1,7 @@
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import { PageLayoutGridResizeHandle } from '@/page-layout/components/PageLayoutGridResizeHandle';
+import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
@@ -11,6 +12,7 @@ import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayo
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
@@ -18,10 +20,12 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import {
   Responsive,
   WidthProvider,
+  type Layout,
+  type Layouts,
   type ResponsiveProps,
 } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
@@ -86,6 +90,26 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
 
+  const PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY =
+    '__pending-widget-placeholder__';
+
+  const handleLayoutChangeWithoutPendingPlaceholder = useCallback(
+    (currentLayout: Layout[], allLayouts: Layouts) => {
+      const layoutsWithoutPendingPlaceholder: Layouts = {
+        desktop: allLayouts.desktop?.filter(
+          (layoutItem) =>
+            layoutItem.i !== PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
+        ),
+        mobile: allLayouts.mobile?.filter(
+          (layoutItem) =>
+            layoutItem.i !== PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
+        ),
+      };
+      handleLayoutChange(currentLayout, layoutsWithoutPendingPlaceholder);
+    },
+    [handleLayoutChange],
+  );
+
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
   const isPageLayoutInEditMode = useRecoilComponentValue(
@@ -94,6 +118,10 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const pageLayoutCurrentLayouts = useRecoilComponentValue(
     pageLayoutCurrentLayoutsComponentState,
+  );
+
+  const pageLayoutDraggedArea = useRecoilComponentValue(
+    pageLayoutDraggedAreaComponentState,
   );
 
   const { currentPageLayout } = useCurrentPageLayout();
@@ -109,21 +137,67 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   const isLayoutEmpty =
     !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
 
-  const layouts = isLayoutEmpty
+  const hasPendingPlaceholder =
+    isDefined(pageLayoutDraggedArea) && !isLayoutEmpty;
+
+  const baseLayouts = isLayoutEmpty
     ? EMPTY_LAYOUT
     : (pageLayoutCurrentLayouts[tabId] ?? EMPTY_LAYOUT);
 
-  const Widgets = isLayoutEmpty ? (
-    <div key="empty-placeholder" data-select-disable="true">
-      <WidgetPlaceholder />
-    </div>
-  ) : (
-    activeTabWidgets?.map((widget) => (
-      <div key={widget.id} data-select-disable="true">
-        <WidgetRenderer widget={widget} />
-      </div>
-    ))
-  );
+  const layouts = hasPendingPlaceholder
+    ? {
+        desktop: [
+          ...baseLayouts.desktop,
+          {
+            i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
+            x: pageLayoutDraggedArea.x,
+            y: pageLayoutDraggedArea.y,
+            w: pageLayoutDraggedArea.w,
+            h: pageLayoutDraggedArea.h,
+            minW: DEFAULT_WIDGET_SIZE.minimum.w,
+            minH: DEFAULT_WIDGET_SIZE.minimum.h,
+            static: true,
+          },
+        ],
+        mobile: [
+          ...baseLayouts.mobile,
+          {
+            i: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
+            x: 0,
+            y: pageLayoutDraggedArea.y,
+            w: 1,
+            h: pageLayoutDraggedArea.h,
+            minW: DEFAULT_WIDGET_SIZE.minimum.w,
+            minH: DEFAULT_WIDGET_SIZE.minimum.h,
+            static: true,
+          },
+        ],
+      }
+    : baseLayouts;
+
+  const widgetsArray = isLayoutEmpty
+    ? [
+        <div key="empty-placeholder" data-select-disable="true">
+          <WidgetPlaceholder />
+        </div>,
+      ]
+    : [
+        ...(activeTabWidgets?.map((widget) => (
+          <div key={widget.id} data-select-disable="true">
+            <WidgetRenderer widget={widget} />
+          </div>
+        )) || []),
+        ...(hasPendingPlaceholder
+          ? [
+              <div
+                key={PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY}
+                data-select-disable="true"
+              >
+                <WidgetPlaceholder />
+              </div>,
+            ]
+          : []),
+      ];
 
   return (
     <>
@@ -140,7 +214,9 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
         {isRecordPageEnabled &&
         !isPageLayoutInEditMode &&
         activeTab.layoutMode === 'vertical-list' ? (
-          <StyledVerticalListContainer>{Widgets}</StyledVerticalListContainer>
+          <StyledVerticalListContainer>
+            {widgetsArray}
+          </StyledVerticalListContainer>
         ) : (
           <ResponsiveGridLayout
             className="layout"
@@ -168,14 +244,14 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
             onDragStop={() => {
               setDraggingWidgetId(null);
             }}
-            onLayoutChange={handleLayoutChange}
+            onLayoutChange={handleLayoutChangeWithoutPendingPlaceholder}
             onBreakpointChange={(newBreakpoint) =>
               setPageLayoutCurrentBreakpoint(
                 newBreakpoint as PageLayoutBreakpoint,
               )
             }
           >
-            {Widgets}
+            {widgetsArray}
           </ResponsiveGridLayout>
         )}
       </StyledGridContainer>
