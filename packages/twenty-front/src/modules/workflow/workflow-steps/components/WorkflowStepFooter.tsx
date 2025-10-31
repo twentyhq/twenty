@@ -101,7 +101,6 @@ export const WorkflowStepFooter = ({
     <Button
       title="Delete"
       onClick={() => {
-        closeDropdown(dropdownId);
         deleteStep(stepId);
       }}
       Icon={IconTrash}

@@ -219,7 +219,7 @@ export const WorkflowCreateRecordBody = ({
         isDefined(uniqueFieldMetadataItems) &&
         uniqueFieldMetadataItems.length > 0 && (
           <WorkflowFieldsMultiSelect
-            label="Unique fields"
+            label={t`Unique fields`}
             objectMetadataItem={objectMetadataItem}
             handleFieldsChange={() => {}}
             defaultFields={
@@ -227,7 +227,7 @@ export const WorkflowCreateRecordBody = ({
                 (fieldMetadataItem) => fieldMetadataItem.name,
               ) ?? []
             }
-            placeholder="Object unique fields"
+            placeholder={t`Object unique fields`}
             readonly
             hint={t`We match on these fields. If a ${objectLabelSingular} already exists, we update it. Otherwise, we create a new one.`}
           />
