@@ -125,11 +125,6 @@ export function formatResult<T>(
       continue;
     }
 
-    console.log({
-      object: objectMetadataItemWithFieldMaps.namePlural,
-      raw: rawUpdatedDate,
-    });
-
     // @ts-expect-error legacy noImplicitAny
     newData[dateField.name] = rawUpdatedDate;
   }

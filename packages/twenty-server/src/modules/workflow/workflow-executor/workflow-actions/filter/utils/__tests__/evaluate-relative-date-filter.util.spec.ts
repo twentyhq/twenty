@@ -15,8 +15,6 @@ import {
   parseAndEvaluateRelativeDateFilter,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
 
-type PartialSome<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
 describe('Relative Date Filter Utils', () => {
   const now = new Date('2024-01-15T12:00:00Z'); // Monday, January 15, 2024 at noon
 
