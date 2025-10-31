@@ -3,8 +3,8 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContainer';
-import { WidgetHeader } from '@/page-layout/widgets/components/WidgetHeader';
+import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
+import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
@@ -42,8 +42,13 @@ export const WidgetPlaceholder = () => {
   };
 
   return (
-    <WidgetContainer onClick={handleClick}>
-      <WidgetHeader
+    <WidgetCard
+      onClick={handleClick}
+      widgetCardContext="dashboard"
+      isEditing={false}
+      isDragging={false}
+    >
+      <WidgetCardHeader
         isInEditMode={isPageLayoutInEditMode}
         title={t`Add Widget`}
         isEmpty
@@ -62,6 +67,6 @@ export const WidgetPlaceholder = () => {
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
-    </WidgetContainer>
+    </WidgetCard>
   );
 };

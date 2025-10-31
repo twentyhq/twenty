@@ -1,6 +1,6 @@
-import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import React from 'react';
 
 import { IconCheck } from '@ui/display/icon/components/TablerIcons';
 
@@ -23,7 +23,7 @@ export const Checkmark = ({ className }: CheckmarkProps) => {
 
   return (
     <StyledContainer className={className}>
-      <IconCheck color={theme.grayScale.gray0} size={14} />
+      <IconCheck color={theme.grayScale.gray1} size={14} />
     </StyledContainer>
   );
 };

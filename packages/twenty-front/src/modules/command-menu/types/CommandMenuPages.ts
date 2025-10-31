@@ -19,4 +19,5 @@ export enum CommandMenuPages {
   PageLayoutGraphTypeSelect = 'page-layout-graph-type-select',
   PageLayoutGraphFilter = 'page-layout-graph-filter',
   PageLayoutIframeConfig = 'page-layout-iframe-config',
+  PageLayoutTabSettings = 'page-layout-tab-settings',
 }

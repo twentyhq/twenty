@@ -48,9 +48,7 @@ export class BlocklistReimportMessagesJob {
           connectedAccount: {
             accountOwnerId: workspaceMemberId,
           },
-          syncStage: Not(
-            MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-          ),
+          syncStage: Not(MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING),
         },
       });
 

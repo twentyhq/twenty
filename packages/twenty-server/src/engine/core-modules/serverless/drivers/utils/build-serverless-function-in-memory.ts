@@ -2,10 +2,14 @@ import { join } from 'path';
 
 import { build } from 'esbuild';
 
-export const buildServerlessFunctionInMemory = async (
-  sourceTemporaryDir: string,
-) => {
-  const entryFilePath = join(sourceTemporaryDir, 'src', 'index.ts');
+export const buildServerlessFunctionInMemory = async ({
+  sourceTemporaryDir,
+  handlerPath,
+}: {
+  sourceTemporaryDir: string;
+  handlerPath: string;
+}) => {
+  const entryFilePath = join(sourceTemporaryDir, handlerPath);
 
   const builtBundleFilePath = join(sourceTemporaryDir, 'dist', 'main.mjs');
 

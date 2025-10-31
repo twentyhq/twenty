@@ -3,7 +3,6 @@ import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBa
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useMemo } from 'react';
 
@@ -13,11 +12,8 @@ type UseBarChartDataProps = {
   keys: string[];
   series?: BarChartSeries[];
   colorRegistry: GraphColorRegistry;
-  id: string;
-  instanceId: string;
   seriesLabels?: Record<string, string>;
-  hoveredBar: { key: string; indexValue: string | number } | null;
-  layout: 'vertical' | 'horizontal';
+  groupMode?: 'grouped' | 'stacked';
 };
 
 export const useBarChartData = ({
@@ -26,11 +22,7 @@ export const useBarChartData = ({
   keys,
   series,
   colorRegistry,
-  id,
-  instanceId,
   seriesLabels,
-  hoveredBar,
-  layout,
 }: UseBarChartDataProps) => {
   const seriesConfigMap = useMemo(
     () => new Map<string, BarChartSeries>(series?.map((s) => [s.key, s]) || []),
@@ -38,35 +30,35 @@ export const useBarChartData = ({
   );
 
   const barConfigs = useMemo((): BarChartConfig[] => {
-    return data.flatMap((dataPoint, dataIndex) => {
+    return data.flatMap((dataPoint) => {
       const indexValue = dataPoint[indexBy];
       return keys.map((key, keyIndex): BarChartConfig => {
         const seriesConfig = seriesConfigMap.get(key);
-        const colorScheme = getColorScheme(
-          colorRegistry,
-          seriesConfig?.color,
-          keyIndex,
-        );
-        const sanitizedKey = key.replace(/\s+/g, '-');
-        const gradientId = `gradient-${id}-${instanceId}-${sanitizedKey}-${dataIndex}-${keyIndex}`;
+        const colorScheme = getColorScheme({
+          registry: colorRegistry,
+          colorName: seriesConfig?.color,
+          fallbackIndex: keyIndex,
+          totalGroups: keys.length,
+        });
 
         return {
           key,
           indexValue,
-          gradientId,
           colorScheme,
         };
       });
     });
-  }, [data, indexBy, keys, colorRegistry, id, instanceId, seriesConfigMap]);
+  }, [data, indexBy, keys, colorRegistry, seriesConfigMap]);
 
   const enrichedKeys: BarChartEnrichedKey[] = keys.map((key, index) => {
     const seriesConfig = seriesConfigMap.get(key);
-    const colorScheme = getColorScheme(
-      colorRegistry,
-      seriesConfig?.color,
-      index,
-    );
+    const colorScheme = getColorScheme({
+      registry: colorRegistry,
+      colorName: seriesConfig?.color,
+      fallbackIndex: index,
+      totalGroups: keys.length,
+    });
+
     return {
       key,
       colorScheme,
@@ -74,28 +66,9 @@ export const useBarChartData = ({
     };
   });
 
-  const enrichedKeysMap = useMemo(
-    () => new Map(enrichedKeys.map((item) => [item.key, item])),
-    [enrichedKeys],
-  );
-
-  const defs = barConfigs.map((bar) => {
-    const isHovered =
-      hoveredBar?.key === bar.key && hoveredBar?.indexValue === bar.indexValue;
-    return createGradientDef(
-      bar.colorScheme,
-      bar.gradientId,
-      isHovered,
-      layout === 'horizontal' ? 0 : 90,
-      true,
-    );
-  });
-
   return {
     seriesConfigMap,
     barConfigs,
     enrichedKeys,
-    enrichedKeysMap,
-    defs,
   };
 };

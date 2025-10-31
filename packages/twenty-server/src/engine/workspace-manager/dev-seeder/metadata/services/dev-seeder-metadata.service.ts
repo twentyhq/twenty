@@ -195,7 +195,7 @@ export class DevSeederMetadataService {
       coreDataSource: this.coreDataSource,
       workspaceId,
       objectMetadataItems: createdObjectMetadata,
-      schemaName: dataSourceMetadata.schema,
+      workspaceSchemaName: dataSourceMetadata.schema,
       featureFlags,
     });
   }

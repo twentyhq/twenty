@@ -75,6 +75,7 @@ export const GraphWidgetBarChartRenderer = ({
           displayType="shortNumber"
           rangeMin={configuration.rangeMin ?? undefined}
           rangeMax={configuration.rangeMax ?? undefined}
+          omitNullValues={configuration.omitNullValues ?? false}
         />
       </Suspense>
     </>

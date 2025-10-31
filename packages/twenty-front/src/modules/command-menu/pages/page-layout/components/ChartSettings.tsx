@@ -14,7 +14,7 @@ import { useUpdateChartSettingToggle } from '@/command-menu/pages/page-layout/ho
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
-import { isChartSettingDisabled } from '@/command-menu/pages/page-layout/utils/isChartSettingDisabled';
+import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
@@ -123,13 +123,21 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const chartSettings = GRAPH_TYPE_INFORMATION[currentGraphType].settings;
 
+  const visibleItemIds = chartSettings.flatMap((group) =>
+    group.items
+      .filter(
+        (item) =>
+          !shouldHideChartSetting(
+            item,
+            widget.objectMetadataId,
+            isGroupByEnabled as boolean,
+          ),
+      )
+      .map((item) => item.id),
+  );
+
   return (
-    <CommandMenuList
-      commandGroups={[]}
-      selectableItemIds={[
-        ...chartSettings.flatMap((group) => group.items.map((item) => item.id)),
-      ]}
-    >
+    <CommandMenuList commandGroups={[]} selectableItemIds={visibleItemIds}>
       <ChartTypeSelectionSection
         currentGraphType={currentGraphType}
         setCurrentGraphType={handleGraphTypeChange}
@@ -139,52 +147,56 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
           message={t`Max ${GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter`}
         />
       )}
-      {chartSettings.map((group) => (
-        <CommandGroup key={group.heading} heading={group.heading}>
-          {group.items.map((item) => {
-            const isDisabled = isChartSettingDisabled(
+      {chartSettings.map((group) => {
+        const visibleItems = group.items.filter(
+          (item) =>
+            !shouldHideChartSetting(
               item,
               widget.objectMetadataId,
               isGroupByEnabled as boolean,
-            );
+            ),
+        );
 
-            const handleItemToggleChange = () => {
-              setSelectedItemId(item.id);
-              updateChartSettingToggle(item.id);
-            };
+        return (
+          <CommandGroup key={group.heading} heading={group.heading}>
+            {visibleItems.map((item) => {
+              const handleItemToggleChange = () => {
+                setSelectedItemId(item.id);
+                updateChartSettingToggle(item.id);
+              };
 
-            const handleItemInputChange = (value: number | null) => {
-              updateChartSettingInput(item.id, value);
-            };
+              const handleItemInputChange = (value: number | null) => {
+                updateChartSettingInput(item.id, value);
+              };
 
-            const handleItemDropdownOpen = () => {
-              openDropdown({
-                dropdownComponentInstanceIdFromProps: item.id,
-              });
-            };
+              const handleItemDropdownOpen = () => {
+                openDropdown({
+                  dropdownComponentInstanceIdFromProps: item.id,
+                });
+              };
 
-            const handleFilterClick = () => {
-              navigatePageLayoutCommandMenu({
-                commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
-              });
-            };
+              const handleFilterClick = () => {
+                navigatePageLayoutCommandMenu({
+                  commandMenuPage: CommandMenuPages.PageLayoutGraphFilter,
+                });
+              };
 
-            return (
-              <ChartSettingItem
-                key={item.id}
-                item={item}
-                isDisabled={isDisabled}
-                configuration={configuration}
-                getChartSettingsValues={getChartSettingsValues}
-                onToggleChange={handleItemToggleChange}
-                onInputChange={handleItemInputChange}
-                onDropdownOpen={handleItemDropdownOpen}
-                onFilterClick={handleFilterClick}
-              />
-            );
-          })}
-        </CommandGroup>
-      ))}
+              return (
+                <ChartSettingItem
+                  key={item.id}
+                  item={item}
+                  configuration={configuration}
+                  getChartSettingsValues={getChartSettingsValues}
+                  onToggleChange={handleItemToggleChange}
+                  onInputChange={handleItemInputChange}
+                  onDropdownOpen={handleItemDropdownOpen}
+                  onFilterClick={handleFilterClick}
+                />
+              );
+            })}
+          </CommandGroup>
+        );
+      })}
     </CommandMenuList>
   );
 };

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
-import { EnvManifest } from 'src/engine/core-modules/application/types/application.types';
+import { AppManifest } from 'src/engine/core-modules/application/types/application.types';
 
 export class ApplicationVariableEntityService {
   constructor(
@@ -27,33 +27,52 @@ export class ApplicationVariableEntityService {
     );
   }
 
-  async upsertManyApplicationVariableEntitys({
-    env,
+  async upsertManyApplicationVariableEntities({
+    applicationVariables,
     applicationId,
   }: {
-    env?: EnvManifest;
+    applicationVariables?: AppManifest['application']['applicationVariables'];
     applicationId: string;
   }) {
-    if (!isDefined(env)) {
+    if (!isDefined(applicationVariables)) {
       return;
     }
 
-    for (const [key, { value, description, isSecret }] of Object.entries(env)) {
-      await this.applicationVariableRepository.upsert(
-        {
+    for (const [key, { value, description, isSecret }] of Object.entries(
+      applicationVariables,
+    )) {
+      if (
+        await this.applicationVariableRepository.findOne({
+          where: {
+            key,
+            applicationId,
+          },
+        })
+      ) {
+        await this.applicationVariableRepository.update(
+          {
+            key,
+            applicationId,
+          },
+          {
+            description,
+            isSecret,
+          },
+        );
+      } else {
+        await this.applicationVariableRepository.save({
           key,
           value,
           description,
           isSecret,
           applicationId,
-        },
-        { conflictPaths: ['key', 'applicationId'] },
-      );
+        });
+      }
     }
 
     await this.applicationVariableRepository.delete({
       applicationId,
-      key: Not(In(Object.keys(env))),
+      key: Not(In(Object.keys(applicationVariables))),
     });
   }
 }

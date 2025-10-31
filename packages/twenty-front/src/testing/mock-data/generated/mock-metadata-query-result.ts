@@ -17300,13 +17300,13 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "isUnique": false,
               "createdAt": "2025-06-09T18:53:47.000Z",
               "updatedAt": "2025-06-09T18:53:47.000Z",
-              "defaultValue": "'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING'",
+              "defaultValue": "'CALENDAR_EVENT_LIST_FETCH_PENDING'",
               "options": [
                 {
                   "id": "a63c16e1-fe1e-40ff-9380-118f16b30a16",
                   "color": "blue",
                   "label": "Full calendar event list fetch pending",
-                  "value": "FULL_CALENDAR_EVENT_LIST_FETCH_PENDING",
+                  "value": "CALENDAR_EVENT_LIST_FETCH_PENDING",
                   "position": 0
                 },
                 {
@@ -18145,21 +18145,14 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "isUnique": false,
               "createdAt": "2025-06-09T18:53:47.000Z",
               "updatedAt": "2025-06-09T18:53:47.000Z",
-              "defaultValue": "'FULL_MESSAGE_LIST_FETCH_PENDING'",
+              "defaultValue": "'MESSAGE_LIST_FETCH_PENDING'",
               "options": [
                 {
                   "id": "60f0c071-4375-4e1c-ac0f-3b6c64cb35b3",
                   "color": "blue",
-                  "label": "Full messages list fetch pending",
-                  "value": "FULL_MESSAGE_LIST_FETCH_PENDING",
+                  "label": "Messages list fetch pending",
+                  "value": "MESSAGE_LIST_FETCH_PENDING",
                   "position": 0
-                },
-                {
-                  "id": "0728c8f0-8c9f-4a01-9ccc-d3ff68e64d12",
-                  "color": "blue",
-                  "label": "Partial messages list fetch pending",
-                  "value": "PARTIAL_MESSAGE_LIST_FETCH_PENDING",
-                  "position": 1
                 },
                 {
                   "id": "ec623d96-5b17-4a67-8206-d475a76b2f31",

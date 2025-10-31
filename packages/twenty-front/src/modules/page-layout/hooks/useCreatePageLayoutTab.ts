@@ -35,17 +35,21 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
   const createPageLayoutTab = useRecoilCallback(
     ({ snapshot, set }) =>
-      (title?: string): void => {
+      (title?: string): string => {
         const pageLayoutDraft = snapshot
           .getLoadable(pageLayoutDraftState)
           .getValue();
 
         const newTabId = uuidv4();
         const tabsLength = pageLayoutDraft.tabs.length;
+        const maxPosition =
+          tabsLength > 0
+            ? Math.max(...pageLayoutDraft.tabs.map((t) => t.position))
+            : -1;
         const newTab: PageLayoutTab = {
           id: newTabId,
           title: title || `Tab ${tabsLength + 1}`,
-          position: tabsLength,
+          position: maxPosition + 1,
           pageLayoutId: pageLayoutId,
           widgets: [],
           createdAt: new Date().toISOString(),
@@ -65,6 +69,8 @@ export const useCreatePageLayoutTab = (pageLayoutIdFromProps?: string) => {
         );
 
         setActiveTabId(newTabId);
+
+        return newTabId;
       },
     [
       pageLayoutCurrentLayoutsState,

@@ -1,35 +1,36 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
 import DarkNoise from '@assets/themes/dark-noise.jpg';
+import * as RadixColors from '@radix-ui/colors';
 
-import { COLOR } from './Colors';
-import { GRAY_SCALE } from './GrayScale';
-import { RGBA } from './Rgba';
+import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
+import { GRAY_SCALE_DARK } from './GrayScaleDark';
+import { TRANSPARENT_COLORS_DARK } from './TransparentColorsDark';
 
 export const BACKGROUND_DARK = {
   noisy: `url(${DarkNoise.toString()});`,
-  primary: GRAY_SCALE.gray85,
-  secondary: GRAY_SCALE.gray80,
-  tertiary: GRAY_SCALE.gray75,
-  quaternary: GRAY_SCALE.gray70,
-  invertedPrimary: GRAY_SCALE.gray20,
-  invertedSecondary: GRAY_SCALE.gray35,
-  danger: COLOR.red80,
+  primary: GRAY_SCALE_DARK.gray1,
+  secondary: GRAY_SCALE_DARK.gray2,
+  tertiary: GRAY_SCALE_DARK.gray4,
+  quaternary: GRAY_SCALE_DARK.gray5,
+  invertedPrimary: GRAY_SCALE_DARK.gray12,
+  invertedSecondary: GRAY_SCALE_DARK.gray11,
+  danger: COLOR_DARK.red12,
   transparent: {
-    primary: RGBA(GRAY_SCALE.gray85, 0.5),
-    secondary: RGBA(GRAY_SCALE.gray80, 0.5),
-    strong: RGBA(GRAY_SCALE.gray0, 0.14),
-    medium: RGBA(GRAY_SCALE.gray0, 0.1),
-    light: RGBA(GRAY_SCALE.gray0, 0.06),
-    lighter: RGBA(GRAY_SCALE.gray0, 0.03),
-    danger: RGBA(COLOR.red, 0.08),
-    blue: RGBA(COLOR.blue, 0.2),
-    orange: RGBA(COLOR.orange, 0.2),
+    primary: RadixColors.blackP3A.blackA7,
+    secondary: RadixColors.blackP3A.blackA6,
+    strong: TRANSPARENT_COLORS_DARK.gray7,
+    medium: TRANSPARENT_COLORS_DARK.gray5,
+    light: TRANSPARENT_COLORS_DARK.gray2,
+    lighter: TRANSPARENT_COLORS_DARK.gray1,
+    danger: TRANSPARENT_COLORS_DARK.red3,
+    blue: TRANSPARENT_COLORS_DARK.blue4,
+    orange: TRANSPARENT_COLORS_DARK.orange4,
+    success: TRANSPARENT_COLORS_DARK.green4,
   },
-  overlayPrimary: RGBA(GRAY_SCALE.gray100, 0.8),
-  overlaySecondary: RGBA(GRAY_SCALE.gray100, 0.6),
-  overlayTertiary: RGBA(GRAY_SCALE.gray100, 0.4),
-  radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${GRAY_SCALE.gray60} 100%)`,
-  radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, #505050 0%, ${GRAY_SCALE.gray60} 100%)`,
-  primaryInverted: GRAY_SCALE.gray20,
-  primaryInvertedHover: GRAY_SCALE.gray15,
+  overlayPrimary: '#000000b8',
+  overlaySecondary: '#0000005c',
+  overlayTertiary: '#0000005c',
+  radialGradient: `radial-gradient(50% 62.62% at 50% 0%, ${GRAY_SCALE_DARK.gray9} 0%, ${GRAY_SCALE_DARK.gray10} 100%)`,
+  radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, ${GRAY_SCALE_DARK.gray10} 0%, ${GRAY_SCALE_DARK.gray11} 100%)`,
+  primaryInverted: GRAY_SCALE_DARK.gray12,
+  primaryInvertedHover: GRAY_SCALE_DARK.gray11,
 };

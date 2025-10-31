@@ -27,8 +27,8 @@ const StyledDragSelection = styled.div<SelectionBox>`
   position: absolute;
   z-index: 99;
   opacity: 0.2;
-  border: 1px solid ${({ theme }) => theme.color.blue10};
-  background: ${({ theme }) => theme.color.blue30};
+  border: 1px solid ${({ theme }) => theme.color.blue3};
+  background: ${({ theme }) => theme.color.blue7};
   top: ${({ top }) => top}px;
   left: ${({ left }) => left}px;
   width: ${({ width }) => width}px;
