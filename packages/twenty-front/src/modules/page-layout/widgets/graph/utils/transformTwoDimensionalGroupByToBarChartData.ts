@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
-import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
+import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -11,7 +11,10 @@ import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDi
 import { getFieldKey } from '@/page-layout/widgets/graph/utils/getFieldKey';
 import { getSortedKeys } from '@/page-layout/widgets/graph/utils/getSortedKeys';
 import { isDefined } from 'twenty-shared/utils';
-import { type BarChartConfiguration } from '~/generated/graphql';
+import {
+  BarChartGroupMode,
+  type BarChartConfiguration,
+} from '~/generated/graphql';
 
 type TransformTwoDimensionalGroupByToBarChartDataParams = {
   rawResults: GroupByRawResult[];
@@ -71,16 +74,26 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
     const isNewX = !xValues.has(xValue);
     const isNewY = !yValues.has(yValue);
-    const totalUniqueDimensions = xValues.size * yValues.size;
-    const additionalDimensions =
-      (isNewX ? 1 : 0) * yValues.size + (isNewY ? 1 : 0) * xValues.size;
 
-    if (
-      totalUniqueDimensions + additionalDimensions >
-      GRAPH_MAXIMUM_NUMBER_OF_GROUPS
-    ) {
-      hasTooManyGroups = true;
-      return;
+    if (configuration.groupMode === BarChartGroupMode.STACKED) {
+      if (isNewX && xValues.size >= BAR_CHART_MAXIMUM_NUMBER_OF_BARS) {
+        hasTooManyGroups = true;
+        return;
+      }
+    }
+
+    if (configuration.groupMode === BarChartGroupMode.GROUPED) {
+      const totalUniqueDimensions = xValues.size * yValues.size;
+      const additionalDimensions =
+        (isNewX ? 1 : 0) * yValues.size + (isNewY ? 1 : 0) * xValues.size;
+
+      if (
+        totalUniqueDimensions + additionalDimensions >
+        BAR_CHART_MAXIMUM_NUMBER_OF_BARS
+      ) {
+        hasTooManyGroups = true;
+        return;
+      }
     }
 
     const aggregateValue = computeAggregateValueFromGroupByResult({
