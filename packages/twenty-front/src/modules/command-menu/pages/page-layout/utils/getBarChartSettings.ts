@@ -35,8 +35,8 @@ export const getBarChartSettings = (
 
   const secondaryAxisItems = [
     { ...DATA_DISPLAY_Y_SETTING, Icon: dataDisplayYIcon },
-    DATE_GRANULARITY_Y_SETTING,
     GROUP_BY_SETTING,
+    DATE_GRANULARITY_Y_SETTING,
     SORT_BY_GROUP_BY_FIELD_SETTING,
     RANGE_MIN_SETTING,
     RANGE_MAX_SETTING,

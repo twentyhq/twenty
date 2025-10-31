@@ -33,8 +33,8 @@ export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
     heading: 'Y axis',
     items: [
       DATA_DISPLAY_Y_SETTING,
-      DATE_GRANULARITY_Y_SETTING,
       GROUP_BY_SETTING,
+      DATE_GRANULARITY_Y_SETTING,
       SORT_BY_GROUP_BY_FIELD_SETTING,
       RANGE_MIN_SETTING,
       RANGE_MAX_SETTING,
