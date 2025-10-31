@@ -116,7 +116,7 @@ export const FormAdvancedTextFieldInput = ({
 
   const editor = useAdvancedTextEditor(
     {
-      placeholder: placeholder ?? "Enter text or Type '/' for commands",
+      placeholder: placeholder,
       readonly,
       defaultValue,
       onUpdate: (editor) => {
