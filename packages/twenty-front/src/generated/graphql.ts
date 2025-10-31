@@ -4419,7 +4419,10 @@ export enum WidgetType {
   RICH_TEXT = 'RICH_TEXT',
   TASKS = 'TASKS',
   TIMELINE = 'TIMELINE',
-  VIEW = 'VIEW'
+  VIEW = 'VIEW',
+  WORKFLOW = 'WORKFLOW',
+  WORKFLOW_RUN = 'WORKFLOW_RUN',
+  WORKFLOW_VERSION = 'WORKFLOW_VERSION'
 }
 
 export type WorkerQueueMetrics = {
