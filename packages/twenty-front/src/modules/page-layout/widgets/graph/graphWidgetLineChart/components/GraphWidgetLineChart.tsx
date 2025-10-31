@@ -117,7 +117,6 @@ export const GraphWidgetLineChart = ({
     instanceId,
     enableArea,
     theme,
-    formatOptions,
   });
 
   const { createSliceTooltipData, createPointTooltipData } =

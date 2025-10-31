@@ -1808,6 +1808,7 @@ export type Mutation = {
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
   syncApplication: Scalars['Boolean'];
+  testHttpRequest: TestHttpRequestOutput;
   trackAnalytics: Analytics;
   updateApiKey?: Maybe<ApiKey>;
   updateCoreView: CoreView;
@@ -2474,6 +2475,11 @@ export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
   packageJson: Scalars['JSON'];
   yarnLock: Scalars['String'];
+};
+
+
+export type MutationTestHttpRequestArgs = {
+  input: TestHttpRequestInput;
 };
 
 
@@ -3779,6 +3785,35 @@ export type SystemHealthService = {
   id: HealthIndicatorId;
   label: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
+};
+
+export type TestHttpRequestInput = {
+  /** Request body */
+  body?: InputMaybe<Scalars['JSON']>;
+  /** HTTP headers */
+  headers?: InputMaybe<Scalars['JSON']>;
+  /** HTTP method */
+  method: Scalars['String'];
+  /** URL to make the request to */
+  url: Scalars['String'];
+};
+
+export type TestHttpRequestOutput = {
+  __typename?: 'TestHttpRequestOutput';
+  /** Error information */
+  error?: Maybe<Scalars['JSON']>;
+  /** Response headers */
+  headers?: Maybe<Scalars['JSON']>;
+  /** Message describing the result */
+  message: Scalars['String'];
+  /** Response data */
+  result?: Maybe<Scalars['JSON']>;
+  /** HTTP status code */
+  status?: Maybe<Scalars['Float']>;
+  /** HTTP status text */
+  statusText?: Maybe<Scalars['String']>;
+  /** Whether the request was successful */
+  success: Scalars['Boolean'];
 };
 
 export type TimelineCalendarEvent = {

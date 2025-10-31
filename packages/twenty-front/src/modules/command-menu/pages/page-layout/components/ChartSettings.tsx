@@ -17,7 +17,7 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layou
 import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
+import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -144,7 +144,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       />
       {hasWidgetTooManyGroups && (
         <StyledSidePanelInformationBanner
-          message={t`Max ${GRAPH_MAXIMUM_NUMBER_OF_GROUPS} bars per chart. Consider adding a filter`}
+          message={t`Max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter`}
         />
       )}
       {chartSettings.map((group) => {

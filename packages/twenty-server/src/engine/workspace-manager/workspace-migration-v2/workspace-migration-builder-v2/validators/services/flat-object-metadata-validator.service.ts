@@ -20,7 +20,7 @@ export class FlatObjectMetadataValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): FailedFlatEntityValidation<FlatObjectMetadata> {
@@ -83,7 +83,7 @@ export class FlatObjectMetadataValidatorService {
         ...validateFlatObjectMetadataIdentifiers({
           flatObjectMetadata: updatedFlatObjectMetadata,
           flatFieldMetadataMaps:
-            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         }),
       );
     }
@@ -156,7 +156,7 @@ export class FlatObjectMetadataValidatorService {
   public async validateFlatObjectMetadataCreation({
     flatEntityToValidate: flatObjectMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): Promise<FailedFlatEntityValidation<FlatObjectMetadata>> {
@@ -195,7 +195,7 @@ export class FlatObjectMetadataValidatorService {
       ...validateFlatObjectMetadataIdentifiers({
         flatObjectMetadata: flatObjectMetadataToValidate,
         flatFieldMetadataMaps:
-          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
       }),
     );
     objectValidationResult.errors.push(

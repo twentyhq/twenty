@@ -277,14 +277,9 @@ export const GraphWidgetBarChart = ({
       <GraphWidgetLegend
         show={shouldShowLegend}
         items={enrichedKeys.map((item) => {
-          const total = data.reduce(
-            (sum, d) => sum + Number(d[item.key] || 0),
-            0,
-          );
           return {
             id: item.key,
             label: item.label,
-            formattedValue: formatGraphValue(total, formatOptions),
             color: item.colorScheme.solid,
           };
         })}
