@@ -92,7 +92,7 @@ export const SelectControl = ({
           stroke={theme.icon.stroke.sm}
         />
       ) : null}
-      <OverflowingTextWithTooltip text={selectedOption?.label ?? ''} />
+      <OverflowingTextWithTooltip text={selectedOption.label} />
       <StyledSelectControlIconChevronDown
         disabled={isDisabled}
         size={theme.icon.size.md}
