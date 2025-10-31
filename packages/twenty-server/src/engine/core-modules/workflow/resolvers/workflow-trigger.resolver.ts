@@ -44,10 +44,13 @@ export class WorkflowTriggerResolver {
   async activateWorkflowVersion(
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
+    @Args('workflowId', { type: () => UUIDScalarType })
+    workflowId: string,
   ) {
-    return this.workflowTriggerWorkspaceService.activateWorkflowVersion(
+    return this.workflowTriggerWorkspaceService.activateWorkflowVersion({
       workflowVersionId,
-    );
+      workflowId,
+    });
   }
 
   @Mutation(() => Boolean)

@@ -128,9 +128,10 @@ This is the most efficient way for AI to create workflows as it handles all the 
           }
 
           if (parameters.activate) {
-            await this.workflowTriggerService.activateWorkflowVersion(
+            await this.workflowTriggerService.activateWorkflowVersion({
               workflowVersionId,
-            );
+              workflowId,
+            });
 
             await this.updateWorkflowStatus({
               workspaceId,
@@ -340,11 +341,15 @@ This is the most efficient way for AI to create workflows as it handles all the 
       description:
         'Activate a workflow version. This makes the workflow version active and available for execution.',
       inputSchema: activateWorkflowVersionSchema,
-      execute: async (parameters: { workflowVersionId: string }) => {
+      execute: async (parameters: {
+        workflowVersionId: string;
+        workflowId: string;
+      }) => {
         try {
-          return await this.workflowTriggerService.activateWorkflowVersion(
-            parameters.workflowVersionId,
-          );
+          return await this.workflowTriggerService.activateWorkflowVersion({
+            workflowVersionId: parameters.workflowVersionId,
+            workflowId: parameters.workflowId,
+          });
         } catch (error) {
           return {
             success: false,
