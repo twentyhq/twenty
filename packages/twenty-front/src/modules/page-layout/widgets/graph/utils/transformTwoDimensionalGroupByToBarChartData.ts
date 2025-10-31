@@ -56,15 +56,7 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
 
   let hasTooManyGroups = false;
 
-  rawResults.forEach((result, index) => {
-    if (
-      configuration.groupMode === BarChartGroupMode.STACKED &&
-      index >= BAR_CHART_MAXIMUM_NUMBER_OF_BARS
-    ) {
-      hasTooManyGroups = true;
-      return;
-    }
-
+  rawResults.forEach((result) => {
     const dimensionValues = result.groupByDimensionValues;
     if (!isDefined(dimensionValues) || dimensionValues.length < 2) return;
 
@@ -79,10 +71,18 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
     });
 
+    // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
+    const isNewX = !xValues.has(xValue);
+    const isNewY = !yValues.has(yValue);
+
+    if (configuration.groupMode === BarChartGroupMode.STACKED) {
+      if (isNewX && xValues.size >= BAR_CHART_MAXIMUM_NUMBER_OF_BARS) {
+        hasTooManyGroups = true;
+        return;
+      }
+    }
+
     if (configuration.groupMode === BarChartGroupMode.GROUPED) {
-      // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
-      const isNewX = !xValues.has(xValue);
-      const isNewY = !yValues.has(yValue);
       const totalUniqueDimensions = xValues.size * yValues.size;
       const additionalDimensions =
         (isNewX ? 1 : 0) * yValues.size + (isNewY ? 1 : 0) * xValues.size;
