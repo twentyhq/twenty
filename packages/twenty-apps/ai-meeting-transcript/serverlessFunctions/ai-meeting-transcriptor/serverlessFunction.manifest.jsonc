@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "dae52ab2-174f-4f81-a031-604ee2e81eba",
+  "name": "ai-meeting-transcriptor",
+  "triggers": [
+    {
+      "universalIdentifier": "b011303d-2c24-44d4-9923-55eb060a1ff6",
+      "type": "route",
+      "path": "/webhook/transcript",
+      "httpMethod": "POST",
+      "isAuthRequired": false
+    }
+  ]
+}

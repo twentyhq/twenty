@@ -1,0 +1,39 @@
+{
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/appManifest.schema.json",
+  "universalIdentifier": "028754f1-3235-43b9-9427-fa6a62dbd473",
+  "name": "AI Meeting Transcript",
+  "description": "Automatically process meeting transcripts to extract insights, action items, and follow-ups",
+  "env": {
+    "TWENTY_API_KEY": {
+      "isSecret": true,
+      "value": "",
+      "description": "Twenty API key"
+    },
+    "TWENTY_API_URL": {
+      "isSecret": true,
+      "value": "",
+      "description": "Twenty API URL"
+    },
+    "OPENAI_API_KEY": {
+      "isSecret": true,
+      "value": "",
+      "description": "OpenAI API key for transcript analysis"
+    }
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "openai": "^4.28.0",
+    "twenty-sdk": "^0.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2"
+  }
+}
