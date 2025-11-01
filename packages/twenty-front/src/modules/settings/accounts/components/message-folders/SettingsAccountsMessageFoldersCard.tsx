@@ -6,6 +6,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
 import { SettingsMessageFoldersTableRow } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTableRow';
+import { organizeFoldersHierarchy } from '@/settings/accounts/components/message-folders/utils/organizeFoldersHierarchy.util';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -87,6 +88,10 @@ export const SettingsAccountsMessageFoldersCard = () => {
     );
   }, [messageFolders, search]);
 
+  const hierarchicalFolders = useMemo(() => {
+    return organizeFoldersHierarchy(filteredMessageFolders);
+  }, [filteredMessageFolders]);
+
   const allFoldersToggled = useMemo(() => {
     return filteredMessageFolders.every((folder) => folder.isSynced);
   }, [filteredMessageFolders]);
@@ -143,11 +148,14 @@ export const SettingsAccountsMessageFoldersCard = () => {
         </StyledSectionHeader>
 
         <StyledTableRows>
-          {filteredMessageFolders?.map((folder) => (
+          {hierarchicalFolders?.map((item) => (
             <SettingsMessageFoldersTableRow
-              key={folder.id}
-              folder={folder}
-              onSyncToggle={() => handleToggleFolder(folder)}
+              key={item.folder.id}
+              folder={item.folder}
+              onSyncToggle={() => handleToggleFolder(item.folder)}
+              level={item.level}
+              parentChain={item.parentChain}
+              isLastChild={item.isLastChild}
             />
           ))}
         </StyledTableRows>
