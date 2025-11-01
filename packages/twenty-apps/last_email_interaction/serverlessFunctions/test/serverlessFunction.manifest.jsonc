@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "683966a0-b60a-424e-86b1-7448c9191bde",
+  "name": "test",
+  "triggers": [
+    {
+      "universalIdentifier": "f4f1e127-87f0-4dcf-99fe-8061adf5cbe6",
+      "type": "databaseEvent",
+      "eventName": "message.created"
+    },
+    {
+      "universalIdentifier": "4c17878f-b6b3-4d0a-8de6-967b1cb55002",
+      "type": "databaseEvent",
+      "eventName": "message.updated"
+    }
+  ]
+}
