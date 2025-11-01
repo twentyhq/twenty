@@ -65,12 +65,15 @@ export const mockCurrentWorkspace: Workspace = {
   hasValidEnterpriseKey: false,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,
+  isMicrosoftAuthEnabled: false,
   isCustomDomainEnabled: false,
+  isPasswordAuthBypassEnabled: false,
+  isGoogleAuthBypassEnabled: false,
+  isMicrosoftAuthBypassEnabled: false,
   workspaceUrls: {
     customUrl: undefined,
     subdomainUrl: 'twenty.twenty.com',
   },
-  isMicrosoftAuthEnabled: false,
   featureFlags: [
     {
       key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,

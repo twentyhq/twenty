@@ -160,6 +160,30 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
       );
     }
+    if (payload.isGoogleAuthBypassEnabled && !authProvidersBySystem.google) {
+      throw new WorkspaceException(
+        'Google auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
+    if (
+      payload.isMicrosoftAuthBypassEnabled &&
+      !authProvidersBySystem.microsoft
+    ) {
+      throw new WorkspaceException(
+        'Microsoft auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
+    if (
+      payload.isPasswordAuthBypassEnabled &&
+      !authProvidersBySystem.password
+    ) {
+      throw new WorkspaceException(
+        'Password auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
 
     try {
       return await this.workspaceRepository.save({

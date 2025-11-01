@@ -9,6 +9,7 @@ export enum PermissionFlagType {
   SECURITY = 'SECURITY',
   WORKFLOWS = 'WORKFLOWS',
   IMPERSONATE = 'IMPERSONATE',
+  SSO_BYPASS = 'SSO_BYPASS',
 
   // Tool permissions
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
