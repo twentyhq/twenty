@@ -10,6 +10,7 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionTriggerJob } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -28,6 +29,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     ThrottlerModule,
     AuditModule,
     FeatureFlagModule,
+    PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationV2Module,
     ServerlessFunctionLayerModule,

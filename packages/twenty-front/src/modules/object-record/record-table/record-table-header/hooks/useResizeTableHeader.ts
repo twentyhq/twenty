@@ -6,6 +6,7 @@ import { RECORD_TABLE_COLUMN_WITH_GROUP_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME } 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useRecordTableLastColumnWidthToFill } from '@/object-record/record-table/hooks/useRecordTableLastColumnWidthToFill';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
@@ -26,6 +27,7 @@ import {
   findByProperty,
   throwIfNotDefined,
 } from 'twenty-shared/utils';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const useResizeTableHeader = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
@@ -56,6 +58,8 @@ export const useResizeTableHeader = () => {
   const { updateRecordField } = useUpdateRecordField();
 
   const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
+
+  const hasViewPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
@@ -151,12 +155,15 @@ export const useResizeTableHeader = () => {
             },
           );
 
-          saveRecordFields([updatedRecordField]);
+          if (hasViewPermission) {
+            saveRecordFields([updatedRecordField]);
+          }
         }
 
         setDragSelectionStartEnabled(true);
       },
     [
+      hasViewPermission,
       saveRecordFields,
       resizedFieldMetadataItemId,
       resizeFieldOffsetCallbackState,

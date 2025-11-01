@@ -8,12 +8,14 @@ import { DatabaseEventTriggerResolver } from 'src/engine/metadata-modules/databa
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { WorkspaceFlatDatabaseEventTriggerMapCacheService } from 'src/engine/metadata-modules/database-event-trigger/services/workspace-flat-database-event-trigger-map-cache.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity, DatabaseEventTriggerEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    PermissionsModule,
     WorkspaceMigrationV2Module,
   ],
   providers: [

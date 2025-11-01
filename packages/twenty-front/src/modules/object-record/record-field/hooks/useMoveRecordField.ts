@@ -1,9 +1,11 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useRecoilCallback } from 'recoil';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const useMoveRecordField = (recordTableId?: string) => {
@@ -15,6 +17,8 @@ export const useMoveRecordField = (recordTableId?: string) => {
   const { saveViewFields } = useSaveCurrentViewFields();
 
   const { updateRecordField } = useUpdateRecordField(recordTableId);
+
+  const hasViewPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   // TODO: fix this we want to move left and right of VISIBLE record fields,
   // because otherwise it will just do nothing while moving left and right of non visible record fields
@@ -73,19 +77,26 @@ export const useMoveRecordField = (recordTableId?: string) => {
             position: currentRecordFieldNewPosition,
           });
 
-          await saveViewFields([
-            mapRecordFieldToViewField({
-              ...targetRecordField,
-              position: targetRecordFieldNewPosition,
-            }),
-            mapRecordFieldToViewField({
-              ...currentRecordField,
-              position: currentRecordFieldNewPosition,
-            }),
-          ]);
+          if (hasViewPermission) {
+            await saveViewFields([
+              mapRecordFieldToViewField({
+                ...targetRecordField,
+                position: targetRecordFieldNewPosition,
+              }),
+              mapRecordFieldToViewField({
+                ...currentRecordField,
+                position: currentRecordFieldNewPosition,
+              }),
+            ]);
+          }
         }
       },
-    [currentRecordFieldsCallbackState, saveViewFields, updateRecordField],
+    [
+      currentRecordFieldsCallbackState,
+      hasViewPermission,
+      saveViewFields,
+      updateRecordField,
+    ],
   );
 
   return { moveRecordField };

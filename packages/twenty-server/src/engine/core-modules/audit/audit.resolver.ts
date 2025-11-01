@@ -13,15 +13,16 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
+import { Analytics } from './dtos/analytics.dto';
 import {
   CreateAnalyticsInputV2,
   isPageviewAnalyticsInput,
   isTrackAnalyticsInput,
 } from './dtos/create-analytics.input';
-import { Analytics } from './dtos/analytics.dto';
 import { AuditService } from './services/audit.service';
 
 @Resolver(() => Analytics)
@@ -42,7 +43,7 @@ export class AuditResolver {
   }
 
   @Mutation(() => Analytics)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
   async createObjectEvent(
     @Args()
     createObjectEventInput: CreateObjectEventInput,
@@ -70,7 +71,7 @@ export class AuditResolver {
   }
 
   @Mutation(() => Analytics)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async trackAnalytics(
     @Args()
     createAnalyticsInput: CreateAnalyticsInputV2,

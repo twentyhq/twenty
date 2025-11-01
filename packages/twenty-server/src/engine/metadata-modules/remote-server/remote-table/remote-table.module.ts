@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RemoteServerEntity } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { DistantTableModule } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.module';
 import { ForeignTableModule } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.module';
@@ -21,6 +22,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     DataSourceModule,
     ObjectMetadataModule,
     FieldMetadataModule,
+    PermissionsModule,
     WorkspaceMetadataVersionModule,
     WorkspaceDataSourceModule,
     ForeignTableModule,
