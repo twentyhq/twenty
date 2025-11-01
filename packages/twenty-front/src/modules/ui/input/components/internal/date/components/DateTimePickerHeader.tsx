@@ -3,8 +3,8 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Select } from '@/ui/input/components/Select';
-import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 
+import { DateTimePickerInput } from '@/ui/input/components/internal/date/components/DateTimePickerInput';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -13,7 +13,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from './InternalDatePicker';
+} from './DateTimePicker';
 
 const StyledCustomDatePickerHeader = styled.div`
   align-items: center;
@@ -31,7 +31,7 @@ const years = Array.from(
   (_, i) => new Date().getFullYear() + 50 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
 
-type AbsoluteDatePickerHeaderProps = {
+type DateTimePickerHeaderProps = {
   date: Date;
   onChange?: (date: Date | null) => void;
   onChangeMonth: (month: number) => void;
@@ -40,11 +40,10 @@ type AbsoluteDatePickerHeaderProps = {
   onSubtractMonth: () => void;
   prevMonthButtonDisabled: boolean;
   nextMonthButtonDisabled: boolean;
-  isDateTimeInput?: boolean;
   hideInput?: boolean;
 };
 
-export const AbsoluteDatePickerHeader = ({
+export const DateTimePickerHeader = ({
   date,
   onChange,
   onChangeMonth,
@@ -53,32 +52,14 @@ export const AbsoluteDatePickerHeader = ({
   onSubtractMonth,
   prevMonthButtonDisabled,
   nextMonthButtonDisabled,
-  isDateTimeInput,
   hideInput = false,
-}: AbsoluteDatePickerHeaderProps) => {
+}: DateTimePickerHeaderProps) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const endOfDayInLocalTimezone = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    23,
-    59,
-    59,
-    999,
-  );
-
   return (
     <>
-      {!hideInput && (
-        <DateTimeInput
-          date={date}
-          isDateTimeInput={isDateTimeInput}
-          onChange={onChange}
-        />
-      )}
-
+      {!hideInput && <DateTimePickerInput date={date} onChange={onChange} />}
       <StyledCustomDatePickerHeader>
         <ClickOutsideListenerContext.Provider
           value={{
@@ -89,7 +70,7 @@ export const AbsoluteDatePickerHeader = ({
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
             options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
-            value={endOfDayInLocalTimezone.getMonth()}
+            value={date.getMonth()}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
@@ -101,7 +82,7 @@ export const AbsoluteDatePickerHeader = ({
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
-            value={endOfDayInLocalTimezone.getFullYear()}
+            value={date.getFullYear()}
             options={years}
             fullWidth
           />
