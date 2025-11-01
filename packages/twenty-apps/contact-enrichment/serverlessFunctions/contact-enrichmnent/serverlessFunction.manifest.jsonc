@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "cfae75f0-11c2-4c01-aa6f-b8e52ba678a8",
+  "name": "contact-enrichmnent",
+  "triggers": [
+    {
+      "universalIdentifier": "59bc1f20-1c73-4f8b-8001-85efd4d30226",
+      "type": "databaseEvent",
+      "eventName": "person.created"
+    },
+    {
+      "universalIdentifier": "fe2b4e75-8811-4461-a6e3-72a97e39a392",
+      "type": "databaseEvent",
+      "eventName": "person.updated"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
+  "universalIdentifier": "b79d2b84-0092-4125-9d63-0d8e4c96462c",
+  "name": "Contact enrichment",
+  "description": "Contact enrichment with Fullenrich",
+  "env": {
+    "TWENTY_API_KEY": {
+      "isSecret": true,
+      "value": "",
+      "description": "Twenty API key"
+    },
+    "TWENTY_API_URL": {
+      "isSecret": false,
+      "value": "",
+      "description": "Twenty API URL"
+    },
+    "FULLENRICH_API_KEY": {
+      "isSecret": true,
+      "value": "",
+      "description": "Fullenrich API key"
+    }
+  }
+}
