@@ -1,0 +1,263 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Twenty Documentation",
+  "theme": "almond",
+  "logo": {
+    "light": "/logo.svg",
+    "dark": "/logo.svg"
+  },
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#141414",
+    "light": "#fafafa",
+    "dark": "#141414"
+  },
+  "interaction": {
+    "drilldown": false
+  },
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Get Started",
+      "href": "https://app.twenty.com/welcome"
+    }
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "User Guide",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
+              "user-guide/introduction",
+              "user-guide/getting-started/what-is-twenty",
+              "user-guide/getting-started/create-workspace",
+              "user-guide/getting-started/getting-around-twenty",
+              "user-guide/getting-started/configure-your-workspace",
+              "user-guide/getting-started/implementation-services",
+              "user-guide/getting-started/migrating-from-other-crms",
+              "user-guide/getting-started/import-export-data"
+            ]
+          },
+          {
+            "group": "Data Model",
+            "icon": "database",
+            "pages": [
+              "user-guide/data-model/customize-your-data-model",
+              "user-guide/data-model/objects",
+              "user-guide/data-model/fields",
+              "user-guide/data-model/creating-records",
+              "user-guide/data-model/relation-fields",
+              "user-guide/data-model/data-model-faq"
+            ]
+          },
+          {
+            "group": "CRM Essentials",
+            "icon": "users",
+            "pages": [
+              "user-guide/crm-essentials/contact-and-account-management",
+              "user-guide/crm-essentials/pipeline",
+              "user-guide/crm-essentials/view-management",
+              "user-guide/crm-essentials/sales-use-cases"
+            ]
+          },
+          {
+            "group": "Views",
+            "icon": "table",
+            "pages": [
+              "user-guide/views/kanban-views",
+              "user-guide/views/views-sort-filter"
+            ]
+          },
+          {
+            "group": "Workflows",
+            "icon": "bolt",
+            "pages": [
+              "user-guide/workflows/getting-started-workflows",
+              "user-guide/workflows/workflow-features",
+              "user-guide/workflows/internal-automations",
+              "user-guide/workflows/external-tool-integration",
+              "user-guide/workflows/workflow-troubleshooting",
+              "user-guide/workflows/workflow-credits",
+              "user-guide/workflows/professional-services"
+            ]
+          },
+          {
+            "group": "Collaboration",
+            "icon": "envelope",
+            "pages": [
+              "user-guide/collaboration/emails-and-calendars",
+              "user-guide/collaboration/notes",
+              "user-guide/collaboration/tasks"
+            ]
+          },
+          {
+            "group": "Integrations & API",
+            "icon": "plug",
+            "pages": [
+              "user-guide/integrations-api/apis-overview",
+              "user-guide/integrations-api/api-webhooks",
+              "user-guide/integrations-api/integrations"
+            ]
+          },
+          {
+            "group": "Reporting",
+            "icon": "chart-bar",
+            "pages": ["user-guide/reporting/reporting-overview"]
+          },
+          {
+            "group": "Settings",
+            "icon": "gear",
+            "pages": [
+              "user-guide/settings/profile-settings",
+              "user-guide/settings/experience-settings",
+              "user-guide/settings/email-calendar-setup",
+              "user-guide/settings/workspace-settings",
+              "user-guide/settings/member-management",
+              "user-guide/settings/permissions",
+              "user-guide/settings/domains-settings",
+              "user-guide/settings/releases-settings",
+              "user-guide/settings/settings-faq"
+            ]
+          },
+          {
+            "group": "Pricing",
+            "icon": "credit-card",
+            "pages": ["user-guide/pricing/billing-and-pricing-faq"]
+          },
+          {
+            "group": "Resources",
+            "icon": "book-open",
+            "pages": [
+              "user-guide/resources/glossary",
+              "user-guide/resources/github"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developers",
+        "groups": [
+          {
+            "group": "Developers"
+          },
+          {
+            "group": "Getting Started",
+            "icon": "rocket",
+            "pages": [
+              "developers/introduction",
+              "developers/local-setup",
+              {
+                "group": "Self-Hosting",
+                "pages": [
+                  "developers/self-hosting/docker-compose",
+                  "developers/self-hosting/setup",
+                  "developers/self-hosting/upgrade-guide",
+                  "developers/self-hosting/cloud-providers",
+                  "developers/self-hosting/troubleshooting"
+                ]
+              },
+              {
+                "group": "API and Webhooks",
+                "pages": [
+                  "developers/api-and-webhooks/api",
+                  "developers/api-and-webhooks/webhooks"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Contributing",
+            "icon": "code-branch",
+            "pages": [
+              "developers/bug-and-requests",
+              {
+                "group": "Frontend Development",
+                "pages": [
+                  "developers/frontend-development/storybook",
+                  {
+                    "group": "Twenty UI",
+                    "pages": [
+                      "twenty-ui/introduction",
+                      {
+                        "group": "Display",
+                        "pages": [
+                          "twenty-ui/display/checkmark",
+                          "twenty-ui/display/chip",
+                          "twenty-ui/display/icons",
+                          "twenty-ui/display/soon-pill",
+                          "twenty-ui/display/tag",
+                          "twenty-ui/display/app-tooltip"
+                        ]
+                      },
+                      {
+                        "group": "Feedback",
+                        "pages": ["twenty-ui/progress-bar"]
+                      },
+                      {
+                        "group": "Input",
+                        "pages": [
+                          "twenty-ui/input/buttons",
+                          "twenty-ui/input/color-scheme",
+                          "twenty-ui/input/text",
+                          "twenty-ui/input/checkbox",
+                          "twenty-ui/input/icon-picker",
+                          "twenty-ui/input/image-input",
+                          "twenty-ui/input/radio",
+                          "twenty-ui/input/select",
+                          "twenty-ui/input/toggle",
+                          "twenty-ui/input/block-editor"
+                        ]
+                      },
+                      {
+                        "group": "Navigation",
+                        "pages": [
+                          "twenty-ui/navigation",
+                          "twenty-ui/navigation/breadcrumb",
+                          "twenty-ui/navigation/links",
+                          "twenty-ui/navigation/menu-item",
+                          "twenty-ui/navigation/navigation-bar",
+                          "twenty-ui/navigation/step-bar"
+                        ]
+                      }
+                    ]
+                  },
+                  "developers/frontend-development/frontend-commands",
+                  "developers/frontend-development/work-with-figma",
+                  "developers/frontend-development/best-practices-front",
+                  "developers/frontend-development/style-guide",
+                  "developers/frontend-development/folder-architecture-front",
+                  "developers/frontend-development/hotkeys"
+                ]
+              },
+              {
+                "group": "Backend Development",
+                "pages": [
+                  "developers/backend-development/server-commands",
+                  "developers/backend-development/feature-flags",
+                  "developers/backend-development/folder-architecture-server",
+                  "developers/backend-development/zapier",
+                  "developers/backend-development/best-practices-server",
+                  "developers/backend-development/custom-objects",
+                  "developers/backend-development/queue"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/twentyhq/twenty",
+      "twitter": "https://twitter.com/twentycrm",
+      "discord": "https://discord.gg/cx5n4Jzs57"
+    }
+  }
+}

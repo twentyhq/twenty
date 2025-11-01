@@ -14,6 +14,7 @@ const jestConfig: JestConfigWithTsJest = {
   testRegex: '\\.e2e-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalTeardown: '<rootDir>/src/__tests__/e2e/teardown.ts',
+  setupFilesAfterEnv: ['<rootDir>/src/__tests__/e2e/setupTest.ts'],
   testTimeout: 30000, // 30 seconds timeout for e2e tests
   maxWorkers: 1,
   transform: {

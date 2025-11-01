@@ -7,6 +7,5 @@ export const workflowUpsertRecordActionSettingsSchema =
     input: z.object({
       objectName: z.string(),
       objectRecord: objectRecordSchema,
-      fieldsToUpdate: z.array(z.string()),
     }),
   });

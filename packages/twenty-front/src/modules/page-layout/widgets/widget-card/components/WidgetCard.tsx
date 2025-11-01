@@ -1,15 +1,16 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { type PageLayoutTabLayoutMode } from '@/page-layout/types/PageLayoutTabLayoutMode';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-
-import { type WidgetCardContext } from '../types/WidgetCardContext';
+import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutType } from '~/generated/graphql';
 
 export type WidgetCardProps = {
   children?: ReactNode;
-  widgetCardContext: WidgetCardContext;
+  pageLayoutType: PageLayoutType;
+  layoutMode: PageLayoutTabLayoutMode;
   onClick?: () => void;
   isEditing: boolean;
   isDragging: boolean;
@@ -18,7 +19,8 @@ export type WidgetCardProps = {
 
 const StyledWidgetCard = styled.div<{
   onClick?: () => void;
-  widgetCardContext: WidgetCardContext;
+  pageLayoutType: PageLayoutType;
+  layoutMode: PageLayoutTabLayoutMode;
   isPageLayoutInEditMode: boolean;
   isEditing: boolean;
   isDragging: boolean;
@@ -32,14 +34,21 @@ const StyledWidgetCard = styled.div<{
 
   ${({
     theme,
-    widgetCardContext,
+    pageLayoutType,
+    layoutMode,
     isPageLayoutInEditMode,
     isEditing,
     isDragging,
     onClick,
   }) => {
-    switch (widgetCardContext) {
-      case 'dashboard':
+    if (layoutMode === 'canvas') {
+      return css`
+        height: 100%;
+      `;
+    }
+
+    switch (pageLayoutType) {
+      case PageLayoutType.DASHBOARD:
         return css`
           background: ${theme.background.secondary};
           border: 1px solid ${theme.border.color.light};
@@ -79,7 +88,7 @@ const StyledWidgetCard = styled.div<{
           `}
         `;
 
-      case 'recordPage':
+      case PageLayoutType.RECORD_PAGE:
         return css`
           background: ${theme.background.primary};
           border: 1px solid transparent;
@@ -120,14 +129,15 @@ const StyledWidgetCard = styled.div<{
         `;
 
       default:
-        return assertUnreachable(widgetCardContext);
+        return '';
     }
   }}
 `;
 
 export const WidgetCard = ({
   children,
-  widgetCardContext,
+  pageLayoutType,
+  layoutMode,
   onClick,
   isEditing,
   isDragging,
@@ -140,7 +150,8 @@ export const WidgetCard = ({
   return (
     <StyledWidgetCard
       onClick={onClick}
-      widgetCardContext={widgetCardContext}
+      pageLayoutType={pageLayoutType}
+      layoutMode={layoutMode}
       isPageLayoutInEditMode={isPageLayoutInEditMode}
       isEditing={isEditing}
       isDragging={isDragging}

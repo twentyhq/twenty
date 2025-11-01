@@ -18,7 +18,7 @@ export const SupportDropdown = () => {
   };
 
   const handleUserGuide = () => {
-    window.open('https://twenty.com/user-guide', '_blank');
+    window.open('https://docs.twenty.com/user-guide/introduction', '_blank');
     closeDropdown(dropdownId);
   };
 

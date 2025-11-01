@@ -1,0 +1,83 @@
+---
+title: Migrating from Other CRMs
+info: Step-by-step guide for migrating data and processes from other CRM systems to Twenty.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: A brief guide to grasp the basics of Twenty
+---
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Before You Start
+
+### 1. Audit Your Current Data
+- **Select the few objects and fields to migrate**: this migration is the opportunity for a fresh start
+- **Export this data** from your current CRM
+- **Remove duplicates** and outdated records
+- **List active workflows** and automations
+
+### 2. Create Your New Data Model
+Follow our [data model guide](/user-guide/data-model/customize-your-data-model) to:
+- **Design the data model** you need
+- **Map existing fields** to Twenty's standard objects / fields
+- **Identify the custom objects / fields** that you will need
+- **Create them** under Settings → Data model
+
+## Migration Process
+
+### 1. Import Your Data
+**Recommended order:**
+1. **Companies** first (as base records)
+2. **People** second (linked to companies)
+3. **Opportunities** third (linked to people/companies)
+
+Use the CSV import via the Command Menu  `Cmd + K` (Mac) or `Ctrl + K` (Windows). See our [data import guide](/user-guide/getting-started/import-export-data) for detailed instructions.
+
+### 2. Recreate Workflows
+- **Start simple** - recreate your most critical automations first
+- **Use Twenty's workflow builder** to replace existing automations
+
+## Common Challenges
+
+### Data Formatting Issues
+- **Email addresses** - remove duplicates (People object requirement)
+- **Domain** - remove duplicates (Companies object requirement)
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **Date formats** - ensure consistent formatting (YYYY-MM-DD) or edit this format under Settings → Experience
+- **Phone numbers** - use international format (+1234567890) 
+
+### Relationship Mapping
+To import relations between records using the csv import function, you can use the following fields
+- **Use Twenty IDs** for complex relationships
+- **Use email addresses** to link People records
+- **Use domain names** to link Company records
+- **Use any other field you set as unique**, which can be done in the Data Model section.  
+Read our [import-export data guide](/user-guide/getting-started/import-export-data) for detailed instructions on creating relationships during CSV import.
+
+## Professional Help
+### Our Services
+- **4-hour onboarding packs** for guided migration
+- **Implementation partners** for more advanced projects
+
+Discover our [implementation services](/user-guide/getting-started/implementation-services).
+
+## Migrating from Self-Hosted to Cloud 
+
+If you're moving from Twenty self-hosted to Twenty Cloud:
+1. **Export your data** from your self-hosted instance
+2. **Follow the standard migration process** above
+3. **We can provide migration assistance**, reach out to our team
+
+## Post-Migration Checklist
+
+<input type="checkbox" /> All data imported successfully  
+<input type="checkbox" /> Custom fields working correctly  
+<input type="checkbox" /> User permissions configured  
+<input type="checkbox" /> Email/calendar sync connected  
+<input type="checkbox" /> Critical workflows recreated and tested  
+<input type="checkbox" /> Team trained on new system  
+
+

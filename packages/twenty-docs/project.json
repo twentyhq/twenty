@@ -1,0 +1,43 @@
+{
+  "name": "twenty-docs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-docs",
+  "projectType": "application",
+  "tags": ["scope:docs"],
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "mintlify dev"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/.mintlify"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "mintlify build"
+      }
+    },
+    "lint": {
+      "options": {
+        "lintFilePatterns": [
+          "{projectRoot}/**/*.{mdx,json}",
+          "{projectRoot}/package.json"
+        ]
+      },
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "fmt": {
+      "options": {
+        "files": "."
+      },
+      "configurations": {
+        "fix": {}
+      }
+    }
+  }
+}

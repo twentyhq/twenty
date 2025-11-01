@@ -36,7 +36,7 @@ export const Footer = ({ i18n }: FooterProps) => {
         <Column>
           <ShadowText>
             <Link
-              href="https://twenty.com/user-guide"
+              href="https://docs.twenty.com/user-guide/introduction"
               value={i18n._('User guide')}
               aria-label={i18n._("Read Twenty's user guide")}
             />

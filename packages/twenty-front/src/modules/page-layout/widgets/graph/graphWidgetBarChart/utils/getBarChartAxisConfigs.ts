@@ -10,7 +10,10 @@ import {
 
 const AVERAGE_CHARACTER_WIDTH_RATIO = 0.6;
 const MIN_TICK_LABEL_LENGTH = 5;
-const MAX_LEFT_AXIS_LABEL_LENGTH = 20;
+const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
+const LEFT_AXIS_LEGEND_OFFSET_PADDING = 5;
+const TICK_PADDING = 5;
+const BOTTOM_AXIS_LEGEND_OFFSET = 40;
 
 type GetBarChartAxisConfigsProps = {
   width: number;
@@ -64,24 +67,28 @@ export const getBarChartAxisConfigs = ({
     return {
       axisBottom: {
         tickSize: 0,
-        tickPadding: 5,
+        tickPadding: TICK_PADDING,
         tickRotation: 0,
         tickValues: categoryTickValues,
         legend: xAxisLabel,
         legendPosition: 'middle' as const,
-        legendOffset: 40,
+        legendOffset: BOTTOM_AXIS_LEGEND_OFFSET,
         format: (value: string | number) =>
           truncateTickLabel(String(value), maxLabelLength),
       },
       axisLeft: {
         tickSize: 0,
-        tickPadding: 5,
+        tickPadding: TICK_PADDING,
         tickRotation: 0,
         tickValues: numberOfValueTicks,
         legend: yAxisLabel,
         legendPosition: 'middle' as const,
-        legendOffset: -50,
-        format: (value: number) => formatGraphValue(value, formatOptions || {}),
+        legendOffset: -BAR_CHART_MARGINS.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
+        format: (value: number) =>
+          truncateTickLabel(
+            formatGraphValue(value, formatOptions ?? {}),
+            MAX_LEFT_AXIS_LABEL_LENGTH,
+          ),
       },
     };
   }
@@ -89,22 +96,22 @@ export const getBarChartAxisConfigs = ({
   return {
     axisBottom: {
       tickSize: 0,
-      tickPadding: 5,
+      tickPadding: TICK_PADDING,
       tickRotation: 0,
       tickValues: numberOfValueTicks,
       legend: yAxisLabel,
       legendPosition: 'middle' as const,
-      legendOffset: 40,
+      legendOffset: BOTTOM_AXIS_LEGEND_OFFSET,
       format: (value: number) => formatGraphValue(value, formatOptions || {}),
     },
     axisLeft: {
       tickSize: 0,
-      tickPadding: 5,
+      tickPadding: TICK_PADDING,
       tickRotation: 0,
       tickValues: categoryTickValues,
       legend: xAxisLabel,
       legendPosition: 'middle' as const,
-      legendOffset: -50,
+      legendOffset: -BAR_CHART_MARGINS.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
       format: (value: string | number) =>
         truncateTickLabel(String(value), MAX_LEFT_AXIS_LABEL_LENGTH),
     },

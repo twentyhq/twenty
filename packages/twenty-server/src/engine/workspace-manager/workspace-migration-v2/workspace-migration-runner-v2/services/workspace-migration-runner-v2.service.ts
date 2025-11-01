@@ -30,11 +30,12 @@ export class WorkspaceMigrationRunnerV2Service {
     private readonly logger: LoggerService,
   ) {}
 
-  private async invalidateLegacyCache({
+  private getLegacyCacheInvalidationPromises({
     workspaceMigration: { actions, workspaceId },
   }: {
     workspaceMigration: WorkspaceMigrationV2;
-  }) {
+  }): Promise<void>[] {
+    const asyncOperations: Promise<void>[] = [];
     const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
       (action) => {
         switch (action.type) {
@@ -54,13 +55,15 @@ export class WorkspaceMigrationRunnerV2Service {
     );
 
     if (shouldIncrementMetadataGraphqlSchemaVersion) {
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
-        workspaceId,
-      );
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-        {
+      asyncOperations.push(
+        this.workspaceMetadataVersionService.incrementMetadataVersion(
           workspaceId,
-        },
+        ),
+      );
+      asyncOperations.push(
+        this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
+          workspaceId,
+        }),
       );
     }
 
@@ -92,11 +95,15 @@ export class WorkspaceMigrationRunnerV2Service {
       shouldInvalidFindCoreViewsGraphqlCacheOperation ||
       shouldIncrementMetadataGraphqlSchemaVersion
     ) {
-      await this.workspaceCacheStorageService.flushGraphQLOperation({
-        operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
-        workspaceId,
-      });
+      asyncOperations.push(
+        this.workspaceCacheStorageService.flushGraphQLOperation({
+          operationName: FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION,
+          workspaceId,
+        }),
+      );
     }
+
+    return asyncOperations;
   }
 
   run = async ({
@@ -170,19 +177,34 @@ export class WorkspaceMigrationRunnerV2Service {
         `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
       );
 
-      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId,
-        flatMapsKeys: [
-          ...new Set([
-            ...flatEntityMapsToInvalidate,
-            ...(relatedFlatEntityMapsKeys ?? []),
-          ]),
-        ],
-      });
+      const invalidationResults = await Promise.allSettled([
+        this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+          workspaceId,
+          flatMapsKeys: [
+            ...new Set([
+              ...flatEntityMapsToInvalidate,
+              ...(relatedFlatEntityMapsKeys ?? []),
+            ]),
+          ],
+        }),
+        ...this.getLegacyCacheInvalidationPromises({
+          workspaceMigration: {
+            actions,
+            workspaceId,
+            relatedFlatEntityMapsKeys,
+          },
+        }),
+      ]);
 
-      await this.invalidateLegacyCache({
-        workspaceMigration: { actions, workspaceId, relatedFlatEntityMapsKeys },
-      });
+      const invalidationFailures = invalidationResults.filter(
+        (result) => result.status === 'rejected',
+      );
+
+      if (invalidationFailures.length > 0) {
+        throw new Error(
+          `Failed to invalidate ${invalidationFailures.length} cache operations`,
+        );
+      }
 
       this.logger.timeEnd(
         'Runner',

@@ -18,8 +18,8 @@ export const updateManyOperationFactory = ({
 }: UpdateManyOperationFactoryParams) => ({
   query: gql`
     mutation Update${capitalize(objectMetadataPluralName)}(
-      $data: ${capitalize(objectMetadataSingularName)}UpdateInput
-      $filter: ${capitalize(objectMetadataSingularName)}FilterInput
+      $data: ${capitalize(objectMetadataSingularName)}UpdateInput!
+      $filter: ${capitalize(objectMetadataSingularName)}FilterInput!
     ) {
       update${capitalize(objectMetadataPluralName)}(data: $data, filter: $filter) {
         ${gqlFields}
