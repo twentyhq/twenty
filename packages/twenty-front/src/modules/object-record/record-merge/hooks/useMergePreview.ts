@@ -1,7 +1,6 @@
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
-import { useMergeRecordRelationships } from '@/object-record/record-merge/hooks/useMergeRecordRelationships';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -45,12 +44,6 @@ export const useMergePreview = ({
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const { isLoading: isLoadingRelationships } = useMergeRecordRelationships({
-    objectNameSingular,
-    previewRecordId: mergePreviewRecord?.id || '',
-    selectedRecords: selectedRecords,
-  });
-
   useEffect(() => {
     const fetchPreview = async () => {
       if (selectedRecords.length < 2 || isMergeInProgress || isInitialized)
@@ -92,6 +85,6 @@ export const useMergePreview = ({
   return {
     selectedRecords,
     mergePreviewRecord,
-    isGeneratingPreview: isGeneratingPreview || isLoadingRelationships,
+    isGeneratingPreview: isGeneratingPreview,
   };
 };
