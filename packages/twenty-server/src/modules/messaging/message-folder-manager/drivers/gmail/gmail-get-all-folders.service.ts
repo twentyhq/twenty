@@ -8,7 +8,7 @@ import {
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
-import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
+import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 
 @Injectable()
 export class GmailGetAllFoldersService implements MessageFolderDriver {
@@ -16,7 +16,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
 
   constructor(
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
-    private readonly gmailHandleErrorService: GmailHandleErrorService,
+    private readonly gmailMessageListFetchErrorHandler: GmailMessageListFetchErrorHandler,
   ) {}
 
   private isSyncedByDefault(labelId: string): boolean {
@@ -44,7 +44,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
             `Connected account ${connectedAccount.id}: Error fetching labels: ${error.message}`,
           );
 
-          this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
+          this.gmailMessageListFetchErrorHandler.handleError(error);
 
           return { data: { labels: [] } };
         });
