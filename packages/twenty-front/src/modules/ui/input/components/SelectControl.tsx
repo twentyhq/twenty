@@ -80,12 +80,12 @@ export const SelectControl = ({
   return (
     <StyledControlContainer
       disabled={isDisabled}
-      hasIcon={isDefined(selectedOption.Icon)}
+      hasIcon={isDefined(selectedOption?.Icon)}
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
     >
-      {isDefined(selectedOption.Icon) ? (
+      {isDefined(selectedOption?.Icon) ? (
         <selectedOption.Icon
           color={isDisabled ? theme.font.color.light : theme.font.color.primary}
           size={theme.icon.size.md}

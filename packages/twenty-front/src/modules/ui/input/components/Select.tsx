@@ -93,11 +93,29 @@ export const Select = <Value extends SelectValue>({
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
+  const getSelectedOption = () => {
+    const fromMatchingOption = options.find(
+      ({ value: optionValue }) => optionValue === value,
+    );
 
-  const selectedOption =
-    options.find(({ value: key }) => key === value) ||
-    emptyOption ||
-    options[0];
+    if (fromMatchingOption !== undefined) {
+      return fromMatchingOption;
+    }
+
+    if (emptyOption !== undefined) {
+      return emptyOption;
+    }
+
+    if (options.length > 0) {
+      return options[0];
+    }
+
+    throw new Error(
+      'Please provide at least one option to select, should never occur',
+    );
+  };
+
+  const selectedOption = getSelectedOption();
 
   const filteredOptions = useMemo(
     () =>
