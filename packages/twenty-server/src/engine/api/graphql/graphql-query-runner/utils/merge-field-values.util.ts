@@ -1,4 +1,4 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { FieldMetadataType, type RelationType } from 'twenty-shared/types';
 
 import { type EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
 import { type LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
@@ -31,6 +31,7 @@ export const mergeFieldValues = (
           priorityRecordId,
         );
       }
+
       return selectPriorityFieldValue(recordsWithValues, priorityRecordId);
 
     case FieldMetadataType.EMAILS:

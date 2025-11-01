@@ -73,11 +73,11 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       recordsToMerge,
       priorityRecord.id,
       objectMetadataItemWithFieldMaps,
+      args.dryRun ?? false,
     );
 
     if (args.dryRun) {
-      return await this.createDryRunResponse(
-        args,
+      return this.createDryRunResponse(
         queryRunnerContext,
         priorityRecord,
         mergedData,
@@ -136,9 +136,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       objectMetadataMaps: context.objectMetadataMaps,
     });
 
+    const manyToOneRelations = args.dryRun
+      ? this.getManyToOneRelations(context.objectMetadataItemWithFieldMaps)
+      : undefined;
+
     const recordsToMerge = await context.repository.find({
       where: { id: In(args.ids) },
       select: columnsToSelect,
+      ...(manyToOneRelations ? { relations: manyToOneRelations } : {}),
     });
 
     if (recordsToMerge.length !== args.ids.length) {
@@ -148,7 +153,104 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
+    if (args.dryRun && recordsToMerge.length > 0) {
+      await this.loadOneToManyRelations(
+        recordsToMerge as ObjectRecord[],
+        context,
+      );
+    }
+
     return recordsToMerge as ObjectRecord[];
+  }
+
+  private getManyToOneRelations(
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  ): string[] {
+    return Object.values(objectMetadataItemWithFieldMaps.fieldsById)
+      .filter(
+        (field) =>
+          field?.type === FieldMetadataType.RELATION &&
+          (field.settings as FieldMetadataRelationSettings | undefined)
+            ?.relationType === RelationType.MANY_TO_ONE,
+      )
+      .map((field) => field.name);
+  }
+
+  private async loadOneToManyRelations(
+    recordsToMerge: ObjectRecord[],
+    context: CommonExtendedQueryRunnerContext,
+  ): Promise<void> {
+    const oneToManyFields = Object.values(
+      context.objectMetadataItemWithFieldMaps.fieldsById,
+    ).filter(
+      (field) =>
+        field?.type === FieldMetadataType.RELATION &&
+        (field.settings as FieldMetadataRelationSettings | undefined)
+          ?.relationType === RelationType.ONE_TO_MANY,
+    );
+
+    const recordIds = recordsToMerge.map((record) => record.id);
+    const limitPerRelation = QUERY_MAX_RECORDS;
+
+    for (const fieldMetadata of oneToManyFields) {
+      const relationSettings = fieldMetadata.settings as
+        | FieldMetadataRelationSettings
+        | undefined;
+
+      if (!relationSettings?.joinColumnName) {
+        continue;
+      }
+
+      if (!fieldMetadata.relationTargetObjectMetadataId) {
+        continue;
+      }
+
+      const targetObjectMetadata =
+        context.objectMetadataMaps.byId[
+          fieldMetadata.relationTargetObjectMetadataId
+        ];
+
+      if (!targetObjectMetadata) {
+        continue;
+      }
+
+      try {
+        const targetRepository = context.workspaceDataSource.getRepository(
+          targetObjectMetadata.nameSingular,
+          context.rolePermissionConfig,
+        );
+
+        const relatedRecords = (await targetRepository
+          .createQueryBuilder()
+          .where(`${relationSettings.joinColumnName} IN (:...ids)`, {
+            ids: recordIds,
+          })
+          .take(limitPerRelation * recordsToMerge.length)
+          .getMany()) as ObjectRecord[];
+
+        const groupedByParent = new Map<string, ObjectRecord[]>();
+
+        relatedRecords.forEach((record) => {
+          const parentId = record[relationSettings.joinColumnName!];
+
+          if (parentId) {
+            if (!groupedByParent.has(parentId)) {
+              groupedByParent.set(parentId, []);
+            }
+            groupedByParent.get(parentId)!.push(record);
+          }
+        });
+
+        recordsToMerge.forEach((record) => {
+          record[fieldMetadata.name] = groupedByParent.get(record.id) ?? [];
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to load OneToMany relation ${fieldMetadata.name}:`,
+          error,
+        );
+      }
+    }
   }
 
   private validateAndGetPriorityRecord(
@@ -175,6 +277,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     recordsToMerge: ObjectRecord[],
     priorityRecordId: string,
     objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+    isDryRun = false,
   ): Partial<ObjectRecord> {
     const mergedResult: Partial<ObjectRecord> = {};
 
@@ -217,10 +320,18 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           return;
         }
 
+        const relationType =
+          isDryRun && fieldMetadata.type === FieldMetadataType.RELATION
+            ? (fieldMetadata.settings as FieldMetadataRelationSettings)
+                ?.relationType
+            : undefined;
+
         mergedResult[fieldName] = mergeFieldValues(
           fieldMetadata.type,
           recordsWithValues,
           priorityRecordId,
+          isDryRun,
+          relationType,
         );
       }
     });
@@ -239,24 +350,17 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     return fieldMetadata?.isSystem ?? false;
   }
 
-  private async createDryRunResponse(
-    args: CommonExtendedInput<MergeManyQueryArgs>,
+  private createDryRunResponse(
     queryRunnerContext: CommonExtendedQueryRunnerContext,
     priorityRecord: ObjectRecord,
     mergedData: Partial<ObjectRecord>,
-  ): Promise<ObjectRecord> {
+  ): ObjectRecord {
     const dryRunRecord: ObjectRecord = {
       ...priorityRecord,
       ...mergedData,
       id: uuidv4(),
       deletedAt: new Date().toISOString(),
     };
-
-    await this.processNestedRelations({
-      args,
-      queryRunnerContext,
-      updatedRecords: [dryRunRecord],
-    });
 
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(
