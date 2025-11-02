@@ -8,5 +8,7 @@ export const main = async (params: {
   // This is just an example
   const message = `Hello, input: ${a} and ${b}`;
 
+
+
   return { message };
 };

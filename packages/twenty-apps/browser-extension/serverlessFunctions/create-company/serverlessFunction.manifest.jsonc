@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "cead3d1e-1fbd-4b09-86a9-f0bedf4d54fa",
+  "name": "create-company"
+}
