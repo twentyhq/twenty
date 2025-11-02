@@ -5,7 +5,7 @@ A TypeScript-based reporting bot that summarizes activity from your Twenty CRM w
 ## Features
 
 - 🧑‍💻 **People & Company Tracking**: Summarizes newly created people and companies
-- 🎯 **Opportunity Monitoring**: Reports on new opportunities created, broken down by stage (NEW, PROPOSAL)
+- 🎯 **Opportunity Monitoring**: Reports on new opportunities created, broken down by stage
 - ✅ **Task Analytics**:
   - Tracks task creation
   - Calculates on-time completion rates
