@@ -1,90 +1,137 @@
 import axios from 'axios';
 
-const TWENTY_API_KEY: string = process.env.TWENTY_API_KEY !== "" && process.env.TWENTY_API_KEY !== undefined ? process.env.TWENTY_API_KEY : "";
-const TWENTY_API_URL: string = process.env.TWENTY_API_URL !== "" && process.env.TWENTY_API_URL !== undefined ? `${process.env.TWENTY_API_URL}/rest` : "https://api.twenty.com/rest";
-const STRIPE_API_KEY: string = process.env.STRIPE_API_KEY !== "" && process.env.STRIPE_API_KEY !== undefined ? process.env.STRIPE_API_KEY : "";
-const STRIPE_API_URL: string = "https://api.stripe.com/v1/customers";
+const TWENTY_API_KEY: string = process.env.TWENTY_API_KEY ?? '';
+const TWENTY_API_URL: string =
+  process.env.TWENTY_API_URL !== '' && process.env.TWENTY_API_URL !== undefined
+    ? `${process.env.TWENTY_API_URL}/rest`
+    : 'https://api.twenty.com/rest';
+const STRIPE_API_KEY: string = process.env.STRIPE_API_KEY ?? '';
+const STRIPE_API_URL: string = 'https://api.stripe.com/v1/customers';
 
-const getCompaniesObject = async () => {
+enum stripeStatus {
+  Incomplete = 'INCOMPLETE',
+  IncompleteExpired = 'INCOMPLETE_EXPIRED',
+  Trialing = 'TRIALING',
+  Active = 'ACTIVE',
+  PastDue = 'PAST_DUE',
+  Canceled = 'CANCELED',
+  Unpaid = 'UNPAID',
+  Paused = 'PAUSED',
+}
+
+type stripeData = {
+  quantity: number;
+}
+
+type stripeItems = {
+  data: stripeData[];
+};
+
+type stripeResponse = {
+  customer: string,
+  items: stripeItems;
+  status: stripeStatus;
+  type: string;
+};
+
+type stripeCustomer = {
+  businessName: string;
+}
+
+type twentyObject = {
+  id: string;
+  nameSingular: string;
+  fields: Record<string, any>[];
+}
+
+const getCompaniesObject = async (): Promise<twentyObject> => {
   const options = {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${TWENTY_API_KEY}`,
     },
     url: `${TWENTY_API_URL}/metadata/objects`,
-  }
+  };
   try {
-  const response = await axios.request(options);
-  return response.status === 200 ? response.data.data.objects.find(object => object.nameSingular==="company") : {};
- }
- catch (error) {
-    console.error(error);
-    return {};
- }
-}
+    const response = await axios.request(options);
+    if (response.status === 200) {
+      const companyObject = response.data.data.objects.find(
+        (object: twentyObject) => object.nameSingular === 'company',
+      );
+      return companyObject as twentyObject ?? {} as twentyObject;
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
+  }
+};
 
 const createFields = async (objectId: string, fieldName: string) => {
-  const data = fieldName === "seats" ? {
-    type: "NUMBER",
-    objectMetadataId: objectId,
-    name: "seats",
-    label: "Seats"
-  } : {
-    type: "SELECT",
-    objectMetadataId: objectId,
-    name: "subStatus",
-    label: "Sub Status",
-    options: [
-      {
-        color: "iris",
-        label: "Incomplete",
-        value: "INCOMPLETE",
-        position: 1
-      },
-      {
-        color: "sky",
-        label: "Incomplete (expired)",
-        value: "INCOMPLETE_EXPIRED",
-        position: 2
-      },
-      {
-        color: "amber",
-        label: "Trialing",
-        value: "TRIALING",
-        position: 3
-      },
-      {
-        color: "green",
-        label: "Active",
-        value: "ACTIVE",
-        position: 4
-      },
-      {
-        color: "orange",
-        label: "Past due",
-        value: "PAST_DUE",
-        position: 5
-      },
-      {
-        color: "brown",
-        label: "Canceled",
-        value: "CANCELED",
-        position: 6
-      },
-      {
-        color: "red",
-        label: "Unpaid",
-        value: "UNPAID",
-        position: 7
-      },
-      {
-        color: "gray",
-        label: "Paused",
-        value: "PAUSED",
-        position: 8
-      }
-    ]
-  };
+  const data =
+    fieldName === 'seats'
+      ? {
+          type: 'NUMBER',
+          objectMetadataId: objectId,
+          name: 'seats',
+          label: 'Seats',
+        }
+      : {
+          type: 'SELECT',
+          objectMetadataId: objectId,
+          name: 'subStatus',
+          label: 'Sub Status',
+          options: [
+            {
+              color: 'iris',
+              label: 'Incomplete',
+              value: stripeStatus.Incomplete,
+              position: 1,
+            },
+            {
+              color: 'sky',
+              label: 'Incomplete (expired)',
+              value: stripeStatus.IncompleteExpired,
+              position: 2,
+            },
+            {
+              color: 'amber',
+              label: 'Trialing',
+              value: stripeStatus.Trialing,
+              position: 3,
+            },
+            {
+              color: 'green',
+              label: 'Active',
+              value: stripeStatus.Active,
+              position: 4,
+            },
+            {
+              color: 'orange',
+              label: 'Past due',
+              value: stripeStatus.PastDue,
+              position: 5,
+            },
+            {
+              color: 'brown',
+              label: 'Canceled',
+              value: stripeStatus.Canceled,
+              position: 6,
+            },
+            {
+              color: 'red',
+              label: 'Unpaid',
+              value: stripeStatus.Unpaid,
+              position: 7,
+            },
+            {
+              color: 'gray',
+              label: 'Paused',
+              value: stripeStatus.Paused,
+              position: 8,
+            }
+          ]
+        };
 
   const options = {
     method: 'POST',
@@ -93,36 +140,36 @@ const createFields = async (objectId: string, fieldName: string) => {
       'Content-Type': 'application/json',
     },
     url: `${TWENTY_API_URL}/metadata/fields`,
-    data: data
-  }
+    data: data,
+  };
   try {
     const response = await axios(options);
-    return response.status === 200;
-  }
-  catch (error) {
-    console.error(error);
-    return false;
-  }
-}
-
-const getStripeCustomerData = async (customerID: string) => {
-  const options = {
-    method: 'GET',
-    url: `${STRIPE_API_URL}/v1/customers/${customerID}`,
-    auth: {
-      username: STRIPE_API_KEY,
-      password: ""
+    return response.status === 201;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
     }
   }
+};
+
+const getStripeCustomerData = async (customerID: string): Promise<stripeCustomer> => {
+  const options = {
+    method: 'GET',
+    url: `${STRIPE_API_URL}/${customerID}`,
+    auth: {
+      username: STRIPE_API_KEY,
+      password: '',
+    },
+  };
   try {
-  const response = await axios(options);
-  return response.status === 200 ? response.data : {};
+    const response = await axios(options);
+    return response.status === 200 ? response.data as stripeCustomer : {} as stripeCustomer ;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
   }
-  catch (error) {
-    console.log(error);
-    return {};
-  }
-}
+};
 
 const checkIfCompanyExistsInTwenty = async (name: string) => {
   const options = {
@@ -130,42 +177,52 @@ const checkIfCompanyExistsInTwenty = async (name: string) => {
     headers: {
       Authorization: `Bearer ${TWENTY_API_KEY}`,
     },
-    url: `${TWENTY_API_URL}/customers?filter=name%5Beq%5D%3A%22${name}%22`,
-  }
+    url: `${TWENTY_API_URL}/companies?filter=name%5Beq%5D%3A%22${name}%22`,
+  };
   try {
     const response = await axios(options);
-    return (response.status === 200 && response.data.data.companies.length > 0) ? response.data.data.companies[0] : {};
+    return response.status === 200 && response.data.data.companies.length > 0
+      ? response.data.data.companies[0]
+      : {};
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
   }
-  catch (error) {
-    console.error(error);
-    return {};
-  }
-}
+};
 
-const updateTwentyCompany = async (customerID: string, seats: number, subStatus: string) => {
+const updateTwentyCompany = async (
+  companyId: string,
+  seats: number,
+  subStatus: stripeStatus,
+): Promise<boolean> => {
   const options = {
-    method: 'POST',
+    method: 'PATCH',
     headers: {
       Authorization: `Bearer ${TWENTY_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    url: `${TWENTY_API_URL}/customers/${customerID}`,
+    url: `${TWENTY_API_URL}/companies/${companyId}`,
     data: {
       seats: seats,
-      subStatus: [`${subStatus}`],
-    }
-  }
+      subStatus: subStatus,
+    },
+  };
   try {
     const response = await axios(options);
     return response.status === 200;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
   }
-  catch (error) {
-    console.error(error);
-    return false;
-  }
-}
+};
 
-const createTwentyCustomer = async (customerName: string, seats: number, subStatus: string) => {
+const createTwentyCustomer = async (
+  customerName: string,
+  seats: number,
+  subStatus: string,
+) => {
   const options = {
     method: 'POST',
     headers: {
@@ -176,77 +233,96 @@ const createTwentyCustomer = async (customerName: string, seats: number, subStat
     data: {
       name: customerName,
       seats: seats,
-      subStatus: [`${subStatus}`]
-    }
+      subStatus: subStatus,
+    },
   };
   try {
     const response = await axios(options);
-    return response.status === 200 ? response.data : {};
+    return response.status === 201 ? response.data : {};
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
   }
-  catch (error) {
+};
+
+export const main = async (params: {
+  properties: unknown;
+}): Promise<object> => {
+  if (TWENTY_API_KEY === '' || STRIPE_API_KEY === '') {
+    console.warn('Missing variables');
+    return {};
+  }
+
+  try { // TODO: add validation of signature key from Stripe
+    const { properties } = params;
+    const stripe = properties as stripeResponse;
+    const allowed_types = [
+      'customer.subscription.created',
+      'customer.subscription.updated',
+    ];
+    if (!allowed_types.includes(stripe.type)) {
+      console.error('Wrong webhook');
+      return {};
+    }
+
+    const companyObject = await getCompaniesObject();
+    if (
+      companyObject.fields.find((field) => field.name === 'seats') === undefined
+    ) {
+      const t: boolean = await createFields(companyObject.id, 'seats');
+      if (t == false) {
+        console.error('Seats field creation failed');
+        return {};
+      }
+    }
+    if (
+      companyObject.fields.find((field) => field.name === 'subStatus') ===
+      undefined
+    ) {
+      const t: boolean = await createFields(companyObject.id, 'subStatus');
+      if (t == false) {
+        console.error('Sub status field creation failed');
+        return {};
+      }
+    }
+
+    const stripeCustomer: stripeCustomer = await getStripeCustomerData(
+      stripe.customer,
+    );
+    if (stripeCustomer.businessName) {
+      console.warn('Set customer business name in Stripe');
+      return {};
+    }
+    const twentyCustomer = await checkIfCompanyExistsInTwenty(
+      stripeCustomer.businessName,
+    );
+    if (Object.keys(twentyCustomer).length === 0) {
+      const a = await createTwentyCustomer(
+        stripeCustomer.businessName,
+        stripe.items.data[0].quantity,
+        stripe.status.toUpperCase(),
+      );
+      if (Object.keys(a).length === 0) {
+        console.error('Creation of Stripe customer in Twenty failed');
+        return {};
+      }
+    } else {
+      const a = await updateTwentyCompany(
+        twentyCustomer.id,
+        stripe.items.data[0].quantity,
+        stripe.status.toUpperCase() as stripeStatus,
+      );
+      if (!a) {
+        console.error('Update of Stripe customer in Twenty failed');
+        return {};
+      }
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(error.message);
+    }
     console.error(error);
     return {};
   }
-}
-
-export const main = async (params: {
-  properties: Record<string, any>
-}): Promise<object> => {
-  if (TWENTY_API_KEY === "" || STRIPE_API_KEY === "") {
-    console.log("Missing variables");
-    return {};
-  }
-
-  const { properties } = params;
-  const allowed_types = ["customer.subscription.created", "customer.subscription.updated"];
-  if (!allowed_types.includes(properties.type)) {
-    console.log("Wrong webhook");
-    return {};
-  }
-
-  const companyObject = await getCompaniesObject();
-  if (companyObject.fields.find(field => field.name==="seats") === undefined) {
-    const t = await createFields(companyObject.id,"seats");
-    if (t == false) {
-      console.log("Seats field creation failed");
-      return {};
-    }
-  }
-  if (companyObject.fields.find(field => field.name==="subStatus") === undefined) {
-    const t = await createFields(companyObject.id,"subStatus");
-    if (t == false) {
-      console.log("Sub status field creation failed");
-      return {};
-    }
-  }
-
-  const stripeCustomer = await getStripeCustomerData(properties.data.customer);
-  const customerName: string = stripeCustomer.businessName;
-  if (customerName === undefined) {
-    console.log("Set customer business name in Stripe");
-    return {};
-  }
-  const twentyCustomer = await checkIfCompanyExistsInTwenty(stripeCustomer.businessName);
-  if (Object.keys(twentyCustomer).length === 0){
-    const a = await createTwentyCustomer(stripeCustomer.businessName, properties.data.quantity, properties.data.status.toUpperCase());
-    if (Object.keys(a).length === 0){
-      console.log("Creation of Stripe customer in Twenty failed");
-      return {};
-    }
-  }
-  else {
-    const a = await updateTwentyCompany(twentyCustomer.id, properties.data.quantity, properties.data.status.toUpperCase());
-    if (!a) {
-      console.log("Update of Stripe customer in Twenty failed");
-      return {};
-    }
-  }
-
-  // Retrieve webhook
-  // Check if it's either subscription created or updated
-  // Read customer ID, status and quantity
-  // Read customer data
-  // Check if customer company exists in Twenty, if not, create it
-  // Check if related person exists in Twenty, if not, create it and link to company
-
 };
