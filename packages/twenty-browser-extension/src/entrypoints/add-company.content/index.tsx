@@ -55,7 +55,8 @@ export default defineContentScript({
     });
 
     ctx.addEventListener(window, 'wxt:locationchange', ({newUrl}) => {
-        if(companyPattern.includes(newUrl)) ui.mount()
+      const injectedBtn = document.querySelector('[data-id="twenty-btn"]');
+      if(companyPattern.includes(newUrl) && !injectedBtn) ui.mount()
     })
 
     ui.mount();

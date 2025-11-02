@@ -1,5 +1,5 @@
 import App from '@/entrypoints/popup/app';
-import { ThemeContext } from '@/ui/theme/context/ThemeContext.tsx';
+import { ThemeContext } from '@/ui/theme/context/ThemeContext';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './style.css';

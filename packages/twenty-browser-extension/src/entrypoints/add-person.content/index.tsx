@@ -33,7 +33,7 @@ export default defineContentScript({
         const root = ReactDOM.createRoot(app);
         root.render(
           <ThemeContext>
-            <Main/>
+            <Main />
           </ThemeContext>
         );
         return root;
@@ -43,8 +43,10 @@ export default defineContentScript({
       },
     });
 
+
     ctx.addEventListener(window, 'wxt:locationchange', ({newUrl, }) => {
-        if(personPattern.includes(newUrl)) ui.mount();
+    const injectedBtn = document.querySelector('[data-id="twenty-btn"]');
+        if(personPattern.includes(newUrl) && !injectedBtn) ui.mount();
     });
 
     ui.mount();
