@@ -56,16 +56,30 @@ export type FieldComparatorResult =
 export type FieldRelationComparatorResult =
   | ComparatorSkipResult
   | ComparatorCreateResult<
-      Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+      Partial<
+        ComputedPartialFieldMetadata<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >
+      > & {
         id: string;
+        type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
       }
     >
   | ComparatorUpdateResult<
-      Partial<ComputedPartialFieldMetadata<FieldMetadataType.RELATION>> & {
+      Partial<
+        ComputedPartialFieldMetadata<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >
+      > & {
         id: string;
+        type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
       }
     >
-  | ComparatorDeleteResult<FieldMetadataEntity<FieldMetadataType.RELATION>>;
+  | ComparatorDeleteResult<
+      FieldMetadataEntity<
+        FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+      >
+    >;
 
 export type IndexComparatorResult =
   | ComparatorCreateResult<Partial<IndexMetadataEntity>>
