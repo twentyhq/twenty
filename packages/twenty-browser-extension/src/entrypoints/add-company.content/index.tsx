@@ -1,5 +1,5 @@
 import { LINKEDIN_MATCHES } from '@/common';
-import { Button } from '@/ui/components/button';
+import Main from '@/entrypoints/add-person.content/main';
 import { ThemeContext } from '@/ui/theme/context';
 import styled from '@emotion/styled';
 import ReactDOM from 'react-dom/client';
@@ -36,15 +36,15 @@ export default defineContentScript({
         container.append(app);
 
         const root = ReactDOM.createRoot(app);
-        const Main = () => (
+        const App = () => (
           <StyledContainer>
-            <Button>Add to Twenty</Button>
+           <Main/>
           </StyledContainer>
         );
 
         root.render(
            <ThemeContext>
-            <Main />
+            <App />
            </ThemeContext>
         );
         return root;
