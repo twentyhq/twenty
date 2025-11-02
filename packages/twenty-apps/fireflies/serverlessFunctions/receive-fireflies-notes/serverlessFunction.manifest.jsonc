@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "0765206a-a58d-4ecf-a5a4-23d1d2095f4e",
+  "name": "receive-fireflies-notes",
+  "description": "Receives incoming Fireflies webhook payloads and creates Meeting records or Notes",
+  "triggers": [
+    {
+      "universalIdentifier": "7742d477-4057-436d-9298-565f2934cf1a",
+      "type": "route",
+      "path": "/webhook/fireflies",
+      "httpMethod": "POST",
+      "isAuthRequired": true
+    }
+  ]
+}

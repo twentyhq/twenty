@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/object.schema.json",
+  "universalIdentifier": "9b1f2c44-7b5b-4c8a-9ea0-2c0d5d1f6a7c",
+  "standardId": "9b1f2c44-7b5b-4c8a-9ea0-2c0d5d1f6a7c",
+  "nameSingular": "meeting",
+  "namePlural": "meetings",
+  "labelSingular": "Meeting",
+  "labelPlural": "Meetings",
+  "description": "Meeting records from Fireflies transcriptions",
+  "icon": "IconVideo"
+}
