@@ -5,29 +5,29 @@
   "projectType": "application",
   "tags": ["scope:browser-extension"],
   "targets": {
-    "start": {
+    "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "wxt --mode development && vite build",
+        "command": "wxt --mode development",
         "cwd": "packages/twenty-browser-extension",
         "color": true
       },
       "configurations": {
         "development": {
-          "command": "wxt --mode development && vite build"
+          "command": "wxt --mode development"
         }
       }
     },
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "wxt build && vite build",
+        "command": "wxt build",
         "cwd": "packages/twenty-browser-extension",
         "color": true
       },
       "configurations": {
         "production": {
-          "command": "wxt build && vite build"
+          "command": "wxt build"
         }
       }
     },
