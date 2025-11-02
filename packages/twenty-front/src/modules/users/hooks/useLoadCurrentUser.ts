@@ -4,11 +4,12 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { coreViewsState } from '@/views/states/coreViewState';
+import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
@@ -21,7 +22,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 
 export const useLoadCurrentUser = () => {
   const setCurrentUser = useSetRecoilState(currentUserState);
@@ -109,19 +109,13 @@ export const useLoadCurrentUser = () => {
 
     setCurrentWorkspace(workspace);
 
-    if (!isDefined(workspace) || !authProviders) {
-      setWorkspaceAuthBypassProviders(null);
-    } else {
+    if (isDefined(workspace)) {
       setWorkspaceAuthBypassProviders({
-        google: Boolean(
-          authProviders.google && workspace.isGoogleAuthBypassEnabled,
-        ),
-        microsoft: Boolean(
+        google: authProviders.google && workspace.isGoogleAuthBypassEnabled,
+        microsoft:
           authProviders.microsoft && workspace.isMicrosoftAuthBypassEnabled,
-        ),
-        password: Boolean(
+        password:
           authProviders.password && workspace.isPasswordAuthBypassEnabled,
-        ),
       });
     }
 

@@ -88,16 +88,14 @@ export const SettingsSecurity = () => {
   };
 
   const hasSsoIdentityProviders = SSOIdentitiesProviders.length > 0;
-  const hasDirectAuthEnabled = Boolean(
+  const hasDirectAuthEnabled =
     currentWorkspace?.isGoogleAuthEnabled ||
-      currentWorkspace?.isMicrosoftAuthEnabled ||
-      currentWorkspace?.isPasswordAuthEnabled,
-  );
-  const hasBypassProviderAvailable = Boolean(
+    currentWorkspace?.isMicrosoftAuthEnabled ||
+    currentWorkspace?.isPasswordAuthEnabled;
+  const hasBypassProviderAvailable =
     authProviders?.google ||
-      authProviders?.microsoft ||
-      authProviders?.password,
-  );
+    authProviders?.microsoft ||
+    authProviders?.password;
   const shouldShowBypassSection =
     hasSsoIdentityProviders &&
     !hasDirectAuthEnabled &&

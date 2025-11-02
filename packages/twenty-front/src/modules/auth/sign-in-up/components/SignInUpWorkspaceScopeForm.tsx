@@ -42,7 +42,6 @@ export const SignInUpWorkspaceScopeForm = () => {
   const providers =
     shouldOfferBypass && shouldUseBypass
       ? {
-          ...workspaceAuthProviders,
           ...workspaceAuthBypassProviders,
           sso: [],
         }
