@@ -248,6 +248,12 @@ describe('AuthService', () => {
       id: 'user-id',
       email: 'email',
       passwordHash: 'password-hash',
+      userWorkspaces: [
+        {
+          id: 'user-workspace-id',
+          workspaceId: workspace.id,
+        } as any,
+      ],
     } as unknown as UserEntity;
 
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
@@ -255,7 +261,7 @@ describe('AuthService', () => {
     jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(userEntity);
     jest
       .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
-      .mockResolvedValue({ id: 'user-workspace-id' } as any);
+      .mockResolvedValueOnce({ id: 'user-workspace-id' } as any);
     jest
       .spyOn(permissionsService, 'userHasWorkspaceSettingPermission')
       .mockResolvedValueOnce(true);
@@ -283,6 +289,12 @@ describe('AuthService', () => {
       id: 'user-id',
       email: 'email',
       passwordHash: 'password-hash',
+      userWorkspaces: [
+        {
+          id: 'user-workspace-id',
+          workspaceId: workspace.id,
+        } as any,
+      ],
     } as unknown as UserEntity;
 
     jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(userEntity);
