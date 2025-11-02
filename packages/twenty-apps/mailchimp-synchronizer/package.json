@@ -15,20 +15,20 @@
     "TWENTY_API_KEY": {
       "isSecret": true,
       "value": "",
-      "description": "Twenty API key"
+      "description": "Required to send requests to Twenty"
     },
     "TWENTY_API_URL": {
       "value": "",
-      "description": "Twenty API URL"
+      "description": "Optional, defaults to cloud API URL"
     },
     "MAILCHIMP_API_KEY": {
       "isSecret": true,
       "value": "",
-      "description": "Mailchimp API key"
+      "description": "Required to send requests to Mailchimp"
     },
     "MAILCHIMP_URL": {
       "value": "",
-      "description": "Mailchimp data center"
+      "description": "Required to send requests to Mailchimp"
     },
     "IS_EMAIL_CONSTRAINT": {
       "value": "false",
@@ -52,7 +52,10 @@
     },
     "MAILCHIMP_AUDIENCE_ID": {
       "value": "",
-      "description": "Set an ID of audience to which new contact will be added"
+      "description": "Required to send requests to Mailchimp"
     }
+  },
+  "dependencies": {
+    "axios": "^1.13.1"
   }
 }
