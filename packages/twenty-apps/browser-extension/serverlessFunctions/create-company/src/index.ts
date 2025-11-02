@@ -1,14 +1,20 @@
 export const main = async (params: {
-  a: string;
-  b: number;
+  name: string
 }): Promise<object> => {
-  const { a, b } = params;
+  const response = await fetch(`${process.env.TWENTY_API_URL}/rest/companies`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
+    },
+    body: JSON.stringify({
+      name: params.name
+    }),
+  });
 
-  // Rename the parameters and code below with your own logic
-  // This is just an example
-  const message = `Hello, input: ${a} and ${b}`;
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
 
-
-
-  return { message };
+  return (await response.json()) as object;
 };

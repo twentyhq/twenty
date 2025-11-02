@@ -49,4 +49,22 @@ export default defineBackground(async () => {
         }
         return (await response.json()) as {firstName: string; lastName:string;};
     })
+
+    onMessage('createCompany', async ({data}) => {
+      const response = await fetch(`${import.meta.env.WXT_TWENTY_API_URL}/s/create/company`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${import.meta.env.WXT_TWENTY_API_KEY}`,
+        },
+        body: JSON.stringify({
+          name: data.name
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return (await response.json()) as {name: string};
+  })
 })

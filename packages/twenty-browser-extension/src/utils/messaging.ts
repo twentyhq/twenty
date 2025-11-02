@@ -7,6 +7,7 @@ interface ProtocolMap {
   getCompanyviaRelay(): {companyName: string}
   extractCompany(): {companyName: string}
   createPerson({firstName, lastName}: {firstName: string; lastName: string}): {firstName: string; lastName: string}
+  createCompany({ name }: {name: string}): {name: string}
 }
 
 export const { sendMessage, onMessage } = defineExtensionMessaging<ProtocolMap>()
