@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "7d38261b-99c5-43e7-83d8-bdcedc2dffdb",
+  "name": "create-person"
+}

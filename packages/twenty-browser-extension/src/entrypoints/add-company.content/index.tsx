@@ -1,5 +1,5 @@
 import { LINKEDIN_MATCHES } from '@/common';
-import Main from '@/entrypoints/add-person.content/main';
+import Main from '@/entrypoints/add-company.content/main';
 import { ThemeContext } from '@/ui/theme/context';
 import styled from '@emotion/styled';
 import ReactDOM from 'react-dom/client';
