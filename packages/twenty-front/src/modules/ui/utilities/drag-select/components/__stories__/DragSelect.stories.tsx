@@ -24,7 +24,7 @@ const StyledSelectableItem = styled.div<{ selected?: boolean }>`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   background: ${({ theme, selected }) =>
-    selected ? theme.color.blue10 : theme.background.secondary};
+    selected ? theme.color.blue3 : theme.background.secondary};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,7 +34,7 @@ const StyledSelectableItem = styled.div<{ selected?: boolean }>`
 
   &:hover {
     background: ${({ theme, selected }) =>
-      selected ? theme.color.blue20 : theme.background.tertiary};
+      selected ? theme.color.blue5 : theme.background.tertiary};
   }
 `;
 

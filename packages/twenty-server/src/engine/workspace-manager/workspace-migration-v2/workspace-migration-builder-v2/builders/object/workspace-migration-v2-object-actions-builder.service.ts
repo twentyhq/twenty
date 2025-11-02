@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+
 import { UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/types/workspace-migration-object-action-v2';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -38,10 +39,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       };
     }
 
-    const {
-      flatEntityToValidate: flatObjectMetadataToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatObjectMetadataToValidate } = args;
 
     return {
       status: 'success',
@@ -50,7 +48,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         flatFieldMetadatas: [],
         flatObjectMetadata: flatObjectMetadataToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -72,10 +69,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       };
     }
 
-    const {
-      flatEntityToValidate: flatObjectMetadataToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatObjectMetadataToValidate } = args;
 
     return {
       status: 'success',
@@ -83,7 +77,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
         type: 'delete_object',
         objectMetadataId: flatObjectMetadataToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -107,11 +100,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
       };
     }
 
-    const {
-      dependencyOptimisticFlatEntityMaps,
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateObjectAction: UpdateObjectAction = {
       type: 'update_object',
@@ -122,7 +111,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService extends WorkspaceEn
     return {
       status: 'success',
       action: updateObjectAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

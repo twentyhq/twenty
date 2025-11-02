@@ -37,7 +37,6 @@ export const RecordFieldListCellHoveredPortal = ({
 
   return (
     <RecordInlineCellAnchoredPortal
-      position={hoverPosition}
       fieldMetadataItem={hoveredFieldMetadataItem}
       objectMetadataItem={objectMetadataItem}
       recordId={recordId}

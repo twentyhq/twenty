@@ -77,10 +77,8 @@ export class MessagingMessageListFetchJob {
 
       switch (messageChannel.syncStage) {
         case MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING:
-        case MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING: // DEPRECATED
-        case MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING: // WILL BE DEPRECATED
           await this.messagingMonitoringService.track({
-            eventName: 'full_message_list_fetch.started',
+            eventName: 'message_list_fetch.started',
             workspaceId,
             connectedAccountId: messageChannel.connectedAccount.id,
             messageChannelId: messageChannel.id,
@@ -92,7 +90,7 @@ export class MessagingMessageListFetchJob {
           );
 
           await this.messagingMonitoringService.track({
-            eventName: 'full_message_list_fetch.completed',
+            eventName: 'message_list_fetch.completed',
             workspaceId,
             connectedAccountId: messageChannel.connectedAccount.id,
             messageChannelId: messageChannel.id,

@@ -31,6 +31,8 @@ import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-q
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -77,6 +79,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly throttlerService: ThrottlerService;
   @Inject()
   protected readonly twentyConfigService: TwentyConfigService;
+  @Inject()
+  protected readonly metricsService: MetricsService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -93,6 +97,8 @@ export abstract class CommonBaseQueryRunnerService<
         CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
       );
     }
+
+    await this.throttleQueryExecution(authContext);
 
     await this.validate(args, queryRunnerContext);
 
@@ -114,8 +120,6 @@ export abstract class CommonBaseQueryRunnerService<
       this.operationName,
       commonQueryParser,
     );
-
-    await this.throttleQueryExecution(authContext.workspace.id);
 
     const extendedQueryRunnerContext =
       await this.prepareExtendedQueryRunnerContext(
@@ -331,35 +335,50 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
-  private async throttleQueryExecution(workspaceId: string) {
-    const shortConfig = {
-      key: `api:throttler:${workspaceId}-short-limit`,
-      maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_SHORT_LIMIT'),
-      timeWindow: this.twentyConfigService.get(
-        'API_RATE_LIMITING_SHORT_TTL_IN_MS',
-      ),
-    };
+  private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
+    try {
+      if (!isDefined(authContext.apiKey)) return;
 
-    const longConfig = {
-      key: `api:throttler:${workspaceId}-long-limit`,
-      maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
-      timeWindow: this.twentyConfigService.get(
-        'API_RATE_LIMITING_LONG_TTL_IN_MS',
-      ),
-    };
+      const workspaceId = authContext.workspace.id;
 
-    await this.throttlerService.tokenBucketThrottle(
-      shortConfig.key,
-      1,
-      shortConfig.maxTokens,
-      shortConfig.timeWindow,
-    );
+      const shortConfig = {
+        key: `api:throttler:${workspaceId}-short-limit`,
+        maxTokens: this.twentyConfigService.get(
+          'API_RATE_LIMITING_SHORT_LIMIT',
+        ),
+        timeWindow: this.twentyConfigService.get(
+          'API_RATE_LIMITING_SHORT_TTL_IN_MS',
+        ),
+      };
 
-    await this.throttlerService.tokenBucketThrottle(
-      longConfig.key,
-      1,
-      longConfig.maxTokens,
-      longConfig.timeWindow,
-    );
+      const longConfig = {
+        key: `api:throttler:${workspaceId}-long-limit`,
+        maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
+        timeWindow: this.twentyConfigService.get(
+          'API_RATE_LIMITING_LONG_TTL_IN_MS',
+        ),
+      };
+
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        shortConfig.key,
+        1,
+        shortConfig.maxTokens,
+        shortConfig.timeWindow,
+      );
+
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        longConfig.key,
+        1,
+        longConfig.maxTokens,
+        longConfig.timeWindow,
+      );
+    } catch (error) {
+      await this.metricsService.incrementCounter({
+        key: MetricsKeys.CommonApiQueryRateLimited,
+        shouldStoreInCache: false,
+      });
+
+      throw error;
+    }
   }
 }

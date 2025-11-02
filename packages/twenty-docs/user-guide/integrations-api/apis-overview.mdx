@@ -1,0 +1,118 @@
+---
+title: APIs Overview
+info: Understand the four different APIs and when to use each one.
+image: /images/user-guide/api/api-overview.png
+sectionInfo: Learn how to connect Twenty to your other tools.
+---
+<Frame>
+  <img src="/images/user-guide/api/api-overview.png" alt="Header" />
+</Frame>
+
+Twenty was built to be developer-friendly, offering powerful APIs that adapt to your custom data model. We provide four distinct API types to meet different integration needs.
+
+## Developer-First Approach
+
+Twenty generates APIs specifically for your data model, meaning:
+- **No long IDs required**: Use your object and field names directly in endpoints
+- **Standard and custom objects treated equally**: Your custom objects get the same API treatment as built-in ones
+- **Dedicated endpoints**: Each object and field gets its own API endpoint
+- **Custom documentation**: Generated specifically for your workspace's data model
+
+<Warning>
+Your custom API generates personalized documentation accessible via Settings → API & Webhooks after creating an API key. This documentation reflects your exact data model and field configurations.
+</Warning>
+
+## The Four API Types
+
+Twenty offers APIs in both **REST** and **GraphQL** formats:
+
+### REST APIs
+
+#### 1. REST Metadata API
+- **Purpose**: Manage your workspace and data model structure
+- **Use cases**: 
+  - Create, modify, or delete objects and fields
+  - Configure workspace settings
+  - Manage data model relationships
+- **Access**: Available through REST endpoints
+
+#### 2. REST Core API  
+- **Purpose**: Manage your actual data records
+- **Use cases**:
+  - Create, read, update, delete records
+  - Query specific data
+  - Manage record relationships
+- **Access**: Available through REST endpoints
+
+### GraphQL APIs
+
+#### 3. GraphQL Metadata API
+- **Purpose**: Same as REST Metadata API but with GraphQL benefits
+- **Use cases**: Same workspace and data model management
+- **Additional benefits**: 
+  - Query multiple metadata types in one request
+  - Precise field selection
+  - Better performance for complex queries
+
+#### 4. GraphQL Core API
+- **Purpose**: Same as REST Core API but with GraphQL advantages
+- **Use cases**: Same data record management
+- **Additional benefits**:
+  - **Batch operations**: Available for all operations
+  - **Upsert operations**: Create or update records in one call
+  - Query relationships in single requests
+  - Precise data fetching
+
+## Batch Operations
+
+### REST and GraphQL Batch Support
+Both REST and GraphQL APIs support batch operations for most actions:
+- **Batch size**: Up to 60 records per request
+- **Available operations**: Create, update, delete multiple records
+- **Performance**: Significantly faster than individual API calls
+
+### GraphQL-Only Features
+- **Batch Upsert**: Only available in GraphQL APIs
+- **Usage**: Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
+- **Requirement**: This is why singular and plural object names must be distinct
+
+## API Documentation Access
+
+1. Go to **Settings → API & Webhooks**
+2. Create an API key (required for documentation access)
+3. Access your custom documentation and playground
+4. Test APIs with your actual data model
+
+Your documentation is unique to your workspace because it reflects your custom objects, fields, and relationships.
+
+## When to Use Each API
+
+### Use Metadata APIs when:
+- Setting up your data model
+- Creating custom objects or fields
+- Configuring workspace settings
+
+### Use Core APIs when:
+- Managing day-to-day data (People, Companies, Opportunities)
+- Integrating with external systems
+- Building custom applications
+- Automating data workflows
+
+### Choose GraphQL when:
+- You need batch operations
+- You want to minimize API calls
+- You need upsert functionality
+- You're building complex integrations
+
+### Choose REST when:
+- You prefer simpler API structure
+- You're building basic integrations
+- Your team is more familiar with REST
+- You need straightforward CRUD operations
+
+## Next Steps
+
+- **[API & Webhooks Setup](/user-guide/integrations-api/api-webhooks)**: Learn how to create API keys and webhooks
+- **Custom Documentation**: Access your personalized API docs via Settings → API & Webhooks
+
+

@@ -1,21 +1,21 @@
 # Contributing to Twenty
 
-Thanks for considering contributing to Twenty! 
+Thanks for considering contributing to Twenty!
 
-Please make sure to go through the [documentation](https://docs.twenty.com) before. 
+Please make sure to go through the [documentation](https://docs.twenty.com) before.
 
 <br>
 
 
 ## Good first issues
 
-Good first issues are a great way to start contributing and get familiar with the codebase. You can find them on by filtering on the [good first issue](https://github.com/twentyhq/twenty/labels/good%20first%20issue) label. 
+Good first issues are a great way to start contributing and get familiar with the codebase. You can find them on by filtering on the [good first issue](https://github.com/twentyhq/twenty/labels/good%20first%20issue) label.
 
 ## Issue assignment
 
 To avoid conflicts, we follow these guidelines:
 
-1. For `Good First Issue` and `Experienced Contributor` issues without `size: long` labels, we'll merge the first PRs that meet our [code quality standards](https://twenty.com/developers). **We don't assign contributors to these issues**. For `priority: high` issues, our core team will step in within days if no adequate contributions are received.
+1. For `Good First Issue` and `Experienced Contributor` issues without `size: long` labels, we'll merge the first PRs that meet our [code quality standards](https://docs.twenty.com/developers). **We don't assign contributors to these issues**. For `priority: high` issues, our core team will step in within days if no adequate contributions are received.
 2. For `size: long` Issues, assigned contributors have one week to submit their first draft PR.
 
 ## How to Contribute

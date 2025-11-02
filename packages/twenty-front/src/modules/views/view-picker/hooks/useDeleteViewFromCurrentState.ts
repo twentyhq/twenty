@@ -3,8 +3,8 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { usePersistView } from '@/views/hooks/internal/usePersistView';
 import { useChangeView } from '@/views/hooks/useChangeView';
-import { useDeleteView } from '@/views/hooks/useDeleteView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
@@ -43,7 +43,7 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
 
   const { changeView } = useChangeView();
 
-  const { deleteView } = useDeleteView();
+  const { deleteView } = usePersistView();
 
   const deleteViewFromCurrentState = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -67,7 +67,7 @@ export const useDeleteViewFromCurrentState = (viewBarInstanceId?: string) => {
           );
         }
 
-        await deleteView(viewPickerReferenceViewId);
+        await deleteView({ id: viewPickerReferenceViewId });
       },
     [
       currentView,

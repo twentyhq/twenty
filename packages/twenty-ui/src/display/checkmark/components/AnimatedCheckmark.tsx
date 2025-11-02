@@ -26,7 +26,7 @@ export const AnimatedCheckmark = ({
     >
       <motion.path
         fill="none"
-        stroke={color ?? theme.grayScale.gray0}
+        stroke={color ?? theme.grayScale.gray1}
         strokeWidth={4}
         d="M14 27l7.8 7.8L38 14"
         pathLength="1"

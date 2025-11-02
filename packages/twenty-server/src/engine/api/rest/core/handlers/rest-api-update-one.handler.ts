@@ -1,21 +1,14 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
-import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
-
-import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
+import { capitalize } from 'twenty-shared/utils';
 
 import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
-import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseDepthRestRequest } from 'src/engine/api/rest/input-request-parsers/depth-parser-utils/parse-depth-rest-request.util';
+import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiUpdateOneHandler extends RestApiBaseHandler {
@@ -25,7 +18,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
     super();
   }
 
-  async commonHandle(request: AuthenticatedRequest) {
+  async handle(request: AuthenticatedRequest) {
     try {
       const { id, data, depth } = this.parseRequestArgs(request);
 
@@ -56,7 +49,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
         objectMetadataItemWithFieldMaps.nameSingular,
       );
     } catch (error) {
-      workspaceQueryRunnerRestApiExceptionHandler(error);
+      return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
   }
 
@@ -76,69 +69,5 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       data: request.body,
       depth: parseDepthRestRequest(request),
     };
-  }
-
-  async handle(request: AuthenticatedRequest) {
-    const { id: recordId } = parseCorePath(request);
-
-    if (!recordId) {
-      throw new BadRequestException('Record ID not found');
-    }
-
-    const { objectMetadata, repository, restrictedFields } =
-      await this.getRepositoryAndMetadataOrFail(request);
-
-    // assert the record exists
-    await repository.findOneOrFail({
-      select: { id: true },
-      where: { id: recordId },
-    });
-
-    const overriddenBody = await this.recordInputTransformerService.process({
-      recordInput: request.body,
-      objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
-    });
-
-    let selectedColumns = undefined;
-
-    if (!isEmpty(restrictedFields)) {
-      const selectableFields = getAllSelectableFields({
-        restrictedFields,
-        objectMetadata,
-      });
-
-      selectedColumns = Object.keys(selectableFields).filter(
-        (key) => selectableFields[key],
-      );
-    }
-
-    const updatedRecord = await repository.update(
-      recordId,
-      overriddenBody,
-      undefined,
-      selectedColumns,
-    );
-
-    const updatedRecordId = updatedRecord.generatedMaps[0].id;
-
-    const records = await this.getRecord({
-      recordIds: [updatedRecordId],
-      repository,
-      objectMetadata,
-      depth: parseDepthRestRequest(request),
-      restrictedFields,
-    });
-
-    const record = records[0];
-
-    if (!isDefined(record)) {
-      throw new InternalServerErrorException('Updated record not found');
-    }
-
-    return this.formatResult({
-      operation: 'update',
-      objectNameSingular: objectMetadata.objectMetadataMapItem.nameSingular,
-      data: record,
-    });
   }
 }

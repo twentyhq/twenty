@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { UpdateServerlessFunctionAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/serverless-function/types/workspace-migration-serverless-function-action-v2.type';
 import {
@@ -80,10 +81,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
-    const {
-      flatEntityToValidate: flatServerlessFunctionToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatServerlessFunctionToValidate } = args;
 
     return {
       status: 'success',
@@ -91,7 +89,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         type: 'create_serverless_function',
         serverlessFunction: flatServerlessFunctionToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -115,10 +112,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
-    const {
-      flatEntityToValidate: flatServerlessFunctionToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatServerlessFunctionToValidate } = args;
 
     return {
       status: 'success',
@@ -126,7 +120,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
         type: 'delete_serverless_function',
         serverlessFunctionId: flatServerlessFunctionToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -152,11 +145,7 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
       };
     }
 
-    const {
-      dependencyOptimisticFlatEntityMaps,
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateServerlessFunctionAction: UpdateServerlessFunctionAction = {
       type: 'update_serverless_function',
@@ -167,7 +156,6 @@ export class WorkspaceMigrationV2ServerlessFunctionActionsBuilderService extends
     return {
       status: 'success',
       action: updateServerlessFunctionAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

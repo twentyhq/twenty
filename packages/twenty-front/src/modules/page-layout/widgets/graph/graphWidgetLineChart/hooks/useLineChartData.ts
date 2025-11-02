@@ -3,10 +3,6 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { createGradientDef } from '@/page-layout/widgets/graph/utils/createGradientDef';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
-import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
-} from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { type LineSeries } from '@nivo/line';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,7 +15,6 @@ type UseLineChartDataProps = {
   instanceId: string;
   enableArea: boolean;
   theme: ThemeType;
-  formatOptions: GraphValueFormatOptions;
 };
 
 export const useLineChartData = ({
@@ -29,12 +24,16 @@ export const useLineChartData = ({
   instanceId,
   enableArea,
   theme,
-  formatOptions,
 }: UseLineChartDataProps) => {
   const dataMap = Object.fromEntries(data.map((series) => [series.id, series]));
   const enrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
     return data.map((series, index) => {
-      const colorScheme = getColorScheme(colorRegistry, series.color, index);
+      const colorScheme = getColorScheme({
+        registry: colorRegistry,
+        colorName: series.color,
+        fallbackIndex: index,
+        totalGroups: data.length,
+      });
       const shouldEnableArea = series.enableArea ?? enableArea;
       const gradientId = `lineGradient-${id}-${instanceId}-${series.id}-${index}`;
 
@@ -78,11 +77,9 @@ export const useLineChartData = ({
   const colors = enrichedSeries.map((series) => series.colorScheme.solid);
 
   const legendItems = enrichedSeries.map((series) => {
-    const total = series.data.reduce((sum, point) => sum + (point.y || 0), 0);
     return {
       id: series.id,
       label: series.label,
-      formattedValue: formatGraphValue(total, formatOptions),
       color: series.colorScheme.solid,
     };
   });

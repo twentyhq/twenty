@@ -194,7 +194,7 @@ describe('MessagingMessagesImportService', () => {
 
   it('should fails if SyncStage is not MESSAGES_IMPORT_PENDING', async () => {
     mockMessageChannel.syncStage =
-      MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING;
+      MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING;
 
     expect(
       service.processMessageBatchImport(

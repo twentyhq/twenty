@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
@@ -49,7 +49,7 @@ export class FlatIndexValidatorService {
   public validateFlatIndexCreation({
     flatEntityToValidate: flatIndexToValidate,
     optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.index
   >): FailedFlatEntityValidation<FlatIndexMetadata> {
@@ -77,7 +77,8 @@ export class FlatIndexValidatorService {
 
     const relatedObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
     });
 
     if (!isDefined(relatedObjectMetadata)) {
@@ -117,7 +118,7 @@ export class FlatIndexValidatorService {
         const relatedFlatField = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: flatIndexField.fieldMetadataId,
           flatEntityMaps:
-            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         });
 
         if (!isDefined(relatedFlatField)) {

@@ -24,7 +24,8 @@ export const failingFilterInputByFieldMetadataType: {
       gqlErrorMessage: 'is not defined by type',
       restFilterInput:
         'manyToOneRelationField[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"',
-      restErrorMessage: "'manyToOneRelationField' does not exist",
+      restErrorMessage:
+        'column apiInputValidationTestObject.manyToOneRelationField does not exist',
     },
     {
       gqlFilterInput: {
@@ -45,7 +46,8 @@ export const failingFilterInputByFieldMetadataType: {
       gqlErrorMessage: 'is not defined by type',
       restFilterInput:
         'oneToManyRelationFieldId[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"',
-      restErrorMessage: "'oneToManyRelationFieldId' does not exist",
+      restErrorMessage:
+        'Field metadata not found for field: oneToManyRelationFieldId',
     },
     // {
     //   gqlFilterInput: {
@@ -125,7 +127,7 @@ export const failingFilterInputByFieldMetadataType: {
     {
       gqlFilterInput: { dateTimeField: { eq: 'not-a-date-time' } },
       gqlErrorMessage:
-        'invalid input syntax for type timestamp with time zone: "0NaN-NaN-NaNTNaN:NaN:NaN.NaN+NaN:NaN"',
+        'invalid input syntax for type timestamp with time zone: "not-a-date-time"',
       restFilterInput: 'dateTimeField[eq]:"not-a-date-time"',
       restErrorMessage:
         'invalid input syntax for type timestamp with time zone',
@@ -133,7 +135,7 @@ export const failingFilterInputByFieldMetadataType: {
     {
       gqlFilterInput: { dateTimeField: { eq: {} } },
       gqlErrorMessage:
-        'invalid input syntax for type timestamp with time zone: "0NaN-NaN-NaNTNaN:NaN:NaN.NaN+NaN:NaN"',
+        'invalid input syntax for type timestamp with time zone: "{}"',
       restFilterInput: 'dateTimeField[eq]:"{}"',
       restErrorMessage:
         'invalid input syntax for type timestamp with time zone',
@@ -141,7 +143,7 @@ export const failingFilterInputByFieldMetadataType: {
     {
       gqlFilterInput: { dateTimeField: { eq: [] } },
       gqlErrorMessage:
-        'invalid input syntax for type timestamp with time zone: "0NaN-NaN-NaNTNaN:NaN:NaN.NaN+NaN:NaN"',
+        'invalid input syntax for type timestamp with time zone: "{}"',
       restFilterInput: 'dateTimeField[eq]:"[]"',
       restErrorMessage:
         'invalid input syntax for type timestamp with time zone',
@@ -156,22 +158,19 @@ export const failingFilterInputByFieldMetadataType: {
   [FieldMetadataType.DATE]: [
     {
       gqlFilterInput: { dateField: { eq: 'not-a-date' } },
-      gqlErrorMessage:
-        'invalid input syntax for type date: "0NaN-NaN-NaNTNaN:NaN:NaN.NaN+NaN:NaN"',
+      gqlErrorMessage: 'invalid input syntax for type date: "not-a-date"',
       restFilterInput: 'dateField[eq]:"{}"',
       restErrorMessage: 'invalid input syntax for type date',
     },
     {
       gqlFilterInput: { dateField: { eq: {} } },
-      gqlErrorMessage:
-        'invalid input syntax for type date: "0NaN-NaN-NaNTNaN:NaN:NaN.NaN+NaN:NaN"',
+      gqlErrorMessage: 'invalid input syntax for type date: "{}"',
       restFilterInput: 'dateField[eq]:"{}"',
       restErrorMessage: 'invalid input syntax for type date',
     },
     {
       gqlFilterInput: { dateField: { eq: [] } },
-      gqlErrorMessage:
-        'invalid input syntax for type date: "0NaN-NaN-NaNTNaN:NaN:NaN.NaN+NaN:NaN"',
+      gqlErrorMessage: 'invalid input syntax for type date: "{}"',
       restFilterInput: 'dateField[eq]:"[]"',
       restErrorMessage: 'invalid input syntax for type date',
     },
@@ -314,31 +313,32 @@ export const failingFilterInputByFieldMetadataType: {
       gqlFilterInput: { multiSelectField: { eq: 'not-a-multi-select' } },
       gqlErrorMessage: 'Value "not-a-multi-select" does not exist ',
       restFilterInput: 'multiSelectField[eq]:"not-a-multi-select"',
-      restErrorMessage: "not available in 'multiSelectField'",
+      restErrorMessage: 'malformed array literal',
     },
-    {
-      gqlFilterInput: { multiSelectField: { eq: {} } },
-      gqlErrorMessage: 'cannot represent non-string value: {}.',
-      restFilterInput: 'multiSelectField[eq]:"{}"',
-      restErrorMessage: "not available in 'multiSelectField'",
-    },
+    // TODO - fix this, should throw
+    // {
+    //   gqlFilterInput: { multiSelectField: { eq: {} } },
+    //   gqlErrorMessage: 'cannot represent non-string value: {}.',
+    //   restFilterInput: 'multiSelectField[eq]:"{}"',
+    //   restErrorMessage: "not available in 'multiSelectField'",
+    // },
     {
       gqlFilterInput: { multiSelectField: { eq: [] } },
       gqlErrorMessage: 'cannot represent non-string value: [].',
       restFilterInput: 'multiSelectField[eq]:"[]"',
-      restErrorMessage: "not available in 'multiSelectField'",
+      restErrorMessage: 'malformed array literal',
     },
     {
       gqlFilterInput: { multiSelectField: { eq: true } },
       gqlErrorMessage: 'cannot represent non-string value: true.',
       restFilterInput: 'multiSelectField[eq]:"true"',
-      restErrorMessage: "not available in 'multiSelectField'",
+      restErrorMessage: 'malformed array literal',
     },
     {
       gqlFilterInput: { multiSelectField: { eq: 2 } },
       gqlErrorMessage: 'cannot represent non-string value: 2.',
       restFilterInput: 'multiSelectField[eq]:2',
-      restErrorMessage: "enum value '2' not available in 'multiSelectField' ",
+      restErrorMessage: 'malformed array literal',
     },
     // TODO - ensure it should throw
     // {

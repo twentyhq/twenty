@@ -45,13 +45,15 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      for (const eventData of workspaceEventBatch.events) {
+      const { events, ...batchEventInfo } = workspaceEventBatch;
+
+      for (const event of events) {
         await this.messageQueueService.add<ServerlessFunctionTriggerJobData>(
           ServerlessFunctionTriggerJob.name,
           {
             serverlessFunctionId: databaseEventListener.serverlessFunction.id,
             workspaceId: databaseEventListener.workspaceId,
-            payload: eventData,
+            payload: { ...batchEventInfo, ...event },
           },
           { retryLimit: 3 },
         );

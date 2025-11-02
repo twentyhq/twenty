@@ -9,6 +9,8 @@ export const SERVERLESS_FUNCTION_FRAGMENT = gql`
     timeoutSeconds
     latestVersion
     publishedVersions
+    handlerPath
+    handlerName
     cronTriggers {
       id
       settings

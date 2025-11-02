@@ -19,6 +19,7 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -27,7 +28,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconPoint } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/layout';
-import { MAIN_COLORS } from 'twenty-ui/theme';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
@@ -89,7 +89,7 @@ const StyledLabelContainer = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  border-right: 1px solid ${MAIN_COLORS.yellow};
+  border-right: 1px solid ${({ theme }) => theme.color.yellow};
   display: flex;
 
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
@@ -248,6 +248,8 @@ export const SettingsDataModelFieldSelectForm = ({
     setFormValue('options', newOptions, { shouldDirty: true });
   };
 
+  const theme = useTheme();
+
   return (
     <>
       <Controller
@@ -269,8 +271,8 @@ export const SettingsDataModelFieldSelectForm = ({
                     <StyledIconContainer>
                       <StyledIconPoint
                         size={12}
-                        color={MAIN_COLORS.yellow}
-                        fill={MAIN_COLORS.yellow}
+                        color={theme.color.yellow}
+                        fill={theme.color.yellow}
                       />
                     </StyledIconContainer>
                     <StyledApiKey>{t`API values`}</StyledApiKey>

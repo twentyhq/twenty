@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
 import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util';
@@ -20,7 +20,7 @@ export class FlatObjectMetadataValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): FailedFlatEntityValidation<FlatObjectMetadata> {
@@ -83,7 +83,7 @@ export class FlatObjectMetadataValidatorService {
         ...validateFlatObjectMetadataIdentifiers({
           flatObjectMetadata: updatedFlatObjectMetadata,
           flatFieldMetadataMaps:
-            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
         }),
       );
     }
@@ -156,7 +156,7 @@ export class FlatObjectMetadataValidatorService {
   public async validateFlatObjectMetadataCreation({
     flatEntityToValidate: flatObjectMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): Promise<FailedFlatEntityValidation<FlatObjectMetadata>> {
@@ -195,7 +195,7 @@ export class FlatObjectMetadataValidatorService {
       ...validateFlatObjectMetadataIdentifiers({
         flatObjectMetadata: flatObjectMetadataToValidate,
         flatFieldMetadataMaps:
-          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
       }),
     );
     objectValidationResult.errors.push(

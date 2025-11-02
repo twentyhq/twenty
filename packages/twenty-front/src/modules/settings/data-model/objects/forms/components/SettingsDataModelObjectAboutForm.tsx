@@ -81,6 +81,8 @@ export const SettingsDataModelObjectAboutForm = ({
   const isLabelSyncedWithName = watch('isLabelSyncedWithName');
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
+  const isStandardObject =
+    isDefined(objectMetadataItem?.isCustom) && !objectMetadataItem.isCustom;
   watch('nameSingular');
   watch('namePlural');
   watch('description');
@@ -173,12 +175,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={
-                disableEdition ||
-                (objectMetadataItem &&
-                  !objectMetadataItem?.isCustom &&
-                  isLabelSyncedWithName)
-              }
+              disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -205,12 +202,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={
-                disableEdition ||
-                (objectMetadataItem &&
-                  !objectMetadataItem?.isCustom &&
-                  isLabelSyncedWithName)
-              }
+              disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -242,7 +234,8 @@ export const SettingsDataModelObjectAboutForm = ({
                   'nameSingular' as const satisfies StringKeyOf<ObjectMetadataItem>,
                 placeholder: `listing`,
                 defaultValue: objectMetadataItem?.nameSingular ?? '',
-                disableEdition: disableEdition || isLabelSyncedWithName,
+                disableEdition:
+                  isStandardObject || disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
               {
@@ -251,7 +244,8 @@ export const SettingsDataModelObjectAboutForm = ({
                   'namePlural' as const satisfies StringKeyOf<ObjectMetadataItem>,
                 placeholder: `listings`,
                 defaultValue: objectMetadataItem?.namePlural ?? '',
-                disableEdition: disableEdition || isLabelSyncedWithName,
+                disableEdition:
+                  isStandardObject || disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
             ].map(
@@ -319,7 +313,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 </AdvancedSettingsWrapper>
               ),
             )}
-            {(!objectMetadataItem || objectMetadataItem?.isCustom) && (
+            {!isStandardObject && (
               <AdvancedSettingsWrapper>
                 <Controller
                   name="isLabelSyncedWithName"

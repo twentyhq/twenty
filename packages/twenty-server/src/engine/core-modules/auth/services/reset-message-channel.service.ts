@@ -34,7 +34,7 @@ export class ResetMessageChannelService {
         connectedAccountId,
       },
       {
-        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
         syncStatus: MessageChannelSyncStatus.ONGOING,
         syncCursor: '',
         syncStageStartedAt: null,

@@ -1,7 +1,7 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
+import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilter';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewFiltersToCreate } from '@/views/utils/getViewFiltersToCreate';
 import { getViewFiltersToDelete } from '@/views/utils/getViewFiltersToDelete';
@@ -11,11 +11,8 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFiltersToViewFilters = () => {
-  const {
-    createViewFilterRecords,
-    updateViewFilterRecords,
-    deleteViewFilterRecords,
-  } = usePersistViewFilterRecords();
+  const { createViewFilters, updateViewFilters, deleteViewFilters } =
+    usePersistViewFilterRecords();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -94,16 +91,27 @@ export const useSaveRecordFiltersToViewFilters = () => {
           }),
         );
 
-        await createViewFilterRecords(createViewFilterInputs);
-        await updateViewFilterRecords(updateViewFilterInputs);
-        await deleteViewFilterRecords(deleteViewFilterInputs);
+        const createResult = await createViewFilters(createViewFilterInputs);
+        if (createResult.status === 'failed') {
+          return;
+        }
+
+        const updateResult = await updateViewFilters(updateViewFilterInputs);
+        if (updateResult.status === 'failed') {
+          return;
+        }
+
+        const deleteResult = await deleteViewFilters(deleteViewFilterInputs);
+        if (deleteResult.status === 'failed') {
+          return;
+        }
       },
     [
       currentView,
       currentRecordFiltersCallbackState,
-      createViewFilterRecords,
-      updateViewFilterRecords,
-      deleteViewFilterRecords,
+      createViewFilters,
+      updateViewFilters,
+      deleteViewFilters,
     ],
   );
 

@@ -3,6 +3,5 @@ import { type GraphColorScheme } from '@/page-layout/widgets/graph/types/GraphCo
 export type BarChartConfig = {
   key: string;
   indexValue: string | number;
-  gradientId: string;
   colorScheme: GraphColorScheme;
 };
