@@ -89,7 +89,11 @@ export const useLazyFetchMoreRecordsWithPagination = <
   // This function is equivalent to merge function + read function in field policy
   const fetchMoreRecordsLazy = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (limit = DEFAULT_SEARCH_REQUEST_LIMIT) => {
+      async (overrideLimit?: number) => {
+        const effectiveLimit = isDefined(overrideLimit)
+          ? overrideLimit
+          : limit ?? DEFAULT_SEARCH_REQUEST_LIMIT;
+
         const hasNextPageLocal = snapshot
           .getLoadable(hasNextPageFamilyState(queryIdentifier))
           .getValue();
@@ -106,7 +110,7 @@ export const useLazyFetchMoreRecordsWithPagination = <
           try {
             const { data: fetchMoreDataResult } = await fetchMore({
               variables: {
-                limit,
+                limit: effectiveLimit,
                 filter,
                 orderBy,
                 lastCursor: isNonEmptyString(lastCursorLocal)
@@ -187,6 +191,7 @@ export const useLazyFetchMoreRecordsWithPagination = <
       fetchMore,
       filter,
       orderBy,
+      limit,
       handleFindManyRecordsError,
     ],
   );
