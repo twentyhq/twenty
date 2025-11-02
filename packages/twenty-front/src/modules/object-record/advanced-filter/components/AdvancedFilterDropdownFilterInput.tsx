@@ -10,8 +10,8 @@ import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter
 import { ObjectFilterDropdownCountrySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCountrySelect';
 import { ObjectFilterDropdownCurrencySelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect';
 import { ObjectFilterDropdownDateInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownDateInput';
+import { ObjectFilterDropdownDateTimeInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownDateTimeInput';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
-import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { isFilterOnActorSourceSubField } from '@/object-record/object-filter-dropdown/utils/isFilterOnActorSourceSubField';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -49,9 +49,8 @@ export const AdvancedFilterDropdownFilterInput = ({
           <AdvancedFilterDropdownTextInput recordFilter={recordFilter} />
         ))}
       {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
-      {DATE_FILTER_TYPES.includes(filterType) && (
-        <ObjectFilterDropdownDateInput />
-      )}
+      {filterType === 'DATE_TIME' && <ObjectFilterDropdownDateTimeInput />}
+      {filterType === 'DATE' && <ObjectFilterDropdownDateInput />}
       {filterType === 'RELATION' && (
         <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
           <ObjectFilterDropdownSearchInput />

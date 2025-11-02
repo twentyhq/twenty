@@ -14,7 +14,6 @@ export type Scalars = {
   Int: number;
   Float: number;
   ConnectionCursor: any;
-  Date: any;
   DateTime: string;
   JSON: any;
   JSONObject: any;
@@ -1006,15 +1005,15 @@ export type DatabaseEventTriggerIdInput = {
   id: Scalars['String'];
 };
 
-export type DateFilter = {
-  eq?: InputMaybe<Scalars['Date']>;
-  gt?: InputMaybe<Scalars['Date']>;
-  gte?: InputMaybe<Scalars['Date']>;
-  in?: InputMaybe<Array<Scalars['Date']>>;
+export type DateTimeFilter = {
+  eq?: InputMaybe<Scalars['DateTime']>;
+  gt?: InputMaybe<Scalars['DateTime']>;
+  gte?: InputMaybe<Scalars['DateTime']>;
+  in?: InputMaybe<Array<Scalars['DateTime']>>;
   is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['Date']>;
-  lte?: InputMaybe<Scalars['Date']>;
-  neq?: InputMaybe<Scalars['Date']>;
+  lt?: InputMaybe<Scalars['DateTime']>;
+  lte?: InputMaybe<Scalars['DateTime']>;
+  neq?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type DeleteApprovedAccessDomainInput = {
@@ -2823,12 +2822,12 @@ export type ObjectPermissionInput = {
 
 export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  createdAt?: InputMaybe<DateFilter>;
-  deletedAt?: InputMaybe<DateFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  deletedAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<UuidFilter>;
   not?: InputMaybe<ObjectRecordFilterInput>;
   or?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  updatedAt?: InputMaybe<DateFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
 export type ObjectStandardOverrides = {
