@@ -48,7 +48,6 @@ function App() {
 
       }}>save person to twenty</button>
     }
-
     {
       isCompanyValue(value) &&
       <button onClick={async () => {
@@ -58,8 +57,6 @@ function App() {
 
       }}>save company to twenty</button>
     }
-
-
     </StyledMain>
   );
 }
