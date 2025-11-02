@@ -1,15 +1,19 @@
 {
   "version": "0.0.1",
-   "type": "module", 
+  "type": "module",
   "license": "MIT",
   "engines": {
-    "node": "^24.5.0",
+    "node": "^18.0.0 || ^20.0.0 || ^22.0.0",
     "npm": "please-use-yarn",
     "yarn": ">=4.0.2"
   },
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
-    "@types/node": "^24.9.2"
+    "@types/node": "^20.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit"
   },
   "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/appManifest.schema.json",
   "universalIdentifier": "f15a0c72-f7b4-4d20-9e97-ade1122d4bd7",
@@ -43,9 +47,8 @@
     }
   },
   "dependencies": {
-    "axios": "^1.12.2",
-    "openai": "^6.7.0",
-    "typescript": "^5.9.3"
+    "axios": "^1.7.0",
+    "openai": "^4.67.0",
+    "typescript": "^5.6.0"
   }
-  
 }
