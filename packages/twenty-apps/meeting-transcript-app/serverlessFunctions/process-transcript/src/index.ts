@@ -164,6 +164,129 @@ const lookupWorkspaceMemberByName = async (
   }
 };
 
+// NEW: Lookup person ID by name using GraphQL
+const lookupPersonByName = async (
+  name: string,
+): Promise<string | null> => {
+  const { apiKey, baseUrl } = getTwentyApiConfig();
+  
+  try {
+    const graphqlQuery = {
+      query: `
+        query GetAllPeople {
+          people {
+            edges {
+              node {
+                id
+                name {
+                  firstName
+                  lastName
+                }
+              }
+            }
+          }
+        }
+      `,
+    };
+    
+    const response = await axios.post(
+      `${baseUrl}/graphql`,
+      graphqlQuery,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+      },
+    );
+    
+    const edges = response.data?.data?.people?.edges;
+    
+    if (!edges || edges.length === 0) {
+      console.log('⚠️ No people found in CRM');
+      return null;
+    }
+
+    const searchName = name.trim().toLowerCase();
+    
+    // Exact full name match
+    for (const edge of edges) {
+      const firstName = edge.node.name?.firstName || '';
+      const lastName = edge.node.name?.lastName || '';
+      const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
+      
+      if (fullName === searchName) {
+        console.log(`✅ Found person (exact): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        return edge.node.id;
+      }
+    }
+    
+    // First name match
+    for (const edge of edges) {
+      const firstName = edge.node.name?.firstName || '';
+      if (firstName.toLowerCase() === searchName) {
+        const lastName = edge.node.name?.lastName || '';
+        console.log(`✅ Found person (first name): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        return edge.node.id;
+      }
+    }
+    
+    // Last name match
+    for (const edge of edges) {
+      const lastName = edge.node.name?.lastName || '';
+      if (lastName.toLowerCase() === searchName) {
+        const firstName = edge.node.name?.firstName || '';
+        console.log(`✅ Found person (last name): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        return edge.node.id;
+      }
+    }
+    
+    // Partial match
+    for (const edge of edges) {
+      const firstName = edge.node.name?.firstName || '';
+      const lastName = edge.node.name?.lastName || '';
+      const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
+      
+      if (fullName.includes(searchName) || searchName.includes(fullName)) {
+        console.log(`✅ Found person (partial): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        return edge.node.id;
+      }
+    }
+    
+    console.log(`⚠️ No person found matching: "${name}"`);
+    return null;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data
+        ? JSON.stringify(error.response.data, null, 2)
+        : error.message;
+      console.error(`❌ Failed to lookup person "${name}": ${errorMessage}`);
+    }
+    return null;
+  }
+};
+
+// NEW: Extract person names from task description
+const extractPersonNamesFromDescription = (description: string, participants: string[]): string[] => {
+  const foundNames: string[] = [];
+  
+  for (const participant of participants) {
+    // Check if full name appears in description
+    if (description.includes(participant)) {
+      foundNames.push(participant);
+      continue;
+    }
+    
+    // Check if first name appears
+    const firstName = participant.split(' ')[0];
+    if (firstName && description.includes(firstName)) {
+      foundNames.push(participant);
+    }
+  }
+  
+  return foundNames;
+};
+
 const formatNoteBody = (summary: string, keyPoints: string[]): string => {
   const keyPointsList = keyPoints.map((point) => `- ${point}`).join('\n');
   return `## Summary\n\n${summary}\n\n## Key Points\n\n${keyPointsList}\n\n*Generated from meeting transcript*`;
@@ -387,10 +510,12 @@ const createTaskInTwenty = async (
   }
 };
 
+// MODIFIED: Now accepts participants array and uses smart person linking
 const createTasksFromActionItems = async (
   actionItems: ActionItem[],
   noteId: string,
   relatedPersonId: string,
+  participants: string[],
 ): Promise<string[]> => {
   const taskIds: string[] = [];
 
@@ -398,12 +523,36 @@ const createTasksFromActionItems = async (
     try {
       const taskDescription = `${actionItem.description}\n\n*Related to meeting note: ${noteId}*`;
       console.log(`Creating task: "${actionItem.title}"`);
+      
+      // Extract person names mentioned in the description
+      const mentionedPeople = extractPersonNamesFromDescription(actionItem.description, participants);
+      console.log(`📝 People mentioned in task description:`, mentionedPeople);
+      
+      // Create the task first
       const task = await createTaskInTwenty({
         ...actionItem,
         description: taskDescription,
-      }, relatedPersonId);
+      });
       taskIds.push(task.id);
-      console.log(`✅ Task added to results: ${task.id}`);
+      console.log(`✅ Task created: ${task.id}`);
+      
+      // Link task to all mentioned people (not just relatedPersonId)
+      if (mentionedPeople.length > 0) {
+        for (const personName of mentionedPeople) {
+          const personId = await lookupPersonByName(personName);
+          if (personId) {
+            await linkTaskToPersonREST(task.id, personId);
+          } else {
+            console.log(`⚠️ Could not find person "${personName}" in CRM, skipping link`);
+          }
+        }
+      } else {
+        // Fallback: if no specific people mentioned, use relatedPersonId
+        console.log(`⚠️ No specific people mentioned, using relatedPersonId as fallback`);
+        await linkTaskToPersonREST(task.id, relatedPersonId);
+      }
+      
+      console.log(`✅ Task linking complete: ${task.id}`);
     } catch (error) {
       console.error(`❌ Task creation failed for "${actionItem.title}":`, error instanceof Error ? error.message : error);
     }
@@ -427,8 +576,16 @@ const createTasksFromCommitments = async (
         description: taskDescription,
         assignee: commitment.person,
         dueDate: commitment.dueDate || '',
-      }, relatedPersonId);
+      });
       taskIds.push(task.id);
+      
+      // Link to the person who made the commitment
+      const personId = await lookupPersonByName(commitment.person);
+      if (personId) {
+        await linkTaskToPersonREST(task.id, personId);
+      } else {
+        await linkTaskToPersonREST(task.id, relatedPersonId);
+      }
     } catch (error) {
       console.error(`Commitment task creation failed for "${commitment.commitment}":`, error);
     }
@@ -580,7 +737,7 @@ export const main = async (
       throw new Error('Unauthorized webhook access: Invalid or missing token.');
     }
     
-    const { transcript, meetingTitle, meetingDate, relatedPersonId } = params;
+    const { transcript, meetingTitle, meetingDate, relatedPersonId, participants } = params;
 
     if (!transcript || typeof transcript !== 'string') {
       throw new Error('Transcript is required and must be a string');
@@ -617,6 +774,7 @@ export const main = async (
       analysis.actionItems,
       note.id,
       relatedPersonId,
+      participants || [],
     );
     log(`✅ Action item tasks created: ${actionItemTaskIds.length}`);
     
