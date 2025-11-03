@@ -59,37 +59,38 @@ export class MigrateChannelPartialFullSyncStagesCommand extends ActiveOrSuspende
     schemaName: string,
     options: RunOnWorkspaceArgs['options'],
   ): Promise<void> {
-      let messageChannelUpdateResult: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let messageChannelUpdateResult: any;
 
-      const tableName = 'messageChannel';
+    const tableName = 'messageChannel';
 
-      if (options.dryRun) {
-        this.logger.log(
-          `Would migrate deprecated messageChannel sync stages for workspace ${workspaceId}`,
-        );
+    if (options.dryRun) {
+      this.logger.log(
+        `Would migrate deprecated messageChannel sync stages for workspace ${workspaceId}`,
+      );
 
-        return;
-      }
+      return;
+    }
 
-      try {
-        messageChannelUpdateResult = await this.coreDataSource.query(
-          `UPDATE "${schemaName}"."${tableName}"
+    try {
+      messageChannelUpdateResult = await this.coreDataSource.query(
+        `UPDATE "${schemaName}"."${tableName}"
           SET "syncStage" = 'MESSAGE_LIST_FETCH_PENDING'
           WHERE "syncStage" IN ('FULL_MESSAGE_LIST_FETCH_PENDING', 'PARTIAL_MESSAGE_LIST_FETCH_PENDING')`,
-        );
-      } catch {
-        this.logger.log(
-          `Error (expected) while trying to migrate messageChannel sync stages for workspace ${workspaceId}, nothing to migrate`,
-        );
-
-        return;
-      }
-
-      const messageChannelRowsUpdated = messageChannelUpdateResult[1] || 0;
-
-      this.logger.log(
-        `Migrated ${messageChannelRowsUpdated} messageChannel records from deprecated sync stages in workspace ${workspaceId}`,
       );
+    } catch {
+      this.logger.log(
+        `Error (expected) while trying to migrate messageChannel sync stages for workspace ${workspaceId}, nothing to migrate`,
+      );
+
+      return;
+    }
+
+    const messageChannelRowsUpdated = messageChannelUpdateResult[1] || 0;
+
+    this.logger.log(
+      `Migrated ${messageChannelRowsUpdated} messageChannel records from deprecated sync stages in workspace ${workspaceId}`,
+    );
   }
 
   private async migrateCalendarChannelSyncStages(
@@ -97,6 +98,7 @@ export class MigrateChannelPartialFullSyncStagesCommand extends ActiveOrSuspende
     schemaName: string,
     options: RunOnWorkspaceArgs['options'],
   ): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let calendarChannelUpdateResult: any;
 
     const tableName = 'calendarChannel';
