@@ -584,10 +584,10 @@ msgstr "Не вдається підключитися до {connectFieldName}. 
 msgid "Can't impersonate user via api key"
 msgstr "Не можу імперсонувати користувача через ключ API."
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "Неможливо активувати нечернеткову або не останню опубліковану версію"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +619,6 @@ msgstr "Неможливо вимкнути не активну версію р�
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Неможливо увімкнути унікальність через наявність дублікатів. Будь ласка, перевірте та виправте ваші дані спочатку (включаючи м'яко видалені записи)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "Не може бути більше однієї активної версії робочого процесу"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts

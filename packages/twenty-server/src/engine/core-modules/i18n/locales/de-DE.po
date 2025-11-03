@@ -584,10 +584,10 @@ msgstr "Keine Verbindung zu {connectFieldName}. Kein eindeutiger Eintrag mit dem
 msgid "Can't impersonate user via api key"
 msgstr "Nutzer kann nicht über API-Schlüssel imitiert werden"
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "Nicht-Entwurfs- oder Nicht-zuletzt-veröffentlichte Version kann nicht aktiviert werden"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +619,6 @@ msgstr "Nicht-aktive Workflow-Version kann nicht deaktiviert werden"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Die Einzigartigkeit kann aufgrund vorhandener doppelter Werte nicht aktiviert werden. Bitte überprüfen und korrigieren Sie zuerst Ihre Daten (einschließlich weich gelöschter Datensätze)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "Es kann nicht mehr als eine aktive Workflow-Version geben"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
