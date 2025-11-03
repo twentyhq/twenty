@@ -16,10 +16,8 @@ export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const {
-    activeNonSystemObjectMetadataItems,
-    alphaSortedActiveNonSystemObjectMetadataItems,
-  } = useFilteredObjectMetadataItems();
+  const { alphaSortedActiveNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
 
   const readableAlphaSortedActiveNonSystemObjectMetadataItems = useMemo(() => {
     return alphaSortedActiveNonSystemObjectMetadataItems.filter((item) => {
@@ -36,11 +34,11 @@ export const useDefaultHomePagePath = () => {
 
   const getActiveObjectMetadataItemMatchingId = useCallback(
     (objectMetadataId: string) => {
-      return activeNonSystemObjectMetadataItems.find(
+      return readableAlphaSortedActiveNonSystemObjectMetadataItems.find(
         (item) => item.id === objectMetadataId,
       );
     },
-    [activeNonSystemObjectMetadataItems],
+    [readableAlphaSortedActiveNonSystemObjectMetadataItems],
   );
 
   const getFirstView = useRecoilCallback(({ snapshot }) => {
@@ -76,20 +74,13 @@ export const useDefaultHomePagePath = () => {
           .getLoadable(lastVisitedObjectMetadataItemIdState)
           .getValue();
 
-        if (
-          !isDefined(lastVisitedObjectMetadataItemId) ||
-          !getObjectPermissionsFromMapByObjectMetadataId({
-            objectPermissionsByObjectMetadataId,
-            objectMetadataId: lastVisitedObjectMetadataItemId,
-          }).canReadObjectRecords
-        ) {
-          return firstObjectPathInfo;
-        }
-
-        const lastVisitedObjectMetadataItem =
-          getActiveObjectMetadataItemMatchingId(
-            lastVisitedObjectMetadataItemId,
-          );
+        const lastVisitedObjectMetadataItem = isDefined(
+          lastVisitedObjectMetadataItemId,
+        )
+          ? getActiveObjectMetadataItemMatchingId(
+              lastVisitedObjectMetadataItemId,
+            )
+          : undefined;
 
         if (isDefined(lastVisitedObjectMetadataItem)) {
           return {
@@ -101,12 +92,7 @@ export const useDefaultHomePagePath = () => {
         return firstObjectPathInfo;
       };
     },
-    [
-      firstObjectPathInfo,
-      getActiveObjectMetadataItemMatchingId,
-      getFirstView,
-      objectPermissionsByObjectMetadataId,
-    ],
+    [firstObjectPathInfo, getActiveObjectMetadataItemMatchingId, getFirstView],
   );
 
   const defaultHomePagePath = useMemo(() => {

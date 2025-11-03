@@ -1,9 +1,9 @@
 import { useArgs } from '@storybook/preview-api';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
-import { DateTimePicker } from '../InternalDatePicker';
 import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { DateTimePicker } from '../DateTimePicker';
 
 const meta: Meta<typeof DateTimePicker> = {
   title: 'UI/Input/Internal/InternalDatePicker',

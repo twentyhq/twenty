@@ -1,11 +1,18 @@
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import {
+  combineFilters,
   computeRecordGqlOperationFilter,
   isDefined,
+  turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
 const DATE_RANGE_FILTER_AFTER_ID = 'DATE_RANGE_FILTER_AFTER_ID';
@@ -17,6 +24,20 @@ export const useRecordCalendarQueryDateRangeFilter = (selectedDate: Date) => {
     useRecordCalendarMonthDaysRange(selectedDate);
 
   const { currentView } = useGetCurrentViewOnly();
+
+  const currentRecordFilterGroups = useRecoilComponentValue(
+    currentRecordFilterGroupsComponentState,
+  );
+
+  const currentRecordFilters = useRecoilComponentValue(
+    currentRecordFiltersComponentState,
+  );
+
+  const { filterValueDependencies } = useFilterValueDependencies();
+
+  const anyFieldFilterValue = useRecoilComponentValue(
+    anyFieldFilterValueComponentState,
+  );
 
   if (
     !isDefined(currentView) ||
@@ -50,13 +71,25 @@ export const useRecordCalendarQueryDateRangeFilter = (selectedDate: Date) => {
   };
 
   const dateRangeFilter = computeRecordGqlOperationFilter({
-    filterValueDependencies: {},
-    recordFilters: [dateRangeFilterAfter, dateRangeFilterBefore],
-    recordFilterGroups: [],
+    filterValueDependencies,
+    recordFilters: [
+      ...currentRecordFilters,
+      dateRangeFilterAfter,
+      dateRangeFilterBefore,
+    ],
+    recordFilterGroups: currentRecordFilterGroups,
     fields: objectMetadataItem.fields,
   });
 
+  const { recordGqlOperationFilter: anyFieldFilter } =
+    turnAnyFieldFilterIntoRecordGqlFilter({
+      fields: objectMetadataItem.fields,
+      filterValue: anyFieldFilterValue,
+    });
+
+  const combinedFilter = combineFilters([dateRangeFilter, anyFieldFilter]);
+
   return {
-    dateRangeFilter,
+    dateRangeFilter: combinedFilter,
   };
 };

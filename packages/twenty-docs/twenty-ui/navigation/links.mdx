@@ -1,0 +1,186 @@
+---
+title: Links
+image: /images/user-guide/what-is-twenty/20.png
+---
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Contact Link
+
+A stylized link component for displaying contact information.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from 'twenty-ui/navigation';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+
+</Tab>
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| className | string | Optional name for additional styling |
+| href | string | The target URL or path for the link |
+| onClick | function | Callback function to be triggered when the link is clicked |
+| children | `React.ReactNode` | The content to be displayed inside the link |
+
+
+
+
+</Tab>
+
+</Tabs>
+
+## Raw Link
+
+A stylized link component for displaying links. 
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+
+```
+
+
+</Tab>
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| className | string | Optional name for additional styling |
+| href | string | The target URL or path for the link |
+| onClick | function | Callback function to be triggered when the link is clicked |
+| children | `React.ReactNode` | The content to be displayed inside the link |
+
+
+
+
+</Tab>
+</Tabs>
+
+
+## Rounded Link
+
+A rounded-styled link with a Chip component for links.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| href | string | The target URL or path for the link |
+| children | `React.ReactNode` | The content to be displayed inside the link |
+| onClick | function | Callback function to be triggered when the link is clicked |
+
+
+
+</Tab>
+</Tabs>
+
+## Social Link
+
+Stylized social links, with support for various social link types, such as URLs, LinkedIn, and X (or Twitter).  
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| href | string | The target URL or path for the link |
+| children | `React.ReactNode` | The content to be displayed inside the link |
+| type | string | The type of social links. Options include: `url`, `LinkedIn`, and `Twitter` |
+| onClick | function | Callback function to be triggered when the link is clicked |
+
+
+
+
+</Tab>
+</Tabs>
+

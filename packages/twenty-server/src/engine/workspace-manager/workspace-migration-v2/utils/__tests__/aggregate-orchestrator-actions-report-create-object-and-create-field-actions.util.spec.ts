@@ -6,7 +6,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { EMPTY_ORCHESTRATOR_ACTIONS_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
+import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report-create-object-and-create-field-actions.util';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
@@ -26,7 +26,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         'should aggregate single object with multiple fields into one object action',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
             created: [
               {
@@ -83,7 +83,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         'should keep separate field actions when no matching object action exists',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -147,7 +147,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
       title: 'should handle multiple objects with their respective fields',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
             created: [
               {
@@ -228,7 +228,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         'should handle mixed scenario with some fields merged and some kept separate',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
             created: [
               {
@@ -293,7 +293,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
         'should aggregate multiple field actions for the same object when no create object action exists',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -356,7 +356,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
     {
       title: 'should handle empty actions report',
       context: {
-        input: EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+        input: createEmptyOrchestratorActionsReport(),
         expected: {
           expectCreateFieldActionPerObjectMetadataId: {},
           expectCreateObjectActionPerObjectMetadataId: {},

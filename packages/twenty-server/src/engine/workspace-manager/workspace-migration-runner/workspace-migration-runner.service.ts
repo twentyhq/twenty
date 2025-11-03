@@ -189,10 +189,12 @@ export class WorkspaceMigrationRunnerService {
 
       case WorkspaceMigrationTableActionType.ALTER_INDEXES:
         if (tableMigration.indexes && tableMigration.indexes.length > 0) {
+          const tableName = tableMigration.newName ?? tableMigration.name;
+
           await this.handleIndexesChanges(
             queryRunner,
             schemaName,
-            tableMigration.newName ?? tableMigration.name,
+            tableName,
             tableMigration.indexes,
           );
         }
