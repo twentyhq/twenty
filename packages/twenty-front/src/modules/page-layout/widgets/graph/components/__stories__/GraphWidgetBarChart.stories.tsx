@@ -777,7 +777,6 @@ export const GroupedWithAllBarsTooltip: Story = {
     yAxisLabel: 'Revenue',
     groupMode: 'grouped',
     id: 'bar-chart-grouped-all-tooltip',
-    enableGroupTooltip: true,
   },
   render: (args) => (
     <Container>
@@ -793,7 +792,6 @@ export const GroupedWithAllBarsTooltip: Story = {
         yAxisLabel={args.yAxisLabel}
         groupMode={args.groupMode}
         id={args.id}
-        enableGroupTooltip={args.enableGroupTooltip}
       />
     </Container>
   ),

@@ -23,13 +23,24 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { type ComputedBarDatum, ResponsiveBar } from '@nivo/bar';
+import {
+  type BarDatum,
+  type ComputedBarDatum,
+  type ComputedDatum,
+  ResponsiveBar,
+} from '@nivo/bar';
 import { useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 const LEGEND_THRESHOLD = 10;
+const TOOLTIP_OFFSET_X = 15;
+
+type Position = {
+  x: number;
+  y: number;
+};
 
 const StyledTooltipWrapper = styled.div<{ left: number; top: number }>`
   left: ${({ left }) => left}px;
@@ -92,12 +103,19 @@ export const GraphWidgetBarChart = ({
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
+  // Chart dimensions
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [anchoredPosition, setAnchoredPosition] = useState({ x: 0, y: 0 });
-  const [hoveredDatum, setHoveredDatum] = useState<any>(null);
+
+  // Tooltip state
+  const [hoveredDatum, setHoveredDatum] =
+    useState<ComputedDatum<BarDatum> | null>(null);
+  const [mousePosition, setMousePosition] = useState<Position>({ x: 0, y: 0 });
+  const [anchoredPosition, setAnchoredPosition] = useState<Position>({
+    x: 0,
+    y: 0,
+  });
   const [isChartHovered, setIsChartHovered] = useState(false);
   const [isTooltipHovered, setIsTooltipHovered] = useState(false);
 
@@ -113,11 +131,10 @@ export const GraphWidgetBarChart = ({
     customFormatter,
   };
 
-  const { setHoveredBar, handleBarClick, hasClickableItems } =
-    useBarChartHandlers({
-      data,
-      indexBy,
-    });
+  const { handleBarClick, hasClickableItems } = useBarChartHandlers({
+    data,
+    indexBy,
+  });
 
   const chartTheme = useBarChartTheme();
 
@@ -288,17 +305,9 @@ export const GraphWidgetBarChart = ({
             setAnchoredPosition({ x: mousePosition.x, y: mousePosition.y });
             setIsChartHovered(true);
             debouncedSetChartHovered.cancel();
-
-            if (isDefined(datum.id) && isDefined(datum.indexValue)) {
-              setHoveredBar({
-                key: String(datum.id),
-                indexValue: datum.indexValue,
-              });
-            }
           }}
           onMouseLeave={() => {
             debouncedSetChartHovered(false);
-            setHoveredBar(null);
           }}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
@@ -308,8 +317,10 @@ export const GraphWidgetBarChart = ({
         <>
           {createPortal(
             <StyledTooltipWrapper
-              left={anchoredPosition.x + 15}
+              left={anchoredPosition.x + TOOLTIP_OFFSET_X}
               top={anchoredPosition.y}
+              role="tooltip"
+              aria-live="polite"
               onMouseEnter={() => {
                 debouncedSetChartHovered.cancel();
                 setIsTooltipHovered(true);
