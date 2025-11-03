@@ -54,9 +54,11 @@ export const CommandMenuPageLayoutIframeSettings = () => {
   const configUrl =
     widgetInEditMode.configuration && 'url' in widgetInEditMode.configuration
       ? widgetInEditMode.configuration.url
-      : '';
+      : null;
 
-  const [url, setUrl] = useState(isString(configUrl) ? configUrl : '');
+  const [url, setUrl] = useState<string | null>(
+    isString(configUrl) ? configUrl : null,
+  );
   const [urlError, setUrlError] = useState('');
 
   const validateUrl = (urlString: string): boolean => {
@@ -80,10 +82,11 @@ export const CommandMenuPageLayoutIframeSettings = () => {
     setUrl(value);
 
     if (validateUrl(value)) {
+      const trimmedValue = value.trim();
       updatePageLayoutWidget(widgetInEditMode.id, {
         configuration: {
           ...widgetInEditMode.configuration,
-          url: value.trim(),
+          url: trimmedValue || null,
         },
       });
     }
