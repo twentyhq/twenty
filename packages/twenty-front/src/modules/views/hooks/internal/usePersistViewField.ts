@@ -8,65 +8,63 @@ import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type CreateCoreViewFieldMutationVariables,
+  CreateManyCoreViewFieldsMutationVariables,
   type DeleteCoreViewFieldMutationVariables,
   type DestroyCoreViewFieldMutationVariables,
   type UpdateCoreViewFieldMutationVariables,
-  useCreateCoreViewFieldMutation,
+  useCreateManyCoreViewFieldsMutation,
   useDeleteCoreViewFieldMutation,
   useDestroyCoreViewFieldMutation,
   useUpdateCoreViewFieldMutation,
 } from '~/generated/graphql';
-
 export const usePersistViewField = () => {
   const { triggerViewFieldOptimisticEffect } =
     useTriggerViewFieldOptimisticEffect();
 
-  const [createCoreViewFieldMutation] = useCreateCoreViewFieldMutation();
+  const [createManyCoreViewFieldsMutation] =
+    useCreateManyCoreViewFieldsMutation();
   const [updateCoreViewFieldMutation] = useUpdateCoreViewFieldMutation();
   const [deleteCoreViewFieldMutation] = useDeleteCoreViewFieldMutation();
   const [destroyCoreViewFieldMutation] = useDestroyCoreViewFieldMutation();
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-
   const createViewFields = useCallback(
     async (
-      createCoreViewFieldInputs: CreateCoreViewFieldMutationVariables[],
+      createCoreViewFieldInputs: CreateManyCoreViewFieldsMutationVariables,
     ): Promise<
-      MetadataRequestResult<
-        Awaited<ReturnType<typeof createCoreViewFieldMutation>>[]
-      >
+      MetadataRequestResult<Awaited<
+        ReturnType<typeof createManyCoreViewFieldsMutation>
+      > | null>
     > => {
-      if (createCoreViewFieldInputs.length === 0) {
+      if (
+        !Array.isArray(createCoreViewFieldInputs.inputs) ||
+        createCoreViewFieldInputs.inputs.length === 0
+      ) {
         return {
           status: 'successful',
-          response: [],
+          response: null,
         };
       }
 
       try {
-        const results = await Promise.all(
-          createCoreViewFieldInputs.map(async (variables) =>
-            createCoreViewFieldMutation({
-              variables,
-              update: (_cache, { data }) => {
-                const createdViewField = data?.createCoreViewField;
-                if (!isDefined(createdViewField)) {
-                  return;
-                }
+        const result = await createManyCoreViewFieldsMutation({
+          variables: createCoreViewFieldInputs,
+          update: (_cache, { data }) => {
+            const createdViewFields = data?.createManyCoreViewFields;
+            if (!isDefined(createdViewFields)) {
+              return;
+            }
 
-                triggerViewFieldOptimisticEffect({
-                  createdViewFields: [createdViewField],
-                });
-              },
-            }),
-          ),
-        );
+            triggerViewFieldOptimisticEffect({
+              createdViewFields,
+            });
+          },
+        });
 
         return {
           status: 'successful',
-          response: results,
+          response: result,
         };
       } catch (error) {
         if (error instanceof ApolloError) {
@@ -85,7 +83,7 @@ export const usePersistViewField = () => {
     },
     [
       triggerViewFieldOptimisticEffect,
-      createCoreViewFieldMutation,
+      createManyCoreViewFieldsMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
     ],
