@@ -218,6 +218,7 @@ describe('Fireflies Webhook Integration v2', () => {
               people: { edges: [] },
               createPerson: { id: 'new-person-id' },
               createNote: { id: 'new-note-id' },
+              createMeeting: { id: 'new-meeting-id' },
             },
           }),
         });
@@ -302,6 +303,7 @@ describe('Fireflies Webhook Integration v2', () => {
               people: { edges: [] },
               createPerson: { id: 'new-person-id' },
               createNote: { id: 'new-note-id' },
+              createMeeting: { id: 'new-meeting-id' },
             },
           }),
         });
@@ -391,6 +393,7 @@ describe('Fireflies Webhook Integration v2', () => {
               people: { edges: [] },
               createPerson: { id: 'new-person-id' },
               createNote: { id: 'new-note-id' },
+              createMeeting: { id: 'new-meeting-id' },
             },
           }),
         });
@@ -433,6 +436,7 @@ describe('Fireflies Webhook Integration v2', () => {
               people: { edges: [] },
               createPerson: { id: 'new-person-id' },
               createNote: { id: 'new-note-id' },
+              createMeeting: { id: 'new-meeting-id' },
             },
           }),
         });
@@ -484,6 +488,7 @@ describe('Fireflies Webhook Integration v2', () => {
               people: { edges: [] },
               createPerson: { id: 'new-person-id' },
               createNote: { id: 'new-note-id' },
+              createMeeting: { id: 'new-meeting-id' },
             },
           }),
         });
@@ -527,6 +532,7 @@ describe('Fireflies Webhook Integration v2', () => {
               people: { edges: [] },
               createPerson: { id: 'new-person-id' },
               createNote: { id: 'new-note-id' },
+              createMeeting: { id: 'new-meeting-id' },
             },
           }),
         });
@@ -588,6 +594,7 @@ describe('Fireflies Webhook Integration v2', () => {
               meetings: { edges: [] },
               people: { edges: [] },
               createPerson: { id: 'new-person-id' },
+              createMeeting: { id: 'new-meeting-id' },
             },
           }),
         });
@@ -635,6 +642,14 @@ describe('Fireflies Webhook Integration v2', () => {
             ok: true,
             json: () => Promise.resolve({
               data: { createMeeting: { id: 'new-meeting-id' } },
+            }),
+          });
+        }
+        if (body.query?.includes('createNote')) {
+          return Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({
+              data: { createNote: { id: 'new-note-id' } },
             }),
           });
         }
