@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   workflow_call:
   push:
-    branches: ['main']
+    branches: ['main', 'feat/docs-i18n-workflow']
     paths:
       - 'packages/twenty-docs/**/*.mdx'
       - '!packages/twenty-docs/fr/**'
