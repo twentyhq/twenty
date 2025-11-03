@@ -71,6 +71,7 @@ export class WorkflowTriggerResolver {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMember = await workspaceMemberRepository.findOneOrFail({
