@@ -31,12 +31,14 @@ files: [
   {
     #
     # MDX documentation files for Mintlify
-    # Source files: English MDX files in packages/twenty-docs (exclude locale folders)
+    # Source: packages/twenty-docs/user-guide/getting-started/what-is-twenty.mdx
+    # Translation: packages/twenty-docs/fr/user-guide/getting-started/what-is-twenty.mdx
+    # %file_name% preserves subdirectory structure relative to source
     #
-    "source": "packages/twenty-docs/developers/*.mdx",
+    "source": "packages/twenty-docs/**/*.mdx",
     "ignore": [
       "packages/twenty-docs/fr/**",
     ],
-    "translation": "packages/twenty-docs/%locale%/%original_path%"
+    "translation": "packages/twenty-docs/%two_letters_code%/%file_name%"
   }
 ]
