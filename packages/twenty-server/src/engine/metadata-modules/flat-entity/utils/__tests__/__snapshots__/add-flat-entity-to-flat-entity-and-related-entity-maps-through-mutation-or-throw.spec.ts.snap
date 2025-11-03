@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow should add a view and update related objectMetadata with viewId 1`] = `
+exports[`addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow should add a view and update related objectMetadata with viewId 1`] = `
 {
   "flatFieldMetadataMaps": {
     "byId": {
-      "007d510f-c7f4-4716-b61d-bad2849de279": {
-        "applicationId": "ceaca7b1-54df-463c-8803-4fe36051cf8d",
+      "6afe15d7-7b56-47c7-87a7-5ef58180e8ad": {
+        "applicationId": "752a73a3-59ed-4c14-a4ee-f08c3cade92d",
         "calendarViewIds": [
           "view-1",
         ],
@@ -13,7 +13,7 @@ exports[`addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow should add a view 
         "defaultValue": null,
         "description": "default flat field metadata description",
         "icon": "icon",
-        "id": "007d510f-c7f4-4716-b61d-bad2849de279",
+        "id": "6afe15d7-7b56-47c7-87a7-5ef58180e8ad",
         "isActive": true,
         "isCustom": true,
         "isLabelSyncedWithName": false,
@@ -38,14 +38,14 @@ exports[`addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow should add a view 
         "viewFieldIds": [],
         "viewFilterIds": [],
         "viewGroupIds": [],
-        "workspaceId": "33fdec86-ccf5-4052-9fd2-70184a6012b8",
+        "workspaceId": "8dc06885-1197-4463-965d-3b2a8a16beb8",
       },
     },
     "idByUniversalIdentifier": {
-      "field-universal-1": "007d510f-c7f4-4716-b61d-bad2849de279",
+      "field-universal-1": "6afe15d7-7b56-47c7-87a7-5ef58180e8ad",
     },
     "universalIdentifiersByApplicationId": {
-      "ceaca7b1-54df-463c-8803-4fe36051cf8d": [
+      "752a73a3-59ed-4c14-a4ee-f08c3cade92d": [
         "field-universal-1",
       ],
     },
@@ -95,7 +95,7 @@ exports[`addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow should add a view 
   "flatViewMaps": {
     "byId": {
       "view-1": {
-        "calendarFieldMetadataId": "007d510f-c7f4-4716-b61d-bad2849de279",
+        "calendarFieldMetadataId": "6afe15d7-7b56-47c7-87a7-5ef58180e8ad",
         "id": "view-1",
         "objectMetadataId": "object-1",
         "universalIdentifier": "view-universal-1",
