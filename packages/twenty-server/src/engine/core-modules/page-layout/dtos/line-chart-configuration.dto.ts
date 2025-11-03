@@ -140,6 +140,7 @@ export class LineChartConfigurationDTO {
   timezone?: string;
 
   @Field(() => Int, { nullable: true, defaultValue: CalendarStartDay.MONDAY })
+  @IsOptional()
   @Min(0)
   @Max(7)
   firstDayOfTheWeek?: number;
