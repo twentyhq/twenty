@@ -4,7 +4,7 @@ import { ensureWebsiteLeadObjectExists, ensureWebsiteLeadFieldsExist } from './s
 
 // Rate limiting helper: delay between API calls to avoid hitting limits
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-const RATE_LIMIT_DELAY = 1000;
+const RATE_LIMIT_DELAY = 800;
 
 export const main = async (): Promise<object> => {
   // Capture logs to return in response (create early so we can log everything)
@@ -32,7 +32,6 @@ export const main = async (): Promise<object> => {
   log('WEBMETIC_API_KEY: ' + (WEBMETIC_API_KEY ? '***SET***' : 'MISSING'));
   log('WEBMETIC_DOMAIN: ' + (WEBMETIC_DOMAIN || 'MISSING'));
   log('TWENTY_API_KEY: ' + (TWENTY_API_KEY ? '***SET***' : 'MISSING'));
-  log('TWENTY_API_KEY (preview): ' + (TWENTY_API_KEY ? `${TWENTY_API_KEY.substring(0, 30)}...${TWENTY_API_KEY.substring(TWENTY_API_KEY.length - 30)}` : 'MISSING'));
   log('TWENTY_API_BASE_URL: ' + TWENTY_API_BASE_URL);
   log('TWENTY_API_URL (REST): ' + TWENTY_API_URL);
 
@@ -102,12 +101,12 @@ export const main = async (): Promise<object> => {
         companiesProcessed: 0,
         sessionsProcessed: 0,
         logCount: logs.length,
-        detailedLog: logs.join('\\n')
+        detailedLog: logs.join('\n')
       };
     }
 
     const totalSessions = companies.reduce((sum, c) => sum + c.sessions.length, 0);
-    log(`\\n📊 Found ${companies.length} companies with ${totalSessions} total sessions`);
+    log(`\n📊 Found ${companies.length} companies with ${totalSessions} total sessions`);
     log('='.repeat(50));
 
     // 2. Process each company
@@ -123,7 +122,7 @@ export const main = async (): Promise<object> => {
 
     for (const company of companies) {
       try {
-        log(`\\n🏢 Processing: ${company.company_name} (${company.sessions.length} sessions)`);
+        log(`\n🏢 Processing: ${company.company_name} (${company.sessions.length} sessions)`);
 
         // Extract domain from company_url
         const domainMatch = company.company_url?.match(/^https?:\/\/(?:www\.)?([^\/]+)/);
@@ -145,7 +144,7 @@ export const main = async (): Promise<object> => {
         // Enhanced logging for debugging
         log(`   🔍 Searching for existing company...`);
         log(`   📡 API Call: GET ${existingCompaniesOptions.url}`);
-        log(`   🔑 Auth header: Bearer ${TWENTY_API_KEY?.substring(0, 20)}...${TWENTY_API_KEY?.substring(TWENTY_API_KEY.length - 10)}`);
+        log(`   🔑 Auth header: Bearer ***SET***`);
 
         const existingCompaniesResponse = await axios(existingCompaniesOptions);
         log(`   ✅ Response status: ${existingCompaniesResponse.status}`);
@@ -405,8 +404,8 @@ export const main = async (): Promise<object> => {
         const detailedError = `${errorMsg} - Details: ${JSON.stringify(errorDetails, null, 2)}`;
 
         // Enhanced error logging
-        console.error(`\\n❌ ${detailedError}`);
-        log(`\\n❌ ${detailedError}`);
+        console.error(`\n❌ ${detailedError}`);
+        log(`\n❌ ${detailedError}`);
 
         // Log additional diagnostic info
         if (error?.response) {
@@ -420,7 +419,7 @@ export const main = async (): Promise<object> => {
       }
     }
 
-    log('\\n' + '='.repeat(50));
+    log('\n' + '='.repeat(50));
     log('✅ Sync Completed Successfully!');
     log('='.repeat(50));
     log(`📊 Summary:`);
@@ -432,17 +431,17 @@ export const main = async (): Promise<object> => {
     log(`   Errors: ${results.errors.length}`);
 
     if (results.errors.length > 0) {
-      log('\\n⚠️  Errors encountered:');
+      log('\n⚠️  Errors encountered:');
       results.errors.forEach((err, i) => log(`   ${i + 1}. ${err}`));
     }
 
-    log('='.repeat(50) + '\\n');
+    log('='.repeat(50) + '\n');
 
     // Return results with formatted log string for easier viewing
     return {
       ...results,
       logCount: logs.length,
-      detailedLog: logs.join('\\n')
+      detailedLog: logs.join('\n')
     };
 
   } catch (error) {
