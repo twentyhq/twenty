@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString, IsUrl } from 'class-validator';
+import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 @ObjectType('IframeConfiguration')
 export class IframeConfigurationDTO {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @IsUrl()
-  url: string;
+  url?: string;
 }

@@ -1516,7 +1516,7 @@ export enum IdentityProviderType {
 
 export type IframeConfiguration = {
   __typename?: 'IframeConfiguration';
-  url: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
 };
 
 export type ImapSmtpCaldavConnectionParameters = {

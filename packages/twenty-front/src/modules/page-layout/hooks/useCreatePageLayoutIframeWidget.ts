@@ -47,7 +47,7 @@ export const useCreatePageLayoutIframeWidget = (
 
   const createPageLayoutIframeWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (title: string, url: string): PageLayoutWidget => {
+      (title: string, url: string | null): PageLayoutWidget => {
         const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();

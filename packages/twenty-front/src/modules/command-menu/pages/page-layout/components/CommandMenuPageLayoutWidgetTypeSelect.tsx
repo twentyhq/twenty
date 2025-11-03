@@ -52,7 +52,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const handleNavigateToIframeSettings = () => {
     if (!isDefined(pageLayoutEditingWidgetId)) {
-      const newWidget = createPageLayoutIframeWidget('Untitled iFrame', '');
+      const newWidget = createPageLayoutIframeWidget('Untitled iFrame', null);
 
       setPageLayoutEditingWidgetId(newWidget.id);
     }

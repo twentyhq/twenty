@@ -1,14 +1,15 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
-import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div<{ $isEditMode: boolean }>`
-  background: ${({ theme }) => theme.background.transparent.lighter};
   border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -49,19 +50,6 @@ const StyledErrorContainer = styled.div`
   text-align: center;
 `;
 
-const StyledErrorMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledErrorUrl = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-top: ${({ theme }) => theme.spacing(1)};
-  word-break: break-all;
-`;
-
 export type IframeWidgetProps = {
   widget: PageLayoutWidget;
 };
@@ -74,9 +62,7 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
   const configuration = widget.configuration;
 
   if (!configuration || !('url' in configuration)) {
-    throw new Error(
-      `Invalid configuration for widget ${widget.id}: missing url`,
-    );
+    throw new Error(`Invalid configuration for widget ${widget.id}`);
   }
 
   const url = configuration.url;
@@ -94,14 +80,11 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
     setHasError(true);
   };
 
-  if (hasError) {
+  if (hasError || !isDefined(url)) {
     return (
       <StyledContainer $isEditMode={isPageLayoutInEditMode}>
         <StyledErrorContainer>
-          <StyledErrorMessage>
-            <Trans>Failed to load content</Trans>
-          </StyledErrorMessage>
-          <StyledErrorUrl>{url}</StyledErrorUrl>
+          <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />
         </StyledErrorContainer>
       </StyledContainer>
     );
