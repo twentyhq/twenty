@@ -584,10 +584,10 @@ msgstr "Nelze se připojit k {connectFieldName}. Žádný jedinečný záznam ne
 msgid "Can't impersonate user via api key"
 msgstr "Nelze vámi se uživatele pomocí klíče API."
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "Nelze aktivovat neopravovaný nebo naposledy zveřejněný návrh"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +619,6 @@ msgstr "Nelze deaktivovat neaktivní verzi pracovního postupu"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Nelze povolit jedinečnost kvůli existujícím duplicitním hodnotám. Nejprve prosím zkontrolujte a opravte svá data (včetně měkkých odstraněných záznamů)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "Nelze mít více než jednu aktivní verzi pracovního postupu"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts

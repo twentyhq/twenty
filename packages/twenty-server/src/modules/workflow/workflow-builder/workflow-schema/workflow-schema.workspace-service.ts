@@ -294,6 +294,7 @@ export class WorkflowSchemaWorkspaceService {
       return this.computeRecordOutputSchema({
         objectType: availability.objectNameSingular,
         workspaceId,
+        maxDepth: 0,
       });
     }
 
@@ -395,6 +396,7 @@ export class WorkflowSchemaWorkspaceService {
               value: await this.computeRecordOutputSchema({
                 objectType: trigger.settings.availability.objectNameSingular,
                 workspaceId,
+                maxDepth: 0,
               }),
             };
           }

@@ -1,10 +1,14 @@
 import styled from '@emotion/styled';
 import { Draggable } from '@hello-pangea/dnd';
 
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
+import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { useRecoilValue } from 'recoil';
 
 const StyledDraggableContainer = styled.div`
   position: relative;
@@ -27,6 +31,27 @@ export const RecordCalendarCardDraggableContainer = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
+  const recordIndexCalendarFieldMetadataId = useRecoilValue(
+    recordIndexCalendarFieldMetadataIdState,
+  );
+
+  const calendarFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === recordIndexCalendarFieldMetadataId,
+  );
+
+  const isCalendarFieldReadOnly = calendarFieldMetadataItem
+    ? isFieldMetadataReadOnlyByPermissions({
+        objectPermissions,
+        fieldMetadataId: calendarFieldMetadataItem.id,
+      })
+    : false;
+
+  const isDragDisabled = isRecordReadOnly || isCalendarFieldReadOnly;
+
   return (
     <RecordCalendarCardComponentInstanceContext.Provider
       value={{ instanceId: recordId }}
@@ -35,7 +60,7 @@ export const RecordCalendarCardDraggableContainer = ({
         key={recordId}
         draggableId={recordId}
         index={index}
-        isDragDisabled={isRecordReadOnly}
+        isDragDisabled={isDragDisabled}
       >
         {(draggableProvided) => (
           <StyledDraggableContainer

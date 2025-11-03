@@ -3,7 +3,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import z from 'zod';
 
 const REGEX_FOR_RELATIVE_DATE_FILTER_STRINGIFIED_PARSING =
-  /((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK)(?:(?:;;([^;;]*);;)?(?:(\d\d\d\d-\d\d-\d\d);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?)?/;
+  /((?:THIS)|(?:PAST)|(?:NEXT))_(\d*)_(DAY|MONTH|YEAR|WEEK)(?:(?:;;([^;;]*);;)?(?:(MONDAY|SUNDAY|SATURDAY);;)?)?/;
 
 export const relativeDateFilterStringifiedSchema = z
   .string()
@@ -18,22 +18,13 @@ export const relativeDateFilterStringifiedSchema = z
       throw new Error(`Cannot parse stringified relative date filter`);
     }
 
-    const [
-      _,
-      direction,
-      amount,
-      unit,
-      timezone,
-      referenceDayAsString,
-      firstDayOfTheWeek,
-    ] = result;
+    const [_, direction, amount, unit, timezone, firstDayOfTheWeek] = result;
 
     return relativeDateFilterSchema.parse({
       direction,
       amount,
       unit,
       timezone,
-      referenceDayAsString,
       firstDayOfTheWeek,
     });
   });

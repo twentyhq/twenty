@@ -33,6 +33,12 @@ const StyledTitleContainer = styled.div`
   overflow: hidden;
 `;
 
+const StyledRightContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(0.5)};
+`;
+
 const StyledIconButton = styled(IconButton)`
   display: none;
 `;
@@ -56,16 +62,18 @@ export const WidgetCardHeader = ({
       <StyledTitleContainer>
         <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
       </StyledTitleContainer>
-      {isDefined(forbiddenDisplay) && forbiddenDisplay}
-      {!isEmpty && isInEditMode && onRemove && (
-        <StyledIconButton
-          onClick={onRemove}
-          Icon={IconTrash}
-          variant="tertiary"
-          size="small"
-          className="widget-card-remove-button"
-        />
-      )}
+      <StyledRightContainer>
+        {isDefined(forbiddenDisplay) && forbiddenDisplay}
+        {!isEmpty && isInEditMode && onRemove && (
+          <StyledIconButton
+            onClick={onRemove}
+            Icon={IconTrash}
+            variant="tertiary"
+            size="small"
+            className="widget-card-remove-button"
+          />
+        )}
+      </StyledRightContainer>
     </StyledWidgetCardHeader>
   );
 };
