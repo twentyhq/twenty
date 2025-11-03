@@ -33,7 +33,6 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
@@ -77,11 +76,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     );
 
     if (args.dryRun) {
-      return this.createDryRunResponse(
-        queryRunnerContext,
-        priorityRecord,
-        mergedData,
-      );
+      return this.createDryRunResponse(priorityRecord, mergedData);
     }
 
     const idsToDelete = args.ids.filter((id) => id !== priorityRecord.id);
@@ -136,14 +131,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       objectMetadataMaps: context.objectMetadataMaps,
     });
 
-    const manyToOneRelations = args.dryRun
-      ? this.getManyToOneRelations(context.objectMetadataItemWithFieldMaps)
-      : undefined;
-
     const recordsToMerge = await context.repository.find({
       where: { id: In(args.ids) },
       select: columnsToSelect,
-      ...(manyToOneRelations ? { relations: manyToOneRelations } : {}),
+      ...(args.dryRun
+        ? { relations: args.selectedFieldsResult.relations }
+        : {}),
     });
 
     if (recordsToMerge.length !== args.ids.length) {
@@ -153,104 +146,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       );
     }
 
-    if (args.dryRun && recordsToMerge.length > 0) {
-      await this.loadOneToManyRelations(
-        recordsToMerge as ObjectRecord[],
-        context,
-      );
-    }
-
     return recordsToMerge as ObjectRecord[];
-  }
-
-  private getManyToOneRelations(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  ): string[] {
-    return Object.values(objectMetadataItemWithFieldMaps.fieldsById)
-      .filter(
-        (field) =>
-          field?.type === FieldMetadataType.RELATION &&
-          (field.settings as FieldMetadataRelationSettings | undefined)
-            ?.relationType === RelationType.MANY_TO_ONE,
-      )
-      .map((field) => field.name);
-  }
-
-  private async loadOneToManyRelations(
-    recordsToMerge: ObjectRecord[],
-    context: CommonExtendedQueryRunnerContext,
-  ): Promise<void> {
-    const oneToManyFields = Object.values(
-      context.objectMetadataItemWithFieldMaps.fieldsById,
-    ).filter(
-      (field) =>
-        field?.type === FieldMetadataType.RELATION &&
-        (field.settings as FieldMetadataRelationSettings | undefined)
-          ?.relationType === RelationType.ONE_TO_MANY,
-    );
-
-    const recordIds = recordsToMerge.map((record) => record.id);
-    const limitPerRelation = QUERY_MAX_RECORDS;
-
-    for (const fieldMetadata of oneToManyFields) {
-      const relationSettings = fieldMetadata.settings as
-        | FieldMetadataRelationSettings
-        | undefined;
-
-      if (!relationSettings?.joinColumnName) {
-        continue;
-      }
-
-      if (!fieldMetadata.relationTargetObjectMetadataId) {
-        continue;
-      }
-
-      const targetObjectMetadata =
-        context.objectMetadataMaps.byId[
-          fieldMetadata.relationTargetObjectMetadataId
-        ];
-
-      if (!targetObjectMetadata) {
-        continue;
-      }
-
-      try {
-        const targetRepository = context.workspaceDataSource.getRepository(
-          targetObjectMetadata.nameSingular,
-          context.rolePermissionConfig,
-        );
-
-        const relatedRecords = (await targetRepository
-          .createQueryBuilder()
-          .where(`${relationSettings.joinColumnName} IN (:...ids)`, {
-            ids: recordIds,
-          })
-          .take(limitPerRelation * recordsToMerge.length)
-          .getMany()) as ObjectRecord[];
-
-        const groupedByParent = new Map<string, ObjectRecord[]>();
-
-        relatedRecords.forEach((record) => {
-          const parentId = record[relationSettings.joinColumnName!];
-
-          if (parentId) {
-            if (!groupedByParent.has(parentId)) {
-              groupedByParent.set(parentId, []);
-            }
-            groupedByParent.get(parentId)!.push(record);
-          }
-        });
-
-        recordsToMerge.forEach((record) => {
-          record[fieldMetadata.name] = groupedByParent.get(record.id) ?? [];
-        });
-      } catch (error) {
-        this.logger.warn(
-          `Failed to load OneToMany relation ${fieldMetadata.name}:`,
-          error,
-        );
-      }
-    }
   }
 
   private validateAndGetPriorityRecord(
@@ -351,7 +247,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   }
 
   private createDryRunResponse(
-    queryRunnerContext: CommonExtendedQueryRunnerContext,
     priorityRecord: ObjectRecord,
     mergedData: Partial<ObjectRecord>,
   ): ObjectRecord {
@@ -362,18 +257,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       deletedAt: new Date().toISOString(),
     };
 
-    const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(
-        queryRunnerContext.objectMetadataMaps,
-      );
-
-    return typeORMObjectRecordsParser.processRecord({
-      objectRecord: dryRunRecord,
-      objectName:
-        queryRunnerContext.objectMetadataItemWithFieldMaps.nameSingular,
-      take: 1,
-      totalCount: 1,
-    });
+    return dryRunRecord;
   }
 
   private async updatePriorityRecord(
