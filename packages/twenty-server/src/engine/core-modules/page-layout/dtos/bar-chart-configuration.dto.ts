@@ -9,6 +9,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsTimeZone,
   IsUUID,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
