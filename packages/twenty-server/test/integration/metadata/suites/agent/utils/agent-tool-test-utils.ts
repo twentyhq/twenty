@@ -14,6 +14,7 @@ import { RecordInputTransformerService } from 'src/engine/core-modules/record-tr
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
@@ -199,6 +200,12 @@ export const createAgentToolTestModule =
           provide: WorkflowToolWorkspaceService,
           useValue: {
             generateWorkflowTools: jest.fn().mockResolvedValue({}),
+          },
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: jest.fn(),
           },
         },
       ],

@@ -6,7 +6,7 @@ import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
-import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
+import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 
 describe('GmailGetMessageListService', () => {
   let service: GmailGetMessageListService;
@@ -47,10 +47,9 @@ describe('GmailGetMessageListService', () => {
           },
         },
         {
-          provide: GmailHandleErrorService,
+          provide: GmailMessageListFetchErrorHandler,
           useValue: {
-            handleGmailMessageListFetchError: jest.fn(),
-            handleGmailMessagesImportError: jest.fn(),
+            handleError: jest.fn(),
           },
         },
       ],

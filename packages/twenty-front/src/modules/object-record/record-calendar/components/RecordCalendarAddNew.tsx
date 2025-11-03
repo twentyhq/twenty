@@ -1,5 +1,6 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -48,10 +49,18 @@ export const RecordCalendarAddNew = ({
     (field) => field.id === recordIndexCalendarFieldMetadataId,
   );
 
+  const isCalendarFieldReadOnly = calendarFieldMetadataItem
+    ? isFieldMetadataReadOnlyByPermissions({
+        objectPermissions,
+        fieldMetadataId: calendarFieldMetadataItem.id,
+      })
+    : false;
+
   if (
     hasAnySoftDeleteFilterOnView ||
     !hasObjectUpdatePermissions ||
-    !calendarFieldMetadataItem
+    !calendarFieldMetadataItem ||
+    isCalendarFieldReadOnly
   ) {
     return null;
   }

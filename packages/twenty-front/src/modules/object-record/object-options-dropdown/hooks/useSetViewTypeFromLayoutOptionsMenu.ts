@@ -175,6 +175,16 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               },
             ]);
 
+            loadRecordIndexStates(
+              {
+                ...currentView,
+                type: viewType,
+                calendarFieldMetadataId,
+                calendarLayout: ViewCalendarLayout.MONTH,
+              },
+              objectMetadataItem,
+            );
+
             if (shouldChangeIcon(currentView.icon, currentView.type)) {
               updateCurrentViewParams.icon =
                 viewTypeIconMapping(viewType).displayName;

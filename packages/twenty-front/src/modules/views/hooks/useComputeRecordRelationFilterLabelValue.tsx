@@ -4,7 +4,8 @@ import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFiel
 import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
-import { getRecordFilterLabelValue } from '@/views/utils/getRecordFilterLabelValue';
+import { useGetRecordFilterChipLabelValue } from '@/views/hooks/useGetRecordFilterChipLabelValue';
+
 import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
@@ -16,10 +17,13 @@ type ObjectFilterDropdownRecordSelectProps = {
   recordFilter: RecordFilter;
 };
 
+// TODO: refactor this with new useGetRecordFilterDisplayValue
 export const useComputeRecordRelationFilterLabelValue = ({
   recordFilter,
 }: ObjectFilterDropdownRecordSelectProps) => {
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { getRecordFilterChipLabelValue } = useGetRecordFilterChipLabelValue();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
     throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
@@ -84,13 +88,13 @@ export const useComputeRecordRelationFilterLabelValue = ({
   return {
     labelValue:
       labelValueItems.length > 0
-        ? getRecordFilterLabelValue({
+        ? getRecordFilterChipLabelValue({
             recordFilter: {
               ...recordFilter,
               displayValue: filterDisplayValue,
             },
           })
-        : getRecordFilterLabelValue({
+        : getRecordFilterChipLabelValue({
             recordFilter,
           }),
   };
