@@ -18,22 +18,13 @@ export const relativeDateFilterStringifiedSchema = z
       throw new Error(`Cannot parse stringified relative date filter`);
     }
 
-    const [
-      _,
-      direction,
-      amount,
-      unit,
-      timezone,
-      referenceDayAsString,
-      firstDayOfTheWeek,
-    ] = result;
+    const [_, direction, amount, unit, timezone, firstDayOfTheWeek] = result;
 
     return relativeDateFilterSchema.parse({
       direction,
       amount,
       unit,
       timezone,
-      referenceDayAsString,
       firstDayOfTheWeek,
     });
   });
