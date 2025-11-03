@@ -121,6 +121,10 @@ export const GraphWidgetBarChart = ({
 
   const debouncedSetChartHovered = useDebouncedCallback((value: boolean) => {
     setIsChartHovered(value);
+    // Clear hoveredBar when leaving chart completely (not going to tooltip)
+    if (!value && !isTooltipHovered) {
+      setHoveredBar(null);
+    }
   }, 100);
 
   const formatOptions: GraphValueFormatOptions = {
@@ -131,10 +135,11 @@ export const GraphWidgetBarChart = ({
     customFormatter,
   };
 
-  const { handleBarClick, hasClickableItems } = useBarChartHandlers({
-    data,
-    indexBy,
-  });
+  const { hoveredBar, setHoveredBar, handleBarClick, hasClickableItems } =
+    useBarChartHandlers({
+      data,
+      indexBy,
+    });
 
   const chartTheme = useBarChartTheme();
 
@@ -152,6 +157,8 @@ export const GraphWidgetBarChart = ({
     data,
     indexBy,
     formatOptions,
+    hoveredBar,
+    enableGroupTooltip: groupMode === 'stacked',
   });
 
   useTrackPointer({
@@ -305,6 +312,13 @@ export const GraphWidgetBarChart = ({
             setAnchoredPosition({ x: mousePosition.x, y: mousePosition.y });
             setIsChartHovered(true);
             debouncedSetChartHovered.cancel();
+
+            if (isDefined(datum.id) && isDefined(datum.indexValue)) {
+              setHoveredBar({
+                key: String(datum.id),
+                indexValue: datum.indexValue,
+              });
+            }
           }}
           onMouseLeave={() => {
             debouncedSetChartHovered(false);
@@ -328,6 +342,10 @@ export const GraphWidgetBarChart = ({
               onMouseLeave={() => {
                 setIsTooltipHovered(false);
                 setHoveredDatum(null);
+                // Clear hoveredBar when leaving tooltip if chart is not hovered
+                if (!isChartHovered) {
+                  setHoveredBar(null);
+                }
               }}
             >
               {renderTooltip(hoveredDatum)}
