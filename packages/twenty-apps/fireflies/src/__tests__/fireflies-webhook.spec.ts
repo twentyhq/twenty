@@ -22,8 +22,8 @@ const mockFirefliesApiResponseWithSummary = {
   date: '2024-11-02T14:00:00Z',
   duration: 1800,
   participants: [
-    { email: 'sales@company.com', name: 'Sarah Sales' },
-    { email: 'client@customer.com', name: 'John Client' },
+    'Sarah Sales <sales@company.com>',
+    'John Client <client@customer.com>',
   ],
   organizer_email: 'sales@company.com',
   summary: {
@@ -91,9 +91,9 @@ const mockFirefliesApiResponseWithoutSummary = {
   title: 'Team Standup',
   date: '2024-11-02T15:00:00Z',
   duration: 900,
-        participants: [
-    { email: 'dev1@company.com', name: 'Alice Developer' },
-    { email: 'dev2@company.com', name: 'Bob Developer' },
+  participants: [
+    'Alice Developer <dev1@company.com>',
+    'Bob Developer <dev2@company.com>',
   ],
   organizer_email: 'dev1@company.com',
   summary: {
@@ -134,11 +134,11 @@ const mockFirefliesApiResponseTeamMeeting = {
   ...mockFirefliesApiResponseWithSummary,
   id: 'test-team-003',
   title: 'Sprint Planning',
-        participants: [
-          { email: 'scrum@company.com', name: 'Alice Scrum' },
-          { email: 'dev1@company.com', name: 'Bob Developer' },
-    { email: 'dev2@company.com', name: 'Carol Coder' },
-    { email: 'qa@company.com', name: 'David QA' },
+  participants: [
+    'Alice Scrum <scrum@company.com>',
+    'Bob Developer <dev1@company.com>',
+    'Carol Coder <dev2@company.com>',
+    'David QA <qa@company.com>',
   ],
   summary: {
     ...mockFirefliesApiResponseWithSummary.summary,
@@ -600,10 +600,10 @@ describe('Fireflies Webhook Integration v2', () => {
 
       const noteData = createNoteMock.mock.calls[0][0];
       expect(noteData.data.title).toContain('Meeting:');
-      expect(noteData.data.body).toContain('## Overview'); // Markdown header, not bold
-      expect(noteData.data.body).toContain('## Action Items'); // Markdown header, not bold
-      expect(noteData.data.body).toContain('**Sentiment:**'); // This is bold
-      expect(noteData.data.body).toContain('[View Full Transcript]');
+      expect(noteData.data.bodyV2.markdown).toContain('## Overview'); // Markdown header, not bold
+      expect(noteData.data.bodyV2.markdown).toContain('## Action Items'); // Markdown header, not bold
+      expect(noteData.data.bodyV2.markdown).toContain('**Sentiment:**'); // This is bold
+      expect(noteData.data.bodyV2.markdown).toContain('[View Full Transcript]');
     });
 
     it('should create meeting records for multi-party meetings', async () => {

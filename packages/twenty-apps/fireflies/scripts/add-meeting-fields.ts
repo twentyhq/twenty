@@ -25,6 +25,13 @@ if (!API_KEY) {
   process.exit(1);
 }
 
+interface RelationCreationPayload {
+  targetObjectMetadataId: string;
+  targetFieldLabel: string;
+  targetFieldIcon: string;
+  type: 'ONE_TO_MANY' | 'MANY_TO_ONE';
+}
+
 interface FieldDefinition {
   type: string;
   name: string;
@@ -32,14 +39,15 @@ interface FieldDefinition {
   description: string;
   icon?: string;
   isNullable?: boolean;
+  relationCreationPayload?: RelationCreationPayload;
 }
 
 const MEETING_FIELDS: FieldDefinition[] = [
   {
-    type: 'RICH_TEXT',
-    name: 'notes',
-    label: 'Meeting Notes',
-    description: 'AI-generated summary with overview, topics, action items, and insights',
+    type: 'RELATION',
+    name: 'note',
+    label: 'Meeting Note',
+    description: 'Related note with detailed meeting content',
     icon: 'IconNotes',
     isNullable: true,
   },
@@ -204,6 +212,34 @@ const findMeetingObject = async () => {
   return meetingEdge.node;
 };
 
+const findNoteObject = async () => {
+  const query = `
+    query FindObjects {
+      objects(paging: { first: 100 }) {
+        edges {
+          node {
+            id
+            nameSingular
+            labelSingular
+          }
+        }
+      }
+    }
+  `;
+
+  const data = await graphqlRequest(query);
+  const edges = data.objects?.edges || [];
+  const noteEdge = edges.find(
+    (edge: any) => edge?.node?.nameSingular === 'note',
+  );
+
+  if (!noteEdge) {
+    throw new Error('Note object not found.');
+  }
+
+  return noteEdge.node;
+};
+
 const createField = async (objectId: string, field: FieldDefinition) => {
   const mutation = `
     mutation CreateField($input: CreateOneFieldMetadataInput!) {
@@ -228,6 +264,9 @@ const createField = async (objectId: string, field: FieldDefinition) => {
       isActive: true,
       isCustom: true,
       objectMetadataId: objectId,
+      ...(field.relationCreationPayload && {
+        relationCreationPayload: field.relationCreationPayload,
+      }),
     },
   };
 
@@ -253,23 +292,43 @@ const main = async () => {
   console.log('🚀 Adding custom fields to Meeting object...\n');
 
   try {
-    // Step 1: Find Meeting object
+    // Step 1: Find Meeting and Note objects
     console.log('📋 Finding Meeting object...');
     const meetingObject = await findMeetingObject();
     console.log(`✅ Found Meeting object: ${meetingObject.labelSingular ?? meetingObject.nameSingular ?? 'Meeting'} (ID: ${meetingObject.id})\n`);
 
-    // Step 2: Check existing fields
+    console.log('📋 Finding Note object...');
+    const noteObject = await findNoteObject();
+    console.log(`✅ Found Note object: ${noteObject.labelSingular ?? noteObject.nameSingular ?? 'Note'} (ID: ${noteObject.id})\n`);
+
+    // Step 2: Update note field with relationCreationPayload
+    const fieldsToCreate = MEETING_FIELDS.map(field => {
+      if (field.name === 'note' && field.type === 'RELATION') {
+        return {
+          ...field,
+          relationCreationPayload: {
+            targetObjectMetadataId: noteObject.id,
+            targetFieldLabel: 'Meeting',
+            targetFieldIcon: 'IconCalendarEvent',
+            type: 'MANY_TO_ONE' as const,
+          },
+        };
+      }
+      return field;
+    });
+
+    // Step 3: Check existing fields
     const existingFields = meetingObject.fields?.edges?.map((edge: any) => edge.node.name) || [];
     console.log(`📌 Existing fields: ${existingFields.join(', ')}\n`);
 
-    // Step 3: Create custom fields
+    // Step 4: Create custom fields
     console.log('➕ Creating custom fields...\n');
 
     let createdCount = 0;
     let failedCount = 0;
     let skippedCount = 0;
 
-    for (const field of MEETING_FIELDS) {
+    for (const field of fieldsToCreate) {
       try {
         if (existingFields.includes(field.name)) {
           console.log(`   ⏭️  ${field.name} - already exists`);

@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/object.schema.json",
-  "universalIdentifier": "9b1f2c44-7b5b-4c8a-9ea0-2c0d5d1f6a7c",
-  "standardId": "9b1f2c44-7b5b-4c8a-9ea0-2c0d5d1f6a7c",
+  "universalIdentifier": "c8f4d3e1-2a7b-4e9f-8c1d-5a6b7e8f9c2a",
+  "standardId": "c8f4d3e1-2a7b-4e9f-8c1d-5a6b7e8f9c2a",
   "nameSingular": "meeting",
   "namePlural": "meetings",
   "labelSingular": "Meeting",

@@ -7,5 +7,5 @@ export {
   type ProcessResult,
   type SummaryFetchConfig,
   type SummaryStrategy
-} from '../../serverlessFunctions/receive-fireflies-notes/src/receive-fireflies-notes';
+} from '../../serverlessFunctions/receive-fireflies-notes/src/index';
 

@@ -1,11 +1,10 @@
-export {
-    config,
-    main,
-    type FirefliesMeetingData,
-    type FirefliesParticipant,
-    type FirefliesWebhookPayload,
-    type ProcessResult,
-    type SummaryFetchConfig,
-    type SummaryStrategy
-} from './receive-fireflies-notes';
+export { config, main } from './receive-fireflies-notes';
+export type {
+    FirefliesMeetingData,
+    FirefliesParticipant,
+    FirefliesWebhookPayload,
+    ProcessResult,
+    SummaryFetchConfig,
+    SummaryStrategy
+} from './types';
 

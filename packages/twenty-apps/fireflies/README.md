@@ -17,6 +17,22 @@ Automatically captures meeting notes with AI-generated summaries and insights fr
 - **Links transcripts and recordings** - Easy access to full Fireflies content
 - **Duplicate prevention** - Checks for existing meetings by title
 
+## API Access by Subscription Plan
+
+Fireflies API access varies significantly by subscription tier:
+
+| Feature | Free | Pro | Business | Enterprise |
+|---------|------|-----|----------|------------|
+| **API Rate Limit** | 50 requests/day | 50 requests/day | 60 requests/minute | 60 requests/minute |
+| **Storage** | 800 mins/seat | 8,000 mins/seat | Unlimited | Unlimited |
+| **AI Summaries** | Limited (20 credits) | Unlimited | Unlimited | Unlimited |
+| **Video Upload** | 100MB max | 1.5GB max | 1.5GB max | 1.5GB max |
+| **Advanced Features** | Basic transcription | AI apps, analytics | Team analytics, CI | Full API, SSO, compliance |
+
+**Key Design Pattern:** Subscription-based API access uses **tiered rate limiting** rather than feature gating. Lower tiers get severely restricted throughput (50/day vs 60/minute = 1,700x difference), making production integrations effectively require Business+ plans.
+
+**Pro Plan Limitation:** Despite "unlimited" AI summaries, the 50 requests/day limit severely constrains production usage for meeting-heavy organizations.
+
 ## What Gets Captured
 
 ### Summary & Insights
@@ -34,7 +50,9 @@ Automatically captures meeting notes with AI-generated summaries and insights fr
 - **Transcript Link** - Quick access to full Fireflies transcript
 - **Recording Link** - Video/audio recording when available
 
-## Installation
+## Quick Start
+
+### Installation
 
 ```bash
 # Step 1: Authenticate with Twenty
@@ -51,6 +69,24 @@ yarn setup:fields
 ```
 
 (TODO: change when fields setup internal support)
+
+### Configuration
+
+⚠️ **Important**: The integration uses **conservative retry settings** to respect Fireflies' 50 requests/day API limit with free/pro plans. You may increase for more reactivity with higher plans.
+
+**Required Environment Variables:**
+```bash
+FIREFLIES_API_KEY=your_api_key          # From Fireflies settings
+TWENTY_API_KEY=your_api_key             # From Twenty CRM settings
+SERVER_URL=https://your-domain.twenty.com
+```
+
+**Optional (Recommended):**
+```bash
+FIREFLIES_WEBHOOK_SECRET=your_secret    # For webhook security
+```
+
+📖 **For detailed configuration, troubleshooting, and rate limit management**, see [WEBHOOK_CONFIGURATION.md](./WEBHOOK_CONFIGURATION.md)
 
 ### What Gets Created
 
