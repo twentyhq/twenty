@@ -205,6 +205,15 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     });
   }
 
+  async findUserByEmailWithWorkspaces(email: string) {
+    return await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: { userWorkspaces: true },
+    });
+  }
+
   async findUserById(id: string) {
     return await this.userRepository.findOne({
       where: {

@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
 import { format, isSameDay, isSameMonth, isWeekend } from 'date-fns';
 import { useState } from 'react';
+import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
 import { RecordCalendarAddNew } from '../../components/RecordCalendarAddNew';
 
 const StyledContainer = styled.div<{
@@ -103,7 +104,7 @@ export const RecordCalendarMonthBodyDay = ({
     recordCalendarSelectedDateComponentState,
   );
 
-  const dayKey = format(day, 'yyyy-MM-dd');
+  const dayKey = format(day, DATE_TYPE_FORMAT);
 
   const recordIds = useRecoilComponentFamilyValue(
     calendarDayRecordIdsComponentFamilySelector,

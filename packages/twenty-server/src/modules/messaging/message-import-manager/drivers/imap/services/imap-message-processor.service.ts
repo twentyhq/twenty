@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type FetchMessageObject, type ImapFlow } from 'imapflow';
 import { type ParsedMail, simpleParser } from 'mailparser';
 
-import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
+import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
 
 export type MessageFetchResult = {
   uid: number;
@@ -16,7 +16,7 @@ export class ImapMessageProcessorService {
   private readonly logger = new Logger(ImapMessageProcessorService.name);
 
   constructor(
-    private readonly imapHandleErrorService: ImapHandleErrorService,
+    private readonly imapMessagesImportErrorHandler: ImapMessagesImportErrorHandler,
   ) {}
 
   async processMessagesByUidsInFolder(
@@ -174,7 +174,7 @@ export class ImapMessageProcessorService {
     return uids.map((uid) => {
       this.logger.error(`Failed to fetch message UID ${uid}: ${error.message}`);
 
-      this.imapHandleErrorService.handleImapMessagesImportError(
+      this.imapMessagesImportErrorHandler.handleError(
         error,
         `${folder}:${uid}`,
       );
