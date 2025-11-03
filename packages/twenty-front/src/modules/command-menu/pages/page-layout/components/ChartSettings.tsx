@@ -16,6 +16,7 @@ import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/shouldHideChartSetting';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -41,6 +42,7 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
   const { setSelectedItemId } = useSelectableList(
     COMMAND_MENU_LIST_SELECTABLE_LIST_ID,
   );
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   if (widget.configuration?.__typename === 'IframeConfiguration') {
     throw new Error(t`IframeConfiguration is not supported`);

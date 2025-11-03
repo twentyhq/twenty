@@ -6,7 +6,6 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
-import { PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY } from '@/page-layout/constants/PendingWidgetPlaceholderLayoutKey';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
@@ -16,12 +15,13 @@ import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLa
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { addPendingPlaceholderToLayouts } from '@/page-layout/utils/addPendingPlaceholderToLayouts';
 import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterPendingPlaceholderFromLayouts';
+import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -108,11 +108,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const activeTab = currentPageLayout?.tabs.find((tab) => tab.id === tabId);
 
-  if (!isDefined(currentPageLayout) || !isDefined(activeTab)) {
-    return null;
-  }
-
-  const activeTabWidgets = activeTab.widgets;
+  const activeTabWidgets = activeTab?.widgets;
 
   const isLayoutEmpty =
     !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
@@ -128,37 +124,17 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     ? addPendingPlaceholderToLayouts(baseLayouts, pageLayoutDraggedArea)
     : baseLayouts;
 
-  const widgets = [];
+  const gridLayoutItems = useMemo(
+    () =>
+      prepareGridLayoutItemsWithPlaceholders(
+        activeTabWidgets,
+        hasPendingPlaceholder,
+      ),
+    [activeTabWidgets, hasPendingPlaceholder],
+  );
 
-  if (isLayoutEmpty) {
-    widgets.push(
-      <div key="empty-placeholder" data-select-disable="true">
-        <WidgetPlaceholder />
-      </div>,
-    );
-  } else {
-    activeTabWidgets?.forEach((widget) => {
-      widgets.push(
-        <div key={widget.id} data-select-disable="true">
-          <WidgetRenderer
-            widget={widget}
-            pageLayoutType={currentPageLayout.type}
-            layoutMode="grid"
-          />
-        </div>,
-      );
-    });
-
-    if (hasPendingPlaceholder) {
-      widgets.push(
-        <div
-          key={PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY}
-          data-select-disable="true"
-        >
-          <WidgetPlaceholder />
-        </div>,
-      );
-    }
+  if (!isDefined(currentPageLayout) || !isDefined(activeTab)) {
+    return null;
   }
 
   return (
@@ -204,7 +180,19 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
             )
           }
         >
-          {widgets}
+          {gridLayoutItems.map((item) => (
+            <div key={item.id} data-select-disable="true">
+              {item.type === 'placeholder' ? (
+                <WidgetPlaceholder />
+              ) : (
+                <WidgetRenderer
+                  widget={item.widget}
+                  pageLayoutType={currentPageLayout.type}
+                  layoutMode="grid"
+                />
+              )}
+            </div>
+          ))}
         </ResponsiveGridLayout>
       </StyledGridContainer>
     </>
