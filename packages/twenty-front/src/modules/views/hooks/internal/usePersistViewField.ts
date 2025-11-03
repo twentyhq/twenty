@@ -10,11 +10,11 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CreateCoreViewFieldMutationVariables,
+  type CreateManyCoreViewFieldsMutationVariables,
   type DeleteCoreViewFieldMutationVariables,
   type DestroyCoreViewFieldMutationVariables,
-  type UpdateCoreViewFieldMutationVariables,
-  CreateManyCoreViewFieldsMutationVariables,
   FeatureFlagKey,
+  type UpdateCoreViewFieldMutationVariables,
   useCreateCoreViewFieldMutation,
   useCreateManyCoreViewFieldsMutation,
   useDeleteCoreViewFieldMutation,
@@ -165,7 +165,6 @@ export const usePersistViewField = () => {
       isWorkspaceMigrationV2Enabled,
       oldCreateViewFields,
       triggerViewFieldOptimisticEffect,
-      createCoreViewFieldMutation,
       createManyCoreViewFieldsMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
