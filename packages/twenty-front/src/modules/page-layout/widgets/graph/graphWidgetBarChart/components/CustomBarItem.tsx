@@ -87,9 +87,10 @@ export const CustomBarItem = <D extends BarDatum>({
   );
   const handleMouseEnter = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
-      // Pass bar position data along with the regular data
+      // Pass bar element AND position data along with the regular data
       const enrichedData = {
         ...barData,
+        barElement: event.currentTarget, // The actual bar SVG element
         barX: bar.x,
         barY: bar.y,
         barWidth: bar.width,

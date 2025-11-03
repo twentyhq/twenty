@@ -5,6 +5,7 @@ import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/c
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
+import { useBarChartFloatingTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartFloatingTooltip';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
@@ -22,29 +23,12 @@ import {
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  type BarDatum,
-  type ComputedBarDatum,
-  type ComputedDatum,
-  ResponsiveBar,
-} from '@nivo/bar';
+import { FloatingPortal } from '@floating-ui/react';
+import { type ComputedBarDatum, ResponsiveBar } from '@nivo/bar';
 import { useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useDebouncedCallback } from 'use-debounce';
 
 const LEGEND_THRESHOLD = 10;
-const TOOLTIP_OFFSET_X = 10;
-
-const StyledTooltipWrapper = styled.div<{ x: number; y: number }>`
-  left: ${({ x }) => Math.max(0, Math.min(x, window.innerWidth))}px;
-  max-width: min(400px, calc(100vw - 40px));
-  pointer-events: auto;
-  position: fixed;
-  top: ${({ y }) => Math.max(0, y)}px;
-  transform: translate(-100%, -50%);
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
-`;
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -119,53 +103,16 @@ export const GraphWidgetBarChart = ({
       indexBy,
     });
 
-  // Tooltip state management
-  const [hoveredDatum, setHoveredDatum] =
-    useState<ComputedDatum<BarDatum> | null>(null);
-  const [barPosition, setBarPosition] = useState<{
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  } | null>(null);
-  const [isChartHovered, setIsChartHovered] = useState(false);
-  const [isTooltipHovered, setIsTooltipHovered] = useState(false);
-
-  const debouncedSetChartHovered = useDebouncedCallback((value: boolean) => {
-    setIsChartHovered(value);
-    if (!value && !isTooltipHovered) {
-      setHoveredBar(null);
-    }
-  }, 100);
-
-  // Debounce bar switching to avoid jumping when moving between bars
-  const debouncedSetHoveredBar = useDebouncedCallback((datum: any) => {
-    setHoveredDatum(datum);
-
-    if (
-      isDefined(datum.barAbsX) &&
-      isDefined(datum.barAbsY) &&
-      isDefined(containerRef.current)
-    ) {
-      const rect = containerRef.current.getBoundingClientRect();
-      setBarPosition({
-        x: rect.left + datum.barAbsX - TOOLTIP_OFFSET_X,
-        y: rect.top + datum.barAbsY,
-        width: datum.barWidth,
-        height: datum.barHeight,
-      });
-    }
-
-    if (isDefined(datum.id) && isDefined(datum.indexValue)) {
-      setHoveredBar({
-        key: String(datum.id),
-        indexValue: datum.indexValue,
-      });
-    }
-  }, 50);
-
-  const isTooltipVisible =
-    hoveredDatum !== null && (isChartHovered || isTooltipHovered);
+  const {
+    refs,
+    floatingStyles,
+    hoveredDatum,
+    isTooltipVisible,
+    handleBarMouseEnter,
+    handleBarMouseLeave,
+    handleTooltipMouseEnter,
+    handleTooltipMouseLeave,
+  } = useBarChartFloatingTooltip({ setHoveredBar });
 
   const chartTheme = useBarChartTheme();
 
@@ -326,47 +273,25 @@ export const GraphWidgetBarChart = ({
           label={(d) => formatGraphValue(Number(d.value), formatOptions)}
           tooltip={() => null}
           onClick={handleBarClick}
-          onMouseEnter={(datum: any) => {
-            setIsChartHovered(true);
-            debouncedSetChartHovered.cancel();
-
-            // Use debounced function to avoid tooltip jumping
-            debouncedSetHoveredBar(datum);
-          }}
-          onMouseLeave={() => {
-            debouncedSetChartHovered(false);
-            debouncedSetHoveredBar.cancel(); // Cancel pending bar switch
-          }}
+          onMouseEnter={handleBarMouseEnter}
+          onMouseLeave={handleBarMouseLeave}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
-      {isTooltipVisible && barPosition && (
-        <>
-          {createPortal(
-            <StyledTooltipWrapper
-              x={barPosition.x + barPosition.width / 2}
-              y={barPosition.y}
-              role="tooltip"
-              aria-live="polite"
-              onMouseEnter={() => {
-                debouncedSetChartHovered.cancel();
-                setIsTooltipHovered(true);
-              }}
-              onMouseLeave={() => {
-                setIsTooltipHovered(false);
-                setHoveredDatum(null);
-                debouncedSetHoveredBar.cancel(); // Cancel any pending updates
-                if (!isChartHovered) {
-                  setHoveredBar(null);
-                }
-              }}
-            >
-              {renderTooltip(hoveredDatum)}
-            </StyledTooltipWrapper>,
-            document.body,
-          )}
-        </>
+      {isTooltipVisible && hoveredDatum && (
+        <FloatingPortal>
+          <div
+            ref={refs.setFloating}
+            style={floatingStyles}
+            role="tooltip"
+            aria-live="polite"
+            onMouseEnter={handleTooltipMouseEnter}
+            onMouseLeave={handleTooltipMouseLeave}
+          >
+            {renderTooltip(hoveredDatum)}
+          </div>
+        </FloatingPortal>
       )}
       <GraphWidgetLegend
         show={shouldShowLegend}
