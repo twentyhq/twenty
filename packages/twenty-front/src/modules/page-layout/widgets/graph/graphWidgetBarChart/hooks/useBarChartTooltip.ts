@@ -8,7 +8,6 @@ import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseBarChartTooltipProps = {
-  hoveredBar: { key: string; indexValue: string | number } | null;
   enrichedKeys: BarChartEnrichedKey[];
   data: BarChartDataItem[];
   indexBy: string;
@@ -17,7 +16,6 @@ type UseBarChartTooltipProps = {
 };
 
 export const useBarChartTooltip = ({
-  hoveredBar,
   enrichedKeys,
   data,
   indexBy,
@@ -32,10 +30,13 @@ export const useBarChartTooltip = ({
     if (enableGroupTooltip) {
       keysToShow = enrichedKeys;
     } else {
-      const hoveredKey = hoveredBar?.key;
+      // Use datum.id directly instead of hoveredBar
+      const hoveredKey = datum.id;
       if (!isDefined(hoveredKey)) return null;
 
-      const enrichedKey = enrichedKeys.find((item) => item.key === hoveredKey);
+      const enrichedKey = enrichedKeys.find(
+        (item) => item.key === String(hoveredKey),
+      );
       if (!isDefined(enrichedKey)) return null;
 
       keysToShow = [enrichedKey];

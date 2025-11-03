@@ -97,11 +97,10 @@ export const GraphWidgetBarChart = ({
     customFormatter,
   };
 
-  const { hoveredBar, setHoveredBar, handleBarClick, hasClickableItems } =
-    useBarChartHandlers({
-      data,
-      indexBy,
-    });
+  const { handleBarClick, hasClickableItems } = useBarChartHandlers({
+    data,
+    indexBy,
+  });
 
   const {
     refs,
@@ -112,7 +111,7 @@ export const GraphWidgetBarChart = ({
     handleBarMouseLeave,
     handleTooltipMouseEnter,
     handleTooltipMouseLeave,
-  } = useBarChartFloatingTooltip({ setHoveredBar });
+  } = useBarChartFloatingTooltip();
 
   const chartTheme = useBarChartTheme();
 
@@ -130,7 +129,6 @@ export const GraphWidgetBarChart = ({
     data,
     indexBy,
     formatOptions,
-    hoveredBar,
     enableGroupTooltip: groupMode === 'stacked',
   });
 
@@ -283,7 +281,7 @@ export const GraphWidgetBarChart = ({
         <FloatingPortal>
           <div
             ref={refs.setFloating}
-            style={floatingStyles}
+            style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
             role="tooltip"
             aria-live="polite"
             onMouseEnter={handleTooltipMouseEnter}

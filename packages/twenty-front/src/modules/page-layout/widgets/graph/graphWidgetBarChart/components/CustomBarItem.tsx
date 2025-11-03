@@ -1,5 +1,6 @@
 import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
 import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
+import { type EnrichedBarDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartFloatingTooltip';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { Text } from '@nivo/text';
 import { useTheme } from '@nivo/theming';
@@ -87,18 +88,17 @@ export const CustomBarItem = <D extends BarDatum>({
   );
   const handleMouseEnter = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
-      // Pass bar element AND position data along with the regular data
       const enrichedData = {
         ...barData,
-        barElement: event.currentTarget, // The actual bar SVG element
+        barElement: event.currentTarget,
         barX: bar.x,
         barY: bar.y,
         barWidth: bar.width,
         barHeight: bar.height,
         barAbsX: bar.absX,
         barAbsY: bar.absY,
-      };
-      onMouseEnter?.(enrichedData, event);
+      } as EnrichedBarDatum;
+      onMouseEnter?.(enrichedData as typeof barData, event);
       showTooltipFromEvent(renderTooltip(), event);
     },
     [barData, bar, onMouseEnter, showTooltipFromEvent, renderTooltip],
