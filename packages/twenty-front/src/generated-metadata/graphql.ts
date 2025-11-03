@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -132,11 +132,11 @@ export type AggregateChartConfiguration = {
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   format?: Maybe<Scalars['String']>;
   graphType: GraphType;
   label?: Maybe<Scalars['String']>;
   timezone?: Maybe<Scalars['String']>;
-  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
 };
 
 export enum AggregateOperations {
@@ -327,6 +327,7 @@ export type BarChartConfiguration = {
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
   groupMode?: Maybe<BarChartGroupMode>;
   omitNullValues?: Maybe<Scalars['Boolean']>;
@@ -341,7 +342,6 @@ export type BarChartConfiguration = {
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
   timezone?: Maybe<Scalars['String']>;
-  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
 };
 
 /** Display mode for bar charts with secondary grouping */
@@ -1430,9 +1430,9 @@ export type GaugeChartConfiguration = {
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
   timezone?: Maybe<Scalars['String']>;
-  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
 };
 
 export type GetApiKeyInput = {
@@ -1680,6 +1680,7 @@ export type LineChartConfiguration = {
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
   omitNullValues?: Maybe<Scalars['Boolean']>;
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
@@ -1693,7 +1694,6 @@ export type LineChartConfiguration = {
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
   timezone?: Maybe<Scalars['String']>;
-  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
 };
 
 export type LinkMetadata = {
@@ -3079,12 +3079,12 @@ export type PieChartConfiguration = {
   description?: Maybe<Scalars['String']>;
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   graphType: GraphType;
   groupByFieldMetadataId: Scalars['UUID'];
   groupBySubFieldName?: Maybe<Scalars['String']>;
   orderBy?: Maybe<GraphOrderBy>;
   timezone?: Maybe<Scalars['String']>;
-  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
 };
 
 export type PlaceDetailsResult = {
