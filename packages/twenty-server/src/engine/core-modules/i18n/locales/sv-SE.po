@@ -24,8 +24,8 @@ msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "{fieldName} och {fieldName}Id kan inte båda tillhandahållas."
 
 #. js-lingui-id: ZkHTHm
-#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
 msgstr "{fieldType}-fält kan inte vara unika."
 
@@ -140,9 +140,9 @@ msgid "Access Token"
 msgstr "Åtkomsttoken"
 
 #. js-lingui-id: pd81Qb
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Account Owner"
 msgstr "Kontoinnehavare"
 
@@ -203,16 +203,16 @@ msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Aggregerad / filtrerad händelse som ska visas på tidslinjen"
 
 #. js-lingui-id: pdOYzu
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 msgid "All {objectLabelPlural}"
 msgstr "Alla {objectLabelPlural}"
 
@@ -232,8 +232,8 @@ msgid "An error occurred during messages import"
 msgstr "Ett fel inträffade vid meddelandeimporten"
 
 #. js-lingui-id: XyOToQ
-#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "An error occurred."
 msgstr "Ett fel inträffade."
 
@@ -369,15 +369,15 @@ msgid "Attachment workflow"
 msgstr "Bilaga arbetsflöde"
 
 #. js-lingui-id: w/Sphq
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments"
 msgstr "Bilagor"
 
@@ -478,9 +478,9 @@ msgid "Avatar Url"
 msgstr "Avatar-URL"
 
 #. js-lingui-id: K1172m
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Blocklist"
 msgstr "Blocklista"
 
@@ -495,14 +495,14 @@ msgid "Blocklists"
 msgstr "Blocklistor"
 
 #. js-lingui-id: bGQplw
-#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
 msgstr "Innehåll"
 
 #. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
 msgstr "Efter stadium"
 
@@ -527,20 +527,20 @@ msgid "Calendar Channel Event Association"
 msgstr "Kalenderkanals händelseassociation"
 
 #. js-lingui-id: kYNT3F
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Calendar Channel Event Associations"
 msgstr "Kalenderkanals händelseassociationer"
 
 #. js-lingui-id: Znix/S
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Calendar Channels"
 msgstr "Kalenderkanaler"
 
@@ -561,10 +561,10 @@ msgid "Calendar event participants"
 msgstr "Deltagare i kalenderhändelser"
 
 #. js-lingui-id: ZI2UyM
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Calendar Event Participants"
 msgstr "Deltagare i kalenderhändelser"
 
@@ -605,8 +605,8 @@ msgid "Cannot delete account: you are the only admin. Assign another admin or de
 msgstr "Kan inte ta bort kontot: du är den enda administratören. Tilldela en annan administratör eller ta bort arbetsytan/ar först."
 
 #. js-lingui-id: AQyr9X
-#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Kan inte ta bort, uppdatera etikettidentifieringsfältet först"
 
@@ -667,14 +667,14 @@ msgid "Companies"
 msgstr "Företag"
 
 #. js-lingui-id: 7i8j3G
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Company"
 msgstr "Företag"
 
@@ -695,11 +695,11 @@ msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingu
 msgstr "Anslutning är inte tillåten för {connectFieldName} på {objectMetadataNameSingular}"
 
 #. js-lingui-id: PQ1Dw2
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Connected Account"
 msgstr "Anslutet konto"
 
@@ -715,8 +715,8 @@ msgid "Connected Accounts"
 msgstr "Anslutna konton"
 
 #. js-lingui-id: bA6O5B
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Contact auto creation policy"
 msgstr "Policy för automatisk kontakt skapande"
 
@@ -791,15 +791,15 @@ msgid "Could not find index related object metadata"
 msgstr "Kunde inte hitta objektsmetadata relaterad till index"
 
 #. js-lingui-id: NCIYDF
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "Skapad av"
 
@@ -809,10 +809,10 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Skapade fältmetadata, förälderobjektmetadata hittades inte"
 
 #. js-lingui-id: wPvFAD
-#: src/engine/twenty-orm/base.workspace-entity.ts
-#: src/engine/twenty-orm/base.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/engine/twenty-orm/base.workspace-entity.ts
+#: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Creation date"
 msgstr "Skapelsedatum"
 
@@ -851,10 +851,10 @@ msgid "Custom Connection Parameters"
 msgstr "Anpassade anslutningsparametrar"
 
 #. js-lingui-id: 7p5kLi
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Dashboard"
 msgstr "Instrumentpanel"
 
@@ -912,8 +912,8 @@ msgid "December"
 msgstr "December"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Standardvärdet \"{defaultValue}\" måste vara ett av alternativens värden"
 
@@ -923,14 +923,14 @@ msgid "Default value must be a string"
 msgstr "Standardvärdet måste vara en sträng"
 
 #. js-lingui-id: sv9P4Q
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value should be as quoted string"
 msgstr "Standardvärde ska vara som sträng inom citattecken"
 
 #. js-lingui-id: 6pJV03
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default values must be unique"
 msgstr "Standardvärden måste vara unika"
 
@@ -951,10 +951,10 @@ msgid "Direction"
 msgstr "Riktning"
 
 #. js-lingui-id: 0gS7M5
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Display Name"
 msgstr "Visningsnamn"
 
@@ -984,8 +984,8 @@ msgid "Due Date"
 msgstr "Förfallodatum"
 
 #. js-lingui-id: BXtAxc
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Duplicated option {field}"
 msgstr "Duplicerad alternativ {field}"
 
@@ -1054,10 +1054,10 @@ msgid "Event external ID"
 msgstr "Händelsens externa ID"
 
 #. js-lingui-id: aZJLAR
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 msgid "Event ID"
 msgstr "Händelse-ID"
 
@@ -1114,8 +1114,8 @@ msgid "Event workspace member"
 msgstr "Händelsens arbetsområdesmedlem"
 
 #. js-lingui-id: tst44n
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Events"
 msgstr "Händelser"
 
@@ -1249,19 +1249,19 @@ msgid "Favorite workspace member"
 msgstr "Favorit arbetsplatsmedlem"
 
 #. js-lingui-id: X9kySA
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Favorites"
 msgstr "Favoriter"
 
@@ -1371,14 +1371,14 @@ msgid "Field label identifier is required"
 msgstr "Fältetikettens identifierare krävs"
 
 #. js-lingui-id: MPt365
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "Field metadata not found"
 msgstr "Fältmetadata hittades inte"
 
@@ -1503,16 +1503,16 @@ msgid "handle"
 msgstr "hantera"
 
 #. js-lingui-id: Nf7oXL
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Handle"
 msgstr "Handtag"
 
@@ -1550,8 +1550,8 @@ msgid "Ideal Customer Profile:  Indicates whether the company is the most suitab
 msgstr "Ideal kundprofil: Anger om f\\u00f6retaget \\u00e4r den mest l\\u00e4mpliga och v\\u00e4rdefulla kunden f\\u00f6r dig"
 
 #. js-lingui-id: YcVn4w
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Om definierat måste standardvärdet innehålla minst ett värde"
 
@@ -1586,8 +1586,8 @@ msgid "Index related object not found"
 msgstr "Relaterat objekt till index hittades inte"
 
 #. js-lingui-id: fY2zUQ
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
 msgid "Index to delete not found"
 msgstr "Index att ta bort hittades inte"
 
@@ -1712,10 +1712,10 @@ msgid "Is canceled"
 msgstr "\\u00c4r inst\\u00e4lld"
 
 #. js-lingui-id: k+g9Uh
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Contact Auto Creation Enabled"
 msgstr "\\u00c4r automatisk skapande av kontakt aktiverad"
 
@@ -1738,10 +1738,10 @@ msgid "Is Sent Folder"
 msgstr "Är skickad mapp"
 
 #. js-lingui-id: Mqzqb8
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "\\u00c4r synkronisering aktiverad"
 
@@ -1802,10 +1802,10 @@ msgid "Label identifier field cannot be deactivated"
 msgstr "Etikettidentifieringsfält kan inte deaktiveras"
 
 #. js-lingui-id: ACUSmL
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "Label identifier view field cannot be deleted"
 msgstr "Etikettidentifierarens vyfält kan inte tas bort"
 
@@ -1827,14 +1827,14 @@ msgid "Label is required"
 msgstr "Etikett är obligatorisk"
 
 #. js-lingui-id: 4EGmy6
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not be empty"
 msgstr "Etikett får inte vara tom"
 
 #. js-lingui-id: k731jp
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not contain a comma"
 msgstr "Etikett får inte innehålla kommatecken"
 
@@ -1855,10 +1855,10 @@ msgid "Last sync cursor"
 msgstr "Senaste synkkursor"
 
 #. js-lingui-id: Zdx9Qq
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Last sync date"
 msgstr "Senaste synkdatum"
 
@@ -1896,8 +1896,8 @@ msgid "Linked Record id"
 msgstr "Linked Record id"
 
 #. js-lingui-id: uCA6be
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Linkedin"
 msgstr "LinkedIn"
 
@@ -1934,22 +1934,22 @@ msgid "Meet Link"
 msgstr "M\\u00f6tesl\\u00e4nk"
 
 #. js-lingui-id: xDAtGP
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message"
 msgstr "Meddelande"
 
 #. js-lingui-id: g+QGD6
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Channel"
 msgstr "Meddelandekanal"
 
 #. js-lingui-id: DzU4a3
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channel Association"
 msgstr "Meddelandekanalassociation"
 
@@ -1975,10 +1975,10 @@ msgid "Message channel not found"
 msgstr ""
 
 #. js-lingui-id: k7LXPQ
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Message Channels"
 msgstr "Meddelandekanaler"
 
@@ -2004,9 +2004,9 @@ msgid "Message folder import policy"
 msgstr "Policy för import av meddelandemapp"
 
 #. js-lingui-id: p4ANpY
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Folders"
 msgstr "Meddelandemappar"
 
@@ -2032,14 +2032,14 @@ msgid "Message Participant"
 msgstr "Meddelandedeltagare"
 
 #. js-lingui-id: FhIFx7
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message Participants"
 msgstr "Meddelandedeltagare"
 
@@ -2065,14 +2065,14 @@ msgid "Message Threads"
 msgstr "Meddelandetr\\u00e5dar"
 
 #. js-lingui-id: t7TeQU
-#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
 msgid "Messages"
 msgstr "Meddelanden"
 
 #. js-lingui-id: WoWdku
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Messages from the channel."
 msgstr "Meddelanden fr\\u00e5n kanalen."
 
@@ -2134,18 +2134,18 @@ msgid "Multiple records found with the same unique field values for {conflicting
 msgstr "Flera poster hittades med samma unika fältvärden för {conflictingFieldsValues}. Kan inte avgöra vilken post som ska uppdateras."
 
 #. js-lingui-id: 6YtxFj
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Name"
 msgstr "Namn"
 
@@ -2261,11 +2261,11 @@ msgid "No valid authentication context found."
 msgstr "Ingen giltig autentiseringskontext hittades."
 
 #. js-lingui-id: KiJn9B
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Note"
 msgstr "Anteckning"
 
@@ -2305,11 +2305,11 @@ msgid "Note title"
 msgstr "Anteckningstitel"
 
 #. js-lingui-id: 1DBGsz
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Notes"
 msgstr "Anteckningar"
 
@@ -2369,8 +2369,8 @@ msgid "Number of employees in the company"
 msgstr "Antal anställda i företaget"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Objektet finns redan"
 
@@ -2444,9 +2444,9 @@ msgid "One or more objects you are trying to set permissions for could not be fo
 msgstr "Ett eller flera objekt du försöker ställa in behörigheter för kunde inte hittas. De kan ha blivit raderade."
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Opportunities"
 msgstr "Affärsmöjligheter"
 
@@ -2456,12 +2456,12 @@ msgid "Opportunities linked to the company."
 msgstr "Affärsmöjligheter kopplade till företaget."
 
 #. js-lingui-id: SV/iis
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Opportunity"
 msgstr "Affärsmöjlighet"
 
@@ -2501,26 +2501,26 @@ msgid "Opportunity stage"
 msgstr "Affärsmöjlighetens skede"
 
 #. js-lingui-id: 2mFkfl
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is invalid"
 msgstr "Alternativ-ID är ogiltigt"
 
 #. js-lingui-id: MniXaX
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is required"
 msgstr "Alternativ-ID krävs"
 
 #. js-lingui-id: //eyK1
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Alternativetiketten \"{sanitizedLabel}\" är understigande 1 tecken"
 
 #. js-lingui-id: mTFS0z
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Alternativetiketten överstiger 63 tecken"
 
@@ -2530,9 +2530,9 @@ msgid "Option label format not supported"
 msgstr "Etikettformat för alternativ stöds inte"
 
 #. js-lingui-id: +E9N4m
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label is required"
 msgstr "Alternativetikett är obligatorisk"
 
@@ -2542,14 +2542,14 @@ msgid "Option label must be a string of at least one character"
 msgstr "Alternativetikett måste vara en sträng med minst ett tecken"
 
 #. js-lingui-id: nQqNzE
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Alternativvärdet \"{sanitizedValue}\" understiger 1 tecken"
 
 #. js-lingui-id: 5m/1Hh
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Alternativvärdet överstiger 63 tecken"
 
@@ -2559,9 +2559,9 @@ msgid "Option value format not supported"
 msgstr "Alternativvärdeformat stöds inte"
 
 #. js-lingui-id: /wsRPd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value is required"
 msgstr "Alternativvärde är obligatoriskt"
 
@@ -2606,8 +2606,8 @@ msgid "Pending Sync Action"
 msgstr ""
 
 #. js-lingui-id: 1wdjme
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "People"
 msgstr "Personer"
 
@@ -2617,16 +2617,16 @@ msgid "People linked to the company."
 msgstr "Personer kopplade till företaget."
 
 #. js-lingui-id: OZdaTZ
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Person"
 msgstr "Person"
 
@@ -2672,20 +2672,20 @@ msgid "Point of Contact"
 msgstr "Kontaktperson"
 
 #. js-lingui-id: p/78dY
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
 msgstr "Position"
 
@@ -2772,8 +2772,8 @@ msgid "Related user email address"
 msgstr "Relaterad anv\"andares e-postadress"
 
 #. js-lingui-id: +bFtT5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
 msgstr "Relationsskapadragsdata är nödvändig"
 
@@ -2783,8 +2783,8 @@ msgid "Relation field target metadata not found"
 msgstr "Relationsfältets målinformation hittades inte"
 
 #. js-lingui-id: g87L9j
-#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Relations"
 msgstr "Relationer"
 
@@ -2847,8 +2847,8 @@ msgid "Route with same path already exists"
 msgstr "Rutt med samma sökväg finns redan"
 
 #. js-lingui-id: Tpm2G9
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Runs"
 msgstr "K\"or"
 
@@ -2881,22 +2881,22 @@ msgid "Serverless function already exists"
 msgstr "Serverlös funktion finns redan"
 
 #. js-lingui-id: MSgd2w
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Serverless function not found"
 msgstr "Serverlös funktion hittades inte"
 
@@ -3011,9 +3011,9 @@ msgid "Sync all folders including new ones"
 msgstr ""
 
 #. js-lingui-id: oyJYg7
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Sync Cursor"
 msgstr "Synkkurs"
 
@@ -3023,26 +3023,26 @@ msgid "Sync Cursor. Used for syncing events from the calendar provider"
 msgstr "Synkronisera markören. Används för att synkronisera händelser från kalenderleverantören"
 
 #. js-lingui-id: dNAbG6
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync stage"
 msgstr "Synkroniseringsstadie"
 
 #. js-lingui-id: aqNjQE
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync stage started at"
 msgstr "Synkroniseringsstadiet startade kl"
 
 #. js-lingui-id: bRUdLR
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Sync status"
 msgstr "Synkroniseringsstatus"
 
@@ -3052,11 +3052,11 @@ msgid "Target object metadata not found for {connectFieldName}"
 msgstr "Målobjektmetadata hittades inte för {connectFieldName}"
 
 #. js-lingui-id: Q3P/4s
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Task"
 msgstr "Uppgift"
 
@@ -3111,11 +3111,11 @@ msgid "Task title"
 msgstr "Uppgiftstitel"
 
 #. js-lingui-id: GtycJ/
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Tasks"
 msgstr "Uppgifter"
 
@@ -3206,15 +3206,15 @@ msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "Företagets webbplats-URL. Vi använder denna url för att hämta företagets ikon"
 
 #. js-lingui-id: zGBDEH
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "Skaparen av posten"
 
@@ -3264,8 +3264,8 @@ msgid "The name is not available"
 msgstr "Detta namn är inte tillgängligt"
 
 #. js-lingui-id: hx2IZ4
-#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "Objektet du försöker ställa in behörigheter för kunde inte hittas. Det kan ha blivit raderat."
 
@@ -3285,10 +3285,10 @@ msgid "The role you are trying to assign could not be found. It may have been de
 msgstr "Rollen du försöker tilldela kunde inte hittas. Det kan ha blivit raderat."
 
 #. js-lingui-id: HRcugS
-#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
 msgstr "Rollen du försöker ändra kunde inte hittas. Det kan ha blivit raderat eller så har du kanske inte åtkomst till det."
 
@@ -3368,8 +3368,8 @@ msgid "This name is not available as it is already used by another field."
 msgstr "Detta namn är inte tillgängligt eftersom det redan används av ett annat fält."
 
 #. js-lingui-id: yIUmAs
-#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
+#: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available."
 msgstr "Detta namn är inte tillgängligt."
 
@@ -3389,10 +3389,10 @@ msgid "This role cannot be assigned to users. Please select a different role."
 msgstr "Den här rollen kan inte tilldelas användare. Vänligen välj en annan roll."
 
 #. js-lingui-id: KoDdqN
-#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 #: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Den här rollen kan inte ändras eftersom det är en systemroll. Endast anpassade roller kan redigeras."
 
@@ -3407,10 +3407,10 @@ msgid "Thread id from the messaging provider"
 msgstr "Tr\\u00e5d-id fr\\u00e5n meddelandeleverant\\u00f6ren"
 
 #. js-lingui-id: sS8v5K
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Throttle Failure Count"
 msgstr "Antal misslyckade throttlingförsök"
 
@@ -3430,16 +3430,16 @@ msgid "Time zone"
 msgstr "Tidszon"
 
 #. js-lingui-id: az1boY
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Timeline Activities"
 msgstr "Aktiviteter i tidslinjen"
 
@@ -3494,11 +3494,11 @@ msgid "Timeline Activity"
 msgstr "Tidslinjens aktivitet"
 
 #. js-lingui-id: MHrjPM
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
 msgstr "Titel"
 
@@ -3561,8 +3561,8 @@ msgid "User already exists"
 msgstr "Användaren finns redan"
 
 #. js-lingui-id: l9dlVi
-#: src/engine/core-modules/auth/services/auth.service.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "Användare har inte åtkomst till detta arbetsutrymme"
 
@@ -3627,8 +3627,8 @@ msgid "Validation failed for 0 object(s) and 0 field(s)"
 msgstr "Validering misslyckades för 0 objekt och 0 fält"
 
 #. js-lingui-id: UBPzFQ
-#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Värdet måste vara i VERSALER och följa snake_case \"{sanitizedValue}\""
 
@@ -3690,9 +3690,9 @@ msgid "View field related view object metadata not found"
 msgstr "Vyfältets relaterade objektmetadata hittades inte"
 
 #. js-lingui-id: XJlyZS
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field to delete not found"
 msgstr "Vyfält att ta bort hittades inte"
 
@@ -3702,9 +3702,9 @@ msgid "View field to destroy not found"
 msgstr "Vyfält att förstöra hittades inte"
 
 #. js-lingui-id: Fpy/K1
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field to update not found"
 msgstr "Visa fältet att uppdatera hittades inte"
 
@@ -3765,9 +3765,9 @@ msgid "View group metadata with id {flatViewGroupId} already exists"
 msgstr "Vymetadata med id {flatViewGroupId} finns redan"
 
 #. js-lingui-id: JdAvYa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group to delete not found"
 msgstr "Vygruppen att ta bort hittades inte"
 
@@ -3777,9 +3777,9 @@ msgid "View group to destroy not found"
 msgstr "Vygruppen att förstöra hittades inte"
 
 #. js-lingui-id: UP/TXo
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group to update not found"
 msgstr "Vygruppen att uppdatera hittades inte"
 
@@ -3804,16 +3804,16 @@ msgid "View kanban aggregate field metadata not found"
 msgstr "Visa kanbanaggregatfältmetadata hittades inte"
 
 #. js-lingui-id: F4A9mL
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View not found"
 msgstr "Vy hittades inte"
 
@@ -3884,10 +3884,10 @@ msgid "ViewId is required to create a view sort."
 msgstr "ViewId krävs för att skapa en vynsortering."
 
 #. js-lingui-id: 2q/Q7x
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Visibility"
 msgstr "Synlighet"
 
@@ -3932,15 +3932,15 @@ msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "Välkommen till Twenty: Bekräfta din e-post"
 
 #. js-lingui-id: bLt/0J
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Workflow"
 msgstr "Workflows"
 
@@ -3960,8 +3960,8 @@ msgid "Workflow record position"
 msgstr "Arbetsflödespostposition"
 
 #. js-lingui-id: 5vIcqC
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Workflow Run"
 msgstr "Arbetsflödeskörning"
 
@@ -4030,8 +4030,8 @@ msgid "Workflow version does not contain at least one step"
 msgstr "Arbetsflödesversionen innehåller inte minst ett steg"
 
 #. js-lingui-id: k4DPlQ
-#: src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util.ts
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
+#: src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util.ts
 msgid "Workflow version does not contain trigger"
 msgstr "Arbetsflödesversionen innehåller inte utlösare"
 
@@ -4106,12 +4106,12 @@ msgid "Workspace member"
 msgstr "Arbetsytemedlem"
 
 #. js-lingui-id: qc38qR
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Workspace Member"
 msgstr "Arbetsytemedlem"
 
@@ -4177,14 +4177,14 @@ msgid "WorkspaceMember"
 msgstr "Arbetsytemedlem"
 
 #. js-lingui-id: fV2Bu6
-#: src/engine/core-modules/auth/services/auth.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Wrong password"
 msgstr "Fel lösenord"
 
 #. js-lingui-id: 0gv+T2
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "X"
 msgstr "X"
 
@@ -4194,8 +4194,8 @@ msgid "You cannot change your own role. Please ask another administrator to upda
 msgstr "Du kan inte ändra din egen roll. Be en annan administratör att uppdatera din roll."
 
 #. js-lingui-id: y5haJ4
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
 msgstr "Du kan inte ge redigeringsbehörigheter utan att också ge läsbehörigheter. Vänligen aktivera läsacces först."
 
@@ -4255,9 +4255,9 @@ msgid "Your Password Has Been Successfully Changed"
 msgstr "Ditt lösenord har ändrats"
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/permissions/permissions.service.ts
 #: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Din roll i den här arbetsytan kunde inte hittas. Vänligen kontakta din arbetsytsadministratör."
 

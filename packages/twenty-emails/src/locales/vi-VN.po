@@ -24,16 +24,16 @@ msgid "Suspended Workspace"
 msgstr "Không gian làm việc bị tạm ngưng"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
 #: src/emails/warn-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
 msgid "Dear {userName},"
 msgstr "Kính gửi {userName},"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
 #: src/emails/warn-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
 msgid "Hello,"
 msgstr "Xin chào,"
 
@@ -58,11 +58,6 @@ msgid "Update your subscription"
 msgstr "Cập nhật gói đăng ký của bạn"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Kiểm tra email"
-
-#. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
@@ -72,6 +67,26 @@ msgstr "Xác thực tên miền"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
 msgstr "{senderName} (<0>{senderEmail}</0>): Vui lòng xác thực tên miền này để cho phép người dùng có địa chỉ email <1>@{domain}</1> tham gia không gian làm việc của bạn mà không cần lời mời."
+
+#. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Kiểm tra email"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Tham gia vào đội ngũ của bạn trên Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) đã mời bạn tham gia vào không gian làm việc gọi là <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Chấp nhận lời mời"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -89,19 +104,39 @@ msgid "Verify Email"
 msgstr "Xác minh Email"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Tham gia vào đội ngũ của bạn trên Twenty"
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Mật khẩu đã được cập nhật"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) đã mời bạn tham gia vào không gian làm việc gọi là <1>{workspaceName}</1>."
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Đây là xác nhận rằng mật khẩu cho tài khoản của bạn ({email}) đã được thay đổi thành công vào {formattedDate}."
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Chấp nhận lời mời"
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Nếu bạn không khởi xướng việc thay đổi này, vui lòng liên hệ ngay với chủ sở hữu của không gian làm việc của bạn."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Kết nối với Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Đặt lại mật khẩu của bạn 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Liên kết này chỉ có hiệu lực trong thời gian {duration} kế tiếp. Nếu liên kết không hoạt động, bạn có thể sử dụng liên kết xác minh đăng nhập trực tiếp:"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Đặt lại"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -127,41 +162,6 @@ msgstr "Nếu bạn muốn sử dụng Twenty lại, bạn có thể tạo một
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Create a new workspace"
 msgstr "Tạo không gian làm việc mới"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Đặt lại mật khẩu của bạn 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Liên kết này chỉ có hiệu lực trong thời gian {duration} kế tiếp. Nếu liên kết không hoạt động, bạn có thể sử dụng liên kết xác minh đăng nhập trực tiếp:"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "Đặt lại"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Mật khẩu đã được cập nhật"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Đây là xác nhận rằng mật khẩu cho tài khoản của bạn ({email}) đã được thay đổi thành công vào {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Nếu bạn không khởi xướng việc thay đổi này, vui lòng liên hệ ngay với chủ sở hữu của không gian làm việc của bạn."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Kết nối với Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx

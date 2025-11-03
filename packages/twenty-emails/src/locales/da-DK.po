@@ -24,16 +24,16 @@ msgid "Suspended Workspace"
 msgstr "Suspenderet arbejdsområde"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
 #: src/emails/warn-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
 msgid "Dear {userName},"
 msgstr "Kære {userName},"
 
 #. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-#: src/emails/password-update-notify.email.tsx
 #: src/emails/warn-suspended-workspace.email.tsx
+#: src/emails/password-update-notify.email.tsx
+#: src/emails/clean-suspended-workspace.email.tsx
 msgid "Hello,"
 msgstr "Hej,"
 
@@ -58,11 +58,6 @@ msgid "Update your subscription"
 msgstr "Opdater dit abonnement"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Test e-mail"
-
-#. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
@@ -72,6 +67,26 @@ msgstr "Bekræft domæne"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
 msgstr "{senderName} (<0>{senderEmail}</0>): Bekræft venligst dette domæne for at tillade brugere med <1>@{domain}</1> e-mailadresser at tilslutte sig dit arbejdsområde uden at kræve en invitation."
+
+#. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Test e-mail"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Join your team on Twenty"
+msgstr "Deltag i dit team på Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
+msgstr "{senderName} (<0>{senderEmail}</0>) har inviteret dig til at deltage i et arbejdsområde kaldet <1>{workspaceName}</1>."
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+msgid "Accept invite"
+msgstr "Accepter invitation"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -89,19 +104,39 @@ msgid "Verify Email"
 msgstr "Bekræft e-mail"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Join your team on Twenty"
-msgstr "Deltag i dit team på Twenty"
+#: src/emails/password-update-notify.email.tsx
+msgid "Password updated"
+msgstr "Adgangskode opdateret"
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "{senderName} (<0>{senderEmail}</0>) has invited you to join a workspace called <1>{workspaceName}</1>."
-msgstr "{senderName} (<0>{senderEmail}</0>) har inviteret dig til at deltage i et arbejdsområde kaldet <1>{workspaceName}</1>."
+#: src/emails/password-update-notify.email.tsx
+msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
+msgstr "Dette er en bekræftelse på, at adgangskoden til din konto ({email}) er blevet ændret den {formattedDate}."
 
 #. js-lingui-explicit-id
-#: src/emails/send-invite-link.email.tsx
-msgid "Accept invite"
-msgstr "Accepter invitation"
+#: src/emails/password-update-notify.email.tsx
+msgid "If you did not initiate this change, please contact your workspace owner immediately."
+msgstr "Hvis du ikke har initieret denne ændring, bedes du straks kontakte ejeren af dit arbejdsområde."
+
+#. js-lingui-explicit-id
+#: src/emails/password-update-notify.email.tsx
+msgid "Connect to Twenty"
+msgstr "Forbind til Twenty"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset your password 🗝"
+msgstr "Nulstil din adgangskode 🗝"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "Dette link er kun gyldigt i de næste {duration}. Hvis linket ikke fungerer, kan du bruge loginbekræftelseslinket direkte:"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Reset"
+msgstr "Nulstil"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx
@@ -127,41 +162,6 @@ msgstr "Hvis du ønsker at bruge Twenty igen, kan du oprette et nyt arbejdsområ
 #: src/emails/clean-suspended-workspace.email.tsx
 msgid "Create a new workspace"
 msgstr "Opret et nyt arbejdsområde"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset your password 🗝"
-msgstr "Nulstil din adgangskode 🗝"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "Dette link er kun gyldigt i de næste {duration}. Hvis linket ikke fungerer, kan du bruge loginbekræftelseslinket direkte:"
-
-#. js-lingui-explicit-id
-#: src/emails/password-reset-link.email.tsx
-msgid "Reset"
-msgstr "Nulstil"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Password updated"
-msgstr "Adgangskode opdateret"
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "This is a confirmation that password for your account ({email}) was successfully changed on {formattedDate}."
-msgstr "Dette er en bekræftelse på, at adgangskoden til din konto ({email}) er blevet ændret den {formattedDate}."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "If you did not initiate this change, please contact your workspace owner immediately."
-msgstr "Hvis du ikke har initieret denne ændring, bedes du straks kontakte ejeren af dit arbejdsområde."
-
-#. js-lingui-explicit-id
-#: src/emails/password-update-notify.email.tsx
-msgid "Connect to Twenty"
-msgstr "Forbind til Twenty"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
