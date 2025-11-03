@@ -24,8 +24,8 @@ msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "{fieldName} ו-{fieldName}Id לא יכולים להינתן יחד."
 
 #. js-lingui-id: ZkHTHm
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "{fieldType} fields cannot be unique."
 msgstr "שדות {fieldType} אינם יכולים להיות ייחודיים."
 
@@ -140,9 +140,9 @@ msgid "Access Token"
 msgstr "אסימון גישה"
 
 #. js-lingui-id: pd81Qb
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Account Owner"
 msgstr "בעלים של חשבון"
 
@@ -203,16 +203,16 @@ msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "אירוע מצטבר / מסונן שיוצג בציר הזמן"
 
 #. js-lingui-id: pdOYzu
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 msgid "All {objectLabelPlural}"
 msgstr "כולם {objectLabelPlural}"
 
@@ -232,8 +232,8 @@ msgid "An error occurred during messages import"
 msgstr "אירעה שגיאה במהלך ייבוא הודעות"
 
 #. js-lingui-id: XyOToQ
-#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 msgid "An error occurred."
 msgstr "אירעה שגיאה."
 
@@ -369,15 +369,15 @@ msgid "Attachment workflow"
 msgstr "זרימת עבודה של קבצים מצורפים"
 
 #. js-lingui-id: w/Sphq
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Attachments"
 msgstr "קבצים מצורפים"
 
@@ -478,9 +478,9 @@ msgid "Avatar Url"
 msgstr "כתובת אתר של אווטאר"
 
 #. js-lingui-id: K1172m
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Blocklist"
 msgstr "רשימת חסימה"
 
@@ -495,14 +495,14 @@ msgid "Blocklists"
 msgstr "רשימות חסימה"
 
 #. js-lingui-id: bGQplw
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Body"
 msgstr "גוף"
 
 #. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 msgid "By Stage"
 msgstr "לפי שלב"
 
@@ -527,20 +527,20 @@ msgid "Calendar Channel Event Association"
 msgstr "האגוד של ערוץ הלוח שנה"
 
 #. js-lingui-id: kYNT3F
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar Channel Event Associations"
 msgstr "האגודות של אירועי ערוץ הלוח שנה"
 
 #. js-lingui-id: Znix/S
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Calendar Channels"
 msgstr "ערוצי יומן"
 
@@ -561,10 +561,10 @@ msgid "Calendar event participants"
 msgstr "משתתפי אירוע יומן"
 
 #. js-lingui-id: ZI2UyM
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Calendar Event Participants"
 msgstr "משתתפי אירוע יומן"
 
@@ -605,8 +605,8 @@ msgid "Cannot delete account: you are the only admin. Assign another admin or de
 msgstr "לא ניתן למחוק חשבון: אתה המנהל היחידי. הקצה מנהל נוסף או מחק תחילה את המרחב(ים)."
 
 #. js-lingui-id: AQyr9X
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "לא ניתן למחוק, אנא עדכן קודם את שדה מזהה התווית."
 
@@ -667,14 +667,14 @@ msgid "Companies"
 msgstr "חברות"
 
 #. js-lingui-id: 7i8j3G
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Company"
 msgstr "חברה"
 
@@ -695,11 +695,11 @@ msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingu
 msgstr "לא ניתן להתחבר עבור {connectFieldName} על {objectMetadataNameSingular}"
 
 #. js-lingui-id: PQ1Dw2
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Connected Account"
 msgstr "חשבון מחובר"
 
@@ -715,8 +715,8 @@ msgid "Connected Accounts"
 msgstr "חשבונות מחוברים"
 
 #. js-lingui-id: bA6O5B
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Contact auto creation policy"
 msgstr "מדיניות יצירת אנשי קשר אוטומטית"
 
@@ -791,15 +791,15 @@ msgid "Could not find index related object metadata"
 msgstr "לא ניתן למצוא מטאדטה אובייקט קשור לאינדקס"
 
 #. js-lingui-id: NCIYDF
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Created by"
 msgstr "נוצר ע\"י"
 
@@ -809,10 +809,10 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "נוצרו נתוני שדה metadata, נתוני העצם ההורה לא נמצאו"
 
 #. js-lingui-id: wPvFAD
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/engine/twenty-orm/base.workspace-entity.ts
 #: src/engine/twenty-orm/base.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Creation date"
 msgstr "תאריך יצירה"
 
@@ -851,10 +851,10 @@ msgid "Custom Connection Parameters"
 msgstr "פרמטרים מותאמים של חיבור"
 
 #. js-lingui-id: 7p5kLi
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Dashboard"
 msgstr "לוח מחוונים"
 
@@ -912,8 +912,8 @@ msgid "December"
 msgstr "דצמבר"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "ערך ברירת המחדל \"{defaultValue}\" חייב להיות אחד מערכי האפשרויות"
 
@@ -923,14 +923,14 @@ msgid "Default value must be a string"
 msgstr "ערך ברירת מחדל חייב להיות מחרוזת"
 
 #. js-lingui-id: sv9P4Q
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
 msgstr "ערך ברירת מחדל צריך להיות מחרוזת מצוטטת"
 
 #. js-lingui-id: 6pJV03
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
 msgstr "ערכי ברירת המחדל חייבים להיות ייחודיים"
 
@@ -951,10 +951,10 @@ msgid "Direction"
 msgstr "כיוון"
 
 #. js-lingui-id: 0gS7M5
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Display Name"
 msgstr "שם תצוגה"
 
@@ -984,8 +984,8 @@ msgid "Due Date"
 msgstr "תאריך יעד"
 
 #. js-lingui-id: BXtAxc
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "אפשרות כפולה {field}"
 
@@ -1054,10 +1054,10 @@ msgid "Event external ID"
 msgstr "מזהה חיצוני של אירוע"
 
 #. js-lingui-id: aZJLAR
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Event ID"
 msgstr "מזהה אירוע"
 
@@ -1114,8 +1114,8 @@ msgid "Event workspace member"
 msgstr "חבר חלל עבודה באירוע"
 
 #. js-lingui-id: tst44n
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Events"
 msgstr "אירועים"
 
@@ -1249,19 +1249,19 @@ msgid "Favorite workspace member"
 msgstr "חבר בסביבת העבודה המועדף"
 
 #. js-lingui-id: X9kySA
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Favorites"
 msgstr "מועדפים"
 
@@ -1371,14 +1371,14 @@ msgid "Field label identifier is required"
 msgstr "נחוצה זיהוי תווית השדה"
 
 #. js-lingui-id: MPt365
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "Field metadata not found"
 msgstr "לא נמצאו מטא-נתונים של שדה"
 
@@ -1503,16 +1503,16 @@ msgid "handle"
 msgstr "ידית"
 
 #. js-lingui-id: Nf7oXL
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Handle"
 msgstr "ידית"
 
@@ -1550,8 +1550,8 @@ msgid "Ideal Customer Profile:  Indicates whether the company is the most suitab
 msgstr "פרופיל לקוח אידיאלי: מציין האם החברה היא הלקוח המתאים והשווה ביותר עבורך"
 
 #. js-lingui-id: YcVn4w
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
 msgstr "אם הוגדר ערך ברירת מחדל יש לכלול לפחות ערך אחד"
 
@@ -1586,8 +1586,8 @@ msgid "Index related object not found"
 msgstr "אובייקט הקשור לאינדקס לא נמצא"
 
 #. js-lingui-id: fY2zUQ
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index to delete not found"
 msgstr "האינדקס למחיקה לא נמצא"
 
@@ -1712,10 +1712,10 @@ msgid "Is canceled"
 msgstr "מבוטל"
 
 #. js-lingui-id: k+g9Uh
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Is Contact Auto Creation Enabled"
 msgstr "יצירת איש קשר אוטומטית פעילה"
 
@@ -1738,10 +1738,10 @@ msgid "Is Sent Folder"
 msgstr "תיקיית נשלחים"
 
 #. js-lingui-id: Mqzqb8
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "סנכרון מופעל"
 
@@ -1802,10 +1802,10 @@ msgid "Label identifier field cannot be deactivated"
 msgstr "לא ניתן להשבית את שדה מזהה התווית"
 
 #. js-lingui-id: ACUSmL
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 msgid "Label identifier view field cannot be deleted"
 msgstr "שדה זיהוי תווית לא ניתן למחיקה."
 
@@ -1827,14 +1827,14 @@ msgid "Label is required"
 msgstr "נדרשת תווית."
 
 #. js-lingui-id: 4EGmy6
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not be empty"
 msgstr "תווית חייבת להיות לא ריקה."
 
 #. js-lingui-id: k731jp
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not contain a comma"
 msgstr "תווית לא חייבת להכיל פסיק."
 
@@ -1855,10 +1855,10 @@ msgid "Last sync cursor"
 msgstr "סמן סנכרון אחרון"
 
 #. js-lingui-id: Zdx9Qq
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Last sync date"
 msgstr "תאריך סנכרון אחרון"
 
@@ -1896,8 +1896,8 @@ msgid "Linked Record id"
 msgstr "מזהה רשומה מקושרת"
 
 #. js-lingui-id: uCA6be
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Linkedin"
 msgstr "לינקדין"
 
@@ -1934,22 +1934,22 @@ msgid "Meet Link"
 msgstr "לינק לפגישה"
 
 #. js-lingui-id: xDAtGP
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message"
 msgstr "הודעה"
 
 #. js-lingui-id: g+QGD6
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Channel"
 msgstr "ערוץ הודעות"
 
 #. js-lingui-id: DzU4a3
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message Channel Association"
 msgstr "שיוך ערוץ הודעות"
 
@@ -1975,10 +1975,10 @@ msgid "Message channel not found"
 msgstr ""
 
 #. js-lingui-id: k7LXPQ
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channels"
 msgstr "ערוצי הודעות"
 
@@ -2004,9 +2004,9 @@ msgid "Message folder import policy"
 msgstr "הגבלות ייבוא תיקיית ההודעות"
 
 #. js-lingui-id: p4ANpY
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Folders"
 msgstr "תיקיות הודעות"
 
@@ -2032,14 +2032,14 @@ msgid "Message Participant"
 msgstr "משתתף הודעה"
 
 #. js-lingui-id: FhIFx7
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Message Participants"
 msgstr "משתתפי הודעה"
 
@@ -2065,14 +2065,14 @@ msgid "Message Threads"
 msgstr "שרשורי הודעות"
 
 #. js-lingui-id: t7TeQU
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Messages"
 msgstr "הודעות"
 
 #. js-lingui-id: WoWdku
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Messages from the channel."
 msgstr "הודעות מהערוץ."
 
@@ -2132,18 +2132,18 @@ msgid "Multiple records found with the same unique field values for {conflicting
 msgstr "נמצאו מספר תקליטים עם אותם ערכים ייחודיים לשדות עבור {conflictingFieldsValues}. לא ניתן לקבוע איזה תקליט לעדכן."
 
 #. js-lingui-id: 6YtxFj
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Name"
 msgstr "שם"
 
@@ -2259,11 +2259,11 @@ msgid "No valid authentication context found."
 msgstr "לא נמצא הקשר אימות תקף."
 
 #. js-lingui-id: KiJn9B
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Note"
 msgstr "הערה"
 
@@ -2303,11 +2303,11 @@ msgid "Note title"
 msgstr "כותרת ההערה"
 
 #. js-lingui-id: 1DBGsz
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Notes"
 msgstr "הערות"
 
@@ -2367,8 +2367,8 @@ msgid "Number of employees in the company"
 msgstr "מספר העובדים בחברה"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
+#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 msgid "Object already exists"
 msgstr "העצם כבר קיים."
 
@@ -2442,9 +2442,9 @@ msgid "One or more objects you are trying to set permissions for could not be fo
 msgstr "אובייקט אחד או יותר שאתה מנסה להגדיר הרשאות עבורו לא נמצא. ייתכן שהוא נמחק."
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Opportunities"
 msgstr "הזדמנויות"
 
@@ -2454,12 +2454,12 @@ msgid "Opportunities linked to the company."
 msgstr "הזדמנויות הקשורות לחברה."
 
 #. js-lingui-id: SV/iis
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Opportunity"
 msgstr "הזדמנות"
 
@@ -2499,26 +2499,26 @@ msgid "Opportunity stage"
 msgstr "שלב ההזדמנות"
 
 #. js-lingui-id: 2mFkfl
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
 msgstr "מספר זיהוי אפשרות אינו תקין"
 
 #. js-lingui-id: MniXaX
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
 msgstr "נדרש מספר זיהוי אפשרות"
 
 #. js-lingui-id: //eyK1
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "תווית אפשרות \"{sanitizedLabel}\" היא מתחת ל-1 תו."
 
 #. js-lingui-id: mTFS0z
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label exceeds 63 characters"
 msgstr "תווית אפשרות חורגת מ-63 תווים."
 
@@ -2528,9 +2528,9 @@ msgid "Option label format not supported"
 msgstr "תבנית תווית האופציה אינה נתמכת"
 
 #. js-lingui-id: +E9N4m
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label is required"
 msgstr "נדרשת תווית אפשרות."
 
@@ -2540,14 +2540,14 @@ msgid "Option label must be a string of at least one character"
 msgstr "תווית האפשרות חייבת להיות מחרוזת של תו אחד לפחות"
 
 #. js-lingui-id: nQqNzE
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "ערך אפשרות \"{sanitizedValue}\" הוא מתחת ל-1 תו."
 
 #. js-lingui-id: 5m/1Hh
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value exceeds 63 characters"
 msgstr "ערך אפשרות חורג מ-63 תווים."
 
@@ -2557,9 +2557,9 @@ msgid "Option value format not supported"
 msgstr "פורמט ערך האפשרות אינו נתמך"
 
 #. js-lingui-id: /wsRPd
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value is required"
 msgstr "נדרש ערך אפשרות."
 
@@ -2604,8 +2604,8 @@ msgid "Pending Sync Action"
 msgstr ""
 
 #. js-lingui-id: 1wdjme
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "People"
 msgstr "אנשים"
 
@@ -2615,16 +2615,16 @@ msgid "People linked to the company."
 msgstr "אנשים הקשורים לחברה."
 
 #. js-lingui-id: OZdaTZ
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Person"
 msgstr "אדם"
 
@@ -2670,20 +2670,20 @@ msgid "Point of Contact"
 msgstr "איש קשר"
 
 #. js-lingui-id: p/78dY
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Position"
 msgstr "תפקיד"
 
@@ -2770,8 +2770,8 @@ msgid "Related user email address"
 msgstr "כתובת דוא\"ל של המשתמש הקשור"
 
 #. js-lingui-id: +bFtT5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
 msgstr "נדרש משלוח נתוני יצירת קשר"
 
@@ -2781,8 +2781,8 @@ msgid "Relation field target metadata not found"
 msgstr "לא נמצאו נתוני metadata למטרה של שדה קשר"
 
 #. js-lingui-id: g87L9j
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Relations"
 msgstr "יחסים"
 
@@ -2845,8 +2845,8 @@ msgid "Route with same path already exists"
 msgstr "נתיב עם אותו נתיב כבר קיים"
 
 #. js-lingui-id: Tpm2G9
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Runs"
 msgstr "ריצות"
 
@@ -2877,22 +2877,22 @@ msgid "Serverless function already exists"
 msgstr "הפונקציה חסרת השרת כבר קיימת"
 
 #. js-lingui-id: MSgd2w
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 msgid "Serverless function not found"
 msgstr "לא נמצאה פונקציה חסרת שרת"
 
@@ -3005,9 +3005,9 @@ msgid "Sync all folders including new ones"
 msgstr ""
 
 #. js-lingui-id: oyJYg7
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Sync Cursor"
 msgstr "אינדיקטור סנכרון"
 
@@ -3017,26 +3017,26 @@ msgid "Sync Cursor. Used for syncing events from the calendar provider"
 msgstr "אינדיקטור סנכרון. משמש לסנכרון אירועים מספקי היומן"
 
 #. js-lingui-id: dNAbG6
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync stage"
 msgstr "שלב סינכרון"
 
 #. js-lingui-id: aqNjQE
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync stage started at"
 msgstr "שלב סינכרון התחיל ב"
 
 #. js-lingui-id: bRUdLR
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync status"
 msgstr "סטטוס סינכרון"
 
@@ -3046,11 +3046,11 @@ msgid "Target object metadata not found for {connectFieldName}"
 msgstr "לא נמצא מידע מטא על עבור {connectFieldName}"
 
 #. js-lingui-id: Q3P/4s
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Task"
 msgstr "משימה"
 
@@ -3105,11 +3105,11 @@ msgid "Task title"
 msgstr "כותרת המשימה"
 
 #. js-lingui-id: GtycJ/
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Tasks"
 msgstr "משימות"
 
@@ -3200,15 +3200,15 @@ msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "כתובת האתר של החברה. אנחנו משתמשים בכתובת זו כדי לאחזר את סמל החברה"
 
 #. js-lingui-id: zGBDEH
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "יוצר הרשומה"
 
@@ -3258,8 +3258,8 @@ msgid "The name is not available"
 msgstr "שם זה אינו זמין"
 
 #. js-lingui-id: hx2IZ4
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "לא ניתן למצוא את האובייקט שאתה מנסה להגדיר הרשאות עבורו. ייתכן שהוא נמחק."
 
@@ -3279,10 +3279,10 @@ msgid "The role you are trying to assign could not be found. It may have been de
 msgstr "לא ניתן למצוא את התפקיד שאתה מנסה להעניק. ייתכן שהוא נמחק."
 
 #. js-lingui-id: HRcugS
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
 msgstr "לא ניתן למצוא את התפקיד שאתה מנסה לשנות. ייתכן שהוא נמחק או שאין לך גישה אליו."
 
@@ -3362,8 +3362,8 @@ msgid "This name is not available as it is already used by another field."
 msgstr "שם זה אינו זמין שכן כבר בשימוש על ידי שדה אחר."
 
 #. js-lingui-id: yIUmAs
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 msgid "This name is not available."
 msgstr "שם זה אינו זמין."
 
@@ -3383,10 +3383,10 @@ msgid "This role cannot be assigned to users. Please select a different role."
 msgstr "לא ניתן להקצות תפקיד זה למשתמשים. אנא בחר תפקיד אחר."
 
 #. js-lingui-id: KoDdqN
-#: src/engine/metadata-modules/role/role.service.ts
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/role/role.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "לא ניתן לשנות תפקיד זה כי הוא תפקיד מערכת. רק תפקידים מותאמים אישית יכולים להשתנות."
 
@@ -3401,10 +3401,10 @@ msgid "Thread id from the messaging provider"
 msgstr "מזהה שיחה מספק המסרים"
 
 #. js-lingui-id: sS8v5K
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Throttle Failure Count"
 msgstr "מספר ניסיונות כשל בדיקת מהירות"
 
@@ -3424,16 +3424,16 @@ msgid "Time zone"
 msgstr "אזור זמן"
 
 #. js-lingui-id: az1boY
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Timeline Activities"
 msgstr "פעילויות ציר זמנים"
 
@@ -3488,11 +3488,11 @@ msgid "Timeline Activity"
 msgstr "פעילות בציר זמנים"
 
 #. js-lingui-id: MHrjPM
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Title"
 msgstr "כותרת"
 
@@ -3555,8 +3555,8 @@ msgid "User already exists"
 msgstr "המשתמש כבר קיים"
 
 #. js-lingui-id: l9dlVi
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 msgid "User does not have access to this workspace"
 msgstr "למשתמש אין גישה למרחב עבודה זה"
 
@@ -3621,8 +3621,8 @@ msgid "Validation failed for 0 object(s) and 0 field(s)"
 msgstr "האימות נכשל עבור 0 אובייקטים ו-0 שדות"
 
 #. js-lingui-id: UBPzFQ
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr " תַאִים לִהְיוֹת בְּאוֹתִיּוֹת רִשׁוֹנוֹת   ובפורמט snake_case \"{sanitizedValue}\""
 
@@ -3684,9 +3684,9 @@ msgid "View field related view object metadata not found"
 msgstr "לא נמצאו נתוני Metadata של עצם התצוגה הקשור לשדה תצוגה."
 
 #. js-lingui-id: XJlyZS
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field to delete not found"
 msgstr "לא נמצא שדה תצוגה למחיקה"
 
@@ -3696,9 +3696,9 @@ msgid "View field to destroy not found"
 msgstr "לא נמצא שדה תצוגה למחיקה"
 
 #. js-lingui-id: Fpy/K1
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field to update not found"
 msgstr "שדה תצוגה לעדכון לא נמצא"
 
@@ -3759,9 +3759,9 @@ msgid "View group metadata with id {flatViewGroupId} already exists"
 msgstr "נתוני קבוצת התצוגה עם מזהה {flatViewGroupId} כבר קיימים"
 
 #. js-lingui-id: JdAvYa
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group to delete not found"
 msgstr "לא נמצאה קבוצת תצוגה למחיקה"
 
@@ -3771,9 +3771,9 @@ msgid "View group to destroy not found"
 msgstr "לא נמצאה קבוצת תצוגה להשמדה"
 
 #. js-lingui-id: UP/TXo
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group to update not found"
 msgstr "לא נמצאה קבוצת תצוגה לעדכון"
 
@@ -3798,16 +3798,16 @@ msgid "View kanban aggregate field metadata not found"
 msgstr "לא נמצא מידע מטה של שדה מצטבר לקנבן תצוגה"
 
 #. js-lingui-id: F4A9mL
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View not found"
 msgstr "תצוגה לא נמצאה"
 
@@ -3878,10 +3878,10 @@ msgid "ViewId is required to create a view sort."
 msgstr "ViewId נדרש ליצירת מיון תצוגה."
 
 #. js-lingui-id: 2q/Q7x
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Visibility"
 msgstr "נראות"
 
@@ -3926,15 +3926,15 @@ msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "ברוך הבא ל-Twenty: נא לאשר את האימייל שלך"
 
 #. js-lingui-id: bLt/0J
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow"
 msgstr "זרימת עבודה"
 
@@ -3954,8 +3954,8 @@ msgid "Workflow record position"
 msgstr "מיקום רישום זרימת עבודה"
 
 #. js-lingui-id: 5vIcqC
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow Run"
 msgstr "הרצת זרימת עבודה"
 
@@ -4024,8 +4024,8 @@ msgid "Workflow version does not contain at least one step"
 msgstr "גרסת תהליך העבודה לא מכילה לפחות שלב אחד."
 
 #. js-lingui-id: k4DPlQ
-#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util.ts
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Workflow version does not contain trigger"
 msgstr "גרסת תהליך העבודה לא מכילה הפעלה."
 
@@ -4100,12 +4100,12 @@ msgid "Workspace member"
 msgstr "חבר סביבת עבודה"
 
 #. js-lingui-id: qc38qR
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Member"
 msgstr "חבר סביבת עבודה"
 
@@ -4171,14 +4171,14 @@ msgid "WorkspaceMember"
 msgstr "חבר בסדנה"
 
 #. js-lingui-id: fV2Bu6
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Wrong password"
 msgstr "סיסמה שגויה."
 
 #. js-lingui-id: 0gv+T2
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "X"
 msgstr "X"
 
@@ -4188,8 +4188,8 @@ msgid "You cannot change your own role. Please ask another administrator to upda
 msgstr "אינך יכול לשנות תפקיד משלך. אנא בקש מנהל נוסף לעדכן את תפקידך."
 
 #. js-lingui-id: y5haJ4
-#: src/engine/metadata-modules/role/role.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/role/role.service.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
 msgstr "אינך יכול לתת הרשאות עריכה ללא מתן הרשאות קריאה. אנא אפשר גישת קריאה תחילה."
 
@@ -4249,9 +4249,9 @@ msgid "Your Password Has Been Successfully Changed"
 msgstr "הסיסמה שלך שונתה בהצלחה"
 
 #. js-lingui-id: XxkUFT
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
 #: src/engine/metadata-modules/user-role/user-role.service.ts
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "לא נמצא תפקידך במרחב זה. אנא פנה למנהל המרחב שלך."
 

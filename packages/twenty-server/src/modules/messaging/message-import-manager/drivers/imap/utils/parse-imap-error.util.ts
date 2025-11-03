@@ -7,6 +7,7 @@ import { isImapFlowError } from 'src/modules/messaging/message-import-manager/dr
 
 export const parseImapError = (
   error: Error,
+  options?: { cause?: Error },
 ): MessageImportDriverException | null => {
   if (!error) {
     return null;
@@ -20,6 +21,7 @@ export const parseImapError = (
     return new MessageImportDriverException(
       `IMAP client not available: ${error.message}`,
       MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
+      { cause: options?.cause || error },
     );
   }
 
@@ -27,6 +29,7 @@ export const parseImapError = (
     return new MessageImportDriverException(
       `IMAP connection timeout: ${error.message}`,
       MessageNetworkExceptionCode.ETIMEDOUT,
+      { cause: options?.cause || error },
     );
   }
 
@@ -34,6 +37,7 @@ export const parseImapError = (
     return new MessageImportDriverException(
       `IMAP connection error: ${error.message}`,
       MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR,
+      { cause: options?.cause || error },
     );
   }
 
@@ -42,6 +46,7 @@ export const parseImapError = (
       return new MessageImportDriverException(
         `IMAP authentication error: ${error.responseText || error.message}`,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        { cause: options?.cause || error },
       );
     }
 
@@ -49,6 +54,7 @@ export const parseImapError = (
       return new MessageImportDriverException(
         `IMAP mailbox not found: ${error.responseText || error.message}`,
         MessageImportDriverExceptionCode.NOT_FOUND,
+        { cause: options?.cause || error },
       );
     }
   }
@@ -57,6 +63,7 @@ export const parseImapError = (
     return new MessageImportDriverException(
       `IMAP authentication error: ${error.responseText || error.message}`,
       MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      { cause: options?.cause || error },
     );
   }
 
@@ -65,12 +72,14 @@ export const parseImapError = (
       return new MessageImportDriverException(
         `IMAP temporary error: ${error.responseText}`,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        { cause: options?.cause || error },
       );
     }
 
     return new MessageImportDriverException(
       `IMAP command failed: ${error.responseText}`,
       MessageImportDriverExceptionCode.UNKNOWN,
+      { cause: options?.cause || error },
     );
   }
 

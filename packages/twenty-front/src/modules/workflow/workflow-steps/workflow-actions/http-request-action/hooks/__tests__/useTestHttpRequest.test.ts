@@ -1,12 +1,25 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { useMutation } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { RecoilRoot } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
 import { useTestHttpRequest } from '../useTestHttpRequest';
 
+// Mock Apollo Client
+jest.mock('@apollo/client', () => ({
+  ...jest.requireActual('@apollo/client'),
+  useMutation: jest.fn(),
+}));
+
+jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: jest.fn(),
+}));
+
 // Mock the resolveInput function
 jest.mock('twenty-shared/utils', () => ({
+  ...jest.requireActual('twenty-shared/utils'),
   resolveInput: jest.fn((input, context) => {
     // For testing purposes, we'll actually do the replacement for simple cases
     if (typeof input === 'string') {
@@ -57,13 +70,10 @@ jest.mock('twenty-shared/utils', () => ({
   }),
 }));
 
-// Mock fetch
-global.fetch = jest.fn();
-
-const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
-
 describe('useTestHttpRequest', () => {
   const actionId = 'test-action-id';
+  const mockApolloClient = {};
+  const mockMutate = jest.fn();
 
   const mockFormData: HttpRequestFormData = {
     url: 'https://api.example.com/users',
@@ -81,6 +91,8 @@ describe('useTestHttpRequest', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (useApolloCoreClient as jest.Mock).mockReturnValue(mockApolloClient);
+    (useMutation as jest.Mock).mockReturnValue([mockMutate]);
   });
 
   it('should initialize with correct default values', () => {
@@ -93,15 +105,18 @@ describe('useTestHttpRequest', () => {
     expect(result.current.httpRequestTestData).toBeDefined();
   });
 
-  it('should handle successful GET request', async () => {
-    const mockResponse = {
-      status: 200,
-      statusText: 'OK',
-      json: jest.fn().mockResolvedValue({ id: 1, name: 'John' }),
-      headers: new Map([['content-type', 'application/json']]),
-    };
-
-    mockFetch.mockResolvedValueOnce(mockResponse as any);
+  it('should handle successful GET request with JSON response', async () => {
+    mockMutate.mockResolvedValueOnce({
+      data: {
+        testHttpRequest: {
+          success: true,
+          message:
+            'HTTP GET request to https://api.example.com/users completed successfully',
+          result: { id: 1, name: 'John' },
+          error: null,
+        },
+      },
+    });
 
     const { result } = renderHook(() => useTestHttpRequest(actionId), {
       wrapper,
@@ -111,15 +126,16 @@ describe('useTestHttpRequest', () => {
       await result.current.testHttpRequest(mockFormData, mockVariableValues);
     });
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'https://api.example.com/users',
-      expect.objectContaining({
-        method: 'GET',
-        headers: expect.objectContaining({
-          Authorization: 'Bearer test-token-123',
-        }),
-      }),
-    );
+    expect(mockMutate).toHaveBeenCalledWith({
+      variables: {
+        input: {
+          url: 'https://api.example.com/users',
+          method: 'GET',
+          headers: { Authorization: 'Bearer test-token-123' },
+          body: undefined,
+        },
+      },
+    });
 
     expect(result.current.isTesting).toBe(false);
     expect(result.current.httpRequestTestData.output?.status).toBe(200);
@@ -127,23 +143,26 @@ describe('useTestHttpRequest', () => {
       '{\n  "id": 1,\n  "name": "John"\n}',
     );
     expect(result.current.httpRequestTestData.output?.error).toBeUndefined();
+    expect(result.current.httpRequestTestData.language).toBe('json');
   });
 
-  it('should handle POST request with body', async () => {
+  it('should handle successful POST request with body', async () => {
     const postFormData: HttpRequestFormData = {
       ...mockFormData,
       method: 'POST',
       body: { name: 'Jane', email: 'jane@example.com' },
     };
 
-    const mockResponse = {
-      status: 201,
-      statusText: 'Created',
-      json: jest.fn().mockResolvedValue({ id: 2, name: 'Jane' }),
-      headers: new Map([['content-type', 'application/json']]),
-    };
-
-    mockFetch.mockResolvedValueOnce(mockResponse as any);
+    mockMutate.mockResolvedValueOnce({
+      data: {
+        testHttpRequest: {
+          success: true,
+          message: 'HTTP POST request completed successfully',
+          result: { id: 2, name: 'Jane', email: 'jane@example.com' },
+          error: null,
+        },
+      },
+    });
 
     const { result } = renderHook(() => useTestHttpRequest(actionId), {
       wrapper,
@@ -153,26 +172,32 @@ describe('useTestHttpRequest', () => {
       await result.current.testHttpRequest(postFormData, mockVariableValues);
     });
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      'https://api.example.com/users',
-      expect.objectContaining({
-        method: 'POST',
-        body: JSON.stringify({ name: 'Jane', email: 'jane@example.com' }),
-      }),
-    );
+    expect(mockMutate).toHaveBeenCalledWith({
+      variables: {
+        input: {
+          url: 'https://api.example.com/users',
+          method: 'POST',
+          headers: { Authorization: 'Bearer test-token-123' },
+          body: { name: 'Jane', email: 'jane@example.com' },
+        },
+      },
+    });
 
-    expect(result.current.httpRequestTestData.output?.status).toBe(201);
+    expect(result.current.httpRequestTestData.output?.status).toBe(200);
+    expect(result.current.httpRequestTestData.language).toBe('json');
   });
 
-  it('should handle non-JSON responses', async () => {
-    const mockResponse = {
-      status: 200,
-      statusText: 'OK',
-      text: jest.fn().mockResolvedValue('Plain text response'),
-      headers: new Map([['content-type', 'text/plain']]),
-    };
-
-    mockFetch.mockResolvedValueOnce(mockResponse as any);
+  it('should handle string response from backend', async () => {
+    mockMutate.mockResolvedValueOnce({
+      data: {
+        testHttpRequest: {
+          success: true,
+          message: 'HTTP GET request completed successfully',
+          result: 'Plain text response',
+          error: null,
+        },
+      },
+    });
 
     const { result } = renderHook(() => useTestHttpRequest(actionId), {
       wrapper,
@@ -188,9 +213,18 @@ describe('useTestHttpRequest', () => {
     expect(result.current.httpRequestTestData.language).toBe('plaintext');
   });
 
-  it('should handle request errors', async () => {
-    const errorMessage = 'Network error';
-    mockFetch.mockRejectedValueOnce(new Error(errorMessage));
+  it('should handle backend errors (success=false)', async () => {
+    const errorMessage = 'HTTP request failed';
+    mockMutate.mockResolvedValueOnce({
+      data: {
+        testHttpRequest: {
+          success: false,
+          message: 'HTTP GET request to https://api.example.com/users failed',
+          result: null,
+          error: errorMessage,
+        },
+      },
+    });
 
     const { result } = renderHook(() => useTestHttpRequest(actionId), {
       wrapper,
@@ -206,6 +240,43 @@ describe('useTestHttpRequest', () => {
     expect(result.current.httpRequestTestData.language).toBe('plaintext');
   });
 
+  it('should handle GraphQL mutation errors', async () => {
+    const errorMessage = 'Network error';
+    mockMutate.mockRejectedValueOnce(new Error(errorMessage));
+
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
+    });
+
+    await act(async () => {
+      await result.current.testHttpRequest(mockFormData, mockVariableValues);
+    });
+
+    expect(result.current.isTesting).toBe(false);
+    expect(result.current.httpRequestTestData.output?.error).toBe(errorMessage);
+    expect(result.current.httpRequestTestData.output?.status).toBeUndefined();
+    expect(result.current.httpRequestTestData.language).toBe('plaintext');
+  });
+
+  it('should handle missing response data', async () => {
+    mockMutate.mockResolvedValueOnce({
+      data: null,
+    });
+
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
+    });
+
+    await act(async () => {
+      await result.current.testHttpRequest(mockFormData, mockVariableValues);
+    });
+
+    expect(result.current.isTesting).toBe(false);
+    expect(result.current.httpRequestTestData.output?.error).toBe(
+      'No response from server',
+    );
+  });
+
   it('should set isTesting to true during request', async () => {
     // Create a promise that we can control
     let resolvePromise: (value: any) => void;
@@ -213,7 +284,7 @@ describe('useTestHttpRequest', () => {
       resolvePromise = resolve;
     });
 
-    mockFetch.mockReturnValueOnce(mockPromise as any);
+    mockMutate.mockReturnValueOnce(mockPromise);
 
     const { result } = renderHook(() => useTestHttpRequest(actionId), {
       wrapper,
@@ -230,10 +301,14 @@ describe('useTestHttpRequest', () => {
     // Complete the request
     await act(async () => {
       resolvePromise!({
-        status: 200,
-        statusText: 'OK',
-        json: jest.fn().mockResolvedValue({}),
-        headers: new Map([['content-type', 'application/json']]),
+        data: {
+          testHttpRequest: {
+            success: true,
+            message: 'Success',
+            result: {},
+            error: null,
+          },
+        },
       });
       await mockPromise;
     });
@@ -255,14 +330,16 @@ describe('useTestHttpRequest', () => {
       'trigger.properties.after.name': 'Yo',
     };
 
-    const mockResponse = {
-      status: 201,
-      statusText: 'Created',
-      json: jest.fn().mockResolvedValue({ success: true }),
-      headers: new Map([['content-type', 'application/json']]),
-    };
-
-    mockFetch.mockResolvedValueOnce(mockResponse as any);
+    mockMutate.mockResolvedValueOnce({
+      data: {
+        testHttpRequest: {
+          success: true,
+          message: 'Success',
+          result: { success: true },
+          error: null,
+        },
+      },
+    });
 
     const { result } = renderHook(() => useTestHttpRequest(actionId), {
       wrapper,
@@ -294,5 +371,62 @@ describe('useTestHttpRequest', () => {
         trigger: { properties: { after: { name: 'Yo' } } },
       },
     );
+  });
+
+  it('should handle non-string error responses', async () => {
+    mockMutate.mockResolvedValueOnce({
+      data: {
+        testHttpRequest: {
+          success: false,
+          message: 'Request failed',
+          result: null,
+          error: {
+            code: 'ERR_CONNECTION_REFUSED',
+            details: 'Connection refused',
+          },
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
+    });
+
+    await act(async () => {
+      await result.current.testHttpRequest(mockFormData, mockVariableValues);
+    });
+
+    expect(result.current.httpRequestTestData.output?.error).toBe(
+      '{"code":"ERR_CONNECTION_REFUSED","details":"Connection refused"}',
+    );
+  });
+
+  it('should track request duration', async () => {
+    mockMutate.mockResolvedValueOnce({
+      data: {
+        testHttpRequest: {
+          success: true,
+          message: 'Success',
+          result: { id: 1 },
+          error: null,
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useTestHttpRequest(actionId), {
+      wrapper,
+    });
+
+    await act(async () => {
+      await result.current.testHttpRequest(mockFormData, mockVariableValues);
+    });
+
+    expect(result.current.httpRequestTestData.output?.duration).toBeDefined();
+    expect(typeof result.current.httpRequestTestData.output?.duration).toBe(
+      'number',
+    );
+    expect(
+      result.current.httpRequestTestData.output?.duration,
+    ).toBeGreaterThanOrEqual(0);
   });
 });

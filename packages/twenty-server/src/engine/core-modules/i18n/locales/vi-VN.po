@@ -24,8 +24,8 @@ msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "{fieldName} và {fieldName}Id không thể được cung cấp đồng thời."
 
 #. js-lingui-id: ZkHTHm
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "{fieldType} fields cannot be unique."
 msgstr "Các trường {fieldType} không thể là duy nhất."
 
@@ -140,9 +140,9 @@ msgid "Access Token"
 msgstr "Token truy cập"
 
 #. js-lingui-id: pd81Qb
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Account Owner"
 msgstr "Chủ sở hữu tài khoản"
 
@@ -203,16 +203,16 @@ msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Sự kiện được tổng hợp / lọc để hiển thị trên dòng thời gian"
 
 #. js-lingui-id: pdOYzu
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
 msgid "All {objectLabelPlural}"
 msgstr "Tất cả {objectLabelPlural}"
 
@@ -232,8 +232,8 @@ msgid "An error occurred during messages import"
 msgstr "Đã xảy ra lỗi trong quá trình nhập tin nhắn"
 
 #. js-lingui-id: XyOToQ
-#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 msgid "An error occurred."
 msgstr "Đã xảy ra lỗi."
 
@@ -369,15 +369,15 @@ msgid "Attachment workflow"
 msgstr "Quy trình công việc tập tin đính kèm"
 
 #. js-lingui-id: w/Sphq
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Attachments"
 msgstr "Tập tin đính kèm"
 
@@ -478,9 +478,9 @@ msgid "Avatar Url"
 msgstr "URL Hình Đại Diện"
 
 #. js-lingui-id: K1172m
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
-#: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 msgid "Blocklist"
 msgstr "Danh sách chặn"
 
@@ -495,14 +495,14 @@ msgid "Blocklists"
 msgstr "Danh sách chặn"
 
 #. js-lingui-id: bGQplw
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Body"
 msgstr "Nội dung"
 
 #. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 msgid "By Stage"
 msgstr "Theo Giai đoạn"
 
@@ -527,20 +527,20 @@ msgid "Calendar Channel Event Association"
 msgstr "Liên kết Sự kiện Kênh Lịch"
 
 #. js-lingui-id: kYNT3F
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Calendar Channel Event Associations"
 msgstr "Liên kết Sự kiện Kênh Lịch"
 
 #. js-lingui-id: Znix/S
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Calendar Channels"
 msgstr "Kênh Lịch"
 
@@ -561,10 +561,10 @@ msgid "Calendar event participants"
 msgstr "Người tham gia sự kiện Lịch"
 
 #. js-lingui-id: ZI2UyM
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Calendar Event Participants"
 msgstr "Người tham gia sự kiện Lịch"
 
@@ -605,8 +605,8 @@ msgid "Cannot delete account: you are the only admin. Assign another admin or de
 msgstr "Không thể xóa tài khoản: bạn là quản trị viên duy nhất. Vui lòng chỉ định quản trị viên khác hoặc xóa không gian làm việc trước."
 
 #. js-lingui-id: AQyr9X
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Không thể xóa, vui lòng cập nhật trường nhận dạng nhãn trước"
 
@@ -667,14 +667,14 @@ msgid "Companies"
 msgstr "Công ty"
 
 #. js-lingui-id: 7i8j3G
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Company"
 msgstr "Công ty"
 
@@ -695,11 +695,11 @@ msgid "Connect is not allowed for {connectFieldName} on {objectMetadataNameSingu
 msgstr "Không được phép kết nối cho {connectFieldName} trên {objectMetadataNameSingular}."
 
 #. js-lingui-id: PQ1Dw2
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Connected Account"
 msgstr "Tài khoản Kết nối"
 
@@ -715,8 +715,8 @@ msgid "Connected Accounts"
 msgstr "Các Tài khoản Kết nối"
 
 #. js-lingui-id: bA6O5B
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Contact auto creation policy"
 msgstr "Chính sách tự động tạo liên hệ"
 
@@ -791,15 +791,15 @@ msgid "Could not find index related object metadata"
 msgstr "Không thể tìm thấy siêu dữ liệu đối tượng liên quan đến chỉ mục"
 
 #. js-lingui-id: NCIYDF
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Created by"
 msgstr "Người tạo"
 
@@ -809,10 +809,10 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Đã tạo siêu dữ liệu trường, không tìm thấy siêu dữ liệu đối tượng cha"
 
 #. js-lingui-id: wPvFAD
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/engine/twenty-orm/base.workspace-entity.ts
 #: src/engine/twenty-orm/base.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Creation date"
 msgstr "Ngày tạo"
 
@@ -851,10 +851,10 @@ msgid "Custom Connection Parameters"
 msgstr "Thông số Kết nối Tùy chỉnh"
 
 #. js-lingui-id: 7p5kLi
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Dashboard"
 msgstr "Bảng điều khiển"
 
@@ -912,8 +912,8 @@ msgid "December"
 msgstr "Tháng Mười Hai"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Giá trị mặc định \"{defaultValue}\" phải là một trong những giá trị lựa chọn"
 
@@ -923,14 +923,14 @@ msgid "Default value must be a string"
 msgstr "Giá trị mặc định phải là một chuỗi"
 
 #. js-lingui-id: sv9P4Q
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
 msgstr "Giá trị mặc định nên ở dạng chuỗi trong ngoặc kép"
 
 #. js-lingui-id: 6pJV03
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
 msgstr "Các giá trị mặc định phải là duy nhất"
 
@@ -951,10 +951,10 @@ msgid "Direction"
 msgstr "Hướng"
 
 #. js-lingui-id: 0gS7M5
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Display Name"
 msgstr "Tên hiển thị"
 
@@ -984,8 +984,8 @@ msgid "Due Date"
 msgstr "Ngày đến hạn"
 
 #. js-lingui-id: BXtAxc
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "Tùy chọn bị trùng lặp {field}"
 
@@ -1054,10 +1054,10 @@ msgid "Event external ID"
 msgstr "ID bên ngoài của sự kiện"
 
 #. js-lingui-id: aZJLAR
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Event ID"
 msgstr "ID sự kiện"
 
@@ -1114,8 +1114,8 @@ msgid "Event workspace member"
 msgstr "Thành viên trong không gian làm việc của sự kiện"
 
 #. js-lingui-id: tst44n
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Events"
 msgstr "Sự kiện"
 
@@ -1249,19 +1249,19 @@ msgid "Favorite workspace member"
 msgstr "Thành viên không gian làm việc Ưa thích"
 
 #. js-lingui-id: X9kySA
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Favorites"
 msgstr "Ưa thích"
 
@@ -1371,14 +1371,14 @@ msgid "Field label identifier is required"
 msgstr "Yêu cầu mã nhận dạng nhãn trường"
 
 #. js-lingui-id: MPt365
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "Field metadata not found"
 msgstr "Không tìm thấy siêu dữ liệu trường"
 
@@ -1503,16 +1503,16 @@ msgid "handle"
 msgstr "xử lý"
 
 #. js-lingui-id: Nf7oXL
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Handle"
 msgstr "Xử lý"
 
@@ -1550,8 +1550,8 @@ msgid "Ideal Customer Profile:  Indicates whether the company is the most suitab
 msgstr "Hồ sơ Khách hàng Lý tưởng: Chỉ ra liệu công ty có phải là khách hàng phù hợp và giá trị nhất đối với bạn"
 
 #. js-lingui-id: YcVn4w
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Nếu giá trị mặc định đã được xác định thì phải chứa ít nhất một giá trị"
 
@@ -1586,8 +1586,8 @@ msgid "Index related object not found"
 msgstr "Không tìm thấy đối tượng liên quan đến chỉ mục"
 
 #. js-lingui-id: fY2zUQ
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index to delete not found"
 msgstr "Không tìm thấy chỉ mục để xóa"
 
@@ -1712,10 +1712,10 @@ msgid "Is canceled"
 msgstr "Đã hủy"
 
 #. js-lingui-id: k+g9Uh
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Is Contact Auto Creation Enabled"
 msgstr "Tính năng Tự động Tạo Liên hệ có được Bật không"
 
@@ -1738,10 +1738,10 @@ msgid "Is Sent Folder"
 msgstr "Là thư mục đã gửi"
 
 #. js-lingui-id: Mqzqb8
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "Đã Bật đồng bộ hóa"
 
@@ -1802,10 +1802,10 @@ msgid "Label identifier field cannot be deactivated"
 msgstr "Trường định danh nhãn không thể bị vô hiệu hóa"
 
 #. js-lingui-id: ACUSmL
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
 msgid "Label identifier view field cannot be deleted"
 msgstr "Trường nhãn nhận dạng chế độ xem không thể bị xóa"
 
@@ -1827,14 +1827,14 @@ msgid "Label is required"
 msgstr "Nhãn là bắt buộc"
 
 #. js-lingui-id: 4EGmy6
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not be empty"
 msgstr "Nhãn không được để trống"
 
 #. js-lingui-id: k731jp
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Label must not contain a comma"
 msgstr "Nhãn không được chứa dấu phẩy"
 
@@ -1855,10 +1855,10 @@ msgid "Last sync cursor"
 msgstr "Con trỏ đồng bộ cuối cùng"
 
 #. js-lingui-id: Zdx9Qq
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Last sync date"
 msgstr "Ngày đồng bộ cuối cùng"
 
@@ -1896,8 +1896,8 @@ msgid "Linked Record id"
 msgstr "ID Bản ghi Liên kết"
 
 #. js-lingui-id: uCA6be
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Linkedin"
 msgstr "LinkedIn"
 
@@ -1934,22 +1934,22 @@ msgid "Meet Link"
 msgstr "Liên kết Họp"
 
 #. js-lingui-id: xDAtGP
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 msgid "Message"
 msgstr "Tin nhắn"
 
 #. js-lingui-id: g+QGD6
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Message Channel"
 msgstr "Kênh Tin nhắn"
 
 #. js-lingui-id: DzU4a3
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Message Channel Association"
 msgstr "Liên kết Kênh Tin nhắn"
 
@@ -1975,10 +1975,10 @@ msgid "Message channel not found"
 msgstr ""
 
 #. js-lingui-id: k7LXPQ
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Channels"
 msgstr "Các Kênh Tin nhắn"
 
@@ -2004,9 +2004,9 @@ msgid "Message folder import policy"
 msgstr "Chính sách nhập thư mục tin nhắn"
 
 #. js-lingui-id: p4ANpY
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message Folders"
 msgstr "Các Thư mục Tin nhắn"
 
@@ -2032,14 +2032,14 @@ msgid "Message Participant"
 msgstr "Người tham gia Tin nhắn"
 
 #. js-lingui-id: FhIFx7
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Message Participants"
 msgstr "Các Người tham gia Tin nhắn"
 
@@ -2065,14 +2065,14 @@ msgid "Message Threads"
 msgstr "Các Chuỗi Tin nhắn"
 
 #. js-lingui-id: t7TeQU
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-thread.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Messages"
 msgstr "Tin nhắn"
 
 #. js-lingui-id: WoWdku
-#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Messages from the channel."
 msgstr "Tin nhắn từ kênh."
 
@@ -2132,18 +2132,18 @@ msgid "Multiple records found with the same unique field values for {conflicting
 msgstr "Nhiều bản ghi được tìm thấy với các giá trị trường duy nhất giống nhau cho {conflictingFieldsValues}. Không thể xác định bản ghi nào cần cập nhật."
 
 #. js-lingui-id: 6YtxFj
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Name"
 msgstr "Tên"
 
@@ -2259,11 +2259,11 @@ msgid "No valid authentication context found."
 msgstr "Không tìm thấy ngữ cảnh xác thực hợp lệ."
 
 #. js-lingui-id: KiJn9B
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Note"
 msgstr "Ghi chú"
 
@@ -2303,11 +2303,11 @@ msgid "Note title"
 msgstr "Tiêu đề ghi chú"
 
 #. js-lingui-id: 1DBGsz
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Notes"
 msgstr "Ghi chú"
 
@@ -2367,8 +2367,8 @@ msgid "Number of employees in the company"
 msgstr "Số người làm việc trong công ty"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
+#: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
 msgid "Object already exists"
 msgstr "Đối tượng đã tồn tại"
 
@@ -2442,9 +2442,9 @@ msgid "One or more objects you are trying to set permissions for could not be fo
 msgstr "Một hoặc nhiều đối tượng bạn đang cố gắng thiết lập quyền hạn không thể tìm thấy. Chúng có thể đã bị xóa."
 
 #. js-lingui-id: 4MyDFl
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Opportunities"
 msgstr "Cơ hội"
 
@@ -2454,12 +2454,12 @@ msgid "Opportunities linked to the company."
 msgstr "Các cơ hội liên kết với công ty."
 
 #. js-lingui-id: SV/iis
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Opportunity"
 msgstr "Cơ hội"
 
@@ -2499,26 +2499,26 @@ msgid "Opportunity stage"
 msgstr "Giai đoạn cơ hội"
 
 #. js-lingui-id: 2mFkfl
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
 msgstr "Id của tùy chọn không hợp lệ"
 
 #. js-lingui-id: MniXaX
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
 msgstr "Id của tùy chọn là bắt buộc"
 
 #. js-lingui-id: //eyK1
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Nhãn tùy chọn \"{sanitizedLabel}\" dưới 1 ký tự"
 
 #. js-lingui-id: mTFS0z
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Nhãn tùy chọn vượt quá 63 ký tự"
 
@@ -2528,9 +2528,9 @@ msgid "Option label format not supported"
 msgstr "Định dạng nhãn tùy chọn không được hỗ trợ"
 
 #. js-lingui-id: +E9N4m
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label is required"
 msgstr "Nhãn tùy chọn là bắt buộc"
 
@@ -2540,14 +2540,14 @@ msgid "Option label must be a string of at least one character"
 msgstr "Tên tuỳ chọn phải là một chuỗi có ít nhất một ký tự"
 
 #. js-lingui-id: nQqNzE
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Giá trị tùy chọn \"{sanitizedValue}\" dưới 1 ký tự"
 
 #. js-lingui-id: 5m/1Hh
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Giá trị tùy chọn vượt quá 63 ký tự"
 
@@ -2557,9 +2557,9 @@ msgid "Option value format not supported"
 msgstr "Định dạng giá trị tuỳ chọn không được hỗ trợ"
 
 #. js-lingui-id: /wsRPd
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value is required"
 msgstr "Giá trị tùy chọn là bắt buộc"
 
@@ -2604,8 +2604,8 @@ msgid "Pending Sync Action"
 msgstr ""
 
 #. js-lingui-id: 1wdjme
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "People"
 msgstr "Người"
 
@@ -2615,16 +2615,16 @@ msgid "People linked to the company."
 msgstr "Người liên kết với công ty."
 
 #. js-lingui-id: OZdaTZ
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/note/standard-objects/note-target.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/note/standard-objects/note-target.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Person"
 msgstr "Người"
 
@@ -2670,20 +2670,20 @@ msgid "Point of Contact"
 msgstr "Điểm liên hệ"
 
 #. js-lingui-id: p/78dY
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
-#: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Position"
 msgstr "Vị trí"
 
@@ -2770,8 +2770,8 @@ msgid "Related user email address"
 msgstr "Địa chỉ email người dùng liên quan"
 
 #. js-lingui-id: +bFtT5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
 msgstr "Yêu cầu tải trọng tạo quan hệ"
 
@@ -2781,8 +2781,8 @@ msgid "Relation field target metadata not found"
 msgstr "Không tìm thấy siêu dữ liệu mục tiêu của trường quan hệ"
 
 #. js-lingui-id: g87L9j
-#: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Relations"
 msgstr "Mối quan hệ"
 
@@ -2845,8 +2845,8 @@ msgid "Route with same path already exists"
 msgstr "Tuyến đường với đường dẫn tương tự đã tồn tại"
 
 #. js-lingui-id: Tpm2G9
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Runs"
 msgstr "Lượt chạy"
 
@@ -2877,22 +2877,22 @@ msgid "Serverless function already exists"
 msgstr "Chức năng không máy chủ đã tồn tại"
 
 #. js-lingui-id: MSgd2w
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 msgid "Serverless function not found"
 msgstr "Không tìm thấy chức năng không máy chủ"
 
@@ -3005,9 +3005,9 @@ msgid "Sync all folders including new ones"
 msgstr ""
 
 #. js-lingui-id: oyJYg7
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Sync Cursor"
 msgstr "Con trỏ Đồng bộ"
 
@@ -3017,26 +3017,26 @@ msgid "Sync Cursor. Used for syncing events from the calendar provider"
 msgstr "Con trỏ Đồng bộ. Được sử dụng để đồng bộ các sự kiện từ nhà cung cấp lịch"
 
 #. js-lingui-id: dNAbG6
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync stage"
 msgstr "Giai đoạn đồng bộ"
 
 #. js-lingui-id: aqNjQE
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync stage started at"
 msgstr "Giai đoạn đồng bộ bắt đầu lúc"
 
 #. js-lingui-id: bRUdLR
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync status"
 msgstr "Trạng thái đồng bộ"
 
@@ -3046,11 +3046,11 @@ msgid "Target object metadata not found for {connectFieldName}"
 msgstr "Không tìm thấy siêu dữ liệu đối tượng đích cho {connectFieldName}"
 
 #. js-lingui-id: Q3P/4s
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/task/standard-objects/task-target.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/task/standard-objects/task-target.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Task"
 msgstr "Nhiệm vụ"
 
@@ -3105,11 +3105,11 @@ msgid "Task title"
 msgstr "Tiêu đề nhiệm vụ"
 
 #. js-lingui-id: GtycJ/
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Tasks"
 msgstr "Nhiệm vụ"
 
@@ -3200,15 +3200,15 @@ msgid "The company website URL. We use this url to fetch the company icon"
 msgstr "URL trang web của công ty. Chúng tôi sử dụng url này để lấy biểu tượng của công ty"
 
 #. js-lingui-id: zGBDEH
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "Người tạo bản ghi"
 
@@ -3258,8 +3258,8 @@ msgid "The name is not available"
 msgstr "Tên này không khả dụng"
 
 #. js-lingui-id: hx2IZ4
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
 msgstr "Không thể tìm thấy đối tượng bạn đang cố gắng thiết lập quyền hạn. Nó có thể đã bị xóa."
 
@@ -3279,10 +3279,10 @@ msgid "The role you are trying to assign could not be found. It may have been de
 msgstr "Không thể tìm thấy vai trò bạn đang cố gắng chỉ định. Nó có thể đã bị xóa."
 
 #. js-lingui-id: HRcugS
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
 msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
 msgstr "Không thể tìm thấy vai trò bạn đang cố gắng sửa đổi. Nó có thể đã bị xóa hoặc bạn có thể không có quyền truy cập vào nó."
 
@@ -3362,8 +3362,8 @@ msgid "This name is not available as it is already used by another field."
 msgstr "Tên này không khả dụng vì đã được một trường khác sử dụng."
 
 #. js-lingui-id: yIUmAs
-#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+#: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 msgid "This name is not available."
 msgstr "Tên này không khả dụng."
 
@@ -3383,10 +3383,10 @@ msgid "This role cannot be assigned to users. Please select a different role."
 msgstr "Vai trò này không thể được gán cho người dùng. Vui lòng chọn một vai trò khác."
 
 #. js-lingui-id: KoDdqN
-#: src/engine/metadata-modules/role/role.service.ts
-#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
-#: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/role/role.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Vai trò này không thể sửa đổi vì nó là vai trò hệ thống. Chỉ có thể chỉnh sửa vai trò tùy chỉnh."
 
@@ -3401,10 +3401,10 @@ msgid "Thread id from the messaging provider"
 msgstr "Id chuỗi từ nhà cung cấp tin nhắn"
 
 #. js-lingui-id: sS8v5K
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Throttle Failure Count"
 msgstr "Số lần thất bại do điều tiết"
 
@@ -3424,16 +3424,16 @@ msgid "Time zone"
 msgstr "Múi giờ"
 
 #. js-lingui-id: az1boY
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
+#: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Timeline Activities"
 msgstr "Hoạt động trong dòng thời gian"
 
@@ -3488,11 +3488,11 @@ msgid "Timeline Activity"
 msgstr "Hoạt động dòng thời gian"
 
 #. js-lingui-id: MHrjPM
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
+#: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Title"
 msgstr "Tiêu đề"
 
@@ -3555,8 +3555,8 @@ msgid "User already exists"
 msgstr "Người dùng đã tồn tại"
 
 #. js-lingui-id: l9dlVi
-#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 msgid "User does not have access to this workspace"
 msgstr "Người dùng không có quyền truy cập vào không gian làm việc này"
 
@@ -3621,8 +3621,8 @@ msgid "Validation failed for 0 object(s) and 0 field(s)"
 msgstr "Thất bại xác thực cho 0 đối tượng và 0 trường"
 
 #. js-lingui-id: UBPzFQ
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Giá trị phải ở dạng UPPER_CASE và theo snake_case \"{sanitizedValue}\""
 
@@ -3684,9 +3684,9 @@ msgid "View field related view object metadata not found"
 msgstr "Không tìm thấy siêu dữ liệu đối tượng liên quan đến trường chế độ xem"
 
 #. js-lingui-id: XJlyZS
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field to delete not found"
 msgstr "Không tìm thấy trường để xóa"
 
@@ -3696,9 +3696,9 @@ msgid "View field to destroy not found"
 msgstr "Không tìm thấy trường để hủy"
 
 #. js-lingui-id: Fpy/K1
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field to update not found"
 msgstr "Không tìm thấy trường để cập nhật"
 
@@ -3759,9 +3759,9 @@ msgid "View group metadata with id {flatViewGroupId} already exists"
 msgstr "Siêu dữ liệu nhóm chế độ xem với id {flatViewGroupId} đã tồn tại"
 
 #. js-lingui-id: JdAvYa
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group to delete not found"
 msgstr "Không tìm thấy nhóm chế độ xem để xóa"
 
@@ -3771,9 +3771,9 @@ msgid "View group to destroy not found"
 msgstr "Không tìm thấy nhóm chế độ xem để hủy"
 
 #. js-lingui-id: UP/TXo
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 #: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
 msgid "View group to update not found"
 msgstr "Không tìm thấy nhóm chế độ xem để cập nhật"
 
@@ -3798,16 +3798,16 @@ msgid "View kanban aggregate field metadata not found"
 msgstr "Không tìm thấy metadata của trường tổng hợp kanban"
 
 #. js-lingui-id: F4A9mL
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View not found"
 msgstr "Không tìm thấy chế độ xem"
 
@@ -3878,10 +3878,10 @@ msgid "ViewId is required to create a view sort."
 msgstr "ViewId là cần thiết để tạo một sắp xếp xem."
 
 #. js-lingui-id: 2q/Q7x
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Visibility"
 msgstr "Tính khả dụng"
 
@@ -3926,15 +3926,15 @@ msgid "Welcome to Twenty: Please Confirm Your Email"
 msgstr "Chào mừng đến với Twenty: Vui lòng xác nhận email của bạn"
 
 #. js-lingui-id: bLt/0J
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflow"
 msgstr "Workflows"
 
@@ -3954,8 +3954,8 @@ msgid "Workflow record position"
 msgstr "Vị trí bản ghi quy trình"
 
 #. js-lingui-id: 5vIcqC
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow Run"
 msgstr "Lần chạy quy trình"
 
@@ -4024,8 +4024,8 @@ msgid "Workflow version does not contain at least one step"
 msgstr "Phiên bản quy trình làm việc không chứa ít nhất một bước"
 
 #. js-lingui-id: k4DPlQ
-#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util.ts
+#: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Workflow version does not contain trigger"
 msgstr "Phiên bản quy trình làm việc không có kích hoạt"
 
@@ -4100,12 +4100,12 @@ msgid "Workspace member"
 msgstr "Thành viên không gian làm việc"
 
 #. js-lingui-id: qc38qR
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
-#: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+#: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Workspace Member"
 msgstr "Thành Viên Không Gian Làm Việc"
 
@@ -4171,14 +4171,14 @@ msgid "WorkspaceMember"
 msgstr "ThànhViênKhôngGianLàmViệc"
 
 #. js-lingui-id: fV2Bu6
-#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Wrong password"
 msgstr "Mật khẩu sai"
 
 #. js-lingui-id: 0gv+T2
-#: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "X"
 msgstr "X"
 
@@ -4188,8 +4188,8 @@ msgid "You cannot change your own role. Please ask another administrator to upda
 msgstr "Bạn không thể thay đổi vai trò của chính mình. Vui lòng yêu cầu quản trị viên khác cập nhật vai trò của bạn."
 
 #. js-lingui-id: y5haJ4
-#: src/engine/metadata-modules/role/role.service.ts
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/role/role.service.ts
 msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
 msgstr "Bạn không thể cấp quyền chỉnh sửa mà không cấp quyền đọc. Vui lòng kích hoạt quyền truy cập đọc trước."
 
@@ -4249,9 +4249,9 @@ msgid "Your Password Has Been Successfully Changed"
 msgstr "Mật khẩu của bạn đã được thay đổi thành công"
 
 #. js-lingui-id: XxkUFT
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
 #: src/engine/metadata-modules/user-role/user-role.service.ts
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/permissions/permissions.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Không thể tìm thấy vai trò của bạn trong không gian làm việc này. Vui lòng liên hệ quản trị viên không gian làm việc của bạn."
 
