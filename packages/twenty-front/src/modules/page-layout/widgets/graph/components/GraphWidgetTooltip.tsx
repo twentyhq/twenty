@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconArrowUpRight } from 'twenty-ui/display';
 
-const StyledTooltip = styled.div`
+const StyledTooltip = styled.div<{ $interactive?: boolean }>`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -13,7 +13,7 @@ const StyledTooltip = styled.div`
   gap: 2px;
   max-width: min(300px, calc(100vw - 40px));
   min-width: 160px;
-  pointer-events: none;
+  pointer-events: ${({ $interactive }) => ($interactive ? 'auto' : 'none')};
 `;
 
 const StyledTooltipContent = styled.div`
@@ -30,10 +30,12 @@ const StyledTooltipRow = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTooltipRowContainer = styled.div`
+const StyledTooltipRowContainer = styled.div<{ $scrollable?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
+  max-height: ${({ $scrollable }) => ($scrollable ? '200px' : 'none')};
+  overflow-y: ${({ $scrollable }) => ($scrollable ? 'auto' : 'visible')};
 `;
 
 const StyledDot = styled.div<{ $color: string }>`
@@ -118,23 +120,27 @@ type GraphWidgetTooltipProps = {
   items: GraphWidgetTooltipItem[];
   showClickHint?: boolean;
   indexLabel?: string;
+  interactive?: boolean;
+  scrollable?: boolean;
 };
 
 export const GraphWidgetTooltip = ({
   items,
   showClickHint = false,
   indexLabel,
+  interactive = false,
+  scrollable = false,
 }: GraphWidgetTooltipProps) => {
   const theme = useTheme();
 
   return (
-    <StyledTooltip>
+    <StyledTooltip $interactive={interactive}>
       <StyledHorizontalSectionPadding $addTop $addBottom={!showClickHint}>
         <StyledTooltipContent>
           {indexLabel && (
             <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
           )}
-          <StyledTooltipRowContainer>
+          <StyledTooltipRowContainer $scrollable={scrollable}>
             {items.map((item, index) => (
               <StyledTooltipRow key={index}>
                 <StyledDot $color={item.dotColor} />

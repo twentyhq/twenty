@@ -20,13 +20,24 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
+import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ComputedBarDatum, ResponsiveBar } from '@nivo/bar';
 import { useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 const LEGEND_THRESHOLD = 10;
+
+const StyledTooltipWrapper = styled.div<{ left: number; top: number }>`
+  left: ${({ left }) => left}px;
+  pointer-events: auto;
+  position: fixed;
+  top: ${({ top }) => top}px;
+  z-index: ${({ theme }) => theme.lastLayerZIndex};
+`;
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -44,7 +55,6 @@ type GraphWidgetBarChartProps = {
   seriesLabels?: Record<string, string>;
   rangeMin?: number;
   rangeMax?: number;
-  enableGroupTooltip?: boolean;
   omitNullValues?: boolean;
 } & GraphValueFormatOptions;
 
@@ -73,7 +83,6 @@ export const GraphWidgetBarChart = ({
   seriesLabels,
   rangeMin,
   rangeMax,
-  enableGroupTooltip,
   omitNullValues = false,
   displayType,
   decimals,
@@ -86,9 +95,15 @@ export const GraphWidgetBarChart = ({
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [anchoredPosition, setAnchoredPosition] = useState({ x: 0, y: 0 });
+  const [hoveredDatum, setHoveredDatum] = useState<any>(null);
+  const [isChartHovered, setIsChartHovered] = useState(false);
+  const [isTooltipHovered, setIsTooltipHovered] = useState(false);
 
-  const shouldEnableGroupTooltip =
-    enableGroupTooltip ?? groupMode === 'stacked';
+  const debouncedSetChartHovered = useDebouncedCallback((value: boolean) => {
+    setIsChartHovered(value);
+  }, 100);
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -98,7 +113,7 @@ export const GraphWidgetBarChart = ({
     customFormatter,
   };
 
-  const { hoveredBar, setHoveredBar, handleBarClick, hasClickableItems } =
+  const { setHoveredBar, handleBarClick, hasClickableItems } =
     useBarChartHandlers({
       data,
       indexBy,
@@ -116,12 +131,18 @@ export const GraphWidgetBarChart = ({
   });
 
   const { renderTooltip: getTooltipData } = useBarChartTooltip({
-    hoveredBar,
     enrichedKeys,
     data,
     indexBy,
     formatOptions,
-    enableGroupTooltip: shouldEnableGroupTooltip,
+  });
+
+  // Track mouse position continuously
+  useTrackPointer({
+    shouldTrackPointer: true,
+    onMouseMove: ({ x, y }) => {
+      setMousePosition({ x, y });
+    },
   });
 
   const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
@@ -150,6 +171,8 @@ export const GraphWidgetBarChart = ({
         items={tooltipData.tooltipItems}
         showClickHint={tooltipData.showClickHint}
         indexLabel={tooltipData.indexLabel}
+        interactive
+        scrollable
       />
     );
   };
@@ -259,9 +282,14 @@ export const GraphWidgetBarChart = ({
           }
           labelTextColor={theme.font.color.primary}
           label={(d) => formatGraphValue(Number(d.value), formatOptions)}
-          tooltip={(props) => renderTooltip(props)}
+          tooltip={() => null}
           onClick={handleBarClick}
           onMouseEnter={(datum) => {
+            setHoveredDatum(datum);
+            setAnchoredPosition({ x: mousePosition.x, y: mousePosition.y });
+            setIsChartHovered(true);
+            debouncedSetChartHovered.cancel();
+
             if (isDefined(datum.id) && isDefined(datum.indexValue)) {
               setHoveredBar({
                 key: String(datum.id),
@@ -269,11 +297,35 @@ export const GraphWidgetBarChart = ({
               });
             }
           }}
-          onMouseLeave={() => setHoveredBar(null)}
+          onMouseLeave={() => {
+            debouncedSetChartHovered(false);
+            setHoveredBar(null);
+          }}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
+      {isDefined(hoveredDatum) && (isChartHovered || isTooltipHovered) && (
+        <>
+          {createPortal(
+            <StyledTooltipWrapper
+              left={anchoredPosition.x + 15}
+              top={anchoredPosition.y}
+              onMouseEnter={() => {
+                debouncedSetChartHovered.cancel();
+                setIsTooltipHovered(true);
+              }}
+              onMouseLeave={() => {
+                setIsTooltipHovered(false);
+                setHoveredDatum(null);
+              }}
+            >
+              {renderTooltip(hoveredDatum)}
+            </StyledTooltipWrapper>,
+            document.body,
+          )}
+        </>
+      )}
       <GraphWidgetLegend
         show={shouldShowLegend}
         items={enrichedKeys.map((item) => {

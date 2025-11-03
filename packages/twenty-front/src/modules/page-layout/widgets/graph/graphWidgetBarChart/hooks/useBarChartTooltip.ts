@@ -8,40 +8,22 @@ import { type BarDatum, type ComputedDatum } from '@nivo/bar';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseBarChartTooltipProps = {
-  hoveredBar: { key: string; indexValue: string | number } | null;
   enrichedKeys: BarChartEnrichedKey[];
   data: BarChartDataItem[];
   indexBy: string;
   formatOptions: GraphValueFormatOptions;
-  enableGroupTooltip?: boolean;
 };
 
 export const useBarChartTooltip = ({
-  hoveredBar,
   enrichedKeys,
   data,
   indexBy,
   formatOptions,
-  enableGroupTooltip = true,
 }: UseBarChartTooltipProps) => {
   const renderTooltip = (datum: ComputedDatum<BarDatum>) => {
     const dataItem = data.find((d) => d[indexBy] === datum.indexValue);
 
-    let keysToShow: BarChartEnrichedKey[];
-
-    if (enableGroupTooltip) {
-      keysToShow = enrichedKeys;
-    } else {
-      const hoveredKey = hoveredBar?.key;
-      if (!isDefined(hoveredKey)) return null;
-
-      const enrichedKey = enrichedKeys.find((item) => item.key === hoveredKey);
-      if (!isDefined(enrichedKey)) return null;
-
-      keysToShow = [enrichedKey];
-    }
-
-    const tooltipItems = keysToShow.map((enrichedKey) => {
+    const tooltipItems = enrichedKeys.map((enrichedKey) => {
       const seriesValue = Number(datum.data[enrichedKey.key] ?? 0);
       return {
         label: enrichedKey.label,
