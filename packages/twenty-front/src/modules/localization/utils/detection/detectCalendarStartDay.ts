@@ -1,4 +1,4 @@
-import { type CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { type CalendarStartDay } from 'twenty-shared';
 import { type ExcludeLiteral } from '~/types/ExcludeLiteral';
 
 const MONDAY_KEY: keyof typeof CalendarStartDay = 'MONDAY';
