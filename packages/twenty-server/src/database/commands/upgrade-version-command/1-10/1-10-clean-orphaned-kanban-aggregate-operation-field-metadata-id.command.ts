@@ -1,8 +1,8 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -28,8 +28,6 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
     private readonly viewRepository: Repository<ViewEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -112,22 +110,5 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
     this.logger.log(
       `${options.dryRun ? 'DRY RUN - Would have' : ''}Deleted ${deletedCount} KANBAN views and updated ${updatedCount} other views with orphaned kanbanAggregateOperationFieldMetadataId references`,
     );
-
-    // Apply the migration manually after cleanup 1760965667836-kanbanFieldMetadataIdentifierView.ts
-    // This is workspace-agnostic and will only succeed once
-    if (!options.dryRun) {
-      try {
-        await this.coreDataSource.query(
-          `ALTER TABLE "core"."view" ADD CONSTRAINT "FK_b3cc95732479f7a1337350c398f" FOREIGN KEY ("kanbanAggregateOperationFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
-        );
-        this.logger.log(
-          'Successfully added foreign key constraint for kanbanAggregateOperationFieldMetadataId',
-        );
-      } catch (error) {
-        this.logger.log(
-          `Foreign key constraint already exists or could not be created (this is expected for subsequent workspaces): ${error.message}`,
-        );
-      }
-    }
   }
 }
