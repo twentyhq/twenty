@@ -40,7 +40,9 @@ const getCurrentDateGranularity = ({
     return configuration.primaryAxisDateGranularity || defaultGranularity;
   }
 
-  return configuration.secondaryAxisDateGranularity || defaultGranularity;
+  return (
+    configuration.secondaryAxisGroupByDateGranularity || defaultGranularity
+  );
 };
 
 export const ChartDateGranularitySelectionDropdownContent = ({
@@ -99,7 +101,7 @@ export const ChartDateGranularitySelectionDropdownContent = ({
     const configToUpdate = axis
       ? axis === 'primary'
         ? { primaryAxisDateGranularity: dateGranularityOption }
-        : { secondaryAxisDateGranularity: dateGranularityOption }
+        : { secondaryAxisGroupByDateGranularity: dateGranularityOption }
       : { dateGranularity: dateGranularityOption };
 
     updateCurrentWidgetConfig({

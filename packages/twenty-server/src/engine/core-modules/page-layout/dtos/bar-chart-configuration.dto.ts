@@ -79,7 +79,7 @@ export class BarChartConfigurationDTO {
   })
   @IsEnum(ObjectRecordGroupByDateGranularity)
   @IsOptional()
-  secondaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
+  secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)

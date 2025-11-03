@@ -80,7 +80,7 @@ export class LineChartConfigurationDTO {
   })
   @IsEnum(ObjectRecordGroupByDateGranularity)
   @IsOptional()
-  secondaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
+  secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)

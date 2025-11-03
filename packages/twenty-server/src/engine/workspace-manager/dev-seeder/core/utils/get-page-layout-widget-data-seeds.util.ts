@@ -305,6 +305,7 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisGroupByFieldMetadataId: companyEmployeesFieldId,
               secondaryAxisGroupByFieldMetadataId: companyAddressFieldId,
               secondaryAxisGroupBySubFieldName: 'addressCity',
+              secondaryAxisGroupByDateGranularity: 'DAY',
               primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,

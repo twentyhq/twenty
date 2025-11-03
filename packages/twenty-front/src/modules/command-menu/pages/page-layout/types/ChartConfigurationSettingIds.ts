@@ -31,6 +31,6 @@ export const CHART_CONFIGURATION_SETTING_TO_CONFIG_KEY_MAP = {
   [CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_X]:
     'primaryAxisDateGranularity',
   [CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_Y]:
-    'secondaryAxisDateGranularity',
+    'secondaryAxisGroupByDateGranularity',
   [CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY]: 'dateGranularity',
 } as const;
