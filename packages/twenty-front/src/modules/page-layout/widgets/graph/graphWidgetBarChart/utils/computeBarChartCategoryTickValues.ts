@@ -1,6 +1,5 @@
-import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
-import { BAR_CHART_MARGINS_WITH_LABELS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMarginsWithLabels';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 
 const MINIMUM_WIDTH_PER_TICK = 100;
 
@@ -8,16 +7,20 @@ export const computeBarChartCategoryTickValues = ({
   width,
   data,
   indexBy,
-  hasLabels,
+  xAxisLabel,
+  yAxisLabel,
+  layout,
 }: {
   width: number;
   data: BarChartDataItem[];
   indexBy: string;
-  hasLabels: boolean;
+  layout: 'vertical' | 'horizontal';
+  xAxisLabel?: string;
+  yAxisLabel?: string;
 }): (string | number)[] => {
   if (width === 0 || data.length === 0) return [];
 
-  const margins = hasLabels ? BAR_CHART_MARGINS_WITH_LABELS : BAR_CHART_MARGINS;
+  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
   const horizontalMargins = margins.left + margins.right;
   const availableWidth = width - horizontalMargins;

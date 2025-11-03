@@ -1,13 +1,12 @@
-import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
+import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { isDefined } from 'twenty-shared/utils';
 
 const AVERAGE_CHARACTER_WIDTH_RATIO = 0.6;
 const MIN_TICK_LABEL_LENGTH = 5;
@@ -43,13 +42,15 @@ export const getBarChartAxisConfigs = ({
     width,
     data,
     indexBy,
-    hasLabels: isDefined(xAxisLabel) || isDefined(yAxisLabel),
+    xAxisLabel,
+    yAxisLabel,
+    layout,
   });
 
-  const availableWidth =
-    width - (BAR_CHART_MARGINS.left + BAR_CHART_MARGINS.right);
-  const availableHeight =
-    height - (BAR_CHART_MARGINS.top + BAR_CHART_MARGINS.bottom);
+  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
+
+  const availableWidth = width - (margins.left + margins.right);
+  const availableHeight = height - (margins.top + margins.bottom);
   const widthPerTick =
     categoryTickValues.length > 0
       ? availableWidth / categoryTickValues.length
@@ -85,7 +86,7 @@ export const getBarChartAxisConfigs = ({
         tickValues: numberOfValueTicks,
         legend: yAxisLabel,
         legendPosition: 'middle' as const,
-        legendOffset: -BAR_CHART_MARGINS.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
+        legendOffset: -margins.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
         format: (value: number) =>
           truncateTickLabel(
             formatGraphValue(value, formatOptions ?? {}),
@@ -113,7 +114,7 @@ export const getBarChartAxisConfigs = ({
       tickValues: categoryTickValues,
       legend: xAxisLabel,
       legendPosition: 'middle' as const,
-      legendOffset: -BAR_CHART_MARGINS.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
+      legendOffset: -margins.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
       format: (value: string | number) =>
         truncateTickLabel(String(value), MAX_LEFT_AXIS_LABEL_LENGTH),
     },
