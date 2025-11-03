@@ -36,7 +36,7 @@ const StyledTitleContainer = styled.div`
 const StyledRightContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledIconButton = styled(IconButton)`
