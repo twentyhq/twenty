@@ -11,11 +11,8 @@ import {
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { AddWorkflowRunStopStatusesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-add-workflow-run-stop-statuses.command';
 import { CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-clean-orphaned-kanban-aggregate-operation-field-metadata-id.command';
-<<<<<<< HEAD
-import { MakeSureDashboardNamingAvailableCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-make-sure-dashboard-naming-available.command';
-=======
 import { CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-create-view-kanban-field-metadata-id-foreign-key-migration.command';
->>>>>>> main
+import { MakeSureDashboardNamingAvailableCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-make-sure-dashboard-naming-available.command';
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
