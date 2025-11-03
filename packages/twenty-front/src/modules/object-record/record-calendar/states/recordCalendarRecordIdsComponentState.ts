@@ -8,4 +8,3 @@ export const recordCalendarRecordIdsComponentState = createComponentState<
   defaultValue: [],
   componentInstanceContext: RecordCalendarComponentInstanceContext,
 });
-
