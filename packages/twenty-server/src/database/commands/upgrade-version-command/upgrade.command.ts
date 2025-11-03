@@ -14,6 +14,8 @@ import { CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand } from 'src
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
+import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
+import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -59,6 +61,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly regenerateSearchVectorsCommand: RegenerateSearchVectorsCommand,
     protected readonly addWorkflowRunStopStatusesCommand: AddWorkflowRunStopStatusesCommand,
     protected readonly cleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand: CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
+
+    // 1.11 Commands
+    protected readonly cleanOrphanedUserWorkspacesCommand: CleanOrphanedUserWorkspacesCommand,
+    protected readonly cleanOrphanedRoleTargetsCommand: CleanOrphanedRoleTargetsCommand,
   ) {
     super(
       workspaceRepository,
@@ -102,11 +108,20 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
     };
 
+    const commands_1110: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [
+        this.cleanOrphanedUserWorkspacesCommand,
+        this.cleanOrphanedRoleTargetsCommand,
+      ],
+    };
+
     this.allCommands = {
       '1.6.0': commands_160,
       '1.7.0': commands_170,
       '1.8.0': commands_180,
       '1.10.0': commands_1100,
+      '1.11.0': commands_1110,
     };
   }
 

@@ -3,27 +3,40 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { In, type Repository } from 'typeorm';
 
-import { MigrationCommandRunner } from 'src/database/commands/command-runners/migration.command-runner';
+import {
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  RunOnWorkspaceArgs,
+} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
   name: 'upgrade:1-11:clean-orphaned-role-targets',
   description:
     'Clean up roleTargets records that reference non-existent userWorkspaces',
 })
-export class CleanOrphanedRoleTargetsCommand extends MigrationCommandRunner {
+export class CleanOrphanedRoleTargetsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+  private hasRunOnce = false;
   constructor(
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
-    super();
+    super(workspaceRepository, twentyORMGlobalManager);
   }
 
-  override async runMigrationCommand(
-    _passedParams: string[],
-    options: { dryRun?: boolean },
-  ): Promise<void> {
+  override async runOnWorkspace({
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    if (this.hasRunOnce) {
+      this.logger.log('Skipping kanban field metadata id foreign key creation');
+
+      return;
+    }
     const isDryRun = options.dryRun || false;
 
     if (isDryRun) {
@@ -65,13 +78,14 @@ export class CleanOrphanedRoleTargetsCommand extends MigrationCommandRunner {
       return;
     }
 
-    // Delete orphaned roleTargets
-    const orphanedIds = orphanedRoleTargets.map((rt) => rt.id);
+    const orphanedIds = orphanedRoleTargets.map((roleTarget) => roleTarget.id);
 
     await this.roleTargetsRepository.delete({ id: In(orphanedIds) });
 
     this.logger.log(
       `Deleted ${orphanedRoleTargets.length} orphaned roleTarget(s)`,
     );
+
+    this.hasRunOnce = true;
   }
 }
