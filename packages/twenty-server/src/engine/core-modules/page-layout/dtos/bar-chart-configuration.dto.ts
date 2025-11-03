@@ -138,7 +138,7 @@ export class BarChartConfigurationDTO {
   groupMode?: BarChartGroupMode;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
-  @IsString()
+  @IsTimeZone()
   @IsOptional()
   timezone?: string;
 }

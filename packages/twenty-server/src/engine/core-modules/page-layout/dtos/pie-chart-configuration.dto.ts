@@ -7,6 +7,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsTimeZone,
   IsUUID,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
@@ -83,7 +84,7 @@ export class PieChartConfigurationDTO {
   filter?: ObjectRecordFilter;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
-  @IsString()
+  @IsTimeZone()
   @IsOptional()
   timezone?: string;
 }
