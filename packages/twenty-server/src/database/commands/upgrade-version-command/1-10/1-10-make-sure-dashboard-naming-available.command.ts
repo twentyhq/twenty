@@ -12,7 +12,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 @Command({
   name: 'upgrade:1-10:make-sure-dashboard-naming-available',
@@ -37,7 +36,7 @@ export class MakeSureDashboardNamingAvailableCommand extends ActiveOrSuspendedWo
     const potentialCustomDashboardObjectMetadata =
       await this.objectMetadataRepository.findOne({
         where: {
-          standardId: STANDARD_OBJECT_IDS.dashboard,
+          nameSingular: 'dashboard',
           workspaceId,
           isCustom: true,
         },
@@ -59,7 +58,11 @@ export class MakeSureDashboardNamingAvailableCommand extends ActiveOrSuspendedWo
       return;
     }
 
-    this.objectMetadataServiceV2.updateOne({
+    this.logger.log(
+      `Updating the dashboard object metadata for workspace ${workspaceId}...`,
+    );
+
+    await this.objectMetadataServiceV2.updateOne({
       workspaceId,
       updateObjectInput: {
         id: potentialCustomDashboardObjectMetadata.id,
@@ -71,5 +74,8 @@ export class MakeSureDashboardNamingAvailableCommand extends ActiveOrSuspendedWo
         },
       },
     });
+    this.logger.log(
+      `Updated the dashboard object metadata for workspace ${workspaceId}...`,
+    );
   }
 }
