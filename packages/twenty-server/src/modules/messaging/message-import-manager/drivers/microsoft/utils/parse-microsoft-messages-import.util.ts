@@ -3,15 +3,19 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
-export const parseMicrosoftMessagesImportError = (error: {
-  statusCode: number;
-  message?: string;
-  code?: string;
-}): MessageImportDriverException => {
+export const parseMicrosoftMessagesImportError = (
+  error: {
+    statusCode: number;
+    message?: string;
+    code?: string;
+  },
+  options?: { cause?: Error },
+): MessageImportDriverException => {
   if (error.statusCode === 401) {
     return new MessageImportDriverException(
       'Unauthorized access to Microsoft Graph API',
       MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      { cause: options?.cause },
     );
   }
 
@@ -19,6 +23,7 @@ export const parseMicrosoftMessagesImportError = (error: {
     return new MessageImportDriverException(
       'Forbidden access to Microsoft Graph API',
       MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      { cause: options?.cause },
     );
   }
 
@@ -31,11 +36,13 @@ export const parseMicrosoftMessagesImportError = (error: {
       return new MessageImportDriverException(
         `Disabled, deleted, inactive or no licence Microsoft account - code:${error.code}`,
         MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        { cause: options?.cause },
       );
     } else {
       return new MessageImportDriverException(
         `Not found - code:${error.code}`,
         MessageImportDriverExceptionCode.NOT_FOUND,
+        { cause: options?.cause },
       );
     }
   }
@@ -48,11 +55,13 @@ export const parseMicrosoftMessagesImportError = (error: {
     return new MessageImportDriverException(
       `Microsoft Graph API ${error.code} ${error.statusCode} error: ${error.message}`,
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      { cause: options?.cause },
     );
   }
 
   return new MessageImportDriverException(
     `Microsoft Graph API unknown error: ${error} with status code ${error.statusCode}`,
     MessageImportDriverExceptionCode.UNKNOWN,
+    { cause: options?.cause },
   );
 };

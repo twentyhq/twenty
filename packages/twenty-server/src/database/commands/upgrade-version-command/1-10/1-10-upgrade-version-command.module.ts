@@ -5,6 +5,7 @@ import { AddWorkflowRunStopStatusesCommand } from 'src/database/commands/upgrade
 import { CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-clean-orphaned-kanban-aggregate-operation-field-metadata-id.command';
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
+import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -25,6 +26,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     WorkspaceSchemaManagerModule,
   ],
   providers: [
+    MigrateChannelPartialFullSyncStagesCommand,
     MigrateAttachmentAuthorToCreatedByCommand,
     MigrateAttachmentTypeToFileCategoryCommand,
     RegenerateSearchVectorsCommand,
@@ -37,6 +39,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     RegenerateSearchVectorsCommand,
     AddWorkflowRunStopStatusesCommand,
     CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
+    MigrateChannelPartialFullSyncStagesCommand,
   ],
 })
 export class V1_10_UpgradeVersionCommandModule {}

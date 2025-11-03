@@ -29,6 +29,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { AuthService } from './auth.service';
 
@@ -44,6 +45,10 @@ describe('AuthService', () => {
   let authSsoService: AuthSsoService;
   let userWorkspaceService: UserWorkspaceService;
   let workspaceInvitationService: WorkspaceInvitationService;
+  let permissionsService: PermissionsService;
+  let signInUpServiceMock: jest.Mocked<
+    Pick<SignInUpService, 'validatePassword'>
+  >;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -94,7 +99,10 @@ describe('AuthService', () => {
         },
         {
           provide: SignInUpService,
-          useValue: {},
+          useValue: {
+            validatePassword: jest.fn().mockResolvedValue(undefined),
+            generateHash: jest.fn(),
+          },
         },
         {
           provide: TwentyConfigService,
@@ -153,6 +161,14 @@ describe('AuthService', () => {
           provide: AuditService,
           useValue: {},
         },
+        {
+          provide: PermissionsService,
+          useValue: {
+            userHasWorkspaceSettingPermission: jest
+              .fn()
+              .mockResolvedValue(false),
+          },
+        },
       ],
     }).compile();
 
@@ -170,10 +186,15 @@ describe('AuthService', () => {
     userRepository = module.get<Repository<UserEntity>>(
       getRepositoryToken(UserEntity),
     );
+    permissionsService = module.get<PermissionsService>(PermissionsService);
+    signInUpServiceMock = module.get(SignInUpService) as jest.Mocked<
+      Pick<SignInUpService, 'validatePassword'>
+    >;
   });
 
   beforeEach(() => {
     twentyConfigServiceGetMock.mockReturnValue(false);
+    signInUpServiceMock.validatePassword.mockClear();
   });
 
   it('should be defined', async () => {
@@ -214,6 +235,92 @@ describe('AuthService', () => {
       passwordHash: 'passwordHash',
       captchaToken: user.captchaToken,
     });
+  });
+
+  it('allows password login through SSO bypass when user has permission', async () => {
+    const workspace = {
+      id: 'workspace-id',
+      isPasswordAuthEnabled: false,
+      isPasswordAuthBypassEnabled: true,
+    } as WorkspaceEntity;
+
+    const userEntity = {
+      id: 'user-id',
+      email: 'email',
+      passwordHash: 'password-hash',
+      userWorkspaces: [
+        {
+          id: 'user-workspace-id',
+          workspaceId: workspace.id,
+        } as any,
+      ],
+    } as unknown as UserEntity;
+
+    (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+
+    jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(userEntity);
+    jest
+      .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
+      .mockResolvedValueOnce({ id: 'user-workspace-id' } as any);
+    jest
+      .spyOn(permissionsService, 'userHasWorkspaceSettingPermission')
+      .mockResolvedValueOnce(true);
+
+    const response = await service.validateLoginWithPassword(
+      {
+        email: 'email',
+        password: 'password',
+        captchaToken: 'captcha-token',
+      },
+      workspace,
+    );
+
+    expect(response).toBe(userEntity);
+  });
+
+  it('throws when bypass permission is missing for disabled password auth', async () => {
+    const workspace = {
+      id: 'workspace-id',
+      isPasswordAuthEnabled: false,
+      isPasswordAuthBypassEnabled: true,
+    } as WorkspaceEntity;
+
+    const userEntity = {
+      id: 'user-id',
+      email: 'email',
+      passwordHash: 'password-hash',
+      userWorkspaces: [
+        {
+          id: 'user-workspace-id',
+          workspaceId: workspace.id,
+        } as any,
+      ],
+    } as unknown as UserEntity;
+
+    jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(userEntity);
+    jest
+      .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
+      .mockResolvedValueOnce(null);
+    jest
+      .spyOn(permissionsService, 'userHasWorkspaceSettingPermission')
+      .mockResolvedValueOnce(false);
+
+    await expect(
+      service.validateLoginWithPassword(
+        {
+          email: 'email',
+          password: 'password',
+          captchaToken: 'captcha-token',
+        },
+        workspace,
+      ),
+    ).rejects.toThrow(
+      new AuthException(
+        'Email/Password auth is not enabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
+    expect(signInUpServiceMock.validatePassword).not.toHaveBeenCalled();
   });
 
   it('challenge - user who have an invitation', async () => {
