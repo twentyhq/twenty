@@ -259,7 +259,7 @@ describe('ResetPasswordService', () => {
 
       const result = await service.validatePasswordResetToken('validToken');
 
-      expect(result).toEqual({ id: '1', email: 'test@example.com' });
+      expect(result).toEqual({ id: '1', email: 'test@example.com', 'hasPassword': false });
     });
 
     it('should throw an error for an invalid token', async () => {
