@@ -84,12 +84,13 @@ jobs:
           import_eq_suggestions: false
           download_sources: false
           push_sources: false
-          skip_untranslated_strings: false
-          skip_untranslated_files: false
+          skip_untranslated_strings: true
+          skip_untranslated_files: true
           push_translations: true
           create_pull_request: false
           skip_ref_checkout: true
           dryrun_action: false
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
           CROWDIN_PROJECT_ID: '1'
