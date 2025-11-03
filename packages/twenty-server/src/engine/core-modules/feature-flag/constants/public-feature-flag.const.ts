@@ -32,11 +32,11 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
+    key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
     metadata: {
-      label: 'Calendar View',
-      description: 'View and manage calendar events',
-      imagePath: 'https://twenty.com/images/lab/is-calendar-view-enabled.png',
+      label: 'Dashboards',
+      description: 'Enable dashboards',
+      imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
     },
   },
   {

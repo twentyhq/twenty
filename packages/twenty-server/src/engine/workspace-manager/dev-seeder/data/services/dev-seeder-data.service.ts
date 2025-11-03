@@ -112,7 +112,7 @@ type RecordSeedConfig = {
 // Organize seeds into dependency batches for parallel insertion
 const getRecordSeedsBatches = (
   workspaceId: string,
-  featureFlags?: Record<FeatureFlagKey, boolean>,
+  _featureFlags?: Record<FeatureFlagKey, boolean>,
 ): RecordSeedConfig[][] => {
   // Batch 1: No dependencies
   const batch1: RecordSeedConfig[] = [
@@ -140,15 +140,11 @@ const getRecordSeedsBatches = (
       pgColumns: CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
       recordSeeds: CONNECTED_ACCOUNT_DATA_SEEDS,
     },
-    ...(featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]
-      ? [
-          {
-            tableName: 'dashboard',
-            pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
-            recordSeeds: getDashboardDataSeeds(workspaceId),
-          },
-        ]
-      : []),
+    {
+      tableName: 'dashboard',
+      pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
+      recordSeeds: getDashboardDataSeeds(workspaceId),
+    },
   ];
 
   // Batch 3: Depends on company and connectedAccount
