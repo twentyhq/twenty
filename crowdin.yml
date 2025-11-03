@@ -46,6 +46,7 @@ files: [
       "packages/twenty-docs/ko/**",
       "packages/twenty-docs/tr/**"
     ],
-    "translation": "packages/twenty-docs/%locale%/%original_path%"
+    "translation": "packages/twenty-docs/%locale%/%original_path%",
+    "languages": ["fr"]
   }
 ]
