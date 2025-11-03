@@ -36,6 +36,15 @@ files: [
     "source": "packages/twenty-docs/**/*.mdx",
     "ignore": [
       "packages/twenty-docs/fr/**",
+      "packages/twenty-docs/es/**",
+      "packages/twenty-docs/de/**",
+      "packages/twenty-docs/it/**",
+      "packages/twenty-docs/ja/**",
+      "packages/twenty-docs/pt-br/**",
+      "packages/twenty-docs/zh-cn/**",
+      "packages/twenty-docs/ru/**",
+      "packages/twenty-docs/ko/**",
+      "packages/twenty-docs/tr/**"
     ],
     "translation": "packages/twenty-docs/%locale%/%original_path%"
   }

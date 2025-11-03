@@ -54,7 +54,6 @@ jobs:
           download_translations: false
           localization_branch_name: i18n
           base_url: 'https://twenty.api.crowdin.com'
-          config: 'crowdin-docs.yml'
         env:
           CROWDIN_PROJECT_ID: 1
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
