@@ -39,7 +39,7 @@ const meta: Meta<PageDecoratorArgs> = {
                 validatePasswordResetToken: {
                   id: mockedOnboardingUsersData.id,
                   email: mockedOnboardingUsersData.email,
-                  hasPassword: mockedOnboardingUsersData.hasPassword,
+                  hasPassword: true,
                 },
               },
             });
@@ -66,7 +66,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Reset Password', undefined, {
+    await canvas.findByText('Change Password', undefined, {
       timeout: 3000,
     });
   },
