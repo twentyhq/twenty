@@ -9,7 +9,10 @@
   },
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "axios": "^1.7.0",
+    "openai": "^4.67.0",
+    "typescript": "^5.6.0"
   },
   "scripts": {
     "build": "tsc",
@@ -28,7 +31,7 @@
     "OPENAI_API_KEY": {
       "isSecret": true,
       "value": "",
-      "description": "API key for authenticating with the OpenAI service."
+      "description": "API key for authenticating with the OpenAI-compatible service (supports OpenAI, Groq, and other providers)."
     },
     "TWENTY_API_URL": {
       "isSecret": false,
@@ -40,15 +43,10 @@
       "value": "",
       "description": "Secret token used to authenticate incoming webhook requests."
     },
-    "GROQ_API_BASE_URL": {
-      "isSecret": true,
-      "value": "",
-      "description": "Groq API base URL."
+    "OPENAI_API_BASE_URL": {
+      "isSecret": false,
+      "value": "https://api.openai.com/v1",
+      "description": "Base URL for OpenAI-compatible API. Defaults to OpenAI, but can be changed to use Groq (https://api.groq.com/openai/v1) or other providers."
     }
-  },
-  "dependencies": {
-    "axios": "^1.7.0",
-    "openai": "^4.67.0",
-    "typescript": "^5.6.0"
   }
 }

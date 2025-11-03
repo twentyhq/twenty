@@ -43,14 +43,14 @@ type TwentyApiResponse = {
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY; 
 const WEBHOOK_SECRET_TOKEN = process.env.WEBHOOK_SECRET_TOKEN;
 const TWENTY_API_URL = process.env.TWENTY_API_URL;
-const GROQ_API_BASE_URL = process.env.GROQ_API_BASE_URL;
+const OPENAI_API_BASE_URL = process.env.OPENAI_API_BASE_URL;
 
 const LLM_MODEL_ID = 'openai/gpt-oss-20b'; 
 const OPENAI_TEMPERATURE = 0.3; 
 
 const openai = new OpenAI({ 
   apiKey: OPENAI_API_KEY, 
-  baseURL: GROQ_API_BASE_URL, 
+  baseURL: OPENAI_API_BASE_URL, 
 });
 
 const getTwentyApiConfig = () => {
@@ -164,7 +164,6 @@ const lookupWorkspaceMemberByName = async (
   }
 };
 
-// NEW: Lookup person ID by name using GraphQL
 const lookupPersonByName = async (
   name: string,
 ): Promise<string | null> => {
@@ -209,7 +208,6 @@ const lookupPersonByName = async (
 
     const searchName = name.trim().toLowerCase();
     
-    // Exact full name match
     for (const edge of edges) {
       const firstName = edge.node.name?.firstName || '';
       const lastName = edge.node.name?.lastName || '';
@@ -221,7 +219,6 @@ const lookupPersonByName = async (
       }
     }
     
-    // First name match
     for (const edge of edges) {
       const firstName = edge.node.name?.firstName || '';
       if (firstName.toLowerCase() === searchName) {
@@ -231,7 +228,6 @@ const lookupPersonByName = async (
       }
     }
     
-    // Last name match
     for (const edge of edges) {
       const lastName = edge.node.name?.lastName || '';
       if (lastName.toLowerCase() === searchName) {
@@ -241,7 +237,6 @@ const lookupPersonByName = async (
       }
     }
     
-    // Partial match
     for (const edge of edges) {
       const firstName = edge.node.name?.firstName || '';
       const lastName = edge.node.name?.lastName || '';
@@ -266,18 +261,15 @@ const lookupPersonByName = async (
   }
 };
 
-// NEW: Extract person names from task description
 const extractPersonNamesFromDescription = (description: string, participants: string[]): string[] => {
   const foundNames: string[] = [];
   
   for (const participant of participants) {
-    // Check if full name appears in description
     if (description.includes(participant)) {
       foundNames.push(participant);
       continue;
     }
     
-    // Check if first name appears
     const firstName = participant.split(' ')[0];
     if (firstName && description.includes(firstName)) {
       foundNames.push(participant);
@@ -510,7 +502,6 @@ const createTaskInTwenty = async (
   }
 };
 
-// MODIFIED: Now accepts participants array and uses smart person linking
 const createTasksFromActionItems = async (
   actionItems: ActionItem[],
   noteId: string,
@@ -524,11 +515,9 @@ const createTasksFromActionItems = async (
       const taskDescription = `${actionItem.description}\n\n*Related to meeting note: ${noteId}*`;
       console.log(`Creating task: "${actionItem.title}"`);
       
-      // Extract person names mentioned in the description
       const mentionedPeople = extractPersonNamesFromDescription(actionItem.description, participants);
       console.log(`📝 People mentioned in task description:`, mentionedPeople);
       
-      // Create the task first
       const task = await createTaskInTwenty({
         ...actionItem,
         description: taskDescription,
@@ -536,7 +525,6 @@ const createTasksFromActionItems = async (
       taskIds.push(task.id);
       console.log(`✅ Task created: ${task.id}`);
       
-      // Link task to all mentioned people (not just relatedPersonId)
       if (mentionedPeople.length > 0) {
         for (const personName of mentionedPeople) {
           const personId = await lookupPersonByName(personName);
@@ -547,7 +535,6 @@ const createTasksFromActionItems = async (
           }
         }
       } else {
-        // Fallback: if no specific people mentioned, use relatedPersonId
         console.log(`⚠️ No specific people mentioned, using relatedPersonId as fallback`);
         await linkTaskToPersonREST(task.id, relatedPersonId);
       }
@@ -579,7 +566,6 @@ const createTasksFromCommitments = async (
       });
       taskIds.push(task.id);
       
-      // Link to the person who made the commitment
       const personId = await lookupPersonByName(commitment.person);
       if (personId) {
         await linkTaskToPersonREST(task.id, personId);
@@ -598,17 +584,6 @@ const analyzeTranscript = async (
   transcript: string,
   openaiApiKey: string,
 ): Promise<AnalysisResult> => {
-  
-  const groqBaseUrl = process.env.GROQ_API_BASE_URL;
-  if (!groqBaseUrl) {
-    throw new Error('GROQ_API_BASE_URL environment variable is not set');
-  }
-
-  const openai = new OpenAI({ 
-    apiKey: openaiApiKey,
-    baseURL: groqBaseUrl, 
-  });
-
   const prompt = `Analyze the following meeting transcript and extract:
 1. A concise summary (2-3 sentences)
 2. Key discussion points (bullet list)
@@ -717,7 +692,27 @@ ${transcript}`;
     throw new Error('No response from AI API');
   }
 
-  return JSON.parse(content) as AnalysisResult;
+  let parsedResult: AnalysisResult;
+  try {
+    parsedResult = JSON.parse(content) as AnalysisResult;
+  } catch (error) {
+    throw new Error(`Failed to parse AI response as JSON: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+
+  if (!parsedResult.summary || typeof parsedResult.summary !== 'string') {
+    throw new Error('Invalid AI response: missing or invalid summary');
+  }
+  if (!Array.isArray(parsedResult.keyPoints)) {
+    throw new Error('Invalid AI response: keyPoints must be an array');
+  }
+  if (!Array.isArray(parsedResult.actionItems)) {
+    throw new Error('Invalid AI response: actionItems must be an array');
+  }
+  if (!Array.isArray(parsedResult.commitments)) {
+    throw new Error('Invalid AI response: commitments must be an array');
+  }
+
+  return parsedResult;
 };
 
 export const main = async (
