@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -10,8 +10,11 @@ import {
   IsString,
   IsTimeZone,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -135,4 +138,9 @@ export class LineChartConfigurationDTO {
   @IsTimeZone()
   @IsOptional()
   timezone?: string;
+
+  @Field(() => Int, { nullable: true, defaultValue: CalendarStartDay.MONDAY })
+  @Min(0)
+  @Max(7)
+  firstDayOfTheWeek?: number;
 }

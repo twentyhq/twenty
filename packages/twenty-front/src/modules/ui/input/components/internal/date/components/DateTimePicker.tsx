@@ -1,5 +1,6 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { CalendarStartDay } from 'twenty-shared';
+
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { DateTimePickerHeader } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
@@ -17,8 +18,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { IconCalendarX } from 'twenty-ui/display';
 import {
-  MenuItemLeftContent,
-  StyledHoverableMenuItemBase,
+    MenuItemLeftContent,
+    StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

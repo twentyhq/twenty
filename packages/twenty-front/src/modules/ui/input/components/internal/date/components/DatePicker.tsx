@@ -5,7 +5,8 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { CalendarStartDay } from 'twenty-shared';
+
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { DatePickerHeader } from '@/ui/input/components/internal/date/components/DatePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
@@ -19,15 +20,15 @@ import { useRecoilValue } from 'recoil';
 
 import { type Nullable } from 'twenty-shared/types';
 import {
-  getDateFromPlainDate,
-  getPlainDateFromDate,
-  isDefined,
-  type RelativeDateFilter,
+    getDateFromPlainDate,
+    getPlainDateFromDate,
+    isDefined,
+    type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
 import {
-  MenuItemLeftContent,
-  StyledHoverableMenuItemBase,
+    MenuItemLeftContent,
+    StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
