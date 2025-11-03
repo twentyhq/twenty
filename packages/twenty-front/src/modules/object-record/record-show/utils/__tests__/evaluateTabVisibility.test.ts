@@ -108,7 +108,7 @@ describe('evaluateTabVisibility', () => {
       evaluateTabVisibility(
         {
           ...baseConfig,
-          ifFeaturesDisabled: [FeatureFlagKey.IS_AI_ENABLED],
+          ifFeaturesDisabled: [FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED],
         },
         baseContext,
       ),
@@ -129,7 +129,7 @@ describe('evaluateTabVisibility', () => {
       evaluateTabVisibility(
         {
           ...baseConfig,
-          ifFeaturesDisabled: [FeatureFlagKey.IS_AI_ENABLED],
+          ifFeaturesDisabled: [FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED],
         },
         ctx,
       ),
