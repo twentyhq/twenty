@@ -3,7 +3,6 @@ import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphW
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
-import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
@@ -14,6 +13,7 @@ import { calculateBarChartValueRange } from '@/page-layout/widgets/graph/graphWi
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
+import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -210,6 +210,8 @@ export const GraphWidgetBarChart = ({
       ]
     : undefined;
 
+  const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
+
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
@@ -229,7 +231,7 @@ export const GraphWidgetBarChart = ({
           data={data}
           keys={keys}
           indexBy={indexBy}
-          margin={BAR_CHART_MARGINS}
+          margin={margins}
           padding={0.3}
           groupMode={groupMode}
           layout={layout}
