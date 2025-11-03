@@ -95,9 +95,10 @@ export class ViewFieldResolver {
     });
   }
 
-  @Mutation(() => ViewFieldDTO)
+  @Mutation(() => [ViewFieldDTO])
   async createManyCoreViewFields(
-    @Args('inputs') createViewFieldInputs: CreateViewFieldInput[],
+    @Args('inputs', { type: () => [CreateViewFieldInput] })
+    createViewFieldInputs: CreateViewFieldInput[],
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewFieldDTO[]> {
     const isWorkspaceMigrationV2Enabled =
