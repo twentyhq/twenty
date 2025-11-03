@@ -134,19 +134,6 @@ export class ConnectedAccountRefreshTokensService {
           );
       }
     } catch (error) {
-      if (error?.name === 'AggregateError') {
-        const firstError = error?.errors?.[0];
-
-        this.logger.log(firstError);
-
-        if (isAxiosTemporaryError(error)) {
-          throw new ConnectedAccountRefreshAccessTokenException(
-            `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${firstError.code}`,
-            ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
-          );
-        }
-      }
-
       if (isAxiosTemporaryError(error)) {
         throw new ConnectedAccountRefreshAccessTokenException(
           `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${error.code}`,

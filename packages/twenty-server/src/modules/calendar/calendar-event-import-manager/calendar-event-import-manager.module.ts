@@ -14,15 +14,18 @@ import { CalendarRelaunchFailedCalendarChannelsCommand } from 'src/modules/calen
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
 import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-ongoing-stale.cron.command';
+import { CalendarRelaunchFailedCalendarChannelsCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-relaunch-failed-calendar-channels.cron.command';
 import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job';
 import { CalendarEventsImportCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-events-import.cron.job';
 import { CalendarOngoingStaleCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-ongoing-stale.cron.job';
+import { CalendarRelaunchFailedCalendarChannelsCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-relaunch-failed-calendar-channels.cron.job';
 import { CalDavDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/caldav-driver.module';
 import { GoogleCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/google-calendar-driver.module';
 import { MicrosoftCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/microsoft-calendar-driver.module';
 import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
 import { CalendarOngoingStaleJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
+import { CalendarRelaunchFailedCalendarChannelJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-relaunch-failed-calendar-channel.job';
 import { CalendarAccountAuthenticationService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-account-authentication.service';
 import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
@@ -71,8 +74,11 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     CalendarEventsImportJob,
     CalendarOngoingStaleCronJob,
     CalendarOngoingStaleCronCommand,
-    CalendarRelaunchFailedCalendarChannelsCommand,
     CalendarOngoingStaleJob,
+    CalendarRelaunchFailedCalendarChannelsCommand,
+    CalendarRelaunchFailedCalendarChannelsCronJob,
+    CalendarRelaunchFailedCalendarChannelsCronCommand,
+    CalendarRelaunchFailedCalendarChannelJob,
   ],
   exports: [
     CalendarEventsImportService,
@@ -80,6 +86,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     CalendarEventListFetchCronCommand,
     CalendarEventsImportCronCommand,
     CalendarOngoingStaleCronCommand,
+    CalendarRelaunchFailedCalendarChannelsCronCommand,
   ],
 })
 export class CalendarEventImportManagerModule {}
