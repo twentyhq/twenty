@@ -127,6 +127,40 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   const layouts = hasPendingPlaceholder
     ? addPendingPlaceholderToLayouts(baseLayouts, pageLayoutDraggedArea)
     : baseLayouts;
+
+  const widgets = [];
+
+  if (isLayoutEmpty) {
+    widgets.push(
+      <div key="empty-placeholder" data-select-disable="true">
+        <WidgetPlaceholder />
+      </div>,
+    );
+  } else {
+    activeTabWidgets?.forEach((widget) => {
+      widgets.push(
+        <div key={widget.id} data-select-disable="true">
+          <WidgetRenderer
+            widget={widget}
+            pageLayoutType={currentPageLayout.type}
+            layoutMode="grid"
+          />
+        </div>,
+      );
+    });
+
+    if (hasPendingPlaceholder) {
+      widgets.push(
+        <div
+          key={PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY}
+          data-select-disable="true"
+        >
+          <WidgetPlaceholder />
+        </div>,
+      );
+    }
+  }
+
   return (
     <>
       <StyledGridContainer ref={gridContainerRef}>
@@ -170,31 +204,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
             )
           }
         >
-          {isLayoutEmpty ? (
-            <div key="empty-placeholder" data-select-disable="true">
-              <WidgetPlaceholder />
-            </div>
-          ) : (
-            <>
-              {activeTabWidgets?.map((widget) => (
-                <div key={widget.id} data-select-disable="true">
-                  <WidgetRenderer
-                    widget={widget}
-                    pageLayoutType={currentPageLayout.type}
-                    layoutMode="grid"
-                  />
-                </div>
-              ))}
-              {hasPendingPlaceholder && (
-                <div
-                  key={PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY}
-                  data-select-disable="true"
-                >
-                  <WidgetPlaceholder />
-                </div>
-              )}
-            </>
-          )}
+          {widgets}
         </ResponsiveGridLayout>
       </StyledGridContainer>
     </>
