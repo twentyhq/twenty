@@ -18,7 +18,7 @@ export type ConnectedAccountTokens = {
   refreshToken: string;
 };
 
-const MESSAGING_CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
+const CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
 
 @Injectable()
 export class ConnectedAccountRefreshTokensService {
@@ -98,7 +98,7 @@ export class ConnectedAccountRefreshTokensService {
         const BUFFER_TIME = 5 * 60 * 1000;
 
         const tokenExpirationTime =
-          MESSAGING_CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION - BUFFER_TIME;
+          CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION - BUFFER_TIME;
 
         return (
           connectedAccount.lastCredentialsRefreshedAt >
