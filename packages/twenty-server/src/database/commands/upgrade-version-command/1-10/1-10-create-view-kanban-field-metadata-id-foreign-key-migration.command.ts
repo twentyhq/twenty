@@ -11,11 +11,11 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: '1-10-create-view-kanban-field-metadata-id-foreign-key-hacky-migration',
+  name: '1-10-create-view-kanban-field-metadata-id-foreign-key-migration',
   description:
     'Create FK_b3cc95732479f7a1337350c398f foreign key on view kanban field metadata id column',
 })
-export class CreateViewKanbanFieldMetadataIdForeignKeyHackyMigrationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   private hasRunOnce = false;
 
   constructor(
