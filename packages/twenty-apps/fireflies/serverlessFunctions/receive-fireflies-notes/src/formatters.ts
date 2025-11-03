@@ -195,7 +195,33 @@ export class MeetingFormatter {
       input.organizerEmail = meetingData.organizer_email;
     }
 
+    // Set success status and timestamps
+    input.importStatus = 'SUCCESS';
+    input.lastImportAttempt = new Date().toISOString();
+    input.importAttempts = 1;
+
     return input;
+  }
+
+  static toFailedMeetingCreateInput(
+    meetingId: string,
+    title: string,
+    error: string,
+    attempts: number = 1
+  ): MeetingCreateInput {
+    const currentDate = new Date().toISOString();
+
+    return {
+      name: title || `Failed Meeting Import - ${meetingId}`,
+      meetingDate: currentDate,
+      duration: 0,
+      actionItemsCount: 0,
+      firefliesMeetingId: meetingId,
+      importStatus: 'FAILED',
+      importError: error,
+      lastImportAttempt: currentDate,
+      importAttempts: attempts,
+    };
   }
 }
 

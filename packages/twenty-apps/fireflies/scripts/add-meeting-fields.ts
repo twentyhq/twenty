@@ -32,6 +32,13 @@ interface RelationCreationPayload {
   type: 'ONE_TO_MANY' | 'MANY_TO_ONE';
 }
 
+interface FieldOption {
+  value: string;
+  label: string;
+  position: number;
+  color: string;
+}
+
 interface FieldDefinition {
   type: string;
   name: string;
@@ -40,6 +47,7 @@ interface FieldDefinition {
   icon?: string;
   isNullable?: boolean;
   relationCreationPayload?: RelationCreationPayload;
+  options?: FieldOption[];
 }
 
 const MEETING_FIELDS: FieldDefinition[] = [
@@ -145,6 +153,44 @@ const MEETING_FIELDS: FieldDefinition[] = [
     label: 'Organizer Email',
     description: 'Email address of the meeting organizer',
     icon: 'IconMail',
+    isNullable: true,
+  },
+  {
+    type: 'SELECT',
+    name: 'importStatus',
+    label: 'Import Status',
+    description: 'Status of the meeting import from Fireflies',
+    icon: 'IconCheck',
+    isNullable: true,
+    options: [
+      { value: 'SUCCESS', label: 'Success', position: 0, color: 'green' },
+      { value: 'FAILED', label: 'Failed', position: 1, color: 'red' },
+      { value: 'PENDING', label: 'Pending', position: 2, color: 'yellow' },
+      { value: 'RETRYING', label: 'Retrying', position: 3, color: 'orange' },
+    ],
+  },
+  {
+    type: 'TEXT',
+    name: 'importError',
+    label: 'Import Error',
+    description: 'Error message if meeting import failed',
+    icon: 'IconAlertTriangle',
+    isNullable: true,
+  },
+  {
+    type: 'DATE_TIME',
+    name: 'lastImportAttempt',
+    label: 'Last Import Attempt',
+    description: 'Date and time of the last import attempt',
+    icon: 'IconClock',
+    isNullable: true,
+  },
+  {
+    type: 'NUMBER',
+    name: 'importAttempts',
+    label: 'Import Attempts',
+    description: 'Number of times import has been attempted',
+    icon: 'IconRepeat',
     isNullable: true,
   },
 ];
@@ -266,6 +312,9 @@ const createField = async (objectId: string, field: FieldDefinition) => {
       objectMetadataId: objectId,
       ...(field.relationCreationPayload && {
         relationCreationPayload: field.relationCreationPayload,
+      }),
+      ...(field.options && {
+        options: field.options,
       }),
     },
   };

@@ -155,6 +155,9 @@ export class WebhookHandler {
       const message = error instanceof Error ? error.message : 'Unknown error';
       this.logError(`[fireflies] error: ${message}`);
       result.errors?.push(message);
+
+      // Try to create a failed meeting record for tracking
+      await this.createFailedMeetingRecord(params, message);
     }
 
     result.debug = this.debug;
@@ -303,6 +306,50 @@ export class WebhookHandler {
     this.debug.push(message);
     if (!this.isTestEnvironment) {
       console.error(message);
+    }
+  }
+
+  private async createFailedMeetingRecord(params: unknown, error: string): Promise<void> {
+    try {
+      const twentyApiKey = process.env.TWENTY_API_KEY || '';
+      if (!twentyApiKey) {
+        this.logDebug('[fireflies] Cannot create failed meeting record: TWENTY_API_KEY not configured');
+        return;
+      }
+
+      // Try to extract meeting ID and title from the params
+      let meetingId = 'unknown';
+      let meetingTitle = 'Unknown Meeting';
+
+      const { payload } = this.parsePayload(params);
+      if (payload?.meetingId) {
+        meetingId = payload.meetingId;
+
+        // Try to get meeting title from Fireflies API if possible
+        const firefliesApiKey = process.env.FIREFLIES_API_KEY || '';
+        if (firefliesApiKey) {
+          try {
+            const firefliesClient = new FirefliesApiClient(firefliesApiKey);
+            const meetingData = await firefliesClient.fetchMeetingData(meetingId);
+            meetingTitle = meetingData.title || meetingTitle;
+          } catch (fetchError) {
+            this.logDebug(`[fireflies] Could not fetch meeting title: ${fetchError instanceof Error ? fetchError.message : 'Unknown error'}`);
+          }
+        }
+      }
+
+      const twentyService = new TwentyCrmService(twentyApiKey, getApiUrl());
+      const failedMeetingData = MeetingFormatter.toFailedMeetingCreateInput(
+        meetingId,
+        meetingTitle,
+        error
+      );
+
+      const failedMeetingId = await twentyService.createFailedMeeting(failedMeetingData);
+      this.logDebug(`[fireflies] Created failed meeting record: ${failedMeetingId}`);
+    } catch (recordError) {
+      // Don't throw here - we don't want to break the original error handling
+      this.logError(`[fireflies] Failed to create failed meeting record: ${recordError instanceof Error ? recordError.message : 'Unknown error'}`);
     }
   }
 }

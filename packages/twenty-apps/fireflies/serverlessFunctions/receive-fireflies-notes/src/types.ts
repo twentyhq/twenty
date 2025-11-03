@@ -122,5 +122,9 @@ export type MeetingCreateInput = {
   recordingUrl?: { primaryLinkUrl: string; primaryLinkLabel: string } | null;
   firefliesMeetingId: string;
   organizerEmail?: string | null;
+  importStatus?: 'SUCCESS' | 'FAILED' | 'PENDING' | 'RETRYING' | null;
+  importError?: string | null;
+  lastImportAttempt?: string | null;
+  importAttempts?: number | null;
 };
 

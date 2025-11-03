@@ -508,5 +508,68 @@ export class TwentyCrmService {
       throw error;
     }
   }
+
+  async createFailedMeeting(meetingData: MeetingCreateInput): Promise<string> {
+    const mutation = `
+      mutation CreateMeeting($data: MeetingCreateInput!) {
+        createMeeting(data: $data) { id }
+      }
+    `;
+
+    const variables = { data: meetingData };
+
+    if (!this.isTestEnvironment) {
+      // eslint-disable-next-line no-console
+      console.log('[fireflies] createFailedMeeting variables:', JSON.stringify(variables, null, 2));
+    }
+
+    const response = await this.gqlRequest<CreateMeetingResponse>(mutation, variables);
+    if (!response.data?.createMeeting?.id) {
+      throw new Error('Failed to create failed meeting record: Invalid response from server');
+    }
+    return response.data.createMeeting.id;
+  }
+
+  async findFailedMeetings(): Promise<any[]> {
+    const query = `
+      query FindFailedMeetings {
+        meetings(filter: { importStatus: { eq: "FAILED" } }) {
+          edges {
+            node {
+              id
+              name
+              firefliesMeetingId
+              importError
+              lastImportAttempt
+              importAttempts
+              createdAt
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await this.gqlRequest<any>(query);
+    return response.data?.meetings?.edges?.map((edge: any) => edge.node) || [];
+  }
+
+  async retryFailedMeeting(meetingId: string, updatedData: Partial<MeetingCreateInput>): Promise<void> {
+    const mutation = `
+      mutation UpdateMeeting($where: MeetingWhereUniqueInput!, $data: MeetingUpdateInput!) {
+        updateMeeting(where: $where, data: $data) { id }
+      }
+    `;
+
+    const variables = {
+      where: { id: meetingId },
+      data: {
+        ...updatedData,
+        lastImportAttempt: new Date().toISOString(),
+        importAttempts: { increment: 1 }
+      }
+    };
+
+    await this.gqlRequest<any>(mutation, variables);
+  }
 }
 

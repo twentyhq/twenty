@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.1] - 2025-11-03
+
+### Added
+- **Import status tracking**: Added four new meeting fields to track import status and failure handling:
+  - `importStatus` (SELECT) - Tracks SUCCESS, FAILED, PENDING, RETRYING states
+  - `importError` (TEXT) - Stores error messages when imports fail
+  - `lastImportAttempt` (DATE_TIME) - Timestamp of the last import attempt
+  - `importAttempts` (NUMBER) - Counter for number of import attempts
+- **Automatic failure tracking**: Enhanced webhook handler to automatically create failed meeting records when processing fails
+- **Failed meeting formatter**: Added `toFailedMeetingCreateInput()` method to create standardized failed meeting records
+
+### Enhanced
+- **Meeting type definition**: Extended `MeetingCreateInput` type with import tracking fields
+- **Success status tracking**: Successful meeting imports now automatically set `importStatus: 'SUCCESS'` and track timestamps
+- **Error handling**: Webhook processing failures are now captured and stored as meeting records for visibility and potential retry
+
 ## [0.2.0] - 2025-11-03
 
 ### Changed
