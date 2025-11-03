@@ -12,6 +12,13 @@
       "universalIdentifier": "fe2b4e75-8811-4461-a6e3-72a97e39a392",
       "type": "databaseEvent",
       "eventName": "person.updated"
+    },
+    {
+      "universalIdentifier": "a64fb3b7-a0c3-4cdb-9b71-df9efa3a877f",
+      "type": "route",
+      "path": "/s/fullenrich",
+      "httpMethod": "POST",
+      "isAuthRequired": false
     }
   ]
 }
