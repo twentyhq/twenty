@@ -2,8 +2,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CalendarStartDay } from 'twenty-shared';
 
 import {
-    detectCalendarStartDay,
-    type NonSystemCalendarStartDay,
+  detectCalendarStartDay,
+  type NonSystemCalendarStartDay,
 } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useGetNowInUserTimezoneForRelativeFilter } from '@/object-record/object-filter-dropdown/hooks/useGetNowInUserTimezoneForRelativeFilter';
@@ -18,9 +18,9 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import {
-    isDefined,
-    type RelativeDateFilter,
-    resolveDateFilter,
+  isDefined,
+  type RelativeDateFilter,
+  resolveDateFilter,
 } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';

@@ -18,8 +18,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { IconCalendarX } from 'twenty-ui/display';
 import {
-    MenuItemLeftContent,
-    StyledHoverableMenuItemBase,
+  MenuItemLeftContent,
+  StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

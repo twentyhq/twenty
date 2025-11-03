@@ -20,15 +20,15 @@ import { useRecoilValue } from 'recoil';
 
 import { type Nullable } from 'twenty-shared/types';
 import {
-    getDateFromPlainDate,
-    getPlainDateFromDate,
-    isDefined,
-    type RelativeDateFilter,
+  getDateFromPlainDate,
+  getPlainDateFromDate,
+  isDefined,
+  type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
 import {
-    MenuItemLeftContent,
-    StyledHoverableMenuItemBase,
+  MenuItemLeftContent,
+  StyledHoverableMenuItemBase,
 } from 'twenty-ui/navigation';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
