@@ -87,6 +87,7 @@ const StyledTooltipRowRightContent = styled.div`
 `;
 
 const StyledTooltipLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
   flex: 1;
   min-width: 0;
   overflow: hidden;

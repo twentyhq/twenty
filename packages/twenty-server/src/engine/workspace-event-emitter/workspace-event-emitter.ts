@@ -10,11 +10,11 @@ import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/
 import { type ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { ObjectRecordUpsertEvent } from 'src/engine/core-modules/event-emitter/types/object-record-upsert.event';
-import { type CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
-import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 import type { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { type CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
 type ActionEventMap<T> = {
   [DatabaseEventAction.CREATED]: ObjectRecordCreateEvent<T>;

@@ -4,7 +4,6 @@ import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   type WorkflowAction,
   WorkflowActionType,
@@ -18,25 +17,20 @@ import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/uti
 
 export function assertVersionCanBeActivated(
   workflowVersion: WorkflowVersionWorkspaceEntity,
-  workflow: WorkflowWorkspaceEntity,
 ) {
   assertVersionIsValid(workflowVersion);
 
-  const isLastPublishedVersion =
-    workflow.lastPublishedVersionId === workflowVersion.id;
-
   const isDraft = workflowVersion.status === WorkflowVersionStatus.DRAFT;
 
-  const isLastPublishedVersionDeactivated =
-    workflowVersion.status === WorkflowVersionStatus.DEACTIVATED &&
-    isLastPublishedVersion;
+  const isDeactivated =
+    workflowVersion.status === WorkflowVersionStatus.DEACTIVATED;
 
-  if (!isDraft && !isLastPublishedVersionDeactivated) {
+  if (!isDraft && !isDeactivated) {
     throw new WorkflowTriggerException(
-      'Cannot activate non-draft or non-last-published version',
+      'Cannot activate non-draft or non-deactivated version',
       WorkflowTriggerExceptionCode.INVALID_INPUT,
       {
-        userFriendlyMessage: msg`Cannot activate non-draft or non-last-published version`,
+        userFriendlyMessage: msg`Cannot activate non-draft or non-deactivated version`,
       },
     );
   }

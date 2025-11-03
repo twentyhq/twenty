@@ -4,7 +4,7 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { useGetRecordFilterLabelValue } from '@/views/hooks/useGetRecordFilterLabelValue';
+import { useGetRecordFilterChipLabelValue } from '@/views/hooks/useGetRecordFilterChipLabelValue';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { useIcons } from 'twenty-ui/display';
@@ -26,7 +26,7 @@ export const EditableFilterChip = ({
     recordFilter.fieldMetadataId,
   );
 
-  const { getRecordFilterLabelValue } = useGetRecordFilterLabelValue();
+  const { getRecordFilterChipLabelValue } = useGetRecordFilterChipLabelValue();
 
   const FieldMetadataItemIcon = getIcon(fieldMetadataItem.icon);
 
@@ -47,9 +47,8 @@ export const EditableFilterChip = ({
     : recordFilter.label;
 
   const labelKey = `${fieldNameLabel}`;
-  const labelValue = getRecordFilterLabelValue({
+  const labelValue = getRecordFilterChipLabelValue({
     recordFilter,
-    fieldMetadataOptions: fieldMetadataItem.options ?? [],
   });
 
   return (

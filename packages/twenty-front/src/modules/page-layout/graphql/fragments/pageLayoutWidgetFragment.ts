@@ -22,9 +22,11 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         aggregateOperation
         primaryAxisGroupByFieldMetadataId
         primaryAxisGroupBySubFieldName
+        primaryAxisDateGranularity
         primaryAxisOrderBy
         secondaryAxisGroupByFieldMetadataId
         secondaryAxisGroupBySubFieldName
+        secondaryAxisGroupByDateGranularity
         secondaryAxisOrderBy
         omitNullValues
         axisNameDisplay
@@ -44,9 +46,11 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         aggregateOperation
         primaryAxisGroupByFieldMetadataId
         primaryAxisGroupBySubFieldName
+        primaryAxisDateGranularity
         primaryAxisOrderBy
         secondaryAxisGroupByFieldMetadataId
         secondaryAxisGroupBySubFieldName
+        secondaryAxisGroupByDateGranularity
         secondaryAxisOrderBy
         omitNullValues
         axisNameDisplay

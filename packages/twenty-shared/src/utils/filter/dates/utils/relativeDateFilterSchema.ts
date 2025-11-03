@@ -11,7 +11,6 @@ export const relativeDateFilterSchema = z
     amount: relativeDateFilterAmountSchema.nullish(),
     unit: relativeDateFilterUnitSchema,
     timezone: z.string().nullish(),
-    referenceDayAsString: z.string().nullish(),
     firstDayOfTheWeek: firstDayOfWeekSchema.nullish(),
   })
   .refine((data) => !(data.amount === undefined && data.direction !== 'THIS'), {

@@ -5973,6 +5973,7 @@ msgstr "Ingen metrikdata tillgänglig"
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "Inga modeller tillgängliga. Vänligen konfigurera AI-modeller i dina arbetsinställningar."
 

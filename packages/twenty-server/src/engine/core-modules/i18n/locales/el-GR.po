@@ -584,10 +584,10 @@ msgstr "Δεν είναι δυνατή η σύνδεση με το {connectField
 msgid "Can't impersonate user via api key"
 msgstr "Δεν είναι δυνατή η προσωποποίηση χρήστη μέσω του κλειδιού api"
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "Δεν είναι δυνατή η ενεργοποίηση μη πρόχειρης ή μη τελευταίας δημοσιευμένης έκδοσης"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +619,6 @@ msgstr "Δεν είναι δυνατή η απενεργοποίηση μη εν
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Δεν είναι δυνατή η ενεργοποίηση της μοναδικότητας λόγω υπαρχόντων διπλότυπων τιμών. Παρακαλώ επανεξετάστε και διορθώστε τα δεδομένα σας πρώτα (συμπεριλαμβανομένων των μαλακί καταγραμμένων εγγραφών)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "Δεν μπορεί να υπάρχει περισσότερη από μία ενεργή έκδοση ροής εργασίας"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
