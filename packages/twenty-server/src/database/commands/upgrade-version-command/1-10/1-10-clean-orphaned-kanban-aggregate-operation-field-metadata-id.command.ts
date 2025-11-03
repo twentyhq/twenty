@@ -1,8 +1,8 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { DataSource, In, IsNull, Not, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -28,6 +28,8 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
     private readonly viewRepository: Repository<ViewEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -115,7 +117,7 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
     // This is workspace-agnostic and will only succeed once
     if (!options.dryRun) {
       try {
-        await this.viewRepository.query(
+        await this.coreDataSource.query(
           `ALTER TABLE "core"."view" ADD CONSTRAINT "FK_b3cc95732479f7a1337350c398f" FOREIGN KEY ("kanbanAggregateOperationFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
         );
         this.logger.log(
