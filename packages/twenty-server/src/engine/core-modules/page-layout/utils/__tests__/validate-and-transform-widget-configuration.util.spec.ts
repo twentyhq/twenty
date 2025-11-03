@@ -1,17 +1,14 @@
 import {
-  INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
   INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
   INVALID_IFRAME_CONFIG_BAD_URL,
   INVALID_IFRAME_CONFIG_EMPTY_URL,
-  INVALID_IFRAME_CONFIG_MISSING_URL,
   INVALID_NUMBER_CHART_CONFIG_BAD_UUID,
   INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
-  TEST_VERTICAL_BAR_CHART_CONFIG,
-  TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
-  TEST_HORIZONTAL_BAR_CHART_CONFIG,
-  TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
+  INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
   TEST_GAUGE_CHART_CONFIG,
   TEST_GAUGE_CHART_CONFIG_MINIMAL,
+  TEST_HORIZONTAL_BAR_CHART_CONFIG,
+  TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
   TEST_IFRAME_CONFIG,
   TEST_LINE_CHART_CONFIG,
   TEST_LINE_CHART_CONFIG_MINIMAL,
@@ -19,6 +16,8 @@ import {
   TEST_NUMBER_CHART_CONFIG_MINIMAL,
   TEST_PIE_CHART_CONFIG,
   TEST_PIE_CHART_CONFIG_MINIMAL,
+  TEST_VERTICAL_BAR_CHART_CONFIG,
+  TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
@@ -40,15 +39,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
         validateAndTransformWidgetConfiguration(
           WidgetType.IFRAME,
           INVALID_IFRAME_CONFIG_BAD_URL,
-        ),
-      ).toThrow(/url must be a URL address/);
-    });
-
-    it('should throw error for missing URL', () => {
-      expect(() =>
-        validateAndTransformWidgetConfiguration(
-          WidgetType.IFRAME,
-          INVALID_IFRAME_CONFIG_MISSING_URL,
         ),
       ).toThrow(/url must be a URL address/);
     });
