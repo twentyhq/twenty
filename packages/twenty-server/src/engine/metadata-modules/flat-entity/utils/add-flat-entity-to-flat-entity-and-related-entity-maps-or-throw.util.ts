@@ -37,11 +37,19 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow = <
 
   const manyToOneRelatedMetadataName = Object.entries(
     ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY[metadataName],
-  ) as Array<[keyof MetadataFlatEntity<T>, AllMetadataName]>;
+  ) as Array<
+    [
+      keyof MetadataFlatEntity<T>,
+      {
+        metadataName: AllMetadataName;
+        flatEntityForeignKeyAggregator: keyof MetadataFlatEntity<AllMetadataName>;
+      },
+    ]
+  >;
 
   for (const [
     foreignKey,
-    relatedMetadataName,
+    { metadataName: relatedMetadataName, flatEntityForeignKeyAggregator },
   ] of manyToOneRelatedMetadataName) {
     const relatedFlatEntityMapsKey =
       getMetadataFlatEntityMapsKey(relatedMetadataName);
@@ -62,25 +70,24 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow = <
       flatEntityMaps: relatedFLatEntityMetadataMaps,
     });
 
-    // Does not work here :thinking:
-    const flatForeignKeyAggregatorProperty = `${metadataName as string}Ids`;
     if (
       !Object.prototype.hasOwnProperty.call(
         relatedFlatEntity,
-        flatForeignKeyAggregatorProperty,
+        flatEntityForeignKeyAggregator,
       )
     ) {
       throw new FlatEntityMapsException(
-        `Should never occur, invalid flat entity typing. flat ${metadataName} should contain ${flatForeignKeyAggregatorProperty}`,
+        `Should never occur, invalid flat entity typing. flat ${metadataName} should contain ${flatEntityForeignKeyAggregator}`,
         FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
       );
     }
 
     const updatedRelatedEntity = {
       ...relatedFlatEntity,
-      [flatForeignKeyAggregatorProperty]: [
-        // @ts-expect-error TODO improve
-        ...(relatedFlatEntity[flatForeignKeyAggregatorProperty] as string[]),
+      [flatEntityForeignKeyAggregator]: [
+        ...(relatedFlatEntity[
+          flatEntityForeignKeyAggregator
+        ] as unknown as string[]),
         flatEntity.id,
       ],
     };

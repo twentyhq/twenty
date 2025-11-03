@@ -1,7 +1,11 @@
 import { MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { createEmptyFlatEntityMaps } from '../../constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow } from '../add-flat-entity-to-flat-entity-and-related-entity-maps-or-throw.util';
 
@@ -15,20 +19,37 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow', () => {
       universalIdentifier: 'object-universal-1',
       viewIds: [],
       fieldMetadataIds: [],
+      workspaceId: '20202020-bc64-4148-8a79-b3144f743694',
+      imageIdentifierFieldMetadataId: '20202020-9d65-415f-b0e1-216a2e257ea4',
+      labelIdentifierFieldMetadataId: '20202020-1a62-405c-87fa-4d4fd215851b',
     });
 
-    const mockView = {
+    const mockFieldMEtadata = getFlatFieldMetadataMock({
+      objectMetadataId,
+      type: FieldMetadataType.DATE,
+      universalIdentifier: 'field-universal-1',
+      viewFieldIds: [],
+      viewGroupIds: [],
+      viewFilterIds: [],
+      calendarViewIds: [],
+    });
+
+    const mockView: Partial<FlatView> = {
       id: viewId,
       universalIdentifier: 'view-universal-1',
       objectMetadataId: objectMetadataId,
       viewFieldIds: [],
       viewFilterIds: [],
       viewGroupIds: [],
-    } as unknown as FlatView;
+      calendarFieldMetadataId: mockFieldMEtadata.id,
+    };
 
     const flatEntityAndRelatedMapsToMutate: MetadataFlatEntityAndRelatedFlatEntityMaps<'view'> =
       {
-        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+        flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: mockFieldMEtadata,
+          flatEntityMaps: createEmptyFlatEntityMaps(),
+        }),
         flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: mockObjectMetadata,
           flatEntityMaps: createEmptyFlatEntityMaps(),
@@ -38,76 +59,25 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow', () => {
 
     addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow({
       metadataName: 'view',
-      flatEntity: mockView,
+      flatEntity: mockView as FlatView,
       flatEntityAndRelatedMapsToMutate,
     });
 
-    expect(flatEntityAndRelatedMapsToMutate).toMatchInlineSnapshot(`
-{
-  "flatFieldMetadataMaps": {
-    "byId": {},
-    "idByUniversalIdentifier": {},
-    "universalIdentifiersByApplicationId": {},
-  },
-  "flatObjectMetadataMaps": {
-    "byId": {
-      "object-1": {
-        "applicationId": null,
-        "createdAt": "2024-01-01T00:00:00.000Z",
-        "description": "default flat object metadata description",
-        "duplicateCriteria": null,
-        "fieldMetadataIds": [],
-        "icon": "icon",
-        "id": "object-1",
-        "imageIdentifierFieldMetadataId": "f08c1ab7-b303-44ee-96a3-c1c99818d0c7",
-        "indexMetadataIds": [],
-        "isActive": true,
-        "isAuditLogged": true,
-        "isCustom": true,
-        "isLabelSyncedWithName": false,
-        "isRemote": false,
-        "isSearchable": true,
-        "isSystem": false,
-        "isUIReadOnly": false,
-        "labelIdentifierFieldMetadataId": "e279e9c4-669c-4c53-9cca-ccb1771c8688",
-        "labelPlural": "default flat object metadata label plural",
-        "labelSingular": "default flat object metadata label singular",
-        "namePlural": "defaultflatObjectMetadataNamePlural",
-        "nameSingular": "defaultflatObjectMetadataNameSingular",
-        "shortcut": "shortcut",
-        "standardId": null,
-        "standardOverrides": null,
-        "targetTableName": "",
-        "universalIdentifier": "object-universal-1",
-        "updatedAt": "2024-01-01T00:00:00.000Z",
-        "viewIds": [
-          "view-1",
-        ],
-        "workspaceId": "e25c8a64-020d-405d-be79-3990d6020ced",
-      },
-    },
-    "idByUniversalIdentifier": {
-      "object-universal-1": "object-1",
-    },
-    "universalIdentifiersByApplicationId": {},
-  },
-  "flatViewMaps": {
-    "byId": {
-      "view-1": {
-        "id": "view-1",
-        "objectMetadataId": "object-1",
-        "universalIdentifier": "view-universal-1",
-        "viewFieldIds": [],
-        "viewFilterIds": [],
-        "viewGroupIds": [],
-      },
-    },
-    "idByUniversalIdentifier": {
-      "view-universal-1": "view-1",
-    },
-    "universalIdentifiersByApplicationId": {},
-  },
-}
-`);
+    expect(flatEntityAndRelatedMapsToMutate).toMatchSnapshot();
+    expect(
+      flatEntityAndRelatedMapsToMutate.flatObjectMetadataMaps.byId[
+        objectMetadataId
+      ],
+    ).toMatchObject<Partial<FlatObjectMetadata>>({
+      viewIds: [mockView.id!],
+    });
+
+    expect(
+      flatEntityAndRelatedMapsToMutate.flatFieldMetadataMaps.byId[
+        mockFieldMEtadata.id
+      ],
+    ).toMatchObject<Partial<FlatFieldMetadata>>({
+      calendarViewIds: [mockView.id!],
+    });
   });
 });

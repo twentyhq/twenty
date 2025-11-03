@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow should add a view and update related objectMetadata with viewId 1`] = `
+{
+  "flatFieldMetadataMaps": {
+    "byId": {
+      "007d510f-c7f4-4716-b61d-bad2849de279": {
+        "applicationId": "ceaca7b1-54df-463c-8803-4fe36051cf8d",
+        "calendarViewIds": [
+          "view-1",
+        ],
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "defaultValue": null,
+        "description": "default flat field metadata description",
+        "icon": "icon",
+        "id": "007d510f-c7f4-4716-b61d-bad2849de279",
+        "isActive": true,
+        "isCustom": true,
+        "isLabelSyncedWithName": false,
+        "isNullable": true,
+        "isSystem": false,
+        "isUIReadOnly": false,
+        "isUnique": false,
+        "kanbanAggregateOperationViewIds": [],
+        "label": "flat field metadata label",
+        "morphId": null,
+        "name": "flatFieldMetadataName",
+        "objectMetadataId": "object-1",
+        "options": null,
+        "relationTargetFieldMetadataId": null,
+        "relationTargetObjectMetadataId": null,
+        "settings": null,
+        "standardId": null,
+        "standardOverrides": null,
+        "type": "DATE",
+        "universalIdentifier": "field-universal-1",
+        "updatedAt": "2024-01-01T00:00:00.000Z",
+        "viewFieldIds": [],
+        "viewFilterIds": [],
+        "viewGroupIds": [],
+        "workspaceId": "33fdec86-ccf5-4052-9fd2-70184a6012b8",
+      },
+    },
+    "idByUniversalIdentifier": {
+      "field-universal-1": "007d510f-c7f4-4716-b61d-bad2849de279",
+    },
+    "universalIdentifiersByApplicationId": {
+      "ceaca7b1-54df-463c-8803-4fe36051cf8d": [
+        "field-universal-1",
+      ],
+    },
+  },
+  "flatObjectMetadataMaps": {
+    "byId": {
+      "object-1": {
+        "applicationId": null,
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "description": "default flat object metadata description",
+        "duplicateCriteria": null,
+        "fieldMetadataIds": [],
+        "icon": "icon",
+        "id": "object-1",
+        "imageIdentifierFieldMetadataId": "20202020-9d65-415f-b0e1-216a2e257ea4",
+        "indexMetadataIds": [],
+        "isActive": true,
+        "isAuditLogged": true,
+        "isCustom": true,
+        "isLabelSyncedWithName": false,
+        "isRemote": false,
+        "isSearchable": true,
+        "isSystem": false,
+        "isUIReadOnly": false,
+        "labelIdentifierFieldMetadataId": "20202020-1a62-405c-87fa-4d4fd215851b",
+        "labelPlural": "default flat object metadata label plural",
+        "labelSingular": "default flat object metadata label singular",
+        "namePlural": "defaultflatObjectMetadataNamePlural",
+        "nameSingular": "defaultflatObjectMetadataNameSingular",
+        "shortcut": "shortcut",
+        "standardId": null,
+        "standardOverrides": null,
+        "targetTableName": "",
+        "universalIdentifier": "object-universal-1",
+        "updatedAt": "2024-01-01T00:00:00.000Z",
+        "viewIds": [
+          "view-1",
+        ],
+        "workspaceId": "20202020-bc64-4148-8a79-b3144f743694",
+      },
+    },
+    "idByUniversalIdentifier": {
+      "object-universal-1": "object-1",
+    },
+    "universalIdentifiersByApplicationId": {},
+  },
+  "flatViewMaps": {
+    "byId": {
+      "view-1": {
+        "calendarFieldMetadataId": "007d510f-c7f4-4716-b61d-bad2849de279",
+        "id": "view-1",
+        "objectMetadataId": "object-1",
+        "universalIdentifier": "view-universal-1",
+        "viewFieldIds": [],
+        "viewFilterIds": [],
+        "viewGroupIds": [],
+      },
+    },
+    "idByUniversalIdentifier": {
+      "view-universal-1": "view-1",
+    },
+    "universalIdentifiersByApplicationId": {},
+  },
+}
+`;
