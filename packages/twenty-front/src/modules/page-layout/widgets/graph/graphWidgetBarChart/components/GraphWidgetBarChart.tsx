@@ -137,7 +137,6 @@ export const GraphWidgetBarChart = ({
     formatOptions,
   });
 
-  // Track mouse position continuously
   useTrackPointer({
     shouldTrackPointer: true,
     onMouseMove: ({ x, y }) => {
