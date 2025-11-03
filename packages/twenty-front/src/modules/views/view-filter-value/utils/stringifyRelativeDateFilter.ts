@@ -21,15 +21,11 @@ export const stringifyRelativeDateFilter = (
   if (isNonEmptyString(relativeDateFilter.timezone)) {
     relativeDateFilterStringified = `${relativeDateFilterStringified};;${relativeDateFilter.timezone};;`;
 
-    if (isNonEmptyString(relativeDateFilter.referenceDayAsString)) {
-      relativeDateFilterStringified = `${relativeDateFilterStringified}${relativeDateFilter.referenceDayAsString};;`;
+    const firstDayOfTheWeek =
+      relativeDateFilter.firstDayOfTheWeek ?? detectCalendarStartDay();
 
-      const firstDayOfTheWeek =
-        relativeDateFilter.firstDayOfTheWeek ?? detectCalendarStartDay();
-
-      if (isNonEmptyString(firstDayOfTheWeek)) {
-        relativeDateFilterStringified = `${relativeDateFilterStringified}${firstDayOfTheWeek};;`;
-      }
+    if (isNonEmptyString(firstDayOfTheWeek)) {
+      relativeDateFilterStringified = `${relativeDateFilterStringified}${firstDayOfTheWeek};;`;
     }
   }
 
