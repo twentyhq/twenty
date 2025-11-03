@@ -6,7 +6,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
 import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
-import { organizeFoldersHierarchy } from '@/settings/accounts/components/message-folders/utils/organizeFoldersHierarchy.util';
+import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -94,8 +94,8 @@ export const SettingsAccountsMessageFoldersCard = () => {
     );
   }, [messageFolders, search]);
 
-  const hierarchicalFolders = useMemo(() => {
-    return organizeFoldersHierarchy(filteredMessageFolders);
+  const folderTreeNodes = useMemo(() => {
+    return computeMessageFolderTree(filteredMessageFolders);
   }, [filteredMessageFolders]);
 
   const allFoldersToggled = useMemo(() => {
@@ -155,10 +155,10 @@ export const SettingsAccountsMessageFoldersCard = () => {
 
         <StyledFoldersContainer>
           <StyledTreeList>
-            {hierarchicalFolders.map((rootFolder) => (
+            {folderTreeNodes.map((rootFolder) => (
               <SettingsMessageFoldersTreeItem
                 key={rootFolder.folder.id}
-                hierarchicalFolder={rootFolder}
+                folderTreeNode={rootFolder}
                 onToggleFolder={handleToggleFolder}
               />
             ))}

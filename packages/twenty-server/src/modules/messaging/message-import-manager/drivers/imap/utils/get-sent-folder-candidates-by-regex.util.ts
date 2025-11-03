@@ -16,8 +16,12 @@ export function getImapSentFolderCandidatesByRegex(
     }
   }
 
-  return regexCandidateFolders.map((path) => ({
-    name: path,
-    path,
-  }));
+  return regexCandidateFolders.map((folderPath) => {
+    const folder = list.find((folder) => folder.path === folderPath);
+
+    return {
+      name: folder?.name ?? folderPath,
+      path: folderPath,
+    };
+  });
 }

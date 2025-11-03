@@ -80,33 +80,31 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       });
     }
 
-    const validMailboxes = mailboxList.filter((mailbox) =>
-      this.isValidMailbox(mailbox, folders),
-    );
-
-    for (const mailbox of validMailboxes) {
-      const isInbox = await this.isInboxFolder(mailbox);
+    for (const mailbox of mailboxList) {
       const uidValidity = await this.getUidValidity(client, mailbox);
-      const standardFolder = getStandardFolderByRegex(mailbox.path);
-      const isSynced = this.shouldSyncByDefault(
-        mailbox,
-        standardFolder,
-        isInbox,
-      );
-
       const externalId = uidValidity
         ? `${mailbox.path}:${uidValidity}`
         : mailbox.path;
 
       pathToExternalIdMap.set(mailbox.path, externalId);
 
-      folders.push({
-        externalId,
-        name: mailbox.name,
-        isSynced,
-        isSentFolder: false,
-        parentFolderId: mailbox.parentPath || null,
-      });
+      if (this.isValidMailbox(mailbox, folders)) {
+        const isInbox = await this.isInboxFolder(mailbox);
+        const standardFolder = getStandardFolderByRegex(mailbox.path);
+        const isSynced = this.shouldSyncByDefault(
+          mailbox,
+          standardFolder,
+          isInbox,
+        );
+
+        folders.push({
+          externalId,
+          name: mailbox.name,
+          isSynced,
+          isSentFolder: false,
+          parentFolderId: mailbox.parentPath || null,
+        });
+      }
     }
 
     for (const folder of folders) {
@@ -128,9 +126,15 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       return false;
     }
 
-    const isDuplicate = existingFolders.some(
-      (folder) => folder.name === mailbox.path,
-    );
+    const isDuplicate = existingFolders.some((folder) => {
+      const folderPath = folder?.externalId?.split(':')[0];
+
+      if (!isDefined(folderPath)) {
+        return false;
+      }
+
+      return folderPath === mailbox.path;
+    });
 
     return !isDuplicate;
   }

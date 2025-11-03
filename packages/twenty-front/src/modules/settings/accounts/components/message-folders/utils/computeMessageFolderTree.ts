@@ -1,21 +1,19 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { isDefined } from 'twenty-shared/utils';
 
-export type HierarchicalFolder = {
+export type MessageFolderTreeNode = {
   folder: MessageFolder;
-  children: HierarchicalFolder[];
+  children: MessageFolderTreeNode[];
   hasChildren: boolean;
 };
 
-export const organizeFoldersHierarchy = (
+export const computeMessageFolderTree = (
   folders: MessageFolder[],
-): HierarchicalFolder[] => {
-  const folderMap = new Map<string, MessageFolder>();
+): MessageFolderTreeNode[] => {
   const folderByExternalIdMap = new Map<string, MessageFolder>();
   const childrenMap = new Map<string, MessageFolder[]>();
 
   folders.forEach((folder) => {
-    folderMap.set(folder.id, folder);
     if (isDefined(folder.externalId)) {
       folderByExternalIdMap.set(folder.externalId, folder);
     }
@@ -32,7 +30,7 @@ export const organizeFoldersHierarchy = (
     }
   });
 
-  const buildHierarchy = (folder: MessageFolder): HierarchicalFolder => {
+  const buildTreeNode = (folder: MessageFolder): MessageFolderTreeNode => {
     const children = childrenMap.get(folder.id) || [];
     const sortedChildren = [...children].sort((a, b) =>
       a.name.localeCompare(b.name),
@@ -40,7 +38,7 @@ export const organizeFoldersHierarchy = (
 
     return {
       folder,
-      children: sortedChildren.map((child) => buildHierarchy(child)),
+      children: sortedChildren.map((child) => buildTreeNode(child)),
       hasChildren: children.length > 0,
     };
   };
@@ -53,5 +51,5 @@ export const organizeFoldersHierarchy = (
 
   rootFolders.sort((a, b) => a.name.localeCompare(b.name));
 
-  return rootFolders.map((folder) => buildHierarchy(folder));
+  return rootFolders.map((folder) => buildTreeNode(folder));
 };

@@ -7,6 +7,8 @@ import {
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { extractGmailFolderName } from 'src/modules/messaging/message-folder-manager/drivers/gmail/utils/extract-gmail-folder-name.util';
+import { getGmailFolderParentId } from 'src/modules/messaging/message-folder-manager/drivers/gmail/utils/get-gmail-folder-parent-id.util';
 import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 
@@ -69,8 +71,8 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
         }
 
         const isSentFolder = label.id === 'SENT';
-        const folderName = this.extractFolderName(label.name);
-        const parentFolderId = this.getParentFolderId(
+        const folderName = extractGmailFolderName(label.name);
+        const parentFolderId = getGmailFolderParentId(
           label.name,
           labelNameToIdMap,
         );
@@ -97,25 +99,5 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
 
       throw error;
     }
-  }
-
-  private getParentFolderId(
-    labelName: string,
-    labelNameToIdMap: Map<string, string>,
-  ): string | null {
-    if (!labelName.includes('/')) {
-      return null;
-    }
-    const parentName = labelName.substring(0, labelName.lastIndexOf('/'));
-
-    return labelNameToIdMap.get(parentName) || null;
-  }
-
-  private extractFolderName(labelName: string): string {
-    if (!labelName.includes('/')) {
-      return labelName;
-    }
-
-    return labelName.substring(labelName.lastIndexOf('/') + 1);
   }
 }

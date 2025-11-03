@@ -1,7 +1,7 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { organizeFoldersHierarchy } from '@/settings/accounts/components/message-folders/utils/organizeFoldersHierarchy.util';
+import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
 
-describe('organizeFoldersHierarchy', () => {
+describe('computeMessageFolderTree', () => {
   const createFolder = (
     id: string,
     name: string,
@@ -20,7 +20,7 @@ describe('organizeFoldersHierarchy', () => {
   });
 
   it('should return empty array for empty input', () => {
-    expect(organizeFoldersHierarchy([])).toEqual([]);
+    expect(computeMessageFolderTree([])).toEqual([]);
   });
 
   it('should return single root folder without children', () => {
@@ -29,7 +29,7 @@ describe('organizeFoldersHierarchy', () => {
       'Inbox',
       null,
     );
-    const result = organizeFoldersHierarchy([folder]);
+    const result = computeMessageFolderTree([folder]);
 
     expect(result).toHaveLength(1);
     expect(result[0].folder).toEqual(folder);
@@ -50,7 +50,7 @@ describe('organizeFoldersHierarchy', () => {
       'ext-parent-id',
       'ext-child-id',
     );
-    const result = organizeFoldersHierarchy([parent, child]);
+    const result = computeMessageFolderTree([parent, child]);
 
     expect(result).toHaveLength(1);
     expect(result[0].folder.name).toBe('Work');
@@ -78,7 +78,7 @@ describe('organizeFoldersHierarchy', () => {
       'ext-parent-id',
       'ext-child-id',
     );
-    const result = organizeFoldersHierarchy([grandparent, parent, child]);
+    const result = computeMessageFolderTree([grandparent, parent, child]);
 
     expect(result[0].folder.name).toBe('Work');
     expect(result[0].children[0].folder.name).toBe('Projects');
@@ -91,7 +91,7 @@ describe('organizeFoldersHierarchy', () => {
       createFolder('20202020-7cf8-40bc-a681-b80b771449b8', 'Inbox', null),
       createFolder('20202020-7cf8-40bc-a681-b80b771449b9', 'Drafts', null),
     ];
-    const result = organizeFoldersHierarchy(folders);
+    const result = computeMessageFolderTree(folders);
 
     expect(result[0].folder.name).toBe('Drafts');
     expect(result[1].folder.name).toBe('Inbox');
@@ -117,7 +117,7 @@ describe('organizeFoldersHierarchy', () => {
       'ext-parent-id',
       'ext-child2-id',
     );
-    const result = organizeFoldersHierarchy([parent, child1, child2]);
+    const result = computeMessageFolderTree([parent, child1, child2]);
 
     expect(result[0].children[0].folder.name).toBe('Apple');
     expect(result[0].children[1].folder.name).toBe('Zebra');
@@ -126,7 +126,7 @@ describe('organizeFoldersHierarchy', () => {
   it('should treat orphaned folders as root folders', () => {
     const orphan = createFolder('o', 'Orphan', 'non-existent', 'ext-o');
     const normal = createFolder('n', 'Normal', null, 'ext-n');
-    const result = organizeFoldersHierarchy([orphan, normal]);
+    const result = computeMessageFolderTree([orphan, normal]);
 
     expect(result).toHaveLength(2);
     expect(result.map((r) => r.folder.name).sort()).toEqual([
@@ -139,7 +139,7 @@ describe('organizeFoldersHierarchy', () => {
     const work = createFolder('1', 'Work', null, 'ext-work');
     const projects = createFolder('2', 'Projects', 'ext-work', 'ext-proj');
     const clients = createFolder('3', 'Clients', 'ext-work', 'ext-cli');
-    const result = organizeFoldersHierarchy([work, projects, clients]);
+    const result = computeMessageFolderTree([work, projects, clients]);
 
     expect(result).toHaveLength(1);
     expect(result[0].children).toHaveLength(2);

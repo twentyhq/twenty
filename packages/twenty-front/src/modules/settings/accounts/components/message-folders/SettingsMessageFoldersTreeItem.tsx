@@ -1,15 +1,15 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { SettingsAccountsMessageFolderIcon } from '@/settings/accounts/components/message-folders/SettingsAccountsMessageFolderIcon';
 
-import { formatFolderName } from '@/settings/accounts/components/message-folders/utils/formatFolderName.util';
-import { type HierarchicalFolder } from '@/settings/accounts/components/message-folders/utils/organizeFoldersHierarchy.util';
+import { type MessageFolderTreeNode } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
+import { formatFolderName } from '@/settings/accounts/components/message-folders/utils/formatFolderName';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconChevronRight } from 'twenty-ui/display';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 
 type SettingsMessageFoldersTreeItemProps = {
-  hierarchicalFolder: HierarchicalFolder;
+  folderTreeNode: MessageFolderTreeNode;
   onToggleFolder: (folder: MessageFolder) => void;
   depth?: number;
 };
@@ -98,12 +98,12 @@ const StyledCheckboxWrapper = styled.div`
 `;
 
 export const SettingsMessageFoldersTreeItem = ({
-  hierarchicalFolder,
+  folderTreeNode,
   onToggleFolder,
   depth = 0,
 }: SettingsMessageFoldersTreeItemProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const { folder, children, hasChildren } = hierarchicalFolder;
+  const { folder, children, hasChildren } = folderTreeNode;
 
   const handleExpandToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -154,7 +154,7 @@ export const SettingsMessageFoldersTreeItem = ({
           {children.map((child) => (
             <SettingsMessageFoldersTreeItem
               key={child.folder.id}
-              hierarchicalFolder={child}
+              folderTreeNode={child}
               onToggleFolder={onToggleFolder}
               depth={depth + 1}
             />
