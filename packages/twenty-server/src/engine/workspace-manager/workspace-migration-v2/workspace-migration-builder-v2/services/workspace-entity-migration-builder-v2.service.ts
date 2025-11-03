@@ -11,8 +11,7 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import {
-  MetadataFlatEntityAndRelatedFlatEntityMaps,
-  MetadataValidationRelatedFlatEntityMaps,
+  MetadataValidationRelatedFlatEntityMaps
 } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-throuhg-mutation-or-throw.util';
@@ -89,11 +88,11 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'entity processing');
 
     const flatEntityMapsKey = getMetadataFlatEntityMapsKey(this.metadataName);
-    // TODO possible to improve ? prastoin
+    // TODO possible to improve ?
     const optimisticFlatEntityMapsAndRelatedFlatEntityMaps = {
       [flatEntityMapsKey]: structuredClone(fromFlatEntityMaps),
       ...structuredClone(inputDependencyOptimisticFlatEntityMaps),
-    } as MetadataFlatEntityAndRelatedFlatEntityMaps<T>;
+    } as FlatEntityValidationArgs<T>['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'];
 
     const actionsResult = getMetadataEmptyWorkspaceMigrationActionRecord(
       this.metadataName,

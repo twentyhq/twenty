@@ -18,8 +18,10 @@ export class FlatRouteTriggerValidatorService {
   public validateFlatRouteTriggerUpdate({
     flatEntityId,
     flatEntityUpdates,
-    optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
-    mutableDependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatRouteTriggerMaps: optimisticFlatRouteTriggerMaps,
+      flatServerlessFunctionMaps,
+    },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.routeTrigger
   >): FailedFlatEntityValidation<FlatRouteTrigger> {
@@ -52,9 +54,7 @@ export class FlatRouteTriggerValidatorService {
     };
 
     const serverlessFunction =
-      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
-        updatedFlatRouteTrigger.serverlessFunctionId
-      ];
+      flatServerlessFunctionMaps.byId[updatedFlatRouteTrigger.serverlessFunctionId];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({
@@ -69,7 +69,9 @@ export class FlatRouteTriggerValidatorService {
 
   public validateFlatRouteTriggerDeletion({
     flatEntityToValidate: { id: routeTriggerIdToDelete },
-    optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatRouteTriggerMaps: optimisticFlatRouteTriggerMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.routeTrigger
   >): FailedFlatEntityValidation<FlatRouteTrigger> {
@@ -97,8 +99,10 @@ export class FlatRouteTriggerValidatorService {
 
   public async validateFlatRouteTriggerCreation({
     flatEntityToValidate: flatRouteTriggerToValidate,
-    optimisticFlatEntityMaps: optimisticFlatRouteTriggerMaps,
-    mutableDependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatRouteTriggerMaps: optimisticFlatRouteTriggerMaps,
+      flatServerlessFunctionMaps,
+    },
   }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.routeTrigger>): Promise<
     FailedFlatEntityValidation<FlatRouteTrigger>
   > {
@@ -140,9 +144,7 @@ export class FlatRouteTriggerValidatorService {
     }
 
     const serverlessFunction =
-      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
-        flatRouteTriggerToValidate.serverlessFunctionId
-      ];
+      flatServerlessFunctionMaps.byId[flatRouteTriggerToValidate.serverlessFunctionId];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({
