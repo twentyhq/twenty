@@ -14,20 +14,20 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { isDefined } from 'twenty-shared/utils';
 
-type AddFlatEntityToFlatEntityAndRelatedEntityMapsOrThrowArgs<
+type AddFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArgs<
   T extends AllMetadataName,
 > = {
   metadataName: T;
   flatEntity: MetadataFlatEntity<T>;
   flatEntityAndRelatedMapsToMutate: MetadataFlatEntityAndRelatedFlatEntityMaps<T>;
 };
-export const addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow = <
+export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow = <
   T extends AllMetadataName,
 >({
   metadataName,
   flatEntity,
   flatEntityAndRelatedMapsToMutate,
-}: AddFlatEntityToFlatEntityAndRelatedEntityMapsOrThrowArgs<T>) => {
+}: AddFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArgs<T>) => {
   const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
 
   addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
