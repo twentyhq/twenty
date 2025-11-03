@@ -5,86 +5,89 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
+import { isDefined } from 'twenty-shared/utils';
 
 type AddFlatEntityToFlatEntityAndRelatedEntityMapsOrThrowArgs<
   T extends AllMetadataName,
 > = {
   metadataName: T;
   flatEntity: MetadataFlatEntity<T>;
-  flatEntityAndRelatedMaps: MetadataFlatEntityAndRelatedFlatEntityMaps<T>;
+  flatEntityAndRelatedMapsToMutate: MetadataFlatEntityAndRelatedFlatEntityMaps<T>;
 };
 export const addFlatEntityToFlatEntityAndRelatedEntityMapsOrThrow = <
   T extends AllMetadataName,
 >({
   metadataName,
   flatEntity,
-  flatEntityAndRelatedMaps: initialFlatEntityAndRelatedMaps,
-}: AddFlatEntityToFlatEntityAndRelatedEntityMapsOrThrowArgs<T>): MetadataFlatEntityAndRelatedFlatEntityMaps<T> => {
-  const flatEntityMapsKey: keyof MetadataFlatEntityAndRelatedFlatEntityMaps<T> =
-    getMetadataFlatEntityMapsKey(metadataName);
+  flatEntityAndRelatedMapsToMutate,
+}: AddFlatEntityToFlatEntityAndRelatedEntityMapsOrThrowArgs<T>) => {
+  const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
 
-  const updatedFlatEntityMaps = addFlatEntityToFlatEntityMapsOrThrow({
+  addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
     flatEntity,
-    flatEntityMaps: initialFlatEntityAndRelatedMaps[flatEntityMapsKey],
+    flatEntityMapsToMutate: flatEntityAndRelatedMapsToMutate[flatEntityMapsKey],
   });
 
-  // TODO refactor
   const manyToOneRelatedMetadataName = Object.entries(
     ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY[metadataName],
-  );
+  ) as Array<[keyof MetadataFlatEntity<T>, AllMetadataName]>;
 
-  return manyToOneRelatedMetadataName.reduce(
-    (flatEntityAndRelatedMaps, [relatedMetadataName, foreignKey]) => {
-      const relatedFlatEntityMapsKey = getMetadataFlatEntityMapsKey(
-        relatedMetadataName as AllMetadataName,
+  for (const [
+    foreignKey,
+    relatedMetadataName,
+  ] of manyToOneRelatedMetadataName) {
+    const relatedFlatEntityMapsKey =
+      getMetadataFlatEntityMapsKey(relatedMetadataName);
+    // @ts-expect-error TODO improve
+    const relatedFLatEntityMetadataMaps = flatEntityAndRelatedMapsToMutate[
+      relatedFlatEntityMapsKey
+    ] as FlatEntityMaps<MetadataFlatEntity<typeof relatedMetadataName>>;
+
+    const flatEntityRelatedEntityForeignKeyValue = flatEntity[foreignKey] as
+      | string
+      | undefined;
+    if (!isDefined(flatEntityRelatedEntityForeignKeyValue)) {
+      continue;
+    }
+
+    const relatedFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: flatEntityRelatedEntityForeignKeyValue,
+      flatEntityMaps: relatedFLatEntityMetadataMaps,
+    });
+
+    // Does not work here :thinking:
+    const flatForeignKeyAggregatorProperty = `${metadataName as string}Ids`;
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        relatedFlatEntity,
+        flatForeignKeyAggregatorProperty,
+      )
+    ) {
+      throw new FlatEntityMapsException(
+        `Should never occur, invalid flat entity typing. flat ${metadataName} should contain ${flatForeignKeyAggregatorProperty}`,
+        FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
       );
-      const relatedFLatEntityMetadataMaps =
-        flatEntityAndRelatedMaps[relatedFlatEntityMapsKey];
+    }
 
-      const relatedFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: flatEntity[
-          foreignKey as keyof MetadataFlatEntity<T>
-        ] as string,
-        flatEntityMaps: relatedFLatEntityMetadataMaps,
-      });
+    const updatedRelatedEntity = {
+      ...relatedFlatEntity,
+      [flatForeignKeyAggregatorProperty]: [
+        // @ts-expect-error TODO improve
+        ...(relatedFlatEntity[flatForeignKeyAggregatorProperty] as string[]),
+        flatEntity.id,
+      ],
+    };
 
-      const foreignKeyAggregatorProperty = `${metadataName}Ids`;
-
-      if (
-        !Object.prototype.hasOwnProperty.call(
-          relatedFlatEntity,
-          foreignKeyAggregatorProperty,
-        )
-      ) {
-        throw new FlatEntityMapsException(
-          'Should never occur, invalid cached format',
-          FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
-        );
-      }
-
-      const updatedRelatedFlatEntityMetadataMaps = {
-        ...relatedFlatEntity,
-        [foreignKeyAggregatorProperty]: [
-          ...(relatedFlatEntity[
-            foreignKeyAggregatorProperty as keyof MetadataFlatEntity<T>
-          ] as string[]),
-          flatEntity.id,
-        ],
-      };
-
-      return {
-        ...flatEntityAndRelatedMaps,
-        [relatedFlatEntityMapsKey]: updatedRelatedFlatEntityMetadataMaps,
-      };
-    },
-    {
-      ...initialFlatEntityAndRelatedMaps,
-      [flatEntityMapsKey]: updatedFlatEntityMaps,
-    },
-  );
+    replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
+      flatEntity: updatedRelatedEntity,
+      flatEntityMapsToMutate: relatedFLatEntityMetadataMaps,
+    });
+  }
 };
