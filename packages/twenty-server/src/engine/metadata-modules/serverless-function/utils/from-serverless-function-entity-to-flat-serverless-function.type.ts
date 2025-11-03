@@ -1,0 +1,31 @@
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
+
+export const fromServerlessFunctionEntityToFlatServerlessFunction = (
+  serverlessFunctionEntity: ServerlessFunctionEntity,
+): FlatServerlessFunction => {
+  const serverlessFunctionWithoutRelations = removePropertiesFromRecord(
+    serverlessFunctionEntity,
+    [
+      'databaseEventTriggers',
+      'routeTriggers',
+      'cronTriggers',
+      'serverlessFunctionLayer',
+      'application',
+    ],
+  );
+
+  return {
+    ...serverlessFunctionWithoutRelations,
+    cronTriggerIds:
+      serverlessFunctionEntity.cronTriggers.map((el) => el.id) ?? [],
+    routeTriggerIds:
+      serverlessFunctionEntity.routeTriggers.map((el) => el.id) ?? [],
+    databaseEventTriggerIds:
+      serverlessFunctionEntity.databaseEventTriggers.map((el) => el.id) ?? [],
+    universalIdentifier:
+      serverlessFunctionEntity.universalIdentifier ??
+      serverlessFunctionEntity.id,
+  };
+};
