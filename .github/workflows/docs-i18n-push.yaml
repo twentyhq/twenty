@@ -1,0 +1,102 @@
+name: 'Push docs to Crowdin'
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  pull_request:
+  workflow_call:
+  push:
+    branches:
+      - main
+      - feat/docs-i18n-workflow
+    paths:
+      - 'packages/twenty-docs/**/*.mdx'
+      - '!packages/twenty-docs/fr/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  push_docs:
+    name: Push documentation to Crowdin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+
+      - name: Check if docs changed
+        id: check_docs_changes
+        run: |
+          # For push events, check the current commit
+          if [ "${{ github.event_name }}" == "push" ]; then
+            if git diff --name-only HEAD~1 HEAD | grep -E '^packages/twenty-docs/.*\.mdx$' | grep -v '^packages/twenty-docs/fr/' | grep -q .; then
+              echo "docs_changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "docs_changed=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            # For manual dispatch or workflow_call, always push
+            echo "docs_changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload docs to Crowdin
+        if: steps.check_docs_changes.outputs.docs_changed == 'true'
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          upload_translations: false
+          download_translations: false
+          localization_branch_name: i18n
+          base_url: 'https://twenty.api.crowdin.com'
+        env:
+          CROWDIN_PROJECT_ID: 1
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Configure docs files to French-only
+        if: steps.check_docs_changes.outputs.docs_changed == 'true'
+        run: |
+          echo "🔧 Configuring .mdx files to French-only..."
+          
+          # Get all project languages
+          LANGUAGES=$(curl -s -X GET \
+            "https://twenty.api.crowdin.com/api/v2/projects/1/languages" \
+            -H "Authorization: Bearer ${{ secrets.CROWDIN_PERSONAL_TOKEN }}" | \
+            jq -r '.data[].data.id' | grep -v '^fr$' | tr '\n' ',' | sed 's/,$//')
+          
+          if [ -z "$LANGUAGES" ]; then
+            echo "✅ No languages to exclude (or only French is configured)"
+            exit 0
+          fi
+          
+          echo "📋 Languages to exclude: $LANGUAGES"
+          
+          # Get all files
+          FILES=$(curl -s -X GET \
+            "https://twenty.api.crowdin.com/api/v2/projects/1/files?limit=500" \
+            -H "Authorization: Bearer ${{ secrets.CROWDIN_PERSONAL_TOKEN }}")
+          
+          # Filter .mdx files and update each
+          echo "$FILES" | jq -r '.data[] | select(.data.path | contains("twenty-docs") and endswith(".mdx")) | .data.id' | while read FILE_ID; do
+            FILE_NAME=$(echo "$FILES" | jq -r ".data[] | select(.data.id == $FILE_ID) | .data.path")
+            echo "  🔄 Updating $FILE_NAME..."
+            
+            # Build excluded languages array
+            EXCLUDE_ARRAY=$(echo $LANGUAGES | tr ',' '\n' | jq -R . | jq -s .)
+            
+            curl -s -X PATCH \
+              "https://twenty.api.crowdin.com/api/v2/projects/1/files/$FILE_ID" \
+              -H "Authorization: Bearer ${{ secrets.CROWDIN_PERSONAL_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "[{\"op\": \"replace\", \"path\": \"/excludedTargetLanguages\", \"value\": $EXCLUDE_ARRAY}]" > /dev/null
+            
+            echo "  ✅ Updated"
+            sleep 0.2  # Avoid rate limiting
+          done
+          
+          echo "✨ Done! All .mdx files configured for French-only"
+
