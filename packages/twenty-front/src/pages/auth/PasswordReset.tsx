@@ -91,8 +91,7 @@ export const PasswordReset = () => {
 
   const [email, setEmail] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);
-  const [isTargetUserPasswordSet, setIsTargetUserPasswordSet] =
-    useState(false);
+  const [isTargetUserPasswordSet, setIsTargetUserPasswordSet] = useState(false);
 
   const theme = useTheme();
 
