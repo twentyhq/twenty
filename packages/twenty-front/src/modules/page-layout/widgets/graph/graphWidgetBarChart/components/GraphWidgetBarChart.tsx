@@ -4,6 +4,7 @@ import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/Graph
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { BAR_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMargins';
+import { BAR_CHART_MARGINS_WITH_LABELS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMarginsWithLabels';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
@@ -229,7 +230,11 @@ export const GraphWidgetBarChart = ({
           data={data}
           keys={keys}
           indexBy={indexBy}
-          margin={BAR_CHART_MARGINS}
+          margin={
+            isDefined(xAxisLabel) || isDefined(yAxisLabel)
+              ? BAR_CHART_MARGINS_WITH_LABELS
+              : BAR_CHART_MARGINS
+          }
           padding={0.3}
           groupMode={groupMode}
           layout={layout}

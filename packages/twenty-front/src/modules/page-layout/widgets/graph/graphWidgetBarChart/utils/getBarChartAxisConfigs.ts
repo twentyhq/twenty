@@ -7,6 +7,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { isDefined } from 'twenty-shared/utils';
 
 const AVERAGE_CHARACTER_WIDTH_RATIO = 0.6;
 const MIN_TICK_LABEL_LENGTH = 5;
@@ -42,6 +43,7 @@ export const getBarChartAxisConfigs = ({
     width,
     data,
     indexBy,
+    hasLabels: isDefined(xAxisLabel) || isDefined(yAxisLabel),
   });
 
   const availableWidth =
