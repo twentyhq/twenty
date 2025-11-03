@@ -28,7 +28,7 @@ export const useCreatePageLayoutGraphWidget = (
     pageLayoutIdFromProps,
   );
 
-  const { timeZone } = useDateTimeFormat();
+  const { timeZone, calendarStartDay } = useDateTimeFormat();
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
@@ -113,6 +113,7 @@ export const useCreatePageLayoutGraphWidget = (
           },
           fieldSelection,
           timezone: timeZone,
+          firstDayOfTheWeek: calendarStartDay,
         });
 
         const newLayout = {
@@ -147,6 +148,7 @@ export const useCreatePageLayoutGraphWidget = (
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
       timeZone,
+      calendarStartDay,
     ],
   );
 

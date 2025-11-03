@@ -17,6 +17,7 @@ const createDefaultGraphConfiguration = (
   graphType: GraphType,
   fieldSelection?: GraphWidgetFieldSelection,
   timezone?: string,
+  firstDayOfTheWeek?: number,
 ): WidgetConfiguration | null => {
   switch (graphType) {
     case GraphType.AGGREGATE:
@@ -30,6 +31,7 @@ const createDefaultGraphConfiguration = (
         aggregateOperation: AggregateOperations.COUNT,
         displayDataLabel: true,
         timezone,
+        firstDayOfTheWeek,
       };
 
     case GraphType.PIE:
@@ -54,6 +56,7 @@ const createDefaultGraphConfiguration = (
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.NONE,
         timezone,
+        firstDayOfTheWeek,
       };
 
     case GraphType.HORIZONTAL_BAR:
@@ -75,6 +78,7 @@ const createDefaultGraphConfiguration = (
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.NONE,
         timezone,
+        firstDayOfTheWeek,
       };
 
     case GraphType.LINE:
@@ -97,6 +101,7 @@ type CreateDefaultGraphWidgetParams = {
   objectMetadataId?: string | null;
   fieldSelection?: GraphWidgetFieldSelection;
   timezone?: string;
+  firstDayOfTheWeek?: number;
 };
 
 export const createDefaultGraphWidget = ({
@@ -108,6 +113,7 @@ export const createDefaultGraphWidget = ({
   objectMetadataId,
   fieldSelection,
   timezone,
+  firstDayOfTheWeek,
 }: CreateDefaultGraphWidgetParams): PageLayoutWidget => {
   const resolvedObjectMetadataId =
     fieldSelection?.objectMetadataId ?? objectMetadataId ?? null;
@@ -116,6 +122,7 @@ export const createDefaultGraphWidget = ({
     graphType,
     fieldSelection,
     timezone,
+    firstDayOfTheWeek,
   );
 
   return {

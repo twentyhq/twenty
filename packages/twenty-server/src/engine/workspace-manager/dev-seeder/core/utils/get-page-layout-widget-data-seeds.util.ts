@@ -1,3 +1,4 @@
+import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
@@ -99,6 +100,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
             timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -122,6 +124,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
             timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -150,6 +153,7 @@ export const getPageLayoutWidgetDataSeeds = (
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
               timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -181,6 +185,7 @@ export const getPageLayoutWidgetDataSeeds = (
               displayDataLabel: false,
               color: 'auto',
               timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -211,6 +216,7 @@ export const getPageLayoutWidgetDataSeeds = (
               displayDataLabel: false,
               color: 'auto',
               timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -234,6 +240,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
             timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -259,6 +266,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
             timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -286,6 +294,7 @@ export const getPageLayoutWidgetDataSeeds = (
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
               timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -319,6 +328,7 @@ export const getPageLayoutWidgetDataSeeds = (
               displayDataLabel: false,
               color: 'auto',
               timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -344,6 +354,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
             timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -370,6 +381,7 @@ export const getPageLayoutWidgetDataSeeds = (
               orderBy: 'VALUE_DESC',
               displayDataLabel: true,
               timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -393,6 +405,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateOperation: AggregateOperations.AVG,
             displayDataLabel: true,
             timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -416,6 +429,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
             timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -442,6 +456,7 @@ export const getPageLayoutWidgetDataSeeds = (
               orderBy: 'VALUE_DESC',
               displayDataLabel: true,
               timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -464,6 +479,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
             timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: personObject?.id ?? null,
@@ -492,6 +508,7 @@ export const getPageLayoutWidgetDataSeeds = (
               displayDataLabel: false,
               color: 'auto',
               timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
@@ -520,6 +537,7 @@ export const getPageLayoutWidgetDataSeeds = (
               orderBy: 'VALUE_DESC',
               displayDataLabel: true,
               timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
@@ -540,6 +558,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
             timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: taskObject?.id ?? null,
