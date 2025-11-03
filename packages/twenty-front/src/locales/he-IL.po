@@ -5971,6 +5971,7 @@ msgstr "אין נתונים זמינים"
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "אין מודלים זמינים. נא להגדיר מודלים לבינה מלאכותית בהגדרות מרחב העבודה שלכם."
 

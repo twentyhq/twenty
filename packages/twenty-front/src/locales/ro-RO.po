@@ -5971,6 +5971,7 @@ msgstr "Nu sunt disponibile date metrice"
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
+#: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "Nu există modele disponibile. Vă rugăm să configurați modelele AI în setările spațiului de lucru."
 
