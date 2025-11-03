@@ -123,9 +123,9 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
         this.logger.log(
           'Successfully added foreign key constraint for kanbanAggregateOperationFieldMetadataId',
         );
-      } catch {
+      } catch (error) {
         this.logger.log(
-          'Foreign key constraint already exists or could not be created (this is expected for subsequent workspaces)',
+          `Foreign key constraint already exists or could not be created (this is expected for subsequent workspaces): ${error.message}`,
         );
       }
     }

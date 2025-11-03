@@ -12,10 +12,10 @@ export class KanbanFieldMetadataIdentifierView1760965667836
       await queryRunner.query(
         `ALTER TABLE "core"."view" ADD CONSTRAINT "FK_b3cc95732479f7a1337350c398f" FOREIGN KEY ("kanbanAggregateOperationFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
       );
-    } catch {
+    } catch (error) {
       // eslint-disable-next-line no-console
       console.error(
-        'Swallowing KanbanFieldMetadataIdentifierView1760965667836 error, upgrade:1-10:clean-orphaned-kanban-aggregate-operation-field-metadata-id upgrade command will handle fallback',
+        `Swallowing KanbanFieldMetadataIdentifierView1760965667836 error: ${error.message}. Upgrade:1-10:clean-orphaned-kanban-aggregate-operation-field-metadata-id upgrade command will handle fallback`,
       );
     }
   }
