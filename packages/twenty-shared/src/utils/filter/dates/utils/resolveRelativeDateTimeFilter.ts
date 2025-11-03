@@ -20,15 +20,6 @@ export const resolveRelativeDateTimeFilter = (
       : new TZDate(),
   );
 
-  console.log({
-    direction,
-    amount,
-    unit,
-    timezone,
-    firstDayOfTheWeek,
-    referenceDate,
-  });
-
   switch (direction) {
     case 'NEXT':
       if (!isDefined(amount)) {

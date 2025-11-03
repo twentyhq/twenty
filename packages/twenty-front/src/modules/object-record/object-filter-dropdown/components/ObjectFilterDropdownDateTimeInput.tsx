@@ -97,7 +97,8 @@ export const ObjectFilterDropdownDateTimeInput = () => {
   };
 
   const isRelativeOperand =
-    selectedOperandInDropdown === ViewFilterOperand.IS_RELATIVE;
+    objectFilterDropdownCurrentRecordFilter?.operand ===
+    ViewFilterOperand.IS_RELATIVE;
 
   const handleClear = () => {
     isRelativeOperand
