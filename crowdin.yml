@@ -34,27 +34,9 @@ files: [
     # Source files: English MDX files in packages/twenty-docs (exclude locale folders)
     #
     "source": "packages/twenty-docs/**/*.mdx",
-    #
-    # Exclude files in locale folders (fr/, es/, etc.)
-    #
     "ignore": [
       "packages/twenty-docs/fr/**",
-      "packages/twenty-docs/es/**",
-      "packages/twenty-docs/de/**",
-      "packages/twenty-docs/it/**",
-      "packages/twenty-docs/ja/**",
-      "packages/twenty-docs/pt-br/**",
-      "packages/twenty-docs/zh-cn/**",
-      "packages/twenty-docs/ru/**",
-      "packages/twenty-docs/ko/**",
-      "packages/twenty-docs/tr/**"
     ],
-    #
-    # Translation files: Place in locale-specific folders preserving directory structure
-    # Source: packages/twenty-docs/user-guide/introduction.mdx
-    # Translation: packages/twenty-docs/fr/user-guide/introduction.mdx
-    # Note: %original_path% includes full path, may need post-processing to remove duplication
-    #
     "translation": "packages/twenty-docs/%locale%/%original_path%"
   }
 ]

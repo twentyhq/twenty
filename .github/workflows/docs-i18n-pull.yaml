@@ -1,6 +1,3 @@
-# Pull down translated documentation from Crowdin every two hours or when triggered manually.
-# When force_pull input is true, translations will be pulled regardless of status.
-
 name: 'Pull docs translations from Crowdin'
 
 permissions:
@@ -9,7 +6,7 @@ permissions:
 
 on:
   schedule:
-    - cron: '0 */2 * * *' # Every two hours.
+    - cron: '0 */2 * * *'
   workflow_dispatch:
     inputs:
       force_pull:
@@ -56,7 +53,6 @@ jobs:
           git stash || true
 
       - name: Pull translated docs from Crowdin
-        # Always pull for scheduled runs, or when force_pull is explicitly true
         if: github.event_name == 'schedule' || inputs.force_pull == true || (github.event_name == 'workflow_dispatch' && inputs.force_pull != false)
         uses: crowdin/github-action@v2
         with:
