@@ -1854,7 +1854,6 @@ export type Mutation = {
 
 
 export type MutationActivateWorkflowVersionArgs = {
-  workflowId: Scalars['UUID'];
   workflowVersionId: Scalars['UUID'];
 };
 

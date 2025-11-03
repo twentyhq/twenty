@@ -81,10 +81,8 @@ export class WorkflowTriggerWorkspaceService {
 
   async activateWorkflowVersion({
     workflowVersionId,
-    workflowId,
   }: {
     workflowVersionId: string;
-    workflowId: string;
   }) {
     const workspaceId = this.getWorkspaceId();
     const workflowVersionRepository =
@@ -101,20 +99,39 @@ export class WorkflowTriggerWorkspaceService {
         { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
-    const allWorkflowVersions = await workflowVersionRepository.find({
-      where: { workflowId, status: Not(WorkflowVersionStatus.ARCHIVED) },
-    });
+    const workflowVersionToActivateNullable =
+      await workflowVersionRepository.findOne({
+        where: { id: workflowVersionId },
+        select: {
+          id: true,
+          status: true,
+          workflowId: true,
+          steps: {
+            id: true,
+            type: true,
+          },
+          trigger: {
+            type: true,
+          },
+        },
+      });
 
-    const workflowVersionNullable = allWorkflowVersions.find(
-      (version) => version.id === workflowVersionId,
-    );
-
-    const workflowVersion =
+    const workflowVersionToActivate =
       await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
-        workflowVersionNullable ?? null,
+        workflowVersionToActivateNullable ?? null,
       );
 
-    assertVersionCanBeActivated(workflowVersion);
+    assertVersionCanBeActivated(workflowVersionToActivate);
+
+    const workflowId = workflowVersionToActivate.workflowId;
+
+    const allWorkflowVersions = await workflowVersionRepository.find({
+      where: {
+        workflowId: workflowVersionToActivate.workflowId,
+        status: Not(WorkflowVersionStatus.ARCHIVED),
+      },
+      select: { id: true, status: true, trigger: { type: true } },
+    });
 
     const currentPublishedVersions = allWorkflowVersions.filter(
       (version) =>
@@ -131,7 +148,7 @@ export class WorkflowTriggerWorkspaceService {
 
     await this.performActivationSteps({
       workflowId,
-      workflowVersionToActivate: workflowVersion,
+      workflowVersionToActivate,
       currentPublishedVersion: currentPublishedVersions?.[0],
       workflowRepository,
       workflowVersionRepository,

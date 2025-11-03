@@ -130,7 +130,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
           if (parameters.activate) {
             await this.workflowTriggerService.activateWorkflowVersion({
               workflowVersionId,
-              workflowId,
             });
 
             await this.updateWorkflowStatus({
@@ -348,7 +347,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
         try {
           return await this.workflowTriggerService.activateWorkflowVersion({
             workflowVersionId: parameters.workflowVersionId,
-            workflowId: parameters.workflowId,
           });
         } catch (error) {
           return {

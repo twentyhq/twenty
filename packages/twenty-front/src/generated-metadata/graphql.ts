@@ -1903,7 +1903,6 @@ export type Mutation = {
 
 
 export type MutationActivateWorkflowVersionArgs = {
-  workflowId: Scalars['UUID'];
   workflowVersionId: Scalars['UUID'];
 };
 
@@ -6115,7 +6114,6 @@ export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepCh
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['UUID'];
-  workflowId: Scalars['UUID'];
 }>;
 
 
@@ -13575,11 +13573,8 @@ export type FindOneCoreViewSortQueryHookResult = ReturnType<typeof useFindOneCor
 export type FindOneCoreViewSortLazyQueryHookResult = ReturnType<typeof useFindOneCoreViewSortLazyQuery>;
 export type FindOneCoreViewSortQueryResult = Apollo.QueryResult<FindOneCoreViewSortQuery, FindOneCoreViewSortQueryVariables>;
 export const ActivateWorkflowVersionDocument = gql`
-    mutation ActivateWorkflowVersion($workflowVersionId: UUID!, $workflowId: UUID!) {
-  activateWorkflowVersion(
-    workflowVersionId: $workflowVersionId
-    workflowId: $workflowId
-  )
+    mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
+  activateWorkflowVersion(workflowVersionId: $workflowVersionId)
 }
     `;
 export type ActivateWorkflowVersionMutationFn = Apollo.MutationFunction<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
@@ -13598,7 +13593,6 @@ export type ActivateWorkflowVersionMutationFn = Apollo.MutationFunction<Activate
  * const [activateWorkflowVersionMutation, { data, loading, error }] = useActivateWorkflowVersionMutation({
  *   variables: {
  *      workflowVersionId: // value for 'workflowVersionId'
- *      workflowId: // value for 'workflowId'
  *   },
  * });
  */

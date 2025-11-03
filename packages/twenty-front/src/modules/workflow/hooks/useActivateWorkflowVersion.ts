@@ -44,7 +44,6 @@ export const useActivateWorkflowVersion = () => {
     await mutate({
       variables: {
         workflowVersionId,
-        workflowId,
       },
       update: () => {
         modifyRecordFromCache({
