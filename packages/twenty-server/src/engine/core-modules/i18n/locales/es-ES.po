@@ -584,10 +584,10 @@ msgstr "No se puede conectar a {connectFieldName}. No se encontró un registro �
 msgid "Can't impersonate user via api key"
 msgstr "No se puede suplantar al usuario mediante la clave API."
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "No se puede activar una versión que no sea borrador o la última publicada"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +619,6 @@ msgstr "No se puede deshabilitar una versión del flujo de trabajo que no está 
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "No se puede habilitar la exclusividad debido a valores duplicados existentes. Por favor, revise y corrija sus datos primero (incluyendo los registros eliminados suavemente)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "No se puede tener más de una versión activa del flujo de trabajo"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
