@@ -33,7 +33,7 @@ files: [
     # MDX documentation files for Mintlify
     # Source files: English MDX files in packages/twenty-docs (exclude locale folders)
     #
-    "source": "packages/twenty-docs/**/*.mdx",
+    "source": "packages/twenty-docs/developers/*.mdx",
     "ignore": [
       "packages/twenty-docs/fr/**",
     ],
