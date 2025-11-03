@@ -909,10 +909,20 @@ msgstr "All workspaces this user is a member of"
 msgid "All your custom objects"
 msgstr "All your custom objects"
 
+#. js-lingui-id: 6BV/aG
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Allow email & password login for SSO bypass users."
+msgstr "Allow email & password login for SSO bypass users."
+
 #. js-lingui-id: +XmkDf
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow exporting data to CSV files"
 msgstr "Allow exporting data to CSV files"
+
+#. js-lingui-id: q/pgyN
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Allow Google-based login for users with SSO bypass permissions."
+msgstr "Allow Google-based login for users with SSO bypass permissions."
 
 #. js-lingui-id: gCnKdT
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -928,6 +938,11 @@ msgstr "Allow logins through Google's single sign-on functionality."
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Allow logins through Microsoft's single sign-on functionality."
+
+#. js-lingui-id: pf6MGm
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Allow Microsoft-based login for users with SSO bypass permissions."
+msgstr "Allow Microsoft-based login for users with SSO bypass permissions."
 
 #. js-lingui-id: qf7N9I
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -1493,6 +1508,11 @@ msgstr "Brief explanation of this output field"
 msgid "By using Twenty, you agree to the"
 msgstr "By using Twenty, you agree to the"
 
+#. js-lingui-id: Yx41df
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
+msgid "Bypass SSO"
+msgstr "Bypass SSO"
+
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
 msgid "Calculate"
@@ -1966,6 +1986,11 @@ msgstr "Configure CalDAV settings to sync your calendar events."
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure date, time, number, timezone, and calendar start day"
 msgstr "Configure date, time, number, timezone, and calendar start day"
+
+#. js-lingui-id: utsXG8
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Configure fallback login methods for users with SSO bypass permissions"
+msgstr "Configure fallback login methods for users with SSO bypass permissions"
 
 #. js-lingui-id: c7wznw
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -2603,6 +2628,28 @@ msgstr "Date field"
 msgid "Date format"
 msgstr "Date format"
 
+#. js-lingui-id: +A7KEy
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Date granularity"
+msgstr "Date granularity"
+
+#. js-lingui-id: dhHZTJ
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+msgid "Date Granularity"
+msgstr "Date Granularity"
+
+#. js-lingui-id: agXC4d
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+msgid "Date Granularity X"
+msgstr "Date Granularity X"
+
+#. js-lingui-id: YsCGZL
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+msgid "Date Granularity Y"
+msgstr "Date Granularity Y"
+
 #. js-lingui-id: /ITcnz
 #: src/utils/date-utils.ts
 msgid "day"
@@ -2611,8 +2658,14 @@ msgstr "day"
 #. js-lingui-id: H7OUPr
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day"
 msgstr "Day"
+
+#. js-lingui-id: ahA8fy
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Day of the week"
+msgstr "Day of the week"
 
 #. js-lingui-id: J/Upwb
 #: src/utils/date-utils.ts
@@ -3381,6 +3434,11 @@ msgstr "Empty Inbox"
 #: src/modules/ai/components/ToolStepRenderer.tsx
 msgid "Empty Object"
 msgstr "Empty Object"
+
+#. js-lingui-id: q11Dk2
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+msgid "Enable bypass options"
+msgstr "Enable bypass options"
 
 #. js-lingui-id: gZo0V9
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
@@ -4276,6 +4334,11 @@ msgstr "Go to Tasks"
 msgid "Go to workflows"
 msgstr "Go to workflows"
 
+#. js-lingui-id: eoe8BR
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Google"
+msgstr "Google"
+
 #. js-lingui-id: 6eo66Q
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
 msgid "Grant access to your workspace so we can troubleshoot problems."
@@ -4667,6 +4730,11 @@ msgstr "Invalid 2FA information."
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Invalid API key"
 msgstr "Invalid API key"
+
+#. js-lingui-id: 9TgH9p
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Invalid auth bypass provider"
+msgstr "Invalid auth bypass provider"
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5375,6 +5443,11 @@ msgstr "Metered tier switching has been cancelled."
 msgid "Method"
 msgstr "Method"
 
+#. js-lingui-id: 6cH65H
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Microsoft"
+msgstr "Microsoft"
+
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -5421,8 +5494,14 @@ msgstr "month"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month"
 msgstr "Month"
+
+#. js-lingui-id: ytTyc9
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Month of the year"
+msgstr "Month of the year"
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -5974,6 +6053,7 @@ msgstr "No workflow versions yet"
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 msgid "None"
@@ -6340,6 +6420,7 @@ msgstr "Page Not Found"
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Password"
 msgstr "Password"
 
@@ -6604,6 +6685,7 @@ msgstr "Priority"
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
 msgstr "Privacy Policy"
 
@@ -6672,6 +6754,16 @@ msgstr "Public domain successfully deleted"
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Public Domains"
 msgstr "Public Domains"
+
+#. js-lingui-id: 2vudsu
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Quarter"
+msgstr "Quarter"
+
+#. js-lingui-id: GKNfuv
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Quarter of the year"
+msgstr "Quarter of the year"
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
@@ -7816,6 +7908,12 @@ msgstr "SSO"
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
+#. js-lingui-id: qBpBSc
+#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+msgid "SSO Bypass"
+msgstr "SSO Bypass"
+
 #. js-lingui-id: uavm+q
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Stack Trace"
@@ -8120,6 +8218,7 @@ msgid "Temporary Failure"
 msgstr "Temporary Failure"
 
 #. js-lingui-id: xowcRf
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
 msgstr "Terms of Service"
@@ -8722,6 +8821,7 @@ msgstr "User Info"
 #. js-lingui-id: IjyOjp
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "User is not logged in"
 msgstr "User is not logged in"
 
@@ -9159,6 +9259,11 @@ msgstr "Y axis"
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "year"
 msgstr "year"
+
+#. js-lingui-id: 3PAU4M
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Year"
+msgstr "Year"
 
 #. js-lingui-id: dfmB8/
 #: src/modules/billing/hooks/useBillingWording.ts

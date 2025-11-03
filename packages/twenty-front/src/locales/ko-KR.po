@@ -914,10 +914,20 @@ msgstr "이 사용자가 속한 모든 작업 공간"
 msgid "All your custom objects"
 msgstr "모든 사용자 정의 객체"
 
+#. js-lingui-id: 6BV/aG
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Allow email & password login for SSO bypass users."
+msgstr ""
+
 #. js-lingui-id: +XmkDf
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow exporting data to CSV files"
 msgstr "데이터를 CSV 파일로 내보내기 허용"
+
+#. js-lingui-id: q/pgyN
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Allow Google-based login for users with SSO bypass permissions."
+msgstr ""
 
 #. js-lingui-id: gCnKdT
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -933,6 +943,11 @@ msgstr "Google의 SSO 기능을 통한 로그인 허용."
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow logins through Microsoft's single sign-on functionality."
 msgstr "Microsoft의 SSO 기능을 통한 로그인 허용."
+
+#. js-lingui-id: pf6MGm
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Allow Microsoft-based login for users with SSO bypass permissions."
+msgstr ""
 
 #. js-lingui-id: qf7N9I
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -1498,6 +1513,11 @@ msgstr "이 출력 필드에 대한 간단한 설명"
 msgid "By using Twenty, you agree to the"
 msgstr "Twenty를 사용함으로써 귀하는 다음에 동의합니다"
 
+#. js-lingui-id: Yx41df
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
+msgid "Bypass SSO"
+msgstr ""
+
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
 msgid "Calculate"
@@ -1971,6 +1991,11 @@ msgstr "CalDAV 설정을 구성하여 캘린더 이벤트를 동기화하세요.
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 msgid "Configure date, time, number, timezone, and calendar start day"
 msgstr "날짜, 시간, 숫자, 시간대 및 캘린더 시작일 구성"
+
+#. js-lingui-id: utsXG8
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Configure fallback login methods for users with SSO bypass permissions"
+msgstr ""
 
 #. js-lingui-id: c7wznw
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -2608,6 +2633,28 @@ msgstr "날짜 필드"
 msgid "Date format"
 msgstr "날짜 형식"
 
+#. js-lingui-id: +A7KEy
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Date granularity"
+msgstr ""
+
+#. js-lingui-id: dhHZTJ
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+msgid "Date Granularity"
+msgstr ""
+
+#. js-lingui-id: agXC4d
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+msgid "Date Granularity X"
+msgstr ""
+
+#. js-lingui-id: YsCGZL
+#: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
+msgid "Date Granularity Y"
+msgstr ""
+
 #. js-lingui-id: /ITcnz
 #: src/utils/date-utils.ts
 msgid "day"
@@ -2616,8 +2663,14 @@ msgstr "일"
 #. js-lingui-id: H7OUPr
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day"
 msgstr "일"
+
+#. js-lingui-id: ahA8fy
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Day of the week"
+msgstr ""
 
 #. js-lingui-id: J/Upwb
 #: src/utils/date-utils.ts
@@ -3386,6 +3439,11 @@ msgstr "받은 편지함 비우기"
 #: src/modules/ai/components/ToolStepRenderer.tsx
 msgid "Empty Object"
 msgstr "빈 객체"
+
+#. js-lingui-id: q11Dk2
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+msgid "Enable bypass options"
+msgstr ""
 
 #. js-lingui-id: gZo0V9
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
@@ -4281,6 +4339,11 @@ msgstr "작업으로 이동"
 msgid "Go to workflows"
 msgstr "워크플로우로 이동"
 
+#. js-lingui-id: eoe8BR
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Google"
+msgstr ""
+
 #. js-lingui-id: 6eo66Q
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
 msgid "Grant access to your workspace so we can troubleshoot problems."
@@ -4672,6 +4735,11 @@ msgstr "잘못된 이중 인증 정보입니다."
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "Invalid API key"
 msgstr "잘못된 API 키"
+
+#. js-lingui-id: 9TgH9p
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Invalid auth bypass provider"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5380,6 +5448,11 @@ msgstr "계측된 계층 전환이 취소되었습니다."
 msgid "Method"
 msgstr "방법"
 
+#. js-lingui-id: 6cH65H
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
+msgid "Microsoft"
+msgstr ""
+
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
@@ -5426,8 +5499,14 @@ msgstr "월"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month"
 msgstr "월"
+
+#. js-lingui-id: ytTyc9
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Month of the year"
+msgstr ""
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -5979,6 +6058,7 @@ msgstr "아직 워크플로 버전 없음"
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
 msgid "None"
@@ -6345,6 +6425,7 @@ msgstr "페이지를 찾을 수 없음"
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Password"
 msgstr "비밀번호"
 
@@ -6609,6 +6690,7 @@ msgstr "우선 순위"
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
 msgstr "개인정보 보호정책"
 
@@ -6677,6 +6759,16 @@ msgstr "공개 도메인이 성공적으로 삭제되었습니다."
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Public Domains"
 msgstr "공개 도메인"
+
+#. js-lingui-id: 2vudsu
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Quarter"
+msgstr ""
+
+#. js-lingui-id: GKNfuv
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Quarter of the year"
+msgstr ""
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
@@ -7821,6 +7913,12 @@ msgstr "SSO"
 msgid "SSO (SAML / OIDC)"
 msgstr "SSO (SAML / OIDC)"
 
+#. js-lingui-id: qBpBSc
+#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
+msgid "SSO Bypass"
+msgstr ""
+
 #. js-lingui-id: uavm+q
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Stack Trace"
@@ -8125,6 +8223,7 @@ msgid "Temporary Failure"
 msgstr "임시 오류"
 
 #. js-lingui-id: xowcRf
+#: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Terms of Service"
 msgstr "서비스 약관"
@@ -8727,6 +8826,7 @@ msgstr "사용자 정보"
 #. js-lingui-id: IjyOjp
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
+#: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "User is not logged in"
 msgstr "사용자가 로그인하지 않았습니다"
 
@@ -9164,6 +9264,11 @@ msgstr "Y 축"
 #: src/modules/billing/hooks/useBillingWording.ts
 msgid "year"
 msgstr "연"
+
+#. js-lingui-id: 3PAU4M
+#: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
+msgid "Year"
+msgstr ""
 
 #. js-lingui-id: dfmB8/
 #: src/modules/billing/hooks/useBillingWording.ts
