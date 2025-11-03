@@ -20,7 +20,6 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
-import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -35,18 +34,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 const LEGEND_THRESHOLD = 10;
-const TOOLTIP_OFFSET_X = 15;
+const TOOLTIP_OFFSET_X = 10;
 
-type Position = {
-  x: number;
-  y: number;
-};
-
-const StyledTooltipWrapper = styled.div<{ left: number; top: number }>`
-  left: ${({ left }) => left}px;
+const StyledTooltipWrapper = styled.div<{ x: number; y: number }>`
+  left: ${({ x }) => Math.max(0, Math.min(x, window.innerWidth))}px;
+  max-width: min(400px, calc(100vw - 40px));
   pointer-events: auto;
   position: fixed;
-  top: ${({ top }) => top}px;
+  top: ${({ y }) => Math.max(0, y)}px;
+  transform: translate(-100%, -50%);
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
@@ -103,28 +99,11 @@ export const GraphWidgetBarChart = ({
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
+
   // Chart dimensions
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Tooltip state
-  const [hoveredDatum, setHoveredDatum] =
-    useState<ComputedDatum<BarDatum> | null>(null);
-  const [mousePosition, setMousePosition] = useState<Position>({ x: 0, y: 0 });
-  const [anchoredPosition, setAnchoredPosition] = useState<Position>({
-    x: 0,
-    y: 0,
-  });
-  const [isChartHovered, setIsChartHovered] = useState(false);
-  const [isTooltipHovered, setIsTooltipHovered] = useState(false);
-
-  const debouncedSetChartHovered = useDebouncedCallback((value: boolean) => {
-    setIsChartHovered(value);
-    if (!value && !isTooltipHovered) {
-      setHoveredBar(null);
-    }
-  }, 100);
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -139,6 +118,54 @@ export const GraphWidgetBarChart = ({
       data,
       indexBy,
     });
+
+  // Tooltip state management
+  const [hoveredDatum, setHoveredDatum] =
+    useState<ComputedDatum<BarDatum> | null>(null);
+  const [barPosition, setBarPosition] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
+  const [isChartHovered, setIsChartHovered] = useState(false);
+  const [isTooltipHovered, setIsTooltipHovered] = useState(false);
+
+  const debouncedSetChartHovered = useDebouncedCallback((value: boolean) => {
+    setIsChartHovered(value);
+    if (!value && !isTooltipHovered) {
+      setHoveredBar(null);
+    }
+  }, 100);
+
+  // Debounce bar switching to avoid jumping when moving between bars
+  const debouncedSetHoveredBar = useDebouncedCallback((datum: any) => {
+    setHoveredDatum(datum);
+
+    if (
+      isDefined(datum.barAbsX) &&
+      isDefined(datum.barAbsY) &&
+      isDefined(containerRef.current)
+    ) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setBarPosition({
+        x: rect.left + datum.barAbsX - TOOLTIP_OFFSET_X,
+        y: rect.top + datum.barAbsY,
+        width: datum.barWidth,
+        height: datum.barHeight,
+      });
+    }
+
+    if (isDefined(datum.id) && isDefined(datum.indexValue)) {
+      setHoveredBar({
+        key: String(datum.id),
+        indexValue: datum.indexValue,
+      });
+    }
+  }, 50);
+
+  const isTooltipVisible =
+    hoveredDatum !== null && (isChartHovered || isTooltipHovered);
 
   const chartTheme = useBarChartTheme();
 
@@ -158,13 +185,6 @@ export const GraphWidgetBarChart = ({
     formatOptions,
     hoveredBar,
     enableGroupTooltip: groupMode === 'stacked',
-  });
-
-  useTrackPointer({
-    shouldTrackPointer: true,
-    onMouseMove: ({ x, y }) => {
-      setMousePosition({ x, y });
-    },
   });
 
   const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
@@ -306,32 +326,27 @@ export const GraphWidgetBarChart = ({
           label={(d) => formatGraphValue(Number(d.value), formatOptions)}
           tooltip={() => null}
           onClick={handleBarClick}
-          onMouseEnter={(datum) => {
-            setHoveredDatum(datum);
-            setAnchoredPosition({ x: mousePosition.x, y: mousePosition.y });
+          onMouseEnter={(datum: any) => {
             setIsChartHovered(true);
             debouncedSetChartHovered.cancel();
 
-            if (isDefined(datum.id) && isDefined(datum.indexValue)) {
-              setHoveredBar({
-                key: String(datum.id),
-                indexValue: datum.indexValue,
-              });
-            }
+            // Use debounced function to avoid tooltip jumping
+            debouncedSetHoveredBar(datum);
           }}
           onMouseLeave={() => {
             debouncedSetChartHovered(false);
+            debouncedSetHoveredBar.cancel(); // Cancel pending bar switch
           }}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
-      {isDefined(hoveredDatum) && (isChartHovered || isTooltipHovered) && (
+      {isTooltipVisible && barPosition && (
         <>
           {createPortal(
             <StyledTooltipWrapper
-              left={anchoredPosition.x + TOOLTIP_OFFSET_X}
-              top={anchoredPosition.y}
+              x={barPosition.x + barPosition.width / 2}
+              y={barPosition.y}
               role="tooltip"
               aria-live="polite"
               onMouseEnter={() => {
@@ -341,7 +356,7 @@ export const GraphWidgetBarChart = ({
               onMouseLeave={() => {
                 setIsTooltipHovered(false);
                 setHoveredDatum(null);
-                // Clear hoveredBar when leaving tooltip if chart is not hovered
+                debouncedSetHoveredBar.cancel(); // Cancel any pending updates
                 if (!isChartHovered) {
                   setHoveredBar(null);
                 }

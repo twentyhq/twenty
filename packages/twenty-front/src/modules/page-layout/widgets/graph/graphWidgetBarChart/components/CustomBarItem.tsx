@@ -87,10 +87,20 @@ export const CustomBarItem = <D extends BarDatum>({
   );
   const handleMouseEnter = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
-      onMouseEnter?.(barData, event);
+      // Pass bar position data along with the regular data
+      const enrichedData = {
+        ...barData,
+        barX: bar.x,
+        barY: bar.y,
+        barWidth: bar.width,
+        barHeight: bar.height,
+        barAbsX: bar.absX,
+        barAbsY: bar.absY,
+      };
+      onMouseEnter?.(enrichedData, event);
       showTooltipFromEvent(renderTooltip(), event);
     },
-    [barData, onMouseEnter, showTooltipFromEvent, renderTooltip],
+    [barData, bar, onMouseEnter, showTooltipFromEvent, renderTooltip],
   );
   const handleMouseLeave = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
