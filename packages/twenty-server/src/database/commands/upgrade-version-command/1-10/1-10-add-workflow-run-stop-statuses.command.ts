@@ -65,29 +65,37 @@ export class AddWorkflowRunStopStatusesCommand extends ActiveOrSuspendedWorkspac
         `Would add stopped and stopping statuses to workflow run status field metadata for workspace ${workspaceId}`,
       );
     } else {
-      const workflowRunStatusFieldMetadataOptionsWithoutStoppingAndStopped =
+      const workflowRunStatusFieldMetadataOptionsSpecificStoppingAndStoppedTreatment =
         workflowRunStatusFieldMetadataOptions?.filter(
           (option) =>
             option.value !== WorkflowRunStatus.STOPPED &&
             option.value !== WorkflowRunStatus.STOPPING,
         ) as FieldMetadataComplexOption[];
 
-      workflowRunStatusFieldMetadataOptionsWithoutStoppingAndStopped?.push({
-        id: v4(),
-        value: WorkflowRunStatus.STOPPING,
-        label: 'Stopping',
-        position: 5,
-        color: 'orange',
-      });
-      workflowRunStatusFieldMetadataOptionsWithoutStoppingAndStopped?.push({
-        id: v4(),
-        value: WorkflowRunStatus.STOPPED,
-        label: 'Stopped',
-        position: 6,
-        color: 'gray',
-      });
+      workflowRunStatusFieldMetadataOptionsSpecificStoppingAndStoppedTreatment?.push(
+        {
+          id: v4(),
+          value: WorkflowRunStatus.STOPPING,
+          label: 'Stopping',
+          position: 5,
+          color: 'orange',
+        },
+      );
+      workflowRunStatusFieldMetadataOptionsSpecificStoppingAndStoppedTreatment?.push(
+        {
+          id: v4(),
+          value: WorkflowRunStatus.STOPPED,
+          label: 'Stopped',
+          position: 6,
+          color: 'gray',
+        },
+      );
 
-      await this.fieldMetadataRepository.save(workflowRunStatusFieldMetadata);
+      await this.fieldMetadataRepository.save({
+        ...workflowRunStatusFieldMetadata,
+        options:
+          workflowRunStatusFieldMetadataOptionsSpecificStoppingAndStoppedTreatment,
+      });
 
       this.logger.log(
         `Stopped and stopping statuses added to workflow run status field metadata for workspace ${workspaceId}`,
