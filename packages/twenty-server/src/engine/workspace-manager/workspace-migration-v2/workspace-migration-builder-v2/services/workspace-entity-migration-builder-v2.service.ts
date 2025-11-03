@@ -9,10 +9,11 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { MetadataFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { MetadataValidationRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
-import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-throuhg-mutation-or-throw.util';
+import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
@@ -86,11 +87,10 @@ export abstract class WorkspaceEntityMigrationBuilderV2Service<
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'entity processing');
 
     const flatEntityMapsKey = getMetadataFlatEntityMapsKey(this.metadataName);
-    // TODO possible to improve ?
     const optimisticFlatEntityMapsAndRelatedFlatEntityMaps = {
       [flatEntityMapsKey]: structuredClone(fromFlatEntityMaps),
       ...structuredClone(inputDependencyOptimisticFlatEntityMaps),
-    } as FlatEntityValidationArgs<T>['optimisticFlatEntityMapsAndRelatedFlatEntityMaps'];
+    } as MetadataFlatEntityAndRelatedFlatEntityMapsForValidation<T>;
 
     const actionsResult = getMetadataEmptyWorkspaceMigrationActionRecord(
       this.metadataName,

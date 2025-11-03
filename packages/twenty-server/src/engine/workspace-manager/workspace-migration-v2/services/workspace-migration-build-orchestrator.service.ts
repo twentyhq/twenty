@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { AllMetadataName } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -87,7 +87,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     ) as (keyof MetadataFlatEntityAndRelatedFlatEntityMaps<T>)[];
 
     for (const flatEntityMapsKey of flatEntityMapsKeys) {
-      // @ts-expect-error TOOD improve
+      // @ts-expect-error TODO improve
       allFlatEntityMaps[flatEntityMapsKey] =
         flatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey];
     }
