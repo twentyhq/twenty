@@ -1,6 +1,5 @@
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { renderHook } from '@testing-library/react';
 import { type ThemeType } from 'twenty-ui/theme';
 import { useLineChartData } from '../useLineChartData';
@@ -54,7 +53,6 @@ describe('useLineChartData', () => {
   };
 
   const mockTheme = { name: 'light' } as ThemeType;
-  const mockFormatOptions: GraphValueFormatOptions = { displayType: 'number' };
 
   const mockData: LineChartSeries[] = [
     {
@@ -87,7 +85,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -104,7 +101,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -130,7 +126,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: true,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -147,7 +142,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: true,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -164,7 +158,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -202,7 +195,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -225,7 +217,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -250,7 +241,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: darkTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -274,7 +264,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -299,7 +288,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -307,13 +295,11 @@ describe('useLineChartData', () => {
       {
         id: 'series1',
         label: 'Sales',
-        formattedValue: '370',
         color: expect.any(String),
       },
       {
         id: 'series2',
         label: 'Costs',
-        formattedValue: '270',
         color: expect.any(String),
       },
     ]);
@@ -338,7 +324,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -354,7 +339,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 
@@ -384,7 +368,6 @@ describe('useLineChartData', () => {
         instanceId: 'instance-1',
         enableArea: false,
         theme: mockTheme,
-        formatOptions: mockFormatOptions,
       }),
     );
 

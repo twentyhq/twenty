@@ -1,5 +1,6 @@
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -8,9 +9,11 @@ import { IconLogout } from 'twenty-ui/display';
 
 export const InformationBannerIsImpersonating = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const isImpersonating = useRecoilValue(isImpersonatingState);
+
   const { signOut } = useAuth();
 
-  if (!isDefined(currentWorkspaceMember)) {
+  if (!isDefined(currentWorkspaceMember) || !isImpersonating) {
     return null;
   }
 

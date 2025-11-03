@@ -1,6 +1,9 @@
+import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { IconChartBar } from 'twenty-ui/display';
 import { shouldHideChartSetting } from '../shouldHideChartSetting';
 
@@ -174,6 +177,264 @@ describe('shouldHideChartSetting', () => {
       const result = shouldHideChartSetting(itemWithEmptyDependsOn, '', false);
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('date granularity visibility based on field type', () => {
+    const mockDateGranularityXItem: ChartSettingsItem = {
+      id: CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_X,
+      label: msg`Date Granularity X`,
+      Icon: IconChartBar,
+      isBoolean: false,
+      isInput: false,
+    };
+
+    const mockDateGranularityYItem: ChartSettingsItem = {
+      id: CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_Y,
+      label: msg`Date Granularity Y`,
+      Icon: IconChartBar,
+      isBoolean: false,
+      isInput: false,
+    };
+
+    const mockDateGranularityItem: ChartSettingsItem = {
+      id: CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY,
+      label: msg`Date Granularity`,
+      Icon: IconChartBar,
+      isBoolean: false,
+      isInput: false,
+    };
+
+    const mockObjectMetadataItem: ObjectMetadataItem = {
+      id: 'object-id',
+      nameSingular: 'opportunity',
+      namePlural: 'opportunities',
+      labelSingular: 'Opportunity',
+      labelPlural: 'Opportunities',
+      description: 'An opportunity',
+      icon: 'IconTargetArrow',
+      isActive: true,
+      isSystem: false,
+      isRemote: false,
+      isAuditLogged: false,
+      isLabelSyncedWithName: true,
+      fields: [
+        {
+          id: 'date-field-id',
+          name: 'closedAt',
+          label: 'Closed At',
+          type: FieldMetadataType.DATE,
+          isNullable: true,
+          isSystem: false,
+          isActive: true,
+          isCustom: false,
+          defaultValue: null,
+          options: null,
+          relationDefinition: null,
+        } as any,
+        {
+          id: 'text-field-id',
+          name: 'name',
+          label: 'Name',
+          type: FieldMetadataType.TEXT,
+          isNullable: true,
+          isSystem: false,
+          isActive: true,
+          isCustom: false,
+          defaultValue: null,
+          options: null,
+          relationDefinition: null,
+        } as any,
+        {
+          id: 'datetime-field-id',
+          name: 'createdAt',
+          label: 'Created At',
+          type: FieldMetadataType.DATE_TIME,
+          isNullable: false,
+          isSystem: true,
+          isActive: true,
+          isCustom: false,
+          defaultValue: null,
+          options: null,
+          relationDefinition: null,
+        } as any,
+      ],
+    } as any;
+
+    describe('DATE_GRANULARITY_X', () => {
+      it('should show when primary axis field is a date field', () => {
+        const barChartConfig: ChartConfiguration = {
+          __typename: 'BarChartConfiguration',
+          primaryAxisGroupByFieldMetadataId: 'date-field-id',
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityXItem,
+          'object-id',
+          true,
+          barChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(false);
+      });
+
+      it('should show when primary axis field is a datetime field', () => {
+        const barChartConfig: ChartConfiguration = {
+          __typename: 'BarChartConfiguration',
+          primaryAxisGroupByFieldMetadataId: 'datetime-field-id',
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityXItem,
+          'object-id',
+          true,
+          barChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(false);
+      });
+
+      it('should hide when primary axis field is not a date field', () => {
+        const barChartConfig: ChartConfiguration = {
+          __typename: 'BarChartConfiguration',
+          primaryAxisGroupByFieldMetadataId: 'text-field-id',
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityXItem,
+          'object-id',
+          true,
+          barChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(true);
+      });
+
+      it('should hide when no primary axis field is selected', () => {
+        const barChartConfig: ChartConfiguration = {
+          __typename: 'BarChartConfiguration',
+          primaryAxisGroupByFieldMetadataId: undefined,
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityXItem,
+          'object-id',
+          true,
+          barChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(true);
+      });
+    });
+
+    describe('DATE_GRANULARITY_Y', () => {
+      it('should show when secondary axis field is a date field', () => {
+        const barChartConfig: ChartConfiguration = {
+          __typename: 'BarChartConfiguration',
+          secondaryAxisGroupByFieldMetadataId: 'date-field-id',
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityYItem,
+          'object-id',
+          true,
+          barChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(false);
+      });
+
+      it('should hide when secondary axis field is not a date field', () => {
+        const barChartConfig: ChartConfiguration = {
+          __typename: 'BarChartConfiguration',
+          secondaryAxisGroupByFieldMetadataId: 'text-field-id',
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityYItem,
+          'object-id',
+          true,
+          barChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(true);
+      });
+
+      it('should hide when no secondary axis field is selected', () => {
+        const barChartConfig: ChartConfiguration = {
+          __typename: 'BarChartConfiguration',
+          secondaryAxisGroupByFieldMetadataId: undefined,
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityYItem,
+          'object-id',
+          true,
+          barChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(true);
+      });
+    });
+
+    describe('DATE_GRANULARITY (Pie Chart)', () => {
+      it('should show when group by field is a date field', () => {
+        const pieChartConfig: ChartConfiguration = {
+          __typename: 'PieChartConfiguration',
+          groupByFieldMetadataId: 'date-field-id',
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityItem,
+          'object-id',
+          true,
+          pieChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(false);
+      });
+
+      it('should hide when group by field is not a date field', () => {
+        const pieChartConfig: ChartConfiguration = {
+          __typename: 'PieChartConfiguration',
+          groupByFieldMetadataId: 'text-field-id',
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityItem,
+          'object-id',
+          true,
+          pieChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(true);
+      });
+
+      it('should hide when no group by field is selected', () => {
+        const pieChartConfig: ChartConfiguration = {
+          __typename: 'PieChartConfiguration',
+          groupByFieldMetadataId: undefined,
+        } as any;
+
+        const result = shouldHideChartSetting(
+          mockDateGranularityItem,
+          'object-id',
+          true,
+          pieChartConfig,
+          mockObjectMetadataItem,
+        );
+
+        expect(result).toBe(true);
+      });
     });
   });
 });

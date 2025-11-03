@@ -9,7 +9,7 @@ import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
 
-import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
+import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
 
 const mockMessageIds = [
   'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAAA8ZAfgAA',
@@ -27,7 +27,10 @@ xdescribe('Microsoft dev tests : get messages service', () => {
       imports: [TwentyConfigModule.forRoot()],
       providers: [
         MicrosoftGetMessagesService,
-        MicrosoftHandleErrorService,
+        {
+          provide: MicrosoftMessagesImportErrorHandler,
+          useValue: { handleError: jest.fn() },
+        },
         OAuth2ClientManagerService,
         MicrosoftOAuth2ClientManagerService,
         MicrosoftFetchByBatchService,

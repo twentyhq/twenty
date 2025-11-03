@@ -1,7 +1,6 @@
 import { type EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
@@ -22,7 +21,7 @@ export const prefillViews = async (
   entityManager: EntityManager,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
-  featureFlags?: Record<string, boolean>,
+  _featureFlags?: Record<string, boolean>,
 ) => {
   const customObjectMetadataItems = objectMetadataItems.filter(
     (item) => item.isCustom,
@@ -47,9 +46,7 @@ export const prefillViews = async (
     ...customViews,
   ];
 
-  if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
-    views.push(dashboardsAllView(objectMetadataItems));
-  }
+  views.push(dashboardsAllView(objectMetadataItems));
 
   return createWorkspaceViews(entityManager, schemaName, views);
 };
