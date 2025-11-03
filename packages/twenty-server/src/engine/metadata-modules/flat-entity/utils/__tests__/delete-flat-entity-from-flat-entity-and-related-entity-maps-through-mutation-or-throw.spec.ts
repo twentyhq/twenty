@@ -7,18 +7,19 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { createEmptyFlatEntityMaps } from '../../constant/create-empty-flat-entity-maps.constant';
-import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from '../add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
+import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from '../delete-flat-entity-from-flat-entity-and-related-entity-maps-throuhg-mutation-or-throw.util';
 
-describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', () => {
-  it('should add a view and update related objectMetadata with viewId', () => {
+describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', () => {
+  it('should delete a view and update related objectMetadata and fieldMetadata by removing viewId', () => {
     const objectMetadataId = 'object-1';
     const viewId = 'view-1';
     const applicationId = '20202020-f3ad-452e-b5b6-2d49d3ea88b1';
     const workspaceId = '20202020-bc64-4148-8a79-b3144f743694';
+
     const mockObjectMetadata = getFlatObjectMetadataMock({
       id: objectMetadataId,
       universalIdentifier: 'object-universal-1',
-      viewIds: [],
+      viewIds: [viewId, 'something-else'],
       fieldMetadataIds: [],
       workspaceId,
       imageIdentifierFieldMetadataId: '20202020-9d65-415f-b0e1-216a2e257ea4',
@@ -26,68 +27,77 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', 
       applicationId,
     });
 
-    const mockFieldMEtadata = getFlatFieldMetadataMock({
+    const mockFieldMetadata = getFlatFieldMetadataMock({
       objectMetadataId,
-      id: '202020-71a3-4856-a3d0-d08cea0ecec6',
+      id: '20202020-4087-423b-852a-91f91acf2df2',
       type: FieldMetadataType.DATE,
-      workspaceId,
-      applicationId,
       universalIdentifier: 'field-universal-1',
       viewFieldIds: [],
       viewGroupIds: [],
       viewFilterIds: [],
-      calendarViewIds: [],
+      workspaceId,
+      calendarViewIds: [viewId],
+      applicationId,
     });
 
-    const mockView: Pick<FlatView, 'id'> & Partial<FlatView> = {
+    const mockView: Partial<FlatView> = {
       id: viewId,
-      workspaceId,
       universalIdentifier: 'view-universal-1',
       objectMetadataId: objectMetadataId,
       viewFieldIds: [],
       viewFilterIds: [],
       viewGroupIds: [],
+      workspaceId,
+      calendarFieldMetadataId: mockFieldMetadata.id,
+      createdAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-01'),
+      icon: 'icon',
+      isCompact: false,
+      name: 'View Name',
+      position: 0,
       applicationId,
-      calendarFieldMetadataId: mockFieldMEtadata.id,
     };
 
     const flatEntityAndRelatedMapsToMutate: MetadataFlatEntityAndRelatedFlatEntityMaps<'view'> =
       {
         flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: mockFieldMEtadata,
+          flatEntity: mockFieldMetadata,
           flatEntityMaps: createEmptyFlatEntityMaps(),
         }),
         flatObjectMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: mockObjectMetadata,
           flatEntityMaps: createEmptyFlatEntityMaps(),
         }),
-        flatViewMaps: createEmptyFlatEntityMaps(),
+        flatViewMaps: addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: mockView as FlatView,
+          flatEntityMaps: createEmptyFlatEntityMaps(),
+        }),
       };
 
-    addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
+    deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
       metadataName: 'view',
       flatEntity: mockView as FlatView,
       flatEntityAndRelatedMapsToMutate,
     });
 
     expect(
-      flatEntityAndRelatedMapsToMutate.flatViewMaps.byId[mockView.id],
-    ).toMatchObject(mockView);
+      flatEntityAndRelatedMapsToMutate.flatViewMaps.byId[viewId],
+    ).toBeUndefined();
 
     expect(
       flatEntityAndRelatedMapsToMutate.flatObjectMetadataMaps.byId[
         objectMetadataId
       ],
     ).toMatchObject<Partial<FlatObjectMetadata>>({
-      viewIds: [mockView.id],
+      viewIds: ['something-else'],
     });
 
     expect(
       flatEntityAndRelatedMapsToMutate.flatFieldMetadataMaps.byId[
-        mockFieldMEtadata.id
+        mockFieldMetadata.id
       ],
     ).toMatchObject<Partial<FlatFieldMetadata>>({
-      calendarViewIds: [mockView.id],
+      calendarViewIds: [],
     });
 
     expect(flatEntityAndRelatedMapsToMutate).toMatchSnapshot();
