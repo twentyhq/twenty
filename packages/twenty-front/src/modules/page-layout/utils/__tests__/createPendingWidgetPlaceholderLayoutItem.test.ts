@@ -20,7 +20,7 @@ describe('createPendingWidgetPlaceholderLayoutItem', () => {
         h: 6,
         minW: DEFAULT_WIDGET_SIZE.minimum.w,
         minH: DEFAULT_WIDGET_SIZE.minimum.h,
-        static: true,
+        static: false,
       });
     });
 
@@ -51,7 +51,7 @@ describe('createPendingWidgetPlaceholderLayoutItem', () => {
         h: 6,
         minW: DEFAULT_WIDGET_SIZE.minimum.w,
         minH: DEFAULT_WIDGET_SIZE.minimum.h,
-        static: true,
+        static: false,
       });
     });
 
@@ -78,7 +78,7 @@ describe('createPendingWidgetPlaceholderLayoutItem', () => {
       'mobile',
     );
 
-    expect(desktopResult.static).toBe(true);
-    expect(mobileResult.static).toBe(true);
+    expect(desktopResult.static).toBe(false);
+    expect(mobileResult.static).toBe(false);
   });
 });
