@@ -25,7 +25,7 @@ const StyledContainer = styled.div<{
   color: ${({ theme }) => theme.font.color.primary};
 
   &:not(:last-child) {
-    border-right: 0.5px solid ${({ theme }) => theme.border.color.light};
+    border-right: 1px solid ${({ theme }) => theme.border.color.light};
   }
 
   ${({ isOtherMonth, theme }) =>

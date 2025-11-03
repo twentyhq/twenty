@@ -11,6 +11,7 @@ import {
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { AddWorkflowRunStopStatusesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-add-workflow-run-stop-statuses.command';
 import { CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-clean-orphaned-kanban-aggregate-operation-field-metadata-id.command';
+import { CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-create-view-kanban-field-metadata-id-foreign-key-migration.command';
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
@@ -61,6 +62,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly addWorkflowRunStopStatusesCommand: AddWorkflowRunStopStatusesCommand,
     protected readonly cleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand: CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     protected readonly migrateChannelPartialFullSyncStagesCommand: MigrateChannelPartialFullSyncStagesCommand,
+    protected readonly createViewKanbanFieldMetadataIdForeignKeyMigrationCommand: CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -97,6 +99,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.regenerateSearchVectorsCommand,
         this.addWorkflowRunStopStatusesCommand,
         this.cleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
+        this.createViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
         this.migrateChannelPartialFullSyncStagesCommand,
       ],
       afterSyncMetadata: [

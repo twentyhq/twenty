@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AddWorkflowRunStopStatusesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-add-workflow-run-stop-statuses.command';
 import { CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-clean-orphaned-kanban-aggregate-operation-field-metadata-id.command';
+import { CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-create-view-kanban-field-metadata-id-foreign-key-migration.command';
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
@@ -32,6 +33,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     RegenerateSearchVectorsCommand,
     AddWorkflowRunStopStatusesCommand,
     CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
+    CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
   ],
   exports: [
     MigrateAttachmentAuthorToCreatedByCommand,
@@ -40,6 +42,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     AddWorkflowRunStopStatusesCommand,
     CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     MigrateChannelPartialFullSyncStagesCommand,
+    CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
   ],
 })
 export class V1_10_UpgradeVersionCommandModule {}
