@@ -6,7 +6,6 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
-import { isAccessTokenExpiredOrInvalid } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/is-access-token-expired-or-invalid.util';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
@@ -18,6 +17,8 @@ export type ConnectedAccountTokens = {
   accessToken: string;
   refreshToken: string;
 };
+
+const MESSAGING_CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
 
 @Injectable()
 export class ConnectedAccountRefreshTokensService {
@@ -44,10 +45,8 @@ export class ConnectedAccountRefreshTokensService {
       );
     }
 
-    const isAccessTokenValid = await this.isAccessTokenStillValid(
-      connectedAccount,
-      accessToken,
-    );
+    const isAccessTokenValid =
+      await this.isAccessTokenStillValid(connectedAccount);
 
     if (isAccessTokenValid) {
       this.logger.debug(
@@ -77,7 +76,10 @@ export class ConnectedAccountRefreshTokensService {
 
     await connectedAccountRepository.update(
       { id: connectedAccount.id },
-      connectedAccountTokens,
+      {
+        ...connectedAccountTokens,
+        lastCredentialsRefreshedAt: new Date(),
+      },
     );
 
     return connectedAccountTokens;
@@ -85,17 +87,23 @@ export class ConnectedAccountRefreshTokensService {
 
   async isAccessTokenStillValid(
     connectedAccount: ConnectedAccountWorkspaceEntity,
-    accessToken: string,
   ): Promise<boolean> {
     switch (connectedAccount.provider) {
-      case ConnectedAccountProvider.GOOGLE: {
-        // Google's access tokens are opaque and needs network calls to check if they are valid we default to false for now
-        return false;
-      }
+      case ConnectedAccountProvider.GOOGLE:
       case ConnectedAccountProvider.MICROSOFT: {
-        const isExpired = isAccessTokenExpiredOrInvalid(accessToken);
+        if (!connectedAccount.lastCredentialsRefreshedAt) {
+          return false;
+        }
 
-        return !isExpired;
+        const BUFFER_TIME = 5 * 60 * 1000;
+
+        const tokenExpirationTime =
+          MESSAGING_CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION - BUFFER_TIME;
+
+        return (
+          connectedAccount.lastCredentialsRefreshedAt >
+          new Date(Date.now() - tokenExpirationTime)
+        );
       }
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return true;
