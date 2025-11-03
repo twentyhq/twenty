@@ -136,4 +136,9 @@ export class BarChartConfigurationDTO {
   @IsEnum(BarChartGroupMode)
   @IsOptional()
   groupMode?: BarChartGroupMode;
+
+  @Field(() => String, { nullable: true, defaultValue: 'UTC' })
+  @IsString()
+  @IsOptional()
+  timezone?: string;
 }

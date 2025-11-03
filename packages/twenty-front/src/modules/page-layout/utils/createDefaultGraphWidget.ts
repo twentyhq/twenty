@@ -16,6 +16,7 @@ import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetF
 const createDefaultGraphConfiguration = (
   graphType: GraphType,
   fieldSelection?: GraphWidgetFieldSelection,
+  timezone?: string,
 ): WidgetConfiguration | null => {
   switch (graphType) {
     case GraphType.AGGREGATE:
@@ -28,6 +29,7 @@ const createDefaultGraphConfiguration = (
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: AggregateOperations.COUNT,
         displayDataLabel: true,
+        timezone,
       };
 
     case GraphType.PIE:
@@ -51,6 +53,7 @@ const createDefaultGraphConfiguration = (
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.NONE,
+        timezone,
       };
 
     case GraphType.HORIZONTAL_BAR:
@@ -71,6 +74,7 @@ const createDefaultGraphConfiguration = (
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.NONE,
+        timezone,
       };
 
     case GraphType.LINE:
@@ -92,6 +96,7 @@ type CreateDefaultGraphWidgetParams = {
   gridPosition: GridPosition;
   objectMetadataId?: string | null;
   fieldSelection?: GraphWidgetFieldSelection;
+  timezone?: string;
 };
 
 export const createDefaultGraphWidget = ({
@@ -102,6 +107,7 @@ export const createDefaultGraphWidget = ({
   gridPosition,
   objectMetadataId,
   fieldSelection,
+  timezone,
 }: CreateDefaultGraphWidgetParams): PageLayoutWidget => {
   const resolvedObjectMetadataId =
     fieldSelection?.objectMetadataId ?? objectMetadataId ?? null;
@@ -109,6 +115,7 @@ export const createDefaultGraphWidget = ({
   const configuration = createDefaultGraphConfiguration(
     graphType,
     fieldSelection,
+    timezone,
   );
 
   return {

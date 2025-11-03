@@ -129,4 +129,9 @@ export class LineChartConfigurationDTO {
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => String, { nullable: true, defaultValue: 'UTC' })
+  @IsString()
+  @IsOptional()
+  timezone?: string;
 }

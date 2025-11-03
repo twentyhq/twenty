@@ -53,4 +53,9 @@ export class GaugeChartConfigurationDTO {
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => String, { nullable: true, defaultValue: 'UTC' })
+  @IsString()
+  @IsOptional()
+  timezone?: string;
 }

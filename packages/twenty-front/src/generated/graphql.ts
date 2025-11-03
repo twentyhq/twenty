@@ -136,6 +136,7 @@ export type AggregateChartConfiguration = {
   format?: Maybe<Scalars['String']>;
   graphType: GraphType;
   label?: Maybe<Scalars['String']>;
+  timezone?: Maybe<Scalars['String']>;
 };
 
 export enum AggregateOperations {
@@ -332,6 +333,7 @@ export type BarChartConfiguration = {
   secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
+  timezone?: Maybe<Scalars['String']>;
 };
 
 /** Display mode for bar charts with secondary grouping */
@@ -1378,6 +1380,7 @@ export type GaugeChartConfiguration = {
   displayDataLabel?: Maybe<Scalars['Boolean']>;
   filter?: Maybe<Scalars['JSON']>;
   graphType: GraphType;
+  timezone?: Maybe<Scalars['String']>;
 };
 
 export type GetApiKeyInput = {
@@ -1637,6 +1640,7 @@ export type LineChartConfiguration = {
   secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
   secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
+  timezone?: Maybe<Scalars['String']>;
 };
 
 export type LinkMetadata = {
@@ -2973,6 +2977,7 @@ export type PieChartConfiguration = {
   groupByFieldMetadataId: Scalars['UUID'];
   groupBySubFieldName?: Maybe<Scalars['String']>;
   orderBy?: Maybe<GraphOrderBy>;
+  timezone?: Maybe<Scalars['String']>;
 };
 
 export type PlaceDetailsResult = {

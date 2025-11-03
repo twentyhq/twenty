@@ -98,6 +98,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: opportunityAmountFieldId,
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
+            timezone: 'UTC',
           }
         : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -120,6 +121,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: rocketIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
           }
         : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -147,6 +149,7 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              timezone: 'UTC',
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -177,6 +180,7 @@ export const getPageLayoutWidgetDataSeeds = (
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
               color: 'auto',
+              timezone: 'UTC',
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -206,6 +210,7 @@ export const getPageLayoutWidgetDataSeeds = (
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
               color: 'auto',
+              timezone: 'UTC',
             }
           : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -228,6 +233,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: opportunityIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
           }
         : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -252,6 +258,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -278,6 +285,7 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              timezone: 'UTC',
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -310,6 +318,7 @@ export const getPageLayoutWidgetDataSeeds = (
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
               color: 'auto',
+              timezone: 'UTC',
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -334,6 +343,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
+            timezone: 'UTC',
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -359,6 +369,7 @@ export const getPageLayoutWidgetDataSeeds = (
               groupByFieldMetadataId: companyNameFieldId,
               orderBy: 'VALUE_DESC',
               displayDataLabel: true,
+              timezone: 'UTC',
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -381,6 +392,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.AVG,
             displayDataLabel: true,
+            timezone: 'UTC',
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -403,6 +415,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: companyLinkedinLinkFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -428,6 +441,7 @@ export const getPageLayoutWidgetDataSeeds = (
               groupByFieldMetadataId: companyLinkedinLinkFieldId,
               orderBy: 'VALUE_DESC',
               displayDataLabel: true,
+              timezone: 'UTC',
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -449,6 +463,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: personIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
           }
         : null,
       objectMetadataId: personObject?.id ?? null,
@@ -476,6 +491,7 @@ export const getPageLayoutWidgetDataSeeds = (
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
               color: 'auto',
+              timezone: 'UTC',
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
@@ -503,6 +519,7 @@ export const getPageLayoutWidgetDataSeeds = (
               groupByFieldMetadataId: personJobTitleFieldId,
               orderBy: 'VALUE_DESC',
               displayDataLabel: true,
+              timezone: 'UTC',
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
@@ -522,6 +539,7 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: taskIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
           }
         : null,
       objectMetadataId: taskObject?.id ?? null,
