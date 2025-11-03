@@ -86,11 +86,6 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
-      {
-        key: FeatureFlagKey.IS_DYNAMIC_SEARCH_FIELDS_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
     ])
     .execute();
 };
