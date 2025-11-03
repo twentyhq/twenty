@@ -54,9 +54,8 @@ export const prefillCoreViews = async ({
     workflowsAllView(objectMetadataItems, true),
     workflowVersionsAllView(objectMetadataItems, true),
     workflowRunsAllView(objectMetadataItems, true),
+    dashboardsAllView(objectMetadataItems, true),
   ];
-
-  views.push(dashboardsAllView(objectMetadataItems, true));
 
   const queryRunner = coreDataSource.createQueryRunner();
 
@@ -100,7 +99,7 @@ export const prefillCoreViews = async ({
   }
 };
 
-const createCoreViews = async (
+export const createCoreViews = async (
   queryRunner: QueryRunner,
   workspaceId: string,
   viewDefinitions: ViewDefinition[],

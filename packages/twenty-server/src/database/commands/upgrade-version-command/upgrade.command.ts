@@ -16,6 +16,7 @@ import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
+import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-seed-dashboard-view.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -63,6 +64,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand: CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     protected readonly migrateChannelPartialFullSyncStagesCommand: MigrateChannelPartialFullSyncStagesCommand,
     protected readonly makeSureDashboardNamingAvailableCommand: MakeSureDashboardNamingAvailableCommand,
+    protected readonly seedDashboardViewCommand: SeedDashboardViewCommand,
   ) {
     super(
       workspaceRepository,
@@ -105,6 +107,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [
         this.migrateAttachmentAuthorToCreatedByCommand,
         this.migrateAttachmentTypeToFileCategoryCommand,
+        this.seedDashboardViewCommand,
       ],
     };
 
