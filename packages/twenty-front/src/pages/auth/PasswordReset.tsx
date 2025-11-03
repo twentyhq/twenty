@@ -5,6 +5,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -22,7 +23,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
@@ -83,6 +84,7 @@ export const PasswordReset = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const setCurrentUser = useSetRecoilState(currentUserState);
 
   const navigate = useNavigateApp();
   const { redirect } = useRedirect();
@@ -157,6 +159,10 @@ export const PasswordReset = () => {
         isTargetUserPasswordSet === false
           ? t`Password has been set`
           : t`Password has been updated`;
+
+      setCurrentUser((currentUser) =>
+        currentUser ? { ...currentUser, hasPassword: true } : currentUser,
+      );
 
       if (isLoggedIn) {
         enqueueSuccessSnackBar({
