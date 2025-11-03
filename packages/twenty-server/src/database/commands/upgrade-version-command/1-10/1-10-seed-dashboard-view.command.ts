@@ -1,7 +1,7 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'class-validator';
 import { Command } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
 
 import {
@@ -67,7 +67,7 @@ export class SeedDashboardViewCommand extends ActiveOrSuspendedWorkspacesMigrati
       },
     });
 
-    if (!schema) {
+    if (!isDefined(schema)) {
       throw new Error(`Schema not found for workspace ${workspaceId}`);
     }
 
