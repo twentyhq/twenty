@@ -68,6 +68,12 @@ export const CallToActionButton: Story = {
   },
 };
 
+export const WithLabel: Story = {
+  args: {
+    label: 'Test label',
+  },
+};
+
 export const WithDescription: Story = {
   args: {
     description: 'Test description',
