@@ -256,7 +256,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         message: expect.stringContaining(
           'Microsoft OAuth error: invalid_grant - Token has been revoked',
         ),
-        code: ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
+        code: ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
       });
     });
 
