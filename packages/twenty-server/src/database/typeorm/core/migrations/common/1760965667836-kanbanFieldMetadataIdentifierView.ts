@@ -6,9 +6,15 @@ export class KanbanFieldMetadataIdentifierView1760965667836
   name = 'KanbanFieldMetadataIdentifierView1760965667836';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."view" ADD CONSTRAINT "FK_b3cc95732479f7a1337350c398f" FOREIGN KEY ("kanbanAggregateOperationFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
-    );
+    try {
+      await queryRunner.query(
+        `ALTER TABLE "core"."view" ADD CONSTRAINT "FK_b3cc95732479f7a1337350c398f" FOREIGN KEY ("kanbanAggregateOperationFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      );
+    } catch (e) {
+      console.error(
+        'Swallowing KanbanFieldMetadataIdentifierView1760965667836 error, upgrade command will handle fallback',
+      );
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

@@ -110,5 +110,7 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
     this.logger.log(
       `${options.dryRun ? 'DRY RUN - Would have' : ''}Deleted ${deletedCount} KANBAN views and updated ${updatedCount} other views with orphaned kanbanAggregateOperationFieldMetadataId references`,
     );
+
+    // We need to duplicated what's done in the migration command here and try catch it globally becasue it will be run several time for all workspaces
   }
 }
