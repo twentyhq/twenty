@@ -1,6 +1,6 @@
 import { type ObjectRecord, RelationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { selectPriorityFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/select-priority-field-value.util';
 
 export const mergeRelationFieldValuesForDryRunRecord = (
@@ -21,23 +21,15 @@ export const mergeRelationFieldValuesForDryRunRecord = (
 const mergeOneToManyRelationArrays = (
   recordsWithValues: { value: unknown; recordId: string }[],
 ): ObjectRecord[] => {
-  const allRelations: ObjectRecord[] = [];
+  const uniqueRelationsMap = new Map<string, ObjectRecord>();
 
   recordsWithValues.forEach(({ value }) => {
     if (Array.isArray(value)) {
       value.forEach((relation: ObjectRecord) => {
-        if (relation?.id && hasRecordFieldValue(relation)) {
-          allRelations.push(relation);
+        if (isDefined(relation?.id)) {
+          uniqueRelationsMap.set(relation.id, relation);
         }
       });
-    }
-  });
-
-  const uniqueRelationsMap = new Map<string, ObjectRecord>();
-
-  allRelations.forEach((relation) => {
-    if (relation.id && !uniqueRelationsMap.has(relation.id)) {
-      uniqueRelationsMap.set(relation.id, relation);
     }
   });
 
