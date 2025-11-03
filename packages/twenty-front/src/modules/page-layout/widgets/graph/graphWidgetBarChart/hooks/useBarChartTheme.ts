@@ -17,9 +17,9 @@ export const useBarChartTheme = () => {
       },
       legend: {
         text: {
-          fill: theme.font.color.light,
+          fill: theme.font.color.secondary,
           fontSize: 12,
-          fontWeight: theme.font.weight.medium,
+          fontWeight: theme.font.weight.regular,
         },
       },
     },
@@ -34,6 +34,13 @@ export const useBarChartTheme = () => {
       text: {
         fontSize: 11,
         fontWeight: theme.font.weight.medium,
+      },
+    },
+    legend: {
+      text: {
+        fontSize: 9,
+        fill: theme.font.color.light,
+        fontWeight: theme.font.weight.semiBold,
       },
     },
   };
