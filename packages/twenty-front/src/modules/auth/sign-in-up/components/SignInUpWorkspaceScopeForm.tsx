@@ -5,7 +5,9 @@ import { SignInUpWithSSO } from '@/auth/sign-in-up/components/internal/SignInUpW
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useWorkspaceBypass } from '@/auth/sign-in-up/hooks/useWorkspaceBypass';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
+import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
@@ -22,6 +24,10 @@ const StyledContentContainer = styled.div`
 
 export const SignInUpWorkspaceScopeForm = () => {
   const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
+  const workspaceAuthBypassProviders = useRecoilValue(
+    workspaceAuthBypassProvidersState,
+  );
+  const { shouldOfferBypass, shouldUseBypass } = useWorkspaceBypass();
 
   const { form } = useSignInUpForm();
 
@@ -33,26 +39,32 @@ export const SignInUpWorkspaceScopeForm = () => {
     return null;
   }
 
+  const providers =
+    shouldOfferBypass && shouldUseBypass
+      ? {
+          ...workspaceAuthBypassProviders,
+          sso: [],
+        }
+      : workspaceAuthProviders;
+
   return (
     <>
       <StyledContentContainer>
-        {workspaceAuthProviders.google && (
-          <SignInUpWithGoogle action="join-workspace" />
-        )}
+        {providers.google && <SignInUpWithGoogle action="join-workspace" />}
 
-        {workspaceAuthProviders.microsoft && (
+        {providers.microsoft && (
           <SignInUpWithMicrosoft action="join-workspace" />
         )}
 
-        {workspaceAuthProviders.sso.length > 0 && <SignInUpWithSSO />}
+        {providers.sso.length > 0 && <SignInUpWithSSO />}
 
-        {(workspaceAuthProviders.google ||
-          workspaceAuthProviders.microsoft ||
-          workspaceAuthProviders.sso.length > 0) &&
-        workspaceAuthProviders.password ? (
+        {(providers.google ||
+          providers.microsoft ||
+          providers.sso.length > 0) &&
+        providers.password ? (
           <HorizontalSeparator />
         ) : null}
-        {workspaceAuthProviders.password && (
+        {providers.password && (
           // eslint-disable-next-line react/jsx-props-no-spreading
           <FormProvider {...form}>
             <SignInUpWithCredentials />
