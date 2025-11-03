@@ -5,6 +5,7 @@ permissions:
 
 on:
   workflow_dispatch:
+  pull_request:
   workflow_call:
   push:
     branches:
