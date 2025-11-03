@@ -39,6 +39,7 @@ const meta: Meta<PageDecoratorArgs> = {
                 validatePasswordResetToken: {
                   id: mockedOnboardingUsersData.id,
                   email: mockedOnboardingUsersData.email,
+                  hasPassword: mockedOnboardingUsersData.hasPassword,
                 },
               },
             });

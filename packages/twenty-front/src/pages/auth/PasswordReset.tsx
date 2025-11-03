@@ -15,7 +15,7 @@ import { ApolloError } from '@apollo/client';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -89,6 +89,8 @@ export const PasswordReset = () => {
 
   const [email, setEmail] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);
+  const [isTargetUserPasswordSet, setIsTargetUserPasswordSet] =
+    useState(false);
 
   const theme = useTheme();
 
@@ -118,8 +120,12 @@ export const PasswordReset = () => {
     },
     onCompleted: (data) => {
       setIsTokenValid(true);
-      if (isNonEmptyString(data?.validatePasswordResetToken?.email)) {
-        setEmail(data.validatePasswordResetToken.email);
+      const validationResult = data?.validatePasswordResetToken;
+      if (isNonEmptyString(validationResult?.email)) {
+        setEmail(validationResult.email);
+      }
+      if (validationResult?.hasPassword) {
+        setIsTargetUserPasswordSet(validationResult.hasPassword);
       }
     },
   });
@@ -147,9 +153,14 @@ export const PasswordReset = () => {
         return;
       }
 
+      const successMessage =
+        isTargetUserPasswordSet === false
+          ? t`Password has been set`
+          : t`Password has been updated`;
+
       if (isLoggedIn) {
         enqueueSuccessSnackBar({
-          message: t`Password has been updated`,
+          message: successMessage,
         });
         navigate(AppPath.Index);
         return;
@@ -179,6 +190,9 @@ export const PasswordReset = () => {
     }
   };
 
+  const passwordActionLabel =
+    isTargetUserPasswordSet === false ? t`Set Password` : t`Change Password`;
+
   return (
     isTokenValid && (
       <Modal.Content isVerticalCentered isHorizontalCentered>
@@ -189,9 +203,7 @@ export const PasswordReset = () => {
               placeholder={workspacePublicData?.displayName}
             />
           </AnimatedEaseIn>
-          <Title animate>
-            <Trans>Reset Password</Trans>
-          </Title>
+          <Title animate>{passwordActionLabel}</Title>
           <StyledContentContainer>
             {!email ? (
               <SkeletonTheme
@@ -259,7 +271,7 @@ export const PasswordReset = () => {
 
                 <StyledMainButton
                   variant="secondary"
-                  title={t`Change Password`}
+                  title={passwordActionLabel}
                   type="submit"
                   fullWidth
                   disabled={isUpdatingPassword}

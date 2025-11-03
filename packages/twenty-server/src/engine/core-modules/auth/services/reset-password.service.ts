@@ -210,6 +210,7 @@ export class ResetPasswordService {
     return {
       id: user.id,
       email: user.email,
+      hasPassword: isDefined(user.passwordHash),
     };
   }
 

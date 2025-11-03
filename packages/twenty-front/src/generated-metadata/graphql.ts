@@ -4525,6 +4525,7 @@ export type ValidateApprovedAccessDomainInput = {
 export type ValidatePasswordResetTokenOutput = {
   __typename?: 'ValidatePasswordResetTokenOutput';
   email: Scalars['String'];
+  hasPassword: Scalars['Boolean'];
   id: Scalars['UUID'];
 };
 
@@ -5214,7 +5215,7 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 }>;
 
 
-export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetTokenOutput', id: string, email: string } };
+export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetTokenOutput', id: string, email: string, hasPassword: boolean } };
 
 export type BillingPriceLicensedFragmentFragment = { __typename?: 'BillingPriceLicensed', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType };
 
@@ -8683,6 +8684,7 @@ export const ValidatePasswordResetTokenDocument = gql`
   validatePasswordResetToken(passwordResetToken: $token) {
     id
     email
+    hasPassword
   }
 }
     `;

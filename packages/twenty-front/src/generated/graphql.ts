@@ -4353,6 +4353,7 @@ export type ValidateApprovedAccessDomainInput = {
 export type ValidatePasswordResetTokenOutput = {
   __typename?: 'ValidatePasswordResetTokenOutput';
   email: Scalars['String'];
+  hasPassword: Scalars['Boolean'];
   id: Scalars['UUID'];
 };
 

@@ -244,6 +244,7 @@ export const mockedOnboardingUserData = (
     email: 'workspace-onboarding@test.com',
     firstName: '',
     lastName: '',
+    hasPassword: false,
     canAccessFullAdminPanel: false,
     canImpersonate: false,
     supportUserHash:
