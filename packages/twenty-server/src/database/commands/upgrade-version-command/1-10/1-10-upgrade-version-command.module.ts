@@ -33,7 +33,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     RegenerateSearchVectorsCommand,
     AddWorkflowRunStopStatusesCommand,
     CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
-    CreateViewKanbanFieldMetadataIdForeignKeyHackyMigrationCommand
+    CreateViewKanbanFieldMetadataIdForeignKeyHackyMigrationCommand,
   ],
   exports: [
     MigrateAttachmentAuthorToCreatedByCommand,
@@ -42,7 +42,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     AddWorkflowRunStopStatusesCommand,
     CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     MigrateChannelPartialFullSyncStagesCommand,
-    CreateViewKanbanFieldMetadataIdForeignKeyHackyMigrationCommand
+    CreateViewKanbanFieldMetadataIdForeignKeyHackyMigrationCommand,
   ],
 })
 export class V1_10_UpgradeVersionCommandModule {}

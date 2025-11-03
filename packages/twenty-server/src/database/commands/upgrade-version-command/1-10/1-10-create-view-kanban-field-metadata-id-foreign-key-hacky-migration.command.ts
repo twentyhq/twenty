@@ -33,6 +33,7 @@ export class CreateViewKanbanFieldMetadataIdForeignKeyHackyMigrationCommand exte
   }: RunOnWorkspaceArgs): Promise<void> {
     if (this.hasRunOnce) {
       this.logger.log('Skipping kanban field metadata id foreign key creation');
+
       return;
     }
 
