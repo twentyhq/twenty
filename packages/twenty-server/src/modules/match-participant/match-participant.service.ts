@@ -110,6 +110,7 @@ export class MatchParticipantService<
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     const chunkSize = 200;

@@ -1,22 +1,22 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { type Repository } from 'typeorm';
 
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 describe('UserService', () => {
   let service: UserService;
@@ -107,7 +107,9 @@ describe('UserService', () => {
 
       expect(
         twentyORMGlobalManager.getRepositoryForWorkspace,
-      ).toHaveBeenCalledWith('w1', 'workspaceMember');
+      ).toHaveBeenCalledWith('w1', 'workspaceMember', {
+        shouldBypassPermissionChecks: true,
+      });
       expect(mockWorkspaceMemberRepo.findOne).toHaveBeenCalledWith({
         where: { userId: 'u1' },
       });
