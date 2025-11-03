@@ -10,7 +10,6 @@ import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/meta
 import { fromDeleteViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util';
 import { fromDestroyViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util';
 import { fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util';
-import { throwOnViewFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-view-field/utils/throw-on-view-field-input-transpilations-error.util';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
@@ -80,23 +79,12 @@ export class ViewFieldV2Service {
       },
     );
 
-    const allTranspiledTranspilationInputs = createViewFieldInputs.map(
+    const flatViewFieldsToCreate = createViewFieldInputs.map(
       (createViewFieldInput) =>
         fromCreateViewFieldInputToFlatViewFieldToCreate({
           createViewFieldInput,
           workspaceId,
-          flatViewMaps,
-          flatFieldMetadataMaps,
         }),
-    );
-
-    throwOnViewFieldInputTranspilationsError(
-      allTranspiledTranspilationInputs,
-      'Multiple validation errors occurred while creating view fields',
-    );
-
-    const flatViewFieldsToCreate = allTranspiledTranspilationInputs.map(
-      ({ result }) => result,
     );
 
     const validateAndBuildResult =
