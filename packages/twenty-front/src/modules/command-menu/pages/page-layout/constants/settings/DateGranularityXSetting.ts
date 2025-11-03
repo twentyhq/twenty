@@ -9,5 +9,6 @@ export const DATE_GRANULARITY_X_SETTING: ChartSettingsItem = {
   Icon: IconCalendar,
   label: CHART_CONFIGURATION_SETTING_LABELS.DATE_GRANULARITY_X,
   id: CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_X,
+  dependsOn: [CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X],
   DropdownContent: ChartDateGranularityXSelectionDropdownContent,
 };
