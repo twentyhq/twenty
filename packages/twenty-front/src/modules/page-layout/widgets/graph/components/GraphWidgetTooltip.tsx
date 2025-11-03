@@ -34,7 +34,7 @@ const StyledTooltipRowContainer = styled.div<{ $scrollable?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  max-height: ${({ $scrollable }) => ($scrollable ? '200px' : 'none')};
+  max-height: ${({ $scrollable }) => ($scrollable ? '120px' : 'none')};
   overflow-y: ${({ $scrollable }) => ($scrollable ? 'auto' : 'visible')};
 `;
 

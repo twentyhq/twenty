@@ -121,7 +121,6 @@ export const GraphWidgetBarChart = ({
 
   const debouncedSetChartHovered = useDebouncedCallback((value: boolean) => {
     setIsChartHovered(value);
-    // Clear hoveredBar when leaving chart completely (not going to tooltip)
     if (!value && !isTooltipHovered) {
       setHoveredBar(null);
     }
