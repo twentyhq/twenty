@@ -99,27 +99,28 @@ export class WorkflowTriggerWorkspaceService {
         { shouldBypassPermissionChecks: true }, // settings permissions are checked at resolver-level
       );
 
-    const workflowVersionToActivateNullable =
-      await workflowVersionRepository.findOne({
-        where: { id: workflowVersionId },
-        select: {
+    const workflowVersionToActivate = await workflowVersionRepository.findOne({
+      where: { id: workflowVersionId },
+      select: {
+        id: true,
+        status: true,
+        workflowId: true,
+        steps: {
           id: true,
-          status: true,
-          workflowId: true,
-          steps: {
-            id: true,
-            type: true,
-          },
-          trigger: {
-            type: true,
-          },
+          type: true,
         },
-      });
+        trigger: {
+          type: true,
+        },
+      },
+    });
 
-    const workflowVersionToActivate =
-      await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
-        workflowVersionToActivateNullable ?? null,
+    if (!workflowVersionToActivate) {
+      throw new WorkflowTriggerException(
+        'Workflow version not found',
+        WorkflowTriggerExceptionCode.NOT_FOUND,
       );
+    }
 
     assertVersionCanBeActivated(workflowVersionToActivate);
 
@@ -204,9 +205,9 @@ export class WorkflowTriggerWorkspaceService {
       );
     }
 
-    await workflowVersionRepository.update(
-      { id: workflowVersionToActivate.id },
-      { status: WorkflowVersionStatus.ACTIVE },
+    await this.setActiveVersionStatus(
+      workflowVersionToActivate,
+      workflowVersionRepository,
     );
 
     await this.enableTrigger(workflowVersionToActivate);
@@ -215,26 +216,22 @@ export class WorkflowTriggerWorkspaceService {
       { id: workflowId },
       { lastPublishedVersionId: workflowVersionToActivate.id },
     );
-
-    await this.emitStatusUpdateEvents(
-      workflowVersionToActivate,
-      WorkflowVersionStatus.ACTIVE,
-      this.getWorkspaceId(),
-    );
   }
 
   private async performDeactivationSteps(
     workflowVersionId: string,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
   ) {
-    const workflowVersionNullable = await workflowVersionRepository.findOne({
+    const workflowVersion = await workflowVersionRepository.findOne({
       where: { id: workflowVersionId },
     });
 
-    const workflowVersion =
-      await this.workflowCommonWorkspaceService.getValidWorkflowVersionOrFail(
-        workflowVersionNullable,
+    if (!workflowVersion) {
+      throw new WorkflowTriggerException(
+        'Workflow version not found',
+        WorkflowTriggerExceptionCode.NOT_FOUND,
       );
+    }
 
     if (workflowVersion.status !== WorkflowVersionStatus.ACTIVE) {
       return;
@@ -252,7 +249,6 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
   ) {
-    // No redundant query - validation already done in activateWorkflowVersion
     await workflowVersionRepository.update(
       { id: workflowVersion.id },
       { status: WorkflowVersionStatus.ACTIVE },
