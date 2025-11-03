@@ -22,7 +22,7 @@
   "devDependencies": {
     "jest": "29.7.0",
     "rimraf": "^3.0.2",
-    "zapier-platform-cli": "^17.9.1"
+    "zapier-platform-cli": "^15.4.1"
   },
   "installConfig": {
     "hoistingLimits": "dependencies"
