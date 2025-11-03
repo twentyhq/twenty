@@ -14,6 +14,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 describe('Core REST API Create One endpoint', () => {
   beforeEach(async () => {
     await deleteAllRecords('person');
+    await deleteAllRecords('company');
     await makeRestAPIRequest({
       method: 'post',
       path: '/companies',
@@ -24,6 +25,11 @@ describe('Core REST API Create One endpoint', () => {
         },
       },
     });
+  });
+
+  afterAll(async () => {
+    await deleteAllRecords('person');
+    await deleteAllRecords('company');
   });
 
   it('should create a new person', async () => {
@@ -182,7 +188,9 @@ describe('Core REST API Create One endpoint', () => {
     })
       .expect(400)
       .expect((res) => {
-        expect(res.body.messages[0]).toContain(`Record already exists`);
+        expect(res.body.messages[0]).toContain(
+          `A duplicate entry was detected`,
+        );
         expect(res.body.error).toBe('BadRequestException');
       });
   });

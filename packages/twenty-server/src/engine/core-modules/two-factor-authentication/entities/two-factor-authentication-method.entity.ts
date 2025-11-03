@@ -14,12 +14,12 @@ import {
 } from 'typeorm';
 
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorAuthenticationMethod', schema: 'core' })
-@ObjectType()
-export class TwoFactorAuthenticationMethod {
+@ObjectType('TwoFactorAuthenticationMethod')
+export class TwoFactorAuthenticationMethodEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -28,16 +28,16 @@ export class TwoFactorAuthenticationMethod {
   @Column({ nullable: false, type: 'uuid' })
   userWorkspaceId: string;
 
-  @Field(() => UserWorkspace)
+  @Field(() => UserWorkspaceEntity)
   @ManyToOne(
-    () => UserWorkspace,
+    () => UserWorkspaceEntity,
     (userWorkspace) => userWorkspace.twoFactorAuthenticationMethods,
     {
       onDelete: 'CASCADE',
     },
   )
   @JoinColumn({ name: 'userWorkspaceId' })
-  userWorkspace: Relation<UserWorkspace>;
+  userWorkspace: Relation<UserWorkspaceEntity>;
 
   @Column({ nullable: false, type: 'text' })
   secret: string;

@@ -33,6 +33,8 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   name: '20202020-87a5-48f8-bbf7-ade388825a57',
   fullPath: '20202020-0d19-453d-8e8d-fbcda8ca3747',
   type: '20202020-a417-49b8-a40b-f6a7874caa0d',
+  fileCategory: '20202020-8c3f-4d9e-9a1b-2e5f7a8c9d0e',
+  createdBy: '395be3bd-a5c9-463d-aafe-9bc3bbec3f15',
   author: '20202020-6501-4ac5-a4ef-b2f8522ef6cd',
   activity: '20202020-b569-481b-a13f-9b94e47e54fe',
   task: '20202020-51e5-4621-9cf8-215487951c4b',
@@ -245,6 +247,8 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
   messageFolders: '20202020-cc39-4432-9fe8-ec8ab8bbed94',
   messageFolderImportPolicy: '20202020-cc39-4432-9fe8-ec8ab8bbed95',
+  syncAllFolders: '20202020-e36b-409c-a9bd-79071596cdc0',
+  pendingGroupEmailsAction: '20202020-17c5-4e9f-bc50-af46a89fdd42',
   isSyncEnabled: '20202020-d9a6-48e9-990b-b97fdf22e8dd',
   syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
   syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
@@ -261,6 +265,7 @@ export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
   isSentFolder: '20202020-2af5-4a25-b2de-3c9386da941b',
   isSynced: '20202020-764f-4e09-8f95-cd46b6bfe3c4',
   externalId: '20202020-f3a8-4d2b-9c7e-1b5f9a8e4c6d',
+  pendingSyncAction: '20202020-4f97-4c79-9517-16387fe237f7',
 } as const;
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {

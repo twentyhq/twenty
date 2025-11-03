@@ -9,10 +9,10 @@ import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
 import { AIChatErrorMessage } from '@/ai/components/AIChatErrorMessage';
 import { AIChatErrorMessageWithRecordsContext } from '@/ai/components/internal/AIChatErrorMessageWithRecordsContext';
-import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -51,7 +51,9 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  white-space: pre-wrap;
+  /* Pre-wrap within the whole container turns every newline between block
+     elements into extra spacing; keep normal flow and only pre-wrap code. */
+  white-space: normal;
 
   code {
     overflow: auto;
@@ -146,7 +148,7 @@ export const AIChatMessage = ({
   isLastMessageStreaming,
   error,
 }: {
-  message: UIMessageWithMetadata;
+  message: ExtendedUIMessage;
   isLastMessageStreaming: boolean;
   error?: Error | null;
 }) => {
@@ -159,6 +161,8 @@ export const AIChatMessage = ({
 
   const showError =
     isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
+
+  const fileParts = message.parts.filter((part) => part.type === 'file');
 
   return (
     <StyledMessageBubble
@@ -191,13 +195,11 @@ export const AIChatMessage = ({
               hasError={showError}
             />
           </StyledMessageText>
-          {message.parts.length > 0 && (
+          {fileParts.length > 0 && (
             <StyledFilesContainer>
-              {message.parts
-                .filter((part) => part.type === 'file')
-                .map((file) => (
-                  <AgentChatFilePreview key={file.filename} file={file} />
-                ))}
+              {fileParts.map((file) => (
+                <AgentChatFilePreview key={file.filename} file={file} />
+              ))}
             </StyledFilesContainer>
           )}
           {showError &&

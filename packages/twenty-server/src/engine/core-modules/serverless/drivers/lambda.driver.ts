@@ -46,9 +46,17 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
+
+type LambdaDriverExecutorPayload = {
+  code: string;
+  params: object;
+  env: Record<string, string>;
+  handlerName: string;
+};
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -325,8 +333,10 @@ export class LambdaDriver implements ServerlessDriver {
       let builtBundleFilePath = '';
 
       try {
-        builtBundleFilePath =
-          await buildServerlessFunctionInMemory(sourceTemporaryDir);
+        builtBundleFilePath = await buildServerlessFunctionInMemory({
+          sourceTemporaryDir,
+          handlerPath: serverlessFunction.handlerPath,
+        });
       } catch (error) {
         return formatBuildError(error, startTime);
       }
@@ -335,9 +345,11 @@ export class LambdaDriver implements ServerlessDriver {
         'utf-8',
       );
 
-      const executorPayload = {
+      const executorPayload: LambdaDriverExecutorPayload = {
         params: payload,
         code: compiledCode,
+        env: buildEnvVar(serverlessFunction),
+        handlerName: serverlessFunction.handlerName,
       };
 
       const params: InvokeCommandInput = {

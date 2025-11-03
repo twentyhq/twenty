@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-access-token.service';
-import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 
 @Module({
-  imports: [MessagingCommonModule],
+  imports: [TwentyConfigModule],
   providers: [GoogleAPIRefreshAccessTokenService],
   exports: [GoogleAPIRefreshAccessTokenService],
 })

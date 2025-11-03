@@ -6,10 +6,10 @@ import axios from 'axios';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 const UserFindOneMock = jest.fn();
 const LoginTokenServiceGenerateLoginTokenMock = jest.fn();
@@ -47,7 +47,7 @@ describe('AdminPanelService', () => {
       providers: [
         AdminPanelService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserEntity),
           useValue: {
             findOne: UserFindOneMock,
           },
@@ -59,7 +59,7 @@ describe('AdminPanelService', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: WorkspaceDomainsService,
           useValue: {
             getWorkspaceUrls: jest.fn().mockReturnValue({
               customUrl: undefined,

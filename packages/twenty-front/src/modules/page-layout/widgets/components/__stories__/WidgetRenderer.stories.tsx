@@ -5,12 +5,12 @@ import {
 } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { type MutableSnapshot } from 'recoil';
 import { MemoryRouter } from 'react-router-dom';
+import { type MutableSnapshot } from 'recoil';
 
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
@@ -21,8 +21,9 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
+  AggregateOperations,
   AxisNameDisplay,
-  ExtendedAggregateOperations,
+  PageLayoutType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -122,7 +123,7 @@ const meta: Meta<typeof WidgetRenderer> = {
           objectMetadataItemsState,
           generatedMockObjectMetadataItems,
         );
-        snapshot.set(isAppWaitingForFreshObjectMetadataState, false);
+        snapshot.set(shouldAppBeLoadingState, false);
       };
 
       return (
@@ -169,9 +170,9 @@ export const WithNumberChart: Story = {
         columnSpan: 3,
       },
       configuration: {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
@@ -182,7 +183,11 @@ export const WithNumberChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -206,7 +211,7 @@ export const WithGaugeChart: Story = {
       configuration: {
         __typename: 'GaugeChartConfiguration',
         graphType: GraphType.GAUGE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: false,
       },
@@ -217,7 +222,11 @@ export const WithGaugeChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '400px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -241,7 +250,7 @@ export const WithBarChart: Story = {
       configuration: {
         __typename: 'BarChartConfiguration',
         graphType: GraphType.VERTICAL_BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
@@ -255,7 +264,11 @@ export const WithBarChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -277,9 +290,9 @@ export const SmallWidget: Story = {
         columnSpan: 2,
       },
       configuration: {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
@@ -297,7 +310,11 @@ export const SmallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -321,7 +338,7 @@ export const MediumWidget: Story = {
       configuration: {
         __typename: 'BarChartConfiguration',
         graphType: GraphType.VERTICAL_BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
@@ -342,7 +359,11 @@ export const MediumWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '400px', height: '250px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -366,7 +387,7 @@ export const LargeWidget: Story = {
       configuration: {
         __typename: 'BarChartConfiguration',
         graphType: GraphType.VERTICAL_BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
@@ -387,7 +408,11 @@ export const LargeWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '600px', height: '400px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -409,9 +434,9 @@ export const WideWidget: Story = {
         columnSpan: 8,
       },
       configuration: {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
@@ -429,7 +454,11 @@ export const WideWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '800px', height: '200px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -453,7 +482,7 @@ export const TallWidget: Story = {
       configuration: {
         __typename: 'BarChartConfiguration',
         graphType: GraphType.VERTICAL_BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         aggregateFieldMetadataId: idField.id,
         primaryAxisGroupByFieldMetadataId: createdAtField.id,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
@@ -474,7 +503,11 @@ export const TallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };

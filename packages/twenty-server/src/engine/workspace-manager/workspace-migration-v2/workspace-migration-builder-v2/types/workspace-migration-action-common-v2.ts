@@ -1,4 +1,5 @@
-import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
 import { type MetadataWorkspaceMigrationAction } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 
 export type WorkspaceMigrationActionV2 =

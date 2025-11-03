@@ -15,7 +15,7 @@ import {
   type ClientAIModelConfig,
   type ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -23,7 +23,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class ClientConfigService {
   constructor(
     private twentyConfigService: TwentyConfigService,
-    private domainManagerService: DomainManagerService,
+    private domainServerConfigService: DomainServerConfigService,
     private aiModelRegistryService: AiModelRegistryService,
   ) {}
 
@@ -107,7 +107,7 @@ export class ClientConfigService {
         'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-      frontDomain: this.domainManagerService.getFrontUrl().hostname,
+      frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
       debugMode:
         this.twentyConfigService.get('NODE_ENV') ===
         NodeEnvironment.DEVELOPMENT,

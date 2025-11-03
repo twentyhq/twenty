@@ -60,9 +60,14 @@ export const parseGroupByArgs = (
     }
     for (const fieldName of Object.keys(fieldNames)) {
       const fieldMetadataId =
-        objectMetadataItemWithFieldMaps.fieldIdByName[fieldName];
+        objectMetadataItemWithFieldMaps.fieldIdByName[fieldName] ||
+        objectMetadataItemWithFieldMaps.fieldIdByJoinColumnName[fieldName];
       const fieldMetadata =
         objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+
+      if (!isDefined(fieldMetadata) || !isDefined(fieldMetadataId)) {
+        throw new Error(`Unidentified field in groupBy: ${fieldName}`);
+      }
 
       if (
         fieldMetadata.type === FieldMetadataType.DATE ||

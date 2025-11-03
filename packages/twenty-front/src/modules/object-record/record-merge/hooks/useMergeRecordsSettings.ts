@@ -1,16 +1,10 @@
 import { useRecoilState } from 'recoil';
 
-import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { type MergeManySettings } from '@/object-record/hooks/useMergeManyRecords';
 import { mergeSettingsState } from '../states/mergeSettingsState';
 
 export const useMergeRecordsSettings = () => {
   const [mergeSettings, setMergeSettings] = useRecoilState(mergeSettingsState);
-  const { records: selectedRecords } = useFindManyRecordsSelectedInContextStore(
-    {
-      limit: 10,
-    },
-  );
 
   const updateMergeSettings = (settings: MergeManySettings) => {
     setMergeSettings(settings);
@@ -24,7 +18,6 @@ export const useMergeRecordsSettings = () => {
   };
 
   return {
-    selectedRecords,
     mergeSettings,
     updateMergeSettings,
     updatePriorityRecordIndex,

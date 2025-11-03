@@ -42,6 +42,7 @@ import {
   getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -65,11 +66,14 @@ import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { loginTokenState } from '../states/loginTokenState';
-import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
+import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setLoginToken = useSetRecoilState(loginTokenState);
+  const setIsAppEffectRedirectEnabled = useSetRecoilState(
+    isAppEffectRedirectEnabledState,
+  );
 
   const { origin } = useOrigin();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
@@ -317,13 +321,20 @@ export const useAuth = () => {
     async (authTokens: AuthTokenPair) => {
       handleSetAuthTokens(authTokens);
 
+      setIsAppEffectRedirectEnabled(false);
+
       // TODO: We can't parallelize this yet because when loadCurrentUSer is loaded
       // then UserProvider updates its children and PrefetchDataProvider is then triggered
       // which requires the correct metadata to be loaded (not the mocks)
       await loadCurrentUser();
       await refreshObjectMetadataItems();
     },
-    [loadCurrentUser, handleSetAuthTokens, refreshObjectMetadataItems],
+    [
+      loadCurrentUser,
+      handleSetAuthTokens,
+      refreshObjectMetadataItems,
+      setIsAppEffectRedirectEnabled,
+    ],
   );
 
   const handleGetAuthTokensFromLoginToken = useCallback(

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-all-flat-entity-maps.constant';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { EMPTY_ORCHESTRATOR_ACTIONS_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
+import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-failure-report.constant';
 import {
   WorkspaceMigrationOrchestratorBuildArgs,
@@ -65,7 +65,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         };
       },
       {
-        ...EMPTY_ALL_FLAT_ENTITY_MAPS,
+        ...createEmptyAllFlatEntityMaps(),
         ...dependencyAllFlatEntityMaps,
       },
     );
@@ -81,10 +81,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
     | WorkspaceMigrationOrchestratorSuccessfulResult
   > {
     const orchestratorActionsReport = structuredClone({
-      ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+      ...createEmptyOrchestratorActionsReport(),
     });
     const orchestratorFailureReport = structuredClone(
-      EMPTY_ORCHESTRATOR_FAILURE_REPORT,
+      EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
     );
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
@@ -126,6 +126,14 @@ export class WorkspaceMigrationBuildOrchestratorService {
                     ?.idByUniversalIdentifier,
                   ...flatFieldMetadataMaps?.from.idByUniversalIdentifier,
                   ...flatFieldMetadataMaps?.to.idByUniversalIdentifier,
+                },
+                universalIdentifiersByApplicationId: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
+                    ?.universalIdentifiersByApplicationId,
+                  ...flatFieldMetadataMaps?.from
+                    .universalIdentifiersByApplicationId,
+                  ...flatFieldMetadataMaps?.to
+                    .universalIdentifiersByApplicationId,
                 },
               },
             },
@@ -213,6 +221,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             dependencyOptimisticFlatEntityMaps: {
               flatObjectMetadataMaps:
                 optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+              flatFieldMetadataMaps:
+                optimisticAllFlatEntityMaps.flatFieldMetadataMaps,
             },
             from: fromFlatViewMaps,
             to: toFlatViewMaps,

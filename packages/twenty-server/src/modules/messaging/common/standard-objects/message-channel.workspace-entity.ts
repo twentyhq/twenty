@@ -32,8 +32,6 @@ export enum MessageChannelSyncStatus {
 
 export enum MessageChannelSyncStage {
   PENDING_CONFIGURATION = 'PENDING_CONFIGURATION',
-  FULL_MESSAGE_LIST_FETCH_PENDING = 'FULL_MESSAGE_LIST_FETCH_PENDING', // WILL BE DEPRECATED
-  PARTIAL_MESSAGE_LIST_FETCH_PENDING = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING', // DEPRECATED
   MESSAGE_LIST_FETCH_PENDING = 'MESSAGE_LIST_FETCH_PENDING',
   MESSAGE_LIST_FETCH_SCHEDULED = 'MESSAGE_LIST_FETCH_SCHEDULED',
   MESSAGE_LIST_FETCH_ONGOING = 'MESSAGE_LIST_FETCH_ONGOING',
@@ -65,6 +63,12 @@ export enum MessageFolderImportPolicy {
   SELECTED_FOLDERS = 'SELECTED_FOLDERS',
 }
 
+export enum MessageChannelPendingGroupEmailsAction {
+  GROUP_EMAILS_DELETION = 'GROUP_EMAILS_DELETION',
+  GROUP_EMAILS_IMPORT = 'GROUP_EMAILS_IMPORT',
+  NONE = 'NONE',
+}
+
 registerEnumType(MessageChannelVisibility, {
   name: 'MessageChannelVisibility',
 });
@@ -87,6 +91,10 @@ registerEnumType(MessageChannelContactAutoCreationPolicy, {
 
 registerEnumType(MessageFolderImportPolicy, {
   name: 'MessageFolderImportPolicy',
+});
+
+registerEnumType(MessageChannelPendingGroupEmailsAction, {
+  name: 'MessageChannelPendingGroupEmailsAction',
 });
 
 @WorkspaceEntity({
@@ -250,6 +258,46 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   excludeGroupEmails: boolean;
 
   @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncAllFolders,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`Sync all folders`,
+    description: msg`Sync all folders including new ones`,
+    icon: 'IconFolders',
+    defaultValue: true,
+  })
+  syncAllFolders: boolean;
+
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.pendingGroupEmailsAction,
+    type: FieldMetadataType.SELECT,
+    label: msg`Pending group emails action`,
+    description: msg`Pending action for group emails`,
+    icon: 'IconUsersGroup',
+    options: [
+      {
+        value: MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION,
+        label: 'Group emails deletion',
+        position: 0,
+        color: 'red',
+      },
+      {
+        value: MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT,
+        label: 'Group emails import',
+        position: 1,
+        color: 'green',
+      },
+      {
+        value: MessageChannelPendingGroupEmailsAction.NONE,
+        label: 'None',
+        position: 2,
+        color: 'blue',
+      },
+    ],
+    defaultValue: `'${MessageChannelPendingGroupEmailsAction.NONE}'`,
+  })
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction;
+
+  @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: msg`Is Sync Enabled`,
@@ -370,21 +418,9 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'red',
       },
       {
-        value: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING, // WILL BE DEPRECATED
-        label: 'Full messages list fetch pending',
-        position: 7,
-        color: 'blue',
-      },
-      {
-        value: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING, // DEPRECATED
-        label: 'Partial messages list fetch pending',
-        position: 8,
-        color: 'blue',
-      },
-      {
         value: MessageChannelSyncStage.PENDING_CONFIGURATION,
         label: 'Pending configuration',
-        position: 9,
+        position: 7,
         color: 'gray',
       },
     ],

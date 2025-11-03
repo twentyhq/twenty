@@ -1,7 +1,7 @@
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource } from 'typeorm';
 
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 const tableName = 'workspace';
@@ -26,10 +26,10 @@ const workspaceSeederFields = [
   'activationStatus',
   'version',
   'isTwoFactorAuthenticationEnforced',
-] as const satisfies (keyof Workspace)[];
+] as const satisfies (keyof WorkspaceEntity)[];
 
 type WorkspaceSeederFields = Pick<
-  Workspace,
+  WorkspaceEntity,
   (typeof workspaceSeederFields)[number]
 >;
 

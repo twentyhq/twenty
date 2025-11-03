@@ -19,27 +19,28 @@ export default [
 
   // Global ignores
   {
-    ignores: [
-      '**/node_modules/**',
-    ],
+    ignores: ['**/node_modules/**'],
   },
 
   // Base configuration for all files
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     plugins: {
-      'prettier': prettierPlugin,
-      'lingui': linguiPlugin,
+      prettier: prettierPlugin,
+      lingui: linguiPlugin,
       '@nx': nxPlugin,
       'prefer-arrow': preferArrowPlugin,
-      'import': importPlugin,
+      import: importPlugin,
       'unused-imports': unusedImportsPlugin,
-      'unicorn': unicornPlugin,
+      unicorn: unicornPlugin,
     },
     rules: {
       // General rules
       'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
-      'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
+      'no-console': [
+        'warn',
+        { allow: ['group', 'groupCollapsed', 'groupEnd'] },
+      ],
       'no-control-regex': 0,
       'no-debugger': 'error',
       'no-duplicate-imports': 'error',
@@ -53,6 +54,14 @@ export default [
           enforceBuildableLibDependency: true,
           allow: [],
           depConstraints: [
+            {
+              sourceTag: 'scope:apps',
+              onlyDependOnLibsWithTags: ['scope:apps', 'scope:sdk'],
+            },
+            {
+              sourceTag: 'scope:sdk',
+              onlyDependOnLibsWithTags: ['scope:sdk'],
+            },
             {
               sourceTag: 'scope:shared',
               onlyDependOnLibsWithTags: ['scope:shared'],
@@ -123,9 +132,9 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { 
+        {
           prefer: 'type-imports',
-          fixStyle: 'inline-type-imports'
+          fixStyle: 'inline-type-imports',
         },
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',

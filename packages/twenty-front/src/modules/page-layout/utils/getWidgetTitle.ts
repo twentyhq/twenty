@@ -2,7 +2,7 @@ import { GraphType } from '~/generated/graphql';
 
 export const getWidgetTitle = (graphType: GraphType, index: number): string => {
   const baseNames: Record<GraphType, string> = {
-    [GraphType.NUMBER]: 'Number',
+    [GraphType.AGGREGATE]: 'Number',
     [GraphType.GAUGE]: 'Gauge',
     [GraphType.PIE]: 'Pie Chart',
     [GraphType.VERTICAL_BAR]: 'Vertical Bar Chart',

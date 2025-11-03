@@ -67,7 +67,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         description
         filter
       }
-      ... on NumberChartConfiguration {
+      ... on AggregateChartConfiguration {
         graphType
         aggregateFieldMetadataId
         aggregateOperation

@@ -1,10 +1,10 @@
-import { COLOR } from './Colors';
+import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
 
 export const CODE_DARK = {
   text: {
-    gray: COLOR.gray50,
-    sky: COLOR.sky50,
-    pink: COLOR.pink50,
-    orange: COLOR.orange40,
+    gray: COLOR_DARK.gray10,
+    sky: COLOR_DARK.sky10,
+    pink: COLOR_DARK.pink10,
+    orange: COLOR_DARK.orange8,
   },
 };

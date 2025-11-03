@@ -13,9 +13,9 @@ import { PublicDomainService } from 'src/engine/core-modules/public-domain/publi
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomainInput } from 'src/engine/core-modules/public-domain/dtos/public-domain.input';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import {
   PublicDomainException,
@@ -31,15 +31,15 @@ import {
 @Resolver()
 export class PublicDomainResolver {
   constructor(
-    @InjectRepository(PublicDomain)
-    private readonly publicDomainRepository: Repository<PublicDomain>,
+    @InjectRepository(PublicDomainEntity)
+    private readonly publicDomainRepository: Repository<PublicDomainEntity>,
     private readonly publicDomainService: PublicDomainService,
     private readonly dnsManagerService: DnsManagerService,
   ) {}
 
   @Query(() => [PublicDomainDTO])
   async findManyPublicDomains(
-    @AuthWorkspace() currentWorkspace: Workspace,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<PublicDomainDTO[]> {
     return await this.publicDomainRepository.find({
       where: { workspaceId: currentWorkspace.id },
@@ -49,7 +49,7 @@ export class PublicDomainResolver {
   @Mutation(() => PublicDomainDTO)
   async createPublicDomain(
     @Args() { domain }: PublicDomainInput,
-    @AuthWorkspace() currentWorkspace: Workspace,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<PublicDomainDTO> {
     return this.publicDomainService.createPublicDomain({
       domain,
@@ -60,7 +60,7 @@ export class PublicDomainResolver {
   @Mutation(() => Boolean)
   async deletePublicDomain(
     @Args() { domain }: PublicDomainInput,
-    @AuthWorkspace() currentWorkspace: Workspace,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<boolean> {
     await this.publicDomainService.deletePublicDomain({
       domain,
@@ -73,7 +73,7 @@ export class PublicDomainResolver {
   @Mutation(() => DomainValidRecords, { nullable: true })
   async checkPublicDomainValidRecords(
     @Args() { domain }: PublicDomainInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<DomainValidRecords | undefined> {
     const publicDomain = await this.publicDomainRepository.findOne({
       where: { workspaceId: workspace.id, domain },

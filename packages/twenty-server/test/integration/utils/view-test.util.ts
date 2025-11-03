@@ -1,14 +1,10 @@
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { type ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
-
-export const cleanupViewRecords = async (): Promise<void> => {
-  await global.testDataSource.query(`DELETE from "core"."view"`);
-};
 
 export const assertViewStructure = (
   view: ViewEntity,

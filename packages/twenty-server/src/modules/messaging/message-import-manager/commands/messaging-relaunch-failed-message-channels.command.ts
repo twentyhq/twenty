@@ -7,7 +7,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import {
@@ -22,8 +22,8 @@ import {
 })
 export class MessagingRelaunchFailedMessageChannelsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace)
-    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly accountsToReconnectService: AccountsToReconnectService,
   ) {
@@ -57,7 +57,7 @@ export class MessagingRelaunchFailedMessageChannelsCommand extends ActiveOrSuspe
         await messageChannelRepository.update(
           failedMessageChannels.map(({ id }) => id),
           {
-            syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
             syncStatus: MessageChannelSyncStatus.ACTIVE,
           },
         );

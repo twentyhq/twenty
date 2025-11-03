@@ -11,6 +11,10 @@ export const getPageLayoutPageTitle = (page: PageLayoutCommandMenuPage) => {
       return t`Select Graph Type`;
     case CommandMenuPages.PageLayoutIframeConfig:
       return t`Configure iFrame`;
+    case CommandMenuPages.PageLayoutGraphFilter:
+      return t`Configure filters`;
+    case CommandMenuPages.PageLayoutTabSettings:
+      return t`Tab Settings`;
     default:
       assertUnreachable(page);
   }

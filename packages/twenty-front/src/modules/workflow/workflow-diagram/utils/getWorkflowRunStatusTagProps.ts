@@ -34,6 +34,20 @@ export const getWorkflowRunStatusTagProps = ({
     };
   }
 
+  if (workflowRunStatus === 'STOPPING') {
+    return {
+      color: 'orange',
+      text: 'Stopping',
+    };
+  }
+
+  if (workflowRunStatus === 'STOPPED') {
+    return {
+      color: 'gray',
+      text: 'Stopped',
+    };
+  }
+
   return {
     color: 'red',
     text: 'Failed',

@@ -8,10 +8,10 @@ import {
   IdentityProviderType,
   SSOIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { WorkspaceUrls } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
+import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
-@ObjectType()
-class SSOConnection {
+@ObjectType('SSOConnection')
+class SSOConnectionDTO {
   @Field(() => IdentityProviderType)
   type: SSOConfiguration['type'];
 
@@ -28,7 +28,7 @@ class SSOConnection {
   status: SSOConfiguration['status'];
 }
 
-@ObjectType()
+@ObjectType('AvailableWorkspace')
 export class AvailableWorkspace {
   @Field(() => UUIDScalarType)
   id: string;
@@ -45,17 +45,17 @@ export class AvailableWorkspace {
   @Field(() => String, { nullable: true })
   inviteHash?: string;
 
-  @Field(() => WorkspaceUrls)
-  workspaceUrls: WorkspaceUrls;
+  @Field(() => WorkspaceUrlsDTO)
+  workspaceUrls: WorkspaceUrlsDTO;
 
   @Field(() => String, { nullable: true })
   logo?: string;
 
-  @Field(() => [SSOConnection])
-  sso: SSOConnection[];
+  @Field(() => [SSOConnectionDTO])
+  sso: SSOConnectionDTO[];
 }
 
-@ObjectType()
+@ObjectType('AvailableWorkspaces')
 export class AvailableWorkspaces {
   @Field(() => [AvailableWorkspace])
   availableWorkspacesForSignIn: Array<AvailableWorkspace>;

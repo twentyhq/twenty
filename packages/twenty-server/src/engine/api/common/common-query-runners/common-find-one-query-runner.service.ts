@@ -13,84 +13,51 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
+  CommonExtendedInput,
+  CommonInput,
   CommonQueryNames,
   FindOneQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 @Injectable()
-export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService {
-  async run({
-    args,
-    authContext: toValidateAuthContext,
-    objectMetadataMaps,
-    objectMetadataItemWithFieldMaps,
-  }: {
-    args: FindOneQueryArgs;
-    authContext: AuthContext;
-    objectMetadataMaps: ObjectMetadataMaps;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-  }): Promise<ObjectRecord> {
-    const authContext = toValidateAuthContext;
+export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
+  FindOneQueryArgs,
+  ObjectRecord
+> {
+  protected readonly operationName = CommonQueryNames.FIND_ONE;
 
-    if (!isWorkspaceAuthContext(authContext)) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-      );
-    }
-
+  async run(
+    args: CommonExtendedInput<FindOneQueryArgs>,
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): Promise<ObjectRecord> {
     const {
-      workspaceDataSource,
       repository,
-      roleId,
-      shouldBypassPermissionChecks,
-    } = await this.prepareQueryRunnerContext({
       authContext,
+      rolePermissionConfig,
+      workspaceDataSource,
+      objectMetadataMaps,
       objectMetadataItemWithFieldMaps,
-    });
-
-    const processedArgs = await this.processQueryArgs({
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      args,
-    });
-
-    if (
-      !processedArgs.filter ||
-      Object.keys(processedArgs.filter).length === 0
-    ) {
-      throw new CommonQueryRunnerException(
-        'Missing filter argument',
-        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-      );
-    }
+      commonQueryParser,
+    } = queryRunnerContext;
 
     const queryBuilder = repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    //TODO : Refacto-common - QueryParser should be common branded service
-    const commonQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    );
-
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataItemWithFieldMaps.nameSingular,
-      processedArgs.filter ?? ({} as ObjectRecordFilter),
+      args.filter ?? ({} as ObjectRecordFilter),
     );
 
     commonQueryParser.applyDeletedAtToBuilder(
       queryBuilder,
-      processedArgs.filter ?? ({} as ObjectRecordFilter),
+      args.filter ?? ({} as ObjectRecordFilter),
     );
 
     const columnsToSelect = buildColumnsToSelect({
@@ -128,47 +95,52 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         limit: QUERY_MAX_RECORDS,
         authContext,
         workspaceDataSource,
-        roleId,
-        shouldBypassPermissionChecks,
+        rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
       });
     }
 
-    const enrichedResults = await this.enrichResultsWithGettersAndHooks({
-      results: objectRecords,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-      operationName: CommonQueryNames.findOne,
-    });
-
-    return enrichedResults[0];
+    return objectRecords[0];
   }
 
-  async processQueryArgs({
-    authContext,
-    objectMetadataItemWithFieldMaps,
-    args,
-  }: {
-    authContext: WorkspaceAuthContext;
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
-    args: FindOneQueryArgs;
-  }): Promise<FindOneQueryArgs> {
-    const hookedArgs =
-      (await this.workspaceQueryHookService.executePreQueryHooks(
-        authContext,
-        objectMetadataItemWithFieldMaps.nameSingular,
-        CommonQueryNames.findOne,
-        args,
-        //TODO : Refacto-common - To fix when updating workspaceQueryHookService, removing gql typing dependency
-      )) as FindOneQueryArgs;
+  async computeArgs(
+    args: CommonInput<FindOneQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<CommonInput<FindOneQueryArgs>> {
+    const { objectMetadataItemWithFieldMaps } = queryRunnerContext;
 
     return {
-      ...hookedArgs,
+      ...args,
       filter: this.queryRunnerArgsFactory.overrideFilterByFieldMetadata(
-        hookedArgs.filter,
+        args.filter,
         objectMetadataItemWithFieldMaps,
       ),
     };
+  }
+
+  async processQueryResult(
+    queryResult: ObjectRecord,
+    objectMetadataItemId: string,
+    objectMetadataMaps: ObjectMetadataMaps,
+    authContext: WorkspaceAuthContext,
+  ): Promise<ObjectRecord> {
+    return this.commonResultGettersService.processRecord(
+      queryResult,
+      objectMetadataItemId,
+      objectMetadataMaps,
+      authContext.workspace.id,
+    );
+  }
+
+  async validate(
+    args: CommonInput<FindOneQueryArgs>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<void> {
+    if (!args.filter || Object.keys(args.filter).length === 0) {
+      throw new CommonQueryRunnerException(
+        'Missing filter argument',
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
+    }
   }
 }

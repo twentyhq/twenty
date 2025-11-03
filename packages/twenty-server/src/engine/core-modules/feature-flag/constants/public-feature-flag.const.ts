@@ -32,20 +32,20 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
-    metadata: {
-      label: 'Workflow Iterator',
-      description: 'Iterate over a list of items in a workflow',
-      imagePath:
-        'https://twenty.com/images/lab/is-workflow-iterator-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
     metadata: {
       label: 'Calendar View',
       description: 'View and manage calendar events',
       imagePath: 'https://twenty.com/images/lab/is-calendar-view-enabled.png',
+    },
+  },
+  {
+    key: FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
+    metadata: {
+      label: 'Morph Relations',
+      description:
+        'Create polymorphic relationships that can link to multiple object types',
+      imagePath: 'https://twenty.com/images/lab/is-morph-relation-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

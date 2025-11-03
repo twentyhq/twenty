@@ -1,12 +1,10 @@
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type ThemeColor } from 'twenty-ui/theme';
 import {
-  ExtendedAggregateOperations,
+  AggregateOperations,
+  AxisNameDisplay,
   GraphOrderBy,
   GraphType,
-} from '~/generated-metadata/graphql';
-import {
-  AxisNameDisplay,
   type GridPosition,
   type PageLayoutWidget,
   type WidgetConfiguration,
@@ -20,15 +18,15 @@ const createDefaultGraphConfiguration = (
   fieldSelection?: GraphWidgetFieldSelection,
 ): WidgetConfiguration | null => {
   switch (graphType) {
-    case GraphType.NUMBER:
+    case GraphType.AGGREGATE:
       if (!isDefined(fieldSelection?.aggregateFieldMetadataId)) {
         return null;
       }
       return {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         displayDataLabel: true,
       };
 
@@ -50,9 +48,9 @@ const createDefaultGraphConfiguration = (
         primaryAxisGroupByFieldMetadataId:
           fieldSelection.groupByFieldMetadataIdX,
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
-        aggregateOperation: ExtendedAggregateOperations.SUM,
+        aggregateOperation: AggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
+        axisNameDisplay: AxisNameDisplay.NONE,
       };
 
     case GraphType.HORIZONTAL_BAR:
@@ -70,9 +68,9 @@ const createDefaultGraphConfiguration = (
         primaryAxisGroupByFieldMetadataId:
           fieldSelection.groupByFieldMetadataIdX,
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
-        aggregateOperation: ExtendedAggregateOperations.SUM,
+        aggregateOperation: AggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
+        axisNameDisplay: AxisNameDisplay.NONE,
       };
 
     case GraphType.LINE:

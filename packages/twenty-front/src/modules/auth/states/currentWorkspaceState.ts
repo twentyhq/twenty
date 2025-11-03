@@ -15,8 +15,11 @@ export type CurrentWorkspace = Pick<
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
   | 'isGoogleAuthEnabled'
+  | 'isGoogleAuthBypassEnabled'
   | 'isMicrosoftAuthEnabled'
+  | 'isMicrosoftAuthBypassEnabled'
   | 'isPasswordAuthEnabled'
+  | 'isPasswordAuthBypassEnabled'
   | 'isCustomDomainEnabled'
   | 'hasValidEnterpriseKey'
   | 'subdomain'
@@ -25,9 +28,9 @@ export type CurrentWorkspace = Pick<
   | 'metadataVersion'
   | 'isTwoFactorAuthenticationEnforced'
   | 'trashRetentionDays'
+  | 'routerModel'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
-  defaultAgent?: { id: string } | null;
 };
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({

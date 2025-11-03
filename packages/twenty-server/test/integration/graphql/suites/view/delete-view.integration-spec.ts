@@ -1,16 +1,12 @@
-import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-ids.constants';
-import { deleteViewOperationFactory } from 'test/integration/graphql/utils/delete-view-operation-factory.util';
-import { findViewOperationFactory } from 'test/integration/graphql/utils/find-view-operation-factory.util';
-import {
-  assertGraphQLErrorResponseWithSnapshot,
-  assertGraphQLSuccessfulResponse,
-} from 'test/integration/graphql/utils/graphql-test-assertions.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { cleanupViewRecords } from 'test/integration/utils/view-test.util';
 import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { deleteOneCoreView } from 'test/integration/metadata/suites/view/utils/delete-one-core-view.util';
+import { findOneCoreView } from 'test/integration/metadata/suites/view/utils/find-one-core-view.util';
+
+const TEST_NOT_EXISTING_VIEW_ID = '20202020-0000-4000-8000-000000000000';
 
 describe('Delete core view', () => {
   let testObjectMetadataId: string;
@@ -48,11 +44,6 @@ describe('Delete core view', () => {
       expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupViewRecords();
-  });
-
-  beforeEach(async () => {
-    await cleanupViewRecords();
   });
 
   it('should delete an existing view', async () => {
@@ -67,24 +58,28 @@ describe('Delete core view', () => {
       expectToFail: false,
     });
 
-    const deleteOperation = deleteViewOperationFactory({ viewId: view.id });
-    const deleteResponse = await makeGraphqlAPIRequest(deleteOperation);
+    const { data: deleteData, errors: deleteErrors } = await deleteOneCoreView({
+      viewId: view.id,
+      expectToFail: false,
+    });
 
-    assertGraphQLSuccessfulResponse(deleteResponse);
-    expect(deleteResponse.body.data.deleteCoreView).toBe(true);
+    expect(deleteErrors).toBeUndefined();
+    expect(deleteData.deleteCoreView).toBe(true);
 
-    const getOperation = findViewOperationFactory({ viewId: view.id });
-    const getResponse = await makeGraphqlAPIRequest(getOperation);
+    const { data: getData } = await findOneCoreView({
+      viewId: view.id,
+      expectToFail: false,
+    });
 
-    expect(getResponse.body.data.getCoreView).toBeNull();
+    expect(getData.getCoreView).toBeNull();
   });
 
   it('should throw an error when deleting non-existent view', async () => {
-    const operation = deleteViewOperationFactory({
+    const { errors } = await deleteOneCoreView({
       viewId: TEST_NOT_EXISTING_VIEW_ID,
+      expectToFail: true,
     });
-    const response = await makeGraphqlAPIRequest(operation);
 
-    assertGraphQLErrorResponseWithSnapshot(response);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

@@ -43,17 +43,13 @@ export enum SettingsPath {
   NewWebhook = 'api-webhooks/webhooks/new',
   WebhookDetail = 'api-webhooks/webhooks/:webhookId',
   Integrations = 'integrations',
-  IntegrationMCP = 'integrations/mcp',
-  IntegrationDatabase = 'integrations/:databaseKey',
-  IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionId',
-  IntegrationEditDatabaseConnection = 'integrations/:databaseKey/:connectionId/edit',
-  IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',
 
   AdminPanel = 'admin-panel',
   AdminPanelHealthStatus = 'admin-panel#health-status',
   AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
+  AdminPanelQueueDetail = 'admin-panel/health-status/queue/:queueName',
   AdminPanelConfigVariableDetails = 'admin-panel/config-variables/:variableName',
 
   Roles = 'roles',

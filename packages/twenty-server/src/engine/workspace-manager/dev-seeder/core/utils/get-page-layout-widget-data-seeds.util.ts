@@ -94,7 +94,7 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
       configuration: isDefined(opportunityAmountFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: opportunityAmountFieldId,
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
@@ -116,7 +116,7 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 3, rowSpan: 4, columnSpan: 4 },
       configuration: isDefined(rocketIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: rocketIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -174,8 +174,9 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
               secondaryAxisGroupByFieldMetadataId: opportunityStageFieldId,
               primaryAxisOrderBy: 'FIELD_ASC',
-              axisNameDisplay: AxisNameDisplay.BOTH,
+              axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -204,6 +205,7 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
             }
           : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -222,7 +224,7 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 5, rowSpan: 5, columnSpan: 7 },
       configuration: isDefined(opportunityIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: opportunityIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -246,7 +248,7 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
       configuration: isDefined(companyIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -304,8 +306,9 @@ export const getPageLayoutWidgetDataSeeds = (
               secondaryAxisGroupByFieldMetadataId: companyAddressFieldId,
               secondaryAxisGroupBySubFieldName: 'addressCity',
               primaryAxisOrderBy: 'FIELD_ASC',
-              axisNameDisplay: AxisNameDisplay.BOTH,
+              axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -326,7 +329,7 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
       configuration: isDefined(companyArrFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
@@ -395,7 +398,7 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 3 },
       configuration: isDefined(companyLinkedinLinkFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: companyLinkedinLinkFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -441,7 +444,7 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 6 },
       configuration: isDefined(personIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: personIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
@@ -471,6 +474,7 @@ export const getPageLayoutWidgetDataSeeds = (
               primaryAxisOrderBy: 'VALUE_DESC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
@@ -513,7 +517,7 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
       configuration: isDefined(taskIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: taskIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,

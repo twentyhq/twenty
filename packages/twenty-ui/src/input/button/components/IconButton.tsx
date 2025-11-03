@@ -1,6 +1,7 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type IconComponent } from '@ui/display';
+import { GRAY_SCALE_LIGHT } from '@ui/theme';
 import React from 'react';
 
 export type IconButtonSize = 'medium' | 'small';
@@ -70,17 +71,17 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.accent.tertiary}`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: ${GRAY_SCALE_LIGHT.gray1};
               opacity: ${disabled ? 0.24 : 1};
 
               ${disabled
                 ? ''
                 : css`
                     &:hover {
-                      background: ${theme.color.blue50};
+                      background: ${theme.color.blue10};
                     }
                     &:active {
-                      background: ${theme.color.blue60};
+                      background: ${theme.color.blue12};
                     }
                   `}
             `;
@@ -94,9 +95,9 @@ const StyledButton = styled.button<
                 : 'transparent'};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red10}`
+                ? `0 0 0 3px ${theme.color.red3}`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: ${GRAY_SCALE_LIGHT.gray1};
               opacity: ${disabled ? 0.24 : 1};
 
               ${disabled
@@ -104,7 +105,7 @@ const StyledButton = styled.button<
                 : css`
                     &:hover,
                     &:active {
-                      background: ${theme.color.red50};
+                      background: ${theme.color.red10};
                     }
                   `}
             `;
@@ -153,7 +154,7 @@ const StyledButton = styled.button<
               border-color: ${variant === 'secondary'
                 ? !disabled
                   ? theme.color.blue
-                  : theme.color.blue20
+                  : theme.color.blue5
                 : focus
                   ? theme.color.blue
                   : 'transparent'};
@@ -183,9 +184,9 @@ const StyledButton = styled.button<
                   : 'transparent'};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red10}`
+                ? `0 0 0 3px ${theme.color.red3}`
                 : 'none'};
-              color: ${!disabled ? theme.font.color.danger : theme.color.red20};
+              color: ${!disabled ? theme.font.color.danger : theme.color.red5};
               &:hover {
                 background: ${!disabled
                   ? theme.background.danger

@@ -62,27 +62,17 @@ export const seedFeatureFlags = async (
         value: workspaceId === SEED_APPLE_WORKSPACE_ID,
       },
       {
-        key: FeatureFlagKey.IS_COMMON_API_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: false,
       },
       {
         key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_GROUP_BY_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },

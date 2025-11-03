@@ -20,6 +20,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import {
@@ -224,7 +225,15 @@ export class WorkflowExecutorWorkspaceService {
 
     const steps = workflowRun.state.flow.steps;
 
-    if (workflowShouldKeepRunning({ stepInfos, steps })) {
+    if (workflowRun.status === WorkflowRunStatus.STOPPING) {
+      if (!workflowHasRunningSteps({ stepInfos, steps })) {
+        await this.workflowRunWorkspaceService.endWorkflowRun({
+          workflowRunId,
+          workspaceId,
+          status: WorkflowRunStatus.STOPPED,
+        });
+      }
+
       return;
     }
 
@@ -236,6 +245,10 @@ export class WorkflowExecutorWorkspaceService {
         error: 'WorkflowRun failed',
       });
 
+      return;
+    }
+
+    if (workflowShouldKeepRunning({ stepInfos, steps })) {
       return;
     }
 

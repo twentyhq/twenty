@@ -15,7 +15,7 @@ import {
   DnsManagerExceptionCode,
 } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
 import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/dns-manager.validate';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type DnsManagerOptions = {
@@ -28,7 +28,7 @@ export class DnsManagerService {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {
     if (this.twentyConfigService.get('CLOUDFLARE_API_KEY')) {
       this.cloudflareClient = new Cloudflare({
@@ -61,7 +61,7 @@ export class DnsManagerService {
   ): Promise<DomainValidRecords | undefined> {
     if (
       options?.isPublicDomain &&
-      !isDefined(this.domainManagerService.getPublicDomainUrl().hostname)
+      !isDefined(this.domainServerConfigService.getPublicDomainUrl().hostname)
     ) {
       throw new DnsManagerException(
         'Missing public domain URL',
@@ -95,8 +95,8 @@ export class DnsManagerService {
           status: statuses.redirection,
           key: hostname,
           value: options?.isPublicDomain
-            ? this.domainManagerService.getPublicDomainUrl().hostname
-            : this.domainManagerService.getBaseUrl().hostname,
+            ? this.domainServerConfigService.getPublicDomainUrl().hostname
+            : this.domainServerConfigService.getBaseUrl().hostname,
         },
         {
           validationType: 'ssl' as const,

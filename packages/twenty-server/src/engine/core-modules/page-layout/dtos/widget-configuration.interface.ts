@@ -1,10 +1,10 @@
 import { createUnionType } from '@nestjs/graphql';
 
+import { AggregateChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/bar-chart-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
-import { NumberChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/number-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 import { WidgetConfigurationType } from 'src/engine/core-modules/page-layout/enums/widget-configuration-type.enum';
@@ -15,7 +15,7 @@ export const WidgetConfiguration = createUnionType({
     BarChartConfigurationDTO,
     LineChartConfigurationDTO,
     PieChartConfigurationDTO,
-    NumberChartConfigurationDTO,
+    AggregateChartConfigurationDTO,
     GaugeChartConfigurationDTO,
     IframeConfigurationDTO,
   ],
@@ -37,8 +37,8 @@ export const WidgetConfiguration = createUnionType({
           return LineChartConfigurationDTO;
         case GraphType.PIE:
           return PieChartConfigurationDTO;
-        case GraphType.NUMBER:
-          return NumberChartConfigurationDTO;
+        case GraphType.AGGREGATE:
+          return AggregateChartConfigurationDTO;
         case GraphType.GAUGE:
           return GaugeChartConfigurationDTO;
         default:
@@ -62,6 +62,6 @@ export type WidgetConfigurationInterface =
   | BarChartConfigurationDTO
   | LineChartConfigurationDTO
   | PieChartConfigurationDTO
-  | NumberChartConfigurationDTO
+  | AggregateChartConfigurationDTO
   | GaugeChartConfigurationDTO
   | IframeConfigurationDTO;

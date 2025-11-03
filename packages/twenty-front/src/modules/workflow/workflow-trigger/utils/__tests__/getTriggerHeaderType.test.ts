@@ -115,7 +115,7 @@ describe('getTriggerHeaderType', () => {
 
       const result = getTriggerHeaderType(trigger);
 
-      expect(result).toBe('Trigger');
+      expect(result).toBe('Trigger · Cron');
     });
 
     it('returns "Trigger" for cron trigger with HOURS schedule', () => {
@@ -134,7 +134,7 @@ describe('getTriggerHeaderType', () => {
 
       const result = getTriggerHeaderType(trigger);
 
-      expect(result).toBe('Trigger');
+      expect(result).toBe('Trigger · Cron');
     });
 
     it('returns "Trigger" for cron trigger with MINUTES schedule', () => {
@@ -152,7 +152,7 @@ describe('getTriggerHeaderType', () => {
 
       const result = getTriggerHeaderType(trigger);
 
-      expect(result).toBe('Trigger');
+      expect(result).toBe('Trigger · Cron');
     });
 
     it('returns "Trigger" for cron trigger with CUSTOM schedule', () => {
@@ -168,7 +168,7 @@ describe('getTriggerHeaderType', () => {
 
       const result = getTriggerHeaderType(trigger);
 
-      expect(result).toBe('Trigger');
+      expect(result).toBe('Trigger · Cron');
     });
   });
 

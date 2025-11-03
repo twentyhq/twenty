@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
@@ -18,7 +18,7 @@ export class FlatViewGroupValidatorService {
     flatEntityId,
     flatEntityUpdates,
     optimisticFlatEntityMaps: optimisticFlatViewGroupMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
   >): FailedFlatEntityValidation<FlatViewGroup> {
@@ -58,7 +58,7 @@ export class FlatViewGroupValidatorService {
 
     const flatView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updatedFlatViewGroup.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
+      flatEntityMaps: mutableDependencyOptimisticFlatEntityMaps.flatViewMaps,
     });
 
     if (!isDefined(flatView)) {
@@ -71,7 +71,8 @@ export class FlatViewGroupValidatorService {
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updatedFlatViewGroup.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (!isDefined(flatFieldMetadata)) {
@@ -108,14 +109,6 @@ export class FlatViewGroupValidatorService {
         message: t`View group to delete not found`,
         userFriendlyMessage: msg`View group to delete not found`,
       });
-    } else {
-      if (!isDefined(existingFlatViewGroup.deletedAt)) {
-        validationResult.errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`View group to delete has not been soft deleted`,
-          userFriendlyMessage: msg`View group to delete has not been soft deleted`,
-        });
-      }
     }
 
     return validationResult;
@@ -124,7 +117,7 @@ export class FlatViewGroupValidatorService {
   public validateFlatViewGroupCreation({
     flatEntityToValidate: flatViewGroupToValidate,
     optimisticFlatEntityMaps: optimisticFlatViewGroupMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
   >): FailedFlatEntityValidation<FlatViewGroup> {
@@ -153,7 +146,8 @@ export class FlatViewGroupValidatorService {
 
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatViewGroupToValidate.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+      flatEntityMaps:
+        mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
     });
 
     if (!isDefined(flatFieldMetadata)) {
@@ -165,7 +159,7 @@ export class FlatViewGroupValidatorService {
     }
 
     const flatView =
-      dependencyOptimisticFlatEntityMaps.flatViewMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatViewMaps.byId[
         flatViewGroupToValidate.viewId
       ];
 

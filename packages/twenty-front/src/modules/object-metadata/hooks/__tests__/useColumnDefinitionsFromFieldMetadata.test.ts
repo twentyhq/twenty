@@ -29,6 +29,9 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
       isCustomDomainEnabled: false,
+      isGoogleAuthBypassEnabled: false,
+      isMicrosoftAuthBypassEnabled: false,
+      isPasswordAuthBypassEnabled: false,
       customDomain: 'my-custom-domain.com',
       workspaceUrls: {
         subdomainUrl: 'https://twenty.twenty.com',
@@ -51,6 +54,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
       ],
       isTwoFactorAuthenticationEnforced: false,
       trashRetentionDays: 14,
+      routerModel: 'auto',
     });
   },
 });

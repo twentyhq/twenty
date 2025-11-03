@@ -5,46 +5,52 @@ import {
   MessageFolderDriver,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
-import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
+import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
 import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder';
 import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
 
 type MicrosoftGraphFolder = {
   id: string;
   displayName: string;
+  childFolderCount?: number;
+  parentFolderId?: string;
 };
+
+const MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT = 999;
 
 @Injectable()
 export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
   private readonly logger = new Logger(MicrosoftGetAllFoldersService.name);
 
   constructor(
-    private readonly microsoftClientProvider: MicrosoftClientProvider,
-    private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly microsoftMessageListFetchErrorHandler: MicrosoftMessageListFetchErrorHandler,
   ) {}
 
   async getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'refreshToken' | 'id' | 'handle'
+      'accessToken' | 'refreshToken' | 'id' | 'handle' | 'provider'
     >,
   ): Promise<MessageFolder[]> {
     try {
       const microsoftClient =
-        await this.microsoftClientProvider.getMicrosoftClient(connectedAccount);
+        await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
+          connectedAccount,
+        );
 
       const response = await microsoftClient
         .api('/me/mailFolders')
+        .version('beta')
+        .top(MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT)
         .get()
         .catch((error) => {
           this.logger.error(
             `Connected account ${connectedAccount.id}: Error fetching folders: ${error.message}`,
           );
-          this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
-            error,
-          );
+          this.microsoftMessageListFetchErrorHandler.handleError(error);
 
           return { value: [] };
         });
@@ -58,18 +64,13 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
         }
 
         const standardFolder = getStandardFolderByRegex(folder.displayName);
-
-        if (this.shouldExcludeFolder(standardFolder)) {
-          continue;
-        }
-
-        const isInbox = this.isInboxFolder(standardFolder);
         const isSentFolder = this.isSentFolder(standardFolder);
+        const isSynced = this.shouldSyncByDefault(standardFolder);
 
         folderInfos.push({
           externalId: folder.id,
           name: folder.displayName,
-          isSynced: isInbox || isSentFolder,
+          isSynced,
           isSentFolder,
         });
       }
@@ -89,19 +90,19 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
     }
   }
 
-  private isInboxFolder(standardFolder: StandardFolder | null): boolean {
-    return standardFolder === StandardFolder.INBOX;
-  }
-
   private isSentFolder(standardFolder: StandardFolder | null): boolean {
     return standardFolder === StandardFolder.SENT;
   }
 
-  private shouldExcludeFolder(standardFolder: StandardFolder | null): boolean {
-    return (
-      standardFolder !== null &&
-      standardFolder !== StandardFolder.SENT &&
-      standardFolder !== StandardFolder.INBOX
-    );
+  private shouldSyncByDefault(standardFolder: StandardFolder | null): boolean {
+    if (
+      standardFolder === StandardFolder.JUNK ||
+      standardFolder === StandardFolder.DRAFTS ||
+      standardFolder === StandardFolder.TRASH
+    ) {
+      return false;
+    }
+
+    return true;
   }
 }

@@ -1,30 +1,30 @@
+import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import {
   SettingsObjectMetadataItemTableRow,
   StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
-import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
-import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { TableSection } from '@/ui/layout/table/components/TableSection';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
-import { Table } from '@/ui/layout/table/components/Table';
-import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
-import { useMemo, useState } from 'react';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { IconChevronRight, IconSearch } from 'twenty-ui/display';
-import styled from '@emotion/styled';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
-import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
-import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useLingui } from '@lingui/react/macro';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
-import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
+import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableSection } from '@/ui/layout/table/components/TableSection';
+import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
+import { useMemo, useState } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { IconChevronRight, IconSearch } from 'twenty-ui/display';
+import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
+import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};

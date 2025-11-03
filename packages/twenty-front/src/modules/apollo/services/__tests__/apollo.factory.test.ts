@@ -49,6 +49,9 @@ const mockWorkspace = {
   isMicrosoftAuthEnabled: false,
   isPasswordAuthEnabled: false,
   isCustomDomainEnabled: false,
+  isGoogleAuthBypassEnabled: false,
+  isPasswordAuthBypassEnabled: false,
+  isMicrosoftAuthBypassEnabled: false,
   hasValidEnterpriseKey: false,
   subdomain: 'test',
   customDomain: 'test.com',
@@ -58,6 +61,7 @@ const mockWorkspace = {
   },
   isTwoFactorAuthenticationEnforced: false,
   trashRetentionDays: 14,
+  routerModel: 'auto',
 };
 
 const createMockOptions = (): Options<any> => ({

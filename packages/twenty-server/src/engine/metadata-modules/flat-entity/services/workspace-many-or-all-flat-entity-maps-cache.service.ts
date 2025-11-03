@@ -33,23 +33,32 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
       ? flatMapsKeys
       : ALL_FLAT_ENTITY_MAPS_PROPERTIES;
 
-    for (const flatMapKey of keysToProcess) {
-      try {
-        const service = this.cacheRegistry.getCacheServiceOrThrow(
-          flatMapKey as K[number],
-        );
+    const results = await Promise.allSettled(
+      keysToProcess.map(async (flatMapKey) => {
+        try {
+          const service = this.cacheRegistry.getCacheServiceOrThrow(
+            flatMapKey as K[number],
+          );
 
-        await action({
-          flatMapKey: flatMapKey,
-          service,
-        });
-      } catch (error) {
-        this.logger.error(
-          `Failed to run action on flat entity maps of ${flatMapKey}`,
-          error,
-        );
-        throw error;
-      }
+          return await action({
+            flatMapKey: flatMapKey,
+            service,
+          });
+        } catch (error) {
+          this.logger.error(
+            `Failed to run action on flat entity maps of ${flatMapKey}`,
+            error,
+          );
+          throw error;
+        }
+      }),
+    );
+
+    const failures = results.filter((result) => result.status === 'rejected');
+
+    if (failures.length > 0) {
+      this.logger.error(`${failures.length} operations failed`);
+      throw new Error(`Failed to process ${failures.length} flat entity maps`);
     }
   }
 

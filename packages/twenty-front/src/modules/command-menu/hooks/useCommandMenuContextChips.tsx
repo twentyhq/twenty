@@ -1,10 +1,11 @@
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
-import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { recordStoreIdentifiersFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifiersSelector';
+import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
@@ -24,16 +25,31 @@ export const useCommandMenuContextChips = () => {
     commandMenuNavigationStackState,
   );
 
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
   const { navigateCommandMenuHistory } = useCommandMenuHistory();
 
   const theme = useTheme();
 
-  const commandMenuNavigationMorphItemByPage = useRecoilValue(
-    commandMenuNavigationMorphItemByPageState,
+  const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+    commandMenuNavigationMorphItemsByPageState,
   );
 
-  const commandMenuNavigationRecords = useRecoilValue(
-    commandMenuNavigationRecordsState,
+  const allRecordIds = Array.from(
+    commandMenuNavigationMorphItemsByPage.entries(),
+  ).flatMap(([, morphItems]) =>
+    morphItems.map((morphItem) => morphItem.recordId),
+  );
+
+  const recordIdentifiers = useRecoilValue(
+    recordStoreIdentifiersFamilySelector({
+      recordIds: allRecordIds,
+    }),
+  );
+  const records = useRecoilValue(
+    recordStoreRecordsSelector({
+      recordIds: allRecordIds,
+    }),
   );
 
   const contextChips = useMemo(() => {
@@ -51,31 +67,33 @@ export const useCommandMenuContextChips = () => {
 
         if (isRecordPage && !isLastChip) {
           const commandMenuNavigationMorphItem =
-            commandMenuNavigationMorphItemByPage.get(page.pageId);
+            commandMenuNavigationMorphItemsByPage.get(page.pageId)?.[0];
 
           if (!isDefined(commandMenuNavigationMorphItem?.recordId)) {
             return null;
           }
 
-          const objectMetadataItem = commandMenuNavigationRecords.find(
-            ({ objectMetadataItem }) =>
-              objectMetadataItem.id ===
-              commandMenuNavigationMorphItem.objectMetadataId,
-          )?.objectMetadataItem;
+          const objectMetadataItem = objectMetadataItems.find(
+            (item) =>
+              item.id === commandMenuNavigationMorphItem.objectMetadataId,
+          );
 
-          const record = commandMenuNavigationRecords.find(
-            ({ record }) =>
-              record.id === commandMenuNavigationMorphItem.recordId,
-          )?.record;
+          const recordIdentifier = recordIdentifiers.find(
+            (recordIdentifier) =>
+              recordIdentifier.id === commandMenuNavigationMorphItem.recordId,
+          );
 
-          if (!isDefined(objectMetadataItem) || !isDefined(record)) {
+          const record = records.find(
+            (record) => record.id === commandMenuNavigationMorphItem.recordId,
+          );
+
+          if (
+            !isDefined(objectMetadataItem) ||
+            !isDefined(recordIdentifier) ||
+            !isDefined(record)
+          ) {
             return null;
           }
-
-          const name = getObjectRecordIdentifier({
-            objectMetadataItem,
-            record,
-          }).name;
 
           return {
             page,
@@ -85,7 +103,7 @@ export const useCommandMenuContextChips = () => {
                 record={record}
               />,
             ],
-            text: name,
+            text: recordIdentifier.name,
             onClick: () => {
               navigateCommandMenuHistory(index);
             },
@@ -119,10 +137,12 @@ export const useCommandMenuContextChips = () => {
       })
       .filter(isDefined);
   }, [
-    commandMenuNavigationMorphItemByPage,
-    commandMenuNavigationRecords,
+    commandMenuNavigationMorphItemsByPage,
     commandMenuNavigationStack,
     navigateCommandMenuHistory,
+    objectMetadataItems,
+    recordIdentifiers,
+    records,
     theme.font.color.tertiary,
     theme.icon.size.sm,
   ]);

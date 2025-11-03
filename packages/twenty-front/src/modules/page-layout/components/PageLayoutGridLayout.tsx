@@ -11,9 +11,9 @@ import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayo
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/pageLayoutCurrentBreakpointComponentState';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
@@ -36,13 +36,17 @@ const StyledGridContainer = styled.div`
   user-select: none;
 
   .react-grid-placeholder {
-    background: ${({ theme }) => theme.adaptiveColors.blue3} !important;
+    background: ${({ theme }) => theme.color.blue7} !important;
 
-    border-radius: ${({ theme }) => theme.border.radius.sm};
+    border-radius: ${({ theme }) => theme.border.radius.md};
   }
 
   .react-grid-item:not(.react-draggable-dragging) {
     user-select: auto;
+  }
+
+  .react-grid-item:hover .widget-card-resize-handle {
+    display: block !important;
   }
 `;
 
@@ -55,9 +59,17 @@ const ResponsiveGridLayout = WidthProvider(
   Responsive,
 ) as React.ComponentType<ExtendedResponsiveProps>;
 
-export const PageLayoutGridLayout = () => {
+type PageLayoutGridLayoutProps = {
+  tabId: string;
+};
+
+export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
     pageLayoutCurrentBreakpointComponentState,
+  );
+
+  const setDraggingWidgetId = useSetRecoilComponentState(
+    pageLayoutDraggingWidgetIdComponentState,
   );
 
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
@@ -72,24 +84,22 @@ export const PageLayoutGridLayout = () => {
     pageLayoutCurrentLayoutsComponentState,
   );
 
-  const activeTabId = useRecoilComponentValue(activeTabIdComponentState);
-
   const { currentPageLayout } = useCurrentPageLayout();
 
-  if (!isDefined(activeTabId) || !isDefined(currentPageLayout)) {
+  const activeTab = currentPageLayout?.tabs.find((tab) => tab.id === tabId);
+
+  if (!isDefined(currentPageLayout) || !isDefined(activeTab)) {
     return null;
   }
 
-  const activeTabWidgets = currentPageLayout.tabs.find(
-    (tab) => tab.id === activeTabId,
-  )?.widgets;
+  const activeTabWidgets = activeTab.widgets;
 
   const isLayoutEmpty =
     !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
 
   const layouts = isLayoutEmpty
     ? EMPTY_LAYOUT
-    : pageLayoutCurrentLayouts[activeTabId] || EMPTY_LAYOUT;
+    : (pageLayoutCurrentLayouts[tabId] ?? EMPTY_LAYOUT);
 
   return (
     <>
@@ -102,6 +112,7 @@ export const PageLayoutGridLayout = () => {
             />
           </>
         )}
+
         <ResponsiveGridLayout
           className="layout"
           layouts={layouts}
@@ -120,6 +131,12 @@ export const PageLayoutGridLayout = () => {
             isPageLayoutInEditMode ? <PageLayoutGridResizeHandle /> : undefined
           }
           resizeHandles={['se']}
+          onDragStart={(_layout, _oldItem, newItem) => {
+            setDraggingWidgetId(newItem.i);
+          }}
+          onDragStop={() => {
+            setDraggingWidgetId(null);
+          }}
           onLayoutChange={handleLayoutChange}
           onBreakpointChange={(newBreakpoint) =>
             setPageLayoutCurrentBreakpoint(
@@ -134,7 +151,11 @@ export const PageLayoutGridLayout = () => {
           ) : (
             activeTabWidgets?.map((widget) => (
               <div key={widget.id} data-select-disable="true">
-                <WidgetRenderer widget={widget} />
+                <WidgetRenderer
+                  widget={widget}
+                  pageLayoutType={currentPageLayout.type}
+                  layoutMode="grid"
+                />
               </div>
             ))
           )}

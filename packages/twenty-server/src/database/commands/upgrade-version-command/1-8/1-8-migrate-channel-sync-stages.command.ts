@@ -7,7 +7,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -29,8 +29,8 @@ import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-o
 })
 export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace)
-    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -316,7 +316,16 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         option.value === MessageChannelSyncStage.PENDING_CONFIGURATION,
     );
 
-    if (hasMessageListFetchScheduled && hasPendingConfiguration) {
+    const hasMessageListFetchPending = fieldOptions.some(
+      (option) =>
+        option.value === MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+    );
+
+    if (
+      hasMessageListFetchScheduled &&
+      hasPendingConfiguration &&
+      hasMessageListFetchPending
+    ) {
       this.logger.log(
         `MessageChannel syncStage field metadata already migrated for workspace ${workspaceId}`,
       );
@@ -350,6 +359,14 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
       });
     }
 
+    if (!hasMessageListFetchPending) {
+      fieldOptions.push({
+        value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+        label: 'Messages list fetch pending',
+        position: 0,
+        color: 'blue',
+      });
+    }
     syncStageField.options = fieldOptions;
 
     await this.fieldMetadataRepository.save(syncStageField);
@@ -408,7 +425,17 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         option.value === CalendarChannelSyncStage.PENDING_CONFIGURATION,
     );
 
-    if (hasCalendarEventListFetchScheduled && hasPendingConfiguration) {
+    const hasCalendarEventListFetchPending = fieldOptions.some(
+      (option) =>
+        option.value ===
+        CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+    );
+
+    if (
+      hasCalendarEventListFetchScheduled &&
+      hasPendingConfiguration &&
+      hasCalendarEventListFetchPending
+    ) {
       this.logger.log(
         `CalendarChannel syncStage field metadata already migrated for workspace ${workspaceId}`,
       );
@@ -439,6 +466,15 @@ export class MigrateChannelSyncStagesCommand extends ActiveOrSuspendedWorkspaces
         label: 'Pending configuration',
         position: 9,
         color: 'gray',
+      });
+    }
+
+    if (!hasCalendarEventListFetchPending) {
+      fieldOptions.push({
+        value: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        label: 'Calendar event list fetch pending',
+        position: 0,
+        color: 'blue',
       });
     }
 

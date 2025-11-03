@@ -17,7 +17,7 @@ export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
-export type { ExtractPropertiesThatEndsWithId } from './extract-properties-that-ends-with-id';
+export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldRatingValue } from './FieldRatingValue';
@@ -29,11 +29,11 @@ export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export type { FromTo } from './FromToType';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
+export type { ModifiedProperties } from './ModifiedProperties';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
 export type { ObjectPermissions } from './ObjectPermissions';
-export type { ObjectPermissionsDeprecated } from './ObjectPermissionsDeprecated';
 export type { ObjectRecord } from './ObjectRecord';
 export type {
   AggregateOrderByWithGroupByField,
@@ -46,8 +46,6 @@ export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
-export type { ObjectsPermissionsByRoleIdDeprecated } from './ObjectsPermissionsByRoleIdDeprecated';
-export type { ObjectsPermissionsDeprecated } from './ObjectsPermissionsDeprecated';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
@@ -62,6 +60,7 @@ export type {
   RatingFilter,
   FloatFilter,
   DateFilter,
+  DateTimeFilter,
   CurrencyFilter,
   URLFilter,
   FullNameFilter,
@@ -87,12 +86,6 @@ export type {
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
 export { RelationType } from './RelationType';
-export type {
-  VariableDateViewFilterValueDirection,
-  VariableDateViewFilterValueUnit,
-  VariableDateViewFilterValue,
-} from './RelativeDateValue';
-export { DEFAULT_RELATIVE_DATE_VALUE } from './RelativeDateValue';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 export { SettingsPath } from './SettingsPath';

@@ -1,0 +1,43 @@
+{
+  "name": "twenty-sdk",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-sdk/src",
+  "projectType": "library",
+  "tags": [
+    "scope:sdk"
+  ],
+  "targets": {
+    "build": {
+      "dependsOn": [
+        "generateBarrels",
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist",
+        "{projectRoot}/application/package.json",
+        "{projectRoot}/application/dist"
+      ]
+    },
+    "generateBarrels": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "production",
+        "{projectRoot}/scripts/generateBarrels.ts"
+      ],
+      "outputs": [
+        "{projectRoot}/src/index.ts",
+        "{projectRoot}/src/*/index.ts",
+        "{projectRoot}/package.json"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
+      }
+    },
+    "lint": {
+      "configurations": {
+        "fix": {}
+      }
+    }
+  }
+}

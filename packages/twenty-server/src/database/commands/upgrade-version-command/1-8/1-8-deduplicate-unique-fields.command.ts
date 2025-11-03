@@ -8,7 +8,7 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
@@ -35,8 +35,8 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   protected readonly logger = new Logger(DeduplicateUniqueFieldsCommand.name);
   constructor(
-    @InjectRepository(Workspace)
-    protected readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly indexMetadataService: IndexMetadataService,
     protected readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
@@ -187,7 +187,7 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
   }) {
     const workspaceMemberRepository = dataSource.getRepository(
       'workspaceMember',
-      true,
+      { shouldBypassPermissionChecks: true },
     );
 
     const duplicates = await workspaceMemberRepository
@@ -245,7 +245,9 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
     dataSource: WorkspaceDataSource;
     dryRun: boolean;
   }) {
-    const companyRepository = dataSource.getRepository('company', true);
+    const companyRepository = dataSource.getRepository('company', {
+      shouldBypassPermissionChecks: true,
+    });
 
     const duplicates = await companyRepository
       .createQueryBuilder('company')
@@ -303,7 +305,9 @@ export class DeduplicateUniqueFieldsCommand extends ActiveOrSuspendedWorkspacesM
     dataSource: WorkspaceDataSource;
     dryRun: boolean;
   }) {
-    const personRepository = dataSource.getRepository('person', true);
+    const personRepository = dataSource.getRepository('person', {
+      shouldBypassPermissionChecks: true,
+    });
 
     const duplicates = await personRepository
       .createQueryBuilder('person')

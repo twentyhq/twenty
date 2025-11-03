@@ -13,6 +13,7 @@ import {
   computeIdPathParameter,
   computeLimitParameters,
   computeOrderByParameters,
+  computeSoftDeleteParameters,
   computeStartingAfterParameters,
   computeUpsertParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
@@ -210,6 +211,7 @@ export const computeParameterComponents = (
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
     upsert: computeUpsertParameters(),
+    softDelete: computeSoftDeleteParameters(),
     orderBy: computeOrderByParameters(),
     limit: computeLimitParameters(fromMetadata),
   };
@@ -1132,7 +1134,18 @@ export const computeMetadataSchemaComponents = (
               title: { type: 'string' },
               type: {
                 type: 'string',
-                enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
+                enum: [
+                  'VIEW',
+                  'IFRAME',
+                  'FIELDS',
+                  'GRAPH',
+                  'TIMELINE',
+                  'TASKS',
+                  'NOTES',
+                  'FILES',
+                  'EMAILS',
+                  'CALENDAR',
+                ],
                 default: 'VIEW',
               },
               objectMetadataId: { type: 'string', format: 'uuid' },

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+
 import { UpdateCronTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/cron-trigger/types/workspace-migration-cron-trigger-action-v2.type';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -38,10 +39,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
       };
     }
 
-    const {
-      dependencyOptimisticFlatEntityMaps,
-      flatEntityToValidate: flatCronTriggerToValidate,
-    } = args;
+    const { flatEntityToValidate: flatCronTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -49,7 +47,6 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         type: 'create_cron_trigger',
         cronTrigger: flatCronTriggerToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -73,10 +70,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
       };
     }
 
-    const {
-      flatEntityToValidate: flatCronTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatCronTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -84,7 +78,6 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         type: 'delete_cron_trigger',
         cronTriggerId: flatCronTriggerToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -105,11 +98,7 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
         ...validationResult,
       };
     }
-    const {
-      dependencyOptimisticFlatEntityMaps,
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateCronTriggerAction: UpdateCronTriggerAction = {
       type: 'update_cron_trigger',
@@ -120,7 +109,6 @@ export class WorkspaceMigrationV2CronTriggerActionsBuilderService extends Worksp
     return {
       status: 'success',
       action: updateCronTriggerAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

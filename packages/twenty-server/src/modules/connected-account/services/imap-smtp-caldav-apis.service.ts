@@ -4,15 +4,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import {
-  CalendarEventListFetchJob,
-  type CalendarEventListFetchJobData,
-} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
@@ -25,19 +18,11 @@ import {
   MessageChannelType,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessagingMessageListFetchJob,
-  type MessagingMessageListFetchJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 @Injectable()
 export class ImapSmtpCalDavAPIService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
-    @InjectMessageQueue(MessageQueue.calendarQueue)
-    private readonly calendarQueueService: MessageQueueService,
   ) {}
 
   async processAccount(input: {
@@ -119,13 +104,6 @@ export class ImapSmtpCalDavAPIService {
       }
     });
 
-    await this.enqueueSyncJobs(
-      input,
-      workspaceId,
-      messageChannel,
-      calendarChannel,
-    );
-
     return accountId;
   }
 
@@ -168,12 +146,8 @@ export class ImapSmtpCalDavAPIService {
         type: MessageChannelType.EMAIL,
         handle: input.handle,
         isSyncEnabled: shouldEnableSync,
-        syncStatus: shouldEnableSync
-          ? MessageChannelSyncStatus.ONGOING
-          : MessageChannelSyncStatus.NOT_SYNCED,
-        syncStage: shouldEnableSync
-          ? MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING
-          : undefined,
+        syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
+        syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
         syncCursor: '',
         syncStageStartedAt: null,
       },
@@ -192,18 +166,19 @@ export class ImapSmtpCalDavAPIService {
     accountId: string,
     calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
   ): Promise<CalendarChannelWorkspaceEntity | null> {
-    const shouldEnableSync = Boolean(input.connectionParameters.CALDAV);
+    const shouldCreateCalendarChannel = Boolean(
+      input.connectionParameters.CALDAV,
+    );
 
-    if (shouldEnableSync) {
+    if (shouldCreateCalendarChannel) {
       const newCalendarChannel = await calendarChannelRepository.save(
         {
           id: v4(),
           connectedAccountId: accountId,
           handle: input.handle,
-          isSyncEnabled: shouldEnableSync,
-          syncStatus: CalendarChannelSyncStatus.ONGOING,
-          syncStage:
-            CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+          isSyncEnabled: shouldCreateCalendarChannel,
+          syncStatus: CalendarChannelSyncStatus.NOT_SYNCED,
+          syncStage: CalendarChannelSyncStage.PENDING_CONFIGURATION,
           syncCursor: '',
           syncStageStartedAt: null,
         },
@@ -214,34 +189,5 @@ export class ImapSmtpCalDavAPIService {
     }
 
     return null;
-  }
-
-  private async enqueueSyncJobs(
-    input: {
-      connectionParameters: EmailAccountConnectionParameters;
-    },
-    workspaceId: string,
-    messageChannel: MessageChannelWorkspaceEntity | null,
-    calendarChannel: CalendarChannelWorkspaceEntity | null,
-  ) {
-    if (input.connectionParameters.IMAP && messageChannel) {
-      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-        MessagingMessageListFetchJob.name,
-        {
-          workspaceId,
-          messageChannelId: messageChannel.id,
-        },
-      );
-    }
-
-    if (input.connectionParameters.CALDAV && calendarChannel) {
-      await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-        CalendarEventListFetchJob.name,
-        {
-          workspaceId,
-          calendarChannelId: calendarChannel.id,
-        },
-      );
-    }
   }
 }

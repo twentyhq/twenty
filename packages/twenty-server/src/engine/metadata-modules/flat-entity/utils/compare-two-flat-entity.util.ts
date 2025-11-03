@@ -1,8 +1,8 @@
 import diff from 'microdiff';
 import { type FromTo } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
 import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';

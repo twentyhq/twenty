@@ -3,11 +3,11 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const isAuthEnabledOrThrow = (
   provider: AuthProviderEnum,
-  workspace: Workspace,
+  workspace: WorkspaceEntity,
   exceptionToThrowCustom: AuthException = new AuthException(
     `${provider} auth is not enabled for this workspace`,
     AuthExceptionCode.OAUTH_ACCESS_DENIED,
@@ -27,7 +27,10 @@ const isAuthEnabledOrThrow = (
   throw exceptionToThrowCustom;
 };
 
-const isAuthEnabled = (provider: AuthProviderEnum, workspace: Workspace) => {
+const isAuthEnabled = (
+  provider: AuthProviderEnum,
+  workspace: WorkspaceEntity,
+) => {
   if (provider === AuthProviderEnum.Google && workspace.isGoogleAuthEnabled)
     return true;
   if (

@@ -13,11 +13,16 @@ import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message
 import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
-import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
+import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
 
 type ConnectedAccountType = Pick<
   ConnectedAccountWorkspaceEntity,
-  'refreshToken' | 'id' | 'provider' | 'handle' | 'handleAliases'
+  | 'accessToken'
+  | 'refreshToken'
+  | 'id'
+  | 'provider'
+  | 'handle'
+  | 'handleAliases'
 >;
 
 @Injectable()
@@ -26,7 +31,7 @@ export class MicrosoftGetMessagesService {
 
   constructor(
     private readonly microsoftFetchByBatchService: MicrosoftFetchByBatchService,
-    private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
+    private readonly microsoftMessagesImportErrorHandler: MicrosoftMessagesImportErrorHandler,
   ) {}
 
   async getMessages(
@@ -47,7 +52,7 @@ export class MicrosoftGetMessagesService {
 
       return messages;
     } catch (error) {
-      this.microsoftHandleErrorService.handleMicrosoftGetMessagesError(error);
+      this.microsoftMessagesImportErrorHandler.handleError(error);
 
       return [];
     }

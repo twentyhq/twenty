@@ -1,63 +1,122 @@
 import { t } from '@lingui/core/macro';
 import {
-  ObjectRecordGroupByDateGranularity,
   type ObjectRecord,
+  ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
-import { type IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
+import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
+import { type GroupByDefinition } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-definition.types';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
-import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
+export const formatResultWithGroupByDimensionValues = async ({
+  groupsResult,
+  groupByDefinitions,
+  aggregateFieldNames,
+  recordsResult,
+  objectMetadataItemWithFieldMaps,
+  objectMetadataMaps,
+  processRecord,
+}: {
+  groupsResult: Record<string, unknown>[];
+  groupByDefinitions: GroupByDefinition[];
+  aggregateFieldNames: string[];
+  processRecord?: (record: ObjectRecord) => Promise<ObjectRecord>;
+  recordsResult?: Array<Record<string, unknown>>;
+  objectMetadataItemWithFieldMaps?: ObjectMetadataItemWithFieldMaps;
+  objectMetadataMaps?: ObjectMetadataMaps;
+}): Promise<CommonGroupByOutputItem[]> => {
+  const formattedResult: CommonGroupByOutputItem[] = [];
 
-export const formatResultWithGroupByDimensionValues = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  result: any[],
-  groupByColumnsWithQuotes: {
-    columnNameWithQuotes: string;
-    alias: string;
-    dateGranularity?: ObjectRecordGroupByDateGranularity;
-  }[],
-): IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] => {
-  let formattedResult: IGroupByConnection<ObjectRecord, IEdge<ObjectRecord>>[] =
-    [];
+  const recordsByGroupKey = new Map<string, Array<Record<string, unknown>>>();
 
-  result.forEach((group) => {
-    let dimensionValues = [];
-
-    for (const groupByColumn of groupByColumnsWithQuotes) {
-      dimensionValues.push(group[groupByColumn.alias]);
+  if (isDefined(recordsResult)) {
+    if (
+      !isDefined(objectMetadataItemWithFieldMaps) ||
+      !isDefined(objectMetadataMaps)
+    ) {
+      throw new Error('Metadata are required to format result');
     }
-    const groupWithValueMappedToUnaliasedColumn = {
-      ...group,
-      ...groupByColumnsWithQuotes.reduce<Record<string, unknown>>(
-        (acc, groupByColumn) => {
-          const value = group[groupByColumn.alias];
 
-          acc[removeQuotes(groupByColumn.columnNameWithQuotes)] =
-            getTranslatedValueIfApplicable(
-              value,
-              groupByColumn.dateGranularity,
-            );
+    if (!isDefined(processRecord)) {
+      throw new Error(
+        'Process record is required to format results including records',
+      );
+    }
 
-          return acc;
-        },
-        {},
-      ),
-    };
+    for (const entry of recordsResult) {
+      const groupKey = createGroupKey(entry, groupByDefinitions);
+
+      const records = await Promise.all(
+        ((entry.records as Array<Record<string, unknown>>) ?? []).map(
+          async (record) =>
+            await processRecord(
+              formatResult(
+                record,
+                objectMetadataItemWithFieldMaps,
+                objectMetadataMaps,
+              ),
+            ),
+        ),
+      );
+
+      recordsByGroupKey.set(groupKey, records);
+    }
+  }
+
+  groupsResult.forEach((group) => {
+    const dimensionValues: unknown[] = [];
+
+    for (const groupByColumn of groupByDefinitions) {
+      dimensionValues.push(
+        getTranslatedValueIfApplicable(
+          group[groupByColumn.alias],
+          groupByColumn.dateGranularity,
+        ),
+      );
+    }
+
+    const aggregateValues = aggregateFieldNames.reduce(
+      (acc, fieldName) => {
+        if (fieldName in group) {
+          acc[fieldName] = group[fieldName];
+        }
+
+        return acc;
+      },
+      {} as Record<string, unknown>,
+    );
+
+    const groupKey = createGroupKey(group, groupByDefinitions);
+    const records = recordsByGroupKey.get(groupKey) || [];
 
     formattedResult.push({
+      ...aggregateValues,
       groupByDimensionValues: dimensionValues,
-      ...groupWithValueMappedToUnaliasedColumn,
-    });
+      ...(isDefined(recordsResult) ? { records } : {}),
+    } as CommonGroupByOutputItem);
   });
 
   return formattedResult;
 };
 
-const getTranslatedValueIfApplicable = (
-  value: unknown,
+const createGroupKey = (
+  group: Record<string, unknown>,
+  groupByDefinitions: GroupByDefinition[],
+): string => {
+  return groupByDefinitions.map((def) => String(group[def.alias])).join('|');
+};
+
+const getTranslatedValueIfApplicable = <T>(
+  value: T,
   dateGranularity?: ObjectRecordGroupByDateGranularity,
-) => {
+): T | string => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
   switch (dateGranularity) {
     case ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK:
       switch (value) {

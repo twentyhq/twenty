@@ -25,7 +25,6 @@ type WorkflowStepFilterFieldSelectProps = {
 const NON_SELECTABLE_FIELD_TYPES = [
   FieldMetadataType.ACTOR,
   FieldMetadataType.RICH_TEXT_V2,
-  FieldMetadataType.ARRAY,
   FieldMetadataType.RATING,
 ];
 

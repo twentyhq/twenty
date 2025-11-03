@@ -17,7 +17,6 @@ import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordInlineCellAnchoredPortalProps = {
-  position: number;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
     'id' | 'name' | 'type' | 'createdAt' | 'updatedAt' | 'label'

@@ -14,11 +14,15 @@ export const getPageInfo = (
   limit: number,
   isForwardPagination: boolean,
 ): CommonPageInfo => {
-  const { hasNextPage, hasPreviousPage } = getPaginationInfo(
+  const { hasNextPage, hasPreviousPage, hasMoreRecords } = getPaginationInfo(
     records,
     limit,
     isForwardPagination,
   );
+
+  if (hasMoreRecords) {
+    records.pop();
+  }
 
   const startCursor =
     records.length > 0 ? encodeCursor(records[0], orderBy) : null;

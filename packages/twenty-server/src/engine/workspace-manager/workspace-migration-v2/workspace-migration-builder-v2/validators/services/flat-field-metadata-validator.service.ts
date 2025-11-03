@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
@@ -15,6 +15,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
@@ -30,7 +31,7 @@ export class FlatFieldMetadataValidatorService {
     flatEntityId,
     flatEntityUpdates: updates,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
     workspaceId,
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
@@ -69,7 +70,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const flatObjectMetadata =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
         flatFieldMetadataToValidate.objectMetadataId
       ];
 
@@ -88,6 +89,22 @@ export class FlatFieldMetadataValidatorService {
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
         message: 'Label identifier field metadata id does not exist',
         userFriendlyMessage: msg`Object related to updated field does not have a label identifier`,
+      });
+    } else if (
+      flatObjectMetadata.labelIdentifierFieldMetadataId ===
+        flatFieldMetadataToValidate.id &&
+      isDefined(
+        findFlatEntityPropertyUpdate({
+          flatEntityUpdates: updates,
+          property: 'isActive',
+        }),
+      ) &&
+      flatFieldMetadataToValidate.isActive === false
+    ) {
+      validationResult.errors.push({
+        code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
+        message: 'Label identifier field metadata cannot be deactivated',
+        userFriendlyMessage: msg`Label identifier field cannot be deactivated`,
       });
     }
 
@@ -135,14 +152,14 @@ export class FlatFieldMetadataValidatorService {
     const fieldMetadataTypeValidationErrors =
       await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMaps: {
+          mutableDependencyOptimisticFlatEntityMaps: {
             flatObjectMetadataMaps:
-              dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+              mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
           },
           optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
-          remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS,
+          remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
           workspaceId,
         },
       );
@@ -157,7 +174,7 @@ export class FlatFieldMetadataValidatorService {
   validateFlatFieldMetadataDeletion({
     flatEntityToValidate: { id: flatFieldMetadataToDeleteId },
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<FlatFieldMetadata> {
@@ -188,7 +205,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const relatedFlatObjectMetadata =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
         flatFieldMetadataToDelete.objectMetadataId
       ];
 
@@ -208,12 +225,12 @@ export class FlatFieldMetadataValidatorService {
     const relationTargetObjectMetadataHasBeenDeleted =
       isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
       !isDefined(
-        dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
         ],
       );
     const parentObjectMetadataHasBeenDeleted = !isDefined(
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
         flatFieldMetadataToDelete.objectMetadataId
       ],
     );
@@ -248,7 +265,7 @@ export class FlatFieldMetadataValidatorService {
   async validateFlatFieldMetadataCreation({
     flatEntityToValidate: flatFieldMetadataToValidate,
     optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    mutableDependencyOptimisticFlatEntityMaps,
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
@@ -266,7 +283,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const parentFlatObjectMetadata =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+      mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
         flatFieldMetadataToValidate.objectMetadataId
       ];
 
@@ -326,7 +343,7 @@ export class FlatFieldMetadataValidatorService {
     validationResult.errors.push(
       ...(await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMaps,
+          mutableDependencyOptimisticFlatEntityMaps,
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
           optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,

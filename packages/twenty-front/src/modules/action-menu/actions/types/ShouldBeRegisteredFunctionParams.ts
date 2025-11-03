@@ -26,4 +26,5 @@ export type ShouldBeRegisteredFunctionParams = {
     objectMetadataItemNameSingular: string,
   ) => boolean;
   forceRegisteredActionsByKey: Record<string, boolean | undefined>;
+  isWorkflowRunStoppageEnabled: boolean;
 };

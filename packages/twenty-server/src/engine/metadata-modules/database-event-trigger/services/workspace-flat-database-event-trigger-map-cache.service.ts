@@ -9,13 +9,14 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import {
   DATABASE_EVENT_TRIGGER_ENTITY_RELATION_PROPERTIES,
-  DatabaseEventTrigger,
+  DatabaseEventTriggerEntity,
 } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceFlatMapCache('flatDatabaseEventTriggerMaps')
@@ -25,8 +26,8 @@ export class WorkspaceFlatDatabaseEventTriggerMapCacheService extends WorkspaceF
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     cacheStorageService: CacheStorageService,
-    @InjectRepository(DatabaseEventTrigger)
-    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTrigger>,
+    @InjectRepository(DatabaseEventTriggerEntity)
+    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTriggerEntity>,
   ) {
     super(cacheStorageService);
   }
@@ -43,28 +44,23 @@ export class WorkspaceFlatDatabaseEventTriggerMapCacheService extends WorkspaceF
         },
       });
 
-    const flatDatabaseEventTriggerMaps = databaseEventTriggers.reduce<
-      FlatEntityMaps<FlatDatabaseEventTrigger>
-    >((flatEntityMaps, databaseEventTrigger) => {
+    const flatDatabaseEventTriggerMaps = createEmptyFlatEntityMaps();
+
+    for (const databaseEventTriggerEntity of databaseEventTriggers) {
       const flatDatabaseEventTrigger = {
-        ...removePropertiesFromRecord(databaseEventTrigger, [
+        ...removePropertiesFromRecord(databaseEventTriggerEntity, [
           ...DATABASE_EVENT_TRIGGER_ENTITY_RELATION_PROPERTIES,
         ]),
-        universalIdentifier: databaseEventTrigger.universalIdentifier ?? '',
+        universalIdentifier:
+          databaseEventTriggerEntity.universalIdentifier ??
+          databaseEventTriggerEntity.id,
       } satisfies FlatDatabaseEventTrigger;
 
-      return {
-        byId: {
-          ...flatEntityMaps.byId,
-          [flatDatabaseEventTrigger.id]: flatDatabaseEventTrigger,
-        },
-        idByUniversalIdentifier: {
-          ...flatEntityMaps.idByUniversalIdentifier,
-          [flatDatabaseEventTrigger.universalIdentifier]:
-            flatDatabaseEventTrigger.id,
-        },
-      };
-    }, EMPTY_FLAT_ENTITY_MAPS);
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: flatDatabaseEventTrigger,
+        flatEntityMapsToMutate: flatDatabaseEventTriggerMaps,
+      });
+    }
 
     return flatDatabaseEventTriggerMaps;
   }

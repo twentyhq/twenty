@@ -1,4 +1,5 @@
-import { type AllMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-metadata-name.type';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
 import { type MetadataManyToOneRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-related-metadata-names.type';
 
 type MetadataRequiredForValidation = {
@@ -18,6 +19,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     fieldMetadata: true,
   },
   view: {
+    fieldMetadata: true,
     objectMetadata: true,
   },
   viewField: {

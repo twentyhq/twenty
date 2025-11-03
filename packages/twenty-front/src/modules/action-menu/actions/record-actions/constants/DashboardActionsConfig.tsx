@@ -1,3 +1,5 @@
+import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
+import { AddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordAction';
 import { CancelDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/CancelDashboardSingleRecordAction';
 import { EditDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/EditDashboardSingleRecordAction';
 import { SaveDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/SaveDashboardSingleRecordAction';
@@ -9,16 +11,37 @@ import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { PageLayoutSingleRecordActionKeys } from '@/page-layout/actions/PageLayoutSingleRecordActionKeys';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDeviceFloppy, IconPencil, IconX } from 'twenty-ui/display';
+import {
+  IconDeviceFloppy,
+  IconHeart,
+  IconPencil,
+  IconX,
+} from 'twenty-ui/display';
 
 export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
+    [PageLayoutSingleRecordActionKeys.ADD_TO_FAVORITES_READ_MODE]: {
+      key: PageLayoutSingleRecordActionKeys.ADD_TO_FAVORITES_READ_MODE,
+      label: msg`Add to favorites`,
+      shortLabel: msg`Add to favorites`,
+      isPinned: true,
+      position: 0,
+      Icon: IconHeart,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      shouldBeRegistered: ({ selectedRecord }) =>
+        isDefined(selectedRecord) &&
+        !selectedRecord?.isRemote &&
+        !isDefined(selectedRecord?.deletedAt),
+      availableOn: [ActionViewType.SHOW_PAGE],
+      component: <AddToFavoritesSingleRecordAction />,
+    },
     [PageLayoutSingleRecordActionKeys.EDIT_LAYOUT]: {
       key: PageLayoutSingleRecordActionKeys.EDIT_LAYOUT,
       label: msg`Edit Dashboard`,
       shortLabel: msg`Edit`,
       isPinned: true,
-      position: 0,
+      position: 1,
       Icon: IconPencil,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
@@ -29,6 +52,23 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         isDefined(selectedRecord?.pageLayoutId),
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <EditDashboardSingleRecordAction />,
+    },
+    [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: {
+      key: PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION,
+      label: msg`Cancel Edition`,
+      shortLabel: msg`Cancel`,
+      isPinned: true,
+      position: 0,
+      Icon: IconX,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      shouldBeRegistered: ({ selectedRecord }) =>
+        isDefined(selectedRecord) &&
+        !selectedRecord?.isRemote &&
+        !isDefined(selectedRecord?.deletedAt) &&
+        isDefined(selectedRecord?.pageLayoutId),
+      availableOn: [ActionViewType.SHOW_PAGE],
+      component: <CancelDashboardSingleRecordAction />,
     },
     [PageLayoutSingleRecordActionKeys.SAVE_LAYOUT]: {
       key: PageLayoutSingleRecordActionKeys.SAVE_LAYOUT,
@@ -47,25 +87,9 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <SaveDashboardSingleRecordAction />,
     },
-    [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: {
-      key: PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION,
-      label: msg`Cancel Edition`,
-      shortLabel: msg`Cancel`,
-      isPinned: true,
-      position: 2,
-      Icon: IconX,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
-        isDefined(selectedRecord) &&
-        !selectedRecord?.isRemote &&
-        !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
-      availableOn: [ActionViewType.SHOW_PAGE],
-      component: <CancelDashboardSingleRecordAction />,
-    },
   },
   actionKeys: [
+    NoSelectionRecordActionKeys.CREATE_NEW_RECORD,
     SingleRecordActionKeys.ADD_TO_FAVORITES,
     SingleRecordActionKeys.REMOVE_FROM_FAVORITES,
     SingleRecordActionKeys.DELETE,
@@ -76,34 +100,39 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
   ],
   propertiesToOverwrite: {
+    [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
+      position: 0,
+      label: msg`Create new dashboard`,
+    },
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
       position: 3,
+      isPinned: false,
     },
     [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       position: 4,
     },
     [SingleRecordActionKeys.DELETE]: {
-      position: 5,
+      position: 2,
       label: msg`Delete dashboard`,
     },
     [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
-      position: 6,
+      position: 5,
       label: msg`Export dashboard`,
     },
     [SingleRecordActionKeys.DESTROY]: {
-      position: 7,
+      position: 6,
       label: msg`Permanently destroy dashboard`,
     },
     [SingleRecordActionKeys.RESTORE]: {
-      position: 8,
+      position: 7,
       label: msg`Restore dashboard`,
     },
     [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-      position: 9,
+      position: 8,
       label: msg`Navigate to previous dashboard`,
     },
     [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
-      position: 10,
+      position: 9,
       label: msg`Navigate to next dashboard`,
     },
   },

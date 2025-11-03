@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ALL_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-name.constant';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+
 import { UpdateRouteTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/route-trigger/types/workspace-migration-route-trigger-action-v2.type';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -38,10 +39,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const {
-      flatEntityToValidate: flatRouteTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatRouteTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -49,7 +47,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
         type: 'create_route_trigger',
         routeTrigger: flatRouteTriggerToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -73,10 +70,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const {
-      flatEntityToValidate: flatRouteTriggerToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
+    const { flatEntityToValidate: flatRouteTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -84,7 +78,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
         type: 'delete_route_trigger',
         routeTriggerId: flatRouteTriggerToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
@@ -108,11 +101,7 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
       };
     }
 
-    const {
-      dependencyOptimisticFlatEntityMaps,
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateRouteTriggerAction: UpdateRouteTriggerAction = {
       type: 'update_route_trigger',
@@ -123,7 +112,6 @@ export class WorkspaceMigrationV2RouteTriggerActionsBuilderService extends Works
     return {
       status: 'success',
       action: updateRouteTriggerAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

@@ -17,7 +17,7 @@ export const TEST_IFRAME_CONFIG_ALTERNATIVE = {
 };
 
 export const TEST_NUMBER_CHART_CONFIG = {
-  graphType: GraphType.NUMBER,
+  graphType: GraphType.AGGREGATE,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.COUNT,
   label: 'Total Records',
@@ -27,7 +27,7 @@ export const TEST_NUMBER_CHART_CONFIG = {
 };
 
 export const TEST_NUMBER_CHART_CONFIG_MINIMAL = {
-  graphType: GraphType.NUMBER,
+  graphType: GraphType.AGGREGATE,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: AggregateOperations.SUM,
   displayDataLabel: false,
@@ -40,7 +40,7 @@ export const TEST_VERTICAL_BAR_CHART_CONFIG = {
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
   displayDataLabel: true,
-  axisNameDisplay: AxisNameDisplay.BOTH,
+  axisNameDisplay: AxisNameDisplay.NONE,
   color: 'red',
   description: 'Monthly revenue breakdown',
   omitNullValues: true,
@@ -65,7 +65,7 @@ export const TEST_HORIZONTAL_BAR_CHART_CONFIG = {
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
   displayDataLabel: true,
-  axisNameDisplay: AxisNameDisplay.BOTH,
+  axisNameDisplay: AxisNameDisplay.NONE,
   color: 'blue',
   description: 'Horizontal revenue breakdown',
   omitNullValues: true,
@@ -92,7 +92,7 @@ export const TEST_LINE_CHART_CONFIG = {
   secondaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_3,
   secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
   displayDataLabel: true,
-  axisNameDisplay: AxisNameDisplay.BOTH,
+  axisNameDisplay: AxisNameDisplay.NONE,
   color: 'cyan',
   description: 'Trend over time',
   omitNullValues: false,
@@ -174,17 +174,17 @@ export const INVALID_IFRAME_CONFIG_EMPTY_URL = {
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS = {
-  graphType: GraphType.NUMBER,
+  graphType: GraphType.AGGREGATE,
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_BAD_UUID = {
-  graphType: GraphType.NUMBER,
+  graphType: GraphType.AGGREGATE,
   aggregateFieldMetadataId: 'not-a-uuid',
   aggregateOperation: AggregateOperations.COUNT,
 };
 
 export const INVALID_NUMBER_CHART_CONFIG_INVALID_OPERATION = {
-  graphType: GraphType.NUMBER,
+  graphType: GraphType.AGGREGATE,
   aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
   aggregateOperation: 'INVALID_OP' as any,
 };
@@ -218,7 +218,7 @@ export const INVALID_HORIZONTAL_BAR_CHART_CONFIG_BAD_ORDER_BY = {
 };
 
 export const CONFIG_TYPE_MISMATCH_IFRAME_WITH_GRAPH = {
-  graphType: GraphType.NUMBER,
+  graphType: GraphType.AGGREGATE,
   url: 'https://example.com',
 };
 
@@ -268,6 +268,12 @@ export function getValidConfigForWidgetType(widgetType: string): any {
     }
     case 'VIEW':
     case 'FIELDS':
+    case 'TIMELINE':
+    case 'TASKS':
+    case 'NOTES':
+    case 'FILES':
+    case 'EMAILS':
+    case 'CALENDAR':
       return null;
     default:
       return null;

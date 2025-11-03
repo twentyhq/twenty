@@ -38,7 +38,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(messageChannelIds, {
-      syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
     });
   }
 
@@ -131,7 +131,7 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStatus: MessageChannelSyncStatus.ACTIVE,
-      syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
       throttleFailureCount: 0,
       syncStageStartedAt: null,
       syncedAt: new Date().toISOString(),

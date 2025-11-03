@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema, Repository } from 'typeorm';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceFeatureFlagsMapCacheService } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -50,12 +50,12 @@ export class WorkspaceDatasourceFactory {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspacePermissionsCacheStorageService: WorkspacePermissionsCacheStorageService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly getFromCacheWithRecomputeService: GetDataFromCacheWithRecomputeService<
       string,
-      ObjectsPermissionsByRoleIdDeprecated
+      ObjectsPermissionsByRoleId
     >,
   ) {}
 
@@ -239,7 +239,7 @@ export class WorkspaceDatasourceFactory {
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<CacheResult<string, ObjectsPermissionsByRoleIdDeprecated>> {
+  }): Promise<CacheResult<string, ObjectsPermissionsByRoleId>> {
     return this.getFromCacheWithRecomputeService.getFromCacheWithRecompute({
       workspaceId,
       getCacheData: () =>
@@ -292,7 +292,7 @@ export class WorkspaceDatasourceFactory {
   }: {
     workspaceDataSource: WorkspaceDataSource;
     cachedRolesPermissionsVersion: string;
-    cachedRolesPermissions: ObjectsPermissionsByRoleIdDeprecated;
+    cachedRolesPermissions: ObjectsPermissionsByRoleId;
   }): Promise<void> {
     this.updateWorkspaceDataSourceIfNeeded({
       workspaceDataSource,

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class OnboardingStepSuccess {
+@ObjectType('OnboardingStepSuccess')
+export class OnboardingStepSuccessDTO {
   @Field(() => Boolean, {
     description: 'Boolean that confirms query was dispatched',
   })

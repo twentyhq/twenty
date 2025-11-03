@@ -32,7 +32,7 @@ export const useWorkflowCommandMenu = () => {
         );
 
         navigateCommandMenu({
-          page: CommandMenuPages.WorkflowStepSelectTriggerType,
+          page: CommandMenuPages.WorkflowTriggerSelectType,
           pageTitle: t`Trigger Type`,
           pageIcon: IconBolt,
           pageId,

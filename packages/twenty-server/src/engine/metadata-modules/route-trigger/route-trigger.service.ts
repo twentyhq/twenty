@@ -1,35 +1,31 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import {
+  RouteTriggerException,
+  RouteTriggerExceptionCode,
+} from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
 import {
   HTTPMethod,
-  RouteTrigger,
+  RouteTriggerEntity,
 } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
-import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class RouteTriggerService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private readonly domainManagerService: DomainManagerService,
-    @InjectRepository(RouteTrigger)
-    private readonly routeTriggerRepository: Repository<RouteTrigger>,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
+    @InjectRepository(RouteTriggerEntity)
+    private readonly routeTriggerRepository: Repository<RouteTriggerEntity>,
   ) {}
 
   private async getOneRouteTriggerWithPathParamsOrFail({
@@ -39,21 +35,21 @@ export class RouteTriggerService {
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{
-    routeTrigger: RouteTrigger;
+    routeTrigger: RouteTriggerEntity;
     pathParams: Partial<Record<string, string | string[]>>;
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
 
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         host,
       );
 
     assertIsDefinedOrThrow(
       workspace,
-      new AuthException(
+      new RouteTriggerException(
         'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+        RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
       ),
     );
 
@@ -81,7 +77,10 @@ export class RouteTriggerService {
       }
     }
 
-    throw new NotFoundException('No Route trigger found');
+    throw new RouteTriggerException(
+      'No Route trigger found',
+      RouteTriggerExceptionCode.TRIGGER_NOT_FOUND,
+    );
   }
 
   private async validateWorkspaceFromRequest({
@@ -95,11 +94,17 @@ export class RouteTriggerService {
       await this.accessTokenService.validateTokenByRequest(request);
 
     if (!isDefined(workspace)) {
-      throw new NotFoundException('Workspace not found');
+      throw new RouteTriggerException(
+        'Workspace not found',
+        RouteTriggerExceptionCode.WORKSPACE_NOT_FOUND,
+      );
     }
 
     if (workspace.id !== workspaceId) {
-      throw new ForbiddenException('Invalid Workspace');
+      throw new RouteTriggerException(
+        'You are not authorized',
+        RouteTriggerExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
   }
 
@@ -133,11 +138,25 @@ export class RouteTriggerService {
       ...routeTriggerWithPathParams.pathParams,
     };
 
-    return await this.serverlessFunctionService.executeOneServerlessFunction(
-      routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
-      routeTriggerWithPathParams.routeTrigger.workspaceId,
-      executionParams,
-      'draft',
-    );
+    const result =
+      await this.serverlessFunctionService.executeOneServerlessFunction(
+        routeTriggerWithPathParams.routeTrigger.serverlessFunction.id,
+        routeTriggerWithPathParams.routeTrigger.workspaceId,
+        executionParams,
+        'draft',
+      );
+
+    if (!isDefined(result)) {
+      return result;
+    }
+
+    if (result.error) {
+      throw new RouteTriggerException(
+        result.error.errorMessage,
+        RouteTriggerExceptionCode.SERVERLESS_FUNCTION_EXECUTION_ERROR,
+      );
+    }
+
+    return result.data;
   }
 }

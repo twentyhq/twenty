@@ -71,7 +71,7 @@ export const PAGE_LAYOUT_WIDGET_CONFIGURATION_FIELDS = `
     color
     description
   }
-  ... on NumberChartConfiguration {
+  ... on AggregateChartConfiguration {
     graphType
     aggregateFieldMetadataId
     aggregateOperation

@@ -4,12 +4,12 @@ import { capitalize } from 'twenty-shared/utils';
 type GroupByOperationFactoryParams = {
   objectMetadataSingularName: string;
   objectMetadataPluralName: string;
+  orderByForRecords?: object[];
   groupBy: object[];
   filter?: object;
   orderBy?: object[];
   viewId?: string;
   gqlFields?: string;
-  omitNullValues?: boolean;
 };
 
 export const groupByOperationFactory = ({
@@ -18,13 +18,13 @@ export const groupByOperationFactory = ({
   groupBy,
   filter = {},
   orderBy = [],
+  orderByForRecords = [],
   viewId,
   gqlFields,
-  omitNullValues,
 }: GroupByOperationFactoryParams) => ({
   query: gql`
-    query ${capitalize(objectMetadataPluralName)}GroupBy($groupBy: [${capitalize(objectMetadataSingularName)}GroupByInput!]!, $filter: ${capitalize(objectMetadataSingularName)}FilterInput, $orderBy: [${capitalize(objectMetadataSingularName)}OrderByWithGroupByInput!], $viewId: UUID, $omitNullValues: Boolean) {
-      ${objectMetadataPluralName}GroupBy(groupBy: $groupBy, filter: $filter, orderBy: $orderBy, viewId: $viewId, omitNullValues: $omitNullValues) {
+    query ${capitalize(objectMetadataPluralName)}GroupBy($groupBy: [${capitalize(objectMetadataSingularName)}GroupByInput!]!, $filter: ${capitalize(objectMetadataSingularName)}FilterInput, $orderBy: [${capitalize(objectMetadataSingularName)}OrderByWithGroupByInput!], $viewId: UUID) {
+      ${objectMetadataPluralName}GroupBy(groupBy: $groupBy, filter: $filter, orderBy: $orderBy, viewId: $viewId) {
         ${gqlFields ? gqlFields : ''}
         groupByDimensionValues
         totalCount
@@ -35,7 +35,7 @@ export const groupByOperationFactory = ({
     groupBy,
     filter,
     orderBy,
+    orderByForRecords,
     ...(viewId && { viewId }),
-    omitNullValues: omitNullValues ?? null,
   },
 });

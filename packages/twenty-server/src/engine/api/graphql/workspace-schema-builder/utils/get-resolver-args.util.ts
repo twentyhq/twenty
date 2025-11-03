@@ -177,9 +177,10 @@ export const getResolverArgs = (
           isNullable: true,
           isArray: true,
         },
-        omitNullValues: {
-          type: GraphQLBoolean,
+        orderByForRecords: {
+          kind: GqlInputTypeDefinitionKind.OrderBy,
           isNullable: true,
+          isArray: true,
         },
         viewId: {
           type: UUIDScalarType,

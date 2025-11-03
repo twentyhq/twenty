@@ -412,7 +412,12 @@ describe('evaluateFilterConditions', () => {
       });
 
       it('should handle truthy/falsy conversion', () => {
-        const filter = createFilter(ViewFilterOperand.IS, 1, true, 'BOOLEAN');
+        const filter = createFilter(
+          ViewFilterOperand.IS,
+          'true',
+          true,
+          'BOOLEAN',
+        );
         const result = evaluateFilterConditions({ filters: [filter] });
 
         expect(result).toBe(true);

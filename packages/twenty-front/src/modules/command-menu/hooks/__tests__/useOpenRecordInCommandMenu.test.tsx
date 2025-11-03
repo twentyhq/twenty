@@ -6,7 +6,7 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -54,8 +54,8 @@ const renderHooks = () => {
       const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
       const commandMenuPage = useRecoilValue(commandMenuPageState);
-      const commandMenuNavigationMorphItemByPage = useRecoilValue(
-        commandMenuNavigationMorphItemByPageState,
+      const commandMenuNavigationMorphItemsByPage = useRecoilValue(
+        commandMenuNavigationMorphItemsByPageState,
       );
 
       const viewableRecordId = useRecoilComponentValue(
@@ -88,7 +88,7 @@ const renderHooks = () => {
         openRecordInCommandMenu,
         viewableRecordId,
         commandMenuPage,
-        commandMenuNavigationMorphItemByPage,
+        commandMenuNavigationMorphItemsByPage,
         viewableRecordNameSingular,
         currentObjectMetadataItemId,
         targetedRecordsRule,
@@ -134,13 +134,15 @@ describe('useOpenRecordInCommandMenu', () => {
     expect(result.current.numberOfSelectedRecords).toBe(1);
     expect(result.current.currentViewType).toBe(ContextStoreViewType.ShowPage);
 
-    expect(result.current.commandMenuNavigationMorphItemByPage.size).toBe(1);
+    expect(result.current.commandMenuNavigationMorphItemsByPage.size).toBe(1);
     expect(
-      result.current.commandMenuNavigationMorphItemByPage.get('mocked-uuid'),
-    ).toEqual({
-      objectMetadataId: personMockObjectMetadataItem.id,
-      recordId,
-    });
+      result.current.commandMenuNavigationMorphItemsByPage.get('mocked-uuid'),
+    ).toEqual([
+      {
+        objectMetadataId: personMockObjectMetadataItem.id,
+        recordId,
+      },
+    ]);
 
     expect(mockNavigateCommandMenu).toHaveBeenCalledWith({
       page: CommandMenuPages.ViewRecord,

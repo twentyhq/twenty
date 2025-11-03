@@ -10,13 +10,13 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 
 @Catch(AuthException)
 export class AuthOAuthExceptionFilter implements ExceptionFilter {
   constructor(
-    private readonly domainManagerService: DomainManagerService,
+    private readonly domainServerConfigService: DomainServerConfigService,
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}
 
@@ -28,7 +28,7 @@ export class AuthOAuthExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.OAUTH_ACCESS_DENIED:
         response
           .status(403)
-          .redirect(this.domainManagerService.getBaseUrl().toString());
+          .redirect(this.domainServerConfigService.getBaseUrl().toString());
         break;
       default:
         return this.httpExceptionHandlerService.handleError(

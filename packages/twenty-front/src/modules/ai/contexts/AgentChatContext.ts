@@ -1,9 +1,9 @@
-import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { type Chat } from '@ai-sdk/react';
 import { createContext } from 'react';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 export type AgentChatContextValue = {
-  chat: Chat<UIMessageWithMetadata>;
+  chat: Chat<ExtendedUIMessage>;
   isLoadingData: boolean;
 };
 

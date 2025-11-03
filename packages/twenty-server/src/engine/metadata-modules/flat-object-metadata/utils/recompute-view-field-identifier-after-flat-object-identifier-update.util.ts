@@ -13,8 +13,8 @@ type RecomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdateArgs = {
 } & Pick<AllFlatEntityMaps, 'flatViewFieldMaps' | 'flatViewMaps'>;
 
 type FlatViewFieldToCreateAndUpdate = {
-  flatViewFieldToCreate: FlatViewField[];
-  flatViewFieldToUpdate: FlatViewField[];
+  flatViewFieldsToCreate: FlatViewField[];
+  flatViewFieldsToUpdate: FlatViewField[];
 };
 export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
   existingFlatObjectMetadata,
@@ -28,8 +28,8 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
   });
 
   const accumulator: FlatViewFieldToCreateAndUpdate = {
-    flatViewFieldToCreate: [],
-    flatViewFieldToUpdate: [],
+    flatViewFieldsToCreate: [],
+    flatViewFieldsToUpdate: [],
   };
 
   for (const flatView of flatViews) {
@@ -66,9 +66,10 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         deletedAt: null,
         universalIdentifier: viewFieldId,
         aggregateOperation: null,
+        applicationId: existingFlatObjectMetadata.applicationId,
       };
 
-      accumulator.flatViewFieldToCreate.push(flatViewFieldToCreate);
+      accumulator.flatViewFieldsToCreate.push(flatViewFieldToCreate);
     } else if (
       labelMetadataIdentifierViewField.position > lowestViewFieldPosition
     ) {
@@ -77,7 +78,7 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         position: lowestViewFieldPosition - 1,
       };
 
-      accumulator.flatViewFieldToUpdate.push(updatedFlatViewField);
+      accumulator.flatViewFieldsToUpdate.push(updatedFlatViewField);
     }
   }
 
