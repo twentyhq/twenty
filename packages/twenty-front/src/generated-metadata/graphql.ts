@@ -14,7 +14,6 @@ export type Scalars = {
   Int: number;
   Float: number;
   ConnectionCursor: any;
-  Date: any;
   DateTime: string;
   JSON: any;
   JSONObject: any;
@@ -1042,15 +1041,15 @@ export type DatabaseEventTriggerIdInput = {
   id: Scalars['String'];
 };
 
-export type DateFilter = {
-  eq?: InputMaybe<Scalars['Date']>;
-  gt?: InputMaybe<Scalars['Date']>;
-  gte?: InputMaybe<Scalars['Date']>;
-  in?: InputMaybe<Array<Scalars['Date']>>;
+export type DateTimeFilter = {
+  eq?: InputMaybe<Scalars['DateTime']>;
+  gt?: InputMaybe<Scalars['DateTime']>;
+  gte?: InputMaybe<Scalars['DateTime']>;
+  in?: InputMaybe<Array<Scalars['DateTime']>>;
   is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['Date']>;
-  lte?: InputMaybe<Scalars['Date']>;
-  neq?: InputMaybe<Scalars['Date']>;
+  lt?: InputMaybe<Scalars['DateTime']>;
+  lte?: InputMaybe<Scalars['DateTime']>;
+  neq?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type DeleteApprovedAccessDomainInput = {
@@ -1855,6 +1854,7 @@ export type Mutation = {
   syncApplication: Scalars['Boolean'];
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
+  testHttpRequest: TestHttpRequestOutput;
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateApiKey?: Maybe<ApiKey>;
@@ -2556,6 +2556,11 @@ export type MutationSyncRemoteTableSchemaChangesArgs = {
 };
 
 
+export type MutationTestHttpRequestArgs = {
+  input: TestHttpRequestInput;
+};
+
+
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -2906,12 +2911,12 @@ export type ObjectPermissionInput = {
 
 export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  createdAt?: InputMaybe<DateFilter>;
-  deletedAt?: InputMaybe<DateFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  deletedAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<UuidFilter>;
   not?: InputMaybe<ObjectRecordFilterInput>;
   or?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  updatedAt?: InputMaybe<DateFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
 export type ObjectStandardOverrides = {
@@ -3935,6 +3940,35 @@ export type SystemHealthService = {
   status: AdminPanelHealthServiceStatus;
 };
 
+export type TestHttpRequestInput = {
+  /** Request body */
+  body?: InputMaybe<Scalars['JSON']>;
+  /** HTTP headers */
+  headers?: InputMaybe<Scalars['JSON']>;
+  /** HTTP method */
+  method: Scalars['String'];
+  /** URL to make the request to */
+  url: Scalars['String'];
+};
+
+export type TestHttpRequestOutput = {
+  __typename?: 'TestHttpRequestOutput';
+  /** Error information */
+  error?: Maybe<Scalars['JSON']>;
+  /** Response headers */
+  headers?: Maybe<Scalars['JSON']>;
+  /** Message describing the result */
+  message: Scalars['String'];
+  /** Response data */
+  result?: Maybe<Scalars['JSON']>;
+  /** HTTP status code */
+  status?: Maybe<Scalars['Float']>;
+  /** HTTP status text */
+  statusText?: Maybe<Scalars['String']>;
+  /** Whether the request was successful */
+  success: Scalars['Boolean'];
+};
+
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   conferenceLink: LinksMetadata;
@@ -4556,7 +4590,10 @@ export enum WidgetType {
   RICH_TEXT = 'RICH_TEXT',
   TASKS = 'TASKS',
   TIMELINE = 'TIMELINE',
-  VIEW = 'VIEW'
+  VIEW = 'VIEW',
+  WORKFLOW = 'WORKFLOW',
+  WORKFLOW_RUN = 'WORKFLOW_RUN',
+  WORKFLOW_VERSION = 'WORKFLOW_VERSION'
 }
 
 export type WorkerQueueMetrics = {
@@ -6209,6 +6246,13 @@ export type SubmitFormStepMutationVariables = Exact<{
 
 
 export type SubmitFormStepMutation = { __typename?: 'Mutation', submitFormStep: boolean };
+
+export type TestHttpRequestMutationVariables = Exact<{
+  input: TestHttpRequestInput;
+}>;
+
+
+export type TestHttpRequestMutation = { __typename?: 'Mutation', testHttpRequest: { __typename?: 'TestHttpRequestOutput', success: boolean, message: string, result?: any | null, error?: any | null, status?: number | null, statusText?: string | null, headers?: any | null } };
 
 export type UpdateWorkflowVersionPositionsMutationVariables = Exact<{
   input: UpdateWorkflowVersionPositionsInput;
@@ -14052,6 +14096,45 @@ export function useSubmitFormStepMutation(baseOptions?: Apollo.MutationHookOptio
 export type SubmitFormStepMutationHookResult = ReturnType<typeof useSubmitFormStepMutation>;
 export type SubmitFormStepMutationResult = Apollo.MutationResult<SubmitFormStepMutation>;
 export type SubmitFormStepMutationOptions = Apollo.BaseMutationOptions<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
+export const TestHttpRequestDocument = gql`
+    mutation TestHttpRequest($input: TestHttpRequestInput!) {
+  testHttpRequest(input: $input) {
+    success
+    message
+    result
+    error
+    status
+    statusText
+    headers
+  }
+}
+    `;
+export type TestHttpRequestMutationFn = Apollo.MutationFunction<TestHttpRequestMutation, TestHttpRequestMutationVariables>;
+
+/**
+ * __useTestHttpRequestMutation__
+ *
+ * To run a mutation, you first call `useTestHttpRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTestHttpRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [testHttpRequestMutation, { data, loading, error }] = useTestHttpRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useTestHttpRequestMutation(baseOptions?: Apollo.MutationHookOptions<TestHttpRequestMutation, TestHttpRequestMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TestHttpRequestMutation, TestHttpRequestMutationVariables>(TestHttpRequestDocument, options);
+      }
+export type TestHttpRequestMutationHookResult = ReturnType<typeof useTestHttpRequestMutation>;
+export type TestHttpRequestMutationResult = Apollo.MutationResult<TestHttpRequestMutation>;
+export type TestHttpRequestMutationOptions = Apollo.BaseMutationOptions<TestHttpRequestMutation, TestHttpRequestMutationVariables>;
 export const UpdateWorkflowVersionPositionsDocument = gql`
     mutation UpdateWorkflowVersionPositions($input: UpdateWorkflowVersionPositionsInput!) {
   updateWorkflowVersionPositions(input: $input)

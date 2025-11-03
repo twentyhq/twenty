@@ -14,7 +14,6 @@ export type Scalars = {
   Int: number;
   Float: number;
   ConnectionCursor: any;
-  Date: any;
   DateTime: string;
   JSON: any;
   JSONObject: any;
@@ -1006,15 +1005,15 @@ export type DatabaseEventTriggerIdInput = {
   id: Scalars['String'];
 };
 
-export type DateFilter = {
-  eq?: InputMaybe<Scalars['Date']>;
-  gt?: InputMaybe<Scalars['Date']>;
-  gte?: InputMaybe<Scalars['Date']>;
-  in?: InputMaybe<Array<Scalars['Date']>>;
+export type DateTimeFilter = {
+  eq?: InputMaybe<Scalars['DateTime']>;
+  gt?: InputMaybe<Scalars['DateTime']>;
+  gte?: InputMaybe<Scalars['DateTime']>;
+  in?: InputMaybe<Array<Scalars['DateTime']>>;
   is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['Date']>;
-  lte?: InputMaybe<Scalars['Date']>;
-  neq?: InputMaybe<Scalars['Date']>;
+  lt?: InputMaybe<Scalars['DateTime']>;
+  lte?: InputMaybe<Scalars['DateTime']>;
+  neq?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type DeleteApprovedAccessDomainInput = {
@@ -1808,6 +1807,7 @@ export type Mutation = {
   switchBillingPlan: BillingUpdateOutput;
   switchSubscriptionInterval: BillingUpdateOutput;
   syncApplication: Scalars['Boolean'];
+  testHttpRequest: TestHttpRequestOutput;
   trackAnalytics: Analytics;
   updateApiKey?: Maybe<ApiKey>;
   updateCoreView: CoreView;
@@ -2477,6 +2477,11 @@ export type MutationSyncApplicationArgs = {
 };
 
 
+export type MutationTestHttpRequestArgs = {
+  input: TestHttpRequestInput;
+};
+
+
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -2817,12 +2822,12 @@ export type ObjectPermissionInput = {
 
 export type ObjectRecordFilterInput = {
   and?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  createdAt?: InputMaybe<DateFilter>;
-  deletedAt?: InputMaybe<DateFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  deletedAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<UuidFilter>;
   not?: InputMaybe<ObjectRecordFilterInput>;
   or?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  updatedAt?: InputMaybe<DateFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
 export type ObjectStandardOverrides = {
@@ -3781,6 +3786,35 @@ export type SystemHealthService = {
   status: AdminPanelHealthServiceStatus;
 };
 
+export type TestHttpRequestInput = {
+  /** Request body */
+  body?: InputMaybe<Scalars['JSON']>;
+  /** HTTP headers */
+  headers?: InputMaybe<Scalars['JSON']>;
+  /** HTTP method */
+  method: Scalars['String'];
+  /** URL to make the request to */
+  url: Scalars['String'];
+};
+
+export type TestHttpRequestOutput = {
+  __typename?: 'TestHttpRequestOutput';
+  /** Error information */
+  error?: Maybe<Scalars['JSON']>;
+  /** Response headers */
+  headers?: Maybe<Scalars['JSON']>;
+  /** Message describing the result */
+  message: Scalars['String'];
+  /** Response data */
+  result?: Maybe<Scalars['JSON']>;
+  /** HTTP status code */
+  status?: Maybe<Scalars['Float']>;
+  /** HTTP status text */
+  statusText?: Maybe<Scalars['String']>;
+  /** Whether the request was successful */
+  success: Scalars['Boolean'];
+};
+
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   conferenceLink: LinksMetadata;
@@ -4384,7 +4418,10 @@ export enum WidgetType {
   RICH_TEXT = 'RICH_TEXT',
   TASKS = 'TASKS',
   TIMELINE = 'TIMELINE',
-  VIEW = 'VIEW'
+  VIEW = 'VIEW',
+  WORKFLOW = 'WORKFLOW',
+  WORKFLOW_RUN = 'WORKFLOW_RUN',
+  WORKFLOW_VERSION = 'WORKFLOW_VERSION'
 }
 
 export type WorkerQueueMetrics = {

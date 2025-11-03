@@ -15,6 +15,7 @@ export const WorkflowFieldsMultiSelect = ({
   readonly,
   defaultFields,
   placeholder,
+  hint,
 }: {
   label: string;
   placeholder: string;
@@ -22,6 +23,7 @@ export const WorkflowFieldsMultiSelect = ({
   handleFieldsChange: (field: FieldMultiSelectValue | string) => void;
   readonly: boolean;
   defaultFields: string[] | undefined | null;
+  hint?: string;
 }) => {
   const { getIcon } = useIcons();
 
@@ -64,13 +66,14 @@ export const WorkflowFieldsMultiSelect = ({
         return {
           label: field.label,
           value,
-          icon: getIcon(field.iconName),
+          Icon: getIcon(field.iconName),
           color: 'gray',
         };
       })}
       onChange={handleFieldsChange}
       placeholder={placeholder}
       readonly={readonly}
+      hint={hint}
     />
   );
 };

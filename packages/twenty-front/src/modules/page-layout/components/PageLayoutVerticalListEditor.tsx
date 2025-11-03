@@ -9,7 +9,7 @@ import {
   type DropResult,
 } from '@hello-pangea/dnd';
 import { useId } from 'react';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledVerticalListContainer = styled.div`
   display: flex;
@@ -69,7 +69,8 @@ export const PageLayoutVerticalListEditor = ({
                     <div {...provided.dragHandleProps}>
                       <WidgetRenderer
                         widget={widget}
-                        widgetCardContext="recordPage"
+                        pageLayoutType={PageLayoutType.RECORD_PAGE}
+                        layoutMode="vertical-list"
                       />
                     </div>
                   </StyledDraggableWrapper>
