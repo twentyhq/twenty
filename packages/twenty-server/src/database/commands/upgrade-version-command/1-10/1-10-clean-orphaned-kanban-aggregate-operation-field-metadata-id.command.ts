@@ -111,6 +111,21 @@ export class CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand extends
       `${options.dryRun ? 'DRY RUN - Would have' : ''}Deleted ${deletedCount} KANBAN views and updated ${updatedCount} other views with orphaned kanbanAggregateOperationFieldMetadataId references`,
     );
 
-    // We need to duplicated what's done in the migration command here and try catch it globally becasue it will be run several time for all workspaces
+    // Apply the migration manually after cleanup 1760965667836-kanbanFieldMetadataIdentifierView.ts
+    // This is workspace-agnostic and will only succeed once
+    if (!options.dryRun) {
+      try {
+        await this.viewRepository.query(
+          `ALTER TABLE "core"."view" ADD CONSTRAINT "FK_b3cc95732479f7a1337350c398f" FOREIGN KEY ("kanbanAggregateOperationFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+        );
+        this.logger.log(
+          'Successfully added foreign key constraint for kanbanAggregateOperationFieldMetadataId',
+        );
+      } catch {
+        this.logger.log(
+          'Foreign key constraint already exists or could not be created (this is expected for subsequent workspaces)',
+        );
+      }
+    }
   }
 }
