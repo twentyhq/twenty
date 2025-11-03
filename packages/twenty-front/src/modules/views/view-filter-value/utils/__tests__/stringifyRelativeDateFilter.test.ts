@@ -169,7 +169,7 @@ describe('stringifyRelativeDateFilter', () => {
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;MONDAY',
+        'PAST_5_DAY;;America/New_York;;MONDAY;;',
       );
     });
 
