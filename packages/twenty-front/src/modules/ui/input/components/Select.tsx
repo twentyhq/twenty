@@ -17,6 +17,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
@@ -93,16 +94,17 @@ export const Select = <Value extends SelectValue>({
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
-  const getSelectedOption = () => {
+
+  const selectedOption = useMemo(() => {
     const fromMatchingOption = options.find(
       ({ value: optionValue }) => optionValue === value,
     );
 
-    if (fromMatchingOption !== undefined) {
+    if (isDefined(fromMatchingOption)) {
       return fromMatchingOption;
     }
 
-    if (emptyOption !== undefined) {
+    if (isDefined(emptyOption)) {
       return emptyOption;
     }
 
@@ -113,9 +115,7 @@ export const Select = <Value extends SelectValue>({
     throw new Error(
       'Please provide at least one option to select, should never occur',
     );
-  };
-
-  const selectedOption = getSelectedOption();
+  }, [emptyOption, options, value]);
 
   const filteredOptions = useMemo(
     () =>
@@ -150,7 +150,7 @@ export const Select = <Value extends SelectValue>({
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
   const handleDropdownOpen = () => {
-    if (selectedOption && !searchInputValue) {
+    if (isDefined(selectedOption) && !isNonEmptyString(searchInputValue)) {
       setSelectedItemId(selectedOption.label);
     }
   };
@@ -163,7 +163,7 @@ export const Select = <Value extends SelectValue>({
       onBlur={onBlur}
       ref={selectContainerRef}
     >
-      {!!label && <StyledLabel>{label}</StyledLabel>}
+      {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
         <SelectControl
           selectedOption={selectedOption}
@@ -187,17 +187,16 @@ export const Select = <Value extends SelectValue>({
           }
           dropdownComponents={
             <DropdownContent widthInPixels={dropDownMenuWidth}>
-              {!!withSearchInput && (
+              {isNonEmptyString(withSearchInput) && (
                 <DropdownMenuSearchInput
                   autoFocus
                   value={searchInputValue}
                   onChange={(event) => setSearchInputValue(event.target.value)}
                 />
               )}
-              {!!withSearchInput && !!filteredOptions.length && (
-                <DropdownMenuSeparator />
-              )}
-              {!!filteredOptions.length && (
+              {isNonEmptyString(withSearchInput) &&
+                isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
+              {isNonEmptyArray(filteredOptions) && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   <SelectableList
                     selectableListInstanceId={dropdownId}
@@ -231,10 +230,9 @@ export const Select = <Value extends SelectValue>({
                   </SelectableList>
                 </DropdownMenuItemsContainer>
               )}
-              {!!callToActionButton && !!filteredOptions.length && (
-                <DropdownMenuSeparator />
-              )}
-              {!!callToActionButton && (
+              {isDefined(callToActionButton) &&
+                isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
+              {isDefined(callToActionButton) && (
                 <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
                   <MenuItem
                     onClick={callToActionButton.onClick}
@@ -247,7 +245,9 @@ export const Select = <Value extends SelectValue>({
           }
         />
       )}
-      {!!description && <StyledDescription>{description}</StyledDescription>}
+      {isNonEmptyString(description) && (
+        <StyledDescription>{description}</StyledDescription>
+      )}
     </StyledContainer>
   );
 };
