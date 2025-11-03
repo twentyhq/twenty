@@ -187,15 +187,16 @@ export const Select = <Value extends SelectValue>({
           }
           dropdownComponents={
             <DropdownContent widthInPixels={dropDownMenuWidth}>
-              {isNonEmptyString(withSearchInput) && (
+              {withSearchInput === true && (
                 <DropdownMenuSearchInput
                   autoFocus
                   value={searchInputValue}
                   onChange={(event) => setSearchInputValue(event.target.value)}
                 />
               )}
-              {isNonEmptyString(withSearchInput) &&
-                isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
+              {withSearchInput === true && isNonEmptyArray(filteredOptions) && (
+                <DropdownMenuSeparator />
+              )}
               {isNonEmptyArray(filteredOptions) && (
                 <DropdownMenuItemsContainer hasMaxHeight>
                   <SelectableList
