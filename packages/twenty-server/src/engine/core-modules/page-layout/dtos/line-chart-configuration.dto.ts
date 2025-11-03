@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -8,15 +8,20 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsTimeZone,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
+import { ObjectRecordGroupByDateGranularity } from 'src/engine/core-modules/page-layout/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -47,6 +52,14 @@ export class LineChartConfigurationDTO {
   @IsOptional()
   primaryAxisGroupBySubFieldName?: string;
 
+  @Field(() => ObjectRecordGroupByDateGranularity, {
+    nullable: true,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
+  })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
+  primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
+
   @Field(() => GraphOrderBy, {
     nullable: true,
     defaultValue: GraphOrderBy.FIELD_ASC,
@@ -64,6 +77,14 @@ export class LineChartConfigurationDTO {
   @IsString()
   @IsOptional()
   secondaryAxisGroupBySubFieldName?: string;
+
+  @Field(() => ObjectRecordGroupByDateGranularity, {
+    nullable: true,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
+  })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
+  secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
@@ -112,4 +133,15 @@ export class LineChartConfigurationDTO {
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => String, { nullable: true, defaultValue: 'UTC' })
+  @IsTimeZone()
+  @IsOptional()
+  timezone?: string;
+
+  @Field(() => Int, { nullable: true, defaultValue: CalendarStartDay.MONDAY })
+  @IsOptional()
+  @Min(0)
+  @Max(7)
+  firstDayOfTheWeek?: number;
 }

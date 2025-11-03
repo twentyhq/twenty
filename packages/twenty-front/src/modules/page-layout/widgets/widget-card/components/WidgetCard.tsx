@@ -65,7 +65,7 @@ const StyledWidgetCard = styled.div<{
               border: 1px solid ${theme.border.color.strong};
 
               .widget-card-remove-button {
-                display: block !important;
+                display: flex !important;
               }
             }
           `}
@@ -105,7 +105,7 @@ const StyledWidgetCard = styled.div<{
               border: 1px solid ${theme.border.color.strong};
 
               .widget-card-remove-button {
-                display: block !important;
+                display: flex !important;
               }
             }
           `}

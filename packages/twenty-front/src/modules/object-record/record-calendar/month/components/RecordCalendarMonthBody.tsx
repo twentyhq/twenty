@@ -8,7 +8,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  border: 0.5px solid ${({ theme }) => theme.border.color.light};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 4px;
   overflow: hidden;
 `;

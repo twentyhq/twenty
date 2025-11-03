@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { CalendarStartDay } from './CalendarStartDay';
 export { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from './CompositeFieldTypeSubFieldsNames';
 export { CurrencyCode } from './CurrencyCode';
 export { CURRENCY_CODE_LABELS } from './CurrencyCodeLabels';

@@ -23,6 +23,12 @@ const StyledSelectContainer = styled.div`
   max-width: 120px;
 `;
 
+const StyledErrorMessage = styled.div`
+  color: ${({ theme }) => theme.color.red};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
 export const SettingsAIRouterSettings = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
@@ -31,6 +37,7 @@ export const SettingsAIRouterSettings = () => {
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const modelOptions = useAiModelOptions();
+  const noModelsAvailable = modelOptions.length === 0;
 
   const handleModelChange = async (value: string) => {
     if (!currentWorkspace?.id) {
@@ -90,13 +97,19 @@ export const SettingsAIRouterSettings = () => {
             </StyledSettingsOptionCardDescription>
           </div>
           <StyledSelectContainer>
-            <Select
-              dropdownId="router-model-select"
-              value={currentWorkspace?.routerModel || 'auto'}
-              onChange={handleModelChange}
-              options={modelOptions}
-              selectSizeVariant="small"
-            />
+            {noModelsAvailable ? (
+              <StyledErrorMessage>
+                {t`No models available. Please configure AI models in your workspace settings.`}
+              </StyledErrorMessage>
+            ) : (
+              <Select
+                dropdownId="router-model-select"
+                value={currentWorkspace?.routerModel || 'auto'}
+                onChange={handleModelChange}
+                options={modelOptions}
+                selectSizeVariant="small"
+              />
+            )}
           </StyledSelectContainer>
         </StyledSettingsOptionCardContent>
       </Card>

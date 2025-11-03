@@ -64,11 +64,14 @@ export const transformTwoDimensionalGroupByToBarChartData = ({
     const xValue = formatDimensionValue({
       value: dimensionValues[0],
       fieldMetadata: groupByFieldX,
+      dateGranularity: configuration.primaryAxisDateGranularity ?? undefined,
       subFieldName: configuration.primaryAxisGroupBySubFieldName ?? undefined,
     });
     const yValue = formatDimensionValue({
       value: dimensionValues[1],
       fieldMetadata: groupByFieldY,
+      dateGranularity:
+        configuration.secondaryAxisGroupByDateGranularity ?? undefined,
       subFieldName: configuration.secondaryAxisGroupBySubFieldName ?? undefined,
     });
 

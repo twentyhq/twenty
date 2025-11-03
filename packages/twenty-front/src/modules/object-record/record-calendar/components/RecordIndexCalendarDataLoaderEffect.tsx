@@ -1,9 +1,9 @@
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecordCalendarGroupByRecords } from '@/object-record/record-calendar/hooks/useRecordCalendarGroupByRecords';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
+import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { recordCalendarSelectedRecordIdsComponentSelector } from '@/object-record/record-calendar/states/selectors/recordCalendarSelectedRecordIdsComponentSelector';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -26,12 +26,12 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const setRecordIndexAllRecordIdsSelector = useSetRecoilComponentState(
-    recordIndexAllRecordIdsComponentSelector,
-  );
-
   const setContextStoreTargetedRecords = useSetRecoilComponentState(
     contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const setRecordCalendarRecordIds = useSetRecoilComponentState(
+    recordCalendarRecordIdsComponentState,
   );
 
   const { records } = useRecordCalendarGroupByRecords(
@@ -40,8 +40,9 @@ export const RecordIndexCalendarDataLoaderEffect = () => {
 
   useEffect(() => {
     upsertRecordsInStore(records);
-    setRecordIndexAllRecordIdsSelector(records.map((record) => record.id));
-  }, [records, setRecordIndexAllRecordIdsSelector, upsertRecordsInStore]);
+    const recordIds = records.map((record) => record.id);
+    setRecordCalendarRecordIds(recordIds);
+  }, [records, setRecordCalendarRecordIds, upsertRecordsInStore]);
 
   useEffect(() => {
     setContextStoreTargetedRecords({

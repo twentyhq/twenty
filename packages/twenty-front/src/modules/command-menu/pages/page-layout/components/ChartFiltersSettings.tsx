@@ -1,13 +1,12 @@
 import { CommandMenuSubPageNavigationHeader } from '@/command-menu/pages/common/components/CommandMenuSubPageNavigationHeader';
 import { ChartFiltersSettingsInitializeStateEffect } from '@/command-menu/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { type ChartWidget } from '@/command-menu/pages/page-layout/types/ChartWidget';
 import { type ChartWidgetConfiguration } from '@/command-menu/pages/page-layout/types/ChartWidgetConfiguration';
 import { getChartFiltersSettingsInstanceId } from '@/command-menu/pages/page-layout/utils/getChartFiltersSettingsInstanceId';
 
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedFilterCommandMenuContainer } from '@/object-record/advanced-filter/command-menu/components/AdvancedFilterCommandMenuContainer';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
@@ -39,13 +38,7 @@ export const ChartFiltersSettings = ({
   objectMetadataItem,
   widget,
 }: ChartFiltersSettingsProps) => {
-  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
-
-  const handleBackClick = () => {
-    navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutGraphTypeSelect,
-    });
-  };
+  const { goBackFromCommandMenu } = useCommandMenuHistory();
 
   const { instanceId } = getChartFiltersSettingsInstanceId({
     widgetId: widget.id,
@@ -105,7 +98,7 @@ export const ChartFiltersSettings = ({
     <StyledChartFiltersPageContainer>
       <CommandMenuSubPageNavigationHeader
         title={t`Filter`}
-        onBackClick={handleBackClick}
+        onBackClick={goBackFromCommandMenu}
       />
       <div>
         <InputLabel>{t`Conditions`}</InputLabel>
