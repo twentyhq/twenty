@@ -57,3 +57,46 @@ jobs:
           CROWDIN_PROJECT_ID: 1
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
+      - name: Configure docs files to French-only
+        if: steps.check_docs_changes.outputs.docs_changed == 'true'
+        run: |
+          echo "🔧 Configuring .mdx files to French-only..."
+          
+          # Get all project languages
+          LANGUAGES=$(curl -s -X GET \
+            "https://twenty.api.crowdin.com/api/v2/projects/1/languages" \
+            -H "Authorization: Bearer ${{ secrets.CROWDIN_PERSONAL_TOKEN }}" | \
+            jq -r '.data[].data.id' | grep -v '^fr$' | tr '\n' ',' | sed 's/,$//')
+          
+          if [ -z "$LANGUAGES" ]; then
+            echo "✅ No languages to exclude (or only French is configured)"
+            exit 0
+          fi
+          
+          echo "📋 Languages to exclude: $LANGUAGES"
+          
+          # Get all files
+          FILES=$(curl -s -X GET \
+            "https://twenty.api.crowdin.com/api/v2/projects/1/files?limit=500" \
+            -H "Authorization: Bearer ${{ secrets.CROWDIN_PERSONAL_TOKEN }}")
+          
+          # Filter .mdx files and update each
+          echo "$FILES" | jq -r '.data[] | select(.data.path | contains("twenty-docs") and endswith(".mdx")) | .data.id' | while read FILE_ID; do
+            FILE_NAME=$(echo "$FILES" | jq -r ".data[] | select(.data.id == $FILE_ID) | .data.path")
+            echo "  🔄 Updating $FILE_NAME..."
+            
+            # Build excluded languages array
+            EXCLUDE_ARRAY=$(echo $LANGUAGES | tr ',' '\n' | jq -R . | jq -s .)
+            
+            curl -s -X PATCH \
+              "https://twenty.api.crowdin.com/api/v2/projects/1/files/$FILE_ID" \
+              -H "Authorization: Bearer ${{ secrets.CROWDIN_PERSONAL_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "[{\"op\": \"replace\", \"path\": \"/excludedTargetLanguages\", \"value\": $EXCLUDE_ARRAY}]" > /dev/null
+            
+            echo "  ✅ Updated"
+            sleep 0.2  # Avoid rate limiting
+          done
+          
+          echo "✨ Done! All .mdx files configured for French-only"
+
