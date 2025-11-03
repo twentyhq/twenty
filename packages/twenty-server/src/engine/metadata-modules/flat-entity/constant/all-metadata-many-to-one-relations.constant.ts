@@ -2,7 +2,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type ExtractPropertiesThatEndsWithId } from 'twenty-shared/types';
 
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
-import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 
 type ExtractEntityRelations<TEntity extends MetadataEntity<AllMetadataName>> = {
   [K in ExtractPropertiesThatEndsWithId<TEntity, 'id' | 'workspaceId'>]: K;

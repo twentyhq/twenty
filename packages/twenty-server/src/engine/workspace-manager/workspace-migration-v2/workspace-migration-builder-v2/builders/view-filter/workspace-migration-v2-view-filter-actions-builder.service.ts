@@ -37,9 +37,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       };
     }
 
-    const {
-      flatEntityToValidate: flatViewFilterToValidate,
-    } = args;
+    const { flatEntityToValidate: flatViewFilterToValidate } = args;
 
     return {
       status: 'success',
@@ -68,9 +66,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       };
     }
 
-    const {
-      flatEntityToValidate: flatViewFilterToValidate,
-    } = args;
+    const { flatEntityToValidate: flatViewFilterToValidate } = args;
 
     return {
       status: 'success',

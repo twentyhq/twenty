@@ -1,13 +1,14 @@
-import { MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { createEmptyFlatEntityMaps } from '../../constant/create-empty-flat-entity-maps.constant';
-import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from '../delete-flat-entity-from-flat-entity-and-related-entity-maps-throuhg-mutation-or-throw.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-throuhg-mutation-or-throw.util';
 
 describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', () => {
   it('should delete a view and update related objectMetadata and fieldMetadata by removing viewId', () => {

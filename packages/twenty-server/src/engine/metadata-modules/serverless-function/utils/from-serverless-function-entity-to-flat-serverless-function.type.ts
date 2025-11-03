@@ -1,6 +1,7 @@
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
+
+import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
 
 export const fromServerlessFunctionEntityToFlatServerlessFunction = (
   serverlessFunctionEntity: ServerlessFunctionEntity,

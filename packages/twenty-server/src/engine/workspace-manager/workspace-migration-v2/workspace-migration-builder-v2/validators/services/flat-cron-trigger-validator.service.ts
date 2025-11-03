@@ -54,7 +54,9 @@ export class FlatCronTriggerValidatorService {
     };
 
     const serverlessFunction =
-      flatServerlessFunctionMaps.byId[updatedFlatCronTrigger.serverlessFunctionId];
+      flatServerlessFunctionMaps.byId[
+        updatedFlatCronTrigger.serverlessFunctionId
+      ];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({
@@ -127,7 +129,9 @@ export class FlatCronTriggerValidatorService {
     }
 
     const serverlessFunction =
-      flatServerlessFunctionMaps.byId[flatCronTriggerToValidate.serverlessFunctionId];
+      flatServerlessFunctionMaps.byId[
+        flatCronTriggerToValidate.serverlessFunctionId
+      ];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({

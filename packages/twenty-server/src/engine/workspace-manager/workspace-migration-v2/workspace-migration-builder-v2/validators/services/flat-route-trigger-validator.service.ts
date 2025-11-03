@@ -54,7 +54,9 @@ export class FlatRouteTriggerValidatorService {
     };
 
     const serverlessFunction =
-      flatServerlessFunctionMaps.byId[updatedFlatRouteTrigger.serverlessFunctionId];
+      flatServerlessFunctionMaps.byId[
+        updatedFlatRouteTrigger.serverlessFunctionId
+      ];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({
@@ -144,7 +146,9 @@ export class FlatRouteTriggerValidatorService {
     }
 
     const serverlessFunction =
-      flatServerlessFunctionMaps.byId[flatRouteTriggerToValidate.serverlessFunctionId];
+      flatServerlessFunctionMaps.byId[
+        flatRouteTriggerToValidate.serverlessFunctionId
+      ];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({

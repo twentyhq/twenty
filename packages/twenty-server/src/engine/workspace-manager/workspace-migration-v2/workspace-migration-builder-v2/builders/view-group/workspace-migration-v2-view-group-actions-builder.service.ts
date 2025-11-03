@@ -37,9 +37,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
       };
     }
 
-    const {
-      flatEntityToValidate: flatViewGroupToValidate,
-    } = args;
+    const { flatEntityToValidate: flatViewGroupToValidate } = args;
 
     return {
       status: 'success',
@@ -68,9 +66,7 @@ export class WorkspaceMigrationV2ViewGroupActionsBuilderService extends Workspac
       };
     }
 
-    const {
-      flatEntityToValidate: flatViewGroupToValidate,
-    } = args;
+    const { flatEntityToValidate: flatViewGroupToValidate } = args;
 
     return {
       status: 'success',

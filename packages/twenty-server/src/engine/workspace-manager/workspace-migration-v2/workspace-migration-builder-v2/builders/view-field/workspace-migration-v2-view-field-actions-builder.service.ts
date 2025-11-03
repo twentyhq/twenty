@@ -64,9 +64,7 @@ export class WorkspaceMigrationV2ViewFieldActionsBuilderService extends Workspac
       };
     }
 
-    const {
-      flatEntityToValidate: flatViewFieldToValidate,
-    } = args;
+    const { flatEntityToValidate: flatViewFieldToValidate } = args;
 
     return {
       status: 'success',
