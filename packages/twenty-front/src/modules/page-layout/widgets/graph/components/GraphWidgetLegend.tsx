@@ -22,7 +22,7 @@ const StyledLegendItem = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  font-size: 9px;
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
