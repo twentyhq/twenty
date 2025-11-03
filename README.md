@@ -1,5 +1,3 @@
-[![Hacktoberfest 2025](packages/twenty-website/public/images/readme/hacktoberfest2025.png)](https://twentycrm.notion.site/)
-
 <p align="center">
   <a href="https://www.twenty.com">
     <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
