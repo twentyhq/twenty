@@ -2,12 +2,14 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { DataSource, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -58,30 +60,27 @@ export class AddWorkflowRunStopStatusesCommand extends ActiveOrSuspendedWorkspac
     const workflowRunStatusFieldMetadataOptions =
       workflowRunStatusFieldMetadata.options;
 
-    if (
-      workflowRunStatusFieldMetadataOptions?.some(
-        (option) =>
-          option.value === WorkflowRunStatus.STOPPED ||
-          option.value === WorkflowRunStatus.STOPPING,
-      )
-    ) {
-      this.logger.log(
-        `Workflow run status field metadata options already contain stopped and stopping statuses for workspace ${workspaceId}`,
-      );
-
-      return;
-    } else if (options.dryRun) {
+    if (options.dryRun) {
       this.logger.log(
         `Would add stopped and stopping statuses to workflow run status field metadata for workspace ${workspaceId}`,
       );
     } else {
-      workflowRunStatusFieldMetadataOptions?.push({
+      const workflowRunStatusFieldMetadataOptionsWithoutStoppingAndStopped =
+        workflowRunStatusFieldMetadataOptions?.filter(
+          (option) =>
+            option.value !== WorkflowRunStatus.STOPPED &&
+            option.value !== WorkflowRunStatus.STOPPING,
+        ) as FieldMetadataComplexOption[];
+
+      workflowRunStatusFieldMetadataOptionsWithoutStoppingAndStopped?.push({
+        id: v4(),
         value: WorkflowRunStatus.STOPPING,
         label: 'Stopping',
         position: 5,
         color: 'orange',
       });
-      workflowRunStatusFieldMetadataOptions?.push({
+      workflowRunStatusFieldMetadataOptionsWithoutStoppingAndStopped?.push({
+        id: v4(),
         value: WorkflowRunStatus.STOPPED,
         label: 'Stopped',
         position: 6,
@@ -93,6 +92,20 @@ export class AddWorkflowRunStopStatusesCommand extends ActiveOrSuspendedWorkspac
       this.logger.log(
         `Stopped and stopping statuses added to workflow run status field metadata for workspace ${workspaceId}`,
       );
+    }
+
+    if (
+      workflowRunStatusFieldMetadataOptions?.some(
+        (option) =>
+          option.value === WorkflowRunStatus.STOPPED ||
+          option.value === WorkflowRunStatus.STOPPING,
+      )
+    ) {
+      this.logger.log(
+        `We do not want to re-run the workspace command for those already added`,
+      );
+
+      return;
     }
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
