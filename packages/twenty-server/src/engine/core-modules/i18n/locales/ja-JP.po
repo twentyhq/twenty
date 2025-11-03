@@ -584,10 +584,10 @@ msgstr "{connectFieldName}に接続できません。条件: {formattedConnectCo
 msgid "Can't impersonate user via api key"
 msgstr "APIキーを介してユーザーを偽装することはできません。"
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "草稿または最後に公開されたバージョン以外は有効化できません"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +619,6 @@ msgstr "非アクティブなワークフローバージョンを無効化する
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "既存の重複データがあるため、一意性を有効にできません。まずデータを見直して修正してください（ソフト削除されたレコードを含む）。"
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "複数のアクティブなワークフローバージョンを持つことはできません"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts

@@ -584,10 +584,10 @@ msgstr "Kan inte ansluta till {connectFieldName}. Inget unikt rekord hittades me
 msgid "Can't impersonate user via api key"
 msgstr "Kan inte imitera användare via API-nyckel"
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "Kan inte aktivera icke-utkast eller icke-senaste publicerade versionen"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +619,6 @@ msgstr "Kan inte inaktivera icke-aktiva arbetsflödesversioner"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Kan inte aktivera unikhet på grund av befintliga dubbla värden. Vänligen granska och åtgärda dina data först (inklusive mjukt borttagna poster)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "Kan inte ha mer än en aktiv arbetsflödesversion"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
