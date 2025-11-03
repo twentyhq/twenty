@@ -13,7 +13,7 @@ import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/messa
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
 import { MicrosoftGetMessageListService } from './microsoft-get-message-list.service';
-import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
+import { MicrosoftMessageListFetchErrorHandler } from './microsoft-message-list-fetch-error-handler.service';
 
 // in case you have "Please provide a valid token" it may be because you need to pass the env varible to the .env.test file
 const accessToken = 'replace-with-your-access-token';
@@ -53,7 +53,10 @@ xdescribe('Microsoft dev tests : get message list service', () => {
       providers: [
         MicrosoftGetMessageListService,
         OAuth2ClientManagerService,
-        MicrosoftHandleErrorService,
+        {
+          provide: MicrosoftMessageListFetchErrorHandler,
+          useValue: { handleError: jest.fn() },
+        },
         MicrosoftOAuth2ClientManagerService,
         ConfigService,
       ],
@@ -204,7 +207,10 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
       providers: [
         MicrosoftGetMessageListService,
         OAuth2ClientManagerService,
-        MicrosoftHandleErrorService,
+        {
+          provide: MicrosoftMessageListFetchErrorHandler,
+          useValue: { handleError: jest.fn() },
+        },
         MicrosoftOAuth2ClientManagerService,
         ConfigService,
       ],

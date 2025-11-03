@@ -4,7 +4,8 @@ import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFiel
 import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
-import { getRecordFilterLabelValue } from '@/views/utils/getRecordFilterLabelValue';
+import { useGetRecordFilterLabelValue } from '@/views/hooks/useGetRecordFilterLabelValue';
+
 import { t } from '@lingui/core/macro';
 import {
   arrayOfUuidOrVariableSchema,
@@ -20,6 +21,8 @@ export const useComputeRecordRelationFilterLabelValue = ({
   recordFilter,
 }: ObjectFilterDropdownRecordSelectProps) => {
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { getRecordFilterLabelValue } = useGetRecordFilterLabelValue();
 
   if (!isDefined(recordFilter.fieldMetadataId)) {
     throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
