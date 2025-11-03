@@ -19,4 +19,10 @@ export const mockedPublicWorkspaceDataBySubdomain: GetPublicWorkspaceDataByDomai
       password: true,
       microsoft: false,
     },
+    authBypassProviders: {
+      __typename: 'AuthBypassProviders',
+      google: false,
+      password: false,
+      microsoft: false,
+    },
   };

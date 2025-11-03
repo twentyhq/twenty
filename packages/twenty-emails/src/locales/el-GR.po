@@ -19,11 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Δοκιμαστικό email"
-
-#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace"
 msgstr "Ανασταλμένος Χώρος Εργασίας"
@@ -63,6 +58,11 @@ msgid "Update your subscription"
 msgstr "Ενημερώστε τη συνδρομή σας"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Δοκιμαστικό email"
+
+#. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
@@ -72,6 +72,21 @@ msgstr "Επικύρωση τομέα"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
 msgstr "{senderName} (<0>{senderEmail}</0>): Παρακαλώ επικυρώστε αυτόν τον τομέα για να επιτρέψετε στους χρήστες με διευθύνσεις email <1>@{domain}</1> να συμμετάσχουν στον χώρο εργασίας σας χωρίς να απαιτείται πρόσκληση."
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "Επιβεβαιώστε τη διεύθυνση email σας"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "Σας ευχαριστούμε που κάνατε εγγραφή για λογαριασμό στο Twenty! Πριν ξεκινήσουμε, πρέπει να επιβεβαιώσουμε ότι είστε εσείς. Κάντε κλικ παρακάτω για να επαληθεύσετε τη διεύθυνση email σας."
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Επαληθεύστε το Email"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -89,19 +104,29 @@ msgid "Accept invite"
 msgstr "Αποδοχή πρόσκλησης"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "Επιβεβαιώστε τη διεύθυνση email σας"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr "Διαγραμμένος Χώρος Εργασίας"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Σας ευχαριστούμε που κάνατε εγγραφή για λογαριασμό στο Twenty! Πριν ξεκινήσουμε, πρέπει να επιβεβαιώσουμε ότι είστε εσείς. Κάντε κλικ παρακάτω για να επαληθεύσετε τη διεύθυνση email σας."
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+msgstr "Ο χώρος εργασίας σας <0>{workspaceDisplayName}</0> έχει διαγραφεί καθώς η συνδρομή σας έληξε {daysSinceInactive} ημέρες πριν."
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Επαληθεύστε το Email"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "All data in this workspace has been permanently deleted."
+msgstr "Όλα τα δεδομένα σε αυτόν τον χώρο εργασίας έχουν διαγραφεί μόνιμα."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you wish to use Twenty again, you can create a new workspace."
+msgstr "Εάν επιθυμείτε να χρησιμοποιήσετε ξανά το Twenty, μπορείτε να δημιουργήσετε ένα νέο χώρο εργασίας."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr "Δημιουργία νέου χώρου εργασίας"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -137,31 +162,6 @@ msgstr "Εάν δεν έχετε προβεί εσείς σε αυτήν την 
 #: src/emails/password-update-notify.email.tsx
 msgid "Connect to Twenty"
 msgstr "Συνδεθείτε στο Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Deleted Workspace"
-msgstr "Διαγραμμένος Χώρος Εργασίας"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
-msgstr "Ο χώρος εργασίας σας <0>{workspaceDisplayName}</0> έχει διαγραφεί καθώς η συνδρομή σας έληξε {daysSinceInactive} ημέρες πριν."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "All data in this workspace has been permanently deleted."
-msgstr "Όλα τα δεδομένα σε αυτόν τον χώρο εργασίας έχουν διαγραφεί μόνιμα."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Εάν επιθυμείτε να χρησιμοποιήσετε ξανά το Twenty, μπορείτε να δημιουργήσετε ένα νέο χώρο εργασίας."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Create a new workspace"
-msgstr "Δημιουργία νέου χώρου εργασίας"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx

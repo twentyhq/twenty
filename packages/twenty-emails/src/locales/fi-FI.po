@@ -19,11 +19,6 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
-#: src/emails/test.email.tsx
-msgid "Test email"
-msgstr "Testisähköposti"
-
-#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace"
 msgstr "Keskeytetty työtila"
@@ -63,6 +58,11 @@ msgid "Update your subscription"
 msgstr "Päivitä tilauksesi"
 
 #. js-lingui-explicit-id
+#: src/emails/test.email.tsx
+msgid "Test email"
+msgstr "Testisähköposti"
+
+#. js-lingui-explicit-id
 #: src/emails/validate-approved-access-domain.email.tsx
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Validate domain"
@@ -72,6 +72,21 @@ msgstr "Vahvista verkkotunnus"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow users with <1>@{domain}</1> email addresses to join your workspace without requiring an invitation."
 msgstr "{senderName} (<0>{senderEmail}</0>): Vahvista tämä verkkotunnus, jotta käyttäjät, joilla on <1>@{domain}</1> sähköpostiosoitteet, voivat liittyä työtilaasi ilman kutsua."
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your email address"
+msgstr "Vahvista sähköpostiosoitteesi"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "Kiitos, että rekisteröidyit Twenty:n käyttäjäksi! Ennen kuin aloitamme, meidän täytyy vahvistaa, että kyseessä on sinä. Klikkaa alla vahvistaaksesi sähköpostiosoitteesi."
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Verify Email"
+msgstr "Vahvista sähköposti"
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -89,19 +104,29 @@ msgid "Accept invite"
 msgstr "Hyväksy kutsu"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Confirm your email address"
-msgstr "Vahvista sähköpostiosoitteesi"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Deleted Workspace"
+msgstr "Poistettu työtila"
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Kiitos, että rekisteröidyit Twenty:n käyttäjäksi! Ennen kuin aloitamme, meidän täytyy vahvistaa, että kyseessä on sinä. Klikkaa alla vahvistaaksesi sähköpostiosoitteesi."
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+msgstr "Työtilasi <0>{workspaceDisplayName}</0> on poistettu, koska tilauksesi vanheni {daysSinceInactive} päivää sitten."
 
 #. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Verify Email"
-msgstr "Vahvista sähköposti"
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "All data in this workspace has been permanently deleted."
+msgstr "Kaikki tiedot tässä työtilassa on pysyvästi poistettu."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "If you wish to use Twenty again, you can create a new workspace."
+msgstr "Jos haluat käyttää Twentyä uudelleen, voit luoda uuden työtilan."
+
+#. js-lingui-explicit-id
+#: src/emails/clean-suspended-workspace.email.tsx
+msgid "Create a new workspace"
+msgstr "Luo uusi työtila"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -137,31 +162,6 @@ msgstr "Jos et itse aloittanut tätä muutosta, ota heti yhteyttä työtilasi om
 #: src/emails/password-update-notify.email.tsx
 msgid "Connect to Twenty"
 msgstr "Yhdistä Twenty"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Deleted Workspace"
-msgstr "Poistettu työtila"
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
-msgstr "Työtilasi <0>{workspaceDisplayName}</0> on poistettu, koska tilauksesi vanheni {daysSinceInactive} päivää sitten."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "All data in this workspace has been permanently deleted."
-msgstr "Kaikki tiedot tässä työtilassa on pysyvästi poistettu."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "If you wish to use Twenty again, you can create a new workspace."
-msgstr "Jos haluat käyttää Twentyä uudelleen, voit luoda uuden työtilan."
-
-#. js-lingui-explicit-id
-#: src/emails/clean-suspended-workspace.email.tsx
-msgid "Create a new workspace"
-msgstr "Luo uusi työtila"
 
 #. js-lingui-explicit-id
 #: src/components/WhatIsTwenty.tsx
