@@ -95,6 +95,10 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
   const chartSettings = GRAPH_TYPE_INFORMATION[currentGraphType].settings;
 
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === widget.objectMetadataId,
+  );
+
   const visibleItemIds = chartSettings.flatMap((group) =>
     group.items
       .filter(
@@ -103,6 +107,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
             item,
             widget.objectMetadataId,
             isGroupByEnabled as boolean,
+            configuration,
+            objectMetadataItem,
           ),
       )
       .map((item) => item.id),
@@ -126,6 +132,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
               item,
               widget.objectMetadataId,
               isGroupByEnabled as boolean,
+              configuration,
+              objectMetadataItem,
             ),
         );
 
