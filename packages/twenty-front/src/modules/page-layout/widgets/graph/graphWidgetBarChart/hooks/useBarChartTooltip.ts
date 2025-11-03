@@ -30,7 +30,6 @@ export const useBarChartTooltip = ({
     if (enableGroupTooltip) {
       keysToShow = enrichedKeys;
     } else {
-      // Use datum.id directly instead of hoveredBar
       const hoveredKey = datum.id;
       if (!isDefined(hoveredKey)) return null;
 
