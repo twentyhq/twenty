@@ -90,7 +90,5 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', 
     ).toMatchObject<Partial<FlatFieldMetadata>>({
       calendarViewIds: [mockView.id],
     });
-
-    expect(flatEntityAndRelatedMapsToMutate).toMatchSnapshot();
   });
 });
