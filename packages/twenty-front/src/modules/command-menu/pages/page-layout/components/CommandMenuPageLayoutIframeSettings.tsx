@@ -1,10 +1,8 @@
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
-import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -25,30 +23,12 @@ export const CommandMenuPageLayoutIframeSettings = () => {
 
   const theme = useTheme();
 
-  const draftPageLayout = useRecoilComponentValue(
-    pageLayoutDraftComponentState,
-    pageLayoutId,
-  );
-
-  const pageLayoutEditingWidgetId = useRecoilComponentValue(
-    pageLayoutEditingWidgetIdComponentState,
-    pageLayoutId,
-  );
+  const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
-  if (!isDefined(pageLayoutEditingWidgetId)) {
-    throw new Error('Widget ID must be present while editing the widget');
-  }
-
-  const widgetInEditMode = draftPageLayout.tabs
-    .flatMap((tab) => tab.widgets)
-    .find((widget) => widget.id === pageLayoutEditingWidgetId);
-
   if (!isDefined(widgetInEditMode)) {
-    throw new Error(
-      `Widget with ID ${pageLayoutEditingWidgetId} not found in page layout`,
-    );
+    throw new Error('Widget ID must be present while editing the widget');
   }
 
   const configUrl =
@@ -64,7 +44,7 @@ export const CommandMenuPageLayoutIframeSettings = () => {
   const validateUrl = (urlString: string): boolean => {
     const trimmedUrl = urlString.trim();
 
-    if (!trimmedUrl) {
+    if (!isNonEmptyString(trimmedUrl)) {
       setUrlError('');
       return true;
     }
@@ -100,11 +80,13 @@ export const CommandMenuPageLayoutIframeSettings = () => {
         initialTitle={widgetInEditMode.title}
         headerType={t`iFrame Widget`}
         onTitleChange={(newTitle) => {
-          if (isNonEmptyString(newTitle)) {
-            updatePageLayoutWidget(widgetInEditMode.id, {
-              title: newTitle,
-            });
+          if (!isNonEmptyString(newTitle)) {
+            return;
           }
+
+          updatePageLayoutWidget(widgetInEditMode.id, {
+            title: newTitle,
+          });
         }}
       />
       <StyledContainer>
