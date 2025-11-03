@@ -21,6 +21,9 @@ on:
         required: false
         type: boolean
         default: false
+  pull_request:
+    branches:
+      - main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -52,7 +55,7 @@ jobs:
           git stash || true
 
       - name: Pull translated docs from Crowdin
-        if: github.event_name == 'schedule' || inputs.force_pull == true || (github.event_name == 'workflow_dispatch' && inputs.force_pull != false)
+        if: github.event_name == 'schedule' || inputs.force_pull == true || (github.event_name == 'workflow_dispatch' && inputs.force_pull != false) || github.event_name == 'pull_request'
         uses: crowdin/github-action@v2
         with:
           upload_sources: false
