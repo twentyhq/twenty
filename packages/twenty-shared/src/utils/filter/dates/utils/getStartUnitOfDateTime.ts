@@ -18,6 +18,14 @@ export const getStartUnitOfDateTime = (
         const firstDayOfTheWeekAsDateFNSNumber =
           getFirstDayOfTheWeekAsANumberForDateFNS(firstDayOfTheWeek);
 
+        console.log({
+          firstDayOfTheWeek,
+          firstDayOfTheWeekAsDateFNSNumber,
+          startOfWekk: startOfWeek(dateTime, {
+            weekStartsOn: firstDayOfTheWeekAsDateFNSNumber,
+          }),
+        });
+
         return startOfWeek(dateTime, {
           weekStartsOn: firstDayOfTheWeekAsDateFNSNumber,
         });
