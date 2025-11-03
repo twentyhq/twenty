@@ -84,7 +84,6 @@ jobs:
           import_eq_suggestions: false
           download_sources: false
           push_sources: false
-          skip_untranslated_strings: true
           skip_untranslated_files: true
           push_translations: true
           create_pull_request: false
