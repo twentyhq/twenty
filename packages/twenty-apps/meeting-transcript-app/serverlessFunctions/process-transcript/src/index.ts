@@ -40,17 +40,17 @@ type TwentyApiResponse = {
   id: string;
 };
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY; 
+const AI_PROVIDER_API_KEY = process.env.AI_PROVIDER_API_KEY;
 const WEBHOOK_SECRET_TOKEN = process.env.WEBHOOK_SECRET_TOKEN;
 const TWENTY_API_URL = process.env.TWENTY_API_URL;
-const OPENAI_API_BASE_URL = process.env.OPENAI_API_BASE_URL;
+const AI_PROVIDER_API_BASE_URL = process.env.AI_PROVIDER_API_BASE_URL;
 
-const LLM_MODEL_ID = 'openai/gpt-oss-20b'; 
-const OPENAI_TEMPERATURE = 0.3; 
+const LLM_MODEL_ID = 'openai/gpt-oss-20b';
+const OPENAI_TEMPERATURE = 0.3;
 
-const openai = new OpenAI({ 
-  apiKey: OPENAI_API_KEY, 
-  baseURL: OPENAI_API_BASE_URL, 
+const openai = new OpenAI({
+  apiKey: AI_PROVIDER_API_KEY,
+  baseURL: AI_PROVIDER_API_BASE_URL,
 });
 
 const getTwentyApiConfig = () => {
@@ -59,7 +59,7 @@ const getTwentyApiConfig = () => {
     throw new Error('TWENTY_API_KEY environment variable is not set');
   }
 
-  const baseUrl = TWENTY_API_URL; 
+  const baseUrl = TWENTY_API_URL;
   if (!baseUrl) {
     throw new Error('TWENTY_API_URL environment variable is not set');
   }
@@ -71,7 +71,7 @@ const lookupWorkspaceMemberByName = async (
   name: string,
 ): Promise<string | null> => {
   const { apiKey, baseUrl } = getTwentyApiConfig();
-  
+
   try {
     const graphqlQuery = {
       query: `
@@ -90,7 +90,7 @@ const lookupWorkspaceMemberByName = async (
         }
       `,
     };
-    
+
     const response = await axios.post(
       `${baseUrl}/graphql`,
       graphqlQuery,
@@ -101,27 +101,27 @@ const lookupWorkspaceMemberByName = async (
         },
       },
     );
-    
+
     const edges = response.data?.data?.workspaceMembers?.edges;
-    
+
     if (!edges || edges.length === 0) {
       console.log('⚠️ No workspace members found');
       return null;
     }
 
     const searchName = name.trim().toLowerCase();
-    
+
     for (const edge of edges) {
       const firstName = edge.node.name?.firstName || '';
       const lastName = edge.node.name?.lastName || '';
       const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
-      
+
       if (fullName === searchName) {
         console.log(`✅ Found workspace member (exact): ${firstName} ${lastName} (ID: ${edge.node.id})`);
         return edge.node.id;
       }
     }
-    
+
     for (const edge of edges) {
       const firstName = edge.node.name?.firstName || '';
       if (firstName.toLowerCase() === searchName) {
@@ -130,7 +130,7 @@ const lookupWorkspaceMemberByName = async (
         return edge.node.id;
       }
     }
-    
+
     for (const edge of edges) {
       const lastName = edge.node.name?.lastName || '';
       if (lastName.toLowerCase() === searchName) {
@@ -139,18 +139,18 @@ const lookupWorkspaceMemberByName = async (
         return edge.node.id;
       }
     }
-    
+
     for (const edge of edges) {
       const firstName = edge.node.name?.firstName || '';
       const lastName = edge.node.name?.lastName || '';
       const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
-      
+
       if (fullName.includes(searchName) || searchName.includes(fullName)) {
         console.log(`✅ Found workspace member (partial): ${firstName} ${lastName} (ID: ${edge.node.id})`);
         return edge.node.id;
       }
     }
-    
+
     console.log(`⚠️ No workspace member found matching: "${name}"`);
     return null;
   } catch (error) {
@@ -168,7 +168,7 @@ const lookupPersonByName = async (
   name: string,
 ): Promise<string | null> => {
   const { apiKey, baseUrl } = getTwentyApiConfig();
-  
+
   try {
     const graphqlQuery = {
       query: `
@@ -187,7 +187,7 @@ const lookupPersonByName = async (
         }
       `,
     };
-    
+
     const response = await axios.post(
       `${baseUrl}/graphql`,
       graphqlQuery,
@@ -198,27 +198,27 @@ const lookupPersonByName = async (
         },
       },
     );
-    
+
     const edges = response.data?.data?.people?.edges;
-    
+
     if (!edges || edges.length === 0) {
       console.log('⚠️ No people found in CRM');
       return null;
     }
 
     const searchName = name.trim().toLowerCase();
-    
+
     for (const edge of edges) {
       const firstName = edge.node.name?.firstName || '';
       const lastName = edge.node.name?.lastName || '';
       const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
-      
+
       if (fullName === searchName) {
         console.log(`✅ Found person (exact): ${firstName} ${lastName} (ID: ${edge.node.id})`);
         return edge.node.id;
       }
     }
-    
+
     for (const edge of edges) {
       const firstName = edge.node.name?.firstName || '';
       if (firstName.toLowerCase() === searchName) {
@@ -227,7 +227,7 @@ const lookupPersonByName = async (
         return edge.node.id;
       }
     }
-    
+
     for (const edge of edges) {
       const lastName = edge.node.name?.lastName || '';
       if (lastName.toLowerCase() === searchName) {
@@ -236,18 +236,18 @@ const lookupPersonByName = async (
         return edge.node.id;
       }
     }
-    
+
     for (const edge of edges) {
       const firstName = edge.node.name?.firstName || '';
       const lastName = edge.node.name?.lastName || '';
       const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
-      
+
       if (fullName.includes(searchName) || searchName.includes(fullName)) {
         console.log(`✅ Found person (partial): ${firstName} ${lastName} (ID: ${edge.node.id})`);
         return edge.node.id;
       }
     }
-    
+
     console.log(`⚠️ No person found matching: "${name}"`);
     return null;
   } catch (error) {
@@ -263,19 +263,19 @@ const lookupPersonByName = async (
 
 const extractPersonNamesFromDescription = (description: string, participants: string[]): string[] => {
   const foundNames: string[] = [];
-  
+
   for (const participant of participants) {
     if (description.includes(participant)) {
       foundNames.push(participant);
       continue;
     }
-    
+
     const firstName = participant.split(' ')[0];
     if (firstName && description.includes(firstName)) {
       foundNames.push(participant);
     }
   }
-  
+
   return foundNames;
 };
 
@@ -289,7 +289,7 @@ const linkNoteToPersonREST = async (
   personId: string,
 ): Promise<void> => {
   const { apiKey, baseUrl } = getTwentyApiConfig();
-  
+
   try {
     const response = await axios.post(
       `${baseUrl}/rest/noteTargets`,
@@ -304,9 +304,9 @@ const linkNoteToPersonREST = async (
         },
       },
     );
-    
+
     const noteTargetId = response.data?.data?.createNoteTarget?.id;
-    
+
     if (noteTargetId) {
       console.log(`✅ Successfully linked note ${noteId} to person ${personId} (noteTarget: ${noteTargetId})`);
     } else {
@@ -358,22 +358,22 @@ const createNoteInTwenty = async (
         },
       },
     );
-    
+
     const responseJson = JSON.stringify(response.data);
     console.log('📦 Note API Response:', responseJson);
-    
+
     const noteId = response.data?.data?.createNote?.id;
-    
+
     if (!noteId) {
       const errorMsg = `Note created but ID not found in response. Response structure: ${responseJson}`;
       console.error('❌', errorMsg);
       throw new Error(errorMsg);
     }
-    
+
     console.log(`✅ Note ID extracted: ${noteId}`);
-    
+
     await linkNoteToPersonREST(noteId, relatedPersonId);
-    
+
     return { id: noteId };
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -394,7 +394,7 @@ const linkTaskToPersonREST = async (
   personId: string,
 ): Promise<void> => {
   const { apiKey, baseUrl } = getTwentyApiConfig();
-  
+
   try {
     const response = await axios.post(
       `${baseUrl}/rest/taskTargets`,
@@ -470,22 +470,22 @@ const createTaskInTwenty = async (
         },
       },
     );
-    
+
     console.log('📦 Task API Response:', JSON.stringify(response.data));
-    
+
     const taskId = response.data?.data?.createTask?.id;
-    
+
     if (!taskId) {
       console.error('❌ Failed to extract task ID from response:', response.data);
       throw new Error('Task created but ID not found in response');
     }
-    
+
     console.log(`✅ Task created successfully: ${taskId} - "${actionItem.title}"`);
-    
+
     if (relatedPersonId) {
       await linkTaskToPersonREST(taskId, relatedPersonId);
     }
-    
+
     return { id: taskId };
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -514,17 +514,17 @@ const createTasksFromActionItems = async (
     try {
       const taskDescription = `${actionItem.description}\n\n*Related to meeting note: ${noteId}*`;
       console.log(`Creating task: "${actionItem.title}"`);
-      
+
       const mentionedPeople = extractPersonNamesFromDescription(actionItem.description, participants);
       console.log(`📝 People mentioned in task description:`, mentionedPeople);
-      
+
       const task = await createTaskInTwenty({
         ...actionItem,
         description: taskDescription,
       });
       taskIds.push(task.id);
       console.log(`✅ Task created: ${task.id}`);
-      
+
       if (mentionedPeople.length > 0) {
         for (const personName of mentionedPeople) {
           const personId = await lookupPersonByName(personName);
@@ -538,7 +538,7 @@ const createTasksFromActionItems = async (
         console.log(`⚠️ No specific people mentioned, using relatedPersonId as fallback`);
         await linkTaskToPersonREST(task.id, relatedPersonId);
       }
-      
+
       console.log(`✅ Task linking complete: ${task.id}`);
     } catch (error) {
       console.error(`❌ Task creation failed for "${actionItem.title}":`, error instanceof Error ? error.message : error);
@@ -565,7 +565,7 @@ const createTasksFromCommitments = async (
         dueDate: commitment.dueDate || '',
       });
       taskIds.push(task.id);
-      
+
       const personId = await lookupPersonByName(commitment.person);
       if (personId) {
         await linkTaskToPersonREST(task.id, personId);
@@ -606,7 +606,7 @@ Transcript: "Brian will finalize the investor deck. Irfan will review it before 
 
 ✅ CORRECT OUTPUT (1 task):
   Task 1: {
-    "title": "Finalize and present investor deck", 
+    "title": "Finalize and present investor deck",
     "assignee": "Irfan",
     "dueDate": "2025-11-03",
     "description": "Brian Chesky is designated to finalize the investor deck layout and needs to present it next Monday. Irfan will review the deck before the presentation."
@@ -671,7 +671,7 @@ Transcript:
 ${transcript}`;
 
   const completion = await openai.chat.completions.create({
-    model: LLM_MODEL_ID, 
+    model: LLM_MODEL_ID,
     messages: [
       {
         role: 'system',
@@ -725,13 +725,13 @@ export const main = async (
   };
 
   try {
-    const webhookToken = params.token; 
+    const webhookToken = params.token;
     const expectedSecret = process.env.WEBHOOK_SECRET_TOKEN;
-    
+
     if (!expectedSecret || !webhookToken || webhookToken !== expectedSecret) {
       throw new Error('Unauthorized webhook access: Invalid or missing token.');
     }
-    
+
     const { transcript, meetingTitle, meetingDate, relatedPersonId, participants } = params;
 
     if (!transcript || typeof transcript !== 'string') {
@@ -742,15 +742,15 @@ export const main = async (
       throw new Error('relatedPersonId is required and must be a string');
     }
 
-    const openaiApiKey = process.env.OPENAI_API_KEY;
+    const openaiApiKey = process.env.AI_PROVIDER_API_KEY;
     if (!openaiApiKey) {
-      throw new Error('OPENAI_API_KEY environment variable is not set');
+      throw new Error('AI_PROVIDER_API_KEY environment variable is not set');
     }
 
     log('✅ Validation passed');
     log(`📝 RelatedPersonId: ${relatedPersonId}`);
     log('🤖 Starting transcript analysis...');
-    
+
     const analysis = await analyzeTranscript(transcript, openaiApiKey);
     log(`✅ Analysis complete: ${analysis.actionItems.length} action items, ${analysis.commitments.length} commitments`);
 
@@ -772,7 +772,7 @@ export const main = async (
       participants || [],
     );
     log(`✅ Action item tasks created: ${actionItemTaskIds.length}`);
-    
+
     log('📋 Creating tasks from commitments...');
     const commitmentTaskIds = await createTasksFromCommitments(
       analysis.commitments,

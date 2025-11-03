@@ -10,8 +10,6 @@
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "axios": "^1.7.0",
-    "openai": "^4.67.0",
     "typescript": "^5.6.0"
   },
   "scripts": {
@@ -28,7 +26,7 @@
       "value": "",
       "description": "API key for the Twenty CRM instance (used for authentication)."
     },
-    "OPENAI_API_KEY": {
+    "AI_PROVIDER_API_KEY": {
       "isSecret": true,
       "value": "",
       "description": "API key for authenticating with the OpenAI-compatible service (supports OpenAI, Groq, and other providers)."
@@ -43,10 +41,14 @@
       "value": "",
       "description": "Secret token used to authenticate incoming webhook requests."
     },
-    "OPENAI_API_BASE_URL": {
+    "AI_PROVIDER_API_BASE_URL": {
       "isSecret": false,
       "value": "https://api.openai.com/v1",
       "description": "Base URL for OpenAI-compatible API. Defaults to OpenAI, but can be changed to use Groq (https://api.groq.com/openai/v1) or other providers."
     }
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "openai": "^4.67.0"
   }
 }
