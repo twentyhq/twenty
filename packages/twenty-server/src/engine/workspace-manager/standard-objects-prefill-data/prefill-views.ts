@@ -21,7 +21,7 @@ export const prefillViews = async (
   entityManager: EntityManager,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
-  featureFlags?: Record<string, boolean>,
+  _featureFlags?: Record<string, boolean>,
 ) => {
   const customObjectMetadataItems = objectMetadataItems.filter(
     (item) => item.isCustom,

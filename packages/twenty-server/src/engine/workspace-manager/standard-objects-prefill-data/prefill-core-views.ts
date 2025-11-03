@@ -40,7 +40,6 @@ export const prefillCoreViews = async ({
   coreDataSource,
   workspaceId,
   objectMetadataItems,
-  featureFlags,
   workspaceSchemaName,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
   const views = [
