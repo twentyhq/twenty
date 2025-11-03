@@ -180,19 +180,30 @@ export const formatToHumanReadableDate = (date: Date | string) => {
   return i18n.date(parsedJSDate, { dateStyle: 'medium' });
 };
 
-export const getDateFormatString = (
+export const getDateTimeFormatStringFoDatePickerInputMask = (
   dateFormat: DateFormat,
-  isDateTimeInput: boolean,
 ): string => {
-  const timePart = isDateTimeInput ? ' HH:mm' : '';
-
   switch (dateFormat) {
     case DateFormat.DAY_FIRST:
-      return `dd/MM/yyyy${timePart}`;
+      return `dd/MM/yyyy HH:mm`;
     case DateFormat.YEAR_FIRST:
-      return `yyyy-MM-dd${timePart}`;
+      return `yyyy-MM-dd HH:mm`;
     case DateFormat.MONTH_FIRST:
     default:
-      return `MM/dd/yyyy${timePart}`;
+      return `MM/dd/yyyy HH:mm`;
+  }
+};
+
+export const getDateFormatStringForDatePickerInputMask = (
+  dateFormat: DateFormat,
+): string => {
+  switch (dateFormat) {
+    case DateFormat.DAY_FIRST:
+      return `dd/MM/yyyy`;
+    case DateFormat.YEAR_FIRST:
+      return `yyyy-MM-dd`;
+    case DateFormat.MONTH_FIRST:
+    default:
+      return `MM/dd/yyyy`;
   }
 };

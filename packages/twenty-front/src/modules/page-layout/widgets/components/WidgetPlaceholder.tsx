@@ -17,6 +17,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
+import { PageLayoutType } from '~/generated/graphql';
 
 export const WidgetPlaceholder = () => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -44,7 +45,8 @@ export const WidgetPlaceholder = () => {
   return (
     <WidgetCard
       onClick={handleClick}
-      widgetCardContext="dashboard"
+      pageLayoutType={PageLayoutType.DASHBOARD}
+      layoutMode="grid"
       isEditing={false}
       isDragging={false}
     >

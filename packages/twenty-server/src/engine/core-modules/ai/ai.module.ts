@@ -14,9 +14,8 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
-import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
-import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -30,8 +29,8 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([RoleEntity, FileEntity]),
-    TokenModule,
     FileModule,
+    TokenModule,
     FeatureFlagModule,
     RecordCrudModule,
     ObjectMetadataModule,
@@ -41,6 +40,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     TwentyORMModule,
     MessagingModule,
     PermissionsModule,
+    ToolModule,
   ],
   controllers: [AiController, McpController],
   providers: [
@@ -48,10 +48,8 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     AiModelRegistryService,
     ToolService,
     ToolAdapterService,
-    ToolRegistryService,
     AIBillingService,
     McpService,
-    SendEmailTool,
     SearchArticlesTool,
   ],
   exports: [
@@ -60,9 +58,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     AIBillingService,
     ToolService,
     ToolAdapterService,
-    ToolRegistryService,
     McpService,
-    SendEmailTool,
     SearchArticlesTool,
   ],
 })

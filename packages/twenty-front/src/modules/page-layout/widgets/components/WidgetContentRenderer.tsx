@@ -8,6 +8,9 @@ import { NoteWidget } from '@/page-layout/widgets/notes/components/NoteWidget';
 import { RichTextWidget } from '@/page-layout/widgets/rich-text/components/RichTextWidget';
 import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
 import { TimelineWidget } from '@/page-layout/widgets/timeline/components/TimelineWidget';
+import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/WorkflowRunWidget';
+import { WorkflowVersionWidget } from '@/page-layout/widgets/workflow/components/WorkflowVersionWidget';
+import { WorkflowWidget } from '@/page-layout/widgets/workflow/components/WorkflowWidget';
 import {
   type PageLayoutWidget,
   WidgetType,
@@ -50,6 +53,15 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.CALENDAR:
       return <CalendarWidget widget={widget} />;
+
+    case WidgetType.WORKFLOW:
+      return <WorkflowWidget />;
+
+    case WidgetType.WORKFLOW_VERSION:
+      return <WorkflowVersionWidget />;
+
+    case WidgetType.WORKFLOW_RUN:
+      return <WorkflowRunWidget />;
 
     default:
       return null;
