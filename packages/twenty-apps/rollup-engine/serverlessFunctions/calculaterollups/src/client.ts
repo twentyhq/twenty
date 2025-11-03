@@ -16,6 +16,31 @@ const RETRY_BASE_DELAY_MS = 300;
 type QueryParamPrimitive = string | number | boolean;
 type QueryParamValue = QueryParamPrimitive | QueryParamPrimitive[];
 
+const serializeFilterExpressions = (
+  filters: Record<string, QueryParamValue>,
+): string[] => {
+  const expressions: string[] = [];
+
+  Object.entries(filters).forEach(([field, rawValue]) => {
+    if (rawValue === undefined || rawValue === null) {
+      return;
+    }
+
+    if (Array.isArray(rawValue)) {
+      if (rawValue.length === 0) {
+        return;
+      }
+      const serializedValues = rawValue.map((entry) => JSON.stringify(entry)).join(',');
+      expressions.push(`${field}[in]:${serializedValues}`);
+      return;
+    }
+
+    expressions.push(`${field}[eq]:${JSON.stringify(rawValue)}`);
+  });
+
+  return expressions;
+};
+
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
   query?: Record<string, QueryParamValue>;
@@ -193,9 +218,10 @@ export class TwentyClient {
     }
 
     if (options.filter) {
-      Object.entries(options.filter).forEach(([field, value]) => {
-        query[`filter[${field}]`] = value;
-      });
+      const filterExpressions = serializeFilterExpressions(options.filter);
+      if (filterExpressions.length > 0) {
+        query.filter = filterExpressions;
+      }
     }
 
     if (options.orderBy) {

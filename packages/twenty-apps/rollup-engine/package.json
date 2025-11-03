@@ -29,9 +29,11 @@
     }
   },
   "scripts": {
-    "smoke": "node --import tsx scripts/run-rollup-smoke.ts"
+    "smoke": "node --import tsx scripts/run-rollup-smoke.ts",
+    "setup:metadata": "node scripts/setup-company-rollup-fields.mjs"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
     "tsx": "^4.20.6"
   }
 }

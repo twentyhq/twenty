@@ -20,6 +20,7 @@ parent object. The default configuration targets Opportunity → Company rollups
   - `openPipelineAmount` (Currency)
   - `openOpportunityCount` (Number)
   - `lastOpportunityCloseDate` (Date)
+- To script the setup, export `TWENTY_API_KEY` (and `TWENTY_METADATA_BASE_URL` if you are not targeting `http://localhost:3000/rest/metadata`) and run `yarn setup:metadata`. The helper script calls the Metadata API to ensure each field exists on the Company object, skipping anything already provisioned.
 
 Create the fields before syncing so PATCH requests succeed.
 

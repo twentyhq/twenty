@@ -127,6 +127,17 @@ async function main() {
   assert(companyUpdate, 'expected a PATCH payload for company-1');
   assert.deepStrictEqual(companyUpdate.payload, expectedPayload);
 
+  const opportunitiesRequest = requestLog.find(
+    (entry) => entry.method === 'GET' && entry.url.includes('/opportunities'),
+  );
+  assert(opportunitiesRequest, 'expected at least one GET request for /opportunities');
+  const filterParams = new URL(opportunitiesRequest.url).searchParams.getAll('filter');
+  assert.deepStrictEqual(
+    filterParams,
+    ['companyId[eq]:"company-1"'],
+    'expected opportunity filter to use the new syntax',
+  );
+
   console.log('--- Rollup execution summary ---');
   console.dir(result, { depth: null });
 
