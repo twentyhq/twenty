@@ -112,9 +112,7 @@ export const Select = <Value extends SelectValue>({
       return options[0];
     }
 
-    throw new Error(
-      'Please provide at least one option to select, should never occur',
-    );
+    return null;
   }, [emptyOption, options, value]);
 
   const filteredOptions = useMemo(
@@ -154,6 +152,10 @@ export const Select = <Value extends SelectValue>({
       setSelectedItemId(selectedOption.label);
     }
   };
+
+  if (!isDefined(selectedOption)) {
+    return <></>;
+  }
 
   return (
     <StyledContainer
