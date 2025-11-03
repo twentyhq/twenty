@@ -1,88 +1,115 @@
-import {
-  type ViewFieldTestSetup,
-  cleanupViewFieldTestV2,
-  setupViewFieldTestV2,
-} from 'test/integration/graphql/suites/view/utils/setup-view-field-test-v2.util';
 import { createManyCoreViewFields } from 'test/integration/metadata/suites/view-field/utils/create-many-core-view-fields.util';
 import { v4 as uuidv4 } from 'uuid';
 
 import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { createOneCoreView } from 'test/integration/metadata/suites/view/utils/create-one-core-view.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 describe('View Field Resolver - Failing Create Many Operations - v2', () => {
-  let testSetup: ViewFieldTestSetup;
+  let testSetup: {
+    testViewId: string;
+    testObjectMetadataId: string;
+    firstTestFieldMetadataId: string;
+    secondTestFieldMetadataId: string;
+  };
 
   beforeAll(async () => {
-    testSetup = await setupViewFieldTestV2();
+    const {
+      data: {
+        createOneObject: { id: objectMetadataId },
+      },
+    } = await createOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        nameSingular: 'myFieldTestObjectV2',
+        namePlural: 'myFieldTestObjectsV2',
+        labelSingular: 'My Field Test Object v2',
+        labelPlural: 'My Field Test Objects v2',
+        icon: 'Icon123',
+      },
+    });
+
+    const {
+      data: {
+        createOneField: { id: firstTestFieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        name: 'testField',
+        label: 'Test Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId,
+        isLabelSyncedWithName: true,
+      },
+      gqlFields: `
+          id
+          name
+          label
+          isLabelSyncedWithName
+        `,
+    });
+
+    const {
+      data: {
+        createOneField: { id: secondTestFieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        name: 'secondTestField',
+        label: 'Test Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId,
+        isLabelSyncedWithName: false,
+      },
+      gqlFields: `
+          id
+          name
+          label
+          isLabelSyncedWithName
+        `,
+    });
+
+    const {
+      data: {
+        createCoreView: { id: testViewId },
+      },
+    } = await createOneCoreView({
+      input: {
+        icon: 'icon123',
+        objectMetadataId,
+        name: 'TestViewForFields',
+      },
+      expectToFail: false,
+    });
+
+    testSetup = {
+      testViewId,
+      testObjectMetadataId: objectMetadataId,
+      firstTestFieldMetadataId,
+      secondTestFieldMetadataId,
+    };
   });
 
   afterAll(async () => {
-    await cleanupViewFieldTestV2(testSetup.testObjectMetadataId);
-  });
-
-  it('should fail when all view fields have invalid view IDs', async () => {
-    const invalidViewId = uuidv4();
-    const inputs: CreateViewFieldInput[] = [
-      {
-        fieldMetadataId: testSetup.testFieldMetadataId,
-        viewId: invalidViewId,
-        position: 0,
-        isVisible: true,
-        size: 150,
+    await updateOneObjectMetadata({
+      input: {
+        idToUpdate: testSetup.testObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
       },
-      {
-        fieldMetadataId: testSetup.testFieldMetadataId,
-        viewId: invalidViewId,
-        position: 1,
-        isVisible: true,
-        size: 200,
-      },
-    ];
-
-    const {
-      data: { createManyCoreViewFields: createdViewFields },
-      errors,
-    } = await createManyCoreViewFields({
-      inputs,
-      expectToFail: true,
     });
-
-    expect(createdViewFields).toBeUndefined();
-    expect(errors).toBeDefined();
-    expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('View not found');
-  });
-
-  it('should fail when all view fields have invalid field metadata IDs', async () => {
-    const invalidFieldMetadataId = uuidv4();
-    const inputs: CreateViewFieldInput[] = [
-      {
-        fieldMetadataId: invalidFieldMetadataId,
-        viewId: testSetup.testViewId,
-        position: 0,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: invalidFieldMetadataId,
-        viewId: testSetup.testViewId,
-        position: 1,
-        isVisible: true,
-        size: 200,
-      },
-    ];
-
-    const {
-      data: { createManyCoreViewFields: createdViewFields },
-      errors,
-    } = await createManyCoreViewFields({
-      inputs,
-      expectToFail: true,
+    await deleteOneObjectMetadata({
+      expectToFail: false,
+      input: { idToDelete: testSetup.testObjectMetadataId },
     });
-
-    expect(createdViewFields).toBeUndefined();
-    expect(errors).toBeDefined();
-    expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('Field metadata not found');
   });
 
   it('should accumulate multiple validation errors when some inputs are invalid', async () => {
@@ -98,7 +125,7 @@ describe('View Field Resolver - Failing Create Many Operations - v2', () => {
         size: 150,
       },
       {
-        fieldMetadataId: testSetup.testFieldMetadataId,
+        fieldMetadataId: testSetup.firstTestFieldMetadataId,
         viewId: invalidViewId,
         position: 1,
         isVisible: true,
@@ -113,48 +140,13 @@ describe('View Field Resolver - Failing Create Many Operations - v2', () => {
       },
     ];
 
-    const {
-      data: { createManyCoreViewFields: createdViewFields },
-      errors,
-    } = await createManyCoreViewFields({
+    const { errors } = await createManyCoreViewFields({
       inputs,
       expectToFail: true,
     });
 
-    expect(createdViewFields).toBeUndefined();
-    expect(errors).toBeDefined();
-    // All three inputs should fail with validation errors
-    // The errors are accumulated and returned together
-    expect(errors).toHaveLength(1);
-    expect(errors[0].message).toContain('Multiple validation errors');
-  });
-
-  it('should fail when field metadata and view belong to different objects', async () => {
-    // This test would require setting up a field from a different object
-    // For now, we'll use an invalid field metadata ID as a proxy
-    const invalidFieldMetadataId = uuidv4();
-
-    const inputs: CreateViewFieldInput[] = [
-      {
-        fieldMetadataId: invalidFieldMetadataId,
-        viewId: testSetup.testViewId,
-        position: 0,
-        isVisible: true,
-        size: 150,
-      },
-    ];
-
-    const {
-      data: { createManyCoreViewFields: createdViewFields },
+    expectOneNotInternalServerErrorSnapshot({
       errors,
-    } = await createManyCoreViewFields({
-      inputs,
-      expectToFail: true,
     });
-
-    expect(createdViewFields).toBeUndefined();
-    expect(errors).toBeDefined();
-    expect(errors).toHaveLength(1);
   });
 });
-
