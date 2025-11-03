@@ -32,7 +32,6 @@ export const RecordCalendarCardCellEditModePortal = ({
 
   return (
     <RecordInlineCellAnchoredPortal
-      position={editModePosition}
       fieldMetadataItem={editedFieldMetadataItem}
       objectMetadataItem={objectMetadataItem}
       recordId={recordId}

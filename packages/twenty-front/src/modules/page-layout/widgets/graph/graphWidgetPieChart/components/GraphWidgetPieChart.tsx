@@ -7,10 +7,7 @@ import { usePieChartHandlers } from '@/page-layout/widgets/graph/graphWidgetPieC
 import { usePieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartTooltip';
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
-import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
-} from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -129,10 +126,6 @@ export const GraphWidgetPieChart = ({
         items={enrichedData.map((item) => ({
           id: item.id,
           label: item.label || item.id,
-          formattedValue: formatGraphValue(
-            displayType === 'percentage' ? item.percentage / 100 : item.value,
-            formatOptions,
-          ),
           color: item.colorScheme.solid,
         }))}
       />

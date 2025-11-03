@@ -2,11 +2,13 @@ import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
 import { MICROSOFT_SEND_SCOPE } from '@/accounts/constants/MicrosoftSendScope';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
+import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -16,6 +18,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
+import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { SEND_EMAIL_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/SendEmailAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
@@ -31,9 +34,6 @@ import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
-import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 
 const EMAIL_EDITOR_MIN_HEIGHT = 340;
 
@@ -331,13 +331,6 @@ export const WorkflowEditActionSendEmail = ({
             }}
             VariablePicker={WorkflowVariablePicker}
           />
-          <WorkflowSendEmailAttachments
-            label="Attachments"
-            files={formData.files}
-            onChange={(files) => {
-              handleFieldChange('files', files);
-            }}
-          />
           <FormAdvancedTextFieldInput
             label="Body"
             placeholder="Enter email body"
@@ -365,6 +358,13 @@ export const WorkflowEditActionSendEmail = ({
             onImageUploadError={handleImageUploadError}
             minHeight={EMAIL_EDITOR_MIN_HEIGHT}
             maxWidth={EMAIL_EDITOR_MAX_WIDTH}
+          />
+          <WorkflowSendEmailAttachments
+            label="Attachments"
+            files={formData.files}
+            onChange={(files) => {
+              handleFieldChange('files', files);
+            }}
           />
         </WorkflowStepBody>
         {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}

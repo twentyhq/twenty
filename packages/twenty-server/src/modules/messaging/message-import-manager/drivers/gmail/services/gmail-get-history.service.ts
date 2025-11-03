@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { type gmail_v1 } from 'googleapis';
 
 import { MESSAGING_GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-history-max-result.constant';
-import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
+import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 
 @Injectable()
 export class GmailGetHistoryService {
   constructor(
-    private readonly gmailHandleErrorService: GmailHandleErrorService,
+    private readonly gmailMessageListFetchErrorHandler: GmailMessageListFetchErrorHandler,
   ) {}
 
   public async getHistory(
@@ -36,7 +36,7 @@ export class GmailGetHistoryService {
           labelId,
         })
         .catch((error) => {
-          this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
+          this.gmailMessageListFetchErrorHandler.handleError(error);
 
           return {
             data: {

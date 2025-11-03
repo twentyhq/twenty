@@ -108,7 +108,7 @@ describe('evaluateTabVisibility', () => {
       evaluateTabVisibility(
         {
           ...baseConfig,
-          ifFeaturesDisabled: [FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED],
+          ifFeaturesDisabled: [FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED],
         },
         baseContext,
       ),
@@ -121,7 +121,7 @@ describe('evaluateTabVisibility', () => {
       currentWorkspace: {
         featureFlags: [
           { key: FeatureFlagKey.IS_AI_ENABLED, value: true },
-          { key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED, value: true },
+          { key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED, value: true },
         ],
       },
     };
@@ -129,7 +129,7 @@ describe('evaluateTabVisibility', () => {
       evaluateTabVisibility(
         {
           ...baseConfig,
-          ifFeaturesDisabled: [FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED],
+          ifFeaturesDisabled: [FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED],
         },
         ctx,
       ),

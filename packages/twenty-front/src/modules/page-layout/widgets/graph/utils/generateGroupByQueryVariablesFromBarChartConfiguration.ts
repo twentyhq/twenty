@@ -53,6 +53,8 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
     buildGroupByFieldObject({
       field: groupByFieldX,
       subFieldName: groupBySubFieldNameX,
+      dateGranularity:
+        barChartConfiguration.primaryAxisDateGranularity ?? undefined,
     }),
   );
 
@@ -61,6 +63,9 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
       buildGroupByFieldObject({
         field: groupByFieldY,
         subFieldName: groupBySubFieldNameY,
+        dateGranularity:
+          barChartConfiguration.secondaryAxisGroupByDateGranularity ??
+          undefined,
       }),
     );
   }
@@ -80,6 +85,8 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
         groupBySubFieldName:
           barChartConfiguration.primaryAxisGroupBySubFieldName,
         aggregateOperation,
+        dateGranularity:
+          barChartConfiguration.primaryAxisDateGranularity ?? undefined,
       }),
     );
   }
@@ -94,6 +101,9 @@ export const generateGroupByQueryVariablesFromBarChartConfiguration = ({
         groupBySubFieldName:
           barChartConfiguration.secondaryAxisGroupBySubFieldName,
         aggregateOperation,
+        dateGranularity:
+          barChartConfiguration.secondaryAxisGroupByDateGranularity ??
+          undefined,
       }),
     );
   }

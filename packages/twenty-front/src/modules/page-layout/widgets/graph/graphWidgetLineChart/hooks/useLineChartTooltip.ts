@@ -31,7 +31,7 @@ export const useLineChartTooltip = ({
       return {
         items: [],
         showClickHint: false,
-        title: undefined,
+        indexLabel: undefined,
       };
     }
 
@@ -67,7 +67,7 @@ export const useLineChartTooltip = ({
     return {
       items: tooltipItems,
       showClickHint: hasClickablePoint,
-      title: isDefined(xValue) ? String(xValue) : undefined,
+      indexLabel: isDefined(xValue) ? String(xValue) : undefined,
     };
   };
 
@@ -90,7 +90,7 @@ export const useLineChartTooltip = ({
         },
       ],
       showClickHint: isDefined(dataPoint?.to),
-      title: isDefined(point.data.x) ? String(point.data.x) : undefined,
+      indexLabel: isDefined(point.data.x) ? String(point.data.x) : undefined,
     };
   };
 

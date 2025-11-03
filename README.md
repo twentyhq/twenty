@@ -1,5 +1,3 @@
-[![Hacktoberfest 2025](packages/twenty-website/public/images/readme/hacktoberfest2025.png)](https://twentycrm.notion.site/)
-
 <p align="center">
   <a href="https://www.twenty.com">
     <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
@@ -8,7 +6,7 @@
 
 <h2 align="center" >The #1 Open-Source CRM </h2>
 
-<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://twenty.com/developers">📚 Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a></p> 
+<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://docs.twenty.com">📚 Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a></p>
 <br />
 
 
@@ -24,11 +22,11 @@
 
 <br />
 
-# Installation 
+# Installation
 
-See:  
-🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
-🖥️ [Local Setup](https://twenty.com/developers/local-setup)  
+See:
+🚀 [Self-hosting](https://docs.twenty.com/developers/self-hosting/docker-compose)
+🖥️ [Local Setup](https://docs.twenty.com/developers/local-setup)
 
 # Does the world need another CRM?
 
@@ -44,7 +42,7 @@ We built Twenty for three reasons:
 
 # What You Can Do With Twenty
 
-Please feel free to flag any specific needs you have by creating an issue.   
+Please feel free to flag any specific needs you have by creating an issue.
 
 Below are a few features we have implemented to date:
 
@@ -131,7 +129,7 @@ Below are a few features we have implemented to date:
 
 - Star the repo
 - Subscribe to releases (watch -> custom -> releases)
-- Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/) 
+- Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/)
 - Join our [Discord](https://discord.gg/cx5n4Jzs57)
-- Improve translations on [Crowdin](https://twenty.crowdin.com/twenty) 
-- [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome! 
+- Improve translations on [Crowdin](https://twenty.crowdin.com/twenty)
+- [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome!
