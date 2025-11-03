@@ -77,6 +77,7 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
+          download_language: fr
           export_only_approved: false
           localization_branch_name: ${{ steps.determine_branch.outputs.target_branch }}
           base_url: 'https://twenty.api.crowdin.com'
