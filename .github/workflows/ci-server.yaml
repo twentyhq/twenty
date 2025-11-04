@@ -23,6 +23,7 @@ jobs:
     with:
       files: |
         package.json
+        yarn.lock
         packages/twenty-server/**
         packages/twenty-front/src/generated/**
         packages/twenty-front/src/generated-metadata/**
