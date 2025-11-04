@@ -48,6 +48,9 @@ const StyledColorSample = styled(ColorSample)`
 
   margin-right: ${({ theme }) => theme.spacing(3.5)};
   margin-left: ${({ theme }) => theme.spacing(3.5)};
+  border: 1px solid
+    ${({ theme, colorName }) =>
+      colorName ? theme.tag.text[colorName] : 'transparent'};
 `;
 
 const StyledOptionInput = styled(SettingsTextInput)`
@@ -78,7 +81,6 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   isNewRow,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
   const theme = useTheme();
-
   const SELECT_COLOR_DROPDOWN_ID = `select-color-dropdown-${option.id}`;
   const SELECT_ACTIONS_DROPDOWN_ID = `select-actions-dropdown-${option.id}`;
 
