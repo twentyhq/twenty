@@ -158,7 +158,8 @@ export const GraphWidgetTooltip = ({
           )}
           <StyledTooltipRowContainer $scrollable={scrollable}>
             {filteredItems.map((item, index) => {
-              const isHighlighted = highlightedKey === item.key;
+              const isHighlighted =
+                highlightedKey === item.key && filteredItems.length > 1;
               return (
                 <StyledTooltipRow key={index}>
                   <StyledDot $color={item.dotColor} />
