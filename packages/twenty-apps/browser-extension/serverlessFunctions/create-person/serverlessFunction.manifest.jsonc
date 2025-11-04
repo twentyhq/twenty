@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "7d38261b-99c5-43e7-83d8-bdcedc2dffdb",
+  "name": "create-person",
+  "triggers": [
+    {
+      "universalIdentifier": "ecf261b8-183b-4323-ab95-3b11009a0eae",
+      "type": "route",
+      "path": "/create/person",
+      "httpMethod": "POST",
+      "isAuthRequired": true
+    }
+  ]
+}
