@@ -1,2 +1,3 @@
+// TODO rename to universal identifier
 export const TWENTY_WORKFLOW_APPLICATION_ID =
   '20202020-a1cf-4cda-896c-0c19bbba6f00';

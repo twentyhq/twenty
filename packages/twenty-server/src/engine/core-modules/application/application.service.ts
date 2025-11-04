@@ -81,7 +81,7 @@ export class ApplicationService {
     name: string;
     description?: string;
     version?: string;
-    serverlessFunctionLayerId: string;
+    serverlessFunctionLayerId: string | null;
     sourcePath: string;
     workspaceId: string;
   }): Promise<ApplicationEntity> {
