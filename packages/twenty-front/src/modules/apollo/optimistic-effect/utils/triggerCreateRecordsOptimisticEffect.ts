@@ -9,6 +9,7 @@ import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/is
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 
+import { triggerUpdateGroupByQueriesOptimisticEffect } from '@/apollo/optimistic-effect/group-by/utils/triggerUpdateGroupByQueriesOptimisticEffect';
 import { type CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
@@ -237,5 +238,13 @@ export const triggerCreateRecordsOptimisticEffect = ({
         };
       },
     },
+  });
+
+  triggerUpdateGroupByQueriesOptimisticEffect({
+    cache,
+    objectMetadataItem,
+    operation: 'create',
+    records: recordsToCreate,
+    shouldMatchRootQueryFilter,
   });
 };

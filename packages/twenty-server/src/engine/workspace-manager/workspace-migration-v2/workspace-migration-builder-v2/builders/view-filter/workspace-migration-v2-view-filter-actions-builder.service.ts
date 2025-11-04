@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { UpdateViewFilterAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view-filter/types/workspace-migration-view-filter-action-v2.type';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -41,50 +37,13 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       };
     }
 
-    const {
-      flatEntityToValidate: flatViewFilterToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
-
-    const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatViewFilterToValidate.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
-    });
-
-    const updatedFlatViewMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-      flatEntity: {
-        ...flatView,
-        viewFilterIds: [...flatView.viewFilterIds, flatViewFilterToValidate.id],
-      },
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
-    });
-
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatViewFilterToValidate.fieldMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-    });
-    const updatedFlatFieldMetadataMaps =
-      replaceFlatEntityInFlatEntityMapsOrThrow({
-        flatEntity: {
-          ...flatFieldMetadata,
-          viewFilterIds: [
-            ...flatFieldMetadata.viewFilterIds,
-            flatViewFilterToValidate.id,
-          ],
-        },
-        flatEntityMaps:
-          dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-      });
+    const { flatEntityToValidate: flatViewFilterToValidate } = args;
 
     return {
       status: 'success',
       action: {
         type: 'create_view_filter',
         viewFilter: flatViewFilterToValidate,
-      },
-      dependencyOptimisticFlatEntityMaps: {
-        flatFieldMetadataMaps: updatedFlatFieldMetadataMaps,
-        flatViewMaps: updatedFlatViewMaps,
       },
     };
   }
@@ -107,37 +66,13 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       };
     }
 
-    const {
-      flatEntityToValidate: flatViewFilterToValidate,
-      dependencyOptimisticFlatEntityMaps,
-    } = args;
-
-    const flatView = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewFilterToValidate.viewId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
-    });
-
-    const updatedFlatViewMaps = isDefined(flatView)
-      ? replaceFlatEntityInFlatEntityMapsOrThrow({
-          flatEntity: {
-            ...flatView,
-            viewFilterIds: flatView.viewFilterIds.filter(
-              (id) => id !== flatViewFilterToValidate.id,
-            ),
-          },
-          flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatViewMaps,
-        })
-      : dependencyOptimisticFlatEntityMaps.flatViewMaps;
+    const { flatEntityToValidate: flatViewFilterToValidate } = args;
 
     return {
       status: 'success',
       action: {
         type: 'delete_view_filter',
         viewFilterId: flatViewFilterToValidate.id,
-      },
-      dependencyOptimisticFlatEntityMaps: {
-        ...dependencyOptimisticFlatEntityMaps,
-        flatViewMaps: updatedFlatViewMaps,
       },
     };
   }
@@ -160,11 +95,7 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
       };
     }
 
-    const {
-      dependencyOptimisticFlatEntityMaps,
-      flatEntityId,
-      flatEntityUpdates,
-    } = args;
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateViewFilterAction: UpdateViewFilterAction = {
       type: 'update_view_filter',
@@ -175,7 +106,6 @@ export class WorkspaceMigrationV2ViewFilterActionsBuilderService extends Workspa
     return {
       status: 'success',
       action: updateViewFilterAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

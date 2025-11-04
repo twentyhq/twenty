@@ -59,7 +59,7 @@ export const SettingsRadioCard = ({
 
   return (
     <StyledRadioCardContent tabIndex={0} onClick={onClick}>
-      {Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray50} />}
+      {Icon && <Icon size={theme.icon.size.xl} color={theme.color.gray10} />}
       <span>
         {title && <StyledTitle>{title}</StyledTitle>}
         {description && <StyledDescription>{description}</StyledDescription>}

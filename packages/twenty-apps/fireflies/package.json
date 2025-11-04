@@ -1,0 +1,101 @@
+{
+  "name": "fireflies",
+  "version": "0.2.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
+  "universalIdentifier": "af5128d7-192e-4bd3-bcf2-fec1ad767440",
+  "description": "Get fireflies meeting notes in Twenty",
+  "env": {
+    "FIREFLIES_API_KEY": {
+      "description": "Fireflies API key for authentication",
+      "isSecret": true
+    },
+    "FIREFLIES_WEBHOOK_SECRET": {
+      "description": "Secret key for validating Fireflies webhooks",
+      "isSecret": true
+    },
+    "FIREFLIES_PLAN_LEVEL": {
+      "description": "Fireflies plan level: free, pro, enterprise",
+      "value": "pro",
+      "isSecret": false
+    },
+    "TWENTY_API_KEY": {
+      "description": "Twenty CRM API key for authentication",
+      "isSecret": true
+    },
+    "SERVER_URL": {
+      "description": "Twenty CRM server URL",
+      "value": "http://localhost:3000",
+      "isSecret": false
+    },
+    "AUTO_CREATE_CONTACTS": {
+      "description": "Automatically create contacts for unknown participants (true/false)",
+      "value": "true",
+      "isSecret": false
+    },
+    "FIREFLIES_SUMMARY_STRATEGY": {
+      "description": "Summary fetch strategy: immediate_only, immediate_with_retry, delayed_polling, or basic_only",
+      "value": "immediate_with_retry",
+      "isSecret": false
+    },
+    "FIREFLIES_RETRY_ATTEMPTS": {
+      "description": "Number of retry attempts when fetching summaries",
+      "value": "30",
+      "isSecret": false
+    },
+    "FIREFLIES_RETRY_DELAY": {
+      "description": "Delay in milliseconds between retry attempts",
+      "value": "30000",
+      "isSecret": false
+    },
+    "FIREFLIES_POLL_INTERVAL": {
+      "description": "Polling interval (ms) when using delayed polling strategy",
+      "value": "60000",
+      "isSecret": false
+    },
+    "FIREFLIES_MAX_POLLS": {
+      "description": "Maximum number of polling attempts when waiting for summaries",
+      "value": "15",
+      "isSecret": false
+    },
+    "FIREFLIES_MAX_RETRY_ATTEMPTS": {
+      "description": "Maximum number of retry attempts when waiting for summaries",
+      "value": "30",
+      "isSecret": false
+    },
+    "FIREFLIES_MAX_POLL_INTERVAL": {
+      "description": "Maximum polling interval (ms) when waiting for summaries",
+      "value": "600000",
+      "isSecret": false
+    },
+    "DEBUG_LOGS": {
+      "description": "Enable debug logging (true/false)",
+      "value": "false",
+      "isSecret": false
+    }
+  },
+  "scripts": {
+    "test": "jest",
+    "setup:fields": "tsx scripts/add-meeting-fields.ts",
+    "test:webhook": "tsx scripts/test-webhook.ts"
+  },
+  "dependencies": {
+    "axios": "^1.13.1",
+    "dotenv": "^16.3.1",
+    "twenty-sdk": "0.0.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.5",
+    "@types/node": "^24.9.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5.9.3"
+  }
+}

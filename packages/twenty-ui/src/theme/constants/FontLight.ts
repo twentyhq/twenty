@@ -1,16 +1,16 @@
-import { COLOR } from './Colors';
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 import { FONT_COMMON } from './FontCommon';
-import { GRAY_SCALE } from './GrayScale';
+import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 
 export const FONT_LIGHT = {
   color: {
-    primary: GRAY_SCALE.gray60,
-    secondary: GRAY_SCALE.gray50,
-    tertiary: GRAY_SCALE.gray40,
-    light: GRAY_SCALE.gray35,
-    extraLight: GRAY_SCALE.gray30,
-    inverted: GRAY_SCALE.gray0,
-    danger: COLOR.red,
+    primary: GRAY_SCALE_LIGHT.gray12,
+    secondary: GRAY_SCALE_LIGHT.gray11,
+    tertiary: GRAY_SCALE_LIGHT.gray9,
+    light: GRAY_SCALE_LIGHT.gray8,
+    extraLight: GRAY_SCALE_LIGHT.gray7,
+    inverted: GRAY_SCALE_LIGHT.gray1,
+    danger: COLOR_LIGHT.red,
   },
   ...FONT_COMMON,
 };

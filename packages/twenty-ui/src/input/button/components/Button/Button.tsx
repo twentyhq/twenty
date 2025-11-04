@@ -5,6 +5,7 @@ import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ButtonHotkeys } from '@ui/input/button/components/Button/internal/ButtonHotKeys';
 import { ButtonIcon } from '@ui/input/button/components/Button/internal/ButtonIcon';
 import { ButtonSoon } from '@ui/input/button/components/Button/internal/ButtonSoon';
+import { GRAY_SCALE_LIGHT } from '@ui/theme';
 import { useIsMobile } from '@ui/utilities';
 import { type ClickOutsideAttributes } from '@ui/utilities/types/ClickOutsideAttributes';
 import React, { useState } from 'react';
@@ -123,18 +124,18 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              color: ${!inverted ? theme.grayScale.gray0 : theme.color.blue};
+              color: ${!inverted ? GRAY_SCALE_LIGHT.gray1 : theme.color.blue};
               ${disabled
                 ? ''
                 : css`
                     &:hover {
                       background: ${!inverted
-                        ? theme.color.blue50
+                        ? theme.color.blue10
                         : theme.background.secondary};
                     }
                     &:active {
                       background: ${!inverted
-                        ? theme.color.blue60
+                        ? theme.color.blue12
                         : theme.background.tertiary};
                     }
                   `}
@@ -153,7 +154,7 @@ const StyledButton = styled('button', {
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.color.red10
+                      ? theme.color.red3
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
@@ -163,12 +164,12 @@ const StyledButton = styled('button', {
                 : css`
                     &:hover {
                       background: ${!inverted
-                        ? theme.color.red40
+                        ? theme.color.red8
                         : theme.background.secondary};
                     }
                     &:active {
                       background: ${!inverted
-                        ? theme.color.red50
+                        ? theme.color.red10
                         : theme.background.tertiary};
                     }
                   `}
@@ -191,10 +192,10 @@ const StyledButton = styled('button', {
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray0
+                    ? GRAY_SCALE_LIGHT.gray1
                     : theme.background.transparent.primary
                   : focus
-                    ? theme.grayScale.gray0
+                    ? GRAY_SCALE_LIGHT.gray1
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
@@ -237,10 +238,10 @@ const StyledButton = styled('button', {
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray0
+                    ? GRAY_SCALE_LIGHT.gray1
                     : theme.background.transparent.primary
                   : focus
-                    ? theme.grayScale.gray0
+                    ? GRAY_SCALE_LIGHT.gray1
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
@@ -283,23 +284,23 @@ const StyledButton = styled('button', {
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray0
+                    ? GRAY_SCALE_LIGHT.gray1
                     : theme.background.transparent.primary
                   : focus
-                    ? theme.grayScale.gray0
+                    ? GRAY_SCALE_LIGHT.gray1
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.color.red10
+                      ? theme.color.red3
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
               color: ${!inverted
                 ? !disabled
                   ? theme.font.color.danger
-                  : theme.color.red20
+                  : theme.color.red5
                 : theme.font.color.inverted};
               &:hover {
                 background: ${!inverted
@@ -386,7 +387,7 @@ const StyledButtonWrapper = styled.div<
                   : theme.font.color.extraLight
                 : theme.font.color.secondary;
             case 'blue':
-              return !inverted ? theme.grayScale.gray0 : theme.color.blue;
+              return !inverted ? GRAY_SCALE_LIGHT.gray1 : theme.color.blue;
             case 'danger':
               return !inverted ? theme.background.primary : theme.color.red;
           }

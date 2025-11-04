@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isValidUniqueFieldDefaultValueCombination } from 'src/engine/metadata-modules/field-metadata/utils/is-valid-unique-input.util';
@@ -18,7 +18,9 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 @Injectable()
 export class FlatIndexValidatorService {
   public validateFlatIndexDeletion({
-    optimisticFlatEntityMaps: optimisticFlatIndexMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatIndexMaps: optimisticFlatIndexMaps,
+    },
     flatEntityToValidate: { id: indexIdToDelete },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.index
@@ -48,8 +50,11 @@ export class FlatIndexValidatorService {
 
   public validateFlatIndexCreation({
     flatEntityToValidate: flatIndexToValidate,
-    optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-    dependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatIndexMaps: optimisticFlatIndexMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.index
   >): FailedFlatEntityValidation<FlatIndexMetadata> {
@@ -77,7 +82,7 @@ export class FlatIndexValidatorService {
 
     const relatedObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps: dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps: flatObjectMetadataMaps,
     });
 
     if (!isDefined(relatedObjectMetadata)) {
@@ -116,8 +121,7 @@ export class FlatIndexValidatorService {
       flatIndexToValidate.flatIndexFieldMetadatas.forEach((flatIndexField) => {
         const relatedFlatField = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: flatIndexField.fieldMetadataId,
-          flatEntityMaps:
-            dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+          flatEntityMaps: flatFieldMetadataMaps,
         });
 
         if (!isDefined(relatedFlatField)) {

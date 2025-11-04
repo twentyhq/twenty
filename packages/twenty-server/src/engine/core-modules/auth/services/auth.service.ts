@@ -28,9 +28,9 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
+import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 import { type AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { type AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 import { type UpdatePasswordOutput } from 'src/engine/core-modules/auth/dto/update-password.dto';
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
 import { type CheckUserExistOutput } from 'src/engine/core-modules/auth/dto/user-exists.dto';
@@ -64,6 +64,8 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -81,6 +83,7 @@ export class AuthService {
     private readonly authSsoService: AuthSsoService,
     private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
+    private readonly permissionsService: PermissionsService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserEntity)
@@ -135,13 +138,6 @@ export class AuthService {
     input: UserCredentialsInput,
     targetWorkspace?: WorkspaceEntity,
   ) {
-    if (targetWorkspace && !targetWorkspace.isPasswordAuthEnabled) {
-      throw new AuthException(
-        'Email/Password auth is not enabled for this workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
     const user = await this.userRepository.findOne({
       where: {
         email: input.email,
@@ -154,6 +150,21 @@ export class AuthService {
         'User not found',
         AuthExceptionCode.USER_NOT_FOUND,
       );
+    }
+
+    if (targetWorkspace && !targetWorkspace.isPasswordAuthEnabled) {
+      const canBypass = await this.canUserBypassAuthProvider({
+        user,
+        workspace: targetWorkspace,
+        provider: AuthProviderEnum.Password,
+      });
+
+      if (!canBypass) {
+        throw new AuthException(
+          'Email/Password auth is not enabled for this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
 
     if (targetWorkspace) {
@@ -230,8 +241,72 @@ export class AuthService {
     }
 
     if (isDefined(workspace)) {
+      const isProviderEnabled = workspaceValidator.isAuthEnabled(
+        authParams.provider,
+        workspace,
+      );
+
+      if (isProviderEnabled) {
+        return;
+      }
+
+      const existingUser =
+        userData.type === 'existingUser' ? userData.existingUser : undefined;
+
+      if (
+        existingUser &&
+        (await this.canUserBypassAuthProvider({
+          user: existingUser,
+          workspace,
+          provider: authParams.provider,
+        }))
+      ) {
+        return;
+      }
+
       workspaceValidator.isAuthEnabledOrThrow(authParams.provider, workspace);
     }
+  }
+
+  private async canUserBypassAuthProvider({
+    user,
+    workspace,
+    provider,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    provider: AuthProviderEnum;
+  }): Promise<boolean> {
+    const bypassEnabled = (() => {
+      switch (provider) {
+        case AuthProviderEnum.Password:
+          return workspace.isPasswordAuthBypassEnabled;
+        case AuthProviderEnum.Google:
+          return workspace.isGoogleAuthBypassEnabled;
+        case AuthProviderEnum.Microsoft:
+          return workspace.isMicrosoftAuthBypassEnabled;
+        default:
+          return false;
+      }
+    })();
+
+    if (!bypassEnabled) {
+      return false;
+    }
+
+    const userWorkspace = user.userWorkspaces?.find(
+      (userWorkspace) => userWorkspace.workspaceId === workspace.id,
+    );
+
+    if (!userWorkspace) {
+      return false;
+    }
+
+    return await this.permissionsService.userHasWorkspaceSettingPermission({
+      userWorkspaceId: userWorkspace.id,
+      workspaceId: workspace.id,
+      setting: PermissionFlagType.SSO_BYPASS,
+    });
   }
 
   async signInUp(
@@ -775,7 +850,8 @@ export class AuthService {
         ? await this.countAvailableWorkspacesByEmail(email)
         : 0;
 
-    const existingUser = await this.userService.findUserByEmail(email);
+    const existingUser =
+      await this.userService.findUserByEmailWithWorkspaces(email);
 
     if (
       !workspaceId &&

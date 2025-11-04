@@ -1,10 +1,10 @@
-import { COLOR } from './Colors';
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 
 export const ACCENT_LIGHT = {
-  primary: COLOR.blueAccent25,
-  secondary: COLOR.blueAccent20,
-  tertiary: COLOR.blueAccent15,
-  quaternary: COLOR.blueAccent10,
-  accent3570: COLOR.blueAccent35,
-  accent4060: COLOR.blueAccent40,
+  primary: COLOR_LIGHT.blue5,
+  secondary: COLOR_LIGHT.blue5,
+  tertiary: COLOR_LIGHT.blue3,
+  quaternary: COLOR_LIGHT.blue2,
+  accent3570: COLOR_LIGHT.blue8,
+  accent4060: COLOR_LIGHT.blue8,
 };

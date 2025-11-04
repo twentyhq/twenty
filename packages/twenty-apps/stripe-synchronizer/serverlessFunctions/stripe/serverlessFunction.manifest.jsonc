@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "cd15a738-18a5-406e-8b83-959dc52ebe14",
+  "name": "stripe",
+  "triggers": [
+    {
+      "universalIdentifier": "55f58e19-d832-43c4-9f8b-3f29fc05c162",
+      "type": "route",
+      "path": "/stripe",
+      "httpMethod": "POST",
+      "isAuthRequired": false
+    }
+  ]
+}

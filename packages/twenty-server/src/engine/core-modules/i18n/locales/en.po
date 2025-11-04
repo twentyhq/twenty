@@ -579,10 +579,10 @@ msgstr "Can't connect to {connectFieldName}. No unique record found with conditi
 msgid "Can't impersonate user via api key"
 msgstr "Can't impersonate user via api key"
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "Cannot activate non-draft or non-last-published version"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr "Cannot activate non-draft or non-deactivated version"
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -614,11 +614,6 @@ msgstr "Cannot disable non-active workflow version"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "Cannot have more than one active workflow version"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
@@ -1912,6 +1907,11 @@ msgstr "Location"
 msgid "March"
 msgstr "March"
 
+#. js-lingui-id: hw7Mwk
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
+msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
@@ -2567,6 +2567,12 @@ msgstr "Options are required for enum fields"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "Page Layout ID"
+
+#. js-lingui-id: G1fWNt
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Parent Folder ID"
+msgstr "Parent Folder ID"
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

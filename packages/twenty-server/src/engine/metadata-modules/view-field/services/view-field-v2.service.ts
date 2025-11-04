@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/metadata-modules/flat-view-field/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { fromDeleteViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util';
 import { fromDestroyViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util';
@@ -14,6 +15,10 @@ import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dto
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
+import {
+  ViewFieldException,
+  ViewFieldExceptionCode,
+} from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -31,6 +36,32 @@ export class ViewFieldV2Service {
     createViewFieldInput: CreateViewFieldInput;
     workspaceId: string;
   }): Promise<ViewFieldDTO> {
+    const [createdViewField] = await this.createMany({
+      workspaceId,
+      createViewFieldInputs: [createViewFieldInput],
+    });
+
+    if (!isDefined(createdViewField)) {
+      throw new ViewFieldException(
+        'Failed to create view field',
+        ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+      );
+    }
+
+    return createdViewField;
+  }
+
+  async createMany({
+    createViewFieldInputs,
+    workspaceId,
+  }: {
+    createViewFieldInputs: CreateViewFieldInput[];
+    workspaceId: string;
+  }): Promise<ViewFieldDTO[]> {
+    if (createViewFieldInputs.length === 0) {
+      return [];
+    }
+
     const {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatViewMaps,
@@ -48,11 +79,13 @@ export class ViewFieldV2Service {
       },
     );
 
-    const flatViewFieldToCreate =
-      fromCreateViewFieldInputToFlatViewFieldToCreate({
-        createViewFieldInput,
-        workspaceId,
-      });
+    const flatViewFieldsToCreate = createViewFieldInputs.map(
+      (createViewFieldInput) =>
+        fromCreateViewFieldInputToFlatViewFieldToCreate({
+          createViewFieldInput,
+          workspaceId,
+        }),
+    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -60,7 +93,7 @@ export class ViewFieldV2Service {
           fromToAllFlatEntityMaps: {
             flatViewFieldMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewFieldMaps,
-              flatEntityToCreate: [flatViewFieldToCreate],
+              flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             }),
@@ -80,7 +113,7 @@ export class ViewFieldV2Service {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while creating view field',
+        'Multiple validation errors occurred while creating view fields',
       );
     }
 
@@ -92,8 +125,8 @@ export class ViewFieldV2Service {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatViewFieldToCreate.id,
+    return findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityIds: flatViewFieldsToCreate.map((el) => el.id),
       flatEntityMaps: recomputedExistingFlatViewFieldMaps,
     });
   }

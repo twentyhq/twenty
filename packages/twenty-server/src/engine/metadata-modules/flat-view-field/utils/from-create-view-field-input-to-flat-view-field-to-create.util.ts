@@ -5,13 +5,15 @@ import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/
 import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 
+export type FromCreateViewFieldInputToFlatViewFieldToCreateArgs = {
+  createViewFieldInput: CreateViewFieldInput;
+  workspaceId: string;
+};
+
 export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
   createViewFieldInput: rawCreateViewFieldInput,
   workspaceId,
-}: {
-  createViewFieldInput: CreateViewFieldInput;
-  workspaceId: string;
-}): FlatViewField => {
+}: FromCreateViewFieldInputToFlatViewFieldToCreateArgs): FlatViewField => {
   const { fieldMetadataId, viewId, ...createViewFieldInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateViewFieldInput,

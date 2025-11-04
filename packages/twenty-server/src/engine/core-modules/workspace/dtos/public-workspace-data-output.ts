@@ -44,6 +44,18 @@ export class AuthProvidersDTO {
   microsoft: boolean;
 }
 
+@ObjectType('AuthBypassProviders')
+export class AuthBypassProvidersDTO {
+  @Field(() => Boolean)
+  google: boolean;
+
+  @Field(() => Boolean)
+  password: boolean;
+
+  @Field(() => Boolean)
+  microsoft: boolean;
+}
+
 @ObjectType('PublicWorkspaceDataOutput')
 export class PublicWorkspaceDataOutput {
   @Field(() => UUIDScalarType)
@@ -51,6 +63,9 @@ export class PublicWorkspaceDataOutput {
 
   @Field(() => AuthProvidersDTO)
   authProviders: AuthProvidersDTO;
+
+  @Field(() => AuthBypassProvidersDTO, { nullable: true })
+  authBypassProviders?: AuthBypassProvidersDTO;
 
   @Field(() => String, { nullable: true })
   logo: WorkspaceEntity['logo'];

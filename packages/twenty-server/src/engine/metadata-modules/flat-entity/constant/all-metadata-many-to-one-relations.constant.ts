@@ -1,7 +1,8 @@
-import { type ExtractPropertiesThatEndsWithId } from 'twenty-shared/types';
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type ExtractPropertiesThatEndsWithId } from 'twenty-shared/types';
 
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
+import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 
 type ExtractEntityRelations<TEntity extends MetadataEntity<AllMetadataName>> = {
   [K in ExtractPropertiesThatEndsWithId<TEntity, 'id' | 'workspaceId'>]: K;
@@ -11,46 +12,93 @@ type MetadataRelatedMetadataNames<T extends AllMetadataName> =
   keyof ExtractEntityRelations<MetadataEntity<T>>;
 
 type MetadataNameAndRelations = {
-  [T in AllMetadataName]: MetadataRelatedMetadataNames<T> extends never
+  [TSourceMetadataName in AllMetadataName]: MetadataRelatedMetadataNames<TSourceMetadataName> extends never
     ? Record<string, never>
     : {
-        [P in MetadataRelatedMetadataNames<T>]?: AllMetadataName;
+        [K in MetadataRelatedMetadataNames<TSourceMetadataName>]?: {
+          [TTargetMetadataName in AllMetadataName]?: {
+            metadataName: TTargetMetadataName;
+            flatEntityForeignKeyAggregator: keyof MetadataFlatEntity<TTargetMetadataName>;
+          };
+        }[AllMetadataName];
       };
 };
 
 export const ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY = {
   fieldMetadata: {
-    objectMetadataId: 'objectMetadata',
+    objectMetadataId: {
+      metadataName: 'objectMetadata',
+      flatEntityForeignKeyAggregator: 'fieldMetadataIds',
+    },
   },
   objectMetadata: {},
   view: {
-    kanbanAggregateOperationFieldMetadataId: 'fieldMetadata',
-    calendarFieldMetadataId: 'fieldMetadata',
-    objectMetadataId: 'objectMetadata',
+    kanbanAggregateOperationFieldMetadataId: {
+      metadataName: 'fieldMetadata',
+      flatEntityForeignKeyAggregator: 'kanbanAggregateOperationViewIds',
+    },
+    calendarFieldMetadataId: {
+      metadataName: 'fieldMetadata',
+      flatEntityForeignKeyAggregator: 'calendarViewIds',
+    },
+    objectMetadataId: {
+      metadataName: 'objectMetadata',
+      flatEntityForeignKeyAggregator: 'viewIds',
+    },
   },
   viewField: {
-    viewId: 'view',
-    fieldMetadataId: 'fieldMetadata',
+    viewId: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'viewFieldIds',
+    },
+    fieldMetadataId: {
+      metadataName: 'fieldMetadata',
+      flatEntityForeignKeyAggregator: 'viewFieldIds',
+    },
   },
   viewGroup: {
-    viewId: 'view',
-    fieldMetadataId: 'fieldMetadata',
+    viewId: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'viewGroupIds',
+    },
+    fieldMetadataId: {
+      metadataName: 'fieldMetadata',
+      flatEntityForeignKeyAggregator: 'viewGroupIds',
+    },
   },
   index: {
-    objectMetadataId: 'objectMetadata',
+    objectMetadataId: {
+      metadataName: 'objectMetadata',
+      flatEntityForeignKeyAggregator: 'indexMetadataIds',
+    },
   },
   serverlessFunction: {},
   cronTrigger: {
-    serverlessFunctionId: 'serverlessFunction',
+    serverlessFunctionId: {
+      metadataName: 'serverlessFunction',
+      flatEntityForeignKeyAggregator: 'cronTriggerIds',
+    },
   },
   databaseEventTrigger: {
-    serverlessFunctionId: 'serverlessFunction',
+    serverlessFunctionId: {
+      metadataName: 'serverlessFunction',
+      flatEntityForeignKeyAggregator: 'databaseEventTriggerIds',
+    },
   },
   routeTrigger: {
-    serverlessFunctionId: 'serverlessFunction',
+    serverlessFunctionId: {
+      metadataName: 'serverlessFunction',
+      flatEntityForeignKeyAggregator: 'routeTriggerIds',
+    },
   },
   viewFilter: {
-    viewId: 'view',
-    fieldMetadataId: 'fieldMetadata',
+    viewId: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'viewFilterIds',
+    },
+    fieldMetadataId: {
+      metadataName: 'fieldMetadata',
+      flatEntityForeignKeyAggregator: 'viewFilterIds',
+    },
   },
 } as const satisfies MetadataNameAndRelations;

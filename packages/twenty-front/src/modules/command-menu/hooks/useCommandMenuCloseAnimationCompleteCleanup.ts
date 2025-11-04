@@ -15,7 +15,9 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { emitSidePanelCloseEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -50,7 +52,8 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         const isPageLayoutEditingPage =
           currentPage === CommandMenuPages.PageLayoutWidgetTypeSelect ||
           currentPage === CommandMenuPages.PageLayoutGraphTypeSelect ||
-          currentPage === CommandMenuPages.PageLayoutIframeConfig;
+          currentPage === CommandMenuPages.PageLayoutIframeSettings ||
+          currentPage === CommandMenuPages.PageLayoutTabSettings;
 
         if (isPageLayoutEditingPage) {
           const targetedRecordsRule = snapshot
@@ -73,6 +76,18 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
             if (isDefined(record) && isDefined(record.pageLayoutId)) {
               set(
                 pageLayoutEditingWidgetIdComponentState.atomFamily({
+                  instanceId: record.pageLayoutId,
+                }),
+                null,
+              );
+              set(
+                pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
+                  instanceId: record.pageLayoutId,
+                }),
+                null,
+              );
+              set(
+                pageLayoutDraggedAreaComponentState.atomFamily({
                   instanceId: record.pageLayoutId,
                 }),
                 null,
