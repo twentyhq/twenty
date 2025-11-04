@@ -214,7 +214,7 @@ export class FirefliesApiClient {
         parts.forEach(part => {
           const emailMatch = part.match(/<([^>]+)>/);
           const email = emailMatch ? emailMatch[1] : '';
-          const name = part.replace(/<[^>]+>/, '').trim();
+          const name = part.replace(/[<>]/g, '').trim();
 
           // Skip if the "name" is actually an email address
           if (isEmail(name)) {
