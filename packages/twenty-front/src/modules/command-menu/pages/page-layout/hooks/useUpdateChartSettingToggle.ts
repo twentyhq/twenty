@@ -1,7 +1,7 @@
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getConfigKeyFromSettingId } from '@/command-menu/pages/page-layout/utils/getConfigKeyFromSettingId';
-import { BarChartGroupMode, type PageLayoutWidget } from '~/generated/graphql';
+import { BarChartGroupMode } from '~/generated/graphql';
 import { useChartSettingsValues } from './useChartSettingsValues';
 import { useUpdateCurrentWidgetConfig } from './useUpdateCurrentWidgetConfig';
 
@@ -42,19 +42,11 @@ export const useUpdateChartSettingToggle = ({
     }
 
     const newValue = !getChartSettingsValues(settingId);
-    const baseConfigUpdate: Partial<PageLayoutWidget['configuration']> = {
-      [configKey]: newValue,
-    };
-
-    const configToUpdate =
-      settingId === CHART_CONFIGURATION_SETTING_IDS.GROUP_BY &&
-      !newValue &&
-      configuration.__typename === 'BarChartConfiguration'
-        ? { ...baseConfigUpdate, groupMode: undefined }
-        : baseConfigUpdate;
 
     updateCurrentWidgetConfig({
-      configToUpdate,
+      configToUpdate: {
+        [configKey]: newValue,
+      },
     });
   };
 

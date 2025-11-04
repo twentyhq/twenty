@@ -3,6 +3,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
+import { buildBarChartGroupByConfigUpdate } from '@/command-menu/pages/page-layout/utils/buildBarChartGroupByConfigUpdate';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -97,10 +98,11 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
       setSelectedCompositeField(fieldMetadataItem);
     } else {
       updateCurrentWidgetConfig({
-        configToUpdate: {
-          [fieldMetadataIdKey]: fieldMetadataItem.id,
-          [subFieldNameKey]: null,
-        },
+        configToUpdate: buildBarChartGroupByConfigUpdate(
+          fieldMetadataItem.id,
+          null,
+          configuration,
+        ),
       });
       closeDropdown();
     }
@@ -108,10 +110,11 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
 
   const handleSelectNone = () => {
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        [fieldMetadataIdKey]: null,
-        [subFieldNameKey]: null,
-      },
+      configToUpdate: buildBarChartGroupByConfigUpdate(
+        null,
+        null,
+        configuration,
+      ),
     });
     closeDropdown();
   };
@@ -126,10 +129,11 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     }
 
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        [fieldMetadataIdKey]: selectedCompositeField.id,
-        [subFieldNameKey]: subFieldName,
-      },
+      configToUpdate: buildBarChartGroupByConfigUpdate(
+        selectedCompositeField.id,
+        subFieldName,
+        configuration,
+      ),
     });
     closeDropdown();
   };
