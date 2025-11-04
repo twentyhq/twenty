@@ -81,6 +81,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { PageLayoutTabController } from 'src/engine/core-modules/page-layout/controllers/page-layout-tab.controller';
 import { PageLayoutWidgetController } from 'src/engine/core-modules/page-layout/controllers/page-layout-widget.controller';
 import { PageLayoutController } from 'src/engine/core-modules/page-layout/controllers/page-layout.controller';
@@ -24,6 +25,7 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
       PageLayoutWidgetEntity,
     ]),
     TwentyORMModule,
+    FeatureFlagModule,
   ],
   controllers: [
     PageLayoutController,

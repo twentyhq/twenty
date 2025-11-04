@@ -1255,6 +1255,7 @@ export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_APPLICATION_ENABLED = 'IS_APPLICATION_ENABLED',
+  IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
@@ -1758,6 +1759,7 @@ export type Mutation = {
   createEmailingDomain: EmailingDomain;
   createFile: File;
   createManyCoreViewFields: Array<CoreViewField>;
+  createManyCoreViewGroups: Array<CoreViewGroup>;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
@@ -2033,6 +2035,11 @@ export type MutationCreateFileArgs = {
 
 export type MutationCreateManyCoreViewFieldsArgs = {
   inputs: Array<CreateViewFieldInput>;
+};
+
+
+export type MutationCreateManyCoreViewGroupsArgs = {
+  inputs: Array<CreateViewGroupInput>;
 };
 
 
@@ -5980,6 +5987,13 @@ export type CreateManyCoreViewFieldsMutationVariables = Exact<{
 
 
 export type CreateManyCoreViewFieldsMutation = { __typename?: 'Mutation', createManyCoreViewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+
+export type CreateManyCoreViewGroupsMutationVariables = Exact<{
+  inputs: Array<CreateViewGroupInput> | CreateViewGroupInput;
+}>;
+
+
+export type CreateManyCoreViewGroupsMutation = { __typename?: 'Mutation', createManyCoreViewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 export type DeleteCoreViewMutationVariables = Exact<{
   id: Scalars['String'];
@@ -12672,6 +12686,39 @@ export function useCreateManyCoreViewFieldsMutation(baseOptions?: Apollo.Mutatio
 export type CreateManyCoreViewFieldsMutationHookResult = ReturnType<typeof useCreateManyCoreViewFieldsMutation>;
 export type CreateManyCoreViewFieldsMutationResult = Apollo.MutationResult<CreateManyCoreViewFieldsMutation>;
 export type CreateManyCoreViewFieldsMutationOptions = Apollo.BaseMutationOptions<CreateManyCoreViewFieldsMutation, CreateManyCoreViewFieldsMutationVariables>;
+export const CreateManyCoreViewGroupsDocument = gql`
+    mutation CreateManyCoreViewGroups($inputs: [CreateViewGroupInput!]!) {
+  createManyCoreViewGroups(inputs: $inputs) {
+    ...ViewGroupFragment
+  }
+}
+    ${ViewGroupFragmentFragmentDoc}`;
+export type CreateManyCoreViewGroupsMutationFn = Apollo.MutationFunction<CreateManyCoreViewGroupsMutation, CreateManyCoreViewGroupsMutationVariables>;
+
+/**
+ * __useCreateManyCoreViewGroupsMutation__
+ *
+ * To run a mutation, you first call `useCreateManyCoreViewGroupsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateManyCoreViewGroupsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createManyCoreViewGroupsMutation, { data, loading, error }] = useCreateManyCoreViewGroupsMutation({
+ *   variables: {
+ *      inputs: // value for 'inputs'
+ *   },
+ * });
+ */
+export function useCreateManyCoreViewGroupsMutation(baseOptions?: Apollo.MutationHookOptions<CreateManyCoreViewGroupsMutation, CreateManyCoreViewGroupsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateManyCoreViewGroupsMutation, CreateManyCoreViewGroupsMutationVariables>(CreateManyCoreViewGroupsDocument, options);
+      }
+export type CreateManyCoreViewGroupsMutationHookResult = ReturnType<typeof useCreateManyCoreViewGroupsMutation>;
+export type CreateManyCoreViewGroupsMutationResult = Apollo.MutationResult<CreateManyCoreViewGroupsMutation>;
+export type CreateManyCoreViewGroupsMutationOptions = Apollo.BaseMutationOptions<CreateManyCoreViewGroupsMutation, CreateManyCoreViewGroupsMutationVariables>;
 export const DeleteCoreViewDocument = gql`
     mutation DeleteCoreView($id: String!) {
   deleteCoreView(id: $id)

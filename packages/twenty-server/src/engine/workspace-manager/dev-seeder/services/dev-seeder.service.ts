@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -89,12 +90,18 @@ export class DevSeederService {
       relations: { fields: true },
     });
 
-    await seedPageLayoutWidgets(
-      this.coreDataSource,
-      'core',
+    const isDashboardV2Enabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
+      workspaceId,
+    );
+
+    await seedPageLayoutWidgets({
+      dataSource: this.coreDataSource,
+      schemaName: 'core',
       workspaceId,
       objectMetadataItems,
-    );
+      isDashboardV2Enabled,
+    });
 
     await this.devSeederDataService.seed({
       schemaName: dataSourceMetadata.schema,

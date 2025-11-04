@@ -105,14 +105,12 @@ export const useHandleRecordGroupField = () => {
         );
 
         if (viewGroupsToCreate.length > 0) {
-          await createViewGroups(
-            viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-              input: {
-                ...viewGroup,
-                viewId: view.id,
-              },
+          await createViewGroups({
+            inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
+              ...viewGroup,
+              viewId: view.id,
             })),
-          );
+          });
         }
 
         if (viewGroupsToDelete.length > 0) {
