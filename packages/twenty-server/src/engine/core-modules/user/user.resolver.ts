@@ -384,6 +384,27 @@ export class UserResolver {
     return this.userService.deleteUser(userId);
   }
 
+  @Mutation(() => UserWorkspaceEntity)
+  @UseGuards(UserAuthGuard)
+  async deleteUserFromWorkspace(
+    @AuthUser()
+    { id: userId }: UserEntity,
+    @AuthWorkspace()
+    workspace: WorkspaceEntity,
+  ) {
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    return this.userService.deleteUserWorkspaceAndPotentiallyDeleteUser(
+      userId,
+      workspace.id,
+    );
+  }
+
   @ResolveField(() => OnboardingStatus, {
     nullable: true,
   })

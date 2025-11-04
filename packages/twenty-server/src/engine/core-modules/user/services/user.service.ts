@@ -4,7 +4,7 @@ import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { IsNull, Not, Repository } from 'typeorm';
 
@@ -12,6 +12,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
@@ -31,6 +32,8 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
@@ -48,7 +51,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
-        { shouldBypassPermissionChecks: true },
       );
 
     return await workspaceMemberRepository.findOne({
@@ -67,7 +69,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
-        { shouldBypassPermissionChecks: true },
       );
 
     return await workspaceMemberRepository.find({ withDeleted: withDeleted });
@@ -82,7 +83,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
-        { shouldBypassPermissionChecks: true },
       );
 
     return await workspaceMemberRepository.find({
@@ -91,7 +91,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     });
   }
 
-  async deleteUser(userId: string): Promise<UserEntity> {
+  async deleteUser(userId: string) {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -101,86 +101,116 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     userValidator.assertIsDefinedOrThrow(user);
 
-    const prepareForUserDeletionInWorkspaces = await Promise.all(
-      user.userWorkspaces.map(async (userWorkspace) => {
-        const { workspaceId } = userWorkspace;
+    for (const userWorkspace of user.userWorkspaces) {
+      await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
+        userWorkspace,
+      );
+    }
 
-        const workspaceMemberRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+    await this.userRepository.softDelete({ id: userId });
+
+    return await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      withDeleted: true,
+    });
+  }
+
+  async deleteUserWorkspaceAndPotentiallyDeleteUser({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: { userWorkspaces: true },
+    });
+
+    userValidator.assertIsDefinedOrThrow(user);
+
+    const userWorkspace = user.userWorkspaces.find(
+      (userWorkspace) => userWorkspace.workspaceId === workspaceId,
+    );
+
+    if (!isDefined(userWorkspace)) {
+      throw new Error('User workspace not found.');
+    }
+
+    this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(userWorkspace);
+
+    if (user.userWorkspaces.length === 1) {
+      await this.userRepository.softDelete(userId);
+    }
+
+    return await this.userWorkspaceRepository.findOne({
+      where: {
+        id: userWorkspace.id,
+      },
+      withDeleted: true,
+    });
+  }
+
+  async removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
+    userWorkspace: UserWorkspaceEntity,
+  ) {
+    const workspaceId = userWorkspace.workspaceId;
+
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
+        'workspaceMember',
+      );
+
+    const workspaceMembers = await workspaceMemberRepository.find();
+
+    const userWorkspaceId = userWorkspace.id;
+
+    if (workspaceMembers.length > 1) {
+      try {
+        await this.userRoleService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
+          {
             workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const workspaceMembers = await workspaceMemberRepository.find();
-
-        if (workspaceMembers.length > 1) {
-          try {
-            await this.userRoleService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
-              {
-                workspaceId,
-                userWorkspaceId: userWorkspace.id,
-              },
-            );
-          } catch (error) {
-            if (
-              error instanceof PermissionsException &&
-              error.code === PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN
-            ) {
-              throw new PermissionsException(
-                PermissionsExceptionMessage.CANNOT_DELETE_LAST_ADMIN_USER,
-                PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER,
-                {
-                  userFriendlyMessage: msg`Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first.`,
-                },
-              );
-            }
-            throw error;
-          }
-        }
-
-        const workspaceMember = workspaceMembers.find(
-          (member: WorkspaceMemberWorkspaceEntity) => member.userId === userId,
+            userWorkspaceId: userWorkspace.id,
+          },
         );
+      } catch (error) {
+        if (
+          error instanceof PermissionsException &&
+          error.code === PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN
+        ) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.CANNOT_DELETE_LAST_ADMIN_USER,
+            PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER,
+            {
+              userFriendlyMessage: msg`Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first.`,
+            },
+          );
+        }
+        throw error;
+      }
+    }
 
-        assert(workspaceMember, 'WorkspaceMember not found');
-
-        const userWorkspaceId = userWorkspace.id;
-
-        return {
-          workspaceId,
-          workspaceMemberRepository,
-          workspaceMembers,
-          workspaceMember,
-          userWorkspaceId,
-        };
-      }),
+    const workspaceMember = workspaceMembers.find(
+      (member: WorkspaceMemberWorkspaceEntity) =>
+        member.userId === userWorkspace.userId,
     );
 
-    await Promise.all(
-      prepareForUserDeletionInWorkspaces.map(
-        async ({
-          workspaceId,
-          workspaceMemberRepository,
-          workspaceMembers,
-          userWorkspaceId,
-        }) => {
-          await workspaceMemberRepository.delete({ userId });
+    assert(workspaceMember, 'WorkspaceMember not found');
 
-          if (workspaceMembers.length === 1) {
-            await this.workspaceService.deleteWorkspace(workspaceId);
+    await workspaceMemberRepository.delete({ userId: userWorkspace.userId });
 
-            return;
-          }
+    await this.userWorkspaceService.deleteUserWorkspace(userWorkspaceId);
 
-          await this.userWorkspaceService.deleteUserWorkspace(userWorkspaceId); // TODO remove once userWorkspace foreign key is added on roleTarget
-        },
-      ),
-    );
+    if (workspaceMembers.length === 1) {
+      await this.workspaceService.deleteWorkspace(workspaceId);
 
-    await this.userRepository.delete({ id: userId });
-
-    return user;
+      return;
+    }
   }
 
   async hasUserAccessToWorkspaceOrThrow(userId: string, workspaceId: string) {
@@ -216,15 +246,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       where: {
         email,
       },
-    });
-  }
-
-  async findUserByEmailWithWorkspaces(email: string) {
-    return await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: { userWorkspaces: true },
     });
   }
 

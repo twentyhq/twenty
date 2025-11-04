@@ -1763,6 +1763,7 @@ export type Mutation = {
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
+  deleteUserFromWorkspace: User;
   deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;

@@ -1,26 +1,49 @@
 import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useDeleteUserAccountMutation } from '~/generated-metadata/graphql';
+import {
+  useDeleteUserAccountMutation,
+  useDeleteUserWorkspaceMutation,
+} from '~/generated-metadata/graphql';
 
 const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
+const LEAVE_WORKSPACE_MODAL_ID = 'leave-workspace-modal';
+
+const StyledDiv = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const DeleteAccount = () => {
   const { t } = useLingui();
   const { openModal } = useModal();
 
   const [deleteUserAccount] = useDeleteUserAccountMutation();
+  const [deleteUserFromWorkspace] = useDeleteUserWorkspaceMutation();
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
   const { signOut } = useAuth();
+  const availableWorkspaces = useRecoilValue(availableWorkspacesState);
+  const availableWorkspacesCount =
+    countAvailableWorkspaces(availableWorkspaces);
+
+  const userHasMultipleWorkspaces = availableWorkspacesCount > 1;
 
   const deleteAccount = async () => {
     await deleteUserAccount();
+    await signOut();
+  };
+
+  const leaveWorkspace = async () => {
+    await deleteUserFromWorkspace();
     await signOut();
   };
 
@@ -28,16 +51,44 @@ export const DeleteAccount = () => {
     <>
       <H2Title
         title={t`Danger zone`}
-        description={t`Delete account and all the associated data`}
+        description={
+          userHasMultipleWorkspaces
+            ? t`Delete account and all the associated data or leave workspace`
+            : t`Delete account and all the associated data`
+        }
       />
+      {userHasMultipleWorkspaces && (
+        <StyledDiv>
+          <Button
+            accent="danger"
+            onClick={() => openModal(LEAVE_WORKSPACE_MODAL_ID)}
+            variant="secondary"
+            title={t`Leave workspace`}
+          />
 
+          <ConfirmationModal
+            confirmationValue={userEmail}
+            confirmationPlaceholder={userEmail ?? ''}
+            modalId={LEAVE_WORKSPACE_MODAL_ID}
+            title={t`Leave workspace`}
+            subtitle={
+              <>
+                {t`This action cannot be undone. This will permanently remove your membership from this workspace.`}
+                <br />
+                {t`Please type in your email to confirm.`}
+              </>
+            }
+            onConfirmClick={leaveWorkspace}
+            confirmButtonText={t`Leave workspace`}
+          />
+        </StyledDiv>
+      )}
       <Button
         accent="danger"
         onClick={() => openModal(DELETE_ACCOUNT_MODAL_ID)}
         variant="secondary"
         title={t`Delete account`}
       />
-
       <ConfirmationModal
         confirmationValue={userEmail}
         confirmationPlaceholder={userEmail ?? ''}
@@ -45,8 +96,10 @@ export const DeleteAccount = () => {
         title={t`Account Deletion`}
         subtitle={
           <>
-            This action cannot be undone. This will permanently delete your
-            entire account. <br /> Please type in your email to confirm.
+            {t`This action cannot be undone. This will permanently delete your
+            entire account.`}
+            <br />
+            {t`Please type in your email to confirm.`}
           </>
         }
         onConfirmClick={deleteAccount}
