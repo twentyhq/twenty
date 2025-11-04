@@ -15,8 +15,7 @@ import {
   seedStandardApplications,
   SeedStandardApplicationsArgs,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-standard-applications.util';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-application';
-import { TWENTY_WORKFLOW_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-workflow-application';
+import { TWENTY_STANDARD_APPLICATION, TWENTY_WORKFLOW_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 @Command({
   name: 'upgrade:1-11:seed-standard-applications',

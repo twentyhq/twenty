@@ -13,6 +13,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
 
 @Command({
@@ -28,6 +29,7 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
     private readonly featureFlagService: FeatureFlagService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly applicationService: ApplicationService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -50,12 +52,18 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
+    const standardApplicationEntityByApplicationUniversalIdentifier =
+      await this.applicationService.findStandardTwentyApplicationsOrThrow({
+        workspaceId,
+      });
+
     const { storage, workspaceMigrations } =
       await this.workspaceSyncMetadataService.synchronize(
         {
           workspaceId,
           dataSourceId: dataSourceMetadata.id,
           featureFlags,
+          standardApplicationEntityByApplicationUniversalIdentifier,
         },
         { applyChanges: !options.dryRun },
       );
