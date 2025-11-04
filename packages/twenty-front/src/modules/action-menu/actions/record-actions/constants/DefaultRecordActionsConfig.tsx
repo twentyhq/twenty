@@ -486,7 +486,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Workflow) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Workflow) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Workflow ||
         viewType === ActionViewType.SHOW_PAGE),
     availableOn: [
@@ -523,7 +523,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Person) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Person) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Person ||
         viewType === ActionViewType.SHOW_PAGE),
     component: (
@@ -554,7 +554,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Company) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Company) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Company ||
         viewType === ActionViewType.SHOW_PAGE),
     component: (
@@ -585,8 +585,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Dashboard) ===
-        true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Dashboard) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard ||
         viewType === ActionViewType.SHOW_PAGE),
     component: (
@@ -617,8 +616,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Opportunity) ===
-        true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Opportunity) &&
       (objectMetadataItem?.nameSingular !==
         CoreObjectNameSingular.Opportunity ||
         viewType === ActionViewType.SHOW_PAGE),
@@ -676,7 +674,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Task) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Task) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Task ||
         viewType === ActionViewType.SHOW_PAGE),
     component: (
@@ -707,7 +705,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       viewType,
       getTargetObjectReadPermission,
     }) =>
-      getTargetObjectReadPermission(CoreObjectNameSingular.Note) === true &&
+      getTargetObjectReadPermission(CoreObjectNameSingular.Note) &&
       (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Note ||
         viewType === ActionViewType.SHOW_PAGE),
     component: (
