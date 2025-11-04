@@ -12,10 +12,12 @@ import {
 import { AddWorkflowRunStopStatusesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-add-workflow-run-stop-statuses.command';
 import { CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-clean-orphaned-kanban-aggregate-operation-field-metadata-id.command';
 import { CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-create-view-kanban-field-metadata-id-foreign-key-migration.command';
+import { MakeSureDashboardNamingAvailableCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-make-sure-dashboard-naming-available.command';
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
+import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-seed-dashboard-view.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -62,6 +64,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly addWorkflowRunStopStatusesCommand: AddWorkflowRunStopStatusesCommand,
     protected readonly cleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand: CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     protected readonly migrateChannelPartialFullSyncStagesCommand: MigrateChannelPartialFullSyncStagesCommand,
+    protected readonly makeSureDashboardNamingAvailableCommand: MakeSureDashboardNamingAvailableCommand,
+    protected readonly seedDashboardViewCommand: SeedDashboardViewCommand,
     protected readonly createViewKanbanFieldMetadataIdForeignKeyMigrationCommand: CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
   ) {
     super(
@@ -101,10 +105,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.cleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
         this.createViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
         this.migrateChannelPartialFullSyncStagesCommand,
+        this.makeSureDashboardNamingAvailableCommand,
       ],
       afterSyncMetadata: [
         this.migrateAttachmentAuthorToCreatedByCommand,
         this.migrateAttachmentTypeToFileCategoryCommand,
+        this.seedDashboardViewCommand,
       ],
     };
 

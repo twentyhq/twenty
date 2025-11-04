@@ -62,7 +62,7 @@ export const WidgetPlaceholder = () => {
         <AnimatedPlaceholder type="noWidgets" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            <Trans>No widgets yet</Trans>
+            <Trans>Add widget</Trans>
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
             <Trans>Click to add your first widget</Trans>

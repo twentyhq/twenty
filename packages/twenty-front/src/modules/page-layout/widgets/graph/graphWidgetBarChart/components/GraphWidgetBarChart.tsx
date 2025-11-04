@@ -3,6 +3,7 @@ import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphW
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
+import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
@@ -255,6 +256,9 @@ export const GraphWidgetBarChart = ({
           gridYValues={layout === 'vertical' ? 5 : undefined}
           enableLabel={false}
           labelSkipWidth={12}
+          innerPadding={
+            groupMode !== 'stacked' ? BAR_CHART_MINIMUM_INNER_PADDING : 0
+          }
           labelSkipHeight={12}
           valueFormat={(value) =>
             formatGraphValue(Number(value), formatOptions)
