@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
@@ -17,7 +16,6 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
   description: 'Flush cache for workspace',
 })
 export class FlushCacheCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
-  protected readonly logger = new Logger(FlushCacheCommand.name);
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,

@@ -19,6 +19,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
       DataSourceEntity,
     ]),
     WorkspaceSchemaManagerModule,
+    WorkspaceCacheStorageModule,
     ObjectMetadataModule,
   ],
   providers: [
@@ -55,6 +57,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     MakeSureDashboardNamingAvailableCommand,
     SeedDashboardViewCommand,
     CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
+    FlushCacheCommand,
   ],
 })
 export class V1_10_UpgradeVersionCommandModule {}
