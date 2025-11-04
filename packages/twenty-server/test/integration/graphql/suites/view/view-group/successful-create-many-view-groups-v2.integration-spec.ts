@@ -263,4 +263,3 @@ describe('View Group Resolver - Successful Create Many Operations - v2', () => {
     expect(createdViewGroups).toHaveLength(0);
   });
 });
-

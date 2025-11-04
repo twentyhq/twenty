@@ -9,4 +9,3 @@ export const CREATE_MANY_CORE_VIEW_GROUPS = gql`
     }
   }
 `;
-
