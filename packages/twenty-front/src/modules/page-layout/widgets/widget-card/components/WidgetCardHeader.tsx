@@ -5,6 +5,7 @@ import { IconTrash, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
+import { AnimatePresence } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 
 export type WidgetCardHeaderProps = {
@@ -53,12 +54,14 @@ export const WidgetCardHeader = ({
 }: WidgetCardHeaderProps) => {
   return (
     <StyledWidgetCardHeader className={className}>
-      {!isEmpty && isInEditMode && (
-        <WidgetGrip
-          className="drag-handle"
-          onClick={(e) => e.stopPropagation()}
-        />
-      )}
+      <AnimatePresence>
+        {!isEmpty && isInEditMode && (
+          <WidgetGrip
+            className="drag-handle"
+            onClick={(e) => e.stopPropagation()}
+          />
+        )}
+      </AnimatePresence>
       <StyledTitleContainer>
         <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
       </StyledTitleContainer>
