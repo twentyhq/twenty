@@ -48,7 +48,6 @@ export class StandardObjectFactory {
       labelIdentifierFieldMetadataId: null,
       imageIdentifierFieldMetadataId: null,
       duplicateCriteria: [],
-      ...workspaceEntityMetadataArgs,
       description: workspaceEntityMetadataArgs.description ?? null,
       targetTableName: 'DEPRECATED',
       workspaceId: context.workspaceId,
@@ -56,6 +55,14 @@ export class StandardObjectFactory {
       isCustom: false,
       isRemote: false,
       isSystem: workspaceEntityMetadataArgs.isSystem ?? false,
+      isAuditLogged: workspaceEntityMetadataArgs.isAuditLogged,
+      isSearchable: workspaceEntityMetadataArgs.isSearchable,
+      labelPlural: workspaceEntityMetadataArgs.labelPlural,
+      labelSingular: workspaceEntityMetadataArgs.labelSingular,
+      namePlural: workspaceEntityMetadataArgs.namePlural,
+      nameSingular: workspaceEntityMetadataArgs.nameSingular,
+      standardId: workspaceEntityMetadataArgs.standardId,
+      universalIdentifier: workspaceEntityMetadataArgs.universalIdentifier.
     };
   }
 }

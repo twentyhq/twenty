@@ -85,5 +85,5 @@ export interface WorkspaceEntityMetadataArgs {
 
   readonly universalIdentifier: string;
 
-  readonly applicationId: string;
+  readonly applicationUniversalIdentifier: string;
 }

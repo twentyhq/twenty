@@ -15,7 +15,7 @@ interface WorkspaceEntityOptions {
   labelIdentifierStandardId?: string;
   imageIdentifierStandardId?: string;
   universalIdentifier: string;
-  applicationId: string;
+  applicationUniversalIdentifier: string;
 }
 
 export function WorkspaceEntity(
@@ -52,7 +52,7 @@ export function WorkspaceEntity(
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
     metadataArgsStorage.addEntities({
-      applicationId: options.applicationId,
+      applicationUniversalIdentifier: options.applicationUniversalIdentifier,
       universalIdentifier: options.universalIdentifier,
       target,
       standardId: options.universalIdentifier,
