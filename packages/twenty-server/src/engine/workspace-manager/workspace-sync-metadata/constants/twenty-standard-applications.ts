@@ -34,3 +34,7 @@ export const TWENTY_WORKFLOW_APPLICATION = {
   ApplicationEntity,
   'workspaceId' | 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'workspace'
 >;
+
+export type TwentyStandardApplicationUniversalIdentifiers =
+  | (typeof TWENTY_STANDARD_APPLICATION)['universalIdentifier']
+  | (typeof TWENTY_WORKFLOW_APPLICATION)['universalIdentifier'];

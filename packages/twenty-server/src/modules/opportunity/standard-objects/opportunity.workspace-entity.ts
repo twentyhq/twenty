@@ -43,7 +43,7 @@ export const SEARCH_FIELDS_FOR_OPPORTUNITY: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.opportunity,
-  applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'opportunities',
   labelSingular: msg`Opportunity`,
   labelPlural: msg`Opportunities`,

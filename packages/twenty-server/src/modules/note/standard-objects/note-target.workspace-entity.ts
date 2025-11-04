@@ -24,7 +24,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.noteTarget,
-  applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'noteTargets',
   labelSingular: msg`Note Target`,
   labelPlural: msg`Note Targets`,

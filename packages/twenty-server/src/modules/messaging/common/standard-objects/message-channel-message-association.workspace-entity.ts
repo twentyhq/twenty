@@ -27,7 +27,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.messageChannelMessageAssociation,
-  applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'messageChannelMessageAssociations',
   labelSingular: msg`Message Channel Message Association`,
   labelPlural: msg`Message Channel Message Associations`,

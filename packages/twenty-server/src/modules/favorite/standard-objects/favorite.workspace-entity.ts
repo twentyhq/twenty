@@ -31,7 +31,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.favorite,
-  applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'favorites',
   labelSingular: msg`Favorite`,
   labelPlural: msg`Favorites`,
