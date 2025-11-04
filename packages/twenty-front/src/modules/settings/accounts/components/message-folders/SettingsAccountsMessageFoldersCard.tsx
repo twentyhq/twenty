@@ -5,7 +5,8 @@ import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graph
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
-import { SettingsMessageFoldersTableRow } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTableRow';
+import { SettingsMessageFoldersTreeItem } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTreeItem';
+import { computeMessageFolderTree } from '@/settings/accounts/components/message-folders/utils/computeMessageFolderTree';
 import { settingsAccountsSelectedMessageChannelState } from '@/settings/accounts/states/settingsAccountsSelectedMessageChannelState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -18,8 +19,14 @@ import { Label } from 'twenty-ui/display';
 import { Checkbox, CheckboxSize } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
-const StyledTableRows = styled.div`
-  max-height: 300px;
+const StyledTreeList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+`;
+
+const StyledFoldersContainer = styled.div`
+  max-height: 400px;
   overflow-y: auto;
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
@@ -87,6 +94,10 @@ export const SettingsAccountsMessageFoldersCard = () => {
     );
   }, [messageFolders, search]);
 
+  const folderTreeNodes = useMemo(() => {
+    return computeMessageFolderTree(filteredMessageFolders);
+  }, [filteredMessageFolders]);
+
   const allFoldersToggled = useMemo(() => {
     return filteredMessageFolders.every((folder) => folder.isSynced);
   }, [filteredMessageFolders]);
@@ -142,15 +153,17 @@ export const SettingsAccountsMessageFoldersCard = () => {
           </StyledCheckboxCell>
         </StyledSectionHeader>
 
-        <StyledTableRows>
-          {filteredMessageFolders?.map((folder) => (
-            <SettingsMessageFoldersTableRow
-              key={folder.id}
-              folder={folder}
-              onSyncToggle={() => handleToggleFolder(folder)}
-            />
-          ))}
-        </StyledTableRows>
+        <StyledFoldersContainer>
+          <StyledTreeList>
+            {folderTreeNodes.map((rootFolder) => (
+              <SettingsMessageFoldersTreeItem
+                key={rootFolder.folder.id}
+                folderTreeNode={rootFolder}
+                onToggleFolder={handleToggleFolder}
+              />
+            ))}
+          </StyledTreeList>
+        </StyledFoldersContainer>
       </Table>
     </Section>
   );

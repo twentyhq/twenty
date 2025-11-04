@@ -46,6 +46,7 @@ export const useBarChartTooltip = ({
       return {
         label: enrichedKey.label,
         formattedValue: formatGraphValue(seriesValue, formatOptions),
+        value: seriesValue,
         dotColor: enrichedKey.colorScheme.solid,
       };
     });

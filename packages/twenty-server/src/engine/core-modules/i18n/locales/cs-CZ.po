@@ -1838,6 +1838,12 @@ msgstr "Štítek nesmí obsahovat čárku"
 msgid "Language"
 msgstr "Jazyk"
 
+#. js-lingui-id: hHtzNQ
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Last credentials refreshed at"
+msgstr ""
+
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Last published Version Id"
@@ -2572,6 +2578,12 @@ msgstr "Pro pole s výčtem možností jsou vyžadovány možnosti"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "ID rozvržení stránky"
+
+#. js-lingui-id: G1fWNt
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Parent Folder ID"
+msgstr ""
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

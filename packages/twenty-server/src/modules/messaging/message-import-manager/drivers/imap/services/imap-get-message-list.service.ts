@@ -41,10 +41,17 @@ export class ImapGetMessageListService {
       for (const folder of messageFolders) {
         this.logger.log(`Processing folder: ${folder.name}`);
 
+        const folderPath = folder.externalId?.split(':')[0];
+
+        if (!folderPath) {
+          this.logger.warn(`Folder ${folder.name} has no path. Skipping.`);
+          continue;
+        }
+
         try {
           const response = await this.getMessageList(
             client,
-            folder.name,
+            folderPath,
             folder,
           );
 
