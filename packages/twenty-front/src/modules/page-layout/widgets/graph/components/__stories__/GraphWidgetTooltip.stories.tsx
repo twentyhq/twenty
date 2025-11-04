@@ -19,6 +19,7 @@ export const Default: Story = {
   args: {
     items: [
       {
+        key: 'revenue',
         label: 'Revenue',
         formattedValue: '$45,231',
         value: 45231,
@@ -34,6 +35,7 @@ export const WithClickHint: Story = {
   args: {
     items: [
       {
+        key: 'sales',
         label: 'Sales',
         formattedValue: '1,234 units',
         value: 1234,
@@ -48,12 +50,14 @@ export const MultipleItems: Story = {
   args: {
     items: [
       {
+        key: 'lastYear',
         label: 'Last year',
         formattedValue: '20k',
         value: 20000,
         dotColor: 'blue',
       },
       {
+        key: 'thisYear',
         label: 'This year',
         formattedValue: '20k',
         value: 20000,
@@ -69,6 +73,7 @@ export const SuperLongText: Story = {
   args: {
     items: [
       {
+        key: 'arr',
         label:
           'Total Annual Recurring Revenue (North America Region including Canada)',
         formattedValue: '$2,450,000',
@@ -76,6 +81,7 @@ export const SuperLongText: Story = {
         dotColor: 'blue',
       },
       {
+        key: 'cac',
         label: 'Customer Acquisition Cost (Marketing & Sales Combined)',
         formattedValue: '$125,500',
         value: 125500,
@@ -92,24 +98,28 @@ export const WithZeroValues: Story = {
   args: {
     items: [
       {
+        key: 'revenue',
         label: 'Revenue',
         formattedValue: '$0.00',
         value: 0,
         dotColor: 'blue',
       },
       {
+        key: 'sales',
         label: 'Sales',
         formattedValue: '0%',
         value: 0,
         dotColor: 'green',
       },
       {
+        key: 'activeUsers',
         label: 'Active Users',
         formattedValue: '0',
         value: 0,
         dotColor: 'purple',
       },
       {
+        key: 'conversions',
         label: 'Conversions',
         formattedValue: '$45,231',
         value: 45231,

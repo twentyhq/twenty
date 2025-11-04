@@ -44,6 +44,7 @@ export const useLineChartTooltip = ({
 
         const value = Number(point.data.y || 0);
         return {
+          key: enrichedSeriesItem.id,
           label: enrichedSeriesItem.label,
           formattedValue: formatGraphValue(value, formatOptions),
           value,
@@ -81,6 +82,7 @@ export const useLineChartTooltip = ({
     return {
       items: [
         {
+          key: enrichedSeriesItem.id,
           label: enrichedSeriesItem.label,
           formattedValue: formatGraphValue(value, formatOptions),
           value,
