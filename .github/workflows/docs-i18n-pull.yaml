@@ -79,6 +79,7 @@ jobs:
           download_translations: true
           download_language: fr
           source: 'packages/twenty-docs/**/*.mdx'
+          translation: 'packages/twenty-docs/%two_letters_code%/**/%original_file_name%'
           export_only_approved: false
           localization_branch_name: ${{ steps.determine_branch.outputs.target_branch }}
           base_url: 'https://twenty.api.crowdin.com'
