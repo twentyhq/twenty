@@ -6,7 +6,7 @@ import { CamelCase } from 'type-fest';
 export type SeedStandardApplicationsArgs = {
   applicationService: ApplicationService;
   workspaceId: string;
-  applicationsToSync?: Record<
+  applicationsToSeed?: Record<
     | CamelCase<(typeof TWENTY_STANDARD_APPLICATION)['name']>
     | CamelCase<(typeof TWENTY_WORKFLOW_APPLICATION)['name']>,
     boolean
@@ -15,19 +15,19 @@ export type SeedStandardApplicationsArgs = {
 export const seedStandardApplications = async ({
   applicationService,
   workspaceId,
-  applicationsToSync = {
+  applicationsToSeed = {
     twentyStandard: true,
     twentyWorkflows: true,
   },
 }: SeedStandardApplicationsArgs) => {
-  if (applicationsToSync.twentyStandard) {
+  if (applicationsToSeed.twentyStandard) {
     await applicationService.create({
       ...TWENTY_STANDARD_APPLICATION,
       workspaceId,
     });
   }
 
-  if (applicationsToSync.twentyWorkflows) {
+  if (applicationsToSeed.twentyWorkflows) {
     await applicationService.create({
       ...TWENTY_WORKFLOW_APPLICATION,
       workspaceId,
