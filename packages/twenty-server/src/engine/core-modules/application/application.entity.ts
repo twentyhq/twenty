@@ -56,8 +56,8 @@ export class ApplicationEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  serverlessFunctionLayerId: string;
+  @Column({ nullable: true, type: 'uuid' })
+  serverlessFunctionLayerId: string | null;
 
   @ManyToOne(() => WorkspaceEntity, {
     onDelete: 'CASCADE',

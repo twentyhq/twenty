@@ -81,13 +81,15 @@ export class ApplicationSyncService {
       applicationId: application.id,
     });
 
-    await this.syncServerlessFunctions({
-      serverlessFunctionsToSync: manifest.serverlessFunctions,
-      code: manifest.sources,
-      workspaceId,
-      applicationId: application.id,
-      serverlessFunctionLayerId: application.serverlessFunctionLayerId,
-    });
+    if (isDefined(application.serverlessFunctionLayerId)) {
+      await this.syncServerlessFunctions({
+        serverlessFunctionsToSync: manifest.serverlessFunctions,
+        code: manifest.sources,
+        workspaceId,
+        applicationId: application.id,
+        serverlessFunctionLayerId: application.serverlessFunctionLayerId,
+      });
+    }
 
     this.logger.log('✅ Application sync from manifest completed');
   }
@@ -137,13 +139,15 @@ export class ApplicationSyncService {
       return application;
     }
 
-    await this.serverlessFunctionLayerService.update(
-      application.serverlessFunctionLayerId,
-      {
-        packageJson,
-        yarnLock,
-      },
-    );
+    if (isDefined(application.serverlessFunctionLayerId)) {
+      await this.serverlessFunctionLayerService.update(
+        application.serverlessFunctionLayerId,
+        {
+          packageJson,
+          yarnLock,
+        },
+      );
+    }
 
     await this.applicationService.update(application.id, {
       name,
