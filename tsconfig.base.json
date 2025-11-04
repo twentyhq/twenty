@@ -2,13 +2,6 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
-    "baseUrl": ".",
-    "paths": {
-      "twenty-sdk": ["packages/twenty-sdk/src/index.ts"],
-      "twenty-sdk/*": ["packages/twenty-sdk/src/*"],
-      "@/application": ["packages/twenty-sdk/src/application/index.ts"],
-      "@/application/*": ["packages/twenty-sdk/src/application/*"]
-    },
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
