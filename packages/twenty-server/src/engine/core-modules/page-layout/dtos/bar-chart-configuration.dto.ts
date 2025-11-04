@@ -135,7 +135,6 @@ export class BarChartConfigurationDTO {
 
   @Field(() => BarChartGroupMode, {
     nullable: true,
-    defaultValue: BarChartGroupMode.STACKED,
   })
   @IsEnum(BarChartGroupMode)
   @IsOptional()
