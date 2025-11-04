@@ -160,7 +160,7 @@ describe('stringifyRelativeDateFilter', () => {
   });
 
   describe('timezone handling', () => {
-    it('should append timezone when provided', () => {
+    it('should append timezone when provided and default first day of the week', () => {
       const filter: RelativeDateFilter = {
         direction: 'PAST',
         amount: 5,
@@ -169,7 +169,7 @@ describe('stringifyRelativeDateFilter', () => {
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;',
+        'PAST_5_DAY;;America/New_York;;MONDAY;;',
       );
     });
 
@@ -206,74 +206,18 @@ describe('stringifyRelativeDateFilter', () => {
     });
   });
 
-  describe('referenceDayAsString handling', () => {
-    it('should append referenceDayAsString when timezone is provided', () => {
-      const filter: RelativeDateFilter = {
-        direction: 'PAST',
-        amount: 5,
-        unit: 'DAY',
-        timezone: 'America/New_York',
-        referenceDayAsString: '2024-01-15',
-      };
-
-      expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;2024-01-15;;MONDAY;;',
-      );
-    });
-
-    it('should not append referenceDayAsString when timezone is not provided', () => {
-      const filter: RelativeDateFilter = {
-        direction: 'PAST',
-        amount: 5,
-        unit: 'DAY',
-        referenceDayAsString: '2024-01-15',
-      };
-
-      expect(stringifyRelativeDateFilter(filter)).toBe('PAST_5_DAY');
-    });
-
-    it('should not append referenceDayAsString when it is empty', () => {
-      const filter: RelativeDateFilter = {
-        direction: 'PAST',
-        amount: 5,
-        unit: 'DAY',
-        timezone: 'America/New_York',
-        referenceDayAsString: '',
-      };
-
-      expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;',
-      );
-    });
-
-    it('should not append referenceDayAsString when it is null', () => {
-      const filter: RelativeDateFilter = {
-        direction: 'PAST',
-        amount: 5,
-        unit: 'DAY',
-        timezone: 'America/New_York',
-        referenceDayAsString: null,
-      };
-
-      expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;',
-      );
-    });
-  });
-
   describe('firstDayOfTheWeek handling', () => {
-    it('should append firstDayOfTheWeek when timezone and referenceDayAsString are provided', () => {
+    it('should append firstDayOfTheWeek when timezone is provided', () => {
       const filter: RelativeDateFilter = {
         direction: 'PAST',
         amount: 5,
         unit: 'DAY',
         timezone: 'America/New_York',
-        referenceDayAsString: '2024-01-15',
         firstDayOfTheWeek: 'SUNDAY',
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;2024-01-15;;SUNDAY;;',
+        'PAST_5_DAY;;America/New_York;;SUNDAY;;',
       );
     });
 
@@ -285,11 +229,10 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 5,
         unit: 'DAY',
         timezone: 'America/New_York',
-        referenceDayAsString: '2024-01-15',
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;2024-01-15;;MONDAY;;',
+        'PAST_5_DAY;;America/New_York;;MONDAY;;',
       );
       expect(mockDetectCalendarStartDay).toHaveBeenCalledTimes(1);
     });
@@ -302,29 +245,13 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 5,
         unit: 'DAY',
         timezone: 'America/New_York',
-        referenceDayAsString: '2024-01-15',
         firstDayOfTheWeek: null,
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;2024-01-15;;SATURDAY;;',
+        'PAST_5_DAY;;America/New_York;;SATURDAY;;',
       );
       expect(mockDetectCalendarStartDay).toHaveBeenCalledTimes(1);
-    });
-
-    it('should not append firstDayOfTheWeek when referenceDayAsString is not provided', () => {
-      const filter: RelativeDateFilter = {
-        direction: 'PAST',
-        amount: 5,
-        unit: 'DAY',
-        timezone: 'America/New_York',
-        firstDayOfTheWeek: 'SUNDAY',
-      };
-
-      expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;',
-      );
-      expect(mockDetectCalendarStartDay).not.toHaveBeenCalled();
     });
 
     it('should not append firstDayOfTheWeek when timezone is not provided', () => {
@@ -332,7 +259,6 @@ describe('stringifyRelativeDateFilter', () => {
         direction: 'PAST',
         amount: 5,
         unit: 'DAY',
-        referenceDayAsString: '2024-01-15',
         firstDayOfTheWeek: 'SUNDAY',
       };
 
@@ -348,11 +274,10 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 5,
         unit: 'DAY',
         timezone: 'America/New_York',
-        referenceDayAsString: '2024-01-15',
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
-        'PAST_5_DAY;;America/New_York;;2024-01-15;;',
+        'PAST_5_DAY;;America/New_York;;',
       );
     });
   });
@@ -364,12 +289,11 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 10,
         unit: 'MONTH',
         timezone: 'Europe/London',
-        referenceDayAsString: '2024-12-25',
         firstDayOfTheWeek: 'MONDAY',
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
-        'NEXT_10_MONTH;;Europe/London;;2024-12-25;;MONDAY;;',
+        'NEXT_10_MONTH;;Europe/London;;MONDAY;;',
       );
     });
 
@@ -379,12 +303,11 @@ describe('stringifyRelativeDateFilter', () => {
         amount: 7,
         unit: 'WEEK',
         timezone: 'Asia/Tokyo',
-        referenceDayAsString: '2024-06-01',
         firstDayOfTheWeek: 'SUNDAY',
       };
 
       expect(stringifyRelativeDateFilter(filter)).toBe(
-        'THIS_1_WEEK;;Asia/Tokyo;;2024-06-01;;SUNDAY;;',
+        'THIS_1_WEEK;;Asia/Tokyo;;SUNDAY;;',
       );
     });
 

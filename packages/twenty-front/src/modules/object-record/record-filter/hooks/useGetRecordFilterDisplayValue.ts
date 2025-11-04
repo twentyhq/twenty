@@ -1,6 +1,5 @@
-import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useGetDateTimeFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateTimeFilterDisplayValue';
-import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
@@ -10,8 +9,10 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { isValid } from 'date-fns';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { type Nullable } from 'twenty-shared/types';
 import {
   getDateFromPlainDate,
+  isDefined,
   isEmptinessOperand,
   parseJson,
   relativeDateFilterStringifiedSchema,
@@ -20,25 +21,30 @@ import {
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
 
-export const useGetRecordFilterLabelValue = () => {
+// TODO: finish the implementation of this hook to obtain filter display value and remove deprecated display value property
+export const useGetRecordFilterDisplayValue = () => {
   const { dateFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
   const { userTimezone } = useUserTimezone();
 
   const { getDateTimeFilterDisplayValue } = useGetDateTimeFilterDisplayValue();
 
-  const getRecordFilterLabelValue = ({
-    recordFilter,
-    fieldMetadataOptions,
-  }: {
-    recordFilter: RecordFilter;
-    fieldMetadataOptions?: FieldMetadataItemOption[];
-  }) => {
-    const operandLabelShort = getOperandLabelShort(recordFilter.operand);
+  const { getFieldMetadataItemByIdOrThrow } =
+    useGetFieldMetadataItemByIdOrThrow();
+
+  const getRecordFilterDisplayValue = (
+    recordFilter?: Nullable<RecordFilter>,
+  ) => {
+    if (!isDefined(recordFilter)) {
+      return '';
+    }
+
+    const filterType = recordFilter.type;
+
     const operandIsEmptiness = isEmptinessOperand(recordFilter.operand);
     const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
 
-    if (recordFilter.type === 'DATE') {
+    if (filterType === 'DATE') {
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS: {
           const date = getDateFromPlainDate(recordFilter.value);
@@ -51,7 +57,7 @@ export const useGetRecordFilterLabelValue = () => {
             );
 
           if (!isValid(date)) {
-            return `${operandLabelShort}`;
+            return '';
           }
 
           const formattedDate = formatDateString({
@@ -61,28 +67,28 @@ export const useGetRecordFilterLabelValue = () => {
             localeCatalog: dateLocale.localeCatalog,
           });
 
-          return `${operandLabelShort} ${formattedDate}`;
+          return `${formattedDate}`;
         }
         case RecordFilterOperand.IS_RELATIVE: {
           const relativeDateFilter =
             relativeDateFilterStringifiedSchema.safeParse(recordFilter.value);
 
           if (!relativeDateFilter.success) {
-            return `${operandLabelShort}`;
+            return ``;
           }
 
           const relativeDateDisplayValue = getRelativeDateDisplayValue(
             relativeDateFilter.data,
           );
 
-          return `${operandLabelShort} ${relativeDateDisplayValue}`;
+          return ` ${relativeDateDisplayValue}`;
         }
         case RecordFilterOperand.IS_TODAY:
         case RecordFilterOperand.IS_IN_FUTURE:
         case RecordFilterOperand.IS_IN_PAST:
-          return operandLabelShort;
+          return '';
         default:
-          return `${operandLabelShort} ${recordFilter.displayValue}`;
+          return ` ${recordFilter.displayValue}`;
       }
     } else if (recordFilter.type === 'DATE_TIME') {
       switch (recordFilter.operand) {
@@ -93,28 +99,28 @@ export const useGetRecordFilterLabelValue = () => {
 
           const { displayValue } = getDateTimeFilterDisplayValue(pointInTime);
 
-          return `${operandLabelShort} ${displayValue}`;
+          return `${displayValue}`;
         }
         case RecordFilterOperand.IS_RELATIVE: {
           const relativeDateFilter =
             relativeDateFilterStringifiedSchema.safeParse(recordFilter.value);
 
           if (!relativeDateFilter.success) {
-            return `${operandLabelShort}`;
+            return ``;
           }
 
           const relativeDateDisplayValue = getRelativeDateDisplayValue(
             relativeDateFilter.data,
           );
 
-          return `${operandLabelShort} ${relativeDateDisplayValue}`;
+          return `${relativeDateDisplayValue}`;
         }
         case RecordFilterOperand.IS_TODAY:
         case RecordFilterOperand.IS_IN_FUTURE:
         case RecordFilterOperand.IS_IN_PAST:
-          return operandLabelShort;
+          return '';
         default:
-          return `${operandLabelShort} ${recordFilter.displayValue}`;
+          return `${recordFilter.displayValue}`;
       }
     } else if (
       recordFilter.type === 'SELECT' ||
@@ -126,24 +132,33 @@ export const useGetRecordFilterLabelValue = () => {
         return '';
       }
 
-      const optionLabels = valueArray.map(
-        (value) =>
-          fieldMetadataOptions?.find((option) => option.value === value)?.label,
+      const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
+        recordFilter.fieldMetadataId,
       );
 
-      return `${operandLabelShort} ${optionLabels.join(', ')}`;
+      const fieldMetadataItemOptions = fieldMetadataItem.options;
+
+      const optionLabels = valueArray.map(
+        (value) =>
+          fieldMetadataItemOptions?.find((option) => option.value === value)
+            ?.label,
+      );
+
+      return `${optionLabels.join(', ')}`;
     }
 
     if (!operandIsEmptiness && !recordFilterIsEmpty) {
-      return `${operandLabelShort} ${recordFilter.displayValue}`;
+      return `${recordFilter.displayValue}`;
     }
 
     if (operandIsEmptiness) {
-      return `${operandLabelShort}`;
+      return ``;
     }
 
     return recordFilter.displayValue;
   };
 
-  return { getRecordFilterLabelValue };
+  return {
+    getRecordFilterDisplayValue,
+  };
 };

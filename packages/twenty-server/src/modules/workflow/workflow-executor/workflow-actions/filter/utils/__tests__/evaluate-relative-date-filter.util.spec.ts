@@ -8,10 +8,7 @@ import {
   subWeeks,
   subYears,
 } from 'date-fns';
-import {
-  getPlainDateFromDate,
-  type RelativeDateFilter,
-} from 'twenty-shared/utils';
+import { type RelativeDateFilter } from 'twenty-shared/utils';
 
 import {
   evaluateRelativeDateFilter,
@@ -472,7 +469,6 @@ describe('Relative Date Filter Utils', () => {
           direction: 'THIS',
           unit: 'WEEK',
           firstDayOfTheWeek: 'MONDAY',
-          referenceDayAsString: getPlainDateFromDate(now),
         };
 
         expect(
