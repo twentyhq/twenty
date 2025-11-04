@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 const TWENTY_API_URL: string =
   process.env.TWENTY_API_URL !== '' && process.env.TWENTY_API_URL !== undefined
@@ -119,9 +120,9 @@ const prepareData = (
   phoneNumber: string,
   phoneCallingCode: string,
   companyName: string,
-  address: mailchimpAddress,
+  address: mailchimpAddress | null,
 ): object => {
-  const data = {};
+  const data = {} as any;
   if (IS_EMAIL_CONSTRAINT) {
     data['email_channel'] = {
       email: email,
@@ -194,11 +195,11 @@ export const main = async (params: {
       IS_PHONE_CONSTRAINT &&
       twentyRecord.phones.primaryPhoneNumber !== '' &&
       twentyRecord.phones.primaryPhoneCallingCode !== '';
-    const company: object = IS_COMPANY_CONSTRAINT
+    const company: any = IS_COMPANY_CONSTRAINT
       ? await fetchCompanyData(properties.after.companyId)
       : null;
     const companyName: string = company['name'] !== '' ? company['name'] : null;
-    const address: mailchimpAddress = IS_ADDRESS_CONSTRAINT
+    const address: mailchimpAddress | null = IS_ADDRESS_CONSTRAINT
       ? checkAddress(company['address'])
       : null;
 
@@ -264,4 +265,16 @@ export const main = async (params: {
     console.error(error);
     return {};
   }
+};
+
+export const config: ServerlessFunctionConfig = {
+  universalIdentifier: '83319670-775b-4862-b133-5c353e594151',
+  name: 'mailchimp-synchronizer',
+  triggers: [
+    {
+      universalIdentifier: 'e627ff6f-0a0c-48b2-bdbb-31967489ec96',
+      type: 'databaseEvent',
+      eventName: 'person.created',
+    },
+  ],
 };
