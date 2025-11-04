@@ -63,7 +63,7 @@ export const ChangePassword: Story = {
   args: {
     routePath: '/reset-password/:passwordResetToken',
     routeParams: {
-      ":passwordResetToken": 'MOCKED_TOKEN_CHANGE'
+      ':passwordResetToken': 'MOCKED_TOKEN_CHANGE',
     },
   },
   parameters: {
@@ -75,7 +75,7 @@ export const ChangePassword: Story = {
     const canvas = within(canvasElement);
     await canvas.findByRole(
       'button',
-      { name: "Change Password" },
+      { name: 'Change Password' },
       { timeout: 3000 },
     );
   },
@@ -85,7 +85,7 @@ export const SetPassword: Story = {
   args: {
     routePath: '/reset-password/:passwordResetToken',
     routeParams: {
-      ":passwordResetToken": 'MOCKED_TOKEN_SET'
+      ':passwordResetToken': 'MOCKED_TOKEN_SET',
     },
   },
   parameters: {
@@ -97,7 +97,7 @@ export const SetPassword: Story = {
     const canvas = within(canvasElement);
     await canvas.findByRole(
       'button',
-      { name: "Set Password" },
+      { name: 'Set Password' },
       { timeout: 3000 },
     );
   },
