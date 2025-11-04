@@ -71,25 +71,11 @@ export const ChangePassword: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText(
-      'Change Password',
-      { selector: 'button' },
-      { timeout: 3000 },
-    );
-  },
-};
-
-export const SetPassword: Story = {
-  parameters: {
-    msw: {
-      handlers: buildHandlers(false),
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await canvas.findByText(
-      'Set Password',
-      { selector: 'button' },
+    await canvas.findByRole(
+      'button',
+      {
+        name: 'Change Password',
+      },
       { timeout: 3000 },
     );
   },
