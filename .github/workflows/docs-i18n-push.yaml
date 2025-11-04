@@ -14,6 +14,7 @@ on:
     paths:
       - 'packages/twenty-docs/**/*.mdx'
       - '!packages/twenty-docs/fr/**'
+      - 'crowdin.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -34,7 +35,8 @@ jobs:
         run: |
           # For push events, check the current commit
           if [ "${{ github.event_name }}" == "push" ]; then
-            if git diff --name-only HEAD~1 HEAD | grep -E '^packages/twenty-docs/.*\.mdx$' | grep -v '^packages/twenty-docs/fr/' | grep -q .; then
+            # Check if MDX files or crowdin.yml changed
+            if git diff --name-only HEAD~1 HEAD | grep -E '^(packages/twenty-docs/.*\.mdx$|crowdin\.yml$)' | grep -v '^packages/twenty-docs/fr/' | grep -q .; then
               echo "docs_changed=true" >> $GITHUB_OUTPUT
             else
               echo "docs_changed=false" >> $GITHUB_OUTPUT
