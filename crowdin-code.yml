@@ -1,0 +1,22 @@
+#
+# Crowdin configuration for code translations (.po files only)
+# Used by i18n-pull.yaml and i18n-push.yaml
+# See https://crowdin.github.io/crowdin-cli/configuration for more information
+#
+
+"preserve_hierarchy": true
+
+files: [
+  {
+    #
+    # Source files filter for code translations
+    #
+    "source": "**/en.po",
+
+    #
+    # Translation files filter for code translations
+    #
+    "translation": "%original_path%/%locale%.po",
+  }
+]
+

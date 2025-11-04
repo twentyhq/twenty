@@ -75,8 +75,7 @@ jobs:
           upload_translations: false
           download_translations: true
           export_only_approved: false
-          source: '**/en.po'
-          translation: '%original_path%/%locale%.po'
+          config: 'crowdin-code.yml'
           localization_branch_name: i18n
           base_url: 'https://twenty.api.crowdin.com'
           auto_approve_imported: false
