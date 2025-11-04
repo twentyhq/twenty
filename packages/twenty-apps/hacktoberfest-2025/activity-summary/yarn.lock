@@ -14,9 +14,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"Activity Summary@workspace:.":
+"activity-summary@workspace:.":
   version: 0.0.0-use.local
-  resolution: "Activity Summary@workspace:."
+  resolution: "activity-summary@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
     twenty-sdk: "npm:0.0.3"
