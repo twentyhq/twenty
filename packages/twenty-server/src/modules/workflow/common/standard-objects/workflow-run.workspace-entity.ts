@@ -23,6 +23,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { TWENTY_WORKFLOW_APPLICATION_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-workflow-application-id';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -80,7 +81,8 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.workflowRun,
+  universalIdentifier: STANDARD_OBJECT_IDS.workflowRun,
+  applicationId: TWENTY_WORKFLOW_APPLICATION_ID,
   namePlural: 'workflowRuns',
   labelSingular: msg`Workflow Run`,
   labelPlural: msg`Workflow Runs`,

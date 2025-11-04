@@ -6,7 +6,6 @@ import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manag
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 interface WorkspaceEntityOptions {
-  standardId: string;
   namePlural: string;
   labelSingular: MessageDescriptor;
   labelPlural: MessageDescriptor;
@@ -15,6 +14,8 @@ interface WorkspaceEntityOptions {
   shortcut?: string;
   labelIdentifierStandardId?: string;
   imageIdentifierStandardId?: string;
+  universalIdentifier: string;
+  applicationId: string;
 }
 
 export function WorkspaceEntity(
@@ -51,8 +52,10 @@ export function WorkspaceEntity(
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
     metadataArgsStorage.addEntities({
+      applicationId: options.applicationId,
+      universalIdentifier: options.universalIdentifier,
       target,
-      standardId: options.standardId,
+      standardId: options.universalIdentifier,
       nameSingular: objectName,
       namePlural: options.namePlural,
       labelSingular: options.labelSingular?.message ?? '',

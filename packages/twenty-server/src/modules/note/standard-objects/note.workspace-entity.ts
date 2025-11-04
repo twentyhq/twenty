@@ -20,6 +20,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { NOTE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { TWENTY_STANDARD_APPLICATION_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-application-id';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -38,7 +39,8 @@ export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.note,
+  universalIdentifier: STANDARD_OBJECT_IDS.note,
+  applicationId: TWENTY_STANDARD_APPLICATION_ID,
   namePlural: 'notes',
   labelSingular: msg`Note`,
   labelPlural: msg`Notes`,

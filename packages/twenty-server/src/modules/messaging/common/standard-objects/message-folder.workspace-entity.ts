@@ -17,6 +17,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MESSAGE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { TWENTY_STANDARD_APPLICATION_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-application-id';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export enum MessageFolderPendingSyncAction {
@@ -30,7 +31,8 @@ registerEnumType(MessageFolderPendingSyncAction, {
 });
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.messageFolder,
+  universalIdentifier: STANDARD_OBJECT_IDS.messageFolder,
+  applicationId: TWENTY_STANDARD_APPLICATION_ID,
   namePlural: 'messageFolders',
   labelSingular: msg`Message Folder`,
   labelPlural: msg`Message Folders`,

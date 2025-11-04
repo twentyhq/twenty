@@ -22,6 +22,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { TWENTY_STANDARD_APPLICATION_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-application-id';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -41,7 +42,8 @@ export const SEARCH_FIELDS_FOR_OPPORTUNITY: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.opportunity,
+  universalIdentifier: STANDARD_OBJECT_IDS.opportunity,
+  applicationId: TWENTY_STANDARD_APPLICATION_ID,
   namePlural: 'opportunities',
   labelSingular: msg`Opportunity`,
   labelPlural: msg`Opportunities`,

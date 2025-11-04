@@ -15,12 +15,14 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { TWENTY_STANDARD_APPLICATION_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-application-id';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.messageParticipant,
+  universalIdentifier: STANDARD_OBJECT_IDS.messageParticipant,
+  applicationId: TWENTY_STANDARD_APPLICATION_ID,
   namePlural: 'messageParticipants',
   labelSingular: msg`Message Participant`,
   labelPlural: msg`Message Participants`,
