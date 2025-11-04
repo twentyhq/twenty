@@ -5,12 +5,9 @@ permissions:
 
 on:
   workflow_dispatch:
-  pull_request:
   workflow_call:
   push:
-    branches:
-      - main
-      - feat/docs-i18n-workflow
+    branches: ['main']
     paths:
       - 'packages/twenty-docs/**/*.mdx'
       - '!packages/twenty-docs/fr/**'
@@ -29,25 +26,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ github.token }}
-
-      - name: Check if docs changed
-        id: check_docs_changes
-        run: |
-          # For push events, check the current commit
-          if [ "${{ github.event_name }}" == "push" ]; then
-            # Check if MDX files or crowdin.yml changed
-            if git diff --name-only HEAD~1 HEAD | grep -E '^(packages/twenty-docs/.*\.mdx$|crowdin\.yml$)' | grep -v '^packages/twenty-docs/fr/' | grep -q .; then
-              echo "docs_changed=true" >> $GITHUB_OUTPUT
-            else
-              echo "docs_changed=false" >> $GITHUB_OUTPUT
-            fi
-          else
-            # For manual dispatch or workflow_call, always push
-            echo "docs_changed=true" >> $GITHUB_OUTPUT
-          fi
+          ref: main
 
       - name: Upload docs to Crowdin
-        if: steps.check_docs_changes.outputs.docs_changed == 'true'
         uses: crowdin/github-action@v2
         with:
           upload_sources: true
