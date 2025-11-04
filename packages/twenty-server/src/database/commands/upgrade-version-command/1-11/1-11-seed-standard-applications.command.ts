@@ -12,7 +12,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-application';
-import { TWENTY_WORKFLOW_APPLICATION_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-workflow-application-id';
+import { TWENTY_WORKFLOW_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-workflow-application';
 
 @Command({
   name: 'upgrade:1-11:seed-standard-applications',
@@ -44,7 +44,7 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
         workspaceId,
         universalIdentifier: In([
           TWENTY_STANDARD_APPLICATION,
-          TWENTY_WORKFLOW_APPLICATION_ID,
+          TWENTY_WORKFLOW_APPLICATION,
         ]),
       },
     });
@@ -70,9 +70,9 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
       });
     }
 
-    if (!existingIds.has(TWENTY_WORKFLOW_APPLICATION_ID)) {
+    if (!existingIds.has(TWENTY_WORKFLOW_APPLICATION.universalIdentifier)) {
       applicationsToCreate.push({
-        universalIdentifier: TWENTY_WORKFLOW_APPLICATION_ID,
+        universalIdentifier: TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
         name: 'Twenty Workflows',
         description: 'Workflow automation engine for Twenty CRM',
         sourcePath: 'system/twenty-workflow',
