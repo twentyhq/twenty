@@ -53,12 +53,7 @@ export const PageLayoutContent = ({
     isRecordPageEnabled && activeTab.layoutMode === 'vertical-list';
 
   if (isCanvasLayout) {
-    return (
-      <PageLayoutCanvasViewer
-        widgets={activeTab.widgets}
-        isInPinnedTab={isInPinnedTab}
-      />
-    );
+    return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;
   }
 
   if (isVerticalList) {
@@ -68,17 +63,13 @@ export const PageLayoutContent = ({
           <PageLayoutVerticalListEditor
             widgets={activeTab.widgets}
             onReorder={reorderWidgets}
-            isInPinnedTab={isInPinnedTab}
           />
         ) : (
-          <PageLayoutVerticalListViewer
-            widgets={activeTab.widgets}
-            isInPinnedTab={isInPinnedTab}
-          />
+          <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
         )}
       </StyledContainer>
     );
   }
 
-  return <PageLayoutGridLayout tabId={tabId} isInPinnedTab={isInPinnedTab} />;
+  return <PageLayoutGridLayout tabId={tabId} />;
 };

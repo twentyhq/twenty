@@ -10,12 +10,10 @@ const StyledCanvasContainer = styled.div`
 
 type PageLayoutCanvasViewerProps = {
   widgets: PageLayoutWidget[];
-  isInPinnedTab: boolean;
 };
 
 export const PageLayoutCanvasViewer = ({
   widgets,
-  isInPinnedTab,
 }: PageLayoutCanvasViewerProps) => {
   const widget = widgets.at(0);
 
@@ -29,7 +27,6 @@ export const PageLayoutCanvasViewer = ({
         widget={widget}
         pageLayoutType={PageLayoutType.RECORD_PAGE}
         layoutMode="canvas"
-        isInPinnedTab={isInPinnedTab}
       />
     </StyledCanvasContainer>
   );
