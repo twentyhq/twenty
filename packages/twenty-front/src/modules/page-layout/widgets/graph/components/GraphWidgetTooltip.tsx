@@ -113,6 +113,7 @@ const StyledHorizontalSectionPadding = styled.div<{
 export type GraphWidgetTooltipItem = {
   label: string;
   formattedValue: string;
+  value: number;
   dotColor: string;
 };
 
@@ -130,8 +131,7 @@ export const GraphWidgetTooltip = ({
   const theme = useTheme();
 
   const filteredItems = items.filter(
-    (item) =>
-      item.formattedValue !== '0' && isNonEmptyString(item.formattedValue),
+    (item) => item.value !== 0 && isNonEmptyString(item.formattedValue),
   );
 
   return (
