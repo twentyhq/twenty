@@ -204,14 +204,12 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             fieldMetadataId: kanbanFieldMetadataId,
           } satisfies ViewGroup);
 
-          const groupResult = await createViewGroups(
-            viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-              input: {
-                ...viewGroup,
-                viewId: newViewId,
-              },
+          const groupResult = await createViewGroups({
+            inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
+              ...viewGroup,
+              viewId: newViewId,
             })),
-          );
+          });
 
           if (groupResult.status === 'failed') {
             set(isPersistingViewFieldsState, false);

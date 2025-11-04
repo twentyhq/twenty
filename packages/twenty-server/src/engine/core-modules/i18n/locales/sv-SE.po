@@ -2575,6 +2575,12 @@ msgstr "Alternativ är nödvändiga för enum fält"
 msgid "Page Layout ID"
 msgstr "Sidlayout-ID"
 
+#. js-lingui-id: G1fWNt
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Parent Folder ID"
+msgstr ""
+
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
