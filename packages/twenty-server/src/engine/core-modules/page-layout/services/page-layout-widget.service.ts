@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { EntityManager, IsNull, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
@@ -29,6 +31,7 @@ export class PageLayoutWidgetService {
     @InjectRepository(PageLayoutWidgetEntity)
     private readonly pageLayoutWidgetRepository: Repository<PageLayoutWidgetEntity>,
     private readonly pageLayoutTabService: PageLayoutTabService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   private getPageLayoutWidgetRepository(
@@ -131,11 +134,18 @@ export class PageLayoutWidgetService {
       let validatedConfig: WidgetConfigurationInterface | null = null;
 
       if (pageLayoutWidgetData.configuration && pageLayoutWidgetData.type) {
-        try {
-          validatedConfig = validateAndTransformWidgetConfiguration(
-            pageLayoutWidgetData.type,
-            pageLayoutWidgetData.configuration,
+        const isDashboardV2Enabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
+            workspaceId,
           );
+
+        try {
+          validatedConfig = validateAndTransformWidgetConfiguration({
+            type: pageLayoutWidgetData.type,
+            configuration: pageLayoutWidgetData.configuration,
+            isDashboardV2Enabled,
+          });
         } catch (error) {
           throw new PageLayoutWidgetException(
             generatePageLayoutWidgetExceptionMessage(
@@ -228,11 +238,18 @@ export class PageLayoutWidgetService {
       const titleForError = updateData.title ?? existingWidget.title;
 
       if (typeForValidation) {
-        try {
-          validatedConfig = validateAndTransformWidgetConfiguration(
-            typeForValidation,
-            updateData.configuration,
+        const isDashboardV2Enabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
+            workspaceId,
           );
+
+        try {
+          validatedConfig = validateAndTransformWidgetConfiguration({
+            type: typeForValidation,
+            configuration: updateData.configuration,
+            isDashboardV2Enabled,
+          });
         } catch (error) {
           throw new PageLayoutWidgetException(
             generatePageLayoutWidgetExceptionMessage(
