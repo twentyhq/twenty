@@ -571,7 +571,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_DASHBOARDS,
     label: msg`Go to Dashboards`,
     shortLabel: msg`Dashboards`,
-    position: 22,
+    position: 23,
     Icon: IconLayoutDashboard,
     isPinned: false,
     availableOn: [
@@ -603,7 +603,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
     label: msg`Go to Opportunities`,
     shortLabel: msg`Opportunities`,
-    position: 23,
+    position: 24,
     Icon: IconTargetArrow,
     isPinned: false,
     availableOn: [
@@ -636,7 +636,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     label: msg`Go to Settings`,
     shortLabel: msg`Settings`,
-    position: 24,
+    position: 25,
     Icon: IconSettings,
     isPinned: false,
     availableOn: [
@@ -662,7 +662,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_TASKS,
     label: msg`Go to Tasks`,
     shortLabel: msg`Tasks`,
-    position: 25,
+    position: 26,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
@@ -693,7 +693,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_NOTES,
     label: msg`Go to Notes`,
     shortLabel: msg`Notes`,
-    position: 26,
+    position: 27,
     Icon: IconCheckbox,
     isPinned: false,
     availableOn: [
