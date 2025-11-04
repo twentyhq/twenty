@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
+  "universalIdentifier": "718ed9ab-53fc-49c8-8deb-0cff78ecf0d2",
+  "name": "Last email interaction",
+  "description": "Updates Last interaction and Interaction status fields based on last received email",
+  "env": {
+    "TWENTY_API_KEY": {
+      "isSecret": true,
+      "value": "",
+      "description": "Required to send requests to Twenty"
+    },
+    "TWENTY_API_URL": {
+      "isSecret": false,
+      "value": "",
+      "description": "Optional, defaults to cloud API URL"
+    }
+  },
+  "dependencies": {
+    "axios": "^1.12.2"
+  }
+}

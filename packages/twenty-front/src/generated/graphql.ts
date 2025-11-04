@@ -1714,6 +1714,7 @@ export type Mutation = {
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createEmailingDomain: EmailingDomain;
   createFile: File;
+  createManyCoreViewFields: Array<CoreViewField>;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
@@ -1978,6 +1979,11 @@ export type MutationCreateEmailingDomainArgs = {
 
 export type MutationCreateFileArgs = {
   file: Scalars['Upload'];
+};
+
+
+export type MutationCreateManyCoreViewFieldsArgs = {
+  inputs: Array<CreateViewFieldInput>;
 };
 
 
@@ -4776,6 +4782,13 @@ export type CreateCoreViewSortMutationVariables = Exact<{
 
 export type CreateCoreViewSortMutation = { __typename?: 'Mutation', createCoreViewSort: { __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any } };
 
+export type CreateManyCoreViewFieldsMutationVariables = Exact<{
+  inputs: Array<CreateViewFieldInput> | CreateViewFieldInput;
+}>;
+
+
+export type CreateManyCoreViewFieldsMutation = { __typename?: 'Mutation', createManyCoreViewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+
 export type DeleteCoreViewMutationVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -5542,6 +5555,39 @@ export function useCreateCoreViewSortMutation(baseOptions?: Apollo.MutationHookO
 export type CreateCoreViewSortMutationHookResult = ReturnType<typeof useCreateCoreViewSortMutation>;
 export type CreateCoreViewSortMutationResult = Apollo.MutationResult<CreateCoreViewSortMutation>;
 export type CreateCoreViewSortMutationOptions = Apollo.BaseMutationOptions<CreateCoreViewSortMutation, CreateCoreViewSortMutationVariables>;
+export const CreateManyCoreViewFieldsDocument = gql`
+    mutation CreateManyCoreViewFields($inputs: [CreateViewFieldInput!]!) {
+  createManyCoreViewFields(inputs: $inputs) {
+    ...ViewFieldFragment
+  }
+}
+    ${ViewFieldFragmentFragmentDoc}`;
+export type CreateManyCoreViewFieldsMutationFn = Apollo.MutationFunction<CreateManyCoreViewFieldsMutation, CreateManyCoreViewFieldsMutationVariables>;
+
+/**
+ * __useCreateManyCoreViewFieldsMutation__
+ *
+ * To run a mutation, you first call `useCreateManyCoreViewFieldsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateManyCoreViewFieldsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createManyCoreViewFieldsMutation, { data, loading, error }] = useCreateManyCoreViewFieldsMutation({
+ *   variables: {
+ *      inputs: // value for 'inputs'
+ *   },
+ * });
+ */
+export function useCreateManyCoreViewFieldsMutation(baseOptions?: Apollo.MutationHookOptions<CreateManyCoreViewFieldsMutation, CreateManyCoreViewFieldsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateManyCoreViewFieldsMutation, CreateManyCoreViewFieldsMutationVariables>(CreateManyCoreViewFieldsDocument, options);
+      }
+export type CreateManyCoreViewFieldsMutationHookResult = ReturnType<typeof useCreateManyCoreViewFieldsMutation>;
+export type CreateManyCoreViewFieldsMutationResult = Apollo.MutationResult<CreateManyCoreViewFieldsMutation>;
+export type CreateManyCoreViewFieldsMutationOptions = Apollo.BaseMutationOptions<CreateManyCoreViewFieldsMutation, CreateManyCoreViewFieldsMutationVariables>;
 export const DeleteCoreViewDocument = gql`
     mutation DeleteCoreView($id: String!) {
   deleteCoreView(id: $id)
