@@ -31,10 +31,10 @@ const config: ApplicationConfig = {
       description: 'Whether to auto-create contacts for unknown participants',
       value: 'true',
     },
-    DEBUG_LOGS: {
-      universalIdentifier: '009510df-5125-4683-941b-cce94b113242',
-      description: 'Enable verbose logging for debugging (true/false)',
-      value: 'false',
+    LOG_LEVEL: {
+      universalIdentifier: '2b019cf1-d198-48dd-943e-110571aa541e',
+      description: 'Log level: silent, error, warn, info, debug (default: error)',
+      value: 'error',
     },
     FIREFLIES_SUMMARY_STRATEGY: {
       universalIdentifier: '562b43d9-cd47-4ec1-ae16-5cc7ebc9729b',
