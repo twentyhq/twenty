@@ -1,10 +1,10 @@
 {
-  "extends": "../../../tsconfig.base.json",
   "compileOnSave": false,
   "compilerOptions": {
     "sourceMap": true,
     "declaration": true,
     "outDir": "./dist",
+    "rootDir": ".",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -15,8 +15,7 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true
+    "resolveJsonModule": true
   },
   "exclude": [
     "node_modules",
