@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Create input validation - RICH_TEXT Gql create input - failure RICH_TEXT - should fail with : {"richTextField":"test"} 1`] = `"Rich text is not supported, please use RICH_TEXT_V2 instead"`;
+exports[`Create input validation - RICH_TEXT Gql create input - failure RICH_TEXT - should fail with : {"richTextField":"test"} 1`] = `"richTextField RICH_TEXT-typed field does not support write operations"`;
 
-exports[`Create input validation - RICH_TEXT Rest create input - failure RICH_TEXT - should fail with : {"richTextField":"test"} 1`] = `"["Rich text is not supported, please use RICH_TEXT_V2 instead"]"`;
+exports[`Create input validation - RICH_TEXT Rest create input - failure RICH_TEXT - should fail with : {"richTextField":"test"} 1`] = `"["richTextField RICH_TEXT-typed field does not support write operations"]"`;

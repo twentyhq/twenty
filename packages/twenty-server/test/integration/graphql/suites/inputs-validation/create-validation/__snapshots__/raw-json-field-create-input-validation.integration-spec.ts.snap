@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Create input validation - RAW_JSON Gql create input - failure RAW_JSON - should fail with : {"rawJsonField":"not-a-json"} 1`] = `"Unexpected token 'o', "not-a-json" is not valid JSON"`;
+exports[`Create input validation - RAW_JSON Gql create input - failure RAW_JSON - should fail with : {"rawJsonField":"not-a-json"} 1`] = `"Invalid value 'not-a-json' for raw json field "rawJsonField""`;
 
-exports[`Create input validation - RAW_JSON Rest create input - failure RAW_JSON - should fail with : {"rawJsonField":"not-a-json"} 1`] = `"["Unexpected token 'o', \\"not-a-json\\" is not valid JSON"]"`;
+exports[`Create input validation - RAW_JSON Rest create input - failure RAW_JSON - should fail with : {"rawJsonField":"not-a-json"} 1`] = `"["Invalid value 'not-a-json' for raw json field \\"rawJsonField\\""]"`;

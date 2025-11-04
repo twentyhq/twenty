@@ -10,6 +10,7 @@ import {
 export const coerceTextFieldOrThrow = (
   value: unknown,
   fieldName?: string,
+  isNullEquivalenceEnabled: boolean = false,
 ): string | null => {
   if (typeof value !== 'string' && !isNull(value))
     throw new CommonDataCoercerException(
@@ -17,7 +18,7 @@ export const coerceTextFieldOrThrow = (
       CommonDataCoercerExceptionCode.INVALID_TEXT,
     );
 
-  if (value === '') return null;
+  if (value === '' && isNullEquivalenceEnabled) return null;
 
   return value;
 };

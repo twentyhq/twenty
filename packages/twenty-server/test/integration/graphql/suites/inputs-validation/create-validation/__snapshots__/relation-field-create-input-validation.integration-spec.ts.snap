@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":"non-uuid"} 1`] = `"invalid input syntax for type uuid: "non-uuid""`;
+exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":"non-uuid"} 1`] = `"Invalid UUID value 'non-uuid' for field "manyToOneRelationFieldId""`;
 
-exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":1} 1`] = `"invalid input syntax for type uuid: "1""`;
+exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":1} 1`] = `"Invalid UUID value '1' for field "manyToOneRelationFieldId""`;
 
 exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":true} 1`] = `"ID cannot represent value: true"`;
 
 exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"oneToManyRelationFieldId":"not-existing-field"} 1`] = `"Field "oneToManyRelationFieldId" is not defined by type "ApiInputValidationTestObjectCreateInput". Did you mean "manyToOneRelationFieldId" or "manyToOneRelationField"?"`;
 
-exports[`Create input validation - RELATION Rest create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":"non-uuid"} 1`] = `"["invalid input syntax for type uuid: \\"non-uuid\\""]"`;
+exports[`Create input validation - RELATION Rest create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":"non-uuid"} 1`] = `"["Invalid UUID value 'non-uuid' for field \\"manyToOneRelationFieldId\\""]"`;
 
-exports[`Create input validation - RELATION Rest create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":1} 1`] = `"["invalid input syntax for type uuid: \\"1\\""]"`;
+exports[`Create input validation - RELATION Rest create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":1} 1`] = `"["Invalid UUID value 1 for field \\"manyToOneRelationFieldId\\""]"`;
 
-exports[`Create input validation - RELATION Rest create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":true} 1`] = `"["invalid input syntax for type uuid: \\"true\\""]"`;
+exports[`Create input validation - RELATION Rest create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":true} 1`] = `"["Invalid UUID value true for field \\"manyToOneRelationFieldId\\""]"`;
 
-exports[`Create input validation - RELATION Rest create input - failure RELATION - should fail with : {"oneToManyRelationFieldId":"not-existing-field"} 1`] = `"["Field metadata for field \\"oneToManyRelationFieldId\\" is missing in object metadata apiInputValidationTestObject"]"`;
+exports[`Create input validation - RELATION Rest create input - failure RELATION - should fail with : {"oneToManyRelationFieldId":"not-existing-field"} 1`] = `"["Object apiInputValidationTestObject doesn't have any \\"oneToManyRelationFieldId\\" field."]"`;

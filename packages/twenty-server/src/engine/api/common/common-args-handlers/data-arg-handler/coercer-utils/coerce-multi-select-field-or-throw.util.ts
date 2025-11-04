@@ -10,8 +10,13 @@ export const coerceMultiSelectFieldOrThrow = (
   value: unknown,
   options?: string[],
   fieldName?: string,
+  isNullEquivalenceEnabled: boolean = false,
 ) => {
-  const parsedValue = coerceArrayFieldOrThrow(value, fieldName);
+  const parsedValue = coerceArrayFieldOrThrow(
+    value,
+    fieldName,
+    isNullEquivalenceEnabled,
+  );
 
   if (parsedValue === null) return null;
 

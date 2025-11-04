@@ -10,6 +10,7 @@ import {
 export const coerceArrayFieldOrThrow = (
   value: unknown,
   fieldName?: string,
+  isNullEquivalenceEnabled: boolean = false,
 ): unknown[] | null => {
   if (isNull(value)) return null;
 
@@ -26,7 +27,7 @@ export const coerceArrayFieldOrThrow = (
       );
     }
 
-    if (parsedValue.length === 0) return null;
+    if (parsedValue.length === 0 && isNullEquivalenceEnabled) return null;
 
     return value as unknown[];
   } catch {

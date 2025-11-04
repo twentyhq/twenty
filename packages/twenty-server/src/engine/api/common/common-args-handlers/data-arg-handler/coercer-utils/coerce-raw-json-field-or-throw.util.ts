@@ -10,6 +10,7 @@ import {
 export const coerceRawJsonFieldOrThrow = (
   value: unknown,
   fieldName?: string,
+  isNullEquivalenceEnabled: boolean = false,
 ) => {
   if (isNull(value)) return null;
 
@@ -23,7 +24,8 @@ export const coerceRawJsonFieldOrThrow = (
       );
     }
 
-    if (Object.keys(parsedValue).length === 0) return null;
+    if (Object.keys(parsedValue).length === 0 && isNullEquivalenceEnabled)
+      return null;
 
     return value;
   } catch {
