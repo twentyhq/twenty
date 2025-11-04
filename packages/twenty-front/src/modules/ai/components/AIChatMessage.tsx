@@ -155,14 +155,14 @@ export const AIChatMessage = ({
   const theme = useTheme();
   const { localeCatalog } = useRecoilValue(dateLocaleState);
 
+  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
+    contextStoreCurrentObjectMetadataItemIdComponentState,
+  );
+
   const showError =
     isDefined(error) && message.role === AgentChatMessageRole.ASSISTANT;
 
   const fileParts = message.parts.filter((part) => part.type === 'file');
-
-  const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
-    contextStoreCurrentObjectMetadataItemIdComponentState,
-  );
 
   return (
     <StyledMessageBubble
