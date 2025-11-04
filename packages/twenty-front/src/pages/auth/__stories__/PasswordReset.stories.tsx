@@ -71,7 +71,11 @@ export const ChangePassword: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Change Password',undefined, { timeout: 3000 });
+    await canvas.findByText(
+      'Change Password',
+      { selector: 'button' },
+      { timeout: 3000 },
+    );
   },
 };
 
@@ -83,6 +87,10 @@ export const SetPassword: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Set Password', { selector: 'button' }, { timeout: 3000 });
+    await canvas.findByText(
+      'Set Password',
+      { selector: 'button' },
+      { timeout: 3000 },
+    );
   },
 };
