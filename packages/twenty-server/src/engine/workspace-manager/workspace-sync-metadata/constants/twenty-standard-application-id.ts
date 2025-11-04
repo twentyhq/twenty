@@ -1,0 +1,2 @@
+export const TWENTY_STANDARD_APPLICATION_ID =
+  '20202020-64aa-4b6f-b003-9c74b97cee20';

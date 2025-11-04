@@ -19,6 +19,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { TWENTY_WORKFLOW_APPLICATION_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-workflow-application-id';
 import {
   type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
@@ -71,7 +72,8 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS: FieldTypeAndNameMetadata[] = [
 ];
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.workflowVersion,
+  universalIdentifier: STANDARD_OBJECT_IDS.workflowVersion,
+  applicationId: TWENTY_WORKFLOW_APPLICATION_ID,
   namePlural: 'workflowVersions',
   labelSingular: msg`Workflow Version`,
   labelPlural: msg`Workflow Versions`,

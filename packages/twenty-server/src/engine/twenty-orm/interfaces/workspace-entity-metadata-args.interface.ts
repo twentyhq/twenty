@@ -82,4 +82,8 @@ export interface WorkspaceEntityMetadataArgs {
    * Is searchable object.
    */
   readonly isSearchable: boolean;
+
+  readonly universalIdentifier: string;
+
+  readonly applicationId: string;
 }
