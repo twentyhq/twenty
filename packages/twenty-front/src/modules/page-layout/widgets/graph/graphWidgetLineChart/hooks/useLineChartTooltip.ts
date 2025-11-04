@@ -42,12 +42,11 @@ export const useLineChartTooltip = ({
         );
         if (!enrichedSeriesItem) return null;
 
+        const value = Number(point.data.y || 0);
         return {
           label: enrichedSeriesItem.label,
-          formattedValue: formatGraphValue(
-            Number(point.data.y || 0),
-            formatOptions,
-          ),
+          formattedValue: formatGraphValue(value, formatOptions),
+          value,
           dotColor: enrichedSeriesItem.colorScheme.solid,
         };
       })
@@ -78,14 +77,13 @@ export const useLineChartTooltip = ({
     const series = dataMap[point.seriesId];
     const dataPoint = series?.data[point.indexInSeries];
 
+    const value = Number(point.data.y || 0);
     return {
       items: [
         {
           label: enrichedSeriesItem.label,
-          formattedValue: formatGraphValue(
-            Number(point.data.y || 0),
-            formatOptions,
-          ),
+          formattedValue: formatGraphValue(value, formatOptions),
+          value,
           dotColor: enrichedSeriesItem.colorScheme.solid,
         },
       ],
