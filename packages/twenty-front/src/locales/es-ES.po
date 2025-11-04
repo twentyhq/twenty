@@ -697,6 +697,11 @@ msgstr "Añadir a favoritos"
 msgid "Add view"
 msgstr "Agregar vista"
 
+#. js-lingui-id: 8sZiWP
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+msgid "Add widget"
+msgstr ""
+
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
@@ -990,6 +995,7 @@ msgstr "Ocurrió un error al procesar su mensaje"
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
@@ -2006,16 +2012,6 @@ msgstr "Configurar filtros"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
 msgstr "Configurar cómo debemos mostrar tus eventos en tu calendario"
-
-#. js-lingui-id: EZzl/g
-#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
-msgid "Configure iFrame"
-msgstr "Configurar iFrame"
-
-#. js-lingui-id: 3La0aM
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
-msgid "Configure iFrame Widget"
-msgstr "Configurar Widget de iFrame"
 
 #. js-lingui-id: jbuOOX
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -3169,11 +3165,6 @@ msgstr "Holandés"
 msgid "E.g. backoffice integration"
 msgstr "Ej. integración de backoffice"
 
-#. js-lingui-id: BtKcxf
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
-msgid "e.g., Analytics Dashboard"
-msgstr "p. ej., Panel de Analítica"
-
 #. js-lingui-id: GhTFTJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "e.g., summary, status, count"
@@ -3253,11 +3244,6 @@ msgstr "Editar gráfico"
 #: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 msgid "Edit iFrame"
 msgstr "Editar iFrame"
-
-#. js-lingui-id: mY8UAQ
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
-msgid "Edit iFrame Widget"
-msgstr "Editar Widget de iFrame"
 
 #. js-lingui-id: NZubw3
 #: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
@@ -4552,6 +4538,21 @@ msgstr "Si esto es inesperado, por favor verifique su configuración."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "Si ha perdido esta clave, puede regenerarla, pero tenga en cuenta que cualquier script que utilice esta clave deberá ser actualizado. Escriba \"{confirmationValue}\" para confirmar."
+
+#. js-lingui-id: KDMdBi
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "iFrame"
+msgstr ""
+
+#. js-lingui-id: hiXeBh
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "iFrame Settings"
+msgstr ""
+
+#. js-lingui-id: mO+Bte
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+msgid "iFrame Widget"
+msgstr ""
 
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
@@ -6038,11 +6039,6 @@ msgstr "Sin campo de selección"
 msgid "No variables found"
 msgstr "No se encontraron variables"
 
-#. js-lingui-id: xyEjfo
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
-msgid "No widgets yet"
-msgstr "Todavía no hay widgets"
-
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
@@ -6585,6 +6581,11 @@ msgstr "Por favor, revisa tu correo electrónico para un enlace de verificación
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Please create agents in the AI settings to use in workflows."
 msgstr "Por favor, cree agentes en la configuración de IA para usar en flujos de trabajo."
+
+#. js-lingui-id: jEw0Mr
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+msgid "Please enter a valid URL"
+msgstr ""
 
 #. js-lingui-id: CjNkdJ
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -8783,6 +8784,11 @@ msgstr "Suba el archivo XML con su información de conexión"
 msgid "URL"
 msgstr "URL"
 
+#. js-lingui-id: pphDjD
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+msgid "URL to Embed"
+msgstr ""
+
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -9129,11 +9135,6 @@ msgstr "Cuándo caducará la clave API."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "Cuándo se desactivará la clave"
-
-#. js-lingui-id: Z4rkzJ
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
-msgid "Widget Title"
-msgstr "Título del Widget"
 
 #. js-lingui-id: fANaAS
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
