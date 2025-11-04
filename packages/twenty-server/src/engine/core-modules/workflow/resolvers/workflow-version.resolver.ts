@@ -14,6 +14,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.workspace-service';
+import { DuplicateWorkflowInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-input.dto';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
@@ -43,6 +44,19 @@ export class WorkflowVersionResolver {
     return this.workflowVersionWorkspaceService.createDraftFromWorkflowVersion({
       workspaceId,
       workflowId,
+      workflowVersionIdToCopy,
+    });
+  }
+
+  @Mutation(() => WorkflowVersionDTO)
+  async duplicateWorkflow(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('input')
+    { workflowIdToDuplicate, workflowVersionIdToCopy }: DuplicateWorkflowInput,
+  ): Promise<WorkflowVersionDTO> {
+    return this.workflowVersionWorkspaceService.duplicateWorkflow({
+      workspaceId,
+      workflowIdToDuplicate,
       workflowVersionIdToCopy,
     });
   }

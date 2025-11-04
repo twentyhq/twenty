@@ -331,6 +331,19 @@ export class WorkflowVersionStepWorkspaceService {
     });
   }
 
+  async createStepForDuplicate({
+    step,
+    workspaceId,
+  }: {
+    step: WorkflowAction;
+    workspaceId: string;
+  }): Promise<WorkflowAction> {
+    return this.workflowVersionStepOperationsWorkspaceService.createStepForDuplicate({
+      step,
+      workspaceId,
+    });
+  }
+
   async createDraftStep({
     step,
     workspaceId,
