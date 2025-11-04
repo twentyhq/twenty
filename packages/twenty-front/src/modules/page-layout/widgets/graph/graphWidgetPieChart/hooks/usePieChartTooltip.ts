@@ -35,6 +35,7 @@ export const usePieChartTooltip = ({
 
     return {
       tooltipItem: {
+        key: item.id,
         label: item.label || item.id,
         formattedValue,
         value: item.value,
