@@ -16,7 +16,7 @@ export const buildBarChartGroupByConfigUpdate = (
     return {
       ...baseConfig,
       groupMode: isDefined(fieldMetadataId)
-        ? BarChartGroupMode.STACKED
+        ? (configuration.groupMode ?? BarChartGroupMode.STACKED)
         : undefined,
     };
   }
