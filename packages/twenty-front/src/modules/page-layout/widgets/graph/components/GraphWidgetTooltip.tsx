@@ -149,6 +149,8 @@ export const GraphWidgetTooltip = ({
     (item) => item.value !== 0 && isNonEmptyString(item.formattedValue),
   );
 
+  const shouldHighlight = filteredItems.length > 1;
+
   return (
     <StyledTooltip $interactive={interactive}>
       <StyledHorizontalSectionPadding $addTop $addBottom={!showClickHint}>
@@ -159,7 +161,7 @@ export const GraphWidgetTooltip = ({
           <StyledTooltipRowContainer $scrollable={scrollable}>
             {filteredItems.map((item, index) => {
               const isHighlighted =
-                highlightedKey === item.key && filteredItems.length > 1;
+                shouldHighlight && highlightedKey === item.key;
               return (
                 <StyledTooltipRow key={index}>
                   <StyledDot $color={item.dotColor} />
