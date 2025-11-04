@@ -11,6 +11,10 @@ import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
+const TOOLTIP_HIDE_DELAY_MS = 300;
+const TOOLTIP_OFFSET_PX = 2;
+const TOOLTIP_BOUNDARY_PADDING_PX = 8;
+
 export type BarDatumWithGeometry = ComputedDatum<BarDatum> & {
   barElement?: SVGElement;
   barAbsoluteX?: number;
@@ -60,30 +64,27 @@ const createFloatingAnchorFromBarGeometry = (
 export const useBarChartFloatingTooltip = () => {
   const [hoveredBarDatum, setHoveredBarDatum] =
     useState<BarDatumWithGeometry | null>(null);
-  const [isTooltipHovered, setIsTooltipHovered] = useState(false);
 
   const { refs, floatingStyles } = useFloating({
     placement: 'left',
     strategy: 'fixed',
     middleware: [
-      offset(2),
+      offset(TOOLTIP_OFFSET_PX),
       flip({
         fallbackPlacements: ['right', 'top', 'bottom'],
         boundary: document.querySelector('#root') ?? undefined,
       }),
       shift({
         boundary: document.querySelector('#root') ?? undefined,
-        padding: 8,
+        padding: TOOLTIP_BOUNDARY_PADDING_PX,
       }),
     ],
     whileElementsMounted: autoUpdate,
   });
 
   const debouncedClearTooltip = useDebouncedCallback(() => {
-    if (!isTooltipHovered) {
-      setHoveredBarDatum(null);
-    }
-  }, 100);
+    setHoveredBarDatum(null);
+  }, TOOLTIP_HIDE_DELAY_MS);
 
   const handleBarMouseEnter = useCallback(
     (datum: BarDatumWithGeometry) => {
@@ -104,11 +105,9 @@ export const useBarChartFloatingTooltip = () => {
 
   const handleTooltipMouseEnter = useCallback(() => {
     debouncedClearTooltip.cancel();
-    setIsTooltipHovered(true);
   }, [debouncedClearTooltip]);
 
   const handleTooltipMouseLeave = useCallback(() => {
-    setIsTooltipHovered(false);
     setHoveredBarDatum(null);
   }, []);
 
