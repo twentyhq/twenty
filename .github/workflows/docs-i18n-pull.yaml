@@ -78,15 +78,12 @@ jobs:
           upload_translations: false
           download_translations: true
           download_language: fr
+          source: 'packages/twenty-docs/**/*.mdx'
           export_only_approved: false
           localization_branch_name: ${{ steps.determine_branch.outputs.target_branch }}
           base_url: 'https://twenty.api.crowdin.com'
-          auto_approve_imported: false
-          import_eq_suggestions: false
-          download_sources: false
-          push_sources: false
           skip_untranslated_files: true
-          push_translations: true
+          push_translations: false
           create_pull_request: false
           skip_ref_checkout: true
           dryrun_action: false
