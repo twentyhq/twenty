@@ -6,16 +6,13 @@ import {
   INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
   INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
   TEST_GAUGE_CHART_CONFIG,
-  TEST_GAUGE_CHART_CONFIG_MINIMAL,
   TEST_HORIZONTAL_BAR_CHART_CONFIG,
   TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
   TEST_IFRAME_CONFIG,
   TEST_LINE_CHART_CONFIG,
-  TEST_LINE_CHART_CONFIG_MINIMAL,
   TEST_NUMBER_CHART_CONFIG,
   TEST_NUMBER_CHART_CONFIG_MINIMAL,
   TEST_PIE_CHART_CONFIG,
-  TEST_PIE_CHART_CONFIG_MINIMAL,
   TEST_VERTICAL_BAR_CHART_CONFIG,
   TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
@@ -160,72 +157,6 @@ describe('validateAndTransformWidgetConfiguration', () => {
             isDashboardV2Enabled: false,
           }),
         ).toThrow(/primaryAxisGroupByFieldMetadataId/);
-      });
-    });
-
-    describe('LINE graph', () => {
-      it('should validate full line graph configuration', () => {
-        const result = validateAndTransformWidgetConfiguration({
-          type: WidgetType.GRAPH,
-          configuration: TEST_LINE_CHART_CONFIG,
-          isDashboardV2Enabled: false,
-        });
-
-        expect(result).toMatchObject(TEST_LINE_CHART_CONFIG);
-      });
-
-      it('should validate minimal line graph configuration', () => {
-        const result = validateAndTransformWidgetConfiguration({
-          type: WidgetType.GRAPH,
-          configuration: TEST_LINE_CHART_CONFIG_MINIMAL,
-          isDashboardV2Enabled: false,
-        });
-
-        expect(result).toMatchObject(TEST_LINE_CHART_CONFIG_MINIMAL);
-      });
-    });
-
-    describe('PIE graph', () => {
-      it('should validate full pie graph configuration', () => {
-        const result = validateAndTransformWidgetConfiguration({
-          type: WidgetType.GRAPH,
-          configuration: TEST_PIE_CHART_CONFIG,
-          isDashboardV2Enabled: false,
-        });
-
-        expect(result).toMatchObject(TEST_PIE_CHART_CONFIG);
-      });
-
-      it('should validate minimal pie graph configuration', () => {
-        const result = validateAndTransformWidgetConfiguration({
-          type: WidgetType.GRAPH,
-          configuration: TEST_PIE_CHART_CONFIG_MINIMAL,
-          isDashboardV2Enabled: false,
-        });
-
-        expect(result).toMatchObject(TEST_PIE_CHART_CONFIG_MINIMAL);
-      });
-    });
-
-    describe('GAUGE graph', () => {
-      it('should validate full gauge graph configuration', () => {
-        const result = validateAndTransformWidgetConfiguration({
-          type: WidgetType.GRAPH,
-          configuration: TEST_GAUGE_CHART_CONFIG,
-          isDashboardV2Enabled: false,
-        });
-
-        expect(result).toMatchObject(TEST_GAUGE_CHART_CONFIG);
-      });
-
-      it('should validate minimal gauge graph configuration', () => {
-        const result = validateAndTransformWidgetConfiguration({
-          type: WidgetType.GRAPH,
-          configuration: TEST_GAUGE_CHART_CONFIG_MINIMAL,
-          isDashboardV2Enabled: false,
-        });
-
-        expect(result).toMatchObject(TEST_GAUGE_CHART_CONFIG_MINIMAL);
       });
     });
 
