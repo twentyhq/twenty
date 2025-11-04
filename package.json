@@ -233,7 +233,6 @@
       "packages/twenty-sdk",
       "packages/twenty-apps",
       "packages/twenty-cli",
-      "packages/twenty-browser-extension",
       "tools/eslint-rules"
     ]
   }
