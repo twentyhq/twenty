@@ -53,10 +53,6 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/PasswordReset',
   component: PasswordReset,
   decorators: [PageDecorator, I18nFrontDecorator],
-  args: {
-    routePath: '/reset-password/:passwordResetToken',
-    routeParams: { ':passwordResetToken': 'MOCKED_TOKEN' },
-  },
 };
 
 export default meta;
@@ -64,6 +60,12 @@ export default meta;
 export type Story = StoryObj<typeof PasswordReset>;
 
 export const ChangePassword: Story = {
+  args: {
+    routePath: '/reset-password/:passwordResetToken',
+    routeParams: {
+      ":passwordResetToken": 'MOCKED_TOKEN_CHANGE'
+    },
+  },
   parameters: {
     msw: {
       handlers: buildHandlers(true),
@@ -73,9 +75,29 @@ export const ChangePassword: Story = {
     const canvas = within(canvasElement);
     await canvas.findByRole(
       'button',
-      {
-        name: 'Change Password',
-      },
+      { name: "Change Password" },
+      { timeout: 3000 },
+    );
+  },
+};
+
+export const SetPassword: Story = {
+  args: {
+    routePath: '/reset-password/:passwordResetToken',
+    routeParams: {
+      ":passwordResetToken": 'MOCKED_TOKEN_SET'
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: buildHandlers(false),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByRole(
+      'button',
+      { name: "Set Password" },
       { timeout: 3000 },
     );
   },

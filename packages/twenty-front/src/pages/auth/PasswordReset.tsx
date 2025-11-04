@@ -3,9 +3,9 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -196,7 +196,7 @@ export const PasswordReset = () => {
   };
 
   const passwordActionLabel =
-    isTargetUserPasswordSet === false ? t`Set Password` : t`Change Password`;
+    isTargetUserPasswordSet === true ? t`Change Password` : t`Set Password`;
 
   return (
     isTokenValid && (
