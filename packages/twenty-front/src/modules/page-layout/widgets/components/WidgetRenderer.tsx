@@ -1,3 +1,4 @@
+import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWidget';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
@@ -20,12 +21,14 @@ type WidgetRendererProps = {
   widget: PageLayoutWidget;
   pageLayoutType: PageLayoutType;
   layoutMode: PageLayoutTabLayoutMode;
+  isInPinnedTab: boolean;
 };
 
 export const WidgetRenderer = ({
   widget,
   pageLayoutType,
   layoutMode,
+  isInPinnedTab
 }: WidgetRendererProps) => {
   const theme = useTheme();
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
@@ -49,6 +52,8 @@ export const WidgetRenderer = ({
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
+  const hideHeader = layoutMode === 'canvas' || isInPinnedTab;
+
   const handleClick = () => {
     handleEditWidget({
       widgetId: widget.id,
@@ -69,7 +74,7 @@ export const WidgetRenderer = ({
       layoutMode={layoutMode}
       isEditing={isEditing}
     >
-      {layoutMode !== 'canvas' && (
+      {hideHeader && (
         <WidgetCardHeader
           isInEditMode={isPageLayoutInEditMode}
           title={widget.title}

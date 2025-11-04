@@ -10,10 +10,12 @@ const StyledVerticalListContainer = styled.div`
 
 type PageLayoutVerticalListViewerProps = {
   widgets: PageLayoutWidget[];
+  isInPinnedTab: boolean;
 };
 
 export const PageLayoutVerticalListViewer = ({
   widgets,
+  isInPinnedTab,
 }: PageLayoutVerticalListViewerProps) => {
   return (
     <StyledVerticalListContainer>
@@ -23,6 +25,7 @@ export const PageLayoutVerticalListViewer = ({
             widget={widget}
             pageLayoutType={PageLayoutType.RECORD_PAGE}
             layoutMode="vertical-list"
+            isInPinnedTab={isInPinnedTab}
           />
         </div>
       ))}

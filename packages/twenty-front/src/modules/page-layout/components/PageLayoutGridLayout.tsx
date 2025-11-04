@@ -67,9 +67,13 @@ const ResponsiveGridLayout = WidthProvider(
 
 type PageLayoutGridLayoutProps = {
   tabId: string;
+  isInPinnedTab: boolean;
 };
 
-export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
+export const PageLayoutGridLayout = ({
+  tabId,
+  isInPinnedTab,
+}: PageLayoutGridLayoutProps) => {
   const setPageLayoutCurrentBreakpoint = useSetRecoilComponentState(
     pageLayoutCurrentBreakpointComponentState,
   );
@@ -188,6 +192,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
                   widget={item.widget}
                   pageLayoutType={currentPageLayout.type}
                   layoutMode="grid"
+                  isInPinnedTab={isInPinnedTab}
                 />
               )}
             </div>

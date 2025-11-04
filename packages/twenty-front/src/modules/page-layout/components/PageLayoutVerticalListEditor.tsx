@@ -27,11 +27,13 @@ const StyledDraggableWrapper = styled.div<{ isDragging: boolean }>`
 type PageLayoutVerticalListEditorProps = {
   widgets: PageLayoutWidget[];
   onReorder: (result: DropResult) => void;
+  isInPinnedTab: boolean;
 };
 
 export const PageLayoutVerticalListEditor = ({
   widgets,
   onReorder,
+  isInPinnedTab,
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
@@ -71,6 +73,7 @@ export const PageLayoutVerticalListEditor = ({
                         widget={widget}
                         pageLayoutType={PageLayoutType.RECORD_PAGE}
                         layoutMode="vertical-list"
+                        isInPinnedTab={isInPinnedTab}
                       />
                     </div>
                   </StyledDraggableWrapper>

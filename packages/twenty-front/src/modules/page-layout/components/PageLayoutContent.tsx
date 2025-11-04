@@ -23,9 +23,13 @@ const StyledContainer = styled.div`
 
 type PageLayoutContentProps = {
   tabId: string;
+  isInPinnedTab?: boolean;
 };
 
-export const PageLayoutContent = ({ tabId }: PageLayoutContentProps) => {
+export const PageLayoutContent = ({
+  tabId,
+  isInPinnedTab = false,
+}: PageLayoutContentProps) => {
   const isRecordPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
   );
@@ -49,7 +53,12 @@ export const PageLayoutContent = ({ tabId }: PageLayoutContentProps) => {
     isRecordPageEnabled && activeTab.layoutMode === 'vertical-list';
 
   if (isCanvasLayout) {
-    return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;
+    return (
+      <PageLayoutCanvasViewer
+        widgets={activeTab.widgets}
+        isInPinnedTab={isInPinnedTab}
+      />
+    );
   }
 
   if (isVerticalList) {
@@ -59,13 +68,17 @@ export const PageLayoutContent = ({ tabId }: PageLayoutContentProps) => {
           <PageLayoutVerticalListEditor
             widgets={activeTab.widgets}
             onReorder={reorderWidgets}
+            isInPinnedTab={isInPinnedTab}
           />
         ) : (
-          <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
+          <PageLayoutVerticalListViewer
+            widgets={activeTab.widgets}
+            isInPinnedTab={isInPinnedTab}
+          />
         )}
       </StyledContainer>
     );
   }
 
-  return <PageLayoutGridLayout tabId={tabId} />;
+  return <PageLayoutGridLayout tabId={tabId} isInPinnedTab={isInPinnedTab} />;
 };
