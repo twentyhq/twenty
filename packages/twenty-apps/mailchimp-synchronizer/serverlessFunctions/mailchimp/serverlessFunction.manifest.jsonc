@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "83319670-775b-4862-b133-5c353e594151",
+  "name": "mailchimp-synchronizer",
+  "triggers": [
+    {
+      "universalIdentifier": "e627ff6f-0a0c-48b2-bdbb-31967489ec96",
+      "type": "databaseEvent",
+      "eventName": "person.created"
+    }
+  ]
+}

@@ -16,8 +16,10 @@ export class FlatViewValidatorService {
   public validateFlatViewUpdate({
     flatEntityId,
     flatEntityUpdates,
-    optimisticFlatEntityMaps: optimisticFlatViewMaps,
-    mutableDependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
+      flatFieldMetadataMaps,
+    },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<FlatView> {
@@ -67,7 +69,9 @@ export class FlatViewValidatorService {
 
   public validateFlatViewDeletion({
     flatEntityToValidate: { id: viewIdToDelete },
-    optimisticFlatEntityMaps: optimisticFlatViewMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<FlatView> {
@@ -94,8 +98,8 @@ export class FlatViewValidatorService {
 
   public async validateFlatViewCreation({
     flatEntityToValidate: flatViewToValidate,
-    optimisticFlatEntityMaps: optimisticFlatViewMaps,
-    mutableDependencyOptimisticFlatEntityMaps: {
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     },

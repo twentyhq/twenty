@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { IconArrowUpRight } from 'twenty-ui/display';
 
 const StyledTooltip = styled.div<{ $interactive?: boolean }>`
@@ -114,6 +115,7 @@ const StyledHorizontalSectionPadding = styled.div<{
 export type GraphWidgetTooltipItem = {
   label: string;
   formattedValue: string;
+  value: number;
   dotColor: string;
 };
 
@@ -134,6 +136,10 @@ export const GraphWidgetTooltip = ({
 }: GraphWidgetTooltipProps) => {
   const theme = useTheme();
 
+  const filteredItems = items.filter(
+    (item) => item.value !== 0 && isNonEmptyString(item.formattedValue),
+  );
+
   return (
     <StyledTooltip $interactive={interactive}>
       <StyledHorizontalSectionPadding $addTop $addBottom={!showClickHint}>
@@ -142,7 +148,7 @@ export const GraphWidgetTooltip = ({
             <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
           )}
           <StyledTooltipRowContainer $scrollable={scrollable}>
-            {items.map((item, index) => (
+            {filteredItems.map((item, index) => (
               <StyledTooltipRow key={index}>
                 <StyledDot $color={item.dotColor} />
                 <StyledTooltipRowRightContent>
