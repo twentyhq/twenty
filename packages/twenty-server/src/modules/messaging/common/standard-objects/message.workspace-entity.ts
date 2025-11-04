@@ -22,7 +22,7 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.message,
-  applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'messages',
   labelSingular: msg`Message`,
   labelPlural: msg`Messages`,

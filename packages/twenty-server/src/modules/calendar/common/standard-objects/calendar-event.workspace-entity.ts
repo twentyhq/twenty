@@ -22,7 +22,7 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.calendarEvent,
-  applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'calendarEvents',
   labelSingular: msg`Calendar event`,
   labelPlural: msg`Calendar events`,

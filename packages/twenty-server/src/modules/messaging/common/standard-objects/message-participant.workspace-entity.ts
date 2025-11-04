@@ -23,7 +23,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.messageParticipant,
-  applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'messageParticipants',
   labelSingular: msg`Message Participant`,
   labelPlural: msg`Message Participants`,

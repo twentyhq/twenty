@@ -30,7 +30,7 @@ export enum CalendarEventParticipantResponseStatus {
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.calendarEventParticipant,
-  applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'calendarEventParticipants',
   labelSingular: msg`Calendar event participant`,
   labelPlural: msg`Calendar event participants`,

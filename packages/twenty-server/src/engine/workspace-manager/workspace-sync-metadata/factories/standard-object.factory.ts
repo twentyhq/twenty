@@ -42,9 +42,13 @@ export class StandardObjectFactory {
     ) {
       return undefined;
     }
-
+    const relatedStandardApplication =
+      context.standardApplicationEntityByApplicationUniversalIdentifier[
+        workspaceEntityMetadataArgs.applicationUniversalIdentifier
+      ];
     return {
       // TODO: Remove targetTableName when we remove the old metadata
+      applicationId: relatedStandardApplication.id,
       labelIdentifierFieldMetadataId: null,
       imageIdentifierFieldMetadataId: null,
       duplicateCriteria: [],
@@ -62,7 +66,7 @@ export class StandardObjectFactory {
       namePlural: workspaceEntityMetadataArgs.namePlural,
       nameSingular: workspaceEntityMetadataArgs.nameSingular,
       standardId: workspaceEntityMetadataArgs.standardId,
-      universalIdentifier: workspaceEntityMetadataArgs.universalIdentifier.
+      universalIdentifier: workspaceEntityMetadataArgs.universalIdentifier,
     };
   }
 }

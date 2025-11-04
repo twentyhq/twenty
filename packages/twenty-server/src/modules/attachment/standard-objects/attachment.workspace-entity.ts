@@ -30,7 +30,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.attachment,
-  applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'attachments',
   labelSingular: msg`Attachment`,
   labelPlural: msg`Attachments`,
