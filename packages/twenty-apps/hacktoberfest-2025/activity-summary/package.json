@@ -1,4 +1,5 @@
 {
+  "name": "activity-summary",
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
@@ -12,6 +13,5 @@
   },
   "devDependencies": {
     "@types/node": "^24.7.2"
-  },
-  "name": "activity-summary"
+  }
 }
