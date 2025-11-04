@@ -106,7 +106,7 @@ export const GraphWidgetBarChart = ({
   const {
     refs,
     floatingStyles,
-    hoveredDatum,
+    hoveredBarDatum,
     isTooltipVisible,
     handleBarMouseEnter,
     handleBarMouseLeave,
@@ -284,7 +284,7 @@ export const GraphWidgetBarChart = ({
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
-      {isTooltipVisible && hoveredDatum && (
+      {isTooltipVisible && hoveredBarDatum && (
         <FloatingPortal>
           <div
             ref={refs.setFloating}
@@ -294,7 +294,7 @@ export const GraphWidgetBarChart = ({
             onMouseEnter={handleTooltipMouseEnter}
             onMouseLeave={handleTooltipMouseLeave}
           >
-            {renderTooltip(hoveredDatum)}
+            {renderTooltip(hoveredBarDatum)}
           </div>
         </FloatingPortal>
       )}

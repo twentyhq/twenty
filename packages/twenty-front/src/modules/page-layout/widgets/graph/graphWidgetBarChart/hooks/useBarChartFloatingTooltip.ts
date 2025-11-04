@@ -11,22 +11,21 @@ import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
-// find a better name
-export type EnrichedBarDatum = ComputedDatum<BarDatum> & {
+export type BarDatumWithGeometry = ComputedDatum<BarDatum> & {
   barElement?: SVGElement;
-  barAbsX?: number;
-  barAbsY?: number;
+  barAbsoluteX?: number;
+  barAbsoluteY?: number;
   barWidth?: number;
   barHeight?: number;
 };
 
-const createBarVirtualElement = (
-  datum: EnrichedBarDatum,
+const createFloatingAnchorFromBarGeometry = (
+  datum: BarDatumWithGeometry,
 ): VirtualElement | null => {
   if (
     !isDefined(datum.barElement) ||
-    !isDefined(datum.barAbsX) ||
-    !isDefined(datum.barAbsY) ||
+    !isDefined(datum.barAbsoluteX) ||
+    !isDefined(datum.barAbsoluteY) ||
     !isDefined(datum.barWidth)
   ) {
     return null;
@@ -34,34 +33,33 @@ const createBarVirtualElement = (
 
   return {
     getBoundingClientRect: () => {
-      const rect = datum.barElement!.getBoundingClientRect();
-      const containerRect = datum
+      const barElementRectangle = datum.barElement!.getBoundingClientRect();
+      const svgContainerRectangle = datum
         .barElement!.closest('svg')
         ?.getBoundingClientRect();
 
-      if (!containerRect) {
-        return rect;
+      if (!svgContainerRectangle) {
+        return barElementRectangle;
       }
 
       return {
-        left: containerRect.left + datum.barAbsX!,
-        right: containerRect.left + datum.barAbsX! + datum.barWidth!,
-        top: containerRect.top + datum.barAbsY!,
-        bottom: containerRect.top + datum.barAbsY! + 1,
+        left: svgContainerRectangle.left + datum.barAbsoluteX!,
+        right:
+          svgContainerRectangle.left + datum.barAbsoluteX! + datum.barWidth!,
+        top: svgContainerRectangle.top + datum.barAbsoluteY!,
+        bottom: svgContainerRectangle.top + datum.barAbsoluteY! + 1,
         width: datum.barWidth!,
         height: 1,
-        x: containerRect.left + datum.barAbsX!,
-        y: containerRect.top + datum.barAbsY!,
+        x: svgContainerRectangle.left + datum.barAbsoluteX!,
+        y: svgContainerRectangle.top + datum.barAbsoluteY!,
       };
     },
   };
 };
 
 export const useBarChartFloatingTooltip = () => {
-  const [hoveredDatum, setHoveredDatum] = useState<EnrichedBarDatum | null>(
-    null,
-  );
-  const [isChartHovered, setIsChartHovered] = useState(false);
+  const [hoveredBarDatum, setHoveredBarDatum] =
+    useState<BarDatumWithGeometry | null>(null);
   const [isTooltipHovered, setIsTooltipHovered] = useState(false);
 
   const { refs, floatingStyles } = useFloating({
@@ -81,46 +79,45 @@ export const useBarChartFloatingTooltip = () => {
     whileElementsMounted: autoUpdate,
   });
 
-  const debouncedSetChartHovered = useDebouncedCallback((value: boolean) => {
-    setIsChartHovered(value);
+  const debouncedClearTooltip = useDebouncedCallback(() => {
+    if (!isTooltipHovered) {
+      setHoveredBarDatum(null);
+    }
   }, 100);
 
   const handleBarMouseEnter = useCallback(
-    (datum: EnrichedBarDatum) => {
-      setIsChartHovered(true);
-      debouncedSetChartHovered.cancel();
+    (datum: BarDatumWithGeometry) => {
+      debouncedClearTooltip.cancel();
+      setHoveredBarDatum(datum);
 
-      setHoveredDatum(datum);
-
-      const virtualElement = createBarVirtualElement(datum);
+      const virtualElement = createFloatingAnchorFromBarGeometry(datum);
       if (isDefined(virtualElement)) {
         refs.setReference(virtualElement);
       }
     },
-    [debouncedSetChartHovered, refs],
+    [debouncedClearTooltip, refs],
   );
 
   const handleBarMouseLeave = useCallback(() => {
-    debouncedSetChartHovered(false);
-  }, [debouncedSetChartHovered]);
+    debouncedClearTooltip();
+  }, [debouncedClearTooltip]);
 
   const handleTooltipMouseEnter = useCallback(() => {
-    debouncedSetChartHovered.cancel();
+    debouncedClearTooltip.cancel();
     setIsTooltipHovered(true);
-  }, [debouncedSetChartHovered]);
+  }, [debouncedClearTooltip]);
 
   const handleTooltipMouseLeave = useCallback(() => {
     setIsTooltipHovered(false);
-    setHoveredDatum(null);
+    setHoveredBarDatum(null);
   }, []);
 
-  const isTooltipVisible =
-    isDefined(hoveredDatum) && (isChartHovered || isTooltipHovered);
+  const isTooltipVisible = isDefined(hoveredBarDatum);
 
   return {
     refs,
     floatingStyles,
-    hoveredDatum,
+    hoveredBarDatum,
     isTooltipVisible,
     handleBarMouseEnter,
     handleBarMouseLeave,
