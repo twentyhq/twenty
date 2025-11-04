@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { setTimeout } from 'timers/promises';
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '';
 const TWENTY_URL =
@@ -103,7 +104,7 @@ export const main = async (params: {
   properties: Record<string, any>;
   recordId: string;
   userId: string;
-}): Promise<object> => {
+}): Promise<object | undefined> => {
   if (TWENTY_API_KEY === '') {
     console.log("Function exited as API key or URL hasn't been set properly");
     return {};
@@ -121,22 +122,22 @@ export const main = async (params: {
     const response = await axios.request(options);
     const objects = response.data.data.objects;
     const company_object = objects.find(
-      (object) => object.nameSingular === 'company',
+      (object: any) => object.nameSingular === 'company',
     );
     const company_last_interaction = company_object.fields.find(
-      (field) => field.name === 'lastInteraction',
+      (field: any) => field.name === 'lastInteraction',
     );
     const company_interaction_status = company_object.fields.find(
-      (field) => field.name === 'interactionStatus',
+      (field: any) => field.name === 'interactionStatus',
     );
     const person_object = objects.find(
-      (object) => object.nameSingular === 'person',
+      (object: any) => object.nameSingular === 'person',
     );
     const person_last_interaction = person_object.fields.find(
-      (field) => field.name === 'lastInteraction',
+      (field: any) => field.name === 'lastInteraction',
     );
     const person_interaction_status = person_object.fields.find(
-      (field) => field.name === 'interactionStatus',
+      (field: any) => field.name === 'interactionStatus',
     );
     // If not, create them
     if (company_last_interaction === undefined) {
@@ -272,4 +273,21 @@ export const main = async (params: {
     console.log(error);
     return {};
   }
+};
+
+export const config: ServerlessFunctionConfig = {
+  universalIdentifier: '683966a0-b60a-424e-86b1-7448c9191bde',
+  name: 'test',
+  triggers: [
+    {
+      universalIdentifier: 'f4f1e127-87f0-4dcf-99fe-8061adf5cbe6',
+      type: 'databaseEvent',
+      eventName: 'message.created',
+    },
+    {
+      universalIdentifier: '4c17878f-b6b3-4d0a-8de6-967b1cb55002',
+      type: 'databaseEvent',
+      eventName: 'message.updated',
+    },
+  ],
 };
