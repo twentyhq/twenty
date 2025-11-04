@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 const TWENTY_API_KEY: string = process.env.TWENTY_API_KEY ?? '';
 const TWENTY_API_URL: string =
@@ -21,14 +22,14 @@ enum stripeStatus {
 
 type stripeData = {
   quantity: number;
-}
+};
 
 type stripeItems = {
   data: stripeData[];
 };
 
 type stripeResponse = {
-  customer: string,
+  customer: string;
   items: stripeItems;
   status: stripeStatus;
   type: string;
@@ -36,15 +37,15 @@ type stripeResponse = {
 
 type stripeCustomer = {
   businessName: string;
-}
+};
 
 type twentyObject = {
   id: string;
   nameSingular: string;
   fields: Record<string, any>[];
-}
+};
 
-const getCompaniesObject = async (): Promise<twentyObject> => {
+const getCompaniesObject = async (): Promise<twentyObject | undefined> => {
   const options = {
     method: 'GET',
     headers: {
@@ -58,7 +59,7 @@ const getCompaniesObject = async (): Promise<twentyObject> => {
       const companyObject = response.data.data.objects.find(
         (object: twentyObject) => object.nameSingular === 'company',
       );
-      return companyObject as twentyObject ?? {} as twentyObject;
+      return (companyObject as twentyObject) ?? ({} as twentyObject);
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -129,8 +130,8 @@ const createFields = async (objectId: string, fieldName: string) => {
               label: 'Paused',
               value: stripeStatus.Paused,
               position: 8,
-            }
-          ]
+            },
+          ],
         };
 
   const options = {
@@ -152,7 +153,9 @@ const createFields = async (objectId: string, fieldName: string) => {
   }
 };
 
-const getStripeCustomerData = async (customerID: string): Promise<stripeCustomer> => {
+const getStripeCustomerData = async (
+  customerID: string,
+): Promise<stripeCustomer | undefined> => {
   const options = {
     method: 'GET',
     url: `${STRIPE_API_URL}/${customerID}`,
@@ -163,7 +166,9 @@ const getStripeCustomerData = async (customerID: string): Promise<stripeCustomer
   };
   try {
     const response = await axios(options);
-    return response.status === 200 ? response.data as stripeCustomer : {} as stripeCustomer ;
+    return response.status === 200
+      ? (response.data as stripeCustomer)
+      : ({} as stripeCustomer);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw error;
@@ -171,7 +176,10 @@ const getStripeCustomerData = async (customerID: string): Promise<stripeCustomer
   }
 };
 
-const checkIfCompanyExistsInTwenty = async (name: string) => {
+const checkIfCompanyExistsInTwenty = async (name: string | undefined) => {
+  if (!name) {
+    return {};
+  }
   const options = {
     method: 'GET',
     headers: {
@@ -195,7 +203,7 @@ const updateTwentyCompany = async (
   companyId: string,
   seats: number,
   subStatus: stripeStatus,
-): Promise<boolean> => {
+): Promise<boolean | undefined> => {
   const options = {
     method: 'PATCH',
     headers: {
@@ -219,7 +227,7 @@ const updateTwentyCompany = async (
 };
 
 const createTwentyCustomer = async (
-  customerName: string,
+  customerName: string | undefined,
   seats: number,
   subStatus: string,
 ) => {
@@ -248,13 +256,14 @@ const createTwentyCustomer = async (
 
 export const main = async (params: {
   properties: unknown;
-}): Promise<object> => {
+}): Promise<object | undefined> => {
   if (TWENTY_API_KEY === '' || STRIPE_API_KEY === '') {
     console.warn('Missing variables');
     return {};
   }
 
-  try { // TODO: add validation of signature key from Stripe
+  try {
+    // TODO: add validation of signature key from Stripe
     const { properties } = params;
     const stripe = properties as stripeResponse;
     const allowed_types = [
@@ -268,38 +277,41 @@ export const main = async (params: {
 
     const companyObject = await getCompaniesObject();
     if (
-      companyObject.fields.find((field) => field.name === 'seats') === undefined
+      companyObject?.fields.find((field) => field.name === 'seats') ===
+      undefined
     ) {
-      const t: boolean = await createFields(companyObject.id, 'seats');
-      if (t == false) {
+      const t: boolean | undefined = companyObject?.id
+        ? await createFields(companyObject?.id, 'seats')
+        : false;
+      if (t === false) {
         console.error('Seats field creation failed');
         return {};
       }
     }
     if (
-      companyObject.fields.find((field) => field.name === 'subStatus') ===
+      companyObject?.fields.find((field) => field.name === 'subStatus') ===
       undefined
     ) {
-      const t: boolean = await createFields(companyObject.id, 'subStatus');
-      if (t == false) {
+      const t: boolean | undefined = companyObject?.id
+        ? await createFields(companyObject?.id, 'subStatus')
+        : false;
+      if (t === false) {
         console.error('Sub status field creation failed');
         return {};
       }
     }
 
-    const stripeCustomer: stripeCustomer = await getStripeCustomerData(
-      stripe.customer,
-    );
-    if (stripeCustomer.businessName) {
+    const stripeCustomer = await getStripeCustomerData(stripe.customer);
+    if (stripeCustomer?.businessName) {
       console.warn('Set customer business name in Stripe');
       return {};
     }
     const twentyCustomer = await checkIfCompanyExistsInTwenty(
-      stripeCustomer.businessName,
+      stripeCustomer?.businessName,
     );
     if (Object.keys(twentyCustomer).length === 0) {
       const a = await createTwentyCustomer(
-        stripeCustomer.businessName,
+        stripeCustomer?.businessName,
         stripe.items.data[0].quantity,
         stripe.status.toUpperCase(),
       );
@@ -325,4 +337,18 @@ export const main = async (params: {
     console.error(error);
     return {};
   }
+};
+
+export const config: ServerlessFunctionConfig = {
+  universalIdentifier: 'cd15a738-18a5-406e-8b83-959dc52ebe14',
+  name: 'stripe',
+  triggers: [
+    {
+      universalIdentifier: '55f58e19-d832-43c4-9f8b-3f29fc05c162',
+      type: 'route',
+      path: '/stripe',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+    },
+  ],
 };
