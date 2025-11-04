@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { GaxiosError } from 'gaxios';
 import { google } from 'googleapis';
+import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
@@ -26,8 +27,15 @@ export class GoogleAPIRefreshAccessTokenService {
     try {
       const { token } = await oAuth2Client.getAccessToken();
 
+      if (!isDefined(token)) {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          'Error refreshing Google tokens: Invalid refresh token',
+          ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+        );
+      }
+
       return {
-        accessToken: token as string,
+        accessToken: token,
         refreshToken,
       };
     } catch (error) {
