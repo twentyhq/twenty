@@ -9,7 +9,6 @@ import {
   CalendarChannelSyncStatus,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 
 export type CalendarRelaunchFailedCalendarChannelJobData = {
   workspaceId: string;
@@ -23,7 +22,6 @@ export type CalendarRelaunchFailedCalendarChannelJobData = {
 export class CalendarRelaunchFailedCalendarChannelJob {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
   @Process(CalendarRelaunchFailedCalendarChannelJob.name)
@@ -59,11 +57,5 @@ export class CalendarRelaunchFailedCalendarChannelJob {
       syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
       syncStatus: CalendarChannelSyncStatus.ACTIVE,
     });
-
-    await this.accountsToReconnectService.removeAccountToReconnect(
-      calendarChannel.connectedAccount.accountOwner.userId,
-      calendarChannel.connectedAccountId,
-      workspaceId,
-    );
   }
 }

@@ -4,7 +4,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
@@ -23,7 +22,6 @@ export type MessagingRelaunchFailedMessageChannelJobData = {
 export class MessagingRelaunchFailedMessageChannelJob {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
   @Process(MessagingRelaunchFailedMessageChannelJob.name)
@@ -59,11 +57,5 @@ export class MessagingRelaunchFailedMessageChannelJob {
       syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
       syncStatus: MessageChannelSyncStatus.ACTIVE,
     });
-
-    await this.accountsToReconnectService.removeAccountToReconnect(
-      messageChannel.connectedAccount.accountOwner.userId,
-      messageChannel.connectedAccountId,
-      workspaceId,
-    );
   }
 }
