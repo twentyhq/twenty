@@ -4,6 +4,7 @@ import { GRAPH_DEFAULT_DATE_GRANULARITY } from '@/page-layout/widgets/graph/cons
 import {
   OrderByDirection,
   type AggregateOrderByWithGroupByField,
+  type ObjectRecordGroupByDateGranularity,
   type ObjectRecordOrderByForCompositeField,
   type ObjectRecordOrderByForScalarField,
   type ObjectRecordOrderByWithGroupByDateField,
@@ -35,11 +36,13 @@ export const getGroupByOrderBy = ({
   groupByField,
   groupBySubFieldName,
   aggregateOperation,
+  dateGranularity,
 }: {
   graphOrderBy: GraphOrderBy;
   groupByField: FieldMetadataItem;
   groupBySubFieldName?: string | null;
   aggregateOperation?: string;
+  dateGranularity?: ObjectRecordGroupByDateGranularity;
 }):
   | AggregateOrderByWithGroupByField
   | ObjectRecordOrderByForScalarField
@@ -63,7 +66,7 @@ export const getGroupByOrderBy = ({
         return {
           [groupByField.name]: {
             orderBy: mapOrderByToDirection(graphOrderBy),
-            granularity: GRAPH_DEFAULT_DATE_GRANULARITY,
+            granularity: dateGranularity ?? GRAPH_DEFAULT_DATE_GRANULARITY,
           },
         };
       } else {

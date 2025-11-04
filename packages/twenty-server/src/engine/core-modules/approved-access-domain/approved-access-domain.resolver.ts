@@ -40,6 +40,7 @@ export class ApprovedAccessDomainResolver {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         currentWorkspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMember = await workspaceMemberRepository.findOneOrFail({

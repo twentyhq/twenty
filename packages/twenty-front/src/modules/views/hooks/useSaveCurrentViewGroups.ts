@@ -146,14 +146,12 @@ export const useSaveCurrentViewGroups = () => {
         );
 
         await Promise.all([
-          createViewGroups(
-            viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-              input: {
-                ...viewGroup,
-                viewId: view.id,
-              },
+          createViewGroups({
+            inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
+              ...viewGroup,
+              viewId: view.id,
             })),
-          ),
+          }),
           updateViewGroups(viewGroupsToUpdate),
         ]);
       },

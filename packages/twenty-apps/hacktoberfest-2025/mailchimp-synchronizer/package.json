@@ -1,0 +1,61 @@
+{
+  "version": "0.0.1",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
+  "universalIdentifier": "1eadac4e-db9f-4cce-b20b-de75f41e34dc",
+  "name": "Mailchimp synchronizer",
+  "description": "",
+  "env": {
+    "TWENTY_API_KEY": {
+      "isSecret": true,
+      "value": "",
+      "description": "Required to send requests to Twenty"
+    },
+    "TWENTY_API_URL": {
+      "value": "",
+      "description": "Optional, defaults to cloud API URL"
+    },
+    "MAILCHIMP_API_KEY": {
+      "isSecret": true,
+      "value": "",
+      "description": "Required to send requests to Mailchimp"
+    },
+    "MAILCHIMP_URL": {
+      "value": "",
+      "description": "Required to send requests to Mailchimp"
+    },
+    "IS_EMAIL_CONSTRAINT": {
+      "value": "false",
+      "description": "Set to true if you want to add additional constraint (default is false)"
+    },
+    "IS_PHONE_CONSTRAINT": {
+      "value": "false",
+      "description": "Set to true if you want to add additional constraint (default is false)"
+    },
+    "IS_COMPANY_CONSTRAINT": {
+      "value": "false",
+      "description": "Set to true if you want to add additional constraint (default is false)"
+    },
+    "IS_ADDRESS_CONSTRAINT": {
+      "value": "false",
+      "description": "Set to true if you want to add additional constraint (default is false)"
+    },
+    "UPDATE_PERSON": {
+      "value": "false",
+      "description": "Set to true if you want to update record if it exists"
+    },
+    "MAILCHIMP_AUDIENCE_ID": {
+      "value": "",
+      "description": "Required to send requests to Mailchimp"
+    }
+  },
+  "dependencies": {
+    "axios": "^1.13.1"
+  }
+}

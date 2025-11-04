@@ -14,6 +14,7 @@ export type TabContentProps = {
   RightIcon?: IconComponent;
   pill?: string | ReactElement;
   contentSize?: 'sm' | 'md';
+  className?: string;
 };
 
 export const TabContent = ({
@@ -25,6 +26,7 @@ export const TabContent = ({
   RightIcon,
   pill,
   contentSize = 'sm',
+  className,
 }: TabContentProps) => {
   const { theme } = useContext(ThemeContext);
   const iconColor = active
@@ -34,7 +36,7 @@ export const TabContent = ({
       : theme.font.color.secondary;
 
   return (
-    <StyledTabHover contentSize={contentSize}>
+    <StyledTabHover contentSize={contentSize} className={className}>
       {LeftIcon && <LeftIcon color={iconColor} size={theme.icon.size.md} />}
       {logo && <Avatar avatarUrl={logo} size="md" placeholder={title} />}
       {title}

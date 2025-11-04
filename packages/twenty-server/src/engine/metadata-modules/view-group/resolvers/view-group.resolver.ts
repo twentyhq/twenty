@@ -11,6 +11,10 @@ import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dto
 import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import {
+  ViewGroupException,
+  ViewGroupExceptionCode,
+} from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -66,6 +70,31 @@ export class ViewGroupResolver {
 
     return this.viewGroupService.create({
       ...createViewGroupInput,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => [ViewGroupDTO])
+  async createManyCoreViewGroups(
+    @Args('inputs', { type: () => [CreateViewGroupInput] })
+    createViewGroupInputs: CreateViewGroupInput[],
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ViewGroupDTO[]> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (!isWorkspaceMigrationV2Enabled) {
+      throw new ViewGroupException(
+        'Not implemented in v1, please active IS_WORKSPACE_MIGRATION_V2_ENABLED',
+        ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
+      );
+    }
+
+    return await this.viewGroupV2Service.createMany({
+      createViewGroupInputs,
       workspaceId,
     });
   }

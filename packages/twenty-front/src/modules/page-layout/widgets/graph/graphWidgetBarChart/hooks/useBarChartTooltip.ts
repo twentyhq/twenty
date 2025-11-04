@@ -13,6 +13,7 @@ type UseBarChartTooltipProps = {
   data: BarChartDataItem[];
   indexBy: string;
   formatOptions: GraphValueFormatOptions;
+  enableGroupTooltip?: boolean;
 };
 
 export const useBarChartTooltip = ({
@@ -21,26 +22,39 @@ export const useBarChartTooltip = ({
   data,
   indexBy,
   formatOptions,
+  enableGroupTooltip = true,
 }: UseBarChartTooltipProps) => {
   const renderTooltip = (datum: ComputedDatum<BarDatum>) => {
-    const hoveredKey = hoveredBar?.key;
-    if (!isDefined(hoveredKey)) return null;
-
-    const enrichedKey = enrichedKeys.find((item) => item.key === hoveredKey);
-    if (!enrichedKey) return null;
-
     const dataItem = data.find((d) => d[indexBy] === datum.indexValue);
-    const seriesValue = Number(datum.data[hoveredKey] || 0);
-    const tooltipItem = {
-      label: enrichedKey.label,
-      formattedValue: formatGraphValue(seriesValue, formatOptions),
-      dotColor: enrichedKey.colorScheme.solid,
-    };
+
+    let keysToShow: BarChartEnrichedKey[];
+
+    if (enableGroupTooltip) {
+      keysToShow = enrichedKeys;
+    } else {
+      const hoveredKey = hoveredBar?.key;
+      if (!isDefined(hoveredKey)) return null;
+
+      const enrichedKey = enrichedKeys.find((item) => item.key === hoveredKey);
+      if (!isDefined(enrichedKey)) return null;
+
+      keysToShow = [enrichedKey];
+    }
+
+    const tooltipItems = keysToShow.map((enrichedKey) => {
+      const seriesValue = Number(datum.data[enrichedKey.key] ?? 0);
+      return {
+        label: enrichedKey.label,
+        formattedValue: formatGraphValue(seriesValue, formatOptions),
+        value: seriesValue,
+        dotColor: enrichedKey.colorScheme.solid,
+      };
+    });
 
     return {
-      tooltipItem,
+      tooltipItems,
       showClickHint: isDefined(dataItem?.to),
-      title: String(datum.indexValue),
+      indexLabel: String(datum.indexValue),
     };
   };
 

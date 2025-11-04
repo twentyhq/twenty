@@ -253,6 +253,8 @@ export const Stacked: Story = {
         data={args.data}
         indexBy={args.indexBy}
         keys={args.keys}
+        groupMode={args.groupMode}
+        seriesLabels={args.seriesLabels}
         showLegend={args.showLegend}
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
@@ -492,6 +494,366 @@ export const Currency: Story = {
   ),
 };
 
+export const NegativeValues: Story = {
+  args: {
+    data: [
+      { quarter: 'Q1', profit: -50000, to: '/financials/q1' },
+      { quarter: 'Q2', profit: -20000, to: '/financials/q2' },
+      { quarter: 'Q3', profit: 10000, to: '/financials/q3' },
+      { quarter: 'Q4', profit: 80000, to: '/financials/q4' },
+    ],
+    indexBy: 'quarter',
+    keys: ['profit'],
+    seriesLabels: {
+      profit: 'Net Profit',
+    },
+    displayType: 'shortNumber',
+    prefix: '$',
+    showLegend: false,
+    showGrid: true,
+    xAxisLabel: 'Quarter',
+    yAxisLabel: 'Profit/Loss ($)',
+    id: 'bar-chart-negative',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        seriesLabels={args.seriesLabels}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
+export const MixedPositiveNegative: Story = {
+  args: {
+    data: [
+      {
+        month: 'Jan',
+        revenue: 120000,
+        expenses: -80000,
+        net: 40000,
+        to: '/reports/jan',
+      },
+      {
+        month: 'Feb',
+        revenue: 150000,
+        expenses: -95000,
+        net: 55000,
+        to: '/reports/feb',
+      },
+      {
+        month: 'Mar',
+        revenue: 130000,
+        expenses: -140000,
+        net: -10000,
+        to: '/reports/mar',
+      },
+      {
+        month: 'Apr',
+        revenue: 180000,
+        expenses: -110000,
+        net: 70000,
+        to: '/reports/apr',
+      },
+    ],
+    indexBy: 'month',
+    keys: ['revenue', 'expenses', 'net'],
+    seriesLabels: {
+      revenue: 'Revenue',
+      expenses: 'Expenses',
+      net: 'Net Income',
+    },
+    displayType: 'shortNumber',
+    prefix: '$',
+    showLegend: true,
+    showGrid: true,
+    xAxisLabel: 'Month',
+    yAxisLabel: 'Amount ($)',
+    id: 'bar-chart-mixed-values',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        seriesLabels={args.seriesLabels}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
+export const AllNegative: Story = {
+  args: {
+    data: [
+      { category: 'Loss A', value: -45, to: '/losses/a' },
+      { category: 'Loss B', value: -30, to: '/losses/b' },
+      { category: 'Loss C', value: -60, to: '/losses/c' },
+      { category: 'Loss D', value: -25, to: '/losses/d' },
+    ],
+    indexBy: 'category',
+    keys: ['value'],
+    showLegend: false,
+    showGrid: true,
+    xAxisLabel: 'Category',
+    yAxisLabel: 'Value',
+    id: 'bar-chart-all-negative',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
+export const TemperatureData: Story = {
+  args: {
+    data: [
+      { month: 'Jan', temp: -5, to: '/weather/jan' },
+      { month: 'Feb', temp: -2, to: '/weather/feb' },
+      { month: 'Mar', temp: 5, to: '/weather/mar' },
+      { month: 'Apr', temp: 15, to: '/weather/apr' },
+      { month: 'May', temp: 22, to: '/weather/may' },
+      { month: 'Jun', temp: 28, to: '/weather/jun' },
+    ],
+    indexBy: 'month',
+    keys: ['temp'],
+    showLegend: false,
+    showGrid: true,
+    xAxisLabel: 'Month',
+    yAxisLabel: 'Temperature',
+    suffix: '°C',
+    id: 'bar-chart-temperature',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        suffix={args.suffix}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
+export const StackedNegative: Story = {
+  args: {
+    data: [
+      {
+        period: 'Q1',
+        profit: 50000,
+        loss: -30000,
+        adjustment: -5000,
+        to: '/periods/q1',
+      },
+      {
+        period: 'Q2',
+        profit: 70000,
+        loss: -40000,
+        adjustment: 10000,
+        to: '/periods/q2',
+      },
+      {
+        period: 'Q3',
+        profit: 60000,
+        loss: -25000,
+        adjustment: -8000,
+        to: '/periods/q3',
+      },
+      {
+        period: 'Q4',
+        profit: 90000,
+        loss: -35000,
+        adjustment: 15000,
+        to: '/periods/q4',
+      },
+    ],
+    indexBy: 'period',
+    keys: ['profit', 'loss', 'adjustment'],
+    seriesLabels: {
+      profit: 'Profit',
+      loss: 'Loss',
+      adjustment: 'Adjustment',
+    },
+    groupMode: 'stacked',
+    displayType: 'shortNumber',
+    prefix: '$',
+    showLegend: true,
+    showGrid: true,
+    xAxisLabel: 'Period',
+    yAxisLabel: 'Amount ($)',
+    id: 'bar-chart-stacked-negative',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        seriesLabels={args.seriesLabels}
+        groupMode={args.groupMode}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
+export const GroupedWithAllBarsTooltip: Story = {
+  args: {
+    data: [
+      {
+        period: 'January',
+        lastYear: 18000,
+        thisYear: 19500,
+        to: '/comparison/january',
+      },
+      {
+        period: 'February',
+        lastYear: 20000,
+        thisYear: 20000,
+        to: '/comparison/february',
+      },
+      {
+        period: 'March',
+        lastYear: 22000,
+        thisYear: 24500,
+        to: '/comparison/march',
+      },
+      {
+        period: 'April',
+        lastYear: 21000,
+        thisYear: 23000,
+        to: '/comparison/april',
+      },
+    ],
+    indexBy: 'period',
+    keys: ['lastYear', 'thisYear'],
+    seriesLabels: {
+      lastYear: 'Last year',
+      thisYear: 'This year',
+    },
+    displayType: 'shortNumber',
+    showLegend: true,
+    showGrid: true,
+    xAxisLabel: 'Period',
+    yAxisLabel: 'Revenue',
+    groupMode: 'grouped',
+    id: 'bar-chart-grouped-all-tooltip',
+    enableGroupTooltip: true,
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        seriesLabels={args.seriesLabels}
+        displayType={args.displayType}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        groupMode={args.groupMode}
+        id={args.id}
+        enableGroupTooltip={args.enableGroupTooltip}
+      />
+    </Container>
+  ),
+};
+
+export const GroupedDefaultTooltip: Story = {
+  args: {
+    data: [
+      {
+        period: 'January',
+        lastYear: 18000,
+        thisYear: 19500,
+        to: '/comparison/january',
+      },
+      {
+        period: 'February',
+        lastYear: 20000,
+        thisYear: 20000,
+        to: '/comparison/february',
+      },
+      {
+        period: 'March',
+        lastYear: 22000,
+        thisYear: 24500,
+        to: '/comparison/march',
+      },
+    ],
+    indexBy: 'period',
+    keys: ['lastYear', 'thisYear'],
+    seriesLabels: {
+      lastYear: 'Last year',
+      thisYear: 'This year',
+    },
+    displayType: 'shortNumber',
+    showLegend: true,
+    showGrid: true,
+    xAxisLabel: 'Period',
+    yAxisLabel: 'Revenue',
+    groupMode: 'grouped',
+    id: 'bar-chart-grouped-default',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        seriesLabels={args.seriesLabels}
+        displayType={args.displayType}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        groupMode={args.groupMode}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
 export const Catalog: Story = {
   decorators: [CatalogDecorator],
   parameters: {
@@ -539,7 +901,9 @@ export const Catalog: Story = {
         groupMode={args.groupMode}
         showLegend={true}
         showGrid={true}
-        id={args.id}
+        id={`bar-chart-catalog-${args.keys?.length ?? 0}-${
+          args.groupMode ?? 'grouped'
+        }`}
       />
     </Container>
   ),

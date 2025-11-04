@@ -33,6 +33,7 @@ export const useGaugeChartTooltip = ({
       tooltipItem: {
         label: label,
         formattedValue,
+        value,
         dotColor: colorScheme.solid,
       },
       showClickHint: isDefined(to),

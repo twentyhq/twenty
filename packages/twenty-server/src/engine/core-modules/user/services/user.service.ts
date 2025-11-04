@@ -4,9 +4,9 @@ import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
 import { IsNull, Not, Repository } from 'typeorm';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import {
   AuthException,
@@ -46,6 +46,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     return await workspaceMemberRepository.findOne({
@@ -64,6 +65,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     return await workspaceMemberRepository.find({ withDeleted: withDeleted });
@@ -78,6 +80,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     return await workspaceMemberRepository.find({
@@ -104,6 +107,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
           await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
             'workspaceMember',
+            { shouldBypassPermissionChecks: true },
           );
 
         const workspaceMembers = await workspaceMemberRepository.find();
@@ -202,6 +206,15 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       where: {
         email,
       },
+    });
+  }
+
+  async findUserByEmailWithWorkspaces(email: string) {
+    return await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: { userWorkspaces: true },
     });
   }
 

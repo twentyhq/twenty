@@ -1,3 +1,4 @@
+import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
@@ -6,7 +7,6 @@ import { type RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigg
 import { type ServerlessFunctionLayerEntity } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.entity';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
-import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 
 export type ServerlessFunctionEntityRelationProperties =
   ExtractRecordTypeOrmRelationProperties<
@@ -22,5 +22,8 @@ export type FlatServerlessFunction = FlatEntityFrom<
   ServerlessFunctionEntity,
   ServerlessFunctionEntityRelationProperties
 > & {
+  databaseEventTriggerIds: string[];
+  cronTriggerIds: string[];
+  routeTriggerIds: string[];
   code?: Sources;
 };

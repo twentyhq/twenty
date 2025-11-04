@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/serverlessFunction.schema.json",
+  "universalIdentifier": "cead3d1e-1fbd-4b09-86a9-f0bedf4d54fa",
+  "name": "create-company",
+  "triggers": [
+    {
+      "universalIdentifier": "57ff5ea2-c4b7-458c-9296-27bad6acdaf9",
+      "type": "route",
+      "path": "/create/company",
+      "httpMethod": "POST",
+      "isAuthRequired": true
+    }
+  ]
+}

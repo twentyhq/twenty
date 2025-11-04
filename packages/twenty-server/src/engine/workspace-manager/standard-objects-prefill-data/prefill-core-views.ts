@@ -2,7 +2,6 @@ import { isString } from '@sniptt/guards';
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -41,7 +40,6 @@ export const prefillCoreViews = async ({
   coreDataSource,
   workspaceId,
   objectMetadataItems,
-  featureFlags,
   workspaceSchemaName,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
   const views = [
@@ -56,11 +54,8 @@ export const prefillCoreViews = async ({
     workflowsAllView(objectMetadataItems, true),
     workflowVersionsAllView(objectMetadataItems, true),
     workflowRunsAllView(objectMetadataItems, true),
+    dashboardsAllView(objectMetadataItems, true),
   ];
-
-  if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
-    views.push(dashboardsAllView(objectMetadataItems, true));
-  }
 
   const queryRunner = coreDataSource.createQueryRunner();
 
@@ -104,7 +99,7 @@ export const prefillCoreViews = async ({
   }
 };
 
-const createCoreViews = async (
+export const createCoreViews = async (
   queryRunner: QueryRunner,
   workspaceId: string,
   viewDefinitions: ViewDefinition[],

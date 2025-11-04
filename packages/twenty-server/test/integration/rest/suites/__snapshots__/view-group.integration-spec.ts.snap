@@ -32,7 +32,7 @@ exports[`View Group REST API POST /metadata/viewGroups should fail to create vie
       },
     ],
   },
-  "message": "Multiple validation errors occurred while creating view group",
+  "message": "Multiple validation errors occurred while creating view groups",
   "statusCode": 400,
   "summary": {
     "invalidCronTrigger": 0,

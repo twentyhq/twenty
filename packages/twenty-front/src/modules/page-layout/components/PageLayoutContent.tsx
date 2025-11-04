@@ -1,3 +1,4 @@
+import { PageLayoutCanvasViewer } from '@/page-layout/components/PageLayoutCanvasViewer';
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
 import { PageLayoutVerticalListEditor } from '@/page-layout/components/PageLayoutVerticalListEditor';
 import { PageLayoutVerticalListViewer } from '@/page-layout/components/PageLayoutVerticalListViewer';
@@ -42,8 +43,14 @@ export const PageLayoutContent = ({ tabId }: PageLayoutContentProps) => {
     return null;
   }
 
+  const isCanvasLayout =
+    isRecordPageEnabled && activeTab.layoutMode === 'canvas';
   const isVerticalList =
     isRecordPageEnabled && activeTab.layoutMode === 'vertical-list';
+
+  if (isCanvasLayout) {
+    return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;
+  }
 
   if (isVerticalList) {
     return (

@@ -10,6 +10,7 @@ import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/obje
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
@@ -34,6 +35,7 @@ type FormMultiSelectFieldInputProps = {
   readonly?: boolean;
   placeholder?: string;
   testId?: string;
+  hint?: string;
 };
 
 const StyledDisplayModeReadonlyContainer = styled.div`
@@ -82,6 +84,7 @@ export const FormMultiSelectFieldInput = ({
   readonly,
   placeholder,
   testId,
+  hint,
 }: FormMultiSelectFieldInputProps) => {
   const instanceId = useId();
   const theme = useTheme();
@@ -278,6 +281,7 @@ export const FormMultiSelectFieldInput = ({
           />
         )}
       </FormFieldInputRowContainer>
+      {hint ? <InputHint>{hint}</InputHint> : null}
     </FormFieldInputContainer>
   );
 };

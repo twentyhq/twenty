@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
-import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
+import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
@@ -14,7 +14,7 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 export class GmailGetMessagesService {
   constructor(
     private readonly fetchByBatchesService: GmailFetchByBatchService,
-    private readonly gmailHandleErrorService: GmailHandleErrorService,
+    private readonly gmailMessagesImportErrorHandler: GmailMessagesImportErrorHandler,
   ) {}
 
   async getMessages(
@@ -57,7 +57,7 @@ export class GmailGetMessagesService {
 
     const messages = parsedResponses.map((response, index) => {
       if ('error' in response) {
-        this.gmailHandleErrorService.handleGmailMessagesImportError(
+        this.gmailMessagesImportErrorHandler.handleError(
           response.error,
           messageIds[index],
         );

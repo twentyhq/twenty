@@ -91,4 +91,14 @@ export interface WorkspaceRelationMetadataArgs {
   readonly isActive?: boolean;
 
   readonly isLabelSyncedWithName: boolean;
+
+  /**
+   * Is morph relation.
+   */
+  readonly isMorphRelation: boolean;
+
+  /**
+   * Morph id.
+   */
+  readonly morphId?: string;
 }

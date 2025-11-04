@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
@@ -30,8 +30,10 @@ export class FlatFieldMetadataValidatorService {
   async validateFlatFieldMetadataUpdate({
     flatEntityId,
     flatEntityUpdates: updates,
-    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
     workspaceId,
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
@@ -70,9 +72,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const flatObjectMetadata =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
-        flatFieldMetadataToValidate.objectMetadataId
-      ];
+      flatObjectMetadataMaps.byId[flatFieldMetadataToValidate.objectMetadataId];
 
     if (!isDefined(flatObjectMetadata)) {
       validationResult.errors.push({
@@ -152,14 +152,13 @@ export class FlatFieldMetadataValidatorService {
     const fieldMetadataTypeValidationErrors =
       await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMaps: {
-            flatObjectMetadataMaps:
-              dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+            flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+            flatObjectMetadataMaps,
           },
-          optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
-          remainingFlatEntityMapsToValidate: EMPTY_FLAT_ENTITY_MAPS,
+          remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
           workspaceId,
         },
       );
@@ -173,8 +172,10 @@ export class FlatFieldMetadataValidatorService {
 
   validateFlatFieldMetadataDeletion({
     flatEntityToValidate: { id: flatFieldMetadataToDeleteId },
-    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<FlatFieldMetadata> {
@@ -205,9 +206,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const relatedFlatObjectMetadata =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
-        flatFieldMetadataToDelete.objectMetadataId
-      ];
+      flatObjectMetadataMaps.byId[flatFieldMetadataToDelete.objectMetadataId];
 
     if (
       isDefined(relatedFlatObjectMetadata) &&
@@ -225,14 +224,12 @@ export class FlatFieldMetadataValidatorService {
     const relationTargetObjectMetadataHasBeenDeleted =
       isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
       !isDefined(
-        dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
+        flatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
         ],
       );
     const parentObjectMetadataHasBeenDeleted = !isDefined(
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
-        flatFieldMetadataToDelete.objectMetadataId
-      ],
+      flatObjectMetadataMaps.byId[flatFieldMetadataToDelete.objectMetadataId],
     );
 
     if (
@@ -264,8 +261,10 @@ export class FlatFieldMetadataValidatorService {
 
   async validateFlatFieldMetadataCreation({
     flatEntityToValidate: flatFieldMetadataToValidate,
-    optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
-    dependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
@@ -283,9 +282,7 @@ export class FlatFieldMetadataValidatorService {
     };
 
     const parentFlatObjectMetadata =
-      dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps.byId[
-        flatFieldMetadataToValidate.objectMetadataId
-      ];
+      flatObjectMetadataMaps.byId[flatFieldMetadataToValidate.objectMetadataId];
 
     if (!isDefined(parentFlatObjectMetadata)) {
       validationResult.errors.push({
@@ -343,10 +340,12 @@ export class FlatFieldMetadataValidatorService {
     validationResult.errors.push(
       ...(await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          dependencyOptimisticFlatEntityMaps,
+          optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+            flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+            flatObjectMetadataMaps,
+          },
           flatEntityToValidate: flatFieldMetadataToValidate,
           buildOptions,
-          optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
           workspaceId,
           remainingFlatEntityMapsToValidate,
         },

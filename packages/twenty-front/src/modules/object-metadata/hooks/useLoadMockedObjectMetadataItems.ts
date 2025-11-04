@@ -1,5 +1,6 @@
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
+import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { useRecoilCallback } from 'recoil';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -17,12 +18,15 @@ export const useLoadMockedObjectMetadataItems = () => {
           set(objectMetadataItemsState, generatedMockObjectMetadataItems);
         }
 
+        if (snapshot.getLoadable(shouldAppBeLoadingState).getValue() === true) {
+          set(shouldAppBeLoadingState, false);
+        }
+
         if (
-          snapshot
-            .getLoadable(isAppWaitingForFreshObjectMetadataState)
-            .getValue() === true
+          snapshot.getLoadable(isAppEffectRedirectEnabledState).getValue() ===
+          false
         ) {
-          set(isAppWaitingForFreshObjectMetadataState, false);
+          set(isAppEffectRedirectEnabledState, true);
         }
       },
     [],

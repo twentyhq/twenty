@@ -5,7 +5,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import {
   fromCreateFieldInputToFlatFieldMetadatasToCreate,
@@ -25,7 +25,7 @@ const flatObjectMetadataMaps = [
     flatEntity: flatObjectMetadata,
     flatEntityMaps: flatObjectMetadataMaps,
   });
-}, EMPTY_FLAT_ENTITY_MAPS);
+}, createEmptyFlatEntityMaps());
 
 type TestCase = EachTestingContext<{
   input: FromCreateFieldInputToFlatObjectMetadataArgs;
