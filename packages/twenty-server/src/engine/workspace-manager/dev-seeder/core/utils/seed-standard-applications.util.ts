@@ -1,6 +1,6 @@
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-application';
-import { TWENTY_WORKFLOW_APPLICATION_ID } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-workflow-application-id';
+import { TWENTY_WORKFLOW_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-workflow-application';
 
 export const seedStandardApplications = async (
   applicationService: ApplicationService,
@@ -18,7 +18,7 @@ export const seedStandardApplications = async (
   });
 
   await applicationService.create({
-    universalIdentifier: TWENTY_WORKFLOW_APPLICATION_ID,
+    universalIdentifier: TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
     name: 'Twenty Workflows',
     description: 'Workflow automation engine for Twenty CRM',
     version: '1.0.0',
