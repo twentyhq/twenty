@@ -1,6 +1,6 @@
 {
   "name": "fireflies",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
