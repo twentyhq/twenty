@@ -11,6 +11,10 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import {
+  seedStandardApplications,
+  SeedStandardApplicationsArgs,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-standard-applications.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-application';
 import { TWENTY_WORKFLOW_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-workflow-application';
 
@@ -53,67 +57,44 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
       existingApplications.map((app) => app.universalIdentifier),
     );
 
-    const applicationsToCreate: Array<{
-      universalIdentifier: string;
-      name: string;
-      description: string;
-      sourcePath: string;
-    }> = [];
+    const applicationToSync: SeedStandardApplicationsArgs['applicationsToSync'] =
+      {
+        twentyStandard: !existingIds.has(
+          TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        ),
+        twentyWorkflows: !existingIds.has(
+          TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
+        ),
+      };
 
-    if (!existingIds.has(TWENTY_STANDARD_APPLICATION.universalIdentifier)) {
-      applicationsToCreate.push({
-        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-        name: 'Twenty CRM',
-        description:
-          'Twenty is an open-source CRM that allows you to manage your sales and customer relationships',
-        sourcePath: 'system/twenty-standard',
-      });
-    }
-
-    if (!existingIds.has(TWENTY_WORKFLOW_APPLICATION.universalIdentifier)) {
-      applicationsToCreate.push({
-        universalIdentifier: TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
-        name: 'Twenty Workflows',
-        description: 'Workflow automation engine for Twenty CRM',
-        sourcePath: 'system/twenty-workflow',
-      });
-    }
-
-    if (applicationsToCreate.length === 0) {
-      this.logger.log(
-        `All standard applications already exist for workspace ${workspaceId}. Skipping...`,
-      );
-
-      return;
-    }
-
-    if (options.dryRun) {
-      this.logger.log(
-        `Would have created ${applicationsToCreate.length} application(s) for workspace ${workspaceId}: ${applicationsToCreate.map((a) => a.name).join(', ')}`,
-      );
-
-      return;
-    }
-
-    // Create applications without serverless function layers (system applications don't need code execution)
-    for (const appConfig of applicationsToCreate) {
-      await this.applicationService.create({
-        universalIdentifier: appConfig.universalIdentifier,
-        name: appConfig.name,
-        description: appConfig.description,
-        version: '1.0.0',
-        sourcePath: appConfig.sourcePath,
-        serverlessFunctionLayerId: null,
-        workspaceId,
-      });
-
-      this.logger.log(
-        `Created application ${appConfig.name} (${appConfig.universalIdentifier}) for workspace ${workspaceId}`,
-      );
-    }
-
+    // TODO refactor logging to be more human readable
     this.logger.log(
-      `Successfully seeded ${applicationsToCreate.length} standard application(s) for workspace ${workspaceId}`,
+      `About to seed twenty standard: ${applicationToSync.twentyStandard} and twenty workflow: ${applicationToSync.twentyWorkflows}`,
     );
+    if (!options.dryRun) {
+      try {
+        await seedStandardApplications({
+          applicationService: this.applicationService,
+          workspaceId,
+          applicationsToSync: {
+            twentyStandard: !existingIds.has(
+              TWENTY_STANDARD_APPLICATION.universalIdentifier,
+            ),
+            twentyWorkflows: !existingIds.has(
+              TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
+            ),
+          },
+        });
+
+        this.logger.log(
+          `Successfully seeded twenty standard: ${applicationToSync.twentyStandard} and twenty workflow: ${applicationToSync.twentyWorkflows}`,
+        );
+      } catch (e) {
+        this.logger.error(
+          `Failed to seed twenty standard: ${applicationToSync.twentyStandard} and twenty workflow: ${applicationToSync.twentyWorkflows}`,
+          e,
+        );
+      }
+    }
   }
 }

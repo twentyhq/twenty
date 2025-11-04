@@ -3,10 +3,10 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -17,6 +17,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { seedStandardApplications } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-standard-applications.util';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -45,8 +46,8 @@ export class WorkspaceManagerService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
-    private readonly agentService: AgentService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   public async init({
@@ -89,6 +90,13 @@ export class WorkspaceManagerService {
     this.logger.log(
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
+
+    await seedStandardApplications({
+      applicationService: this.applicationService,
+      workspaceId,
+    });
+
+    // TODO seed workspace custom application and associate everything below with it
 
     await this.setupDefaultRoles(workspaceId, userId);
 

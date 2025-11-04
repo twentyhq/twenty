@@ -1,29 +1,36 @@
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-application';
 import { TWENTY_WORKFLOW_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-workflow-application';
+import { CamelCase } from 'type-fest';
 
-export const seedStandardApplications = async (
-  applicationService: ApplicationService,
-  workspaceId: string,
-) => {
-  await applicationService.create({
-    universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-    name: 'Twenty CRM',
-    description:
-      'Twenty is an open-source CRM that allows you to manage your sales and customer relationships',
-    version: '1.0.0',
-    sourcePath: 'system/twenty-standard',
-    serverlessFunctionLayerId: null,
-    workspaceId,
-  });
+export type SeedStandardApplicationsArgs = {
+  applicationService: ApplicationService;
+  workspaceId: string;
+  applicationsToSync?: Record<
+    | CamelCase<(typeof TWENTY_STANDARD_APPLICATION)['name']>
+    | CamelCase<(typeof TWENTY_WORKFLOW_APPLICATION)['name']>,
+    boolean
+  >;
+};
+export const seedStandardApplications = async ({
+  applicationService,
+  workspaceId,
+  applicationsToSync = {
+    twentyStandard: true,
+    twentyWorkflows: true,
+  },
+}: SeedStandardApplicationsArgs) => {
+  if (applicationsToSync.twentyStandard) {
+    await applicationService.create({
+      ...TWENTY_STANDARD_APPLICATION,
+      workspaceId,
+    });
+  }
 
-  await applicationService.create({
-    universalIdentifier: TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
-    name: 'Twenty Workflows',
-    description: 'Workflow automation engine for Twenty CRM',
-    version: '1.0.0',
-    sourcePath: 'system/twenty-workflow',
-    serverlessFunctionLayerId: null,
-    workspaceId,
-  });
+  if (applicationsToSync.twentyWorkflows) {
+    await applicationService.create({
+      ...TWENTY_WORKFLOW_APPLICATION,
+      workspaceId,
+    });
+  }
 };
