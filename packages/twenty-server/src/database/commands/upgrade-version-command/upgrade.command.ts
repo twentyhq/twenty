@@ -22,6 +22,7 @@ import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/com
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
 import { FillNullServerlessFunctionLayerIdCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-fill-null-serverless-function-layer-id.command';
+import { FlushCacheCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-flush-cache';
 import { MigrateChannelSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-channel-sync-stages.command';
 import { MigrateWorkflowStepFilterOperandValueCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-migrate-workflow-step-filter-operand-value';
 import { RegeneratePersonSearchVectorWithPhonesCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-regenerate-person-search-vector-with-phones.command';
@@ -52,6 +53,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.8 Commands
     protected readonly fillNullServerlessFunctionLayerIdCommand: FillNullServerlessFunctionLayerIdCommand,
+    protected readonly flushWorkspaceCacheCommand: FlushCacheCommand,
     protected readonly migrateWorkflowStepFilterOperandValueCommand: MigrateWorkflowStepFilterOperandValueCommand,
     protected readonly deduplicateUniqueFieldsCommand: DeduplicateUniqueFieldsCommand,
     protected readonly regeneratePersonSearchVectorWithPhonesCommand: RegeneratePersonSearchVectorWithPhonesCommand,
@@ -111,6 +113,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.migrateAttachmentAuthorToCreatedByCommand,
         this.migrateAttachmentTypeToFileCategoryCommand,
         this.seedDashboardViewCommand,
+        this.flushWorkspaceCacheCommand,
       ],
     };
 
