@@ -1,5 +1,6 @@
 import axios from 'axios';
 import OpenAI from 'openai';
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 type TranscriptWebhookPayload = {
   transcript: string;
@@ -91,16 +92,12 @@ const lookupWorkspaceMemberByName = async (
       `,
     };
 
-    const response = await axios.post(
-      `${baseUrl}/graphql`,
-      graphqlQuery,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
+    const response = await axios.post(`${baseUrl}/graphql`, graphqlQuery, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
       },
-    );
+    });
 
     const edges = response.data?.data?.workspaceMembers?.edges;
 
@@ -117,7 +114,9 @@ const lookupWorkspaceMemberByName = async (
       const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
 
       if (fullName === searchName) {
-        console.log(`✅ Found workspace member (exact): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        console.log(
+          `✅ Found workspace member (exact): ${firstName} ${lastName} (ID: ${edge.node.id})`,
+        );
         return edge.node.id;
       }
     }
@@ -126,7 +125,9 @@ const lookupWorkspaceMemberByName = async (
       const firstName = edge.node.name?.firstName || '';
       if (firstName.toLowerCase() === searchName) {
         const lastName = edge.node.name?.lastName || '';
-        console.log(`✅ Found workspace member (first name): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        console.log(
+          `✅ Found workspace member (first name): ${firstName} ${lastName} (ID: ${edge.node.id})`,
+        );
         return edge.node.id;
       }
     }
@@ -135,7 +136,9 @@ const lookupWorkspaceMemberByName = async (
       const lastName = edge.node.name?.lastName || '';
       if (lastName.toLowerCase() === searchName) {
         const firstName = edge.node.name?.firstName || '';
-        console.log(`✅ Found workspace member (last name): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        console.log(
+          `✅ Found workspace member (last name): ${firstName} ${lastName} (ID: ${edge.node.id})`,
+        );
         return edge.node.id;
       }
     }
@@ -146,7 +149,9 @@ const lookupWorkspaceMemberByName = async (
       const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
 
       if (fullName.includes(searchName) || searchName.includes(fullName)) {
-        console.log(`✅ Found workspace member (partial): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        console.log(
+          `✅ Found workspace member (partial): ${firstName} ${lastName} (ID: ${edge.node.id})`,
+        );
         return edge.node.id;
       }
     }
@@ -158,15 +163,15 @@ const lookupWorkspaceMemberByName = async (
       const errorMessage = error.response?.data
         ? JSON.stringify(error.response.data, null, 2)
         : error.message;
-      console.error(`❌ Failed to lookup workspace member "${name}": ${errorMessage}`);
+      console.error(
+        `❌ Failed to lookup workspace member "${name}": ${errorMessage}`,
+      );
     }
     return null;
   }
 };
 
-const lookupPersonByName = async (
-  name: string,
-): Promise<string | null> => {
+const lookupPersonByName = async (name: string): Promise<string | null> => {
   const { apiKey, baseUrl } = getTwentyApiConfig();
 
   try {
@@ -188,16 +193,12 @@ const lookupPersonByName = async (
       `,
     };
 
-    const response = await axios.post(
-      `${baseUrl}/graphql`,
-      graphqlQuery,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
+    const response = await axios.post(`${baseUrl}/graphql`, graphqlQuery, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
       },
-    );
+    });
 
     const edges = response.data?.data?.people?.edges;
 
@@ -214,7 +215,9 @@ const lookupPersonByName = async (
       const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
 
       if (fullName === searchName) {
-        console.log(`✅ Found person (exact): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        console.log(
+          `✅ Found person (exact): ${firstName} ${lastName} (ID: ${edge.node.id})`,
+        );
         return edge.node.id;
       }
     }
@@ -223,7 +226,9 @@ const lookupPersonByName = async (
       const firstName = edge.node.name?.firstName || '';
       if (firstName.toLowerCase() === searchName) {
         const lastName = edge.node.name?.lastName || '';
-        console.log(`✅ Found person (first name): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        console.log(
+          `✅ Found person (first name): ${firstName} ${lastName} (ID: ${edge.node.id})`,
+        );
         return edge.node.id;
       }
     }
@@ -232,7 +237,9 @@ const lookupPersonByName = async (
       const lastName = edge.node.name?.lastName || '';
       if (lastName.toLowerCase() === searchName) {
         const firstName = edge.node.name?.firstName || '';
-        console.log(`✅ Found person (last name): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        console.log(
+          `✅ Found person (last name): ${firstName} ${lastName} (ID: ${edge.node.id})`,
+        );
         return edge.node.id;
       }
     }
@@ -243,7 +250,9 @@ const lookupPersonByName = async (
       const fullName = `${firstName} ${lastName}`.trim().toLowerCase();
 
       if (fullName.includes(searchName) || searchName.includes(fullName)) {
-        console.log(`✅ Found person (partial): ${firstName} ${lastName} (ID: ${edge.node.id})`);
+        console.log(
+          `✅ Found person (partial): ${firstName} ${lastName} (ID: ${edge.node.id})`,
+        );
         return edge.node.id;
       }
     }
@@ -261,7 +270,10 @@ const lookupPersonByName = async (
   }
 };
 
-const extractPersonNamesFromDescription = (description: string, participants: string[]): string[] => {
+const extractPersonNamesFromDescription = (
+  description: string,
+  participants: string[],
+): string[] => {
   const foundNames: string[] = [];
 
   for (const participant of participants) {
@@ -308,7 +320,9 @@ const linkNoteToPersonREST = async (
     const noteTargetId = response.data?.data?.createNoteTarget?.id;
 
     if (noteTargetId) {
-      console.log(`✅ Successfully linked note ${noteId} to person ${personId} (noteTarget: ${noteTargetId})`);
+      console.log(
+        `✅ Successfully linked note ${noteId} to person ${personId} (noteTarget: ${noteTargetId})`,
+      );
     } else {
       console.warn(`⚠️ Note linking response received but no ID found`);
     }
@@ -318,8 +332,12 @@ const linkNoteToPersonREST = async (
         ? JSON.stringify(error.response.data, null, 2)
         : error.message;
       const status = error.response?.status;
-      console.error(`❌ Failed to link note to person. Status: ${status}, Error: ${errorMessage}`);
-      console.error(`Attempted to link noteId: ${noteId} to personId: ${personId}`);
+      console.error(
+        `❌ Failed to link note to person. Status: ${status}, Error: ${errorMessage}`,
+      );
+      console.error(
+        `Attempted to link noteId: ${noteId} to personId: ${personId}`,
+      );
       throw new Error(`Failed to link note to person: ${errorMessage}`);
     }
     throw error;
@@ -348,16 +366,12 @@ const createNoteInTwenty = async (
   };
 
   try {
-    const response = await axios.post(
-      `${baseUrl}/rest/notes`,
-      requestData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
+    const response = await axios.post(`${baseUrl}/rest/notes`, requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
       },
-    );
+    });
 
     const responseJson = JSON.stringify(response.data);
     console.log('📦 Note API Response:', responseJson);
@@ -409,15 +423,22 @@ const linkTaskToPersonREST = async (
         },
       },
     );
-    console.log(`✅ Successfully linked task ${taskId} to person ${personId}`, response.data);
+    console.log(
+      `✅ Successfully linked task ${taskId} to person ${personId}`,
+      response.data,
+    );
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const errorMessage = error.response?.data
         ? JSON.stringify(error.response.data, null, 2)
         : error.message;
       const status = error.response?.status;
-      console.error(`❌ Failed to link task to person. Status: ${status}, Error: ${errorMessage}`);
-      console.error(`Attempted to link taskId: ${taskId} to personId: ${personId}`);
+      console.error(
+        `❌ Failed to link task to person. Status: ${status}, Error: ${errorMessage}`,
+      );
+      console.error(
+        `Attempted to link taskId: ${taskId} to personId: ${personId}`,
+      );
     }
   }
 };
@@ -446,9 +467,13 @@ const createTaskInTwenty = async (
     const assigneeId = await lookupWorkspaceMemberByName(actionItem.assignee);
     if (assigneeId) {
       taskData.assigneeId = assigneeId;
-      console.log(`✅ Task will be assigned to: ${actionItem.assignee} (${assigneeId})`);
+      console.log(
+        `✅ Task will be assigned to: ${actionItem.assignee} (${assigneeId})`,
+      );
     } else {
-      console.log(`⚠️ Could not find workspace member "${actionItem.assignee}", task will be unassigned`);
+      console.log(
+        `⚠️ Could not find workspace member "${actionItem.assignee}", task will be unassigned`,
+      );
     }
   }
 
@@ -460,27 +485,28 @@ const createTaskInTwenty = async (
   }
 
   try {
-    const response = await axios.post(
-      `${baseUrl}/rest/tasks`,
-      taskData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
+    const response = await axios.post(`${baseUrl}/rest/tasks`, taskData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
       },
-    );
+    });
 
     console.log('📦 Task API Response:', JSON.stringify(response.data));
 
     const taskId = response.data?.data?.createTask?.id;
 
     if (!taskId) {
-      console.error('❌ Failed to extract task ID from response:', response.data);
+      console.error(
+        '❌ Failed to extract task ID from response:',
+        response.data,
+      );
       throw new Error('Task created but ID not found in response');
     }
 
-    console.log(`✅ Task created successfully: ${taskId} - "${actionItem.title}"`);
+    console.log(
+      `✅ Task created successfully: ${taskId} - "${actionItem.title}"`,
+    );
 
     if (relatedPersonId) {
       await linkTaskToPersonREST(taskId, relatedPersonId);
@@ -493,7 +519,9 @@ const createTaskInTwenty = async (
         ? JSON.stringify(error.response.data, null, 2)
         : error.message;
       const status = error.response?.status;
-      console.error(`❌ Failed to create task "${actionItem.title}". Status: ${status}, Error: ${errorMessage}`);
+      console.error(
+        `❌ Failed to create task "${actionItem.title}". Status: ${status}, Error: ${errorMessage}`,
+      );
       throw new Error(
         `Failed to create task "${actionItem.title}": ${errorMessage}. Status: ${status}`,
       );
@@ -515,7 +543,10 @@ const createTasksFromActionItems = async (
       const taskDescription = `${actionItem.description}\n\n*Related to meeting note: ${noteId}*`;
       console.log(`Creating task: "${actionItem.title}"`);
 
-      const mentionedPeople = extractPersonNamesFromDescription(actionItem.description, participants);
+      const mentionedPeople = extractPersonNamesFromDescription(
+        actionItem.description,
+        participants,
+      );
       console.log(`📝 People mentioned in task description:`, mentionedPeople);
 
       const task = await createTaskInTwenty({
@@ -531,17 +562,24 @@ const createTasksFromActionItems = async (
           if (personId) {
             await linkTaskToPersonREST(task.id, personId);
           } else {
-            console.log(`⚠️ Could not find person "${personName}" in CRM, skipping link`);
+            console.log(
+              `⚠️ Could not find person "${personName}" in CRM, skipping link`,
+            );
           }
         }
       } else {
-        console.log(`⚠️ No specific people mentioned, using relatedPersonId as fallback`);
+        console.log(
+          `⚠️ No specific people mentioned, using relatedPersonId as fallback`,
+        );
         await linkTaskToPersonREST(task.id, relatedPersonId);
       }
 
       console.log(`✅ Task linking complete: ${task.id}`);
     } catch (error) {
-      console.error(`❌ Task creation failed for "${actionItem.title}":`, error instanceof Error ? error.message : error);
+      console.error(
+        `❌ Task creation failed for "${actionItem.title}":`,
+        error instanceof Error ? error.message : error,
+      );
     }
   }
 
@@ -573,7 +611,10 @@ const createTasksFromCommitments = async (
         await linkTaskToPersonREST(task.id, relatedPersonId);
       }
     } catch (error) {
-      console.error(`Commitment task creation failed for "${commitment.commitment}":`, error);
+      console.error(
+        `Commitment task creation failed for "${commitment.commitment}":`,
+        error,
+      );
     }
   }
 
@@ -696,7 +737,9 @@ ${transcript}`;
   try {
     parsedResult = JSON.parse(content) as AnalysisResult;
   } catch (error) {
-    throw new Error(`Failed to parse AI response as JSON: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Failed to parse AI response as JSON: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
   }
 
   if (!parsedResult.summary || typeof parsedResult.summary !== 'string') {
@@ -732,7 +775,13 @@ export const main = async (
       throw new Error('Unauthorized webhook access: Invalid or missing token.');
     }
 
-    const { transcript, meetingTitle, meetingDate, relatedPersonId, participants } = params;
+    const {
+      transcript,
+      meetingTitle,
+      meetingDate,
+      relatedPersonId,
+      participants,
+    } = params;
 
     if (!transcript || typeof transcript !== 'string') {
       throw new Error('Transcript is required and must be a string');
@@ -752,7 +801,9 @@ export const main = async (
     log('🤖 Starting transcript analysis...');
 
     const analysis = await analyzeTranscript(transcript, openaiApiKey);
-    log(`✅ Analysis complete: ${analysis.actionItems.length} action items, ${analysis.commitments.length} commitments`);
+    log(
+      `✅ Analysis complete: ${analysis.actionItems.length} action items, ${analysis.commitments.length} commitments`,
+    );
 
     log('📄 Creating note in Twenty CRM...');
     const note = await createNoteInTwenty(
@@ -804,4 +855,18 @@ export const main = async (
       executionLogs: executionLogs,
     };
   }
-}
+};
+
+export const config: ServerlessFunctionConfig = {
+  universalIdentifier: 'b5e86982-b9ec-4c3d-8a02-6ea08a5b2d35',
+  name: 'process-transcript',
+  triggers: [
+    {
+      universalIdentifier: 'a25fcbbf-1a20-438a-b277-ee8ca9770499',
+      type: 'route',
+      path: '/transcript',
+      httpMethod: 'POST',
+      isAuthRequired: true,
+    },
+  ],
+};

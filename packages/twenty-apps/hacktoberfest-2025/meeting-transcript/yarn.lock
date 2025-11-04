@@ -42,17 +42,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"Meeting Transcript@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "Meeting Transcript@workspace:."
-  dependencies:
-    "@types/node": "npm:^20.0.0"
-    axios: "npm:^1.7.0"
-    openai: "npm:^4.67.0"
-    typescript: "npm:^5.6.0"
-  languageName: unknown
-  linkType: soft
-
 "abort-controller@npm:^3.0.0":
   version: 3.0.0
   resolution: "abort-controller@npm:3.0.0"
@@ -314,6 +303,17 @@ __metadata:
   checksum: 10c0/7579ff94e899e2f76ab64491d76cf606274c874d8f2af4a442c016bd85688927fcfca157ba6bf74b08e9439dc010b248ce05b96cc7c126a354c3bae7fcb48b7f
   languageName: node
   linkType: hard
+
+"meeting-transcript@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "meeting-transcript@workspace:."
+  dependencies:
+    "@types/node": "npm:^20.0.0"
+    axios: "npm:^1.7.0"
+    openai: "npm:^4.67.0"
+    typescript: "npm:^5.6.0"
+  languageName: unknown
+  linkType: soft
 
 "mime-db@npm:1.52.0":
   version: 1.52.0
