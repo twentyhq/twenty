@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
+  "name": "webmetic-visitor-intelligence",
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
@@ -8,28 +8,6 @@
     "yarn": ">=4.0.2"
   },
   "packageManager": "yarn@4.9.2",
-  "universalIdentifier": "8f3c5a1e-9b2d-4c7e-a5f3-1d8e9c2b4a6f",
-  "name": "Webmetic Visitor Intelligence",
-  "description": "Automatically sync B2B website visitor data into Twenty CRM. Identify companies visiting your website and track engagement without forms or manual entry.",
-  "env": {
-    "TWENTY_API_KEY": {
-      "description": "Twenty API key for authentication",
-      "isSecret": true
-    },
-    "TWENTY_API_URL": {
-      "description": "Twenty API URL (base URL of your Twenty instance)",
-      "isSecret": false,
-      "value": ""
-    },
-    "WEBMETIC_API_KEY": {
-      "description": "Webmetic API key (get from hub.webmetic.de)",
-      "isSecret": true
-    },
-    "WEBMETIC_DOMAIN": {
-      "description": "Your website domain to track (e.g., example.com)",
-      "isSecret": false
-    }
-  },
   "dependencies": {
     "axios": "^1.12.2",
     "twenty-sdk": "0.0.3"

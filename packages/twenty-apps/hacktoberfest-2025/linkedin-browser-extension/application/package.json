@@ -1,4 +1,5 @@
 {
+  "name": "browser-extension",
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
@@ -9,21 +10,5 @@
   "packageManager": "yarn@4.9.2",
   "devDependencies": {
     "@types/node": "^24.7.2"
-  },
-  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/appManifest.schema.json",
-  "universalIdentifier": "627280a0-cb5b-40d3-a2e3-3e34b92926c8",
-  "name": "Browser Extension",
-  "description": "",
-  "env": {
-    "TWENTY_API_URL": {
-      "isSecret": false,
-      "value": "",
-      "description": "Twenty API URL"
-    },
-    "TWENTY_API_KEY": {
-      "isSecret": true,
-      "value": "",
-      "description": "Twenty API Key"
-    }
   }
 }

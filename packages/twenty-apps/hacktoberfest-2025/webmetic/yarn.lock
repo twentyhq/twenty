@@ -262,9 +262,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webmetic@workspace:.":
+"webmetic-visitor-intelligence@workspace:.":
   version: 0.0.0-use.local
-  resolution: "webmetic@workspace:."
+  resolution: "webmetic-visitor-intelligence@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
     axios: "npm:^1.12.2"

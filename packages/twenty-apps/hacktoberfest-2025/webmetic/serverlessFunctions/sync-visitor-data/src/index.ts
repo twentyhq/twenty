@@ -1,9 +1,13 @@
 import axios from 'axios';
-import { WebmeticResponse, WebmeticCompany } from './types';
-import { ensureWebsiteLeadObjectExists, ensureWebsiteLeadFieldsExist } from './schemaSetup';
+import { type WebmeticResponse } from './types';
+import {
+  ensureWebsiteLeadObjectExists,
+  ensureWebsiteLeadFieldsExist,
+} from './schemaSetup';
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 // Rate limiting helper: delay between API calls to avoid hitting limits
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const RATE_LIMIT_DELAY = 800;
 
 export const main = async (): Promise<object> => {
@@ -15,16 +19,23 @@ export const main = async (): Promise<object> => {
   };
 
   // Debug: Log all available environment variables
-  log('Available environment variables: ' + Object.keys(process.env).filter(k => k.includes('TWENTY') || k.includes('WEBMETIC')).join(', '));
+  log(
+    'Available environment variables: ' +
+      Object.keys(process.env)
+        .filter((k) => k.includes('TWENTY') || k.includes('WEBMETIC'))
+        .join(', '),
+  );
 
   const WEBMETIC_API_KEY = process.env.WEBMETIC_API_KEY;
   const WEBMETIC_DOMAIN = process.env.WEBMETIC_DOMAIN;
   const TWENTY_API_KEY = process.env.TWENTY_API_KEY;
 
   // Base URL without /rest for metadata operations
-  const TWENTY_API_BASE_URL = process.env.TWENTY_API_URL !== "" && process.env.TWENTY_API_URL !== undefined
-    ? process.env.TWENTY_API_URL
-    : "http://localhost:3000";
+  const TWENTY_API_BASE_URL =
+    process.env.TWENTY_API_URL !== '' &&
+    process.env.TWENTY_API_URL !== undefined
+      ? process.env.TWENTY_API_URL
+      : 'http://localhost:3000';
 
   // REST URL for data operations
   const TWENTY_API_URL = `${TWENTY_API_BASE_URL}/rest`;
@@ -42,7 +53,7 @@ export const main = async (): Promise<object> => {
       WEBMETIC_API_KEY: !!WEBMETIC_API_KEY,
       WEBMETIC_DOMAIN: !!WEBMETIC_DOMAIN,
       TWENTY_API_KEY: !!TWENTY_API_KEY,
-      detailedLog: logs.join('\n')
+      detailedLog: logs.join('\n'),
     };
   }
 
@@ -60,7 +71,7 @@ export const main = async (): Promise<object> => {
     return {
       success: false,
       error: `Field setup failed: ${error.message}`,
-      detailedLog: logs.join('\n')
+      detailedLog: logs.join('\n'),
     };
   }
 
@@ -86,11 +97,13 @@ export const main = async (): Promise<object> => {
           Authorization: WEBMETIC_API_KEY,
         },
         params: webmeticParams,
-      }
+      },
     );
 
     log(`✅ Webmetic API responded successfully`);
-    log(`📦 Webmetic returned ${webmeticResponse.data.result?.length || 0} companies`);
+    log(
+      `📦 Webmetic returned ${webmeticResponse.data.result?.length || 0} companies`,
+    );
 
     const companies = webmeticResponse.data.result;
 
@@ -101,12 +114,17 @@ export const main = async (): Promise<object> => {
         companiesProcessed: 0,
         sessionsProcessed: 0,
         logCount: logs.length,
-        detailedLog: logs.join('\n')
+        detailedLog: logs.join('\n'),
       };
     }
 
-    const totalSessions = companies.reduce((sum, c) => sum + c.sessions.length, 0);
-    log(`\n📊 Found ${companies.length} companies with ${totalSessions} total sessions`);
+    const totalSessions = companies.reduce(
+      (sum, c) => sum + c.sessions.length,
+      0,
+    );
+    log(
+      `\n📊 Found ${companies.length} companies with ${totalSessions} total sessions`,
+    );
     log('='.repeat(50));
 
     // 2. Process each company
@@ -122,10 +140,14 @@ export const main = async (): Promise<object> => {
 
     for (const company of companies) {
       try {
-        log(`\n🏢 Processing: ${company.company_name} (${company.sessions.length} sessions)`);
+        log(
+          `\n🏢 Processing: ${company.company_name} (${company.sessions.length} sessions)`,
+        );
 
         // Extract domain from company_url
-        const domainMatch = company.company_url?.match(/^https?:\/\/(?:www\.)?([^\/]+)/);
+        const domainMatch = company.company_url?.match(
+          /^https?:\/\/(?:www\.)?([^/]+)/,
+        );
         const domain = domainMatch ? domainMatch[1] : company.company_url;
         log(`   Domain: ${domain}`);
 
@@ -148,12 +170,17 @@ export const main = async (): Promise<object> => {
 
         const existingCompaniesResponse = await axios(existingCompaniesOptions);
         log(`   ✅ Response status: ${existingCompaniesResponse.status}`);
-        log(`   📦 Response data structure: ${JSON.stringify(Object.keys(existingCompaniesResponse.data || {}))}`);
+        log(
+          `   📦 Response data structure: ${JSON.stringify(Object.keys(existingCompaniesResponse.data || {}))}`,
+        );
 
         await sleep(RATE_LIMIT_DELAY); // Rate limiting delay
 
-        const existingCompanies = existingCompaniesResponse.data?.data?.companies || [];
-        log(`   Found ${existingCompanies.length} existing companies with this domain`);
+        const existingCompanies =
+          existingCompaniesResponse.data?.data?.companies || [];
+        log(
+          `   Found ${existingCompanies.length} existing companies with this domain`,
+        );
 
         // Build company data with proper validation
         const companyData: any = {
@@ -165,7 +192,12 @@ export const main = async (): Promise<object> => {
         };
 
         // Only add address if at least one field has a value
-        if (company.address || company.city || company.postal_code || company.country) {
+        if (
+          company.address ||
+          company.city ||
+          company.postal_code ||
+          company.country
+        ) {
           companyData.address = {
             addressStreet1: company.address || '',
             addressCity: company.city || '',
@@ -250,7 +282,9 @@ export const main = async (): Promise<object> => {
           companyId = newCompanyResponse.data?.data?.createCompany?.id;
 
           if (!companyId) {
-            log(`   ⚠️  Warning: Could not extract company ID from response. Full response: ${JSON.stringify(newCompanyResponse.data)}`);
+            log(
+              `   ⚠️  Warning: Could not extract company ID from response. Full response: ${JSON.stringify(newCompanyResponse.data)}`,
+            );
           }
 
           results.companiesCreated++;
@@ -274,7 +308,9 @@ export const main = async (): Promise<object> => {
               : 'Direct';
 
             // Extract pages visited (limit length to prevent DB errors)
-            const pagesArray = session.user_data.map((ud) => ud.document_location);
+            const pagesArray = session.user_data.map(
+              (ud) => ud.document_location,
+            );
             let pagesVisited = pagesArray.join(' → ');
 
             // Truncate if too long (max ~1000 chars to be safe)
@@ -289,13 +325,19 @@ export const main = async (): Promise<object> => {
             const scrollDepths = session.user_data
               .map((ud) => ud.scroll_depth)
               .filter((sd) => typeof sd === 'number' && !isNaN(sd));
-            const averageScrollDepth = scrollDepths.length > 0
-              ? Math.round(scrollDepths.reduce((sum, sd) => sum + sd, 0) / scrollDepths.length)
-              : 0;
+            const averageScrollDepth =
+              scrollDepths.length > 0
+                ? Math.round(
+                    scrollDepths.reduce((sum, sd) => sum + sd, 0) /
+                      scrollDepths.length,
+                  )
+                : 0;
 
             // Calculate total user events
-            const totalUserEvents = session.user_data
-              .reduce((sum, ud) => sum + (ud.user_events_count || 0), 0);
+            const totalUserEvents = session.user_data.reduce(
+              (sum, ud) => sum + (ud.user_events_count || 0),
+              0,
+            );
 
             // Use session_id as unique identifier (company name available via relation)
             const leadName = session.session_id;
@@ -314,7 +356,9 @@ export const main = async (): Promise<object> => {
             const existingLeadsResponse = await axios(existingLeadsOptions);
             await sleep(RATE_LIMIT_DELAY); // Rate limiting delay
 
-            const existingLeads = existingLeadsResponse.data?.data?.websiteLeads || existingLeadsResponse.data;
+            const existingLeads =
+              existingLeadsResponse.data?.data?.websiteLeads ||
+              existingLeadsResponse.data;
             log(`      Found ${existingLeads?.length || 0} existing leads`);
 
             if (!existingLeads || existingLeads.length === 0) {
@@ -364,7 +408,9 @@ export const main = async (): Promise<object> => {
                 leadData.companyId = companyId;
               }
 
-              log(`      Creating WebsiteLead with data: ${JSON.stringify(leadData)}`);
+              log(
+                `      Creating WebsiteLead with data: ${JSON.stringify(leadData)}`,
+              );
 
               const createOptions = {
                 method: 'POST',
@@ -378,7 +424,9 @@ export const main = async (): Promise<object> => {
               const createResponse = await axios(createOptions);
               await sleep(RATE_LIMIT_DELAY); // Rate limiting delay
 
-              log(`      WebsiteLead creation response: ${createResponse.status}`);
+              log(
+                `      WebsiteLead creation response: ${createResponse.status}`,
+              );
 
               results.websiteLeadsCreated++;
               log(`      ✓ Created WebsiteLead: ${leadName}`);
@@ -386,7 +434,10 @@ export const main = async (): Promise<object> => {
               log(`      - WebsiteLead already exists: ${leadName}`);
             }
           } catch (sessionError: any) {
-            const errorDetails = sessionError?.response?.data || sessionError?.message || 'Unknown error';
+            const errorDetails =
+              sessionError?.response?.data ||
+              sessionError?.message ||
+              'Unknown error';
             const errorMsg = `Error processing WebsiteLead for session ${session.session_id}: ${JSON.stringify(errorDetails, null, 2)}`;
             console.error(errorMsg);
             log(`      ❌ ${errorMsg}`);
@@ -395,9 +446,9 @@ export const main = async (): Promise<object> => {
 
         results.companiesProcessed++;
         results.sessionsProcessed += company.sessions.length;
-
       } catch (error: any) {
-        const errorDetails = error?.response?.data || error?.message || 'Unknown error';
+        const errorDetails =
+          error?.response?.data || error?.message || 'Unknown error';
         const errorMsg = `Error processing company ${company.company_name}: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`;
@@ -409,13 +460,21 @@ export const main = async (): Promise<object> => {
 
         // Log additional diagnostic info
         if (error?.response) {
-          log(`   🔍 HTTP Status: ${error.response.status} ${error.response.statusText}`);
+          log(
+            `   🔍 HTTP Status: ${error.response.status} ${error.response.statusText}`,
+          );
           log(`   🔍 Request URL: ${error.config?.url || 'Unknown'}`);
-          log(`   🔍 Request Method: ${error.config?.method?.toUpperCase() || 'Unknown'}`);
-          log(`   🔍 Auth Header: ${error.config?.headers?.Authorization ? 'Present' : 'MISSING!'}`);
+          log(
+            `   🔍 Request Method: ${error.config?.method?.toUpperCase() || 'Unknown'}`,
+          );
+          log(
+            `   🔍 Auth Header: ${error.config?.headers?.Authorization ? 'Present' : 'MISSING!'}`,
+          );
         }
 
-        results.errors.push(`${errorMsg} - Details: ${JSON.stringify(errorDetails)}`);
+        results.errors.push(
+          `${errorMsg} - Details: ${JSON.stringify(errorDetails)}`,
+        );
       }
     }
 
@@ -441,11 +500,22 @@ export const main = async (): Promise<object> => {
     return {
       ...results,
       logCount: logs.length,
-      detailedLog: logs.join('\n')
+      detailedLog: logs.join('\n'),
     };
-
   } catch (error) {
     console.error('Fatal error during sync:', error);
     throw error;
   }
-}
+};
+
+export const config: ServerlessFunctionConfig = {
+  universalIdentifier: 'f2d4b8e6-3a1c-4f7e-9b5d-8c3e2a1f6d4b',
+  name: 'sync-visitor-data',
+  triggers: [
+    {
+      universalIdentifier: 'c5e9a3b7-2d8f-4c1e-a6b3-9f2e5d8c1a7b',
+      type: 'cron',
+      pattern: '0 * * * *',
+    },
+  ],
+};

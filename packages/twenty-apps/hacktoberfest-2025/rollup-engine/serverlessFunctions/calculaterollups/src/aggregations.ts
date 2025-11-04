@@ -10,7 +10,10 @@ export const computeAggregations = (
   now: Date,
 ) => {
   const baseFiltered = applyFilters(records, definition.childFilters, now);
-  const result: Record<string, number | string | null | Record<string, unknown>> = {};
+  const result: Record<
+    string,
+    number | string | null | Record<string, unknown>
+  > = {};
 
   definition.aggregations.forEach((aggregation) => {
     const scopedRecords = applyFilters(baseFiltered, aggregation.filters, now);
@@ -40,7 +43,7 @@ export const computeAggregations = (
               return accumulator;
             }
             return {
-              amount: accumulator.amount + numeric,
+              amount: (accumulator.amount as number) + numeric,
               currency:
                 typeof currencyRaw === 'string' && currencyRaw.trim().length > 0
                   ? currencyRaw
@@ -50,7 +53,7 @@ export const computeAggregations = (
           { amount: 0, currency: undefined as string | undefined },
         );
         result[aggregation.parentField] = {
-          amountMicros: Math.round(roundForSum(total.amount)),
+          amountMicros: Math.round(roundForSum(total.amount as number)),
           currencyCode: total.currency ?? '',
         };
         break;
@@ -72,46 +75,58 @@ export const computeAggregations = (
               return accumulator;
             }
             return {
-              total: accumulator.total + numeric,
-              count: accumulator.count + 1,
+              total: (accumulator.total as number) + numeric,
+              count: (accumulator.count as number) + 1,
             };
           },
           { total: 0, count: 0 },
         );
-        result[aggregation.parentField] = count === 0 ? null : roundForSum(total / count);
+        result[aggregation.parentField] =
+          count === 0
+            ? null
+            : roundForSum((total as number) / (count as number));
         break;
       }
       case 'MAX':
       case 'MIN': {
-        if (!aggregation.childField) {
-          throw new Error(`${aggregation.type} aggregation requires childField`);
+        const childField = aggregation.childField;
+        if (!childField) {
+          throw new Error(
+            `${aggregation.type} aggregation requires childField`,
+          );
         }
+
         const direction = aggregation.type === 'MAX' ? 1 : -1;
-        let chosen: { raw: unknown; comparable: number | null } | null = null;
-        scopedRecords.forEach((record) => {
-          const rawValue = getNestedValue(record, aggregation.childField!);
+        let chosen: { raw: unknown; comparable: number } | null = null;
+
+        for (const record of scopedRecords) {
+          const rawValue = getNestedValue(record, childField);
           const comparable = toComparableNumber(rawValue);
-          if (comparable === null) {
-            return;
-          }
+          if (comparable === null) continue;
+
           if (
             chosen === null ||
-            (chosen.comparable !== null && direction * (comparable - chosen.comparable) > 0)
+            direction * (comparable - chosen.comparable) > 0
           ) {
             chosen = { raw: rawValue, comparable };
           }
-        });
+        }
 
         if (chosen === null) {
           result[aggregation.parentField] = null;
-        } else if (typeof chosen.raw === 'number') {
-          result[aggregation.parentField] = chosen.raw;
-        } else if (chosen.raw instanceof Date) {
-          result[aggregation.parentField] = chosen.raw.toISOString().slice(0, 10);
-        } else if (chosen.raw === null || chosen.raw === undefined) {
+          break;
+        }
+
+        const raw = chosen.raw;
+
+        if (typeof raw === 'number') {
+          result[aggregation.parentField] = raw;
+        } else if (raw instanceof Date) {
+          result[aggregation.parentField] = raw.toISOString().slice(0, 10);
+        } else if (raw == null) {
           result[aggregation.parentField] = null;
         } else {
-          const rawString = String(chosen.raw);
+          const rawString = String(raw);
           const parsed = Date.parse(rawString);
           result[aggregation.parentField] = Number.isNaN(parsed)
             ? rawString

@@ -1,3 +1,5 @@
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+
 export const main = async (params: {
   firstName: string;
   lastName: string;
@@ -21,4 +23,18 @@ export const main = async (params: {
   }
 
   return (await response.json()) as object;
+};
+
+export const config: ServerlessFunctionConfig = {
+  universalIdentifier: '7d38261b-99c5-43e7-83d8-bdcedc2dffdb',
+  name: 'create-person',
+  triggers: [
+    {
+      universalIdentifier: 'ecf261b8-183b-4323-ab95-3b11009a0eae',
+      type: 'route',
+      path: '/create/person',
+      httpMethod: 'POST',
+      isAuthRequired: true,
+    },
+  ],
 };

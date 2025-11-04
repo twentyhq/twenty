@@ -5,14 +5,6 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"Mailchimp synchronizer@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "Mailchimp synchronizer@workspace:."
-  dependencies:
-    axios: "npm:^1.13.1"
-  languageName: unknown
-  linkType: soft
-
 "async-function@npm:^1.0.0":
   version: 1.0.0
   resolution: "async-function@npm:1.0.0"
@@ -216,6 +208,14 @@ __metadata:
   checksum: 10c0/3769d434703b8ac66b209a4cca0737519925bbdb61dd887f93a16372b14694c63ff4e797686d87c90f08168e81082248b9b028bad60d4da9e0d1148766f56eb9
   languageName: node
   linkType: hard
+
+"mailchimp-synchronizer@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "mailchimp-synchronizer@workspace:."
+  dependencies:
+    axios: "npm:^1.13.1"
+  languageName: unknown
+  linkType: soft
 
 "math-intrinsics@npm:^1.1.0":
   version: 1.1.0

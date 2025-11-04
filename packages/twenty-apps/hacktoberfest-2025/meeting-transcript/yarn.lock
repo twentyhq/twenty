@@ -15,7 +15,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^24.7.2":
+"@types/node@npm:*":
   version: 24.9.2
   resolution: "@types/node@npm:24.9.2"
   dependencies:
@@ -30,6 +30,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/22ba2bc9f8863101a7e90a56aaeba1eb3ebdc51e847cef4a6d188967ab1acbce9b4f92251372fd0329ecb924bbf610509e122c3dfe346c04dbad04013d4ad7d0
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.0.0":
+  version: 20.19.24
+  resolution: "@types/node@npm:20.19.24"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/c872ce80a1e832fe035a3c94a27acb2d6e45ffa1209c0241ac6e2d405db8d6f47eea7a2509b5c2dbedae6231dafb9dbed873dd5daaebbad1f11fdaa58726ce5e
   languageName: node
   linkType: hard
 
@@ -50,17 +59,6 @@ __metadata:
   checksum: 10c0/235c182432f75046835b05f239708107138a40103deee23b6a08caee5136873709155753b394ec212e49e60e94a378189562cb01347765515cff61b692c69187
   languageName: node
   linkType: hard
-
-"ai-meeting-transcript@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "ai-meeting-transcript@workspace:."
-  dependencies:
-    "@types/node": "npm:^24.7.2"
-    axios: "npm:^1.12.2"
-    openai: "npm:^4.28.0"
-    twenty-sdk: "npm:^0.0.2"
-  languageName: unknown
-  linkType: soft
 
 "async-function@npm:^1.0.0":
   version: 1.0.0
@@ -83,7 +81,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.12.2":
+"axios@npm:^1.7.0":
   version: 1.13.1
   resolution: "axios@npm:1.13.1"
   dependencies:
@@ -306,6 +304,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"meeting-transcript@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "meeting-transcript@workspace:."
+  dependencies:
+    "@types/node": "npm:^20.0.0"
+    axios: "npm:^1.7.0"
+    openai: "npm:^4.67.0"
+    typescript: "npm:^5.6.0"
+  languageName: unknown
+  linkType: soft
+
 "mime-db@npm:1.52.0":
   version: 1.52.0
   resolution: "mime-db@npm:1.52.0"
@@ -350,7 +359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^4.28.0":
+"openai@npm:^4.67.0":
   version: 4.104.0
   resolution: "openai@npm:4.104.0"
   dependencies:
@@ -389,10 +398,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "twenty-sdk@npm:0.0.2"
-  checksum: 10c0/99e6fe86059d847b548c1f03e0f0c59a4d540caf1d28dd4500f1f5f0094196985ded955801274de9e72ff03e3d1f41e9a509b4c2c5a02ffc8a027277b1e35d8e
+"typescript@npm:^5.6.0":
+  version: 5.9.3
+  resolution: "typescript@npm:5.9.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/6bd7552ce39f97e711db5aa048f6f9995b53f1c52f7d8667c1abdc1700c68a76a308f579cd309ce6b53646deb4e9a1be7c813a93baaf0a28ccd536a30270e1c5
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.6.0#optional!builtin<compat/typescript>":
+  version: 5.9.3
+  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
   languageName: node
   linkType: hard
 
@@ -400,6 +422,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 10c0/bb673d7876c2d411b6eb6c560e0c571eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
   languageName: node
   linkType: hard
 
