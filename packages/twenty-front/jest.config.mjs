@@ -87,6 +87,7 @@ const jestConfig = {
     'display/icon/index.ts',
   ],
   coverageDirectory: './coverage',
+  maxWorkers: '50%',
   errorOnDeprecated: true,
 };
 
