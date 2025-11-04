@@ -4,25 +4,34 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewFieldOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewFieldOptimisticEffect';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CreateCoreViewFieldMutationVariables,
+  type CreateManyCoreViewFieldsMutationVariables,
   type DeleteCoreViewFieldMutationVariables,
   type DestroyCoreViewFieldMutationVariables,
+  FeatureFlagKey,
   type UpdateCoreViewFieldMutationVariables,
   useCreateCoreViewFieldMutation,
+  useCreateManyCoreViewFieldsMutation,
   useDeleteCoreViewFieldMutation,
   useDestroyCoreViewFieldMutation,
   useUpdateCoreViewFieldMutation,
 } from '~/generated/graphql';
-
 export const usePersistViewField = () => {
   const { triggerViewFieldOptimisticEffect } =
     useTriggerViewFieldOptimisticEffect();
 
+  const isWorkspaceMigrationV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+  );
+
   const [createCoreViewFieldMutation] = useCreateCoreViewFieldMutation();
+  const [createManyCoreViewFieldsMutation] =
+    useCreateManyCoreViewFieldsMutation();
   const [updateCoreViewFieldMutation] = useUpdateCoreViewFieldMutation();
   const [deleteCoreViewFieldMutation] = useDeleteCoreViewFieldMutation();
   const [destroyCoreViewFieldMutation] = useDestroyCoreViewFieldMutation();
@@ -30,7 +39,7 @@ export const usePersistViewField = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const createViewFields = useCallback(
+  const oldCreateViewFields = useCallback(
     async (
       createCoreViewFieldInputs: CreateCoreViewFieldMutationVariables[],
     ): Promise<
@@ -86,6 +95,77 @@ export const usePersistViewField = () => {
     [
       triggerViewFieldOptimisticEffect,
       createCoreViewFieldMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
+  );
+
+  const createViewFields = useCallback(
+    async (
+      createCoreViewFieldInputs: CreateManyCoreViewFieldsMutationVariables,
+    ): Promise<
+      | MetadataRequestResult<Awaited<
+          ReturnType<typeof createManyCoreViewFieldsMutation>
+        > | null>
+      | MetadataRequestResult<
+          Awaited<ReturnType<typeof createCoreViewFieldMutation>>[]
+        >
+    > => {
+      if (
+        !Array.isArray(createCoreViewFieldInputs.inputs) ||
+        createCoreViewFieldInputs.inputs.length === 0
+      ) {
+        return {
+          status: 'successful',
+          response: null,
+        };
+      }
+
+      if (!isWorkspaceMigrationV2Enabled) {
+        const oldFormatInputs: CreateCoreViewFieldMutationVariables[] =
+          createCoreViewFieldInputs.inputs.map((input) => ({ input }));
+        return await oldCreateViewFields(oldFormatInputs);
+      }
+
+      try {
+        const result = await createManyCoreViewFieldsMutation({
+          variables: createCoreViewFieldInputs,
+          update: (_cache, { data }) => {
+            const createdViewFields = data?.createManyCoreViewFields;
+            if (!isDefined(createdViewFields)) {
+              return;
+            }
+
+            triggerViewFieldOptimisticEffect({
+              createdViewFields,
+            });
+          },
+        });
+
+        return {
+          status: 'successful',
+          response: result,
+        };
+      } catch (error) {
+        if (error instanceof ApolloError) {
+          handleMetadataError(error, {
+            primaryMetadataName: 'viewField',
+          });
+        } else {
+          enqueueErrorSnackBar({ message: t`An error occurred.` });
+        }
+
+        return {
+          status: 'failed',
+          error,
+        };
+      }
+    },
+    [
+      isWorkspaceMigrationV2Enabled,
+      oldCreateViewFields,
+      triggerViewFieldOptimisticEffect,
+      createManyCoreViewFieldsMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
     ],

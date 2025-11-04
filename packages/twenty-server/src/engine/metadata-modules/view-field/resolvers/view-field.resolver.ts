@@ -12,6 +12,10 @@ import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dt
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
+import {
+  ViewFieldException,
+  ViewFieldExceptionCode,
+} from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldV2Service } from 'src/engine/metadata-modules/view-field/services/view-field-v2.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -87,6 +91,31 @@ export class ViewFieldResolver {
 
     return this.viewFieldService.create({
       ...createViewFieldInput,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => [ViewFieldDTO])
+  async createManyCoreViewFields(
+    @Args('inputs', { type: () => [CreateViewFieldInput] })
+    createViewFieldInputs: CreateViewFieldInput[],
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ViewFieldDTO[]> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (!isWorkspaceMigrationV2Enabled) {
+      throw new ViewFieldException(
+        'Not implemented in v1, please active IS_WORKSPACE_MIGRATION_V2_ENABLED',
+        ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA,
+      );
+    }
+
+    return await this.viewFieldV2Service.createMany({
+      createViewFieldInputs,
       workspaceId,
     });
   }
