@@ -2573,6 +2573,12 @@ msgstr "Опції необхідні для полів з енумераціє�
 msgid "Page Layout ID"
 msgstr "Ідентифікатор макета сторінки"
 
+#. js-lingui-id: G1fWNt
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Parent Folder ID"
+msgstr ""
+
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
