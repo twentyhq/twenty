@@ -13,7 +13,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Command({
-  name: 'upgrade:1-8:flush-cache',
+  name: 'upgrade:1-10:flush-cache',
   description: 'Flush cache for workspace',
 })
 export class FlushCacheCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
