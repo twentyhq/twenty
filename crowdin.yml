@@ -30,18 +30,23 @@ files: [
   },
   {
     #
-    # MDX documentation files for Mintlify
-    # Source: packages/twenty-docs/user-guide/getting-started/what-is-twenty.mdx
-    # Translation: packages/twenty-docs/fr/user-guide/getting-started/what-is-twenty.mdx
-    # Using string interpolation to strip base path from %original_file_name%
+    # MDX documentation files - user-guide
     #
-    "source": "packages/twenty-docs/**/*.mdx",
-    "ignore": [
-      "packages/twenty-docs/fr/**",
-    ],
-    "translation": "/packages/twenty-docs/%two_letters_code%/%original_file_name%",
-    "translation_replace": {
-      "/packages/twenty-docs/packages/twenty-docs/": "/packages/twenty-docs/"
-    }
+    "source": "packages/twenty-docs/user-guide/**/*.mdx",
+    "translation": "packages/twenty-docs/%two_letters_code%/user-guide/**/%original_file_name%"
+  },
+  {
+    #
+    # MDX documentation files - developers
+    #
+    "source": "packages/twenty-docs/developers/**/*.mdx",
+    "translation": "packages/twenty-docs/%two_letters_code%/developers/**/%original_file_name%"
+  },
+  {
+    #
+    # MDX documentation files - twenty-ui
+    #
+    "source": "packages/twenty-docs/twenty-ui/**/*.mdx",
+    "translation": "packages/twenty-docs/%two_letters_code%/twenty-ui/**/%original_file_name%"
   }
 ]
