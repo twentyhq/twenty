@@ -2573,6 +2573,12 @@ msgstr "Le opzioni sono richieste per i campi enum"
 msgid "Page Layout ID"
 msgstr "ID Layout Pagina"
 
+#. js-lingui-id: G1fWNt
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Parent Folder ID"
+msgstr ""
+
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"

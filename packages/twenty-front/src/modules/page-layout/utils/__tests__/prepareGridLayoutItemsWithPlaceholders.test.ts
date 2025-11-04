@@ -53,12 +53,12 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
       });
     });
 
-    it('should return empty placeholder even when shouldIncludePendingPlaceholder is true', () => {
+    it('should return pending placeholder when shouldIncludePendingPlaceholder is true and layout is empty', () => {
       const result = prepareGridLayoutItemsWithPlaceholders([], true);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
-        id: 'empty-placeholder',
+        id: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
         type: 'placeholder',
       });
     });

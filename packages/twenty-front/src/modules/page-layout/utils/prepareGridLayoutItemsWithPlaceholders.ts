@@ -10,6 +10,15 @@ export const prepareGridLayoutItemsWithPlaceholders = (
   const hasWidgets = isDefined(widgets) && widgets.length > 0;
 
   if (!hasWidgets) {
+    if (shouldIncludePendingPlaceholder) {
+      return [
+        {
+          id: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
+          type: 'placeholder' as const,
+        },
+      ];
+    }
+
     return [
       {
         id: 'empty-placeholder',
