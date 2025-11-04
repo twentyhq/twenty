@@ -17,6 +17,10 @@ export const coerceArrayFieldOrThrow = (
   try {
     const parsedValue = JSON.parse(JSON.stringify(value));
 
+    if (typeof parsedValue === 'string') {
+      return [parsedValue];
+    }
+
     if (
       !Array.isArray(parsedValue) ||
       parsedValue.some((item) => typeof item !== 'string')

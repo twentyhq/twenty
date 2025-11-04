@@ -12,55 +12,47 @@ export const failingCreateInputByFieldMetadataType: {
         textField: null,
       },
     },
-    // {
-    //   input: {
-    //     textField: {},
-    //   },
-    //   //TODO - rest api to fix, should throw
-    // },
-    // {
-    //   input: {
-    //     textField: [],
-    //   },
-    //   //TODO - rest api to fix, should throw
-    // },
-    // {
-    //   input: {
-    //     textField: true,
-    //   },
-    //   //TODO - rest api to fix, should throw
-    // },
-    // {
-    //   input: {
-    //     textField: 1,
-    //   },
-    //   //TODO - rest api to fix, should throw
-    // },
+    {
+      input: {
+        textField: {},
+      },
+    },
+    {
+      input: {
+        textField: [],
+      },
+    },
+    {
+      input: {
+        textField: true,
+      },
+    },
+    {
+      input: {
+        textField: 1,
+      },
+    },
   ],
   [FieldMetadataType.NUMBER]: [
     {
       input: {
         numberField: {},
       },
-      //TODO - rest api to fix, should throw
     },
     {
       input: {
         numberField: [],
       },
-      //TODO - rest api to fix, should throw
     },
     {
       input: {
         numberField: true,
       },
-      //TODO - rest api to fix, should throw
     },
     {
       input: {
         numberField: 'string',
       },
-      // TODO - rest api to fix, should throw
     },
   ],
   [FieldMetadataType.UUID]: [
@@ -118,18 +110,16 @@ export const failingCreateInputByFieldMetadataType: {
     },
   ],
   [FieldMetadataType.RELATION]: [
-    // {
-    //   input: {
-    //     manyToOneRelationFieldId: {},
-    //   },
-    //   //TODO - rest api to fix, should throw
-    // },
-    // {
-    //   input: {
-    //     manyToOneRelationFieldId: [],
-    //   },
-    //   //TODO - rest api to fix, should throw
-    // },
+    {
+      input: {
+        manyToOneRelationFieldId: {},
+      },
+    },
+    {
+      input: {
+        manyToOneRelationFieldId: [],
+      },
+    },
     {
       input: {
         manyToOneRelationFieldId: true,
@@ -145,12 +135,11 @@ export const failingCreateInputByFieldMetadataType: {
         manyToOneRelationFieldId: 'non-uuid',
       },
     },
-    // {
-    //   input: {
-    //     manyToOneRelationField: 'not-existing-field',
-    //   },
-    //   //TODO - rest api to fix, should throw
-    // },
+    {
+      input: {
+        oneToOneRelationField: 'not-existing-field',
+      },
+    },
     {
       input: {
         oneToManyRelationFieldId: 'not-existing-field',
@@ -163,26 +152,8 @@ export const failingCreateInputByFieldMetadataType: {
         rawJsonField: 'not-a-json',
       },
     },
-    // //TODO - to fix, should throw
-    // {
-    //   input: {
-    //     rawJsonField: true,
-    //   },
-    // },
-    // //TODO - to fix, should throw
-    // {
-    //   input: {
-    //     rawJsonField: 1,
-    //   },
-    // },
   ],
   [FieldMetadataType.ARRAY]: [
-    // //TODO - to fix, should throw
-    // {
-    //   input: {
-    //     arrayField: 'not-an-array',
-    //   },
-    // },
     {
       input: {
         arrayField: true,
@@ -227,12 +198,11 @@ export const failingCreateInputByFieldMetadataType: {
         multiSelectField: 'not-a-select-option',
       },
     },
-    // {
-    //   input: {
-    //     multiSelectField: {},
-    //   },
-    //   //TODO - rest api to fix, should throw
-    // },
+    {
+      input: {
+        multiSelectField: {},
+      },
+    },
     {
       input: {
         multiSelectField: true,
