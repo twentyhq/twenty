@@ -54,7 +54,7 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
     ] of manyToOneRelatedMetadataName) {
       const relatedFlatEntityMapsKey =
         getMetadataFlatEntityMapsKey(relatedMetadataName);
-      const relatedFLatEntityMetadataMaps = flatEntityAndRelatedMapsToMutate[
+      const relatedFlatEntityMetadataMaps = flatEntityAndRelatedMapsToMutate[
         relatedFlatEntityMapsKey as MetadataRelatedFlatEntityMapsKeys<T>
       ] as FlatEntityMaps<MetadataFlatEntity<typeof relatedMetadataName>>;
 
@@ -68,7 +68,7 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
 
       const relatedFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: flatEntityRelatedEntityForeignKeyValue,
-        flatEntityMaps: relatedFLatEntityMetadataMaps,
+        flatEntityMaps: relatedFlatEntityMetadataMaps,
       });
 
       if (
@@ -95,7 +95,7 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
 
       replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
         flatEntity: updatedRelatedEntity,
-        flatEntityMapsToMutate: relatedFLatEntityMetadataMaps,
+        flatEntityMapsToMutate: relatedFlatEntityMetadataMaps,
       });
     }
   };
