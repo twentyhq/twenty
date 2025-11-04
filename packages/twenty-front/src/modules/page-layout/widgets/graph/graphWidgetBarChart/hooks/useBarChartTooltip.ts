@@ -44,6 +44,7 @@ export const useBarChartTooltip = ({
     const tooltipItems = keysToShow.map((enrichedKey) => {
       const seriesValue = Number(datum.data[enrichedKey.key] ?? 0);
       return {
+        key: enrichedKey.key,
         label: enrichedKey.label,
         formattedValue: formatGraphValue(seriesValue, formatOptions),
         value: seriesValue,
@@ -55,6 +56,7 @@ export const useBarChartTooltip = ({
       tooltipItems,
       showClickHint: isDefined(dataItem?.to),
       indexLabel: String(datum.indexValue),
+      hoveredKey: enableGroupTooltip ? String(datum.id) : undefined,
     };
   };
 

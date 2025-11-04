@@ -87,18 +87,24 @@ const StyledTooltipRowRightContent = styled.div`
   width: 100%;
 `;
 
-const StyledTooltipLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledTooltipLabel = styled.span<{ $isHighlighted?: boolean }>`
+  color: ${({ theme, $isHighlighted }) =>
+    $isHighlighted ? theme.font.color.secondary : theme.font.color.tertiary};
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: ${({ theme, $isHighlighted }) =>
+    $isHighlighted ? theme.font.weight.medium : theme.font.weight.regular};
 `;
 
-const StyledTooltipValue = styled.span`
+const StyledTooltipValue = styled.span<{ $isHighlighted?: boolean }>`
+  color: ${({ theme, $isHighlighted }) =>
+    $isHighlighted ? theme.font.color.tertiary : theme.font.color.extraLight};
   flex-shrink: 0;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme, $isHighlighted }) =>
+    $isHighlighted ? theme.font.weight.semiBold : theme.font.weight.medium};
   white-space: nowrap;
 `;
 
@@ -113,6 +119,7 @@ const StyledHorizontalSectionPadding = styled.div<{
 `;
 
 export type GraphWidgetTooltipItem = {
+  key: string;
   label: string;
   formattedValue: string;
   value: number;
@@ -125,6 +132,7 @@ type GraphWidgetTooltipProps = {
   indexLabel?: string;
   interactive?: boolean;
   scrollable?: boolean;
+  highlightedKey?: string;
 };
 
 export const GraphWidgetTooltip = ({
@@ -133,6 +141,7 @@ export const GraphWidgetTooltip = ({
   indexLabel,
   interactive = false,
   scrollable = false,
+  highlightedKey,
 }: GraphWidgetTooltipProps) => {
   const theme = useTheme();
 
@@ -148,15 +157,22 @@ export const GraphWidgetTooltip = ({
             <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
           )}
           <StyledTooltipRowContainer $scrollable={scrollable}>
-            {filteredItems.map((item, index) => (
-              <StyledTooltipRow key={index}>
-                <StyledDot $color={item.dotColor} />
-                <StyledTooltipRowRightContent>
-                  <StyledTooltipLabel>{item.label}</StyledTooltipLabel>
-                  <StyledTooltipValue>{item.formattedValue}</StyledTooltipValue>
-                </StyledTooltipRowRightContent>
-              </StyledTooltipRow>
-            ))}
+            {filteredItems.map((item, index) => {
+              const isHighlighted = highlightedKey === item.key;
+              return (
+                <StyledTooltipRow key={index}>
+                  <StyledDot $color={item.dotColor} />
+                  <StyledTooltipRowRightContent>
+                    <StyledTooltipLabel $isHighlighted={isHighlighted}>
+                      {item.label}
+                    </StyledTooltipLabel>
+                    <StyledTooltipValue $isHighlighted={isHighlighted}>
+                      {item.formattedValue}
+                    </StyledTooltipValue>
+                  </StyledTooltipRowRightContent>
+                </StyledTooltipRow>
+              );
+            })}
           </StyledTooltipRowContainer>
         </StyledTooltipContent>
       </StyledHorizontalSectionPadding>

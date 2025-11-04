@@ -161,6 +161,7 @@ export const GraphWidgetBarChart = ({
         indexLabel={tooltipData.indexLabel}
         interactive
         scrollable
+        highlightedKey={tooltipData.hoveredKey}
       />
     );
   };
