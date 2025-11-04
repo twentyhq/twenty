@@ -10,7 +10,7 @@ export const commonDataCoercerToGraphqlApiExceptionHandler = (
   error: CommonDataCoercerException,
 ) => {
   switch (error.code) {
-    case CommonDataCoercerExceptionCode.INVALID_COMPOSITE_FIELD:
+    case CommonDataCoercerExceptionCode.INVALID_LINKS:
     case CommonDataCoercerExceptionCode.INVALID_NUMBER:
     case CommonDataCoercerExceptionCode.INVALID_TEXT:
     case CommonDataCoercerExceptionCode.INVALID_DATE_OR_DATE_TIME:
@@ -20,6 +20,13 @@ export const commonDataCoercerToGraphqlApiExceptionHandler = (
     case CommonDataCoercerExceptionCode.INVALID_UUID:
     case CommonDataCoercerExceptionCode.INVALID_ARRAY:
     case CommonDataCoercerExceptionCode.INVALID_RAW_JSON:
+    case CommonDataCoercerExceptionCode.INVALID_ADDRESS:
+    case CommonDataCoercerExceptionCode.INVALID_PHONES:
+    case CommonDataCoercerExceptionCode.INVALID_FULL_NAME:
+    case CommonDataCoercerExceptionCode.INVALID_RICH_TEXT_V2:
+    case CommonDataCoercerExceptionCode.INVALID_EMAILS:
+    case CommonDataCoercerExceptionCode.INVALID_CURRENCY:
+    case CommonDataCoercerExceptionCode.INVALID_ACTOR:
       throw new UserInputError(error);
     default: {
       return assertUnreachable(error.code);

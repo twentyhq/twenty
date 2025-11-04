@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -9,7 +10,9 @@ export const transformRichTextV2Value = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   richTextValue: any,
 ): Promise<RichTextV2Metadata> => {
-  const parsedValue = richTextV2ValueSchema.parse(richTextValue);
+  const parsedValue = isNonEmptyString(richTextValue)
+    ? richTextV2ValueSchema.parse(richTextValue)
+    : richTextValue;
 
   const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
 

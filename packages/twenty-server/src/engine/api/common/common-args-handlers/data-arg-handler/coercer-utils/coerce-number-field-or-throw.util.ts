@@ -13,7 +13,8 @@ export const coerceNumberFieldOrThrow = (
 ): number | null => {
   if (
     (typeof value !== 'number' && !isNull(value)) ||
-    (typeof value === 'number' && isNaN(value))
+    (typeof value === 'number' &&
+      (isNaN(value) || value === Infinity || value === -Infinity))
   )
     throw new CommonDataCoercerException(
       `Invalid number value ${inspect(value)} for field "${fieldName}"`,

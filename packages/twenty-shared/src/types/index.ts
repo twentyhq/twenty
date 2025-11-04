@@ -19,26 +19,61 @@ export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export {
-  FieldMetadataDefaultActor, FieldMetadataDefaultArray, FieldMetadataDefaultValueAddress, FieldMetadataDefaultValueBoolean, FieldMetadataDefaultValueCurrency, FieldMetadataDefaultValueDate, FieldMetadataDefaultValueDateTime, FieldMetadataDefaultValueEmails, FieldMetadataDefaultValueFullName, fieldMetadataDefaultValueFunctionName, FieldMetadataDefaultValueLinks, FieldMetadataDefaultValueNowFunction, FieldMetadataDefaultValueNumber, FieldMetadataDefaultValuePhones, FieldMetadataDefaultValueRawJson, FieldMetadataDefaultValueRichText, FieldMetadataDefaultValueRichTextV2, FieldMetadataDefaultValueString, FieldMetadataDefaultValueStringArray, FieldMetadataDefaultValueUuidFunction
+  FieldMetadataDefaultActor,
+  FieldMetadataDefaultArray,
+  FieldMetadataDefaultValueAddress,
+  FieldMetadataDefaultValueBoolean,
+  FieldMetadataDefaultValueCurrency,
+  FieldMetadataDefaultValueDate,
+  FieldMetadataDefaultValueDateTime,
+  FieldMetadataDefaultValueEmails,
+  FieldMetadataDefaultValueFullName,
+  fieldMetadataDefaultValueFunctionName,
+  FieldMetadataDefaultValueLinks,
+  FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValuePhones,
+  FieldMetadataDefaultValueRawJson,
+  FieldMetadataDefaultValueRichText,
+  FieldMetadataDefaultValueRichTextV2,
+  FieldMetadataDefaultValueString,
+  FieldMetadataDefaultValueStringArray,
+  FieldMetadataDefaultValueUuidFunction
 } from './FieldMetadataDefaultValue';
 export type {
-  FieldMetadataClassValidation, FieldMetadataDefaultSerializableValue, FieldMetadataDefaultValue, FieldMetadataDefaultValueForAnyType, FieldMetadataDefaultValueForType, FieldMetadataDefaultValueFunctionNames, FieldMetadataFunctionDefaultValue
+  FieldMetadataClassValidation,
+  FieldMetadataDefaultSerializableValue,
+  FieldMetadataDefaultValue,
+  FieldMetadataDefaultValueForAnyType,
+  FieldMetadataDefaultValueForType,
+  FieldMetadataDefaultValueFunctionNames,
+  FieldMetadataFunctionDefaultValue
 } from './FieldMetadataDefaultValue';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export {
-  FieldMetadataComplexOption, FieldMetadataDefaultOption
+  FieldMetadataComplexOption,
+  FieldMetadataDefaultOption
 } from './FieldMetadataOptions';
 export type { FieldMetadataOptions, TagColor } from './FieldMetadataOptions';
 export { DateDisplayFormat, NumberDataType } from './FieldMetadataSettings';
 export type {
-  AllFieldMetadataSettings, FieldMetadataAddressSettings, FieldMetadataDateSettings,
-  FieldMetadataDateTimeSettings, FieldMetadataNumberSettings, FieldMetadataRelationSettings, FieldMetadataSettings, FieldMetadataTextSettings, FieldMetadataTsVectorSettings, FieldNumberVariant
+  AllFieldMetadataSettings,
+  FieldMetadataAddressSettings,
+  FieldMetadataDateSettings,
+  FieldMetadataDateTimeSettings,
+  FieldMetadataNumberSettings,
+  FieldMetadataRelationSettings,
+  FieldMetadataSettings,
+  FieldMetadataTextSettings,
+  FieldMetadataTsVectorSettings,
+  FieldNumberVariant
 } from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldRatingValue } from './FieldRatingValue';
 export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export type {
-  FilterableAndTSVectorFieldType, FilterableFieldType
+  FilterableAndTSVectorFieldType,
+  FilterableFieldType
 } from './FilterableFieldType';
 export type { FromTo } from './FromToType';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
@@ -51,7 +86,10 @@ export type { ObjectPermissions } from './ObjectPermissions';
 export type { ObjectRecord } from './ObjectRecord';
 export { OrderByDirection } from './ObjectRecordGroupBy';
 export type {
-  AggregateOrderByWithGroupByField, ObjectRecordOrderByForCompositeField, ObjectRecordOrderByForScalarField, ObjectRecordOrderByWithGroupByDateField,
+  AggregateOrderByWithGroupByField,
+  ObjectRecordOrderByForCompositeField,
+  ObjectRecordOrderByForScalarField,
+  ObjectRecordOrderByWithGroupByDateField,
   OrderByWithGroupBy
 } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
@@ -62,8 +100,37 @@ export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOptio
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
 export type {
-  ActorFilter, AddressFilter, AndObjectRecordFilter, ArrayFilter, BooleanFilter, CurrencyFilter, DateFilter,
-  DateTimeFilter, EmailsFilter, FloatFilter, FullNameFilter, IsFilter, LeafFilter, LeafObjectRecordFilter, LinksFilter, MultiSelectFilter, NotObjectRecordFilter, OrObjectRecordFilter, PhonesFilter, RatingFilter, RawJsonFilter, RecordGqlOperationFilter, RelationFilter, RichTextV2Filter, RichTextV2LeafFilter, SelectFilter, StringFilter, TSVectorFilter, URLFilter, UUIDFilter, UUIDFilterValue
+  ActorFilter,
+  AddressFilter,
+  AndObjectRecordFilter,
+  ArrayFilter,
+  BooleanFilter,
+  CurrencyFilter,
+  DateFilter,
+  DateTimeFilter,
+  EmailsFilter,
+  FloatFilter,
+  FullNameFilter,
+  IsFilter,
+  LeafFilter,
+  LeafObjectRecordFilter,
+  LinksFilter,
+  MultiSelectFilter,
+  NotObjectRecordFilter,
+  OrObjectRecordFilter,
+  PhonesFilter,
+  RatingFilter,
+  RawJsonFilter,
+  RecordGqlOperationFilter,
+  RelationFilter,
+  RichTextV2Filter,
+  RichTextV2LeafFilter,
+  SelectFilter,
+  StringFilter,
+  TSVectorFilter,
+  URLFilter,
+  UUIDFilter,
+  UUIDFilterValue
 } from './RecordGqlOperationFilter';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
@@ -74,7 +141,9 @@ export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions'
 export { SettingsPath } from './SettingsPath';
 export { StepLogicalOperator } from './StepFilters';
 export type {
-  StepFilter, StepFilterGroup, StepFilterWithPotentiallyDeprecatedOperand
+  StepFilter,
+  StepFilterGroup,
+  StepFilterWithPotentiallyDeprecatedOperand
 } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { ViewFilterOperand } from './ViewFilterOperand';

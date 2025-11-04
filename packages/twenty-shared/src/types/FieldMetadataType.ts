@@ -25,22 +25,3 @@ export enum FieldMetadataType {
   ARRAY = 'ARRAY',
   TS_VECTOR = 'TS_VECTOR',
 }
-
-export type AtomicFieldMetadataType =
-  | FieldMetadataType.UUID
-  | FieldMetadataType.TEXT
-  | FieldMetadataType.DATE_TIME
-  | FieldMetadataType.DATE
-  | FieldMetadataType.BOOLEAN
-  | FieldMetadataType.NUMBER
-  | FieldMetadataType.NUMERIC
-  | FieldMetadataType.ARRAY
-  | FieldMetadataType.RAW_JSON
-  | FieldMetadataType.RATING
-  | FieldMetadataType.SELECT
-  | FieldMetadataType.MULTI_SELECT
-  | FieldMetadataType.RELATION
-  | FieldMetadataType.MORPH_RELATION
-  | FieldMetadataType.POSITION
-  | FieldMetadataType.RICH_TEXT
-  | FieldMetadataType.TS_VECTOR;

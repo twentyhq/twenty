@@ -68,7 +68,7 @@ export class RecordInputTransformerService {
       case FieldMetadataType.LINKS:
         return transformLinksValue(value);
       case FieldMetadataType.EMAILS:
-        return transformEmailsValue(value);
+        return transformEmailsValue({ input: value });
       case FieldMetadataType.PHONES:
         return transformPhonesValue({ input: value });
       default:

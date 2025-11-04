@@ -171,18 +171,19 @@ export abstract class CommonBaseQueryRunnerService<
     );
 
     const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
+
+    const computedArgs = await this.computeArgs(args, queryRunnerContext);
+
     const hookedArgs =
       (await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
         operationName,
-        args as WorkspacePreQueryHookPayload<CommonQueryNames>,
+        computedArgs as WorkspacePreQueryHookPayload<CommonQueryNames>,
       )) as CommonInput<Args>;
 
-    const computedArgs = await this.computeArgs(hookedArgs, queryRunnerContext);
-
     return {
-      ...computedArgs,
+      ...hookedArgs,
       selectedFieldsResult,
     };
   }
