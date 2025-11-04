@@ -46,6 +46,7 @@ import {
   IconHeart,
   IconHeartOff,
   IconLayout,
+  IconLayoutDashboard,
   IconPlus,
   IconRefresh,
   IconRotate2,
@@ -563,6 +564,38 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       />
     ),
     hotKeys: ['G', 'C'],
+  },
+  [NoSelectionRecordActionKeys.GO_TO_DASHBOARDS]: {
+    type: ActionType.Navigation,
+    scope: ActionScope.Global,
+    key: NoSelectionRecordActionKeys.GO_TO_DASHBOARDS,
+    label: msg`Go to Dashboards`,
+    shortLabel: msg`Dashboards`,
+    position: 22,
+    Icon: IconLayoutDashboard,
+    isPinned: false,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_NO_SELECTION,
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.INDEX_PAGE_BULK_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    shouldBeRegistered: ({
+      objectMetadataItem,
+      viewType,
+      getTargetObjectReadPermission,
+    }) =>
+      getTargetObjectReadPermission(CoreObjectNameSingular.Dashboard) ===
+        true &&
+      (objectMetadataItem?.nameSingular !== CoreObjectNameSingular.Dashboard ||
+        viewType === ActionViewType.SHOW_PAGE),
+    component: (
+      <ActionLink
+        to={AppPath.RecordIndexPage}
+        params={{ objectNamePlural: CoreObjectNamePlural.Dashboard }}
+      />
+    ),
+    hotKeys: ['G', 'D'],
   },
   [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
     type: ActionType.Navigation,

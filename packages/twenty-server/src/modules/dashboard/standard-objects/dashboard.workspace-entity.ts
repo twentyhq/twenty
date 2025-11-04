@@ -41,6 +41,7 @@ export const SEARCH_FIELDS_FOR_DASHBOARD: FieldTypeAndNameMetadata[] = [
   labelPlural: msg`Dashboards`,
   description: msg`A dashboard`,
   icon: STANDARD_OBJECT_ICONS.dashboard,
+  shortcut: 'D',
   labelIdentifierStandardId: DASHBOARD_STANDARD_FIELD_IDS.title,
 })
 @WorkspaceIsSearchable()
