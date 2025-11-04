@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -33,6 +34,7 @@ export class DevSeederService {
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly devSeederDataService: DevSeederDataService,
+    private readonly applicationService: ApplicationService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -44,6 +46,7 @@ export class DevSeederService {
     await seedCoreSchema({
       dataSource: this.coreDataSource,
       workspaceId,
+      applicationService: this.applicationService,
       seedBilling: isBillingEnabled,
       appVersion,
     });

@@ -19,6 +19,7 @@ import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/command
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
 import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-seed-dashboard-view.command';
+import { SeedStandardApplicationsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-seed-standard-applications.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -69,6 +70,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly seedDashboardViewCommand: SeedDashboardViewCommand,
     protected readonly createViewKanbanFieldMetadataIdForeignKeyMigrationCommand: CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
     protected readonly flushWorkspaceCacheCommand: FlushCacheCommand,
+
+    // 1.11 Commands
+    protected readonly seedStandardApplicationsCommand: SeedStandardApplicationsCommand,
   ) {
     super(
       workspaceRepository,
@@ -117,11 +121,17 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
     };
 
+    const commands_1110: VersionCommands = {
+      beforeSyncMetadata: [this.seedStandardApplicationsCommand],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '1.6.0': commands_160,
       '1.7.0': commands_170,
       '1.8.0': commands_180,
       '1.10.0': commands_1100,
+      '1.11.0': commands_1110,
     };
   }
 
