@@ -6,5 +6,5 @@ import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/fl
 export type MetadataManyToOneRelatedMetadataNames<T extends AllMetadataName> =
   Extract<
     (typeof ALL_METADATA_RELATED_METADATA_BY_FOREIGN_KEY)[T][MetadataManyToOneJoinColumn<T>],
-    AllMetadataName
-  >;
+    { metadataName: AllMetadataName }
+  >['metadataName'];

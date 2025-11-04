@@ -9,7 +9,10 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
+import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 import { ServerlessFunctionLayerModule } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.module';
 import { ServerlessFunctionTriggerJob } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -23,7 +26,12 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
   imports: [
     FileUploadModule,
     NestjsQueryTypeOrmModule.forFeature([ServerlessFunctionEntity]),
-    TypeOrmModule.forFeature([FeatureFlagEntity]),
+    TypeOrmModule.forFeature([
+      FeatureFlagEntity,
+      DatabaseEventTriggerEntity,
+      CronTriggerEntity,
+      RouteTriggerEntity,
+    ]),
     FileModule,
     ThrottlerModule,
     AuditModule,
