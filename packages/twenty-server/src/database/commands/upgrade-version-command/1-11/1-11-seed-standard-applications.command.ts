@@ -57,7 +57,7 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
       existingApplications.map((app) => app.universalIdentifier),
     );
 
-    const applicationToSync: SeedStandardApplicationsArgs['applicationsToSync'] =
+    const applicationToSync: SeedStandardApplicationsArgs['applicationsToSeed'] =
       {
         twentyStandard: !existingIds.has(
           TWENTY_STANDARD_APPLICATION.universalIdentifier,
@@ -76,7 +76,7 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
         await seedStandardApplications({
           applicationService: this.applicationService,
           workspaceId,
-          applicationsToSync: {
+          applicationsToSeed: {
             twentyStandard: !existingIds.has(
               TWENTY_STANDARD_APPLICATION.universalIdentifier,
             ),
