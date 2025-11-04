@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -68,7 +68,7 @@ export class UpdateServerlessFunctionActionHandlerService extends WorkspaceMigra
     serverlessFunction: FlatServerlessFunction;
   }) {
     this.serverlessService.delete(
-      serverlessFunction as ServerlessFunctionEntity,
+      serverlessFunction as unknown as ServerlessFunctionEntity,
     );
   }
 
