@@ -17,6 +17,14 @@ files: [
     # Translation files filter for code translations
     #
     "translation": "%original_path%/%locale%.po",
+
+    #
+    # Explicitly ignore MDX documentation files
+    #
+    "ignore": [
+      "**/*.mdx",
+      "packages/twenty-docs/**"
+    ]
   }
 ]
 
