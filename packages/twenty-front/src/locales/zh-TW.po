@@ -697,6 +697,11 @@ msgstr "添加到收藏夾"
 msgid "Add view"
 msgstr "添加視圖"
 
+#. js-lingui-id: 8sZiWP
+#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
+msgid "Add widget"
+msgstr ""
+
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
@@ -990,6 +995,7 @@ msgstr "處理您的消息時發生錯誤"
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
 #: src/modules/views/hooks/internal/usePersistViewFilter.ts
+#: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
 #: src/modules/views/hooks/internal/usePersistViewField.ts
@@ -2006,16 +2012,6 @@ msgstr "配置過濾器"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Configure how we should display your events in your calendar"
 msgstr "配置我們應如何在您的日曆中顯示您的事件"
-
-#. js-lingui-id: EZzl/g
-#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
-msgid "Configure iFrame"
-msgstr "配置 iFrame"
-
-#. js-lingui-id: 3La0aM
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
-msgid "Configure iFrame Widget"
-msgstr "配置 iFrame 小部件"
 
 #. js-lingui-id: jbuOOX
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -3169,11 +3165,6 @@ msgstr "荷蘭語"
 msgid "E.g. backoffice integration"
 msgstr "例如後台集成"
 
-#. js-lingui-id: BtKcxf
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
-msgid "e.g., Analytics Dashboard"
-msgstr "例如，分析儀表板"
-
 #. js-lingui-id: GhTFTJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "e.g., summary, status, count"
@@ -3253,11 +3244,6 @@ msgstr "編輯圖形"
 #: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 msgid "Edit iFrame"
 msgstr "編輯 iFrame"
-
-#. js-lingui-id: mY8UAQ
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
-msgid "Edit iFrame Widget"
-msgstr "編輯 iFrame 小部件"
 
 #. js-lingui-id: NZubw3
 #: src/modules/action-menu/actions/record-actions/constants/RecordPageLayoutActionsConfig.tsx
@@ -4552,6 +4538,21 @@ msgstr "如果出現意外，請檢查您的設定。"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "If you’ve lost this key, you can regenerate it, but be aware that any script using this key will need to be updated. Please type\"{confirmationValue}\" to confirm."
 msgstr "如果您丟失了此密鑰，可以重新生成，但請注意，任何使用此密鑰的腳本都需要更新。請鍵入\"{confirmationValue}\"確認。"
+
+#. js-lingui-id: KDMdBi
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "iFrame"
+msgstr ""
+
+#. js-lingui-id: hiXeBh
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "iFrame Settings"
+msgstr ""
+
+#. js-lingui-id: mO+Bte
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+msgid "iFrame Widget"
+msgstr ""
 
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
@@ -6038,11 +6039,6 @@ msgstr "無選擇字段"
 msgid "No variables found"
 msgstr "未找到變量"
 
-#. js-lingui-id: xyEjfo
-#: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
-msgid "No widgets yet"
-msgstr "目前沒有小工具"
-
 #. js-lingui-id: 0uWxPM
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
 msgid "No workflow runs yet"
@@ -6585,6 +6581,11 @@ msgstr "請檢查您的電子郵件以獲取驗證鏈接。"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Please create agents in the AI settings to use in workflows."
 msgstr "請在AI設置中創建代理以在工作流中使用。"
+
+#. js-lingui-id: jEw0Mr
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+msgid "Please enter a valid URL"
+msgstr ""
 
 #. js-lingui-id: CjNkdJ
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -8783,6 +8784,11 @@ msgstr "上傳包含連接信息的 XML 文件"
 msgid "URL"
 msgstr "網址"
 
+#. js-lingui-id: pphDjD
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
+msgid "URL to Embed"
+msgstr ""
+
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -9129,11 +9135,6 @@ msgstr "API 密鑰的過期時間。"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "按鍵何時禁用"
-
-#. js-lingui-id: Z4rkzJ
-#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeConfig.tsx
-msgid "Widget Title"
-msgstr "小部件標題"
 
 #. js-lingui-id: fANaAS
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
