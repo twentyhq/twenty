@@ -5,7 +5,10 @@ import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/c
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
-import { useBarChartFloatingTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartFloatingTooltip';
+import {
+  type BarDatumWithGeometry,
+  useBarChartFloatingTooltip,
+} from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartFloatingTooltip';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
@@ -107,12 +110,27 @@ export const GraphWidgetBarChart = ({
     refs,
     floatingStyles,
     hoveredBarDatum,
-    isTooltipVisible,
-    handleBarMouseEnter,
-    handleBarMouseLeave,
-    handleTooltipMouseEnter,
-    handleTooltipMouseLeave,
+    showTooltipForBar,
+    scheduleTooltipHide,
+    cancelTooltipHide,
+    hideTooltip,
   } = useBarChartFloatingTooltip();
+
+  const handleBarMouseEnter = (datum: BarDatumWithGeometry) => {
+    showTooltipForBar(datum);
+  };
+
+  const handleBarMouseLeave = () => {
+    scheduleTooltipHide();
+  };
+
+  const handleTooltipMouseEnter = () => {
+    cancelTooltipHide();
+  };
+
+  const handleTooltipMouseLeave = () => {
+    hideTooltip();
+  };
 
   const chartTheme = useBarChartTheme();
 
@@ -284,7 +302,7 @@ export const GraphWidgetBarChart = ({
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
-      {isTooltipVisible && hoveredBarDatum && (
+      {isDefined(hoveredBarDatum) && (
         <FloatingPortal>
           <div
             ref={refs.setFloating}

@@ -86,7 +86,7 @@ export const useBarChartFloatingTooltip = () => {
     setHoveredBarDatum(null);
   }, TOOLTIP_HIDE_DELAY_MS);
 
-  const handleBarMouseEnter = useCallback(
+  const showTooltipForBar = useCallback(
     (datum: BarDatumWithGeometry) => {
       debouncedClearTooltip.cancel();
       setHoveredBarDatum(datum);
@@ -99,28 +99,25 @@ export const useBarChartFloatingTooltip = () => {
     [debouncedClearTooltip, refs],
   );
 
-  const handleBarMouseLeave = useCallback(() => {
+  const scheduleTooltipHide = useCallback(() => {
     debouncedClearTooltip();
   }, [debouncedClearTooltip]);
 
-  const handleTooltipMouseEnter = useCallback(() => {
+  const cancelTooltipHide = useCallback(() => {
     debouncedClearTooltip.cancel();
   }, [debouncedClearTooltip]);
 
-  const handleTooltipMouseLeave = useCallback(() => {
+  const hideTooltip = useCallback(() => {
     setHoveredBarDatum(null);
   }, []);
-
-  const isTooltipVisible = isDefined(hoveredBarDatum);
 
   return {
     refs,
     floatingStyles,
     hoveredBarDatum,
-    isTooltipVisible,
-    handleBarMouseEnter,
-    handleBarMouseLeave,
-    handleTooltipMouseEnter,
-    handleTooltipMouseLeave,
+    showTooltipForBar,
+    scheduleTooltipHide,
+    cancelTooltipHide,
+    hideTooltip,
   };
 };
