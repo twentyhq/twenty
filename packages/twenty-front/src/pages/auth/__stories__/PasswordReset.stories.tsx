@@ -9,6 +9,7 @@ import {
   ValidatePasswordResetTokenDocument,
 } from '~/generated-metadata/graphql';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -20,41 +21,41 @@ const mockedOnboardingUsersData = mockedOnboardingUserData(
   OnboardingStatus.COMPLETED,
 );
 
+const buildHandlers = (hasPassword: boolean) => [
+  graphql.query(
+    getOperationName(ValidatePasswordResetTokenDocument) ?? '',
+    () =>
+      HttpResponse.json({
+        data: {
+          validatePasswordResetToken: {
+            __typename: 'ValidatePasswordResetTokenOutput',
+            id: mockedOnboardingUsersData.id,
+            email: mockedOnboardingUsersData.email,
+            hasPassword,
+          },
+        },
+      }),
+  ),
+  graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () =>
+    HttpResponse.json({
+      data: {
+        currentUser: {
+          ...mockedOnboardingUsersData,
+          hasPassword,
+        },
+      },
+    }),
+  ),
+  ...graphqlMocks.handlers,
+];
+
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/PasswordReset',
   component: PasswordReset,
-  decorators: [PageDecorator],
+  decorators: [PageDecorator, I18nFrontDecorator],
   args: {
     routePath: '/reset-password/:passwordResetToken',
     routeParams: { ':passwordResetToken': 'MOCKED_TOKEN' },
-  },
-  parameters: {
-    msw: {
-      handlers: [
-        graphql.query(
-          getOperationName(ValidatePasswordResetTokenDocument) ?? '',
-          () => {
-            return HttpResponse.json({
-              data: {
-                validatePasswordResetToken: {
-                  id: mockedOnboardingUsersData.id,
-                  email: mockedOnboardingUsersData.email,
-                  hasPassword: true,
-                },
-              },
-            });
-          },
-        ),
-        graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
-          return HttpResponse.json({
-            data: {
-              currentUser: mockedOnboardingUsersData,
-            },
-          });
-        }),
-        graphqlMocks.handlers,
-      ],
-    },
   },
 };
 
@@ -62,12 +63,26 @@ export default meta;
 
 export type Story = StoryObj<typeof PasswordReset>;
 
-export const Default: Story = {
+export const ChangePassword: Story = {
+  parameters: {
+    msw: {
+      handlers: buildHandlers(true),
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await canvas.findByText('Change Password',undefined, { timeout: 3000 });
+  },
+};
 
-    await canvas.findByText('Change Password', undefined, {
-      timeout: 3000,
-    });
+export const SetPassword: Story = {
+  parameters: {
+    msw: {
+      handlers: buildHandlers(false),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText('Set Password', { selector: 'button' }, { timeout: 3000 });
   },
 };
