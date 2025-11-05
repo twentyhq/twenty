@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconArrowUpRight } from 'twenty-ui/display';
 
-const StyledTooltip = styled.div<{ $interactive?: boolean }>`
+const StyledTooltip = styled.div<{ interactive?: boolean }>`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -14,7 +14,7 @@ const StyledTooltip = styled.div<{ $interactive?: boolean }>`
   gap: 2px;
   max-width: min(300px, calc(100vw - 40px));
   min-width: 160px;
-  pointer-events: ${({ $interactive }) => ($interactive ? 'auto' : 'none')};
+  pointer-events: ${({ interactive }) => (interactive ? 'auto' : 'none')};
 `;
 
 const StyledTooltipContent = styled.div`
@@ -31,16 +31,16 @@ const StyledTooltipRow = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTooltipRowContainer = styled.div<{ $scrollable?: boolean }>`
+const StyledTooltipRowContainer = styled.div<{ scrollable?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  max-height: ${({ $scrollable }) => ($scrollable ? '120px' : 'none')};
-  overflow-y: ${({ $scrollable }) => ($scrollable ? 'auto' : 'visible')};
+  max-height: ${({ scrollable }) => (scrollable ? '120px' : 'none')};
+  overflow-y: ${({ scrollable }) => (scrollable ? 'auto' : 'visible')};
 `;
 
-const StyledDot = styled.div<{ $color: string }>`
-  background: ${({ $color }) => $color};
+const StyledDot = styled.div<{ color: string }>`
+  background: ${({ color }) => color};
   border-radius: 50%;
   height: 6px;
   width: 6px;
@@ -87,35 +87,35 @@ const StyledTooltipRowRightContent = styled.div`
   width: 100%;
 `;
 
-const StyledTooltipLabel = styled.span<{ $isHighlighted?: boolean }>`
-  color: ${({ theme, $isHighlighted }) =>
-    $isHighlighted ? theme.font.color.secondary : theme.font.color.tertiary};
+const StyledTooltipLabel = styled.span<{ isHighlighted?: boolean }>`
+  color: ${({ theme, isHighlighted }) =>
+    isHighlighted ? theme.font.color.secondary : theme.font.color.tertiary};
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-weight: ${({ theme, $isHighlighted }) =>
-    $isHighlighted ? theme.font.weight.medium : theme.font.weight.regular};
+  font-weight: ${({ theme, isHighlighted }) =>
+    isHighlighted ? theme.font.weight.medium : theme.font.weight.regular};
 `;
 
-const StyledTooltipValue = styled.span<{ $isHighlighted?: boolean }>`
-  color: ${({ theme, $isHighlighted }) =>
-    $isHighlighted ? theme.font.color.tertiary : theme.font.color.extraLight};
+const StyledTooltipValue = styled.span<{ isHighlighted?: boolean }>`
+  color: ${({ theme, isHighlighted }) =>
+    isHighlighted ? theme.font.color.tertiary : theme.font.color.extraLight};
   flex-shrink: 0;
-  font-weight: ${({ theme, $isHighlighted }) =>
-    $isHighlighted ? theme.font.weight.semiBold : theme.font.weight.medium};
+  font-weight: ${({ theme, isHighlighted }) =>
+    isHighlighted ? theme.font.weight.semiBold : theme.font.weight.medium};
   white-space: nowrap;
 `;
 
 const StyledHorizontalSectionPadding = styled.div<{
-  $addTop?: boolean;
-  $addBottom?: boolean;
+  addTop?: boolean;
+  addBottom?: boolean;
 }>`
   padding-inline: ${({ theme }) => theme.spacing(1)};
-  margin-top: ${({ $addTop, theme }) => ($addTop ? theme.spacing(1) : 0)};
-  margin-bottom: ${({ $addBottom, theme }) =>
-    $addBottom ? theme.spacing(1) : 0};
+  margin-top: ${({ addTop, theme }) => (addTop ? theme.spacing(1) : 0)};
+  margin-bottom: ${({ addBottom, theme }) =>
+    addBottom ? theme.spacing(1) : 0};
 `;
 
 export type GraphWidgetTooltipItem = {
@@ -152,24 +152,24 @@ export const GraphWidgetTooltip = ({
   const shouldHighlight = filteredItems.length > 1;
 
   return (
-    <StyledTooltip $interactive={interactive}>
-      <StyledHorizontalSectionPadding $addTop $addBottom={!showClickHint}>
+    <StyledTooltip interactive={interactive}>
+      <StyledHorizontalSectionPadding addTop addBottom={!showClickHint}>
         <StyledTooltipContent>
           {indexLabel && (
             <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
           )}
-          <StyledTooltipRowContainer $scrollable={scrollable}>
+          <StyledTooltipRowContainer scrollable={scrollable}>
             {filteredItems.map((item, index) => {
               const isHighlighted =
                 shouldHighlight && highlightedKey === item.key;
               return (
                 <StyledTooltipRow key={index}>
-                  <StyledDot $color={item.dotColor} />
+                  <StyledDot color={item.dotColor} />
                   <StyledTooltipRowRightContent>
-                    <StyledTooltipLabel $isHighlighted={isHighlighted}>
+                    <StyledTooltipLabel isHighlighted={isHighlighted}>
                       {item.label}
                     </StyledTooltipLabel>
-                    <StyledTooltipValue $isHighlighted={isHighlighted}>
+                    <StyledTooltipValue isHighlighted={isHighlighted}>
                       {item.formattedValue}
                     </StyledTooltipValue>
                   </StyledTooltipRowRightContent>
@@ -182,7 +182,7 @@ export const GraphWidgetTooltip = ({
       {showClickHint && (
         <>
           <StyledTooltipSeparator />
-          <StyledHorizontalSectionPadding $addBottom>
+          <StyledHorizontalSectionPadding addBottom>
             <StyledTooltipLink>
               <span>{t`Click to see data`}</span>
               <IconArrowUpRight size={theme.icon.size.sm} />
