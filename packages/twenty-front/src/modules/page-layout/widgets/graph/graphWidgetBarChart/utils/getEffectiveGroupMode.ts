@@ -12,9 +12,5 @@ export const getEffectiveGroupMode = (
     return 'grouped';
   }
 
-  if (groupMode === 'STACKED') {
-    return 'stacked';
-  }
-
   return 'stacked';
 };
