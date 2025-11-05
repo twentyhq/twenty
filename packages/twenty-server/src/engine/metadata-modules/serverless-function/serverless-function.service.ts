@@ -479,10 +479,17 @@ export class ServerlessFunctionService {
     callback: () => Promise<T>;
     timeoutMs: number;
   }): Promise<T> {
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Execution timeout')), timeoutMs);
+    let timeoutId: NodeJS.Timeout;
+
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(
+        () => reject(new Error(`Execution timeout: ${timeoutMs / 1000}s`)),
+        timeoutMs,
+      );
     });
 
-    return (await Promise.race([callback(), timeoutPromise])) as T;
+    return Promise.race([callback(), timeoutPromise]).finally(() =>
+      clearTimeout(timeoutId),
+    ) as Promise<T>;
   }
 }
