@@ -60,6 +60,8 @@ const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
   height: 20px;
+
+  background-color: ${({ theme }) => theme.background.secondary};
 `;
 
 export const RecordInlineCellDisplayMode = ({

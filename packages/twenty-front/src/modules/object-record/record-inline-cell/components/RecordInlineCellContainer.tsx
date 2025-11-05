@@ -115,7 +115,7 @@ export const RecordInlineCellContainer = () => {
               <IconLabel stroke={theme.icon.stroke.sm} />
             </StyledIconContainer>
           )}
-          {showLabel && label && (
+          {label && (
             <StyledLabelContainer width={labelWidth}>
               <OverflowingTextWithTooltip text={label} displayedMaxRows={1} />
             </StyledLabelContainer>
