@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isUndefined } from '@sniptt/guards';
+import { isNull, isUndefined } from '@sniptt/guards';
 import {
   FieldMetadataType,
   ObjectRecord,
@@ -95,6 +95,17 @@ export class DataArgHandler {
         const fieldMetadata =
           objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
 
+        if (
+          !isDefined(fieldMetadata.defaultValue) &&
+          !fieldMetadata.isNullable &&
+          isNull(value)
+        ) {
+          throw new CommonQueryRunnerException(
+            `Field ${key} is not nullable and has no default value.`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          );
+        }
+
         if (isUndefined(value)) {
           continue;
         }
@@ -102,13 +113,15 @@ export class DataArgHandler {
         let coercedValue: unknown;
 
         switch (fieldMetadata.type) {
+          case FieldMetadataType.POSITION:
+            coercedValue = value;
+            break;
           case FieldMetadataType.NUMERIC:
             coercedValue = coerceNumericFieldOrThrow(value, key);
             break;
           case FieldMetadataType.NUMBER:
             coercedValue = coerceNumberFieldOrThrow(value, key);
             break;
-          case FieldMetadataType.POSITION:
           case FieldMetadataType.TEXT:
             coercedValue = coerceTextFieldOrThrow(
               value,
