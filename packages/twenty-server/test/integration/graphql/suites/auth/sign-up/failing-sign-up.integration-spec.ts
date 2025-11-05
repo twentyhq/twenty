@@ -17,7 +17,7 @@ describe('Successful User Sign Up (integration)', () => {
   });
 
   it('should fail to sign up with duplicate email', async () => {
-    const testEmail = `test-duplicate-${Date.now()}@example.com`;
+    const testEmail = `test-duplicate@example.com`;
 
     const { data: firstSignUp } = await signUp({
       input: {
@@ -47,7 +47,7 @@ describe('Successful User Sign Up (integration)', () => {
   it('should fail to sign up with weak password', async () => {
     const { errors } = await signUp({
       input: {
-        email: `test-${Date.now()}@example.com`,
+        email: `test-123@example.com`,
         password: '123',
       },
       expectToFail: true,

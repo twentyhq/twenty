@@ -1,11 +1,11 @@
 import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { signUpOnNewWorkspace } from 'test/integration/graphql/utils/sign-up-on-new-workspace.util';
+import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 
 // TODO implement strong coverage on all exceptions
 describe.skip('Failing workspace creation flow (integration)', () => {
   it('should fail to activate workspace without displayName', async () => {
-    const { data: signUpData } = await signUpOnNewWorkspace({
+    const { data: signUpData } = await signUpInNewWorkspace({
       accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       expectToFail: false,
     });

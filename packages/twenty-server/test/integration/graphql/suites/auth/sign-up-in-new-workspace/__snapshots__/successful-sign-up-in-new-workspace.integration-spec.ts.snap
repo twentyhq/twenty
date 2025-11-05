@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Successful User Sign Up (integration) should sign up a new user successfully 1`] = `
+exports[`Successful User Sign Up In New Workspace (integration) should sign up a new user successfully 1`] = `
 {
   "canAccessFullAdminPanel": false,
   "canImpersonate": false,
@@ -10,7 +10,7 @@ exports[`Successful User Sign Up (integration) should sign up a new user success
   "defaultAvatarUrl": null,
   "deletedAt": null,
   "disabled": false,
-  "email": "test-1762356533781@example.com",
+  "email": "test-123@example.com",
   "firstName": "",
   "id": Any<String>,
   "isEmailVerified": false,

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Successful workspace activation flow (integration) should create a workspace in pending status via signUpOnNewWorkspace 1`] = `
+{
+  "canAccessFullAdminPanel": false,
+  "canImpersonate": false,
+  "createdAt": Any<String>,
+  "currentUserWorkspace": null,
+  "currentWorkspace": null,
+  "defaultAvatarUrl": null,
+  "deletedAt": null,
+  "disabled": false,
+  "email": "test-1762358157539@example.com",
+  "firstName": "",
+  "id": Any<String>,
+  "isEmailVerified": false,
+  "lastName": "",
+  "locale": "en",
+  "updatedAt": Any<String>,
+}
+`;
