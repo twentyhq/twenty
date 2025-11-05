@@ -48,7 +48,8 @@ export class MessagingRelaunchFailedMessageChannelJob {
 
     if (
       !messageChannel ||
-      messageChannel.syncStage !== MessageChannelSyncStage.FAILED
+      messageChannel.syncStage !== MessageChannelSyncStage.FAILED ||
+      messageChannel.syncStatus !== MessageChannelSyncStatus.FAILED_UNKNOWN
     ) {
       return;
     }
