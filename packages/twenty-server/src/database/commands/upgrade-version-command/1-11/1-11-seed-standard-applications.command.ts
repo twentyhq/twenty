@@ -12,9 +12,9 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-  seedStandardApplications,
+  createStandardApplications,
   SeedStandardApplicationsArgs,
-} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-standard-applications.util';
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/create-standard-applications.util';
 import {
   TWENTY_STANDARD_APPLICATION,
   TWENTY_WORKFLOW_APPLICATION,
@@ -75,7 +75,7 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
     );
     if (!options.dryRun) {
       try {
-        await seedStandardApplications({
+        await createStandardApplications({
           applicationService: this.applicationService,
           workspaceId,
           applicationsToSeed: {

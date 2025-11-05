@@ -17,7 +17,7 @@ export type SeedStandardApplicationsArgs = {
     boolean
   >;
 };
-export const seedStandardApplications = async ({
+export const createStandardApplications = async ({
   applicationService,
   workspaceId,
   queryRunner,
