@@ -79,15 +79,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
         const lastFields = lastContextStoreVisibleRecordFields || [];
         const currentFields = visibleRecordFields || [];
 
-        const shouldRefetchData = lastFields.some((lastField, index) => {
-          const currentField = currentFields[index];
-          return (
-            !currentField ||
-            lastField.fieldMetadataItemId !==
-              currentField.fieldMetadataItemId ||
-            lastField.isVisible !== currentField.isVisible
-          );
-        });
+        const shouldRefetchData = currentFields.length > lastFields.length;
+
         if (shouldRefetchData) {
           await triggerInitialRecordTableDataLoad({
             shouldScrollToStart: isEmpty(lastFields),
