@@ -1,6 +1,8 @@
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
+import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
+import { assertPageLayoutTabHasDefinedLayoutModeOrThrow } from '@/page-layout/utils/assertPageLayoutTabHasDefinedLayoutModeOrThrow';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
@@ -9,12 +11,6 @@ import { PageLayoutType } from '~/generated/graphql';
 type PageLayoutLeftPanelProps = {
   pinnedLeftTabId: string;
 };
-
-const usePinnedLeftTab = () => {
-  return tab;
-};
-
-const useActiveTab = () => {};
 
 export const PageLayoutLeftPanel = ({
   pinnedLeftTabId,
@@ -27,6 +23,12 @@ export const PageLayoutLeftPanel = ({
     return null;
   }
 
+  const pinnedTab = currentPageLayout.tabs.find(
+    (tab) => tab.id === pinnedLeftTabId,
+  );
+
+  assertPageLayoutTabHasDefinedLayoutModeOrThrow(pinnedTab);
+
   return (
     <ShowPageLeftContainer>
       <SummaryCard
@@ -35,7 +37,14 @@ export const PageLayoutLeftPanel = ({
         isInRightDrawer={isInRightDrawer}
       />
 
-      <PageLayoutContent tabId={pinnedLeftTabId} isInPinnedTab />
+      <PageLayoutContentProvider
+        value={{
+          tabId: pinnedTab.id,
+          layoutMode: pinnedTab.layoutMode,
+        }}
+      >
+        <PageLayoutContent tabId={pinnedLeftTabId} />
+      </PageLayoutContentProvider>
     </ShowPageLeftContainer>
   );
 };

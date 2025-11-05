@@ -2,35 +2,29 @@ import { PageLayoutCanvasViewer } from '@/page-layout/components/PageLayoutCanva
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
 import { PageLayoutVerticalListEditor } from '@/page-layout/components/PageLayoutVerticalListEditor';
 import { PageLayoutVerticalListViewer } from '@/page-layout/components/PageLayoutVerticalListViewer';
-import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
+import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ isInPinnedTab: boolean }>`
   background: ${({ theme }) => theme.background.primary};
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
   position: relative;
-  padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+  padding: ${({ theme, isInPinnedTab }) =>
+    isInPinnedTab ? 0 : theme.spacing(2)};
 `;
 
-type PageLayoutContentProps = {
-  tabId: string;
-  isInPinnedTab?: boolean;
-};
-
-export const PageLayoutContent = ({
-  tabId,
-  isInPinnedTab = false,
-}: PageLayoutContentProps) => {
+export const PageLayoutContent = () => {
   const isRecordPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
   );
@@ -40,9 +34,13 @@ export const PageLayoutContent = ({
   );
 
   const { currentPageLayout } = useCurrentPageLayout();
+  const { tabId } = usePageLayoutContentContext();
+
   const { reorderWidgets } = useReorderPageLayoutWidgets(tabId);
 
   const activeTab = currentPageLayout?.tabs.find((tab) => tab.id === tabId);
+
+  const { isInPinnedTab } = useIsInPinnedTab();
 
   if (
     !isDefined(currentPageLayout) ||
@@ -58,48 +56,23 @@ export const PageLayoutContent = ({
     isRecordPageEnabled && activeTab.layoutMode === 'vertical-list';
 
   if (isCanvasLayout) {
-    return (
-      <PageLayoutContentProvider
-        value={{
-          tabId: tabId,
-          layoutMode: activeTab.layoutMode,
-        }}
-      >
-        <PageLayoutCanvasViewer widgets={activeTab.widgets} />
-      </PageLayoutContentProvider>
-    );
+    return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;
   }
 
   if (isVerticalList) {
     return (
-      <PageLayoutContentProvider
-        value={{
-          tabId: tabId,
-          layoutMode: activeTab.layoutMode,
-        }}
-      >
-        <StyledContainer>
-          {isPageLayoutInEditMode ? (
-            <PageLayoutVerticalListEditor
-              widgets={activeTab.widgets}
-              onReorder={reorderWidgets}
-            />
-          ) : (
-            <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
-          )}
-        </StyledContainer>
-      </PageLayoutContentProvider>
+      <StyledContainer isInPinnedTab={isInPinnedTab}>
+        {isPageLayoutInEditMode ? (
+          <PageLayoutVerticalListEditor
+            widgets={activeTab.widgets}
+            onReorder={reorderWidgets}
+          />
+        ) : (
+          <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
+        )}
+      </StyledContainer>
     );
   }
 
-  return (
-    <PageLayoutContentProvider
-      value={{
-        tabId: tabId,
-        layoutMode: activeTab.layoutMode,
-      }}
-    >
-      <PageLayoutGridLayout tabId={tabId} />
-    </PageLayoutContentProvider>
-  );
+  return <PageLayoutGridLayout tabId={tabId} />;
 };

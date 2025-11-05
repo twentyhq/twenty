@@ -1,6 +1,6 @@
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import styled from '@emotion/styled';
-import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledVerticalListContainer = styled.div`
   display: flex;
@@ -10,23 +10,16 @@ const StyledVerticalListContainer = styled.div`
 
 type PageLayoutVerticalListViewerProps = {
   widgets: PageLayoutWidget[];
-  isInPinnedTab: boolean;
 };
 
 export const PageLayoutVerticalListViewer = ({
   widgets,
-  isInPinnedTab,
 }: PageLayoutVerticalListViewerProps) => {
   return (
     <StyledVerticalListContainer>
       {widgets.map((widget) => (
         <div key={widget.id}>
-          <WidgetRenderer
-            widget={widget}
-            pageLayoutType={PageLayoutType.RECORD_PAGE}
-            layoutMode="vertical-list"
-            isInPinnedTab={isInPinnedTab}
-          />
+          <WidgetRenderer widget={widget} />
         </div>
       ))}
     </StyledVerticalListContainer>
