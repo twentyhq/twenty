@@ -482,7 +482,13 @@ export class ServerlessFunctionService {
 
     const timeoutPromise = new Promise<never>((_, reject) => {
       timeoutId = setTimeout(
-        () => reject(new Error(`Execution timeout: ${timeoutMs / 1000}s`)),
+        () =>
+          reject(
+            new ServerlessFunctionException(
+              `Execution timeout: ${timeoutMs / 1000}s`,
+              ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_TIMEOUT,
+            ),
+          ),
         timeoutMs,
       );
     });
