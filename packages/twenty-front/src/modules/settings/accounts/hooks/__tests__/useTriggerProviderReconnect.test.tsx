@@ -115,7 +115,9 @@ describe('useTriggerProviderReconnect', () => {
 
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.GOOGLE,
-        undefined,
+        {
+          redirectLocation: '/settings/accounts',
+        },
       );
       expect(mockNavigate).not.toHaveBeenCalled();
     });
@@ -133,7 +135,9 @@ describe('useTriggerProviderReconnect', () => {
 
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.MICROSOFT,
-        undefined,
+        {
+          redirectLocation: '/settings/accounts',
+        },
       );
       expect(mockNavigate).not.toHaveBeenCalled();
     });
@@ -160,7 +164,10 @@ describe('useTriggerProviderReconnect', () => {
 
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.GOOGLE,
-        options,
+        {
+          ...options,
+          redirectLocation: '/settings/accounts',
+        },
       );
       expect(mockNavigate).not.toHaveBeenCalled();
     });
@@ -186,7 +193,10 @@ describe('useTriggerProviderReconnect', () => {
 
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.MICROSOFT,
-        options,
+        {
+          ...options,
+          redirectLocation: '/settings/accounts',
+        },
       );
       expect(mockNavigate).not.toHaveBeenCalled();
     });
@@ -205,7 +215,9 @@ describe('useTriggerProviderReconnect', () => {
 
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.GOOGLE,
-        undefined,
+        {
+          redirectLocation: '/settings/accounts',
+        },
       );
       expect(mockNavigate).not.toHaveBeenCalled();
     });
@@ -230,7 +242,9 @@ describe('useTriggerProviderReconnect', () => {
 
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.GOOGLE,
-        undefined,
+        {
+          redirectLocation: '/settings/accounts',
+        },
       );
     });
   });
