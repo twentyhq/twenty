@@ -2,8 +2,6 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { forwardRef } from 'react';
 import {
-  IconMinus,
-  IconMinusVertical,
   IconRadiusBottomLeft,
   IconRadiusBottomRight,
   IconRadiusTopLeft,
@@ -71,55 +69,77 @@ const StyledTopRightIcon = styled(IconRadiusTopRight)`
   }
 `;
 
-const StyledVerticalIcon = styled(IconMinusVertical)<{
-  handleAxis: 'w' | 'e';
-}>`
-  ${({ theme, handleAxis }) =>
-    handleAxis === 'w' &&
-    css`
-      left: ${theme.spacing(1)};
-    `}
-  ${({ theme, handleAxis }) =>
-    handleAxis === 'e' &&
-    css`
-      right: ${theme.spacing(1)};
-    `}
-
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: col-resize;
-  position: absolute;
-  color: transparent;
-  display: none;
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
+const StyledVerticalHandle = styled.div`
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  height: ${({ theme }) => theme.spacing(5)};
+  width: 3px;
 `;
 
-const StyledHorizontalIcon = styled(IconMinus)<{
+const StyledHorizontalHandle = styled.div`
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  height: 3px;
+  width: ${({ theme }) => theme.spacing(5)};
+`;
+
+const StyledHorizontalHandleWrapper = styled.div<{
   handleAxis: 'n' | 's';
 }>`
   ${({ theme, handleAxis }) =>
     handleAxis === 'n' &&
     css`
-      top: ${theme.spacing(1)};
+      top: ${theme.spacing(2)};
     `}
   ${({ theme, handleAxis }) =>
     handleAxis === 's' &&
     css`
-      bottom: ${theme.spacing(1)};
+      bottom: ${theme.spacing(2)};
     `}
 
-  left: 50%;
-  transform: translateX(-50%);
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: row-resize;
+  left: 50%;
+  transform: ${({ handleAxis }) =>
+    handleAxis === 'n'
+      ? 'translateY(-50%) translateX(-50%)'
+      : 'translateY(50%) translateX(-50%)'};
   position: absolute;
-  color: transparent;
-  display: none;
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)};
 
   :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
+    & > div {
+      background-color: ${({ theme }) => theme.font.color.tertiary};
+    }
+  }
+`;
+
+const StyledVerticalHandleWrapper = styled.div<{
+  handleAxis: 'w' | 'e';
+}>`
+  ${({ theme, handleAxis }) =>
+    handleAxis === 'w' &&
+    css`
+      left: ${theme.spacing(2)};
+    `}
+  ${({ theme, handleAxis }) =>
+    handleAxis === 'e' &&
+    css`
+      right: ${theme.spacing(2)};
+    `}
+
+  cursor: col-resize;
+  position: absolute;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  top: 50%;
+  transform: ${({ handleAxis }) =>
+    handleAxis === 'w'
+      ? 'translateY(-50%) translateX(-50%)'
+      : 'translateY(-50%) translateX(50%)'};
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)};
+
+  :hover {
+    & > div {
+      background-color: ${({ theme }) => theme.font.color.tertiary};
+    }
   }
 `;
 
@@ -147,20 +167,14 @@ export const PageLayoutGridResizeHandle = forwardRef<
       style={style}
     >
       {(handleAxis === 'w' || handleAxis === 'e') && (
-        <StyledVerticalIcon
-          handleAxis={handleAxis}
-          size={theme.spacing(4)}
-          stroke={theme.spacing(1)}
-          className="widget-card-resize-handle"
-        />
+        <StyledVerticalHandleWrapper handleAxis={handleAxis}>
+          <StyledVerticalHandle className="widget-card-resize-handle" />
+        </StyledVerticalHandleWrapper>
       )}
       {(handleAxis === 'n' || handleAxis === 's') && (
-        <StyledHorizontalIcon
-          handleAxis={handleAxis}
-          size={theme.spacing(4)}
-          stroke={theme.spacing(1)}
-          className="widget-card-resize-handle"
-        />
+        <StyledHorizontalHandleWrapper handleAxis={handleAxis}>
+          <StyledHorizontalHandle className="widget-card-resize-handle" />
+        </StyledHorizontalHandleWrapper>
       )}
       {handleAxis === 'se' && (
         <StyledBottomRightIcon
