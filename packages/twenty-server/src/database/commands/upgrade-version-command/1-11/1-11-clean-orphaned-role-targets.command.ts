@@ -33,7 +33,7 @@ export class CleanOrphanedRoleTargetsCommand extends ActiveOrSuspendedWorkspaces
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     if (this.hasRunOnce) {
-      this.logger.log('Skipping kanban field metadata id foreign key creation');
+      this.logger.log('This command has already been run');
 
       return;
     }
