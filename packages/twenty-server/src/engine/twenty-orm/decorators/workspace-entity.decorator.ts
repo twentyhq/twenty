@@ -2,7 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { TwentyStandardApplicationUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
+import { type TwentyStandardApplicationUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 

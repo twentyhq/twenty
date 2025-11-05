@@ -15,4 +15,3 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
   exports: [SeedStandardApplicationsCommand],
 })
 export class V1_11_UpgradeVersionCommandModule {}
-

@@ -1,7 +1,7 @@
 import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { TwentyStandardApplicationUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
+import { type TwentyStandardApplicationUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 export interface WorkspaceEntityMetadataArgs {
   /**

@@ -16,7 +16,8 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.favoriteFolder,
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'favoriteFolders',
   labelSingular: msg`Favorite Folder`,
   labelPlural: msg`Favorite Folders`,

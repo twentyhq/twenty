@@ -18,7 +18,8 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.blocklist,
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'blocklists',
   labelSingular: msg`Blocklist`,
   labelPlural: msg`Blocklists`,

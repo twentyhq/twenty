@@ -24,7 +24,8 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.taskTarget,
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'taskTargets',
   labelSingular: msg`Task Target`,
   labelPlural: msg`Task Targets`,

@@ -99,7 +99,8 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.messageChannel,
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'messageChannels',
   labelSingular: msg`Message Channel`,
   labelPlural: msg`Message Channels`,
