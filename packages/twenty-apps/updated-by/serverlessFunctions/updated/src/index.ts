@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 const TWENTY_API_KEY: string = process.env.TWENTY_API_KEY ?? '';
 const TWENTY_API_URL: string =
@@ -35,7 +36,15 @@ const objectsNotForUpdate: string[] = [
   'viewGroups',
 ];
 
-const fetchAllObjects = async (): Promise<Record<string, string>> => {
+type twentyObject = {
+  id: string;
+  nameSingular: string;
+  namePlural: string;
+}
+
+const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1);
+
+const fetchAllObjects = async (): Promise<twentyObject[]> => {
   const options = {
     method: 'GET',
     headers: {
@@ -45,10 +54,10 @@ const fetchAllObjects = async (): Promise<Record<string, string>> => {
   };
   try {
     const response = await axios(options);
-    let objects: Record<string, string> = {};
+    let objects: twentyObject[] = [];
     const objectsToParse: Record<string, any>[] = response.data.data.objects;
     objectsToParse.forEach((object) => {
-      objects[object.namePlural] = object.id;
+      objects.push({id: object.id, nameSingular: object.nameSingular, namePlural: object.namePlural} as twentyObject);
     });
     return objects;
   } catch (error) {
@@ -60,11 +69,13 @@ const fetchAllObjects = async (): Promise<Record<string, string>> => {
 };
 
 const createUpdatedByField = async (
-  twentyObjects: Record<string, string>,
+  twentyObjects: twentyObject[],
   objectName: string,
 ): Promise<boolean> => {
-  const sourceObjectId: string = twentyObjects[objectName];
-  const targetObjectId: string = twentyObjects['workspaceMembers'];
+  //@ts-expect-error suppress so compiler won't complain
+  const sourceObjectId: string = twentyObjects.find((object: twentyObject) => object.namePlural === objectName).id;
+  // @ts-expect-error object is in array but compiler doesn't know it
+  const targetObjectId: string = twentyObjects.find((object: twentyObject) => object.namePlural === 'workspaceMembers').id;
   // taken directly from Network tab
   const GraphQLQuery: string = `mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {
   createOneField(input: $input) {
@@ -136,6 +147,49 @@ const createUpdatedByField = async (
 };
 
 const updateUpdatedByField = async (
+  objectSingularName: string, // first letter must be capitalized
+  userId: string,
+  recordId: string,
+): Promise<boolean> => {
+  const graphQLQuery = `mutation UpdateOne${objectSingularName}($idToUpdate: UUID!, $input: ${objectSingularName}UpdateInput!) {
+  update${objectSingularName}(id: $idToUpdate, data: $input) {
+    id
+  }
+}`;
+  const variables = {
+    "idToUpdate": recordId,
+      "input": {
+      "updatedById": userId
+    }
+  }; // TODO: find a root cause and fix the request
+  const options = {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${TWENTY_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    url: `${TWENTY_API_URL}/graphql`,
+    data: {
+      query: graphQLQuery,
+      variables: variables,
+    }
+  };
+  try {
+    console.log(graphQLQuery, variables);
+    const response = await axios.request(options);
+    console.log(response.data);
+    return response.status === 200;
+  }
+  catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
+    throw error;
+  }
+}
+
+/*
+const updateUpdatedByField = async (
   objectName: string,
   userId: string,
   recordId: string,
@@ -161,6 +215,7 @@ const updateUpdatedByField = async (
     throw error;
   }
 };
+*/
 
 const helperFinderObjectName = async (
   objectName: string,
@@ -177,22 +232,24 @@ const helperFinderObjectName = async (
   const response = await axios.request(options);
   return response.status === 200 ? objectName : '';
   } catch (error) {
-    return "";
+    return ""; // throwing error will finish process, it's necessary to do it like this
   }
 };
 
 const findObjectName = async (
-  twentyObjects: Record<string, string>,
+  twentyObjects: twentyObject[],
   objectId: string,
 ): Promise<string> => {
-  const changeable_objects: string[] = Object.keys(twentyObjects).filter(
-    (key: string) => objectsNotForUpdate.indexOf(key) === -1,
-  );
-  console.log(changeable_objects.toString());
+  const changeable_objects: string[] = [];
+  for (let i = 0; i < twentyObjects.length; i++) {
+    if (!objectsNotForUpdate.includes(twentyObjects[i].namePlural)) {
+      changeable_objects.push(twentyObjects[i].namePlural);
+    }
+  }
     for (const object of changeable_objects) {
       const temp: string = await helperFinderObjectName(object, objectId);
-      console.log(temp);
       if (temp !== '') {
+        console.log(temp);
         return temp;
       }
     }
@@ -213,19 +270,20 @@ export const main = async (params: {
 
     if (
       properties.updatedFields?.length === 1 &&
-      properties.updatedFields.includes('updatedBy')
+      properties.updatedFields.includes('updatedById')
     ) {
+      console.log("Exited as last update was done by serverless function")
       return {}; // if last update was updatedBy field, don't update
     }
-    const twentyObjects: Record<string, string> = await fetchAllObjects();
+    const twentyObjects: twentyObject[] = await fetchAllObjects();
 
     // const objectName = properties.after; //TODO: uncomment once object type is exposed in properties
-    const objectName: string = await findObjectName(twentyObjects, recordId);
+    const objectPluralName: string = await findObjectName(twentyObjects, recordId);
 
-    if (properties.after.updatedBy === undefined) {
+    if (properties.after.updatedById === undefined) {
       const isFieldCreated: boolean = await createUpdatedByField(
         twentyObjects,
-        objectName,
+        objectPluralName,
       );
       if (!isFieldCreated) {
         console.error('Creation of updated by field failed');
@@ -233,16 +291,21 @@ export const main = async (params: {
       }
     }
 
+    // @ts-expect-error object exists but compiler doesn't know
+    const objectSingularName: string = twentyObjects.find((object) => object.namePlural === objectPluralName).nameSingular;
     const isObjectUpdated: boolean = await updateUpdatedByField(
-      objectName,
+      capitalizeFirstLetter(objectSingularName),
       userId,
       recordId,
     );
 
     if (isObjectUpdated) {
-      console.log(`Field updatedBy in object ${objectName} has been updated`);
+      console.log(`Field updatedBy in object ${objectPluralName} has been updated`);
+      return {};
     }
-    return {};
+    else {
+      throw new Error(`Update field updatedBy in record ${recordId} in object ${objectPluralName} has failed!`);
+    }
   } catch (error) {
     console.error('Exiting because of error');
     if (axios.isAxiosError(error)) {
@@ -253,3 +316,15 @@ export const main = async (params: {
     return {};
   }
 };
+
+export const config: ServerlessFunctionConfig = {
+  universalIdentifier: "47005bbc-ed0d-4d04-b53b-e94f5c38656d",
+  name: "updated-by",
+  triggers: [
+    {
+      universalIdentifier: "0b6da7cf-506f-4cb9-b692-a44b08972ba4",
+      type: "databaseEvent",
+      eventName: "*.updated"
+    }
+  ]
+}

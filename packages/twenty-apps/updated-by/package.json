@@ -8,21 +8,6 @@
   },
   "packageManager": "yarn@4.9.2",
   "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/schemas/appManifest.schema.json",
-  "universalIdentifier": "113d22d6-6711-4c1f-807d-b69203d3a503",
-  "name": "updated_by",
-  "description": "Updates Updated by field with details of person behind newest update",
-  "env": {
-    "TWENTY_API_KEY": {
-      "isSecret": true,
-      "value": "",
-      "description": "Required, used to send requests to Twenty"
-    },
-    "TWENTY_API_URL": {
-      "isSecret": false,
-      "value": "",
-      "description": "Optional, defaults to cloud API URL"
-    }
-  },
   "dependencies": {
     "axios": "^1.13.1"
   }
