@@ -8,9 +8,13 @@ export const getEffectiveGroupMode = (
     return undefined;
   }
 
+  if (groupMode === 'GROUPED') {
+    return 'grouped';
+  }
+
   if (groupMode === 'STACKED') {
     return 'stacked';
   }
 
-  return 'grouped';
+  return 'stacked';
 };
