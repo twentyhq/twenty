@@ -4,8 +4,6 @@ exports[`Create input validation - ARRAY Gql create input - failure ARRAY - shou
 
 exports[`Create input validation - ARRAY Gql create input - failure ARRAY - should fail with : {"arrayField":true} 1`] = `"String cannot represent a non string value: true"`;
 
-exports[`Create input validation - ARRAY Rest create input - failure ARRAY - should fail with : {"arrayField":"not-an-array"} 1`] = `"["Invalid value 'not-an-array' for array field \\"arrayField\\""]"`;
-
 exports[`Create input validation - ARRAY Rest create input - failure ARRAY - should fail with : {"arrayField":1} 1`] = `"["Invalid value 1 for array field \\"arrayField\\""]"`;
 
 exports[`Create input validation - ARRAY Rest create input - failure ARRAY - should fail with : {"arrayField":true} 1`] = `"["Invalid value true for array field \\"arrayField\\""]"`;

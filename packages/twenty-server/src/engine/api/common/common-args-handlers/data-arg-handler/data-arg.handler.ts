@@ -204,7 +204,7 @@ export class DataArgHandler {
             coercedValue = coerceActorFieldOrThrow(value, key);
             break;
           case FieldMetadataType.RICH_TEXT_V2:
-            coercedValue = coerceRichTextV2FieldOrThrow(value, key);
+            coercedValue = await coerceRichTextV2FieldOrThrow(value, key);
             break;
           case FieldMetadataType.LINKS:
             coercedValue = coerceLinksFieldOrThrow(value, key);

@@ -5,10 +5,15 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE",
-      "userFriendlyMessage": "Provided country code and calling code are conflicting",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided country code and calling code are conflicting",
+    "message": "Invalid value {
+  primaryPhoneNumber: '123456789',
+  primaryPhoneCountryCode: 'US',
+  primaryPhoneCallingCode: '+33',
+  additionalPhones: []
+} for phones field "phonenumber" - Provided country code and calling code are conflicting",
     "name": "UserInputError",
   },
 ]
@@ -19,10 +24,12 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE",
-      "userFriendlyMessage": "Provided country code and calling code are conflicting",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided country code and calling code are conflicting",
+    "message": "Invalid value {
+  additionalPhones: [ { callingCode: '+33', countryCode: 'US', number: '123456789' } ]
+} for phones field "phonenumber" - Provided country code and calling code are conflicting",
     "name": "UserInputError",
   },
 ]
@@ -33,10 +40,14 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "CONFLICTING_PHONE_CALLING_CODE",
-      "userFriendlyMessage": "Provided and inferred calling code are conflicting",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided and inferred calling code are conflicting",
+    "message": "Invalid value {
+  primaryPhoneNumber: '+33123456789',
+  primaryPhoneCallingCode: '+1',
+  additionalPhones: []
+} for phones field "phonenumber" - Provided and inferred calling code are conflicting",
     "name": "UserInputError",
   },
 ]
@@ -47,10 +58,10 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "CONFLICTING_PHONE_CALLING_CODE",
-      "userFriendlyMessage": "Provided and inferred calling code are conflicting",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided and inferred calling code are conflicting",
+    "message": "Invalid value { additionalPhones: [ { callingCode: '+1', number: '+33123456789' } ] } for phones field "phonenumber" - Provided and inferred calling code are conflicting",
     "name": "UserInputError",
   },
 ]
@@ -61,10 +72,14 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "CONFLICTING_PHONE_COUNTRY_CODE",
-      "userFriendlyMessage": "Provided and inferred country code are conflicting",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided and inferred country code are conflicting",
+    "message": "Invalid value {
+  primaryPhoneNumber: '+33123456789',
+  primaryPhoneCountryCode: 'US',
+  additionalPhones: []
+} for phones field "phonenumber" - Provided and inferred country code are conflicting",
     "name": "UserInputError",
   },
 ]
@@ -75,10 +90,10 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "CONFLICTING_PHONE_COUNTRY_CODE",
-      "userFriendlyMessage": "Provided and inferred country code are conflicting",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided and inferred country code are conflicting",
+    "message": "Invalid value { additionalPhones: [ { countryCode: 'US', number: '+33123456789' } ] } for phones field "phonenumber" - Provided and inferred country code are conflicting",
     "name": "UserInputError",
   },
 ]
@@ -89,10 +104,15 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_PHONE_CALLING_CODE",
-      "userFriendlyMessage": "Invalid calling code +999",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Invalid calling code +999",
+    "message": "Invalid value {
+  primaryPhoneNumber: '123456789',
+  primaryPhoneCountryCode: 'FR',
+  primaryPhoneCallingCode: '+999',
+  additionalPhones: []
+} for phones field "phonenumber" - Invalid calling code +999",
     "name": "UserInputError",
   },
 ]
@@ -103,10 +123,12 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_PHONE_CALLING_CODE",
-      "userFriendlyMessage": "Invalid calling code +999",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Invalid calling code +999",
+    "message": "Invalid value {
+  additionalPhones: [ { callingCode: '+999', countryCode: 'FR', number: '123456789' } ]
+} for phones field "phonenumber" - Invalid calling code +999",
     "name": "UserInputError",
   },
 ]
@@ -117,10 +139,15 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_PHONE_COUNTRY_CODE",
-      "userFriendlyMessage": "Invalid country code XX",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Invalid country code XX",
+    "message": "Invalid value {
+  primaryPhoneNumber: '123456789',
+  primaryPhoneCountryCode: 'XX',
+  primaryPhoneCallingCode: '+33',
+  additionalPhones: []
+} for phones field "phonenumber" - Invalid country code XX",
     "name": "UserInputError",
   },
 ]
@@ -131,10 +158,12 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_PHONE_COUNTRY_CODE",
-      "userFriendlyMessage": "Invalid country code XX",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Invalid country code XX",
+    "message": "Invalid value {
+  additionalPhones: [ { callingCode: '+33', countryCode: 'XX', number: '123456789' } ]
+} for phones field "phonenumber" - Invalid country code XX",
     "name": "UserInputError",
   },
 ]
@@ -145,10 +174,10 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_PHONE_NUMBER",
-      "userFriendlyMessage": "Provided phone number is invalid not-a-number",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided phone number is invalid not-a-number",
+    "message": "Invalid value { primaryPhoneNumber: 'not-a-number', additionalPhones: [] } for phones field "phonenumber" - Provided phone number is invalid not-a-number",
     "name": "UserInputError",
   },
 ]
@@ -159,10 +188,10 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_PHONE_NUMBER",
-      "userFriendlyMessage": "Provided phone number is invalid not-a-number",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided phone number is invalid not-a-number",
+    "message": "Invalid value { additionalPhones: [ { number: 'not-a-number' } ] } for phones field "phonenumber" - Provided phone number is invalid not-a-number",
     "name": "UserInputError",
   },
 ]
@@ -173,10 +202,10 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_PHONE_NUMBER",
-      "userFriendlyMessage": "Provided phone number is invalid 123456789",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided phone number is invalid 123456789",
+    "message": "Invalid value { primaryPhoneNumber: '123456789', additionalPhones: [] } for phones field "phonenumber" - Provided phone number is invalid 123456789",
     "name": "UserInputError",
   },
 ]
@@ -187,10 +216,10 @@ exports[`failing create phone field metadata test suite it should fail to create
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_PHONE_NUMBER",
-      "userFriendlyMessage": "Provided phone number is invalid 123456789",
+      "subCode": "INVALID_PHONES",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Provided phone number is invalid 123456789",
+    "message": "Invalid value { additionalPhones: [ { number: '123456789' } ] } for phones field "phonenumber" - Provided phone number is invalid 123456789",
     "name": "UserInputError",
   },
 ]
