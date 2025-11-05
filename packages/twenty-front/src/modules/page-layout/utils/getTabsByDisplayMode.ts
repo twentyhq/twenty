@@ -24,6 +24,13 @@ export const getTabsByDisplayMode = ({
     };
   }
 
+  if (pageLayout.tabs.length === 1) {
+    return {
+      tabsToRenderInTabList: pageLayout.tabs,
+      pinnedLeftTab: undefined,
+    };
+  }
+
   const tabsToRenderInTabList = pageLayout.tabs.slice(1);
   const pinnedLeftTab = pageLayout.tabs[0];
 

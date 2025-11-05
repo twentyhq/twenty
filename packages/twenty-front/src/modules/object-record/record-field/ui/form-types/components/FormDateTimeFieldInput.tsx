@@ -8,10 +8,12 @@ import {
   DateTimePicker,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/InternalDatePicker';
+} from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
-import { useDateParser } from '@/ui/input/components/internal/hooks/useDateParser';
+import { useParseDateTimeInputStringToJSDate } from '@/ui/input/components/internal/date/hooks/useParseDateTimeInputStringToJSDate';
+import { useParseJSDateToIMaskDateTimeInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateTimeInputString';
+
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -76,7 +78,6 @@ type DraftValue =
     };
 
 type FormDateTimeFieldInputProps = {
-  dateOnly?: boolean;
   label?: string;
   defaultValue: string | undefined;
   onChange: (value: string | null) => void;
@@ -86,7 +87,6 @@ type FormDateTimeFieldInputProps = {
 };
 
 export const FormDateTimeFieldInput = ({
-  dateOnly,
   label,
   defaultValue,
   onChange,
@@ -94,11 +94,12 @@ export const FormDateTimeFieldInput = ({
   readonly,
   placeholder,
 }: FormDateTimeFieldInputProps) => {
-  const { parseToString, parseToDate } = useDateParser({
-    isDateTimeInput: !dateOnly,
-  });
-
   const instanceId = useId();
+
+  const { parseJSDateToDateTimeInputString: parseDateTimeToString } =
+    useParseJSDateToIMaskDateTimeInputString();
+  const { parseDateTimeInputStringToJSDate: parseStringToDateTime } =
+    useParseDateTimeInputStringToJSDate();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)
@@ -127,7 +128,7 @@ export const FormDateTimeFieldInput = ({
 
   const [inputDateTime, setInputDateTime] = useState(
     isDefined(draftValueAsDate) && !isStandaloneVariableString(defaultValue)
-      ? parseToString(draftValueAsDate)
+      ? parseDateTimeToString(draftValueAsDate)
       : '',
   );
 
@@ -147,8 +148,7 @@ export const FormDateTimeFieldInput = ({
   const displayDatePicker =
     draftValue.type === 'static' && draftValue.mode === 'edit';
 
-  const placeholderToDisplay =
-    placeholder ?? (dateOnly ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm');
+  const placeholderToDisplay = placeholder ?? 'mm/dd/yyyy hh:mm';
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
@@ -174,7 +174,7 @@ export const FormDateTimeFieldInput = ({
       value: newDate?.toDateString() ?? null,
     });
 
-    setInputDateTime(isDefined(newDate) ? parseToString(newDate) : '');
+    setInputDateTime(isDefined(newDate) ? parseDateTimeToString(newDate) : '');
 
     setPickerDate(newDate);
 
@@ -224,7 +224,7 @@ export const FormDateTimeFieldInput = ({
 
     setPickerDate(newDate);
 
-    setInputDateTime(isDefined(newDate) ? parseToString(newDate) : '');
+    setInputDateTime(isDefined(newDate) ? parseDateTimeToString(newDate) : '');
 
     persistDate(newDate);
   };
@@ -253,7 +253,7 @@ export const FormDateTimeFieldInput = ({
       return;
     }
 
-    const parsedInputDateTime = parseToDate(inputDateTimeTrimmed);
+    const parsedInputDateTime = parseStringToDateTime(inputDateTimeTrimmed);
 
     if (!isDefined(parsedInputDateTime)) {
       return;
@@ -274,7 +274,7 @@ export const FormDateTimeFieldInput = ({
 
     setPickerDate(validatedDate);
 
-    setInputDateTime(parseToString(validatedDate));
+    setInputDateTime(parseDateTimeToString(validatedDate));
 
     persistDate(validatedDate);
   };
@@ -337,7 +337,6 @@ export const FormDateTimeFieldInput = ({
                     <OverlayContainer>
                       <DateTimePicker
                         date={pickerDate ?? new Date()}
-                        isDateTimeInput={false}
                         onChange={handlePickerChange}
                         onClose={handlePickerMouseSelect}
                         onEnter={handlePickerEnter}

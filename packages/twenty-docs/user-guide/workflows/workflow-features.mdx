@@ -1,0 +1,273 @@
+---
+title: Workflow Features
+info: Complete reference for all available workflow triggers, actions, and management features.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Automate processes and integrate with external tools
+---
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Workflow Triggers
+
+Workflows always start with a single trigger that defines when the automation should run.
+
+### Record is Created
+Starts the workflow when a new record is created in a selected object (People, Companies, Opportunities, or any custom object).
+
+**Configuration**: Select the object type to monitor for new records.
+
+### Record is Updated
+Starts the workflow when changes are made to an existing record.
+
+**Configuration**: 
+- Select the object type
+- Optionally specify which fields to monitor for changes
+
+### Record is Updated or Created
+Starts the workflow when a record is either created or updated in a selected object.
+
+**Why This Matters**: This trigger is particularly helpful because records created via different methods behave differently:
+- **API/CSV imports**: Records are created with all fields populated immediately
+- **Manual creation**: Records are created first, then fields are added in subsequent updates
+
+**Configuration**:
+- Select the object type to monitor
+- Optionally specify which fields to monitor for changes
+- The workflow will trigger both on initial creation and any subsequent updates
+
+### Record is Deleted
+Starts the workflow when a record is removed from an object.
+
+**Configuration**: Select the object type to monitor for deletions.
+
+### Launch Manually
+Starts the workflow when triggered by a user action. This trigger can be accessed through the Cmd+K menu or via a custom button in the top navbar.
+
+**Availability Configuration**:
+Choose how the workflow should handle record selection:
+
+- **Global**: No record is required to trigger this workflow. The workflow is triggered from anywhere (from any object) and does not use record(s) as input.
+
+- **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run as many times as there are records selected.
+  
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Bulk**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run once, providing the entire list of records as input. This means the workflow needs to contain an Iterator action. This is best for people who want to optimize/limit the number of workflow runs.
+
+**Additional Configuration**:
+- Select the target object (for Single and Bulk availability)
+- Choose a command icon for the workflow trigger
+- Configure navbar placement (Pinned or Not Pinned)
+
+**Access Methods**:
+- Cmd+K menu to find and launch manual workflows
+- Custom button in the top navbar (if configured)
+
+### On a Schedule
+Starts the workflow on a recurring basis you define.
+
+**Configuration**: 
+- Select time unit (minutes, hours, days)
+- Enter a value or use custom cron expressions for advanced scheduling
+
+### Webhook
+Starts the workflow when a GET or POST request is received from an external service.
+
+**Configuration**:
+- Receive a unique webhook URL
+- For POST requests, define the expected body structure
+- Configure authentication if needed
+
+## Workflow Actions
+
+Actions define what happens after a trigger fires. You can chain multiple actions together.
+
+### Create a Record
+Adds a new record to a selected object.
+
+**Configuration**:
+- Select the target object
+- Fill out the required and optional fields
+- Use data from previous steps to populate fields
+
+**Output**: The newly created record data is available for use in subsequent steps.
+
+### Update Record
+Modifies an existing record in a selected object.
+
+**Configuration**:
+- Select the target object
+- Choose the specific record to update
+- Select fields to modify and enter new values
+
+**Output**: The updated record data is available for use in subsequent steps.
+
+### Delete Record
+Removes a record from a selected object.
+
+**Configuration**:
+- Select the target object
+- Choose the specific record to delete
+
+**Output**: The deleted record data remains available for use in subsequent steps.
+
+### Search Records
+Finds records within a selected object using filter conditions.
+
+**Configuration**:
+- Select the object to search
+- Set filter criteria to narrow results
+- Configure sorting and limits
+
+**Output**: Returns matching records that can be used in subsequent steps.
+
+**Best Practice**: Use branches after Search Records to handle "found" vs "not found" scenarios.
+
+### Iterator
+Loops through an array of records returned from a previous step, allowing you to perform actions on each record individually.
+
+**Configuration**:
+- Select the array of records from a previous step (e.g., results from Search Records)
+- Define the actions to perform on each record in the loop
+- Configure the variable name to reference each record in the iteration
+
+**Example**: Search Records returns 5 people, then use Iterator to send an email to each person or update each record individually.
+
+**Note**: Iterator is currently in beta. Activate it under Settings > Releases > Lab.
+
+### Filter
+Filters an array of records based on specified conditions, allowing only records that meet the criteria to pass through.
+
+**Configuration**:
+- Select the array of records to filter
+- Define filter conditions and criteria
+- Configure which records should pass through to subsequent steps
+
+**Output**: Returns only the records that match the specified filter conditions.
+
+### Send Email
+Sends an email from your workflow.
+
+**Prerequisites**: Add an email account in Settings > Accounts
+
+**Configuration**:
+- Enter recipient email address
+- Set subject line
+- Compose message body
+- Reference variables from previous steps for personalization
+
+**Note**: Email attachments will be available in Q1 2026.
+
+### Code
+Runs custom JavaScript within your workflow.
+
+**Configuration**:
+- Write JavaScript code in the editor
+- Access variables from previous steps
+- Return variables for use in subsequent steps
+- Test code directly in the step
+
+**Access**: Manage API keys in Settings → API & Webhooks
+
+### Form
+Prompts a form during workflow execution to collect user input.
+
+**Configuration**:
+- Define input fields with types, labels, and placeholders
+- Configure validation rules
+- Set form title and description
+
+**Output**: Form responses are available for use in subsequent steps.
+
+<Warning>
+Forms are currently designed for manual triggers only. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. A notifications center will be released in 2026 to properly support forms in automated workflows.
+</Warning>
+
+### HTTP Request
+Sends a request to an external API as part of your workflow.
+
+**Configuration**:
+- Enter the API endpoint URL
+- Select HTTP method (GET, POST, PUT, PATCH, DELETE)
+- Add required headers and values
+- Include request body for POST/PUT/PATCH requests
+- Provide sample response for structure preview
+
+## Workflow Management
+
+### Creating Workflows
+1. Click "+ Add a Workflow" to begin
+2. Click "Untitled" to name your workflow
+3. Choose and configure your workflow trigger
+4. Add actions to your workflow
+5. Test and iterate
+6. Activate your workflow (currently in draft mode) once you're done editing it
+
+**Note**: If you don't see the Workflows section, this is due to a permissions issue. Contact your workspace administrator to grant you access to workflows.
+
+### Workflow Statuses
+- **Draft**: Being edited, not yet published
+- **Active**: Live version responding to triggers
+- **Deactivated**: Previously active but manually stopped
+- **Archived**: Past versions kept for history
+
+### Activating Workflows
+Click **Activate** to publish your draft as a new version. This makes the workflow eligible to run when triggered but doesn't immediately execute it.
+
+### Testing Workflows
+Test workflows before activation using:
+- Manual triggers (when no record selected)
+- Individual action testing (especially Code actions)
+- Draft mode testing that doesn't activate the workflow
+
+### Workflow Runs
+A **Run** is a record of workflow execution containing:
+- Status (success, failed, running)
+- Output data from each step
+- Author and timestamps
+- Error messages if applicable
+
+**Viewing Runs**: 
+- Check the **Runs** panel in the workflow editor
+- Open **Workflow Runs** view for monitoring across all workflows
+
+**Performance Tip**: Hide workflow runs from the "All workflows" page and other workflow pages to improve loading performance, as large numbers of runs can slow down page loading.
+
+### Version History
+- View all versions under the **Versions** field
+- Click any version to view details
+- Use **Use as draft** to restore previous versions
+- Handle draft conflicts with override or return options
+
+## Best Practices
+
+### Workflow Organization
+- **Descriptive Names**: Use clear, specific workflow names
+- **Step Naming**: Rename steps to describe their function
+- **Documentation**: Add comments in Code actions
+- **Categorization**: Group related workflows logically
+- **Custom Fields**: Add fields to the Workflow object in your data model (similar to other objects) to organize and categorize workflows with custom properties
+
+### Performance Optimization
+- **Minimize API Calls**: Batch operations when possible
+- **Efficient Searches**: Use specific filter criteria
+- **Error Handling**: Plan for failure scenarios
+- **Rate Limiting**: Respect external API limits
+
+### Data Flow Management
+- **Branch Logic**: Use branches after Search Records
+- **Variable Usage**: Leverage data from previous steps
+- **Data Validation**: Validate inputs in Code actions
+- **Field Mapping**: Plan data transformations carefully
+
+### Monitoring and Maintenance
+- **Regular Monitoring**: Check workflow runs for errors
+- **Performance Review**: Analyze execution times and success rates
+- **Update Management**: Test changes in draft before activation
+- **Team Coordination**: Document workflows for team members
+
+For practical examples of these features in action, see our [Internal Automations](/user-guide/workflows/internal-automations) and [External Tool Integration](/user-guide/workflows/external-tool-integration) guides.
+

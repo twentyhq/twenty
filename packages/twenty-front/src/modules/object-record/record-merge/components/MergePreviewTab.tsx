@@ -18,11 +18,11 @@ export const MergePreviewTab = ({
     objectNameSingular,
   });
 
-  if (!isDefined(mergePreviewRecord) && !isGeneratingPreview) {
+  if (!isDefined(mergePreviewRecord) || isGeneratingPreview) {
     return null;
   }
 
-  const recordId = mergePreviewRecord?.id ?? 'merge-preview-loading';
+  const recordId = mergePreviewRecord.id;
 
   return (
     <LayoutRenderingProvider

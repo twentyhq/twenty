@@ -18,4 +18,7 @@ export const CHART_CONFIGURATION_SETTING_LABELS = {
   OMIT_NULL_VALUES: msg`Omit zero values`,
   MIN_RANGE: msg`Min range`,
   MAX_RANGE: msg`Max range`,
+  DATE_GRANULARITY_X: msg`Date granularity`,
+  DATE_GRANULARITY_Y: msg`Date granularity`,
+  DATE_GRANULARITY: msg`Date granularity`,
 };

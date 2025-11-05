@@ -10,6 +10,7 @@ import { WorkspaceFlatViewFieldMapCacheService } from 'src/engine/metadata-modul
 import { WorkspaceFlatViewFilterMapCacheService } from 'src/engine/metadata-modules/flat-view-filter/services/workspace-flat-view-filter-map-cache.service';
 import { WorkspaceFlatViewGroupMapCacheService } from 'src/engine/metadata-modules/flat-view-group/services/workspace-flat-view-group-map-cache.service';
 import { WorkspaceFlatViewMapCacheService } from 'src/engine/metadata-modules/flat-view/services/workspace-flat-view-map-cache.service';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -31,10 +32,11 @@ import { WorkspaceFlatMapCacheRegistryService } from 'src/engine/workspace-flat-
       ViewEntity,
       ViewFieldEntity,
       ViewFilterEntity,
+      ViewGroupEntity,
       IndexMetadataEntity,
+      IndexFieldMetadataEntity,
       FieldMetadataEntity,
       ObjectMetadataEntity,
-      ViewGroupEntity,
     ]),
   ],
   providers: [

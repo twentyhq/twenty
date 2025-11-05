@@ -4,7 +4,7 @@ import { type ImapFlow } from 'imapflow';
 
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
+import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-list-fetch-error-handler.service';
 import { ImapIncrementalSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-incremental-sync.service';
 import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
 import { extractMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
@@ -25,7 +25,7 @@ export class ImapGetMessageListService {
   constructor(
     private readonly imapClientProvider: ImapClientProvider,
     private readonly imapIncrementalSyncService: ImapIncrementalSyncService,
-    private readonly imapHandleErrorService: ImapHandleErrorService,
+    private readonly imapMessageListFetchErrorHandler: ImapMessageListFetchErrorHandler,
   ) {}
 
   public async getMessageLists({
@@ -41,10 +41,17 @@ export class ImapGetMessageListService {
       for (const folder of messageFolders) {
         this.logger.log(`Processing folder: ${folder.name}`);
 
+        const folderPath = folder.externalId?.split(':')[0];
+
+        if (!folderPath) {
+          this.logger.warn(`Folder ${folder.name} has no path. Skipping.`);
+          continue;
+        }
+
         try {
           const response = await this.getMessageList(
             client,
-            folder.name,
+            folderPath,
             folder,
           );
 
@@ -74,7 +81,7 @@ export class ImapGetMessageListService {
         error.stack,
       );
 
-      this.imapHandleErrorService.handleImapMessageListFetchError(error);
+      this.imapMessageListFetchErrorHandler.handleError(error);
 
       return messageFolders.map((folder) => ({
         messageExternalIds: [],

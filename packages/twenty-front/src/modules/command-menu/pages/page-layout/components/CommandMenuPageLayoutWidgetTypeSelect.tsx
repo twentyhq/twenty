@@ -6,6 +6,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useCompanyDefaultChartConfig } from '@/page-layout/hooks/useCompanyDefaultChartConfig';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
+import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -23,6 +24,9 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const { createPageLayoutGraphWidget } =
     useCreatePageLayoutGraphWidget(pageLayoutId);
+
+  const { createPageLayoutIframeWidget } =
+    useCreatePageLayoutIframeWidget(pageLayoutId);
 
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilComponentState(
@@ -46,9 +50,15 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     });
   };
 
-  const handleNavigateToIframeConfig = () => {
+  const handleNavigateToIframeSettings = () => {
+    if (!isDefined(pageLayoutEditingWidgetId)) {
+      const newWidget = createPageLayoutIframeWidget('Untitled iFrame', null);
+
+      setPageLayoutEditingWidgetId(newWidget.id);
+    }
+
     navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutIframeConfig,
+      commandMenuPage: CommandMenuPages.PageLayoutIframeSettings,
     });
   };
 
@@ -68,15 +78,13 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
         </SelectableListItem>
         <SelectableListItem
           itemId="iframe"
-          onEnter={() => {
-            handleNavigateToIframeConfig();
-          }}
+          onEnter={handleNavigateToIframeSettings}
         >
           <CommandMenuItem
             Icon={IconFrame}
-            label="iFrame"
+            label={t`iFrame`}
             id="iframe"
-            onClick={handleNavigateToIframeConfig}
+            onClick={handleNavigateToIframeSettings}
           />
         </SelectableListItem>
       </CommandGroup>

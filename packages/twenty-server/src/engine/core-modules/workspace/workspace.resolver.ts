@@ -46,6 +46,7 @@ import {
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { getAuthBypassProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-bypass-providers-by-workspace.util';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -364,6 +365,10 @@ export class WorkspaceResolver {
         displayName: workspace.displayName,
         workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
         authProviders: getAuthProvidersByWorkspace({
+          workspace,
+          systemEnabledProviders,
+        }),
+        authBypassProviders: getAuthBypassProvidersByWorkspace({
           workspace,
           systemEnabledProviders,
         }),

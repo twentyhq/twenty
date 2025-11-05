@@ -13,6 +13,7 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
   catch(exception: ApplicationException) {
     switch (exception.code) {
       case ApplicationExceptionCode.OBJECT_NOT_FOUND:
+      case ApplicationExceptionCode.FIELD_NOT_FOUND:
       case ApplicationExceptionCode.ENTITY_NOT_FOUND:
       case ApplicationExceptionCode.APPLICATION_NOT_FOUND:
       case ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:

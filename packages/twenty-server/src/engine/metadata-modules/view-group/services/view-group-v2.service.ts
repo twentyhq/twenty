@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
 import { fromDeleteViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util';
 import { fromDestroyViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util';
@@ -14,6 +15,10 @@ import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dto
 import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import {
+  ViewGroupException,
+  ViewGroupExceptionCode,
+} from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
@@ -31,6 +36,32 @@ export class ViewGroupV2Service {
     createViewGroupInput: CreateViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
+    const [createdViewGroup] = await this.createMany({
+      workspaceId,
+      createViewGroupInputs: [createViewGroupInput],
+    });
+
+    if (!isDefined(createdViewGroup)) {
+      throw new ViewGroupException(
+        'Failed to create view group',
+        ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
+      );
+    }
+
+    return createdViewGroup;
+  }
+
+  async createMany({
+    createViewGroupInputs,
+    workspaceId,
+  }: {
+    createViewGroupInputs: CreateViewGroupInput[];
+    workspaceId: string;
+  }): Promise<ViewGroupDTO[]> {
+    if (createViewGroupInputs.length === 0) {
+      return [];
+    }
+
     const {
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps,
@@ -46,11 +77,13 @@ export class ViewGroupV2Service {
       },
     );
 
-    const flatViewGroupToCreate =
-      fromCreateViewGroupInputToFlatViewGroupToCreate({
-        createViewGroupInput,
-        workspaceId,
-      });
+    const flatViewGroupsToCreate = createViewGroupInputs.map(
+      (createViewGroupInput) =>
+        fromCreateViewGroupInputToFlatViewGroupToCreate({
+          createViewGroupInput,
+          workspaceId,
+        }),
+    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -58,7 +91,7 @@ export class ViewGroupV2Service {
           fromToAllFlatEntityMaps: {
             flatViewGroupMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewGroupMaps,
-              flatEntityToCreate: [flatViewGroupToCreate],
+              flatEntityToCreate: flatViewGroupsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             }),
@@ -77,7 +110,7 @@ export class ViewGroupV2Service {
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(
         validateAndBuildResult,
-        'Multiple validation errors occurred while creating view group',
+        'Multiple validation errors occurred while creating view groups',
       );
     }
 
@@ -89,8 +122,8 @@ export class ViewGroupV2Service {
         },
       );
 
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatViewGroupToCreate.id,
+    return findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityIds: flatViewGroupsToCreate.map((el) => el.id),
       flatEntityMaps: recomputedExistingFlatViewGroupMaps,
     });
   }

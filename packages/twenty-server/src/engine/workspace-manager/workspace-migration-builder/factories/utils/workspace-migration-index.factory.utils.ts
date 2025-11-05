@@ -57,6 +57,10 @@ export const createIndexMigration = async (
             isFieldMetadataEntityOfType(
               fieldMetadata,
               FieldMetadataType.RELATION,
+            ) ||
+            isFieldMetadataEntityOfType(
+              fieldMetadata,
+              FieldMetadataType.MORPH_RELATION,
             )
           ) {
             if (!fieldMetadata.settings) {

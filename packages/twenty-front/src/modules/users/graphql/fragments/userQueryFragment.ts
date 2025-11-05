@@ -18,6 +18,7 @@ export const USER_QUERY_FRAGMENT = gql`
     firstName
     lastName
     email
+    hasPassword
     canAccessFullAdminPanel
     canImpersonate
     supportUserHash
@@ -53,6 +54,9 @@ export const USER_QUERY_FRAGMENT = gql`
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled
+      isGoogleAuthBypassEnabled
+      isMicrosoftAuthBypassEnabled
+      isPasswordAuthBypassEnabled
       subdomain
       hasValidEnterpriseKey
       customDomain

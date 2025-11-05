@@ -159,6 +159,7 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       const result = await super.execute();
+
       const after = await eventSelectQueryBuilder.getMany();
 
       const formattedAfter = formatResult<T[]>(

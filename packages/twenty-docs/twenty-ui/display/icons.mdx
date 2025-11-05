@@ -1,0 +1,93 @@
+---
+title: Icons
+image: /images/user-guide/objects/objects.png
+---
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+A list of icons used throughout our app. 
+
+## Tabler Icons
+
+We use Tabler icons for React throughout the app. 
+
+<Tabs>
+
+<Tab title="Installation">
+<br/>
+
+```
+yarn add @tabler/icons-react
+```
+
+</Tab>
+
+<Tab title="Props">
+
+You can import each icon as a component. Here's an example:
+<br />
+
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+
+| Props | Type | Description | Default |
+|-------|------|-------------|--------|
+| size | number | The height and width of the icon in pixels | 24 |
+| color | string | The color of the icons | currentColor |
+| stroke | number | The stroke width of the icon in pixels | 2 |
+
+
+
+</Tab>
+
+</Tabs>
+
+
+
+## Custom Icons
+
+In addition to Tabler icons, the app also uses some custom icons.  
+
+### Icon Address Book
+
+Displays an address book icon. 
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+
+| Props | Type | Description | Default |
+|-------|------|-------------|--------|
+| size | number | The height and width of the icon in pixels | 24 |
+| stroke | number | The stroke width of the icon in pixels | 2 |
+
+
+
+</Tab>
+
+</Tabs>
+

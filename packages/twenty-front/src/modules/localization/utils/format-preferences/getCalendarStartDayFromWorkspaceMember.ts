@@ -1,5 +1,6 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { CalendarStartDay } from 'twenty-shared';
+
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 

@@ -1,4 +1,3 @@
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
@@ -35,7 +34,6 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
   );
 
   const { form } = useSignInUpForm();
-  const { redirectToSSOLoginPage } = useSSO();
 
   const { signInUpStep, continueWithEmail, continueWithCredentials } =
     useSignInUp(form);
@@ -55,11 +53,7 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
     if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length > 1) {
       return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
     }
-
-    if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length === 1) {
-      redirectToSSOLoginPage(workspaceAuthProviders.sso[0].id);
-    }
-  }, [redirectToSSOLoginPage, setSignInUpStep, workspaceAuthProviders]);
+  }, [setSignInUpStep, workspaceAuthProviders]);
 
   useEffect(() => {
     if (loadingStatus === LoadingStatus.Done) {
