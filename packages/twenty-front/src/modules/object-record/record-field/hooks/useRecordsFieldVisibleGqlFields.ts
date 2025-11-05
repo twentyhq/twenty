@@ -77,15 +77,5 @@ export const useRecordsFieldVisibleGqlFields = ({
       objectMetadataItems,
       shouldOnlyLoadActivityIdentifiers: true,
     }),
-    // noteTargets: generateDepthRecordGqlFieldsFromObject({
-    //   objectMetadataItem: noteTargetObjectMetadataItem,
-    //   objectMetadataItems,
-    //   depth: 1,
-    // }),
-    // taskTargets: generateDepthRecordGqlFieldsFromObject({
-    //   objectMetadataItems,
-    //   objectMetadataItem: taskTargetObjectMetadataItem,
-    //   depth: 1,
-    // }),
   };
 };
