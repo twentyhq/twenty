@@ -10,11 +10,14 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterGroupDTO)
@@ -23,6 +26,8 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 export class ViewFilterGroupResolver {
   constructor(
     private readonly viewFilterGroupService: ViewFilterGroupService,
+    private readonly viewService: ViewService,
+    private readonly permissionsService: PermissionsService,
     @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
   ) {}
@@ -67,7 +72,24 @@ export class ViewFilterGroupResolver {
       throw new Error('View not found');
     }
 
-    if (view.createdById !== userWorkspaceId) {
+    // Get user permissions
+    const permissions = isDefined(userWorkspaceId)
+      ? await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        })
+      : null;
+
+    const hasViewsPermission =
+      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+
+    const canUpdate = this.viewService.canUserUpdateView(
+      view,
+      userWorkspaceId,
+      hasViewsPermission,
+    );
+
+    if (!canUpdate) {
       throw new Error('You do not have permission to update this view');
     }
 
@@ -106,7 +128,24 @@ export class ViewFilterGroupResolver {
       throw new Error('View not found');
     }
 
-    if (view.createdById !== userWorkspaceId) {
+    // Get user permissions
+    const permissions = isDefined(userWorkspaceId)
+      ? await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        })
+      : null;
+
+    const hasViewsPermission =
+      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+
+    const canUpdate = this.viewService.canUserUpdateView(
+      view,
+      userWorkspaceId,
+      hasViewsPermission,
+    );
+
+    if (!canUpdate) {
       throw new Error('You do not have permission to update this view');
     }
 
@@ -141,7 +180,24 @@ export class ViewFilterGroupResolver {
       throw new Error('View not found');
     }
 
-    if (view.createdById !== userWorkspaceId) {
+    // Get user permissions
+    const permissions = isDefined(userWorkspaceId)
+      ? await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        })
+      : null;
+
+    const hasViewsPermission =
+      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+
+    const canUpdate = this.viewService.canUserUpdateView(
+      view,
+      userWorkspaceId,
+      hasViewsPermission,
+    );
+
+    if (!canUpdate) {
       throw new Error('You do not have permission to update this view');
     }
 
@@ -181,7 +237,24 @@ export class ViewFilterGroupResolver {
       throw new Error('View not found');
     }
 
-    if (view.createdById !== userWorkspaceId) {
+    // Get user permissions
+    const permissions = isDefined(userWorkspaceId)
+      ? await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        })
+      : null;
+
+    const hasViewsPermission =
+      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+
+    const canUpdate = this.viewService.canUserUpdateView(
+      view,
+      userWorkspaceId,
+      hasViewsPermission,
+    );
+
+    if (!canUpdate) {
       throw new Error('You do not have permission to update this view');
     }
 

@@ -1,6 +1,7 @@
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { useCanEditView } from '@/views/hooks/useCanEditView';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
@@ -12,6 +13,7 @@ import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/v
 import { useRecoilCallback } from 'recoil';
 
 export const useUpdateViewFromCurrentState = () => {
+  const { canEditView } = useCanEditView();
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
   const viewPickerInputNameCallbackState = useRecoilComponentCallbackState(
@@ -43,6 +45,11 @@ export const useUpdateViewFromCurrentState = () => {
   const updateViewFromCurrentState = useRecoilCallback(
     ({ set, snapshot }) =>
       async () => {
+        if (!canEditView) {
+          closeAndResetViewPicker();
+          return;
+        }
+
         set(viewPickerIsPersistingCallbackState, true);
         set(viewPickerIsDirtyCallbackState, false);
         closeAndResetViewPicker();
@@ -75,6 +82,7 @@ export const useUpdateViewFromCurrentState = () => {
         changeView(viewPickerReferenceViewId);
       },
     [
+      canEditView,
       viewPickerIsPersistingCallbackState,
       viewPickerIsDirtyCallbackState,
       closeAndResetViewPicker,

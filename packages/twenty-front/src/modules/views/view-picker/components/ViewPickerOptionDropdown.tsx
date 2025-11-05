@@ -1,6 +1,6 @@
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -11,15 +11,16 @@ import { useDeleteViewFromCurrentState } from '@/views/view-picker/hooks/useDele
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import {
-    IconHeart,
-    IconLock,
-    IconPencil,
-    IconTrash,
-    useIcons,
+  IconHeart,
+  IconLock,
+  IconPencil,
+  IconTrash,
+  useIcons,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { ViewVisibility } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
@@ -52,14 +53,16 @@ export const ViewPickerOptionDropdown = ({
     viewPickerReferenceViewIdComponentState,
   );
   const { setViewPickerMode } = useViewPickerMode();
-  const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
+  const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   const { sortedFavorites: favorites } = useFavorites();
   const { createFavorite } = useCreateFavorite();
 
-  // Check if user can edit this view (they must be the creator)
+  // Check if user can edit this view
+  // Users with VIEWS permission can edit all views
+  // Users without VIEWS permission can only edit unlisted views (which are always their own, filtered by backend)
   const canEditView =
-    view.createdByUserWorkspaceId === currentUserWorkspace?.id;
+    hasViewsPermission || view.visibility === ViewVisibility.UNLISTED;
 
   const isFavorite = favorites.some(
     (favorite) =>

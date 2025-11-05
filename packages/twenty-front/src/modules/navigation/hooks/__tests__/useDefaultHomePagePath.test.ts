@@ -10,9 +10,9 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { coreViewsState } from '@/views/states/coreViewState';
 import { AppPath } from 'twenty-shared/types';
 import {
-    ViewOpenRecordIn,
-    ViewType,
-    ViewVisibility,
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
 } from '~/generated/graphql';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { mockedUserData } from '~/testing/mock-data/users';

@@ -12,6 +12,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useTheme } from '@emotion/react';
@@ -36,6 +37,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   const { updateCurrentView } = useUpdateCurrentView();
   const { enqueueSuccessSnackBar } = useSnackBar();
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
+  const { canPersistChanges } = useCanPersistViewChanges();
 
   const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
@@ -48,7 +50,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   ];
 
   const handleVisibilityChange = (visibility: ViewVisibility) => {
-    if (!currentView) return;
+    if (!canPersistChanges || !currentView) return;
     updateCurrentView({
       visibility,
     });
@@ -79,6 +81,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
             itemId={ViewVisibility.WORKSPACE}
             onEnter={() =>
               hasViewsPermission &&
+              canPersistChanges &&
               handleVisibilityChange(ViewVisibility.WORKSPACE)
             }
           >
@@ -92,9 +95,10 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                   focused={selectedItemId === ViewVisibility.WORKSPACE}
                   onClick={() =>
                     hasViewsPermission &&
+                    canPersistChanges &&
                     handleVisibilityChange(ViewVisibility.WORKSPACE)
                   }
-                  disabled={!hasViewsPermission}
+                  disabled={!hasViewsPermission || !canPersistChanges}
                 />
               </div>
               {!hasViewsPermission &&
@@ -110,7 +114,10 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewVisibility.UNLISTED}
-            onEnter={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
+            onEnter={() =>
+              canPersistChanges &&
+              handleVisibilityChange(ViewVisibility.UNLISTED)
+            }
           >
             <MenuItemSelect
               LeftIcon={IconCircleDashed}
@@ -118,7 +125,11 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               contextualText={t`Visible to you`}
               selected={currentVisibility === ViewVisibility.UNLISTED}
               focused={selectedItemId === ViewVisibility.UNLISTED}
-              onClick={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
+              onClick={() =>
+                canPersistChanges &&
+                handleVisibilityChange(ViewVisibility.UNLISTED)
+              }
+              disabled={!canPersistChanges}
             />
           </SelectableListItem>
           {currentVisibility === ViewVisibility.WORKSPACE && (

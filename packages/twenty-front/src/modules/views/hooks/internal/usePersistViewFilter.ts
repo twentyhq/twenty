@@ -8,14 +8,14 @@ import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-    type CreateCoreViewFilterMutationVariables,
-    type DeleteCoreViewFilterMutationVariables,
-    type DestroyCoreViewFilterMutationVariables,
-    type UpdateCoreViewFilterMutationVariables,
-    useCreateCoreViewFilterMutation,
-    useDeleteCoreViewFilterMutation,
-    useDestroyCoreViewFilterMutation,
-    useUpdateCoreViewFilterMutation,
+  type CreateCoreViewFilterMutationVariables,
+  type DeleteCoreViewFilterMutationVariables,
+  type DestroyCoreViewFilterMutationVariables,
+  type UpdateCoreViewFilterMutationVariables,
+  useCreateCoreViewFilterMutation,
+  useDeleteCoreViewFilterMutation,
+  useDestroyCoreViewFilterMutation,
+  useUpdateCoreViewFilterMutation,
 } from '~/generated/graphql';
 
 export const usePersistViewFilterRecords = () => {

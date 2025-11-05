@@ -11,11 +11,11 @@ import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modul
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import {
-    ViewException,
-    ViewExceptionCode,
-    ViewExceptionMessageKey,
-    generateViewExceptionMessage,
-    generateViewUserFriendlyExceptionMessage,
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -250,8 +250,21 @@ export class ViewService {
     });
   }
 
-  canUserUpdateView(view: ViewEntity, userWorkspaceId?: string): boolean {
-    return view.createdByUserWorkspaceId === userWorkspaceId;
+  canUserUpdateView(
+    view: ViewEntity,
+    userWorkspaceId: string | undefined,
+    userHasViewsPermission: boolean,
+  ): boolean {
+    // Users with VIEWS permission can edit all views
+    if (userHasViewsPermission) {
+      return true;
+    }
+
+    // Users without VIEWS permission can only edit unlisted views they created
+    return (
+      view.visibility === ViewVisibility.UNLISTED &&
+      view.createdByUserWorkspaceId === userWorkspaceId
+    );
   }
 
   async flushGraphQLCache(workspaceId: string): Promise<void> {

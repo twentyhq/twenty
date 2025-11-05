@@ -1,14 +1,6 @@
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { useRecoilValue } from 'recoil';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 
 export const useCanEditView = () => {
-  const { currentView } = useGetCurrentViewOnly();
-  const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
-
-  const canEditView =
-    !!currentView &&
-    currentView.createdByUserWorkspaceId === currentUserWorkspace?.id;
-
+  const { canPersistChanges: canEditView } = useCanPersistViewChanges();
   return { canEditView };
 };

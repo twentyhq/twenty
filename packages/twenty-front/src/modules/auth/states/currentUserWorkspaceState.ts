@@ -6,7 +6,6 @@ export type CurrentUserWorkspace = Pick<
   UserWorkspace,
   'permissionFlags' | 'twoFactorAuthenticationMethodSummary'
 > & {
-  id?: string;
   objectsPermissions: Array<ObjectPermissions & { objectMetadataId: string }>;
 };
 

@@ -1,12 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
-    Args,
-    Context,
-    Mutation,
-    Parent,
-    Query,
-    ResolveField,
-    Resolver,
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
@@ -43,11 +43,11 @@ import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import {
-    ViewException,
-    ViewExceptionCode,
-    ViewExceptionMessageKey,
-    generateViewExceptionMessage,
-    generateViewUserFriendlyExceptionMessage,
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
@@ -214,9 +214,21 @@ export class ViewResolver {
       throw new Error('View not found');
     }
 
+    // Get user permissions first
+    const permissions = isDefined(userWorkspaceId)
+      ? await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId: workspace.id,
+        })
+      : null;
+
+    const hasViewsPermission =
+      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+
     const canUpdate = this.viewService.canUserUpdateView(
       existingView,
       userWorkspaceId,
+      hasViewsPermission,
     );
 
     if (!canUpdate) {
@@ -233,22 +245,15 @@ export class ViewResolver {
       );
     }
 
+    // Check if trying to change to workspace visibility without permission
     if (
       isDefined(input.visibility) &&
       input.visibility === ViewVisibility.WORKSPACE &&
-      isDefined(userWorkspaceId)
+      !hasViewsPermission
     ) {
-      const permissions =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-        });
-
-      if (!permissions.permissionFlags[PermissionFlagType.VIEWS]) {
-        throw new Error(
-          'You need manage views permission to update workspace-level views',
-        );
-      }
+      throw new Error(
+        'You need manage views permission to update workspace-level views',
+      );
     }
 
     const isWorkspaceMigrationV2Enabled =
