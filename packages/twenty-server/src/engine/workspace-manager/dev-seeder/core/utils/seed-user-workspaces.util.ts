@@ -6,7 +6,7 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
-} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
 
 const tableName = 'userWorkspace';
 

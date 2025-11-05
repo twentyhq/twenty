@@ -26,6 +26,7 @@ export const seedStandardApplications = async ({
   if (applicationsToSeed.twentyStandard) {
     await applicationService.create({
       ...TWENTY_STANDARD_APPLICATION,
+      serverlessFunctionLayerId: null,
       workspaceId,
     });
   }
@@ -33,6 +34,7 @@ export const seedStandardApplications = async ({
   if (applicationsToSeed.twentyWorkflows) {
     await applicationService.create({
       ...TWENTY_WORKFLOW_APPLICATION,
+      serverlessFunctionLayerId: null,
       workspaceId,
     });
   }

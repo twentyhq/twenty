@@ -9,7 +9,8 @@ import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/u
 import { seedStandardApplications } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-standard-applications.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
-import { seedWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { seedWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
+import { createWorkspaceCustomApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/create-workspace-custom-application';
 
 type SeedCoreSchemaArgs = {
   dataSource: DataSource;
@@ -30,7 +31,7 @@ export const seedCoreSchema = async ({
 }: SeedCoreSchemaArgs) => {
   const schemaName = 'core';
 
-  await seedWorkspaces({
+  const workspace = await seedWorkspace({
     dataSource,
     schemaName,
     workspaceId,
@@ -40,6 +41,13 @@ export const seedCoreSchema = async ({
   await seedUserWorkspaces(dataSource, schemaName, workspaceId);
 
   await seedStandardApplications({ applicationService, workspaceId });
+  const workspaceCustomApplication = createWorkspaceCustomApplication({
+    workspace,
+  });
+  await applicationService.create({
+    ...workspaceCustomApplication,
+    serverlessFunctionLayerId: null,
+  });
 
   await seedAgents(dataSource, schemaName, workspaceId);
 

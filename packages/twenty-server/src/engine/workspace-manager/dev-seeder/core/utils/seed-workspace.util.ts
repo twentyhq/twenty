@@ -1,8 +1,9 @@
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource } from 'typeorm';
 
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { isDefined } from 'twenty-shared/utils';
 
 const tableName = 'workspace';
 
@@ -33,7 +34,7 @@ type WorkspaceSeederFields = Pick<
   (typeof workspaceSeederFields)[number]
 >;
 
-export const seedWorkspaces = async ({
+export const seedWorkspace = async ({
   schemaName,
   dataSource,
   workspaceId,
@@ -71,6 +72,19 @@ export const seedWorkspaces = async ({
     .orIgnore()
     .values(workspaces[workspaceId])
     .execute();
+
+  const createdWorkspace = await dataSource
+    .createQueryBuilder()
+    .select('workspace')
+    .from(WorkspaceEntity, 'workspace')
+    .where('workspace.id = :workspaceId', { workspaceId })
+    .getOne();
+
+  if (!isDefined(createdWorkspace)) {
+    throw new Error('Could not find just seeded workspace, should never occur');
+  }
+
+  return createdWorkspace;
 };
 
 export const deleteWorkspaces = async (

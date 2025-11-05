@@ -35,8 +35,8 @@ export class ApplicationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true, type: 'uuid' })
-  universalIdentifier?: string;
+  @Column({ nullable: false, type: 'uuid' })
+  universalIdentifier: string;
 
   @Column({ nullable: false, type: 'text' })
   name: string;

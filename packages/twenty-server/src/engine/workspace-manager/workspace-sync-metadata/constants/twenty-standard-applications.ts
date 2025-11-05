@@ -7,34 +7,32 @@ export const TWENTY_STANDARD_APPLICATION = {
     'Twenty is an open-source CRM that allows you to manage your sales and customer relationships',
   version: '1.0.0',
   sourcePath: 'cli-sync', // TODO double check value
-  serverlessFunctionLayerId: null,
-  agents: [],
-  applicationVariables: [],
-  objects: [],
-  serverlessFunctions: [],
   sourceType: 'local',
-} as const satisfies Omit<
-  ApplicationEntity,
-  'workspaceId' | 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'workspace'
->;
+} as const satisfies CreateApplicationInput;
 
 export const TWENTY_WORKFLOW_APPLICATION = {
   universalIdentifier: '20202020-a1cf-4cda-896c-0c19bbba6f00',
   name: 'Twenty Workflows',
   description: 'Workflow automation engine for Twenty CRM',
   version: '1.0.0',
-  sourcePath: 'system/twenty-workflow',
-  serverlessFunctionLayerId: null,
-  agents: [],
-  applicationVariables: [],
-  objects: [],
-  serverlessFunctions: [],
+  sourcePath: 'cli-sync',
   sourceType: 'local',
-} as const satisfies Omit<
-  ApplicationEntity,
-  'workspaceId' | 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'workspace'
->;
+} as const satisfies CreateApplicationInput;
 
+export type CreateApplicationInput = Omit<
+  ApplicationEntity,
+  | 'workspaceId'
+  | 'serverlessFunctionLayerId'
+  | 'id'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt'
+  | 'workspace'
+  | 'agents'
+  | 'applicationVariables'
+  | 'objects'
+  | 'serverlessFunctions'
+>;
 export type TwentyStandardApplicationUniversalIdentifiers =
   | (typeof TWENTY_STANDARD_APPLICATION)['universalIdentifier']
   | (typeof TWENTY_WORKFLOW_APPLICATION)['universalIdentifier'];
