@@ -211,7 +211,13 @@ export class ViewResolver {
     const existingView = await this.viewService.findById(id, workspace.id);
 
     if (!isDefined(existingView)) {
-      throw new Error('View not found');
+      throw new ViewException(
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          id,
+        ),
+        ViewExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
     // Get user permissions first
@@ -269,7 +275,10 @@ export class ViewResolver {
       });
     }
 
-    const updatedView = await this.viewService.update(id, workspace.id, input);
+    const updatedView = await this.viewService.updateWithEntity(
+      existingView,
+      input,
+    );
 
     return updatedView;
   }

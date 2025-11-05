@@ -6,7 +6,7 @@ exports[`View Field Resolver - Failing Delete Operation - v2 should fail to dele
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View field to delete not found",
+  "message": "View field (id: 20202020-0000-4000-8000-000000000001) not found",
   "name": "NotFoundError",
 }
 `;

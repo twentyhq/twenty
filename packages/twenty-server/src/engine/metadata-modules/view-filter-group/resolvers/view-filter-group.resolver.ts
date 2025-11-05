@@ -15,6 +15,12 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
+import {
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessageKey,
+  generateViewFilterGroupExceptionMessage,
+} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
@@ -113,7 +119,13 @@ export class ViewFilterGroupResolver {
     );
 
     if (!isDefined(viewFilterGroup)) {
-      throw new Error('View filter group not found');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -149,7 +161,7 @@ export class ViewFilterGroupResolver {
       throw new Error('You do not have permission to update this view');
     }
 
-    return this.viewFilterGroupService.update(id, workspace.id, input);
+    return this.viewFilterGroupService.updateWithEntity(viewFilterGroup, input);
   }
 
   @Mutation(() => Boolean)
@@ -165,7 +177,13 @@ export class ViewFilterGroupResolver {
     );
 
     if (!isDefined(viewFilterGroup)) {
-      throw new Error('View filter group not found');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -201,10 +219,8 @@ export class ViewFilterGroupResolver {
       throw new Error('You do not have permission to update this view');
     }
 
-    const deletedViewFilterGroup = await this.viewFilterGroupService.delete(
-      id,
-      workspace.id,
-    );
+    const deletedViewFilterGroup =
+      await this.viewFilterGroupService.deleteWithEntity(viewFilterGroup);
 
     return isDefined(deletedViewFilterGroup);
   }
@@ -216,13 +232,20 @@ export class ViewFilterGroupResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<boolean> {
-    const viewFilterGroup = await this.viewFilterGroupService.findById(
-      id,
-      workspace.id,
-    );
+    const viewFilterGroup =
+      await this.viewFilterGroupService.findByIdIncludingDeleted(
+        id,
+        workspace.id,
+      );
 
     if (!isDefined(viewFilterGroup)) {
-      throw new Error('View filter group not found');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -258,10 +281,8 @@ export class ViewFilterGroupResolver {
       throw new Error('You do not have permission to update this view');
     }
 
-    const deletedViewFilterGroup = await this.viewFilterGroupService.destroy(
-      id,
-      workspace.id,
-    );
+    const deletedViewFilterGroup =
+      await this.viewFilterGroupService.destroyWithEntity(viewFilterGroup);
 
     return isDefined(deletedViewFilterGroup);
   }

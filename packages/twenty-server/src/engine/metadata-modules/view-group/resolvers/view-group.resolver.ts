@@ -23,6 +23,8 @@ import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-g
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
@@ -163,7 +165,13 @@ export class ViewGroupResolver {
     );
 
     if (!isDefined(viewGroup)) {
-      throw new Error('View group not found');
+      throw new ViewGroupException(
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          updateViewGroupInput.id,
+        ),
+        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -212,9 +220,8 @@ export class ViewGroupResolver {
       });
     }
 
-    return this.viewGroupService.update(
-      updateViewGroupInput.id,
-      workspaceId,
+    return this.viewGroupService.updateWithEntity(
+      viewGroup,
       updateViewGroupInput.update,
     );
   }
@@ -232,7 +239,13 @@ export class ViewGroupResolver {
     );
 
     if (!isDefined(viewGroup)) {
-      throw new Error('View group not found');
+      throw new ViewGroupException(
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          deleteViewGroupInput.id,
+        ),
+        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -281,10 +294,8 @@ export class ViewGroupResolver {
       });
     }
 
-    const deletedViewGroup = await this.viewGroupService.delete(
-      deleteViewGroupInput.id,
-      workspaceId,
-    );
+    const deletedViewGroup =
+      await this.viewGroupService.deleteWithEntity(viewGroup);
 
     return deletedViewGroup;
   }
@@ -296,13 +307,19 @@ export class ViewGroupResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
-    const viewGroup = await this.viewGroupService.findById(
+    const viewGroup = await this.viewGroupService.findByIdIncludingDeleted(
       destroyViewGroupInput.id,
       workspaceId,
     );
 
     if (!isDefined(viewGroup)) {
-      throw new Error('View group not found');
+      throw new ViewGroupException(
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          destroyViewGroupInput.id,
+        ),
+        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -353,10 +370,8 @@ export class ViewGroupResolver {
       return destroyedViewGroup;
     }
 
-    const destroyedViewGroup = await this.viewGroupService.destroy(
-      destroyViewGroupInput.id,
-      workspaceId,
-    );
+    const destroyedViewGroup =
+      await this.viewGroupService.destroyWithEntity(viewGroup);
 
     return destroyedViewGroup;
   }

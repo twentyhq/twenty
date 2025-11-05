@@ -63,6 +63,22 @@ export class ViewSortService {
     return viewSort || null;
   }
 
+  async findByIdIncludingDeleted(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewSortEntity | null> {
+    const viewSort = await this.viewSortRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: ['workspace', 'view'],
+      withDeleted: true,
+    });
+
+    return viewSort || null;
+  }
+
   async create(viewSortData: Partial<ViewSortEntity>): Promise<ViewSortEntity> {
     if (!isDefined(viewSortData.workspaceId)) {
       throw new ViewSortException(
@@ -132,14 +148,21 @@ export class ViewSortService {
       );
     }
 
+    return this.updateWithEntity(existingViewSort, updateData);
+  }
+
+  async updateWithEntity(
+    entity: ViewSortEntity,
+    updateData: Partial<ViewSortEntity>,
+  ): Promise<ViewSortEntity> {
     const updatedViewSort = await this.viewSortRepository.save({
-      id,
+      id: entity.id,
       ...updateData,
     });
 
-    await this.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(entity.workspaceId);
 
-    return { ...existingViewSort, ...updatedViewSort };
+    return { ...entity, ...updatedViewSort };
   }
 
   async delete(id: string, workspaceId: string): Promise<ViewSortEntity> {
@@ -155,15 +178,19 @@ export class ViewSortService {
       );
     }
 
-    await this.viewSortRepository.softDelete(id);
+    return this.deleteWithEntity(viewSort);
+  }
 
-    await this.flushGraphQLCache(workspaceId);
+  async deleteWithEntity(entity: ViewSortEntity): Promise<ViewSortEntity> {
+    await this.viewSortRepository.softDelete(entity.id);
 
-    return viewSort;
+    await this.flushGraphQLCache(entity.workspaceId);
+
+    return entity;
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const viewSort = await this.findById(id, workspaceId);
+    const viewSort = await this.findByIdIncludingDeleted(id, workspaceId);
 
     if (!isDefined(viewSort)) {
       throw new ViewSortException(
@@ -175,9 +202,13 @@ export class ViewSortService {
       );
     }
 
-    await this.viewSortRepository.delete(id);
+    return this.destroyWithEntity(viewSort);
+  }
 
-    await this.flushGraphQLCache(workspaceId);
+  async destroyWithEntity(entity: ViewSortEntity): Promise<boolean> {
+    await this.viewSortRepository.delete(entity.id);
+
+    await this.flushGraphQLCache(entity.workspaceId);
 
     return true;
   }

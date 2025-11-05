@@ -70,6 +70,22 @@ export class ViewFieldService {
     return viewField || null;
   }
 
+  async findByIdIncludingDeleted(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewFieldEntity | null> {
+    const viewField = await this.viewFieldRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: ['workspace', 'view'],
+      withDeleted: true,
+    });
+
+    return viewField || null;
+  }
+
   async create(
     viewFieldData: Partial<ViewFieldEntity>,
   ): Promise<ViewFieldEntity> {
@@ -205,15 +221,24 @@ export class ViewFieldService {
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
       );
     }
-    const viewId = existingViewField.viewId;
+
+    return this.updateWithEntity(existingViewField, updateData, workspaceId);
+  }
+
+  async updateWithEntity(
+    entity: ViewFieldEntity,
+    updateData: Partial<ViewFieldEntity>,
+    workspaceId: string,
+  ): Promise<ViewFieldEntity> {
+    const viewId = entity.viewId;
 
     if (this.updatesPosition(updateData)) {
       await this.verifyLabelMetadataIdentifierIsInFirstPositionOrThrow(
         {
           ...updateData,
           viewId,
-          id,
-          fieldMetadataId: existingViewField.fieldMetadataId,
+          id: entity.id,
+          fieldMetadataId: entity.fieldMetadataId,
         },
         workspaceId,
       );
@@ -221,19 +246,19 @@ export class ViewFieldService {
 
     if (this.disablesVisibility(updateData)) {
       await this.verifyLabelMetadataIdentifierIsVisibleOrThrow(
-        { ...updateData, viewId, id },
+        { ...updateData, viewId, id: entity.id },
         workspaceId,
       );
     }
 
     const updatedViewField = await this.viewFieldRepository.save({
-      id,
+      id: entity.id,
       ...updateData,
     });
 
     await this.flushGraphQLCache(workspaceId);
 
-    return { ...existingViewField, ...updatedViewField };
+    return { ...entity, ...updatedViewField };
   }
 
   async delete(id: string, workspaceId: string): Promise<ViewFieldEntity> {
@@ -249,15 +274,22 @@ export class ViewFieldService {
       );
     }
 
-    await this.viewFieldRepository.softDelete(id);
+    return this.deleteWithEntity(viewField, workspaceId);
+  }
+
+  async deleteWithEntity(
+    entity: ViewFieldEntity,
+    workspaceId: string,
+  ): Promise<ViewFieldEntity> {
+    await this.viewFieldRepository.softDelete(entity.id);
 
     await this.flushGraphQLCache(workspaceId);
 
-    return viewField;
+    return entity;
   }
 
   async destroy(id: string, workspaceId: string): Promise<ViewFieldEntity> {
-    const viewField = await this.findById(id, workspaceId);
+    const viewField = await this.findByIdIncludingDeleted(id, workspaceId);
 
     if (!isDefined(viewField)) {
       throw new ViewFieldException(
@@ -269,11 +301,18 @@ export class ViewFieldService {
       );
     }
 
-    await this.viewFieldRepository.delete(id);
+    return this.destroyWithEntity(viewField, workspaceId);
+  }
+
+  async destroyWithEntity(
+    entity: ViewFieldEntity,
+    workspaceId: string,
+  ): Promise<ViewFieldEntity> {
+    await this.viewFieldRepository.delete(entity.id);
 
     await this.flushGraphQLCache(workspaceId);
 
-    return viewField;
+    return entity;
   }
 
   private updatesPosition(

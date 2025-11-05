@@ -88,6 +88,29 @@ export class ViewService {
     return view || null;
   }
 
+  async findByIdIncludingDeleted(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewEntity | null> {
+    const view = await this.viewRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: [
+        'workspace',
+        'viewFields',
+        'viewFilters',
+        'viewSorts',
+        'viewGroups',
+        'viewFilterGroups',
+      ],
+      withDeleted: true,
+    });
+
+    return view || null;
+  }
+
   async create(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
     if (!isDefined(viewData.workspaceId)) {
       throw new ViewException(
@@ -146,14 +169,21 @@ export class ViewService {
       );
     }
 
+    return this.updateWithEntity(existingView, updateData);
+  }
+
+  async updateWithEntity(
+    entity: ViewEntity,
+    updateData: Partial<ViewEntity>,
+  ): Promise<ViewEntity> {
     const updatedView = await this.viewRepository.save({
-      id,
+      id: entity.id,
       ...updateData,
     });
 
-    await this.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(entity.workspaceId);
 
-    return { ...existingView, ...updatedView };
+    return { ...entity, ...updatedView };
   }
 
   async delete(id: string, workspaceId: string): Promise<ViewEntity> {
@@ -169,15 +199,19 @@ export class ViewService {
       );
     }
 
-    await this.viewRepository.softDelete(id);
+    return this.deleteWithEntity(view);
+  }
 
-    await this.flushGraphQLCache(workspaceId);
+  async deleteWithEntity(entity: ViewEntity): Promise<ViewEntity> {
+    await this.viewRepository.softDelete(entity.id);
 
-    return view;
+    await this.flushGraphQLCache(entity.workspaceId);
+
+    return entity;
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const view = await this.findById(id, workspaceId);
+    const view = await this.findByIdIncludingDeleted(id, workspaceId);
 
     if (!isDefined(view)) {
       throw new ViewException(
@@ -189,8 +223,12 @@ export class ViewService {
       );
     }
 
-    await this.viewRepository.delete(id);
-    await this.flushGraphQLCache(workspaceId);
+    return this.destroyWithEntity(view);
+  }
+
+  async destroyWithEntity(entity: ViewEntity): Promise<boolean> {
+    await this.viewRepository.delete(entity.id);
+    await this.flushGraphQLCache(entity.workspaceId);
 
     return true;
   }

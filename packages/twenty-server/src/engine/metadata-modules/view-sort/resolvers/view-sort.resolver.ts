@@ -15,6 +15,12 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
+import {
+  ViewSortException,
+  ViewSortExceptionCode,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
@@ -110,7 +116,13 @@ export class ViewSortResolver {
     const viewSort = await this.viewSortService.findById(id, workspace.id);
 
     if (!isDefined(viewSort)) {
-      throw new Error('View sort not found');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          id,
+        ),
+        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -146,7 +158,7 @@ export class ViewSortResolver {
       throw new Error('You do not have permission to update this view');
     }
 
-    return this.viewSortService.update(id, workspace.id, input);
+    return this.viewSortService.updateWithEntity(viewSort, input);
   }
 
   @Mutation(() => Boolean)
@@ -159,7 +171,13 @@ export class ViewSortResolver {
     const viewSort = await this.viewSortService.findById(id, workspace.id);
 
     if (!isDefined(viewSort)) {
-      throw new Error('View sort not found');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          id,
+        ),
+        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -195,7 +213,8 @@ export class ViewSortResolver {
       throw new Error('You do not have permission to update this view');
     }
 
-    const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
+    const deletedViewSort =
+      await this.viewSortService.deleteWithEntity(viewSort);
 
     return isDefined(deletedViewSort);
   }
@@ -207,10 +226,19 @@ export class ViewSortResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<boolean> {
-    const viewSort = await this.viewSortService.findById(id, workspace.id);
+    const viewSort = await this.viewSortService.findByIdIncludingDeleted(
+      id,
+      workspace.id,
+    );
 
     if (!isDefined(viewSort)) {
-      throw new Error('View sort not found');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          id,
+        ),
+        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -246,10 +274,8 @@ export class ViewSortResolver {
       throw new Error('You do not have permission to update this view');
     }
 
-    const deletedViewSort = await this.viewSortService.destroy(
-      id,
-      workspace.id,
-    );
+    const deletedViewSort =
+      await this.viewSortService.destroyWithEntity(viewSort);
 
     return isDefined(deletedViewSort);
   }

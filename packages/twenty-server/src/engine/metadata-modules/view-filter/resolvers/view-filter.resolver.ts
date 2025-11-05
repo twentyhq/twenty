@@ -19,6 +19,12 @@ import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
+import {
+  ViewFilterException,
+  ViewFilterExceptionCode,
+  ViewFilterExceptionMessageKey,
+  generateViewFilterExceptionMessage,
+} from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -132,7 +138,13 @@ export class ViewFilterResolver {
     );
 
     if (!isDefined(viewFilter)) {
-      throw new Error('View filter not found');
+      throw new ViewFilterException(
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          updateViewFilterInput.id,
+        ),
+        ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -181,9 +193,8 @@ export class ViewFilterResolver {
       });
     }
 
-    return this.viewFilterService.update(
-      updateViewFilterInput.id,
-      workspaceId,
+    return this.viewFilterService.updateWithEntity(
+      viewFilter,
       updateViewFilterInput.update,
     );
   }
@@ -201,7 +212,13 @@ export class ViewFilterResolver {
     );
 
     if (!isDefined(viewFilter)) {
-      throw new Error('View filter not found');
+      throw new ViewFilterException(
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          deleteViewFilterInput.id,
+        ),
+        ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -250,10 +267,8 @@ export class ViewFilterResolver {
       });
     }
 
-    const deletedViewFilter = await this.viewFilterService.delete(
-      deleteViewFilterInput.id,
-      workspaceId,
-    );
+    const deletedViewFilter =
+      await this.viewFilterService.deleteWithEntity(viewFilter);
 
     return deletedViewFilter;
   }
@@ -265,13 +280,19 @@ export class ViewFilterResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
-    const viewFilter = await this.viewFilterService.findById(
+    const viewFilter = await this.viewFilterService.findByIdIncludingDeleted(
       destroyViewFilterInput.id,
       workspaceId,
     );
 
     if (!isDefined(viewFilter)) {
-      throw new Error('View filter not found');
+      throw new ViewFilterException(
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          destroyViewFilterInput.id,
+        ),
+        ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -322,10 +343,8 @@ export class ViewFilterResolver {
       return destroyedViewFilter;
     }
 
-    const destroyedViewFilter = await this.viewFilterService.destroy(
-      destroyViewFilterInput.id,
-      workspaceId,
-    );
+    const destroyedViewFilter =
+      await this.viewFilterService.destroyWithEntity(viewFilter);
 
     return destroyedViewFilter;
   }

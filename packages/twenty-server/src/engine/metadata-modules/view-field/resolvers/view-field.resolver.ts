@@ -24,6 +24,8 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
+  ViewFieldExceptionMessageKey,
+  generateViewFieldExceptionMessage,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldV2Service } from 'src/engine/metadata-modules/view-field/services/view-field-v2.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
@@ -74,7 +76,13 @@ export class ViewFieldResolver {
     );
 
     if (!isDefined(viewField)) {
-      throw new Error('View field not found');
+      throw new ViewFieldException(
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          updateViewFieldInput.id,
+        ),
+        ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -123,10 +131,10 @@ export class ViewFieldResolver {
       });
     }
 
-    return this.viewFieldService.update(
-      updateViewFieldInput.id,
-      workspaceId,
+    return this.viewFieldService.updateWithEntity(
+      viewField,
       updateViewFieldInput.update,
+      workspaceId,
     );
   }
 
@@ -228,7 +236,13 @@ export class ViewFieldResolver {
     );
 
     if (!isDefined(viewField)) {
-      throw new Error('View field not found');
+      throw new ViewFieldException(
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          deleteViewFieldInput.id,
+        ),
+        ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -276,8 +290,8 @@ export class ViewFieldResolver {
         workspaceId,
       });
     }
-    const deletedViewField = await this.viewFieldService.delete(
-      deleteViewFieldInput.id,
+    const deletedViewField = await this.viewFieldService.deleteWithEntity(
+      viewField,
       workspaceId,
     );
 
@@ -291,13 +305,19 @@ export class ViewFieldResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO> {
-    const viewField = await this.viewFieldService.findById(
+    const viewField = await this.viewFieldService.findByIdIncludingDeleted(
       destroyViewFieldInput.id,
       workspaceId,
     );
 
     if (!isDefined(viewField)) {
-      throw new Error('View field not found');
+      throw new ViewFieldException(
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          destroyViewFieldInput.id,
+        ),
+        ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
+      );
     }
 
     const view = await this.viewRepository.findOne({
@@ -346,8 +366,8 @@ export class ViewFieldResolver {
       });
     }
 
-    const deletedViewField = await this.viewFieldService.destroy(
-      destroyViewFieldInput.id,
+    const deletedViewField = await this.viewFieldService.destroyWithEntity(
+      viewField,
       workspaceId,
     );
 

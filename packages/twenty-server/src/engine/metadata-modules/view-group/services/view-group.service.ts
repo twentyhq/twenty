@@ -65,6 +65,22 @@ export class ViewGroupService {
     return viewGroup || null;
   }
 
+  async findByIdIncludingDeleted(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewGroupEntity | null> {
+    const viewGroup = await this.viewGroupRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: ['workspace', 'view'],
+      withDeleted: true,
+    });
+
+    return viewGroup || null;
+  }
+
   async create(
     viewGroupData: Partial<ViewGroupEntity>,
   ): Promise<ViewGroupEntity> {
@@ -138,14 +154,21 @@ export class ViewGroupService {
       );
     }
 
+    return this.updateWithEntity(existingViewGroup, updateData);
+  }
+
+  async updateWithEntity(
+    entity: ViewGroupEntity,
+    updateData: Partial<ViewGroupEntity>,
+  ): Promise<ViewGroupEntity> {
     const updatedViewGroup = await this.viewGroupRepository.save({
-      id,
+      id: entity.id,
       ...updateData,
     });
 
-    await this.flushGraphQLCache(workspaceId);
+    await this.flushGraphQLCache(entity.workspaceId);
 
-    return { ...existingViewGroup, ...updatedViewGroup };
+    return { ...entity, ...updatedViewGroup };
   }
 
   async delete(id: string, workspaceId: string): Promise<ViewGroupEntity> {
@@ -161,15 +184,19 @@ export class ViewGroupService {
       );
     }
 
-    await this.viewGroupRepository.softDelete(id);
+    return this.deleteWithEntity(viewGroup);
+  }
 
-    await this.flushGraphQLCache(workspaceId);
+  async deleteWithEntity(entity: ViewGroupEntity): Promise<ViewGroupEntity> {
+    await this.viewGroupRepository.softDelete(entity.id);
 
-    return viewGroup;
+    await this.flushGraphQLCache(entity.workspaceId);
+
+    return entity;
   }
 
   async destroy(id: string, workspaceId: string): Promise<ViewGroupEntity> {
-    const viewGroup = await this.findById(id, workspaceId);
+    const viewGroup = await this.findByIdIncludingDeleted(id, workspaceId);
 
     if (!isDefined(viewGroup)) {
       throw new ViewGroupException(
@@ -181,11 +208,15 @@ export class ViewGroupService {
       );
     }
 
-    await this.viewGroupRepository.delete(id);
+    return this.destroyWithEntity(viewGroup);
+  }
 
-    await this.flushGraphQLCache(workspaceId);
+  async destroyWithEntity(entity: ViewGroupEntity): Promise<ViewGroupEntity> {
+    await this.viewGroupRepository.delete(entity.id);
 
-    return viewGroup;
+    await this.flushGraphQLCache(entity.workspaceId);
+
+    return entity;
   }
 
   private async flushGraphQLCache(workspaceId: string): Promise<void> {

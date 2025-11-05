@@ -6,7 +6,7 @@ exports[`View Filter Resolver deleteCoreViewFilter should throw an error when de
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View filter to delete not found",
+  "message": "View filter (id: 20202020-52c5-4152-8c09-76a845fb8ece) not found",
   "name": "NotFoundError",
 }
 `;
@@ -17,7 +17,7 @@ exports[`View Filter Resolver destroyCoreViewFilter should throw an error when d
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View filter to destroy not found",
+  "message": "View filter (id: 20202020-52c5-4152-8c09-76a845fb8ece) not found",
   "name": "NotFoundError",
 }
 `;
@@ -28,7 +28,7 @@ exports[`View Filter Resolver updateCoreViewFilter should throw an error when up
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View filter to update not found",
+  "message": "View filter (id: 20202020-52c5-4152-8c09-76a845fb8ece) not found",
   "name": "NotFoundError",
 }
 `;
