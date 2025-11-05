@@ -28,6 +28,7 @@ type MockedUser = Pick<
   | 'onboardingStatus'
   | 'userVars'
   | 'availableWorkspaces'
+  | 'hasPassword'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
@@ -65,12 +66,15 @@ export const mockCurrentWorkspace: Workspace = {
   hasValidEnterpriseKey: false,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,
+  isMicrosoftAuthEnabled: false,
   isCustomDomainEnabled: false,
+  isPasswordAuthBypassEnabled: false,
+  isGoogleAuthBypassEnabled: false,
+  isMicrosoftAuthBypassEnabled: false,
   workspaceUrls: {
     customUrl: undefined,
     subdomainUrl: 'twenty.twenty.com',
   },
-  isMicrosoftAuthEnabled: false,
   featureFlags: [
     {
       key: FeatureFlagKey.IS_AIRTABLE_INTEGRATION_ENABLED,
@@ -183,6 +187,7 @@ export const mockedUserData: MockedUser = {
   lastName: 'Test',
   canAccessFullAdminPanel: false,
   canImpersonate: false,
+  hasPassword: true,
   supportUserHash:
     'a95afad9ff6f0b364e2a3fd3e246a1a852c22b6e55a3ca33745a86c201f9c10d',
   workspaceMember: mockedWorkspaceMemberData,
@@ -239,6 +244,7 @@ export const mockedOnboardingUserData = (
     email: 'workspace-onboarding@test.com',
     firstName: '',
     lastName: '',
+    hasPassword: false,
     canAccessFullAdminPanel: false,
     canImpersonate: false,
     supportUserHash:

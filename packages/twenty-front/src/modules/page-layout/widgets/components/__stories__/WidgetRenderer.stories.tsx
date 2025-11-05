@@ -23,6 +23,7 @@ import {
 import {
   AggregateOperations,
   AxisNameDisplay,
+  PageLayoutType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -182,7 +183,11 @@ export const WithNumberChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -217,7 +222,11 @@ export const WithGaugeChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '400px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -255,7 +264,11 @@ export const WithBarChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -297,7 +310,11 @@ export const SmallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -342,7 +359,11 @@ export const MediumWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '400px', height: '250px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -387,7 +408,11 @@ export const LargeWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '600px', height: '400px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -429,7 +454,11 @@ export const WideWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '800px', height: '200px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };
@@ -474,7 +503,11 @@ export const TallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer widget={args.widget} />
+      <WidgetRenderer
+        widget={args.widget}
+        layoutMode="grid"
+        pageLayoutType={PageLayoutType.DASHBOARD}
+      />
     </div>
   ),
 };

@@ -14,6 +14,7 @@ import {
   IconLockOpen,
   IconSettings,
   IconSettingsAutomation,
+  IconShield,
   IconSpy,
   IconUsers,
 } from 'twenty-ui/display';
@@ -89,6 +90,12 @@ export const SettingsRolePermissionsSettingsSection = ({
         name: t`Workflows`,
         description: t`Manage workflows`,
         Icon: IconSettingsAutomation,
+      },
+      {
+        key: PermissionFlagType.SSO_BYPASS,
+        name: t`SSO Bypass`,
+        description: t`Enable bypass options`,
+        Icon: IconShield,
       },
       {
         key: PermissionFlagType.IMPERSONATE,

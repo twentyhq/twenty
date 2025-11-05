@@ -1,3 +1,4 @@
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -26,6 +27,8 @@ export const useCreatePageLayoutGraphWidget = (
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
   );
+
+  const { timeZone, calendarStartDay } = useDateTimeFormat();
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
@@ -109,6 +112,8 @@ export const useCreatePageLayoutGraphWidget = (
             columnSpan: position.w,
           },
           fieldSelection,
+          timezone: timeZone,
+          firstDayOfTheWeek: calendarStartDay,
         });
 
         const newLayout = {
@@ -142,6 +147,8 @@ export const useCreatePageLayoutGraphWidget = (
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       pageLayoutDraggedAreaState,
+      timeZone,
+      calendarStartDay,
     ],
   );
 

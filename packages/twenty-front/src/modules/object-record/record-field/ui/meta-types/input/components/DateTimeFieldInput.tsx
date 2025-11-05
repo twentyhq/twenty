@@ -1,7 +1,6 @@
-import { DateInput } from '@/ui/field/input/components/DateInput';
-
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { DateTimeInput } from '@/ui/field/input/components/DateTimeInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
 import { type Nullable } from 'twenty-ui/utilities';
@@ -58,7 +57,7 @@ export const DateTimeFieldInput = () => {
   const dateValue = fieldValue ? new Date(fieldValue) : null;
 
   return (
-    <DateInput
+    <DateTimeInput
       instanceId={instanceId}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
@@ -66,7 +65,6 @@ export const DateTimeFieldInput = () => {
       value={dateValue}
       clearable
       onChange={handleChange}
-      isDateTimeInput
       onClear={handleClear}
       onSubmit={handleSubmit}
     />

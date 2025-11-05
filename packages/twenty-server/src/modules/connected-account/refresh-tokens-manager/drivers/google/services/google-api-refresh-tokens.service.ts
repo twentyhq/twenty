@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
+import { GaxiosError } from 'gaxios';
 import { google } from 'googleapis';
+import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
@@ -23,19 +24,32 @@ export class GoogleAPIRefreshAccessTokenService {
     oAuth2Client.setCredentials({
       refresh_token: refreshToken,
     });
+    try {
+      const { token } = await oAuth2Client.getAccessToken();
 
-    const { token } = await oAuth2Client.getAccessToken();
+      if (!isDefined(token)) {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          'Error refreshing Google tokens: Invalid refresh token',
+          ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+        );
+      }
 
-    if (!isDefined(token)) {
-      throw new ConnectedAccountRefreshAccessTokenException(
-        'Failed to refresh google access token',
-        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
-      );
+      return {
+        accessToken: token,
+        refreshToken,
+      };
+    } catch (error) {
+      if (
+        error instanceof GaxiosError &&
+        error.response?.data?.error === 'invalid_grant'
+      ) {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          'Error refreshing Google tokens: Invalid refresh token',
+          ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+        );
+      }
+
+      throw error;
     }
-
-    return {
-      accessToken: token as string,
-      refreshToken,
-    };
   }
 }

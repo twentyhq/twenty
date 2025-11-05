@@ -6,6 +6,7 @@
     "outDir": "./dist",
     "rootDir": ".",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,

@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { GmailGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service';
 import { ImapGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
-import {
-  MessageImportException,
-  MessageImportExceptionCode,
-} from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 export type GetMessagesResponse = MessageWithParticipants[];
@@ -53,9 +53,9 @@ export class MessagingGetMessagesService {
           connectedAccount,
         );
       default:
-        throw new MessageImportException(
+        throw new MessageImportDriverException(
           `Provider ${connectedAccount.provider} is not supported`,
-          MessageImportExceptionCode.PROVIDER_NOT_SUPPORTED,
+          MessageImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
         );
     }
   }

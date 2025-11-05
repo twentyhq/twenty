@@ -60,6 +60,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       ? formatDimensionValue({
           value: dimensionValues[0],
           fieldMetadata: groupByFieldX,
+          dateGranularity:
+            configuration.primaryAxisDateGranularity ?? undefined,
           subFieldName:
             configuration.primaryAxisGroupBySubFieldName ?? undefined,
         })

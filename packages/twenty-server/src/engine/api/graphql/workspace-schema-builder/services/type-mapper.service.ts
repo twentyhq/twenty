@@ -41,6 +41,7 @@ import { TSVectorFilterType } from 'src/engine/api/graphql/workspace-schema-buil
 import { UUIDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/uuid-filter.input-type';
 import {
   BigFloatScalarType,
+  DateScalarType,
   TSVectorScalarType,
   UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -77,7 +78,7 @@ export class TypeMapperService {
       [FieldMetadataType.UUID, UUIDScalarType],
       [FieldMetadataType.TEXT, GraphQLString],
       [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
-      [FieldMetadataType.DATE, GraphQLISODateTime],
+      [FieldMetadataType.DATE, DateScalarType],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
       [
         FieldMetadataType.NUMBER,
@@ -119,7 +120,7 @@ export class TypeMapperService {
     >([
       [FieldMetadataType.UUID, UUIDFilterType],
       [FieldMetadataType.TEXT, StringFilterType],
-      [FieldMetadataType.DATE_TIME, DateFilterType],
+      [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
       [FieldMetadataType.DATE, DateFilterType],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [

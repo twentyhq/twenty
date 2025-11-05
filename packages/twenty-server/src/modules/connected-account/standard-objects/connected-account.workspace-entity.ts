@@ -71,6 +71,16 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   refreshToken: string;
 
   @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: msg`Last credentials refreshed at`,
+    description: msg`Last credentials refreshed at`,
+    icon: 'IconHistory',
+  })
+  @WorkspaceIsNullable()
+  lastCredentialsRefreshedAt: Date | null;
+
+  @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
     type: FieldMetadataType.TEXT,
     label: msg`Last sync history ID`,
