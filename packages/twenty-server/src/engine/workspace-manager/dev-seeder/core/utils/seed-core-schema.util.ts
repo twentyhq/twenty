@@ -74,7 +74,11 @@ export const seedCoreSchema = async ({
 
     await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
 
-    await seedStandardApplications({ applicationService, workspaceId });
+    await seedStandardApplications({
+      applicationService,
+      workspaceId,
+      queryRunner,
+    });
 
     await seedAgents({ queryRunner, schemaName, workspaceId });
 
