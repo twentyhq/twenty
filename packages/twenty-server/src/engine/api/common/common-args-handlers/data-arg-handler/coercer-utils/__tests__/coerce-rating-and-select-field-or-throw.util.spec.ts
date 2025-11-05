@@ -15,16 +15,6 @@ describe('coerceRatingAndSelectFieldOrThrow', () => {
       expect(result).toBeNull();
     });
 
-    it('should return null when value is an empty string', () => {
-      const result = coerceRatingAndSelectFieldOrThrow(
-        '',
-        validOptions,
-        'testField',
-      );
-
-      expect(result).toBeNull();
-    });
-
     it('should return the value when it is a valid option', () => {
       const result = coerceRatingAndSelectFieldOrThrow(
         'option1',
@@ -40,6 +30,12 @@ describe('coerceRatingAndSelectFieldOrThrow', () => {
     it('should throw when value is undefined', () => {
       expect(() =>
         coerceRatingAndSelectFieldOrThrow(undefined, validOptions, 'testField'),
+      ).toThrow(CommonDataCoercerException);
+    });
+
+    it('should throw when value is an empty string', () => {
+      expect(() =>
+        coerceRatingAndSelectFieldOrThrow('', validOptions, 'testField'),
       ).toThrow(CommonDataCoercerException);
     });
 

@@ -10,8 +10,13 @@ export const coerceRatingAndSelectFieldOrThrow = (
   value: unknown,
   options?: string[],
   fieldName?: string,
+  isNullEquivalenceEnabled: boolean = false,
 ) => {
-  const coercedTextValue = coerceTextFieldOrThrow(value, fieldName);
+  const coercedTextValue = coerceTextFieldOrThrow(
+    value,
+    fieldName,
+    isNullEquivalenceEnabled,
+  );
 
   if (coercedTextValue === null) return null;
 

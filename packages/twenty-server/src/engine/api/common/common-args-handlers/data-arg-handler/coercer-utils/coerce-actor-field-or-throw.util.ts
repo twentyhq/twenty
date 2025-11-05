@@ -10,7 +10,11 @@ import {
 } from 'src/engine/api/common/common-args-handlers/data-arg-handler/errors/common-data-coercer.exception';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
-export const coerceActorFieldOrThrow = (value: unknown, fieldName?: string) => {
+export const coerceActorFieldOrThrow = (
+  value: unknown,
+  fieldName?: string,
+  isNullEquivalenceEnabled: boolean = false,
+) => {
   if (isNull(value)) return null;
 
   try {
@@ -29,6 +33,7 @@ export const coerceActorFieldOrThrow = (value: unknown, fieldName?: string) => {
             parsedValue[subField],
             Object.keys(FieldActorSource),
             `${fieldName}.${subField}`,
+            isNullEquivalenceEnabled,
           );
           break;
         case 'context':

@@ -141,6 +141,7 @@ export class DataArgHandler {
               value,
               fieldMetadata.options?.map((option) => option.value),
               key,
+              isNullEquivalenceEnabled,
             );
             break;
           case FieldMetadataType.SELECT:
@@ -214,7 +215,11 @@ export class DataArgHandler {
             coercedValue = coerceCurrencyFieldOrThrow(value, key);
             break;
           case FieldMetadataType.ACTOR:
-            coercedValue = coerceActorFieldOrThrow(value, key);
+            coercedValue = coerceActorFieldOrThrow(
+              value,
+              key,
+              isNullEquivalenceEnabled,
+            );
             break;
           case FieldMetadataType.RICH_TEXT_V2:
             coercedValue = await coerceRichTextV2FieldOrThrow(value, key);
