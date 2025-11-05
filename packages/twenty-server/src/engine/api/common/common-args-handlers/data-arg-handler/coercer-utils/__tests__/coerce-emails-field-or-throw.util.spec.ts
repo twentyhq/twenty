@@ -26,11 +26,26 @@ describe('coerceEmailsFieldOrThrow', () => {
       });
     });
 
-    it('should return transformed value when value has primaryEmail and additionalEmails', () => {
+    it('should return transformed value when value has primaryEmail and stringified additionalEmails', () => {
       const result = coerceEmailsFieldOrThrow(
         {
           primaryEmail: 'PRIMARY@EXAMPLE.COM',
           additionalEmails: '["SECOND@EXAMPLE.COM", "THIRD@EXAMPLE.COM"]',
+        },
+        'testField',
+      );
+
+      expect(result).toEqual({
+        primaryEmail: 'primary@example.com',
+        additionalEmails: '["second@example.com","third@example.com"]',
+      });
+    });
+
+    it('should return transformed value when value has primaryEmail and  additionalEmails', () => {
+      const result = coerceEmailsFieldOrThrow(
+        {
+          primaryEmail: 'PRIMARY@EXAMPLE.COM',
+          additionalEmails: ['SECOND@EXAMPLE.COM', 'THIRD@EXAMPLE.COM'],
         },
         'testField',
       );

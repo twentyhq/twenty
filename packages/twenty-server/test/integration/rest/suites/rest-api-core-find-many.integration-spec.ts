@@ -61,7 +61,9 @@ describe('Core REST API Find Many endpoint', () => {
     const response = await makeRestAPIRequest({
       method: 'get',
       path: '/people',
-    }).expect(200);
+    });
+
+    expect(response.status).toBe(200);
 
     const people = response.body.data.people;
     const pageInfo = response.body.pageInfo;

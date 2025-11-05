@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const transformEmailsValue = (value: any): any => {
   if (!value) {
@@ -11,7 +13,11 @@ export const transformEmailsValue = (value: any): any => {
 
   if (additionalEmails) {
     try {
-      const emailArray = JSON.parse(additionalEmails) as string[];
+      const emailArray = (
+        isNonEmptyString(additionalEmails)
+          ? JSON.parse(additionalEmails)
+          : additionalEmails
+      ) as string[];
 
       additionalEmails = JSON.stringify(
         emailArray.map((email) => email.toLowerCase()),

@@ -15,13 +15,32 @@ describe('coerceLinksFieldOrThrow', () => {
       expect(result).toBeNull();
     });
 
-    it('should return transformed value when value has all fields including secondaryLinks', () => {
+    it('should return transformed value when value has all fields including stringified secondaryLinks', () => {
       const result = coerceLinksFieldOrThrow(
         {
           primaryLinkUrl: 'HTTPS://PRIMARY.COM/',
           primaryLinkLabel: 'Primary',
           secondaryLinks:
             '[{"url":"HTTPS://SECONDARY.COM/","label":"Secondary"}]',
+        },
+        'testField',
+      );
+
+      expect(result).toEqual({
+        primaryLinkUrl: 'https://primary.com',
+        primaryLinkLabel: 'Primary',
+        secondaryLinks: '[{"url":"https://secondary.com","label":"Secondary"}]',
+      });
+    });
+
+    it('should return transformed value when value has all fields including secondaryLinks', () => {
+      const result = coerceLinksFieldOrThrow(
+        {
+          primaryLinkUrl: 'HTTPS://PRIMARY.COM/',
+          primaryLinkLabel: 'Primary',
+          secondaryLinks: [
+            { url: 'HTTPS://SECONDARY.COM/', label: 'Secondary' },
+          ],
         },
         'testField',
       );
