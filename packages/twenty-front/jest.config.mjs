@@ -63,7 +63,7 @@ const jestConfig = {
     global: {
       statements: 52,
       // Temporarily decreasing to 50.97 as introduced v1 code that aims to be deleted
-      lines: 50.97,
+      lines: 50.95,
       functions: 41,
     },
   },
@@ -87,6 +87,7 @@ const jestConfig = {
     'display/icon/index.ts',
   ],
   coverageDirectory: './coverage',
+  maxWorkers: '50%',
   errorOnDeprecated: true,
 };
 

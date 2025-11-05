@@ -4,21 +4,29 @@ import { validateAndTransformWidgetConfiguration } from 'src/engine/core-modules
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { getPageLayoutWidgetDataSeeds } from 'src/engine/workspace-manager/dev-seeder/core/utils/get-page-layout-widget-data-seeds.util';
 
-export const seedPageLayoutWidgets = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-  objectMetadataItems: ObjectMetadataEntity[],
-) => {
+export const seedPageLayoutWidgets = async ({
+  dataSource,
+  schemaName,
+  workspaceId,
+  objectMetadataItems,
+  isDashboardV2Enabled,
+}: {
+  dataSource: DataSource;
+  schemaName: string;
+  workspaceId: string;
+  objectMetadataItems: ObjectMetadataEntity[];
+  isDashboardV2Enabled: boolean;
+}) => {
   const pageLayoutWidgets = getPageLayoutWidgetDataSeeds(
     workspaceId,
     objectMetadataItems,
   ).map((widget) => {
     const validatedConfiguration = widget.configuration
-      ? validateAndTransformWidgetConfiguration(
-          widget.type,
-          widget.configuration,
-        )
+      ? validateAndTransformWidgetConfiguration({
+          type: widget.type,
+          configuration: widget.configuration,
+          isDashboardV2Enabled,
+        })
       : null;
 
     return {

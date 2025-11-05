@@ -3,7 +3,7 @@ import { type ListResponse } from 'imapflow';
 import { getImapSentFolderCandidatesByRegex } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-sent-folder-candidates-by-regex.util';
 
 function makeList(paths: string[]): ListResponse[] {
-  return paths.map((p) => ({ path: p }) as ListResponse);
+  return paths.map((p) => ({ path: p, name: p }) as ListResponse);
 }
 
 describe('getSentFolderCandidatesByRegex', () => {
@@ -18,7 +18,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(englishVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(englishVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(englishVariants),
+    );
   });
 
   it('matches French variants', () => {
@@ -26,7 +28,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(frenchVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(frenchVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(frenchVariants),
+    );
   });
 
   it('matches German variants', () => {
@@ -34,7 +38,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(germanVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(germanVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(germanVariants),
+    );
   });
 
   it('matches Spanish variants', () => {
@@ -42,7 +48,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(spanishVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(spanishVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(spanishVariants),
+    );
   });
 
   it('matches Portuguese variants', () => {
@@ -50,7 +58,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(portugueseVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(portugueseVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(portugueseVariants),
+    );
   });
 
   it('matches Italian variants', () => {
@@ -58,7 +68,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(italianVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(italianVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(italianVariants),
+    );
   });
 
   it('matches Korean variant', () => {
@@ -66,7 +78,7 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(koreanVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(koreanVariants);
+    expect(result.map((r) => r.path)).toEqual(koreanVariants);
   });
 
   it('matches Japanese variants', () => {
@@ -74,7 +86,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(japaneseVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(japaneseVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(japaneseVariants),
+    );
   });
 
   it('matches Polish variants', () => {
@@ -82,7 +96,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(polishVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(polishVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(polishVariants),
+    );
   });
 
   it('matches Russian variants', () => {
@@ -95,7 +111,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(russianVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(russianVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(russianVariants),
+    );
   });
 
   it('matches Gmail special folder', () => {
@@ -103,7 +121,9 @@ describe('getSentFolderCandidatesByRegex', () => {
     const input = makeList(gmailVariants);
     const result = getImapSentFolderCandidatesByRegex(input);
 
-    expect(result).toEqual(expect.arrayContaining(gmailVariants));
+    expect(result.map((r) => r.path)).toEqual(
+      expect.arrayContaining(gmailVariants),
+    );
   });
 
   it('does not match unrelated folders', () => {

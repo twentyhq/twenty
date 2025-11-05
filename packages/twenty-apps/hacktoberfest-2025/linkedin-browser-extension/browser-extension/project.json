@@ -1,0 +1,48 @@
+{
+  "name": "twenty-browser-extension",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-browser-extension/src",
+  "projectType": "application",
+  "tags": ["scope:browser-extension"],
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wxt --mode development",
+        "cwd": "packages/twenty-browser-extension",
+        "color": true
+      },
+      "configurations": {
+        "development": {
+          "command": "wxt --mode development"
+        }
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wxt build",
+        "cwd": "packages/twenty-browser-extension",
+        "color": true
+      },
+      "configurations": {
+        "production": {
+          "command": "wxt build"
+        }
+      }
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "wxt zip",
+        "cwd": "packages/twenty-browser-extension",
+        "color": true
+      },
+      "configurations": {
+        "production": {
+          "command": "wxt zip"
+        }
+      }
+    }
+  }
+}
