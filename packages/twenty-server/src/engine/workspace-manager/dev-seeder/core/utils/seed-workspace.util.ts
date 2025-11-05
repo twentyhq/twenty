@@ -1,9 +1,9 @@
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource } from 'typeorm';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  CreateWorkspaceInput,
+  WORKSPACE_FIELDS_TO_SEED,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const tableName = 'workspace';
 
@@ -14,77 +14,24 @@ export const SEED_YCOMBINATOR_WORKSPACE_ID =
 export type SeedWorkspaceArgs = {
   dataSource: DataSource;
   schemaName: string;
-  workspaceId: string;
-  appVersion: string | undefined;
+  createWorkspaceInput: CreateWorkspaceInput;
 };
 
-const workspaceSeederFields = [
-  'id',
-  'displayName',
-  'subdomain',
-  'inviteHash',
-  'logo',
-  'activationStatus',
-  'version',
-  'isTwoFactorAuthenticationEnforced',
-] as const satisfies (keyof WorkspaceEntity)[];
-
-type WorkspaceSeederFields = Pick<
-  WorkspaceEntity,
-  (typeof workspaceSeederFields)[number]
->;
-
-export const seedWorkspace = async ({
+export const createWorkspace = async ({
   schemaName,
   dataSource,
-  workspaceId,
-  appVersion,
+  createWorkspaceInput,
 }: SeedWorkspaceArgs) => {
-  const version = extractVersionMajorMinorPatch(appVersion);
-
-  const workspaces: Record<string, WorkspaceSeederFields> = {
-    [SEED_APPLE_WORKSPACE_ID]: {
-      id: SEED_APPLE_WORKSPACE_ID,
-      displayName: 'Apple',
-      subdomain: 'apple',
-      inviteHash: 'apple.dev-invite-hash',
-      logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
-      activationStatus: WorkspaceActivationStatus.PENDING_CREATION, // will be set to active after default role creation
-      version: version,
-      isTwoFactorAuthenticationEnforced: false,
-    },
-    [SEED_YCOMBINATOR_WORKSPACE_ID]: {
-      id: SEED_YCOMBINATOR_WORKSPACE_ID,
-      displayName: 'YCombinator',
-      subdomain: 'yc',
-      inviteHash: 'yc.dev-invite-hash',
-      logo: 'https://twentyhq.github.io/placeholder-images/workspaces/ycombinator-logo.png',
-      activationStatus: WorkspaceActivationStatus.PENDING_CREATION, // will be set to active after default role creation
-      version: version,
-      isTwoFactorAuthenticationEnforced: false,
-    },
-  };
-
   await dataSource
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.${tableName}`, workspaceSeederFields)
+    .into(`${schemaName}.${tableName}`, [
+      ...WORKSPACE_FIELDS_TO_SEED,
+      'version',
+    ])
     .orIgnore()
-    .values(workspaces[workspaceId])
+    .values(createWorkspaceInput)
     .execute();
-
-  const createdWorkspace = await dataSource
-    .createQueryBuilder()
-    .select('workspace')
-    .from(WorkspaceEntity, 'workspace')
-    .where('workspace.id = :workspaceId', { workspaceId })
-    .getOne();
-
-  if (!isDefined(createdWorkspace)) {
-    throw new Error('Could not find just seeded workspace, should never occur');
-  }
-
-  return createdWorkspace;
 };
 
 export const deleteWorkspaces = async (

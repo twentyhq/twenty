@@ -20,8 +20,8 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { seedStandardApplications } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-standard-applications.util';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
-import { createWorkspaceCustomApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/create-workspace-custom-application';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
+import { computeWorkspaceCustomCreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-workspace-custom-create-application-input';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -104,7 +104,7 @@ export class WorkspaceManagerService {
       workspaceId,
     });
 
-    const workspaceCustomApplication = createWorkspaceCustomApplication({
+    const workspaceCustomApplication = computeWorkspaceCustomCreateApplicationInput({
       workspace,
     });
     await this.applicationService.create({

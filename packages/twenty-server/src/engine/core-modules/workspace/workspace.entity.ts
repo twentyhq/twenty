@@ -276,7 +276,7 @@ export class WorkspaceEntity {
   routerModel: ModelId;
 
   @Field(() => String, { nullable: false }) // TODO challenge: Should this be a field now ?
-  @Column({ nullable: false, type: 'uuid' })
+  @Column({ nullable: false, type: 'uuid' }) // add check that attest it's always a application id
   workspaceCustomApplicationId: string;
 
   @OneToMany(() => ApplicationEntity, (application) => application.workspace, {
