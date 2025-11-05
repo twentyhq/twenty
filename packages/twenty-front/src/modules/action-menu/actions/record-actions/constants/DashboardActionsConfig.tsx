@@ -98,6 +98,13 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW,
     SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD,
     SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD,
+    NoSelectionRecordActionKeys.GO_TO_WORKFLOWS,
+    NoSelectionRecordActionKeys.GO_TO_PEOPLE,
+    NoSelectionRecordActionKeys.GO_TO_COMPANIES,
+    NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
+    NoSelectionRecordActionKeys.GO_TO_SETTINGS,
+    NoSelectionRecordActionKeys.GO_TO_TASKS,
+    NoSelectionRecordActionKeys.GO_TO_NOTES,
   ],
   propertiesToOverwrite: {
     [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
@@ -134,6 +141,27 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
       position: 9,
       label: msg`Navigate to next dashboard`,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
+      position: 10,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
+      position: 11,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
+      position: 12,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+      position: 13,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+      position: 14,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+      position: 15,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 16,
     },
   },
 });

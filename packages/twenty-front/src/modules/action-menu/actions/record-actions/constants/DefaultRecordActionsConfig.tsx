@@ -571,7 +571,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_DASHBOARDS,
     label: msg`Go to Dashboards`,
     shortLabel: msg`Dashboards`,
-    position: 23,
+    position: 24,
     Icon: IconLayoutDashboard,
     isPinned: false,
     availableOn: [
@@ -602,7 +602,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     key: NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
     label: msg`Go to Opportunities`,
     shortLabel: msg`Opportunities`,
-    position: 24,
+    position: 23,
     Icon: IconTargetArrow,
     isPinned: false,
     availableOn: [
