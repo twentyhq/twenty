@@ -5,13 +5,18 @@ import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarCha
 import { GraphWidgetBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartTooltip';
 import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
-import { useBarChartFloatingTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartFloatingTooltip';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
+import { useTooltipDebouncedHide } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useTooltipDebouncedHide';
+import { useTooltipFloating } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useTooltipFloating';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartValueRange';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
+import {
+  type BarGeometry,
+  createFloatingAnchorFromBarGeometry,
+} from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/createFloatingAnchorFromBarGeometry';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
@@ -23,8 +28,12 @@ import {
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { type ComputedBarDatum, ResponsiveBar } from '@nivo/bar';
-import { useMemo, useRef, useState } from 'react';
+import {
+  type ComputedBarDatum,
+  type ComputedDatum,
+  ResponsiveBar,
+} from '@nivo/bar';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const LEGEND_THRESHOLD = 10;
@@ -101,15 +110,30 @@ export const GraphWidgetBarChart = ({
     indexBy,
   });
 
-  const {
-    refs,
-    floatingStyles,
-    hoveredBarDatum,
-    showTooltipForBar,
-    scheduleTooltipHide,
-    cancelTooltipHide,
-    hideTooltip,
-  } = useBarChartFloatingTooltip();
+  const [hoveredBarDatum, setHoveredBarDatum] =
+    useState<ComputedDatum<BarChartDataItem> | null>(null);
+
+  const clearHoveredBarDatum = useCallback(() => {
+    setHoveredBarDatum(null);
+  }, []);
+
+  const { scheduleHide, cancelHide, hideImmediately } =
+    useTooltipDebouncedHide(clearHoveredBarDatum);
+
+  const { refs, floatingStyles } = useTooltipFloating();
+
+  const showTooltipForBar = useCallback(
+    (datum: ComputedDatum<BarChartDataItem>, geometry: BarGeometry) => {
+      cancelHide();
+      setHoveredBarDatum(datum);
+
+      const virtualElement = createFloatingAnchorFromBarGeometry(geometry);
+      if (isDefined(virtualElement)) {
+        refs.setReference(virtualElement);
+      }
+    },
+    [cancelHide, refs],
+  );
 
   const chartTheme = useBarChartTheme();
 
@@ -151,7 +175,7 @@ export const GraphWidgetBarChart = ({
         layout={layout}
         chartId={id}
         onShowTooltip={showTooltipForBar}
-        onScheduleHideTooltip={scheduleTooltipHide}
+        onScheduleHideTooltip={scheduleHide}
       />
     ),
     [
@@ -162,7 +186,7 @@ export const GraphWidgetBarChart = ({
       layout,
       id,
       showTooltipForBar,
-      scheduleTooltipHide,
+      scheduleHide,
     ],
   );
 
@@ -276,8 +300,8 @@ export const GraphWidgetBarChart = ({
           indexBy={indexBy}
           formatOptions={formatOptions}
           enableGroupTooltip={groupMode === 'stacked'}
-          onCancelHide={cancelTooltipHide}
-          onRequestHide={hideTooltip}
+          onCancelHide={cancelHide}
+          onRequestHide={hideImmediately}
         />
       )}
       <GraphWidgetLegend

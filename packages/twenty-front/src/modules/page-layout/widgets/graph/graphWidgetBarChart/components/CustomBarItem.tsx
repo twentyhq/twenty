@@ -1,7 +1,11 @@
 import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
 import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
-import { type BarDatumWithGeometry } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartFloatingTooltip';
-import { type BarDatum, type BarItemProps } from '@nivo/bar';
+import { type BarGeometry } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/createFloatingAnchorFromBarGeometry';
+import {
+  type BarDatum,
+  type BarItemProps,
+  type ComputedDatum,
+} from '@nivo/bar';
 import { Text } from '@nivo/text';
 import { useTheme } from '@nivo/theming';
 import { useTooltip } from '@nivo/tooltip';
@@ -18,17 +22,17 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   indexBy?: string;
   layout?: 'vertical' | 'horizontal';
   chartId?: string;
-  onShowTooltip?: (datum: BarDatumWithGeometry) => void;
+  onShowTooltip?: (datum: ComputedDatum<D>, geometry: BarGeometry) => void;
   onScheduleHideTooltip?: () => void;
 };
 
-const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
-  cursor: ${({ $isInteractive }) => ($isInteractive ? 'pointer' : 'default')};
+const StyledBarRect = styled(animated.rect)<{ isInteractive?: boolean }>`
+  cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
   transition: filter 0.15s ease-in-out;
 
   &:hover {
-    filter: ${({ $isInteractive }) =>
-      $isInteractive ? `brightness(${BAR_CHART_HOVER_BRIGHTNESS})` : 'none'};
+    filter: ${({ isInteractive }) =>
+      isInteractive ? `brightness(${BAR_CHART_HOVER_BRIGHTNESS})` : 'none'};
   }
 `;
 
@@ -92,22 +96,26 @@ export const CustomBarItem = <D extends BarDatum>({
   );
   const handleMouseEnter = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
-      const barDatumWithGeometry = {
-        ...barData,
-        barElement: event.currentTarget,
-        barX: bar.x,
-        barY: bar.y,
-        barWidth: bar.width,
-        barHeight: bar.height,
-        barAbsoluteX: bar.absX,
-        barAbsoluteY: bar.absY,
-      } as BarDatumWithGeometry;
+      const geometry: BarGeometry = {
+        element: event.currentTarget,
+        width: bar.width,
+        height: bar.height,
+        absoluteX: bar.absX,
+        absoluteY: bar.absY,
+      };
 
-      onShowTooltip?.(barDatumWithGeometry);
-      onMouseEnter?.(barDatumWithGeometry as typeof barData, event);
+      onShowTooltip?.(barData, geometry);
+      onMouseEnter?.(barData, event);
       showTooltipFromEvent(renderTooltip(), event);
     },
-    [barData, bar, onShowTooltip, onMouseEnter, showTooltipFromEvent, renderTooltip],
+    [
+      barData,
+      bar,
+      onShowTooltip,
+      onMouseEnter,
+      showTooltipFromEvent,
+      renderTooltip,
+    ],
   );
   const handleMouseLeave = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
@@ -246,7 +254,7 @@ export const CustomBarItem = <D extends BarDatum>({
         )}
 
         <StyledBarRect
-          $isInteractive={isInteractive}
+          isInteractive={isInteractive}
           clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
           width={to(finalBarWidthDimension, (value) => Math.max(value, 0))}
           height={to(finalBarHeightDimension, (value) => Math.max(value, 0))}
