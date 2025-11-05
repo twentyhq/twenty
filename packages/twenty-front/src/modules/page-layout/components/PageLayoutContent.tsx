@@ -40,20 +40,15 @@ export const PageLayoutContent = () => {
 
   const activeTab = currentPageLayout?.tabs.find((tab) => tab.id === tabId);
 
+  const { layoutMode } = usePageLayoutContentContext();
   const { isInPinnedTab } = useIsInPinnedTab();
 
-  if (
-    !isDefined(currentPageLayout) ||
-    !isDefined(activeTab) ||
-    !isDefined(activeTab.layoutMode)
-  ) {
+  if (!isDefined(currentPageLayout) || !isDefined(activeTab)) {
     return null;
   }
 
-  const isCanvasLayout =
-    isRecordPageEnabled && activeTab.layoutMode === 'canvas';
-  const isVerticalList =
-    isRecordPageEnabled && activeTab.layoutMode === 'vertical-list';
+  const isCanvasLayout = isRecordPageEnabled && layoutMode === 'canvas';
+  const isVerticalList = isRecordPageEnabled && layoutMode === 'vertical-list';
 
   if (isCanvasLayout) {
     return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;

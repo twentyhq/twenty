@@ -2,7 +2,7 @@ import { SummaryCard } from '@/object-record/record-show/components/SummaryCard'
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
-import { assertPageLayoutTabHasDefinedLayoutModeOrThrow } from '@/page-layout/utils/assertPageLayoutTabHasDefinedLayoutModeOrThrow';
+import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
@@ -27,7 +27,10 @@ export const PageLayoutLeftPanel = ({
     (tab) => tab.id === pinnedLeftTabId,
   );
 
-  assertPageLayoutTabHasDefinedLayoutModeOrThrow(pinnedTab);
+  const layoutMode = getTabLayoutMode({
+    tab: pinnedTab,
+    pageLayoutType: currentPageLayout.type,
+  });
 
   return (
     <ShowPageLeftContainer>
@@ -39,11 +42,11 @@ export const PageLayoutLeftPanel = ({
 
       <PageLayoutContentProvider
         value={{
-          tabId: pinnedTab.id,
-          layoutMode: pinnedTab.layoutMode,
+          tabId: pinnedLeftTabId,
+          layoutMode,
         }}
       >
-        <PageLayoutContent tabId={pinnedLeftTabId} />
+        <PageLayoutContent />
       </PageLayoutContentProvider>
     </ShowPageLeftContainer>
   );

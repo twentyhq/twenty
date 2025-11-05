@@ -1,7 +1,7 @@
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
-import { assertPageLayoutTabHasDefinedLayoutModeOrThrow } from '@/page-layout/utils/assertPageLayoutTabHasDefinedLayoutModeOrThrow';
+import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 
 type PageLayoutMainContentProps = {
   tabId: string;
@@ -17,13 +17,16 @@ export const PageLayoutMainContent = ({
   }
 
   const activeTab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
-  assertPageLayoutTabHasDefinedLayoutModeOrThrow(activeTab);
+  const layoutMode = getTabLayoutMode({
+    tab: activeTab,
+    pageLayoutType: currentPageLayout.type,
+  });
 
   return (
     <PageLayoutContentProvider
       value={{
-        tabId: activeTab.id,
-        layoutMode: activeTab.layoutMode,
+        tabId,
+        layoutMode,
       }}
     >
       <PageLayoutContent />
