@@ -165,7 +165,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
           resizeHandle={
             isPageLayoutInEditMode ? <PageLayoutGridResizeHandle /> : undefined
           }
-          resizeHandles={['se']}
+          resizeHandles={['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw']}
           onDragStart={(_layout, _oldItem, newItem) => {
             setDraggingWidgetId(newItem.i);
           }}
