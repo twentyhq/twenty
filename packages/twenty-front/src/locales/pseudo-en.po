@@ -2533,6 +2533,11 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
+#. js-lingui-id: w6iIMm
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Dashboards"
+msgstr ""
+
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Data"
@@ -4274,6 +4279,11 @@ msgstr ""
 msgid "Go to Companies"
 msgstr ""
 
+#. js-lingui-id: dvMw7T
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Dashboards"
+msgstr ""
+
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
@@ -4315,9 +4325,9 @@ msgstr ""
 msgid "Go to Tasks"
 msgstr ""
 
-#. js-lingui-id: A5WHZY
+#. js-lingui-id: 203RqP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "Go to workflows"
+msgid "Go to Workflows"
 msgstr ""
 
 #. js-lingui-id: eoe8BR
@@ -7487,9 +7497,9 @@ msgstr ""
 msgid "See workflow"
 msgstr ""
 
-#. js-lingui-id: XThiR2
+#. js-lingui-id: MVYiTN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "See workflows"
+msgid "See Workflows"
 msgstr ""
 
 #. js-lingui-id: bP/w4M
