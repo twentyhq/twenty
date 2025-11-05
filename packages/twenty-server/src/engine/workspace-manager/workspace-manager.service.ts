@@ -20,6 +20,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { seedStandardApplications } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-standard-applications.util';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
+import { createWorkspaceCustomApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/create-workspace-custom-application';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -51,12 +52,13 @@ export class WorkspaceManagerService {
   ) {}
 
   public async init({
-    workspaceId,
+    workspace,
     userId,
   }: {
-    workspaceId: string;
+    workspace: WorkspaceEntity;
     userId: string;
   }): Promise<void> {
+    const workspaceId = workspace.id;
     const schemaCreationStart = performance.now();
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
@@ -100,6 +102,14 @@ export class WorkspaceManagerService {
     await seedStandardApplications({
       applicationService: this.applicationService,
       workspaceId,
+    });
+
+    const workspaceCustomApplication = createWorkspaceCustomApplication({
+      workspace,
+    });
+    await this.applicationService.create({
+      ...workspaceCustomApplication,
+      serverlessFunctionLayerId: null,
     });
 
     // TODO seed workspace custom application and associate everything below with it

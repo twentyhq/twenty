@@ -228,7 +228,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     });
 
     await this.workspaceManagerService.init({
-      workspaceId: workspace.id,
+      workspace,
       userId: user.id,
     });
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
