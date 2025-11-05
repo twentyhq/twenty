@@ -1,4 +1,4 @@
-import { type DataSource } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
 import {
   CreateWorkspaceInput,
@@ -8,17 +8,17 @@ import {
 const tableName = 'workspace';
 
 export type SeedWorkspaceArgs = {
-  dataSource: DataSource;
+  queryRunner: QueryRunner;
   schemaName: string;
   createWorkspaceInput: CreateWorkspaceInput;
 };
 
 export const createWorkspace = async ({
   schemaName,
-  dataSource,
+  queryRunner,
   createWorkspaceInput,
 }: SeedWorkspaceArgs) => {
-  await dataSource
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [
@@ -30,12 +30,18 @@ export const createWorkspace = async ({
     .execute();
 };
 
-export const deleteWorkspaces = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
-  await dataSource
+type DeleteWorkspacesArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+};
+
+export const deleteWorkspaces = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+}: DeleteWorkspacesArgs) => {
+  await queryRunner.manager
     .createQueryBuilder()
     .delete()
     .from(`${schemaName}.${tableName}`)

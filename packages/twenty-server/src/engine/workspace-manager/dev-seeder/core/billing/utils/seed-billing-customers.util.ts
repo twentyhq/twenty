@@ -1,13 +1,19 @@
-import { type DataSource } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
 const tableName = 'billingCustomer';
 
-export const seedBillingCustomers = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
-  await dataSource
+type SeedBillingCustomersArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+};
+
+export const seedBillingCustomers = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+}: SeedBillingCustomersArgs) => {
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, ['workspaceId', 'stripeCustomerId'])
