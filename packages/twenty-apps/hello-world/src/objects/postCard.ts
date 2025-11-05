@@ -82,8 +82,6 @@ export class PostCard extends BaseObjectMetadata {
   })
   status: PostCardStatus;
 
-  //  notes?: string // optional internal notes or comments
-
   @FieldMetadata({
     universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
     type: FieldMetadataType.DATE_TIME,
@@ -91,6 +89,7 @@ export class PostCard extends BaseObjectMetadata {
     icon: 'IconCheck',
     isNullable: true,
     defaultValue: null,
+    isUIReadOnly: false,
   })
   deliveredAt?: Date;
 }

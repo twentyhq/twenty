@@ -81,7 +81,8 @@ export type FieldManifest = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   settings?: any;
   isNullable?: boolean;
-  isFieldUiReadOnly?: boolean;
+  isUIReadOnly?: boolean;
+  isUnique?: boolean;
 };
 
 export type ObjectManifest = {

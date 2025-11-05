@@ -8,6 +8,7 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'isActive',
     'isLabelSyncedWithName',
     'isUnique',
+    'isUIReadOnly',
     'label',
     'name',
     'options',

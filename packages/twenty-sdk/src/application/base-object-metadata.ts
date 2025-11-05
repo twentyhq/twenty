@@ -9,12 +9,6 @@ export abstract class BaseObjectMetadata {
 
   searchVector: string | null;
 
-  //taskTargets
-  //noteTargets
-  //attachments
-  //favorites
-  //timelineActivities
-
   createdAt: string;
 
   updatedAt: string;

@@ -252,6 +252,8 @@ export class ApplicationSyncService {
         options: fieldToSync.options ?? undefined,
         settings: fieldToSync.settings ?? undefined,
         isNullable: fieldToSync.isNullable ?? true,
+        isUIReadOnly: fieldToSync.isUIReadOnly ?? false,
+        isUnique: fieldToSync.isUnique ?? false,
       };
 
       await this.fieldMetadataServiceV2.updateOne({
@@ -271,6 +273,8 @@ export class ApplicationSyncService {
         options: fieldToCreate.options ?? undefined,
         settings: fieldToCreate.settings ?? undefined,
         isNullable: fieldToCreate.isNullable ?? true,
+        isUIReadOnly: fieldToCreate.isUIReadOnly ?? false,
+        isUnique: fieldToCreate.isUnique ?? false,
         objectMetadataId: objectId,
         universalIdentifier: fieldToCreate.universalIdentifier,
         standardId: fieldToCreate.universalIdentifier,

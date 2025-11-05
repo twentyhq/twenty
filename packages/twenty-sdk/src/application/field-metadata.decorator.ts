@@ -22,6 +22,8 @@ type FieldOptions<
   options?: FieldMetadataOptions<T>;
   settings?: FieldMetadataSettings<T>;
   isNullable?: boolean;
+  isUIReadOnly?: boolean;
+  isUnique?: boolean;
 };
 
 export const FieldMetadata = <T extends FieldMetadataType>(
