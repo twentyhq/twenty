@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CronTriggerExceptionCode } from 'src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
@@ -18,8 +18,10 @@ export class FlatCronTriggerValidatorService {
   public validateFlatCronTriggerUpdate({
     flatEntityId,
     flatEntityUpdates,
-    optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatCronTriggerMaps: optimisticFlatCronTriggerMaps,
+      flatServerlessFunctionMaps,
+    },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
@@ -52,7 +54,7 @@ export class FlatCronTriggerValidatorService {
     };
 
     const serverlessFunction =
-      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
+      flatServerlessFunctionMaps.byId[
         updatedFlatCronTrigger.serverlessFunctionId
       ];
 
@@ -69,7 +71,9 @@ export class FlatCronTriggerValidatorService {
 
   public validateFlatCronTriggerDeletion({
     flatEntityToValidate: { id: cronTriggerIdToDelete },
-    optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatCronTriggerMaps: optimisticFlatCronTriggerMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
@@ -97,8 +101,10 @@ export class FlatCronTriggerValidatorService {
 
   public async validateFlatCronTriggerCreation({
     flatEntityToValidate: flatCronTriggerToValidate,
-    optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatCronTriggerMaps: optimisticFlatCronTriggerMaps,
+      flatServerlessFunctionMaps,
+    },
   }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>): Promise<
     FailedFlatEntityValidation<FlatCronTrigger>
   > {
@@ -123,7 +129,7 @@ export class FlatCronTriggerValidatorService {
     }
 
     const serverlessFunction =
-      dependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps?.byId?.[
+      flatServerlessFunctionMaps.byId[
         flatCronTriggerToValidate.serverlessFunctionId
       ];
 

@@ -37,7 +37,7 @@ export class ApiKeyEntity {
   revokedAt?: Date | null;
 
   @Field(() => UUIDScalarType)
-  @Column('uuid')
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @Field(() => Date)

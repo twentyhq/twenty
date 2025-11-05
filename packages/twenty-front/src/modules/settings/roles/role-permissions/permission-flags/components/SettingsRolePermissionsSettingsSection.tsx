@@ -19,6 +19,7 @@ import {
   IconLockOpen,
   IconSettings,
   IconSettingsAutomation,
+  IconShield,
   IconSparkles,
   IconSpy,
   IconUsers,
@@ -103,6 +104,12 @@ export const SettingsRolePermissionsSettingsSection = ({
         name: t`Workflows`,
         description: t`Manage workflows`,
         Icon: IconSettingsAutomation,
+      },
+      {
+        key: PermissionFlagType.SSO_BYPASS,
+        name: t`SSO Bypass`,
+        description: t`Enable bypass options`,
+        Icon: IconShield,
       },
       {
         key: PermissionFlagType.IMPERSONATE,

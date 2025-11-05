@@ -38,6 +38,7 @@ import { parseGroupByArgs } from 'src/engine/api/graphql/graphql-query-runner/gr
 import { removeQuotes } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/remove-quote.util';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
@@ -45,6 +46,7 @@ import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/servi
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
 @Injectable()
@@ -104,12 +106,18 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     );
 
     const groupByDefinitions = groupByFields.map((groupByField) => {
-      const columnNameWithQuotes = `"${
-        formatColumnNamesFromCompositeFieldAndSubfields(
-          groupByField.fieldMetadata.name,
-          groupByField.subFieldName ? [groupByField.subFieldName] : undefined,
-        )[0]
-      }"`;
+      const columnName = isFieldMetadataRelationOrMorphRelation(
+        groupByField.fieldMetadata,
+      )
+        ? formatColumnNameForRelationField(
+            groupByField.fieldMetadata.name,
+            groupByField.fieldMetadata.settings,
+          )
+        : formatColumnNamesFromCompositeFieldAndSubfields(
+            groupByField.fieldMetadata.name,
+            groupByField.subFieldName ? [groupByField.subFieldName] : undefined,
+          )[0];
+      const columnNameWithQuotes = `"${columnName}"`;
       const alias =
         removeQuotes(columnNameWithQuotes) +
         (isGroupByDateField(groupByField)
@@ -166,6 +174,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         groupByDefinitions,
         selectedFieldsResult: args.selectedFieldsResult,
         queryRunnerContext,
+        orderByForRecords: args.orderByForRecords ?? [],
       });
     }
 

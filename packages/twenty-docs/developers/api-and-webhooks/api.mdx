@@ -1,0 +1,49 @@
+---
+title: API
+image: /images/docs/getting-started/api.png
+info: Discover how to use our APIs.
+---
+<Frame>
+  <img src="/images/docs/getting-started/api.png" alt="Header" />
+</Frame>
+
+## Overview
+The Twenty API allows developers to interact programmatically with the Twenty CRM platform. Using the API, you can integrate Twenty with other systems, automate data synchronization, and build custom solutions around your customer data. The API provides endpoints to **create, read, update, and delete** core CRM objects (such as people and companies) as well as access metadata configuration.
+
+**API Playground:**  You can now access the API Playground within the app's settings. To try out API calls in real-time, log in to your Twenty workspace and navigate to **Settings → APIs & Webhooks**. This opens the in-app API Playground and the settings for API keys.
+**[Go to API Settings](https://app.twenty.com/settings)**
+
+## Authentication
+Twenty’s API uses API keys for authentication. Every request to protected endpoints must include an API key in the header.
+
+* **API Keys:** You can generate a new API key from your Twenty app’s **API settings** page. Each API key is a secret token that grants access to your CRM data, so keep it safe. If a key is compromised, revoke it from the settings and generate a new one.
+* **Auth Header:** Once you have an API key, include it in the `Authorization` header of your HTTP requests. Use the Bearer token scheme. For example:
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```   
+
+  Replace `YOUR_API_KEY` with the key you obtained. This header must be present on **all API requests**. If the token is missing or invalid, the API will respond with an authentication error (HTTP 401 Unauthorized).
+
+## API Endpoints
+All resources can be accessed and via REST or GraphQL.
+
+* **Cloud:** `https://api.twenty.com/` or your custom domain / sub-domain
+* **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://<your-domain>/rest/`).
+
+Endpoints are grouped into two categories: **Core API** and **Metadata API**. The **Core API** deals with primary CRM data (e.g. people, companies, notes, tasks), while the **Metadata API** covers configuration data (like custom fields or object definitions). Most integrations will primarily use the Core API.
+
+### Core API
+Accessed on `/rest/` or `/graphql/`.
+The **Core API** serves as a unified interface for managing core CRM entities (people, companies, notes, tasks) and their relationships, offering **both REST and GraphQL** interaction models. 
+
+### Metadata API
+Accessed on `/rest/metadata/` or `/metadata/`.
+The Metadata API endpoints allow you to retrieve information about your schema and settings. For instance, you can fetch definitions of custom fields, object schemas, etc.
+
+* **Example Endpoints:**
+
+  * `GET /rest/metadata/objects` – List all object types and their metadata (fields, relationships).
+  * `GET /rest/metadata/objects/{objectName}` – Get metadata for a specific object (e.g., `people`, `companies`).
+  * `GET /rest/metadata/picklists` – Retrieve picklist (dropdown) field options defined in the CRM.
+
+Typically, the metadata endpoints are used to understand the structure of data (for dynamic integrations or form-building) rather than to manage actual records. They are read-only in most cases. Authentication is required for these as well (use your API key).

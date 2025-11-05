@@ -1,12 +1,13 @@
 {
   "name": "twenty-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "AGPL-3.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "application"
   ],
   "scripts": {
     "build": "vite build"
@@ -15,5 +16,24 @@
     "typescript": "5.9.2",
     "vite": "^7.0.0",
     "vite-plugin-dts": "3.8.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./application": {
+      "types": "./dist/application/index.d.ts",
+      "import": "./dist/application.mjs",
+      "require": "./dist/application.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "application": [
+        "dist/application/index.d.ts"
+      ]
+    }
   }
 }

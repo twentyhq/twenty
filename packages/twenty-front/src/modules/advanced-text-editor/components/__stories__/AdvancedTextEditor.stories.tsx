@@ -1,7 +1,8 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
+import { expect, fn, userEvent } from '@storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -291,5 +292,149 @@ export const CustomSize: Story = {
     minHeight: 300,
     maxWidth: 600,
     placeholder: 'This editor has custom dimensions...',
+  },
+};
+
+export const WithLists: Story = {
+  args: {
+    defaultValue: JSON.stringify({
+      type: 'doc',
+      content: [
+        {
+          type: 'heading',
+          attrs: { level: 2 },
+          content: [{ type: 'text', text: 'Project Requirements' }],
+        },
+        {
+          type: 'bulletList',
+          content: [
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [
+                    { type: 'text', text: 'User authentication system' },
+                  ],
+                },
+              ],
+            },
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: 'Database integration' }],
+                },
+              ],
+            },
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: 'API endpoints' }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'heading',
+          attrs: { level: 2 },
+          content: [{ type: 'text', text: 'Implementation Steps' }],
+        },
+        {
+          type: 'orderedList',
+          content: [
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [
+                    { type: 'text', text: 'Set up development environment' },
+                  ],
+                },
+              ],
+            },
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: 'Create database schema' }],
+                },
+              ],
+            },
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: 'Implement authentication' }],
+                },
+              ],
+            },
+            {
+              type: 'listItem',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: [{ type: 'text', text: 'Build API endpoints' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+  },
+  play: async ({ canvasElement, step }) => {
+    await step('Verify bullet list is rendered', async () => {
+      const listItems = canvasElement.querySelectorAll('ul li');
+      expect(listItems.length).toBeGreaterThan(0);
+
+      const firstItem = listItems[0];
+      expect(firstItem).toBeInTheDocument();
+      expect(firstItem).toHaveTextContent(/User authentication system/i);
+    });
+
+    await step('Verify ordered list is rendered', async () => {
+      const orderedListItems = canvasElement.querySelectorAll('ol li');
+      expect(orderedListItems.length).toBeGreaterThan(0);
+
+      const firstOrderedItem = orderedListItems[0];
+      expect(firstOrderedItem).toBeInTheDocument();
+      expect(firstOrderedItem).toHaveTextContent(
+        /Set up development environment/i,
+      );
+    });
+
+    await step('Test list interaction', async () => {
+      const editorContent = canvasElement.querySelector('.tiptap');
+      expect(editorContent).toBeInTheDocument();
+
+      const firstListItem = canvasElement.querySelector('ul li');
+      if (isDefined(firstListItem)) {
+        await userEvent.click(firstListItem);
+
+        expect(editorContent).toHaveFocus();
+      }
+    });
+
+    await step('Verify list structure', async () => {
+      const bulletList = canvasElement.querySelector('ul');
+      expect(bulletList).toBeInTheDocument();
+
+      const orderedList = canvasElement.querySelector('ol');
+      expect(orderedList).toBeInTheDocument();
+
+      const bulletListItems = canvasElement.querySelectorAll('ul li');
+      expect(bulletListItems.length).toBe(3);
+
+      const orderedListItems = canvasElement.querySelectorAll('ol li');
+      expect(orderedListItems.length).toBe(4);
+    });
   },
 };

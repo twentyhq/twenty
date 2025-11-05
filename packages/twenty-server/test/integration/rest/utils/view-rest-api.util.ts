@@ -1,8 +1,3 @@
-import {
-  TEST_FIELD_METADATA_1_ID,
-  TEST_OBJECT_METADATA_1_ID,
-  TEST_VIEW_1_ID,
-} from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
@@ -48,19 +43,21 @@ export const findViewFilterWithRestApi = async (
 };
 
 export const createTestViewWithRestApi = async (
-  overrides: Partial<ViewEntity> = {},
+  params: {
+    objectMetadataId: string;
+  } & Partial<Omit<ViewEntity, 'objectMetadataId'>>,
 ): Promise<ViewEntity> => {
+  const { objectMetadataId, name, ...restParams } = params;
   const viewData = {
-    id: TEST_VIEW_1_ID,
-    name: generateRecordName('Test View'),
-    objectMetadataId: TEST_OBJECT_METADATA_1_ID,
+    name: name || generateRecordName('Test View'),
+    objectMetadataId,
     icon: 'IconTable',
     type: ViewType.TABLE,
     key: 'INDEX',
     position: 0,
     isCompact: false,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-    ...overrides,
+    ...restParams,
   };
 
   const response = await makeRestAPIRequest({
@@ -80,15 +77,19 @@ export const createTestViewWithRestApi = async (
 };
 
 export const createTestViewFieldWithRestApi = async (
-  overrides: Partial<ViewFieldEntity> = {},
+  params: {
+    viewId: string;
+    fieldMetadataId: string;
+  } & Partial<Omit<ViewFieldEntity, 'viewId' | 'fieldMetadataId'>>,
 ): Promise<ViewFieldEntity> => {
+  const { viewId, fieldMetadataId, ...restParams } = params;
   const viewFieldData = {
-    viewId: TEST_VIEW_1_ID,
-    fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+    viewId,
+    fieldMetadataId,
     position: 0,
     isVisible: true,
     size: 150,
-    ...overrides,
+    ...restParams,
   };
 
   const response = await makeRestAPIRequest({
@@ -108,14 +109,18 @@ export const createTestViewFieldWithRestApi = async (
 };
 
 export const createTestViewFilterWithRestApi = async (
-  overrides: Partial<ViewFilterEntity> = {},
+  params: {
+    viewId: string;
+    fieldMetadataId: string;
+  } & Partial<Omit<ViewFilterEntity, 'viewId' | 'fieldMetadataId'>>,
 ): Promise<ViewFilterEntity> => {
+  const { viewId, fieldMetadataId, operand, value, ...restParams } = params;
   const viewFilterData = {
-    viewId: TEST_VIEW_1_ID,
-    fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-    operand: 'Is',
-    value: 'test-value',
-    ...overrides,
+    viewId,
+    fieldMetadataId,
+    operand: operand || 'Is',
+    value: value || 'test-value',
+    ...restParams,
   };
 
   const response = await makeRestAPIRequest({
@@ -135,13 +140,17 @@ export const createTestViewFilterWithRestApi = async (
 };
 
 export const createTestViewSortWithRestApi = async (
-  overrides: Partial<ViewSortEntity> = {},
+  params: {
+    viewId: string;
+    fieldMetadataId: string;
+  } & Partial<Omit<ViewSortEntity, 'viewId' | 'fieldMetadataId'>>,
 ): Promise<ViewSortEntity> => {
+  const { viewId, fieldMetadataId, direction, ...restParams } = params;
   const viewSortData = {
-    viewId: TEST_VIEW_1_ID,
-    fieldMetadataId: TEST_FIELD_METADATA_1_ID,
-    direction: 'ASC',
-    ...overrides,
+    viewId,
+    fieldMetadataId,
+    direction: direction || 'ASC',
+    ...restParams,
   };
 
   const response = await makeRestAPIRequest({
@@ -161,15 +170,19 @@ export const createTestViewSortWithRestApi = async (
 };
 
 export const createTestViewGroupWithRestApi = async (
-  overrides: Partial<ViewGroupEntity> = {},
+  params: {
+    viewId: string;
+    fieldMetadataId: string;
+  } & Partial<Omit<ViewGroupEntity, 'viewId' | 'fieldMetadataId'>>,
 ): Promise<ViewGroupEntity> => {
+  const { viewId, fieldMetadataId, fieldValue, ...restParams } = params;
   const viewGroupData = {
-    viewId: TEST_VIEW_1_ID,
-    fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+    viewId,
+    fieldMetadataId,
     isVisible: true,
-    fieldValue: 'test-group-value',
+    fieldValue: fieldValue || 'test-group-value',
     position: 0,
-    ...overrides,
+    ...restParams,
   };
 
   const response = await makeRestAPIRequest({
@@ -189,12 +202,15 @@ export const createTestViewGroupWithRestApi = async (
 };
 
 export const createTestViewFilterGroupWithRestApi = async (
-  overrides: Partial<ViewFilterGroupEntity> = {},
+  params: {
+    viewId: string;
+  } & Partial<Omit<ViewFilterGroupEntity, 'viewId'>>,
 ): Promise<ViewFilterGroupEntity> => {
+  const { viewId, logicalOperator, ...restParams } = params;
   const viewFilterGroupData = {
-    viewId: TEST_VIEW_1_ID,
-    logicalOperator: 'AND',
-    ...overrides,
+    viewId,
+    logicalOperator: logicalOperator || 'AND',
+    ...restParams,
   };
 
   const response = await makeRestAPIRequest({

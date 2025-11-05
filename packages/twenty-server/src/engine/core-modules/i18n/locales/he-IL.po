@@ -166,6 +166,11 @@ msgstr "יש צורך בפעולה כדי למנוע מחיקת סביבת הע�
 msgid "Action Needed to Reset Password"
 msgstr "יש צורך בפעולה כדי לאפס סיסמה"
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr ""
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
@@ -584,10 +589,10 @@ msgstr "אין אפשרות להתחבר ל-{connectFieldName}. לא נמצא ר
 msgid "Can't impersonate user via api key"
 msgstr "לא ניתן להתחזות למשתמש באמצעות מפתח API"
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "לא ניתן להפעיל גרסה שאינה טיוטה או אינה הגרסה האחרונה שפורסמה."
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +624,6 @@ msgstr "לא ניתן להשבית גרסת תהליך עבודה שאינה פ�
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "לא ניתן לאפשר ייחודיות עקב ערכים כפולים קיימים. נא לבדוק ולתקן את הנתונים שלך תחילה (כולל רשומות שנמחקו רכות)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "לא ניתן להחזיק ביותר מגרסת תהליך עבודה פעילה אחת"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
@@ -1843,6 +1843,12 @@ msgstr "תווית לא חייבת להכיל פסיק."
 msgid "Language"
 msgstr "שפה"
 
+#. js-lingui-id: hHtzNQ
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Last credentials refreshed at"
+msgstr ""
+
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Last published Version Id"
@@ -1918,9 +1924,9 @@ msgid "March"
 msgstr "מרץ"
 
 #. js-lingui-id: hw7Mwk
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr "מספר המרבי של תקליטים לעדכון או הוספה הוא {QUERY_MAX_RECORDS}."
+msgstr ""
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2127,7 +2133,6 @@ msgid "Multi-select field default value must be an array"
 msgstr "ערך ברירת המחדל של שדה רב-בחירה חייב להיות מערך"
 
 #. js-lingui-id: 6rLmLu
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
 msgstr "נמצאו מספר תקליטים עם אותם ערכים ייחודיים לשדות עבור {conflictingFieldsValues}. לא ניתן לקבוע איזה תקליט לעדכן."
@@ -2578,6 +2583,12 @@ msgstr "נדרשות אפשרויות עבור שדות enum"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "מזהה תצורת עמוד"
+
+#. js-lingui-id: G1fWNt
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Parent Folder ID"
+msgstr ""
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -3523,6 +3534,11 @@ msgstr "שדה ייחודי לא יכול להיות בעל ערך ברירת מ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "לא ניתן ליצור אינדקס ייחודי לשדה {fieldName} מסוג {fieldType}"
+
+#. js-lingui-id: rtir7c
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
+msgid "unknown"
+msgstr ""
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts

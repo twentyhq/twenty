@@ -29,6 +29,32 @@ export { computeGqlOperationFilterForLinks } from './filter/compute-record-gql-o
 export { computeEmptyGqlOperationFilterForEmails } from './filter/computeEmptyGqlOperationFilterForEmails';
 export { computeEmptyGqlOperationFilterForLinks } from './filter/computeEmptyGqlOperationFilterForLinks';
 export { computeRecordGqlOperationFilter } from './filter/computeRecordGqlOperationFilter';
+export { addUnitToDateTime } from './filter/dates/utils/addUnitToDateTime';
+export type { FirstDayOfTheWeek } from './filter/dates/utils/firstDayOfWeekSchema';
+export { firstDayOfWeekSchema } from './filter/dates/utils/firstDayOfWeekSchema';
+export { getDateFromPlainDate } from './filter/dates/utils/getDateFromPlainDate';
+export { getEndUnitOfDateTime } from './filter/dates/utils/getEndUnitOfDateTime';
+export { getFirstDayOfTheWeekAsANumberForDateFNS } from './filter/dates/utils/getFirstDayOfTheWeekAsANumberForDateFNS';
+export { getPlainDateFromDate } from './filter/dates/utils/getPlainDateFromDate';
+export { getStartUnitOfDateTime } from './filter/dates/utils/getStartUnitOfDateTime';
+export { relativeDateFilterAmountSchema } from './filter/dates/utils/relativeDateFilterAmountSchema';
+export type { RelativeDateFilterDirection } from './filter/dates/utils/relativeDateFilterDirectionSchema';
+export { relativeDateFilterDirectionSchema } from './filter/dates/utils/relativeDateFilterDirectionSchema';
+export type { RelativeDateFilter } from './filter/dates/utils/relativeDateFilterSchema';
+export { relativeDateFilterSchema } from './filter/dates/utils/relativeDateFilterSchema';
+export { relativeDateFilterStringifiedSchema } from './filter/dates/utils/relativeDateFilterStringifiedSchema';
+export type { RelativeDateFilterUnit } from './filter/dates/utils/relativeDateFilterUnitSchema';
+export { relativeDateFilterUnitSchema } from './filter/dates/utils/relativeDateFilterUnitSchema';
+export type { ResolvedDateFilterValue } from './filter/dates/utils/resolveDateFilter';
+export { resolveDateFilter } from './filter/dates/utils/resolveDateFilter';
+export type { ResolvedDateTimeFilterValue } from './filter/dates/utils/resolveDateTimeFilter';
+export { resolveDateTimeFilter } from './filter/dates/utils/resolveDateTimeFilter';
+export { resolveRelativeDateFilter } from './filter/dates/utils/resolveRelativeDateFilter';
+export { resolveRelativeDateFilterStringified } from './filter/dates/utils/resolveRelativeDateFilterStringified';
+export { resolveRelativeDateTimeFilter } from './filter/dates/utils/resolveRelativeDateTimeFilter';
+export { resolveRelativeDateTimeFilterStringified } from './filter/dates/utils/resolveRelativeDateTimeFilterStringified';
+export { shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone } from './filter/dates/utils/shiftPointInTimeFromTimezoneDifferenceInMinutesWithSystemTimezone';
+export { subUnitFromDateTime } from './filter/dates/utils/subUnitFromDateTime';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
@@ -38,6 +64,7 @@ export type {
 export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
+export { computeTimezoneDifferenceInMinutes } from './filter/utils/computeTimezoneDifferenceInMinutes';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
 export { createAnyFieldRecordFilterBaseProperties } from './filter/utils/createAnyFieldRecordFilterBaseProperties';
@@ -51,16 +78,6 @@ export { generateILikeFiltersForCompositeFields } from './filter/utils/generateI
 export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
-export type {
-  VariableDateViewFilterValueDirection,
-  VariableDateViewFilterValueUnit,
-  ResolvedDateViewFilterValue,
-} from './filter/utils/resolveDateViewFilterValue';
-export {
-  variableDateViewFilterValueUnitSchema,
-  variableDateViewFilterValuePartsSchema,
-  resolveDateViewFilterValue,
-} from './filter/utils/resolveDateViewFilterValue';
 export { arrayOfStringsOrVariablesSchema } from './filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export { arrayOfUuidOrVariableSchema } from './filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 export {
@@ -81,7 +98,7 @@ export { getSettingsPath } from './navigation/getSettingsPath';
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
-export { safeParseRelativeDateFilterValue } from './safeParseRelativeDateFilterValue';
+export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeDateFilterJSONStringified';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';

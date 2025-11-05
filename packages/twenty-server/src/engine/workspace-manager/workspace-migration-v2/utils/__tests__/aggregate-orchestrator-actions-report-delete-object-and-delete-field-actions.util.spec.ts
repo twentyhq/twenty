@@ -3,7 +3,7 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 
-import { EMPTY_ORCHESTRATOR_ACTIONS_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
+import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/types/workspace-migration-orchestrator.type';
 import { aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/utils/aggregate-orchestrator-actions-report-delete-object-and-delete-field.util';
 import { type DeleteFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/types/workspace-migration-field-action-v2';
@@ -23,7 +23,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
       title: 'should remove field actions when parent object is being deleted',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -63,7 +63,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
       title: 'should keep field actions when no parent object is being deleted',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -94,7 +94,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
         'should handle mixed scenario with some fields removed and some kept',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -136,7 +136,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
       title: 'should handle multiple objects with mixed field deletions',
       context: {
         input: {
-          ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+          ...createEmptyOrchestratorActionsReport(),
           objectMetadata: {
             created: [],
             updated: [],
@@ -187,7 +187,7 @@ describe('aggregateOrchestratorActionsReportDeleteObjectAndDeleteFieldActions', 
     {
       title: 'should handle empty actions report',
       context: {
-        input: EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+        input: createEmptyOrchestratorActionsReport(),
         expected: {
           expectDeleteFieldActionPerObjectMetadataId: {},
           expectDeleteObjectActionPerObjectMetadataId: {},

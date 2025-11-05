@@ -1,0 +1,82 @@
+---
+title: Webhooks
+image: /images/docs/getting-started/webhooks.png
+info: Discover how to use our Webhooks.
+---
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## Overview
+Webhooks in Twenty complement the API by enabling **real-time notifications** to your own applications when certain events happen in your CRM. Instead of continuously polling the API for changes, you can set up webhooks to have Twenty **push** data to your system whenever specific events occur (for example, when a new record is created or an existing record is updated). This helps keep external systems in sync with Twenty instantly and efficiently.
+
+With webhooks, Twenty will send an HTTP POST request to a URL you specify, containing details about the event. You can then handle that data in your application (e.g., to update your external database, trigger workflows, or send alerts).
+
+## Setting Up a Webhook
+To create a webhook in Twenty, use the **APIs & Webhooks** settings in your Twenty app:
+
+1. **Navigate to Settings:** In your Twenty application, go to **Settings → APIs & Webhooks**.
+2. **Create a Webhook:** Under **Webhooks** click on **+ Create webhook**.
+3. **Enter URL:** Provide the endpoint URL on your server where you want Twenty to send webhook requests. This should be a publicly accessible URL that can handle POST requests.
+4. **Save:** Click **Save** to create the webhook. The new webhook will be active immediately.
+
+You can create multiple webhooks if you need to send different events to different endpoints. Each webhook is essentially a subscription for all relevant events (at this time, Twenty sends all event types to the given URL; filtering specific event types may be configurable in the UI). If you ever need to remove a webhook, you can delete it from the same settings page (select the webhook and choose delete).
+
+## Events and Payloads
+Once a webhook is set up, Twenty will send an HTTP POST request to your specified URL whenever a trigger event occurs in your CRM data. Common events that trigger webhooks include:
+
+* **Record Created:** e.g. a new person is added (`person.created`), a new company is created (`company.created`), a note is created (`note.created`), etc.
+* **Record Updated:** e.g. an existing person's information is updated (`person.updated`), a company record is edited (`company.updated`), etc.
+* **Record Deleted:** e.g. a person or company is deleted (`person.deleted`, `company.deleted`).
+* **Other Events:** If applicable, other object events or custom triggers (for instance, if tasks or other objects are updated, similar event types would be used like `task.created`, `note.updated`, etc.).
+
+The webhook POST request contains a JSON payload in its body. The payload will generally include at least two things: the type of event, and the data related to that event (often the record that was created/updated). For example, a webhook for a newly created person might send a payload like:
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+In this example:
+ 
+* `"event"` specifies what happened (`person.created`).
+* `"data"` contains the new record's details (the same information you would get if you requested that person via the API).
+* `"timestamp"` is when the event occurred (in UTC).
+
+Your endpoint should be prepared to receive such JSON data via POST. Typically, you'll parse the JSON, look at the `"event"` type to understand what happened, and then use the `"data"` accordingly (e.g., create a new contact in your system, or update an existing one).
+ 
+**Note:** It's important to respond with a **2xx HTTP status** from your webhook endpoint to acknowledge successful receipt. If the Twenty webhook sender does not get a 2xx response, it may consider the delivery failed. (In the future, retry logic might attempt to resend failed webhooks, so always strive to return a 200 OK as quickly as possible after processing the data.)
+
+## Webhook Validation
+
+To ensure the security of your webhook endpoints, Twenty includes a signature in the `X-Twenty-Webhook-Signature` header. 
+
+This signature is an HMAC SHA256 hash of the request payload, computed using your webhook secret. 
+
+To validate the signature, you'll need to:
+1. Concatenate the timestamp (from `X-Twenty-Webhook-Timestamp` header), a colon, and the JSON string of the payload
+2. Compute the HMAC SHA256 hash using your webhook secret as the key ()
+3. Compare the resulting hex digest with the signature header
+
+Here's an example in Node.js:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```

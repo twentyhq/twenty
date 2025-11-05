@@ -1,6 +1,6 @@
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import styled from '@emotion/styled';
-import { type PageLayoutWidget } from '~/generated/graphql';
+import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledVerticalListContainer = styled.div`
   display: flex;
@@ -19,7 +19,11 @@ export const PageLayoutVerticalListViewer = ({
     <StyledVerticalListContainer>
       {widgets.map((widget) => (
         <div key={widget.id}>
-          <WidgetRenderer widget={widget} />
+          <WidgetRenderer
+            widget={widget}
+            pageLayoutType={PageLayoutType.RECORD_PAGE}
+            layoutMode="vertical-list"
+          />
         </div>
       ))}
     </StyledVerticalListContainer>

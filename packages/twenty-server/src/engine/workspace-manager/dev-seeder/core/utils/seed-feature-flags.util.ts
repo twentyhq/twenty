@@ -62,11 +62,6 @@ export const seedFeatureFlags = async (
         value: workspaceId === SEED_APPLE_WORKSPACE_ID,
       },
       {
-        key: FeatureFlagKey.IS_COMMON_API_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -75,11 +70,6 @@ export const seedFeatureFlags = async (
         key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: false,
-      },
-      {
-        key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
       },
       {
         key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
@@ -92,9 +82,9 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_DYNAMIC_SEARCH_FIELDS_ENABLED,
+        key: FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
     ])
     .execute();

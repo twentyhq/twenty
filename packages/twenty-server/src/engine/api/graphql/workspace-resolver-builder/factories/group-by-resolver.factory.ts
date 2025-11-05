@@ -59,6 +59,7 @@ export class GroupByResolverFactory
             totalCount: Number(group.totalCount ?? 0),
             hasNextPage: false,
             hasPreviousPage: false,
+            order: args.orderByForRecords ?? [],
           });
 
           const { _records, ...groupWithoutRecords } = group;

@@ -177,8 +177,12 @@ export class WorkspaceSyncFieldMetadataRelationService {
 
       const originalFieldRelationMetadataCollection =
         (originalObjectMetadata?.fields.filter(
-          (field) => field.type === FieldMetadataType.RELATION,
-        ) ?? []) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
+          (field) =>
+            field.type === FieldMetadataType.RELATION ||
+            field.type === FieldMetadataType.MORPH_RELATION,
+        ) ?? []) as FieldMetadataEntity<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >[];
 
       if (originalFieldRelationMetadataCollection.length === 0) {
         continue;
@@ -204,8 +208,12 @@ export class WorkspaceSyncFieldMetadataRelationService {
     for (const customObjectMetadata of customObjectMetadataCollection) {
       const originalFieldRelationMetadataCollection =
         (customObjectMetadata.fields.filter(
-          (field) => field.type === FieldMetadataType.RELATION,
-        ) ?? []) as FieldMetadataEntity<FieldMetadataType.RELATION>[];
+          (field) =>
+            field.type === FieldMetadataType.RELATION ||
+            field.type === FieldMetadataType.MORPH_RELATION,
+        ) ?? []) as FieldMetadataEntity<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >[];
 
       const customFieldMetadataRelationCollection =
         this.standardFieldRelationFactory.computeRelationFieldsForCustomObject(

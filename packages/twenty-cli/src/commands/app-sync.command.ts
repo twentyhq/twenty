@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { ApiService } from '../services/api.service';
 import { ApiResponse } from '../types/config.types';
-import { loadManifest } from '../utils/app-manifest-loader';
+import { loadManifest } from '../utils/load-manifest';
 
 export class AppSyncCommand {
   private apiService = new ApiService();

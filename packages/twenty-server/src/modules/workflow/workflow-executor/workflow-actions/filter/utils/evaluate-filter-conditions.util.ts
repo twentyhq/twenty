@@ -11,6 +11,7 @@ import {
   type ViewFilterOperandDeprecated,
 } from 'twenty-shared/types';
 import { convertViewFilterOperandToCoreOperand as convertViewFilterOperandDeprecated } from 'twenty-shared/utils';
+import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 
 import { parseAndEvaluateRelativeDateFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
 
@@ -43,6 +44,7 @@ function evaluateFilter(
   switch (filter.type) {
     case 'NUMBER':
     case 'NUMERIC':
+    case 'number':
       return evaluateNumberFilter(filterWithConvertedOperand);
     case 'DATE':
     case 'DATE_TIME':
@@ -55,11 +57,13 @@ function evaluateFilter(
     case 'ADDRESS':
     case 'LINKS':
     case 'ARRAY':
+    case 'array':
     case 'RAW_JSON':
       return evaluateTextAndArrayFilter(filterWithConvertedOperand);
     case 'SELECT':
       return evaluateSelectFilter(filterWithConvertedOperand);
     case 'BOOLEAN':
+    case 'boolean':
       return evaluateBooleanFilter(filterWithConvertedOperand);
     case 'UUID':
       return evaluateUuidFilter(filterWithConvertedOperand);
@@ -168,7 +172,10 @@ function isNotEmptyTextOrArray(value: unknown): boolean {
 function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
   switch (filter.operand) {
     case ViewFilterOperand.IS:
-      return Boolean(filter.leftOperand) === Boolean(filter.rightOperand);
+      return (
+        parseBooleanFromStringValue(filter.leftOperand) ===
+        parseBooleanFromStringValue(filter.rightOperand)
+      );
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for boolean filter`,
@@ -263,6 +270,10 @@ function evaluateRelationFilter(filter: ResolvedFilter): boolean {
       return leftValue === rightValue;
     case ViewFilterOperand.IS_NOT:
       return leftValue !== rightValue;
+    case ViewFilterOperand.IS_EMPTY:
+      return !isNonEmptyString(leftValue);
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isNonEmptyString(leftValue);
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for relation filter`,

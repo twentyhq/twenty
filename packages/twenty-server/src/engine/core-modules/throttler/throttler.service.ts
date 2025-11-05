@@ -28,7 +28,7 @@ export class ThrottlerService {
     await this.cacheStorage.set(key, currentCount + 1, ttl);
   }
 
-  async tokenBucketThrottle(
+  async tokenBucketThrottleOrThrow(
     key: string,
     tokensToConsume: number,
     maxTokens: number,

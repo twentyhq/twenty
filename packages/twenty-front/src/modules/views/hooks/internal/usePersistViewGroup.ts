@@ -4,15 +4,19 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTriggerViewGroupOptimisticEffect } from '@/views/optimistic-effects/hooks/useTriggerViewGroupOptimisticEffect';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ApolloError } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CreateCoreViewGroupMutationVariables,
+  type CreateManyCoreViewGroupsMutationVariables,
   type DeleteCoreViewGroupMutationVariables,
   type DestroyCoreViewGroupMutationVariables,
+  FeatureFlagKey,
   type UpdateCoreViewGroupMutationVariables,
   useCreateCoreViewGroupMutation,
+  useCreateManyCoreViewGroupsMutation,
   useDeleteCoreViewGroupMutation,
   useDestroyCoreViewGroupMutation,
   useUpdateCoreViewGroupMutation,
@@ -21,7 +25,14 @@ import {
 export const usePersistViewGroupRecords = () => {
   const { triggerViewGroupOptimisticEffect } =
     useTriggerViewGroupOptimisticEffect();
+
+  const isWorkspaceMigrationV2Enabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+  );
+
   const [createCoreViewGroupMutation] = useCreateCoreViewGroupMutation();
+  const [createManyCoreViewGroupsMutation] =
+    useCreateManyCoreViewGroupsMutation();
   const [updateCoreViewGroupMutation] = useUpdateCoreViewGroupMutation();
   const [deleteCoreViewGroupMutation] = useDeleteCoreViewGroupMutation();
   const [destroyCoreViewGroupMutation] = useDestroyCoreViewGroupMutation();
@@ -29,7 +40,7 @@ export const usePersistViewGroupRecords = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const createViewGroups = useCallback(
+  const oldCreateViewGroups = useCallback(
     async (
       createCoreViewGroupInputs: CreateCoreViewGroupMutationVariables[],
     ): Promise<
@@ -46,7 +57,7 @@ export const usePersistViewGroupRecords = () => {
 
       try {
         const results = await Promise.all(
-          createCoreViewGroupInputs.map((variables) =>
+          createCoreViewGroupInputs.map(async (variables) =>
             createCoreViewGroupMutation({
               variables,
               update: (_cache, { data }) => {
@@ -85,6 +96,77 @@ export const usePersistViewGroupRecords = () => {
     [
       triggerViewGroupOptimisticEffect,
       createCoreViewGroupMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
+  );
+
+  const createViewGroups = useCallback(
+    async (
+      createCoreViewGroupInputs: CreateManyCoreViewGroupsMutationVariables,
+    ): Promise<
+      | MetadataRequestResult<Awaited<
+          ReturnType<typeof createManyCoreViewGroupsMutation>
+        > | null>
+      | MetadataRequestResult<
+          Awaited<ReturnType<typeof createCoreViewGroupMutation>>[]
+        >
+    > => {
+      if (
+        !Array.isArray(createCoreViewGroupInputs.inputs) ||
+        createCoreViewGroupInputs.inputs.length === 0
+      ) {
+        return {
+          status: 'successful',
+          response: null,
+        };
+      }
+
+      if (!isWorkspaceMigrationV2Enabled) {
+        const oldFormatInputs: CreateCoreViewGroupMutationVariables[] =
+          createCoreViewGroupInputs.inputs.map((input) => ({ input }));
+        return await oldCreateViewGroups(oldFormatInputs);
+      }
+
+      try {
+        const result = await createManyCoreViewGroupsMutation({
+          variables: createCoreViewGroupInputs,
+          update: (_cache, { data }) => {
+            const createdViewGroups = data?.createManyCoreViewGroups;
+            if (!isDefined(createdViewGroups)) {
+              return;
+            }
+
+            triggerViewGroupOptimisticEffect({
+              createdViewGroups,
+            });
+          },
+        });
+
+        return {
+          status: 'successful',
+          response: result,
+        };
+      } catch (error) {
+        if (error instanceof ApolloError) {
+          handleMetadataError(error, {
+            primaryMetadataName: 'viewGroup',
+          });
+        } else {
+          enqueueErrorSnackBar({ message: t`An error occurred.` });
+        }
+
+        return {
+          status: 'failed',
+          error,
+        };
+      }
+    },
+    [
+      isWorkspaceMigrationV2Enabled,
+      oldCreateViewGroups,
+      triggerViewGroupOptimisticEffect,
+      createManyCoreViewGroupsMutation,
       handleMetadataError,
       enqueueErrorSnackBar,
     ],

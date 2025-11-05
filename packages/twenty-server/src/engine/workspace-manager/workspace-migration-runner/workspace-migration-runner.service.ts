@@ -67,10 +67,20 @@ export class WorkspaceMigrationRunnerService {
       `SET LOCAL search_path TO ${schemaName}`,
     );
 
+    // temporary fix to skip view migrations issue during upgrade 1.8 -> 1.10
+    const migrationActionsWithParentTmp = [
+      ...migrationActionsWithParent.filter(
+        ({ tableAction }) => tableAction.name !== 'view',
+      ),
+      ...migrationActionsWithParent.filter(
+        ({ tableAction }) => tableAction.name === 'view',
+      ),
+    ];
+
     for (const {
       tableAction,
       parentMigrationId,
-    } of migrationActionsWithParent) {
+    } of migrationActionsWithParentTmp) {
       await this.handleTableChanges(
         transactionQueryRunner as PostgresQueryRunner,
         schemaName,
@@ -83,7 +93,7 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
-    return migrationActionsWithParent.map((item) => item.tableAction);
+    return migrationActionsWithParentTmp.map((item) => item.tableAction);
   }
 
   public async executeMigrationFromPendingMigrations(
@@ -189,10 +199,12 @@ export class WorkspaceMigrationRunnerService {
 
       case WorkspaceMigrationTableActionType.ALTER_INDEXES:
         if (tableMigration.indexes && tableMigration.indexes.length > 0) {
+          const tableName = tableMigration.newName ?? tableMigration.name;
+
           await this.handleIndexesChanges(
             queryRunner,
             schemaName,
-            tableMigration.newName ?? tableMigration.name,
+            tableName,
             tableMigration.indexes,
           );
         }

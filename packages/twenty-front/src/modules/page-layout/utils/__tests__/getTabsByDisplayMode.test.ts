@@ -204,9 +204,9 @@ describe('getTabsByDisplayMode', () => {
         isInRightDrawer: false,
       });
 
-      expect(result.pinnedLeftTab).toBeDefined();
-      expect(result.pinnedLeftTab?.id).toBe('tab-1');
-      expect(result.tabsToRenderInTabList).toEqual([]);
+      expect(result.pinnedLeftTab).toBeUndefined();
+      expect(result.tabsToRenderInTabList).toEqual(tabs);
+      expect(result.tabsToRenderInTabList).toHaveLength(1);
     });
 
     it('should handle empty tabs array', () => {
@@ -257,8 +257,8 @@ describe('getTabsByDisplayMode', () => {
       expect(resultMobile.tabsToRenderInTabList).toEqual(tabs);
       expect(resultMobile.pinnedLeftTab).toBeUndefined();
 
-      expect(resultDesktop.tabsToRenderInTabList).toEqual([]);
-      expect(resultDesktop.pinnedLeftTab).toEqual(tabs[0]);
+      expect(resultDesktop.tabsToRenderInTabList).toEqual(tabs);
+      expect(resultDesktop.pinnedLeftTab).toBeUndefined();
     });
 
     it('should handle single tab with pinned-left display mode', () => {
@@ -279,8 +279,8 @@ describe('getTabsByDisplayMode', () => {
       expect(resultMobile.tabsToRenderInTabList).toEqual(tabs);
       expect(resultMobile.pinnedLeftTab).toBeUndefined();
 
-      expect(resultDesktop.tabsToRenderInTabList).toEqual([]);
-      expect(resultDesktop.pinnedLeftTab).toEqual(tabs[0]);
+      expect(resultDesktop.tabsToRenderInTabList).toEqual(tabs);
+      expect(resultDesktop.pinnedLeftTab).toBeUndefined();
     });
 
     it('should not mutate the original page layout', () => {
@@ -311,7 +311,8 @@ describe('getTabsByDisplayMode', () => {
         isInRightDrawer: false,
       });
 
-      expect(result.pinnedLeftTab?.layoutMode).toBe('grid');
+      expect(result.pinnedLeftTab).toBeUndefined();
+      expect(result.tabsToRenderInTabList[0]?.layoutMode).toBe('grid');
     });
   });
 
@@ -354,6 +355,28 @@ describe('getTabsByDisplayMode', () => {
 
       expect(mobileResult.pinnedLeftTab).toBeUndefined();
       expect(desktopResult.pinnedLeftTab).toBeDefined();
+    });
+
+    it('should show same results for mobile vs desktop when single tab', () => {
+      const tabs = [createMockTab('tab-1')];
+      const pageLayout = createMockPageLayout(tabs);
+
+      const mobileResult = getTabsByDisplayMode({
+        pageLayout,
+        isMobile: true,
+        isInRightDrawer: false,
+      });
+      const desktopResult = getTabsByDisplayMode({
+        pageLayout,
+        isMobile: false,
+        isInRightDrawer: false,
+      });
+
+      expect(mobileResult.tabsToRenderInTabList).toEqual(tabs);
+      expect(desktopResult.tabsToRenderInTabList).toEqual(tabs);
+
+      expect(mobileResult.pinnedLeftTab).toBeUndefined();
+      expect(desktopResult.pinnedLeftTab).toBeUndefined();
     });
   });
 

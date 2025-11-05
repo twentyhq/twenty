@@ -5,12 +5,6 @@ export const useBarChartTheme = () => {
 
   return {
     axis: {
-      domain: {
-        line: {
-          stroke: theme.border.color.light,
-          strokeWidth: 1,
-        },
-      },
       ticks: {
         line: {
           stroke: theme.border.color.light,
@@ -23,9 +17,9 @@ export const useBarChartTheme = () => {
       },
       legend: {
         text: {
-          fill: theme.font.color.light,
+          fill: theme.font.color.secondary,
           fontSize: 12,
-          fontWeight: theme.font.weight.medium,
+          fontWeight: theme.font.weight.regular,
         },
       },
     },

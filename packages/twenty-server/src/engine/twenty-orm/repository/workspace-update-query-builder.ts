@@ -7,6 +7,7 @@ import {
   type UpdateResult,
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type WhereClause } from 'typeorm/query-builder/WhereClause';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -26,10 +27,12 @@ import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repositor
 import { type WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
+import { applyTableAliasOnWhereCondition } from 'src/engine/twenty-orm/utils/apply-table-alias-on-where-condition';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 export class WorkspaceUpdateQueryBuilder<
   T extends ObjectLiteral,
@@ -109,12 +112,23 @@ export class WorkspaceUpdateQueryBuilder<
         this.featureFlagMap,
       );
 
+      const tableName = computeTableName(
+        objectMetadata.nameSingular,
+        objectMetadata.isCustom,
+      );
+
       eventSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
       eventSelectQueryBuilder.expressionMap.aliases =
         this.expressionMap.aliases;
       eventSelectQueryBuilder.setParameters(this.getParameters());
 
       const before = await eventSelectQueryBuilder.getMany();
+
+      this.expressionMap.wheres = applyTableAliasOnWhereCondition({
+        condition: this.expressionMap.wheres,
+        tableName,
+        aliasName: objectMetadata.nameSingular,
+      }) as WhereClause[];
 
       const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
         this as unknown as WorkspaceSelectQueryBuilder<T>,
@@ -145,6 +159,7 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       const result = await super.execute();
+
       const after = await eventSelectQueryBuilder.getMany();
 
       const formattedAfter = formatResult<T[]>(

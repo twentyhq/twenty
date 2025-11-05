@@ -1,17 +1,21 @@
+import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useAuth } from '@/auth/hooks/useAuth';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
+import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { useSetRecoilState } from 'recoil';
 
 export const useImpersonationAuth = () => {
   const { getAuthTokensFromLoginToken } = useAuth();
-  const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
-    isAppWaitingForFreshObjectMetadataState,
+  const setShouldAppBeLoading = useSetRecoilState(shouldAppBeLoadingState);
+  const setIsAppEffectRedirectEnabled = useSetRecoilState(
+    isAppEffectRedirectEnabledState,
   );
 
   const executeImpersonationAuth = async (loginToken: string) => {
-    setIsAppWaitingForFreshObjectMetadata(true);
+    setShouldAppBeLoading(true);
+    setIsAppEffectRedirectEnabled(false);
     await getAuthTokensFromLoginToken(loginToken);
-    setIsAppWaitingForFreshObjectMetadata(false);
+    setShouldAppBeLoading(false);
+    setIsAppEffectRedirectEnabled(true);
   };
 
   return { executeImpersonationAuth };

@@ -5,10 +5,14 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
+import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step-input.dto';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step-input.dto';
+import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request-input.dto';
+import { TestHttpRequestOutput } from 'src/engine/core-modules/workflow/dtos/test-http-request-output.dto';
 import { UpdateWorkflowRunStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-run-step-input.dto';
 import { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
@@ -43,6 +47,7 @@ export class WorkflowVersionStepResolver {
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly toolRegistryService: ToolRegistryService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -141,5 +146,18 @@ export class WorkflowVersionStepResolver {
         stepId,
       },
     );
+  }
+
+  @Mutation(() => TestHttpRequestOutput)
+  async testHttpRequest(
+    @Args('input')
+    { url, method, headers, body }: TestHttpRequestInput,
+  ): Promise<TestHttpRequestOutput> {
+    return this.toolRegistryService.getTool(ToolType.HTTP_REQUEST).execute({
+      url,
+      method,
+      headers,
+      body,
+    });
   }
 }

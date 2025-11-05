@@ -26,7 +26,7 @@ const StyledRecordTableCellFocusPortalContent = styled.div<{
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ theme }) => `1px solid ${theme.adaptiveColors.blue4}`};
+  outline: ${({ theme }) => `1px solid ${theme.color.blue8}`};
 
   user-select: none;
 `;
