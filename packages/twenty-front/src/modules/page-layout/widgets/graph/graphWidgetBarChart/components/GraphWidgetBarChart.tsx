@@ -27,6 +27,7 @@ import {
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { AnimatePresence } from 'framer-motion';
 import {
   type ComputedBarDatum,
   type ComputedDatum,
@@ -292,23 +293,25 @@ export const GraphWidgetBarChart = ({
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
-      {isDefined(hoveredBarDatum) && (
-        <GraphWidgetBarChartTooltip
-          floatingRef={floatingRefs.setFloating}
-          floatingStyles={floatingStyles}
-          hoveredBarDatum={hoveredBarDatum}
-          enrichedKeys={enrichedKeys}
-          data={data}
-          indexBy={indexBy}
-          formatOptions={formatOptions}
-          enableGroupTooltip={groupMode === 'stacked'}
-          onCancelHide={() => debouncedClearHoveredBarDatum.cancel()}
-          onRequestHide={() => {
-            debouncedClearHoveredBarDatum.cancel();
-            clearHoveredBarDatum();
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {isDefined(hoveredBarDatum) && (
+          <GraphWidgetBarChartTooltip
+            floatingRef={floatingRefs.setFloating}
+            floatingStyles={floatingStyles}
+            hoveredBarDatum={hoveredBarDatum}
+            enrichedKeys={enrichedKeys}
+            data={data}
+            indexBy={indexBy}
+            formatOptions={formatOptions}
+            enableGroupTooltip={groupMode === 'stacked'}
+            onCancelHide={() => debouncedClearHoveredBarDatum.cancel()}
+            onRequestHide={() => {
+              debouncedClearHoveredBarDatum.cancel();
+              clearHoveredBarDatum();
+            }}
+          />
+        )}
+      </AnimatePresence>
       <GraphWidgetLegend
         show={shouldShowLegend}
         items={enrichedKeys.map((item) => {

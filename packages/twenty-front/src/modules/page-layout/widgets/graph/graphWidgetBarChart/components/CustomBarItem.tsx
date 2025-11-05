@@ -26,13 +26,13 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   onScheduleHideTooltip?: () => void;
 };
 
-const StyledBarRect = styled(animated.rect)<{ isInteractive?: boolean }>`
-  cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
+const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
+  cursor: ${({ $isInteractive }) => ($isInteractive ? 'pointer' : 'default')};
   transition: filter 0.15s ease-in-out;
 
   &:hover {
-    filter: ${({ isInteractive }) =>
-      isInteractive ? `brightness(${BAR_CHART_HOVER_BRIGHTNESS})` : 'none'};
+    filter: ${({ $isInteractive }) =>
+      $isInteractive ? `brightness(${BAR_CHART_HOVER_BRIGHTNESS})` : 'none'};
   }
 `;
 
@@ -254,7 +254,7 @@ export const CustomBarItem = <D extends BarDatum>({
         )}
 
         <StyledBarRect
-          isInteractive={isInteractive}
+          $isInteractive={isInteractive}
           clipPath={shouldRoundFreeEnd ? `url(#${clipPathId})` : undefined}
           width={to(finalBarWidthDimension, (value) => Math.max(value, 0))}
           height={to(finalBarHeightDimension, (value) => Math.max(value, 0))}

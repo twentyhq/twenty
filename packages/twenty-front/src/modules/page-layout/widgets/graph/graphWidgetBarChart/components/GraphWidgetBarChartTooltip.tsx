@@ -5,6 +5,7 @@ import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarCh
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import { FloatingPortal } from '@floating-ui/react';
+import { motion } from 'framer-motion';
 import { type ComputedDatum } from '@nivo/bar';
 import { type CSSProperties } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -60,14 +61,25 @@ export const GraphWidgetBarChartTooltip = ({
         onMouseEnter={onCancelHide}
         onMouseLeave={onRequestHide}
       >
-        <GraphWidgetTooltip
-          items={tooltipData.tooltipItems}
-          showClickHint={tooltipData.showClickHint}
-          indexLabel={tooltipData.indexLabel}
-          interactive
-          scrollable
-          highlightedKey={tooltipData.hoveredKey}
-        />
+        <motion.div
+          key={`${hoveredBarDatum.id}-${hoveredBarDatum.index}`}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{
+            duration: theme.animation.duration.fast,
+            ease: 'easeInOut',
+          }}
+        >
+          <GraphWidgetTooltip
+            items={tooltipData.tooltipItems}
+            showClickHint={tooltipData.showClickHint}
+            indexLabel={tooltipData.indexLabel}
+            interactive
+            scrollable
+            highlightedKey={tooltipData.hoveredKey}
+          />
+        </motion.div>
       </div>
     </FloatingPortal>
   );
