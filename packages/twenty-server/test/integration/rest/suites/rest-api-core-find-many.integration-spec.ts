@@ -43,7 +43,7 @@ describe('Core REST API Find Many endpoint', () => {
 
       testPersonCities[personId] = city;
 
-      const response = await makeRestAPIRequest({
+      await makeRestAPIRequest({
         method: 'post',
         path: '/people',
         body: {
@@ -53,8 +53,6 @@ describe('Core REST API Find Many endpoint', () => {
           companyId: TEST_COMPANY_1_ID,
         },
       });
-
-      console.log(response.body);
 
       index++;
     }
