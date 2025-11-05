@@ -45,12 +45,6 @@ export const seedCoreSchema = async ({
       },
     });
 
-    // TODO make deferred
-  const customWorkspaceApplication = await applicationService.create({
-    ...workspaceCustomApplicationCreateInput,
-    serverlessFunctionLayerId: null,
-  });
-
   const version = extractVersionMajorMinorPatch(appVersion);
   const queryRunner = dataSource.createQueryRunner();
 
@@ -58,6 +52,16 @@ export const seedCoreSchema = async ({
   await queryRunner.startTransaction();
 
   try {
+    // Create application within the transaction using queryRunner
+    // The FK constraint is DEFERRABLE INITIALLY DEFERRED, so it won't fail here
+    const customWorkspaceApplication = await applicationService.create(
+      {
+        ...workspaceCustomApplicationCreateInput,
+        serverlessFunctionLayerId: null,
+      },
+      queryRunner,
+    );
+
     await createWorkspace({
       queryRunner,
       schemaName,
