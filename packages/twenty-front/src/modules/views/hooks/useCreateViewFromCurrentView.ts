@@ -29,7 +29,6 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
-import { type CreateCoreViewFieldMutationVariables } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
@@ -161,13 +160,15 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           throw new Error('Failed to create view');
         }
 
-        const fieldResult = await createViewFields(
-          sourceView.viewFields.map<CreateCoreViewFieldMutationVariables>(
+        const fieldResult = await createViewFields({
+          inputs: sourceView.viewFields.map(
             ({ __typename, id: _id, ...viewField }) => ({
-              input: { ...viewField, id: v4(), viewId: newViewId },
+              ...viewField,
+              id: v4(),
+              viewId: newViewId,
             }),
           ),
-        );
+        });
 
         if (fieldResult.status === 'failed') {
           set(isPersistingViewFieldsState, false);
@@ -203,14 +204,12 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             fieldMetadataId: kanbanFieldMetadataId,
           } satisfies ViewGroup);
 
-          const groupResult = await createViewGroups(
-            viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-              input: {
-                ...viewGroup,
-                viewId: newViewId,
-              },
+          const groupResult = await createViewGroups({
+            inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
+              ...viewGroup,
+              viewId: newViewId,
             })),
-          );
+          });
 
           if (groupResult.status === 'failed') {
             set(isPersistingViewFieldsState, false);

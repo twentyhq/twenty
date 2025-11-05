@@ -5,7 +5,6 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { type Nullable } from 'twenty-ui/utilities';
 
 export const DateFieldInput = () => {
@@ -19,48 +18,34 @@ export const DateFieldInput = () => {
     RecordFieldComponentInstanceContext,
   );
 
-  const getDateToPersist = (newDate: Nullable<Date>) => {
-    if (!isDefined(newDate)) {
-      return null;
-    } else {
-      const newDateWithoutTime = `${newDate?.getFullYear()}-${(
-        newDate?.getMonth() + 1
-      )
-        .toString()
-        .padStart(2, '0')}-${newDate?.getDate().toString().padStart(2, '0')}`;
-
-      return newDateWithoutTime;
-    }
+  const handleEnter = (newDate: Nullable<string>) => {
+    onEnter?.({ newValue: newDate });
   };
 
-  const handleEnter = (newDate: Nullable<Date>) => {
-    onEnter?.({ newValue: getDateToPersist(newDate) });
+  const handleSubmit = (newDate: Nullable<string>) => {
+    onSubmit?.({ newValue: newDate });
   };
 
-  const handleSubmit = (newDate: Nullable<Date>) => {
-    onSubmit?.({ newValue: getDateToPersist(newDate) });
-  };
-
-  const handleEscape = (newDate: Nullable<Date>) => {
-    onEscape?.({ newValue: getDateToPersist(newDate) });
+  const handleEscape = (newDate: Nullable<string>) => {
+    onEscape?.({ newValue: newDate });
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
-    newDate: Nullable<Date>,
+    newDate: Nullable<string>,
   ) => {
-    onClickOutside?.({ newValue: getDateToPersist(newDate), event });
+    onClickOutside?.({ newValue: newDate, event });
   };
 
-  const handleChange = (newDate: Nullable<Date>) => {
-    setDraftValue(newDate?.toDateString() ?? '');
+  const handleChange = (newDate: Nullable<string>) => {
+    setDraftValue(newDate ?? '');
   };
 
   const handleClear = () => {
     onSubmit?.({ newValue: null });
   };
 
-  const dateValue = fieldValue ? new Date(fieldValue) : null;
+  const dateValue = fieldValue ?? null;
 
   return (
     <DateInput

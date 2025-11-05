@@ -1,7 +1,9 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetBarChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
+import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { lazy, Suspense, useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
   type PageLayoutWidget,
@@ -37,8 +39,14 @@ export const GraphWidgetBarChartRenderer = ({
   });
 
   const configuration = widget.configuration as BarChartConfiguration;
-  const groupMode =
-    configuration.groupMode === 'GROUPED' ? 'grouped' : 'stacked';
+
+  const hasGroupByOnSecondaryAxis = isDefined(
+    configuration.secondaryAxisGroupByFieldMetadataId,
+  );
+  const groupMode = getEffectiveGroupMode(
+    configuration.groupMode,
+    hasGroupByOnSecondaryAxis,
+  );
 
   const filterStateKey = useMemo(
     () =>
@@ -75,6 +83,7 @@ export const GraphWidgetBarChartRenderer = ({
           displayType="shortNumber"
           rangeMin={configuration.rangeMin ?? undefined}
           rangeMax={configuration.rangeMax ?? undefined}
+          omitNullValues={configuration.omitNullValues ?? false}
         />
       </Suspense>
     </>

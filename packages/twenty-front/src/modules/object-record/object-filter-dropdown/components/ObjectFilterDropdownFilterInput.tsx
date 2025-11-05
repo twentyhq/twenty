@@ -9,10 +9,10 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
+import { ObjectFilterDropdownDateTimeInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownDateTimeInput';
 import { ObjectFilterDropdownInnerSelectOperandDropdown } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownInnerSelectOperandDropdown';
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { ObjectFilterDropdownVectorSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownVectorSearchInput';
-import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -69,7 +69,6 @@ export const ObjectFilterDropdownFilterInput = ({
     fieldMetadataItemUsedInDropdown.type,
   );
 
-  const isDateFilter = DATE_FILTER_TYPES.includes(filterType);
   const isOnlyOperand = !isOperandWithFilterValue;
 
   if (isOnlyOperand) {
@@ -78,12 +77,20 @@ export const ObjectFilterDropdownFilterInput = ({
         <ObjectFilterDropdownInnerSelectOperandDropdown />
       </>
     );
-  } else if (isDateFilter) {
+  } else if (filterType === 'DATE') {
     return (
       <>
         <ObjectFilterDropdownInnerSelectOperandDropdown />
         <DropdownMenuSeparator />
         <ObjectFilterDropdownDateInput />
+      </>
+    );
+  } else if (filterType === 'DATE_TIME') {
+    return (
+      <>
+        <ObjectFilterDropdownInnerSelectOperandDropdown />
+        <DropdownMenuSeparator />
+        <ObjectFilterDropdownDateTimeInput />
       </>
     );
   } else {

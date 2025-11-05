@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { GRAPH_DEFAULT_COLOR } from '@/page-layout/widgets/graph/constants/GraphDefaultColor.constant';
-import { GRAPH_MAXIMUM_NUMBER_OF_GROUPS } from '@/page-layout/widgets/graph/constants/GraphMaximumNumberOfGroups.constant';
+import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
@@ -45,8 +45,13 @@ export const transformOneDimensionalGroupByToBarChartData = ({
     subFieldName: primaryAxisSubFieldName ?? undefined,
   });
 
+  const aggregateValueKey =
+    indexByKey === aggregateField.name
+      ? `${aggregateField.name}-aggregate`
+      : aggregateField.name;
+
   // TODO: Add a limit to the query instead of slicing here (issue: twentyhq/core-team-issues#1600)
-  const limitedResults = rawResults.slice(0, GRAPH_MAXIMUM_NUMBER_OF_GROUPS);
+  const limitedResults = rawResults.slice(0, BAR_CHART_MAXIMUM_NUMBER_OF_BARS);
 
   const data: BarChartDataItem[] = limitedResults.map((result) => {
     const dimensionValues = result.groupByDimensionValues;
@@ -55,6 +60,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
       ? formatDimensionValue({
           value: dimensionValues[0],
           fieldMetadata: groupByFieldX,
+          dateGranularity:
+            configuration.primaryAxisDateGranularity ?? undefined,
           subFieldName:
             configuration.primaryAxisGroupBySubFieldName ?? undefined,
         })
@@ -71,13 +78,13 @@ export const transformOneDimensionalGroupByToBarChartData = ({
 
     return {
       [indexByKey]: xValue,
-      [aggregateField.name]: aggregateValue,
+      [aggregateValueKey]: aggregateValue,
     };
   });
 
   const series: BarChartSeries[] = [
     {
-      key: aggregateField.name,
+      key: aggregateValueKey,
       label: aggregateField.label,
       color: (configuration.color ?? GRAPH_DEFAULT_COLOR) as GraphColor,
     },
@@ -86,8 +93,8 @@ export const transformOneDimensionalGroupByToBarChartData = ({
   return {
     data,
     indexBy: indexByKey,
-    keys: [aggregateField.name],
+    keys: [aggregateValueKey],
     series,
-    hasTooManyGroups: rawResults.length > GRAPH_MAXIMUM_NUMBER_OF_GROUPS,
+    hasTooManyGroups: rawResults.length > BAR_CHART_MAXIMUM_NUMBER_OF_BARS,
   };
 };

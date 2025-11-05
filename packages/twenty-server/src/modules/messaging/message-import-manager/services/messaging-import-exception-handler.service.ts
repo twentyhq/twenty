@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
-
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   type TwentyORMException,
@@ -19,10 +17,6 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
-import {
-  MessageImportException,
-  MessageImportExceptionCode,
-} from 'src/modules/messaging/message-import-manager/exceptions/message-import.exception';
 
 export enum MessageImportSyncStep {
   MESSAGE_LIST_FETCH = 'MESSAGE_LIST_FETCH',
@@ -47,6 +41,19 @@ export class MessageImportExceptionHandlerService {
     >,
     workspaceId: string,
   ): Promise<void> {
+    if (exception instanceof MessageImportDriverException) {
+      exception.context = {
+        ...exception.context,
+        messageChannelId: messageChannel.id,
+        workspaceId,
+        syncStep,
+      };
+    }
+
+    this.exceptionHandlerService.captureExceptions([exception], {
+      workspace: { id: workspaceId },
+    });
+
     if ('code' in exception) {
       switch (exception.code) {
         case MessageImportDriverExceptionCode.NOT_FOUND:
@@ -78,24 +85,16 @@ export class MessageImportExceptionHandlerService {
           );
           break;
         case MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR:
-          await this.handlePermanentException(
-            exception,
-            messageChannel,
-            workspaceId,
-          );
+          await this.handlePermanentException(messageChannel, workspaceId);
           break;
         case MessageImportDriverExceptionCode.UNKNOWN:
         case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
         default:
-          await this.handleUnknownException(
-            exception,
-            messageChannel,
-            workspaceId,
-          );
+          await this.handleUnknownException(messageChannel, workspaceId);
           break;
       }
     } else {
-      await this.handleUnknownException(exception, messageChannel, workspaceId);
+      await this.handleUnknownException(messageChannel, workspaceId);
     }
   }
 
@@ -119,7 +118,9 @@ export class MessageImportExceptionHandlerService {
 
       this.exceptionHandlerService.captureExceptions(
         [
-          `Temporary error occurred ${MESSAGING_THROTTLE_MAX_ATTEMPTS} times while importing messages for message channel ${messageChannel.id.slice(0, 5)}... in workspace ${workspaceId}: ${exception?.message}`,
+          new Error(
+            `Temporary error occurred ${MESSAGING_THROTTLE_MAX_ATTEMPTS} times while importing messages for message channel ${messageChannel.id.slice(0, 5)}... in workspace ${workspaceId}: ${exception?.message}`,
+          ),
         ],
         {
           additionalData: {
@@ -129,10 +130,7 @@ export class MessageImportExceptionHandlerService {
         },
       );
 
-      throw new MessageImportException(
-        `Temporary error occurred multiple times while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception?.message}`,
-        MessageImportExceptionCode.UNKNOWN,
-      );
+      return;
     }
 
     const messageChannelRepository =
@@ -179,7 +177,6 @@ export class MessageImportExceptionHandlerService {
   }
 
   private async handleUnknownException(
-    exception: MessageImportDriverException | Error,
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
@@ -188,27 +185,9 @@ export class MessageImportExceptionHandlerService {
       workspaceId,
       MessageChannelSyncStatus.FAILED_UNKNOWN,
     );
-
-    const messageImportException = new MessageImportException(
-      isDefined(exception.name)
-        ? `${exception.name}: ${exception.message}`
-        : exception.message,
-      MessageImportExceptionCode.UNKNOWN,
-    );
-
-    this.exceptionHandlerService.captureExceptions([messageImportException], {
-      additionalData: {
-        exception,
-        messageChannelId: messageChannel.id,
-      },
-      workspace: { id: workspaceId },
-    });
-
-    throw messageImportException;
   }
 
   private async handlePermanentException(
-    exception: MessageImportDriverException,
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
@@ -216,11 +195,6 @@ export class MessageImportExceptionHandlerService {
       [messageChannel.id],
       workspaceId,
       MessageChannelSyncStatus.FAILED_UNKNOWN,
-    );
-
-    throw new MessageImportException(
-      `Permanent error occurred while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
-      MessageImportExceptionCode.UNKNOWN,
     );
   }
 
@@ -230,14 +204,27 @@ export class MessageImportExceptionHandlerService {
     workspaceId: string,
   ): Promise<void> {
     if (syncStep === MessageImportSyncStep.MESSAGE_LIST_FETCH) {
-      await this.handleUnknownException(
-        new MessageImportDriverException(
-          'Not Found exception occurred while fetching message list, which should never happen',
-          MessageImportDriverExceptionCode.UNKNOWN,
-        ),
-        messageChannel,
+      await this.messageChannelSyncStatusService.markAsFailed(
+        [messageChannel.id],
         workspaceId,
+        MessageChannelSyncStatus.FAILED_UNKNOWN,
       );
+
+      this.exceptionHandlerService.captureExceptions(
+        [
+          new Error(
+            'Not Found exception occurred while fetching message list, which should never happen',
+          ),
+        ],
+        {
+          additionalData: {
+            messageChannelId: messageChannel.id,
+          },
+          workspace: { id: workspaceId },
+        },
+      );
+
+      return;
     }
 
     await this.messageChannelSyncStatusService.resetAndScheduleMessageListFetch(

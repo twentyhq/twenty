@@ -2,12 +2,13 @@ import { RecordCalendarMonthBodyWeek } from '@/object-record/record-calendar/mon
 import { useRecordCalendarMonthContextOrThrow } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
+import { DATE_TYPE_FORMAT } from 'twenty-shared/constants';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  border: 0.5px solid ${({ theme }) => theme.border.color.light};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 4px;
   overflow: hidden;
 `;
@@ -19,7 +20,7 @@ export const RecordCalendarMonthBody = () => {
     <StyledContainer>
       {weekFirstDays.map((weekFirstDay) => (
         <RecordCalendarMonthBodyWeek
-          key={`week-${format(weekFirstDay, 'yyyy-MM-dd')}`}
+          key={`week-${format(weekFirstDay, DATE_TYPE_FORMAT)}`}
           startDayOfWeek={weekFirstDay}
         />
       ))}

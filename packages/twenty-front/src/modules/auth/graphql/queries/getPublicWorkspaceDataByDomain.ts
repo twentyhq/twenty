@@ -23,6 +23,11 @@ export const GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN = gql`
         password
         microsoft
       }
+      authBypassProviders {
+        google
+        password
+        microsoft
+      }
     }
   }
   ${WORKSPACE_URLS_FRAGMENT}

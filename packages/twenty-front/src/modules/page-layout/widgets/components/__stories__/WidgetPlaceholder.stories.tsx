@@ -1,5 +1,5 @@
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceholder';
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -18,7 +18,7 @@ const meta: Meta<typeof WidgetPlaceholder> = {
           objectMetadataItemsState,
           generatedMockObjectMetadataItems,
         );
-        snapshot.set(isAppWaitingForFreshObjectMetadataState, false);
+        snapshot.set(shouldAppBeLoadingState, false);
       };
 
       return (

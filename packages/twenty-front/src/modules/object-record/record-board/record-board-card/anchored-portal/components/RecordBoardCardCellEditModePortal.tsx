@@ -28,7 +28,6 @@ export const RecordBoardCardCellEditModePortal = () => {
 
   return (
     <RecordInlineCellAnchoredPortal
-      position={editModePosition}
       fieldMetadataItem={editedFieldMetadataItem}
       objectMetadataItem={objectMetadataItem}
       recordId={recordId}

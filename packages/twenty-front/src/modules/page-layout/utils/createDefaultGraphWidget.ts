@@ -16,6 +16,8 @@ import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetF
 const createDefaultGraphConfiguration = (
   graphType: GraphType,
   fieldSelection?: GraphWidgetFieldSelection,
+  timezone?: string,
+  firstDayOfTheWeek?: number,
 ): WidgetConfiguration | null => {
   switch (graphType) {
     case GraphType.AGGREGATE:
@@ -28,6 +30,8 @@ const createDefaultGraphConfiguration = (
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: AggregateOperations.COUNT,
         displayDataLabel: true,
+        timezone,
+        firstDayOfTheWeek,
       };
 
     case GraphType.PIE:
@@ -50,7 +54,9 @@ const createDefaultGraphConfiguration = (
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
+        axisNameDisplay: AxisNameDisplay.NONE,
+        timezone,
+        firstDayOfTheWeek,
       };
 
     case GraphType.HORIZONTAL_BAR:
@@ -70,7 +76,9 @@ const createDefaultGraphConfiguration = (
         aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-        axisNameDisplay: AxisNameDisplay.BOTH,
+        axisNameDisplay: AxisNameDisplay.NONE,
+        timezone,
+        firstDayOfTheWeek,
       };
 
     case GraphType.LINE:
@@ -92,6 +100,8 @@ type CreateDefaultGraphWidgetParams = {
   gridPosition: GridPosition;
   objectMetadataId?: string | null;
   fieldSelection?: GraphWidgetFieldSelection;
+  timezone?: string;
+  firstDayOfTheWeek?: number;
 };
 
 export const createDefaultGraphWidget = ({
@@ -102,6 +112,8 @@ export const createDefaultGraphWidget = ({
   gridPosition,
   objectMetadataId,
   fieldSelection,
+  timezone,
+  firstDayOfTheWeek,
 }: CreateDefaultGraphWidgetParams): PageLayoutWidget => {
   const resolvedObjectMetadataId =
     fieldSelection?.objectMetadataId ?? objectMetadataId ?? null;
@@ -109,6 +121,8 @@ export const createDefaultGraphWidget = ({
   const configuration = createDefaultGraphConfiguration(
     graphType,
     fieldSelection,
+    timezone,
+    firstDayOfTheWeek,
   );
 
   return {

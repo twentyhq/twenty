@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull, type Repository } from 'typeorm';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import {
@@ -62,6 +63,12 @@ describe('PageLayoutWidgetService', () => {
           provide: PageLayoutTabService,
           useValue: {
             findByIdOrThrow: jest.fn(),
+          },
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: {
+            isFeatureEnabled: jest.fn(),
           },
         },
       ],

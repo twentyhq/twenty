@@ -1,22 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { removePropertiesFromRecord } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
+import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import {
-  SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES,
-  ServerlessFunctionEntity,
-} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { RouteTriggerEntity } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { fromServerlessFunctionEntityToFlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/utils/from-serverless-function-entity-to-flat-serverless-function.type';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-flat-map-cache/utils/regroup-entities-by-related-entity-id';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceFlatMapCache('flatServerlessFunctionMaps')
@@ -28,6 +29,12 @@ export class WorkspaceFlatServerlessFunctionMapCacheService extends WorkspaceFla
     cacheStorageService: CacheStorageService,
     @InjectRepository(ServerlessFunctionEntity)
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
+    @InjectRepository(DatabaseEventTriggerEntity)
+    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTriggerEntity>,
+    @InjectRepository(CronTriggerEntity)
+    private readonly cronTriggerRepository: Repository<CronTriggerEntity>,
+    @InjectRepository(RouteTriggerEntity)
+    private readonly routeTriggerRepository: Repository<RouteTriggerEntity>,
   ) {
     super(cacheStorageService);
   }
@@ -37,30 +44,80 @@ export class WorkspaceFlatServerlessFunctionMapCacheService extends WorkspaceFla
   }: {
     workspaceId: string;
   }): Promise<FlatEntityMaps<FlatServerlessFunction>> {
-    const serverlessFunctions = await this.serverlessFunctionRepository.find({
-      where: {
-        workspaceId,
-      },
-      withDeleted: true,
-    });
+    const [
+      serverlessFunctions,
+      routeTriggers,
+      cronTriggers,
+      databaseEventTriggers,
+    ] = await Promise.all([
+      this.serverlessFunctionRepository.find({
+        where: { workspaceId },
+        withDeleted: true,
+      }),
+      this.cronTriggerRepository.find({
+        where: { workspaceId },
+        select: ['id', 'serverlessFunctionId'],
+        withDeleted: true,
+      }),
+      this.routeTriggerRepository.find({
+        where: { workspaceId },
+        select: ['id', 'serverlessFunctionId'],
+        withDeleted: true,
+      }),
+      this.databaseEventTriggerRepository.find({
+        where: { workspaceId },
+        select: ['id', 'serverlessFunctionId'],
+        withDeleted: true,
+      }),
+    ]);
 
-    return serverlessFunctions.reduce(
-      (flatServerlessFunctionMaps, serverlessFunctionEntity) => {
-        const flatServerlessFunction = {
-          ...removePropertiesFromRecord(serverlessFunctionEntity, [
-            ...SERVERLESS_FUNCTION_ENTITY_RELATION_PROPERTIES,
-          ]),
-          universalIdentifier:
-            serverlessFunctionEntity.universalIdentifier ??
-            serverlessFunctionEntity.id,
-        } satisfies FlatServerlessFunction;
+    const [
+      routeTriggersByServerlessFunctionId,
+      cronTriggersByServerlessFunctionId,
+      databaseEventTriggersByServerlessFunctionId,
+    ] = (
+      [
+        {
+          entities: routeTriggers,
+          foreignKey: 'serverlessFunctionId',
+        },
+        {
+          entities: cronTriggers,
+          foreignKey: 'serverlessFunctionId',
+        },
+        {
+          entities: databaseEventTriggers,
+          foreignKey: 'serverlessFunctionId',
+        },
+      ] as const
+    ).map(regroupEntitiesByRelatedEntityId);
 
-        return addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: flatServerlessFunction,
-          flatEntityMaps: flatServerlessFunctionMaps,
-        });
-      },
-      EMPTY_FLAT_ENTITY_MAPS,
-    );
+    const flatServerlessFunctionMaps = createEmptyFlatEntityMaps();
+
+    for (const serverlessFunctionEntity of serverlessFunctions) {
+      const flatServerlessFunction =
+        fromServerlessFunctionEntityToFlatServerlessFunction({
+          ...serverlessFunctionEntity,
+          routeTriggers:
+            routeTriggersByServerlessFunctionId.get(
+              serverlessFunctionEntity.id,
+            ) || [],
+          cronTriggers:
+            cronTriggersByServerlessFunctionId.get(
+              serverlessFunctionEntity.id,
+            ) || [],
+          databaseEventTriggers:
+            databaseEventTriggersByServerlessFunctionId.get(
+              serverlessFunctionEntity.id,
+            ) || [],
+        } as ServerlessFunctionEntity);
+
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: flatServerlessFunction,
+        flatEntityMapsToMutate: flatServerlessFunctionMaps,
+      });
+    }
+
+    return flatServerlessFunctionMaps;
   }
 }

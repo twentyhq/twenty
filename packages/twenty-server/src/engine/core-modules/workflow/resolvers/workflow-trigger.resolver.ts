@@ -45,9 +45,9 @@ export class WorkflowTriggerResolver {
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
-    return this.workflowTriggerWorkspaceService.activateWorkflowVersion(
+    return this.workflowTriggerWorkspaceService.activateWorkflowVersion({
       workflowVersionId,
-    );
+    });
   }
 
   @Mutation(() => Boolean)
@@ -71,6 +71,7 @@ export class WorkflowTriggerResolver {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMember = await workspaceMemberRepository.findOneOrFail({

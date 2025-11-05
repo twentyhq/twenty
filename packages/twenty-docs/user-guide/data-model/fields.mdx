@@ -1,0 +1,118 @@
+---
+title: Fields
+info: "Understand the role of fields and how to handle them."
+image: /images/user-guide/fields/field.png
+sectionInfo: Flexible data model designed to support your unique business processes
+---
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## About Fields
+
+Fields are like columns in a spreadsheet. They store different types of data like text, numbers, or dates. Fields can be standard (built-in) or custom (the ones you create).
+
+### Standard Fields
+
+Standard fields come built-in with Twenty to handle common business needs.
+
+For example, `First Name` and `Last Name` are standard fields in the `People` object. They store text data for individual names.
+
+You cannot delete standard fields, but you can deactivate them if you don't need them.
+
+You can also customize the options of the standard ```SELECT``` type fields, for example the options for the ```Stage``` on Opportunities.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Custom Fields
+
+Custom fields can be added to any object. You can store text, numbers, dates, dropdown selections, and more. Use custom fields to track information that's specific to your business.
+
+For instance, a custom field for SpaceX could be `Rocket Active Status`, indicating if a rocket is operational.
+
+<img src="/images/user-guide/fields/custom-fields.png"style={{width:'100%'}}/>
+
+## Create a Custom Field
+
+To add a custom field to any object, follow these steps:
+	1.	Go to `Settings` in the left sidebar.
+	2.	Go to `Data Model`, then select the object you wish to customize.
+	3.	Proceed by clicking on `Add Field`.
+	4.	Choose a field name and type that suits your requirements. Consider adding a field description for better understanding.
+
+Your newly created field is now available within the application's fields. To display it on a specific view, click on the options menu, then select `Fields`.
+
+<div style={{padding:'71.15% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
+  <iframe
+    src="https://player.vimeo.com/video/927628219?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479"
+    frameBorder="0"
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+    style={{
+      position:'absolute',
+      top:0,
+      left:0,
+      width:'100%',
+      height:'100%',
+      borderRadius: '16px',
+      border:'2px solid black'
+    }}
+    title="Export data"
+  ></iframe>
+</div>
+<script src="https://player.vimeo.com/api/player.js"></script>
+
+**Quick way:** Click the **+** button at the top right of any object table, then select `Customize fields`. This takes you directly to the Data Model settings.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Deactivate a field
+
+You can deactivate a field to hide it from the app without losing your data. Think of it as hiding the field rather than deleting it.
+
+Here's how you can do it:
+
+1. Find the field you want to deactivate in your object settings.
+
+2. Click the three dots `⋮` next to the field to open the menu.
+
+3. Select `Deactivate` from the dropdown.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+What happens when you deactivate a field?
+
+1. **In the app:** The field disappears and you can't add new values to it.
+
+2. **Existing relationships:** If it's a relation field, existing connections stay but you can't create new ones.
+
+3. **API access:** You can still access the field and its data through the API.
+
+You can reactivate Standard and Custom Fields or have the option to permanently delete them.
+
+## Make Fields Unique
+
+Make a field unique to ensure distinct records cannot have the same value. For example, email addresses are unique for each person.
+
+If you get an error when setting uniqueness, check for duplicate values in your data (including deleted records).
+
+## Field Configuration Best Practices
+
+### Naming Conventions and Limitations
+- **Relation field names cannot be updated** after creation (impacts API structure)
+- **Singular and plural named must be distinct**: Our GraphQL API needs distinct names for mutations
+- **Protected field names**: some names are reserved for system usage (e.g., ```Type```)
+
+### Currency and Phone Fields
+- **Default currency**: can be configured via the data model
+- **Default country codes**: can be configured for phone fields via the data model
+
+### Select Fields
+- **A default option can be selected** for each Select field
+
+### Record Text Fields
+- **Each object has one main display field**: This field appears in the leftmost column and represents the record when linked to other objects. It must be a text field. For example, People uses `Name` as the main field, so when you link a person to a company, you'll see their name in the company's view.
+
+### Relation Fields
+- **Connect objects together**: Relation fields link records from different objects. For detailed information on creating and managing relationships, see our [Relation Fields](/user-guide/data-model/relation-fields) article.
+
+
