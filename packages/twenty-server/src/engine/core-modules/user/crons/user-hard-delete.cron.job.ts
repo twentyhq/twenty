@@ -30,11 +30,16 @@ export class UserHardDeleteCronJob {
 
     cutoff.setDate(cutoff.getDate() - RETENTION_DAYS);
 
+    const totalUsersToDelete = await this.userRepository.count({
+      withDeleted: true,
+      where: { deletedAt: LessThan(cutoff) },
+    });
+
+    const totalBatches = Math.ceil(totalUsersToDelete / BATCH_SIZE);
+
     let totalDeleted = 0;
 
-    let hasMore = true;
-
-    while (hasMore) {
+    for (let batchNum = 0; batchNum < totalBatches; batchNum++) {
       const usersToDelete = await this.userRepository.find({
         select: ['id'],
         withDeleted: true,
@@ -44,11 +49,14 @@ export class UserHardDeleteCronJob {
         loadEagerRelations: false,
       });
 
-      if (usersToDelete.length === 0) break;
+      if (usersToDelete.length === 0) {
+        break;
+      }
 
       await this.userRepository.delete({
         id: In(usersToDelete.map((user) => user.id)),
       });
+
       totalDeleted += usersToDelete.length;
     }
 

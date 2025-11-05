@@ -3,11 +3,14 @@ import { useRecoilValue } from 'recoil';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import {
@@ -25,11 +28,14 @@ const StyledDiv = styled.div`
 export const DeleteAccount = () => {
   const { t } = useLingui();
   const { openModal } = useModal();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [deleteUserAccount] = useDeleteUserAccountMutation();
   const [deleteUserFromWorkspace] = useDeleteUserWorkspaceMutation();
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const currentWorkspaceMemberId = currentWorkspaceMember?.id;
   const { signOut } = useAuth();
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
   const availableWorkspacesCount =
@@ -43,7 +49,18 @@ export const DeleteAccount = () => {
   };
 
   const leaveWorkspace = async () => {
-    await deleteUserFromWorkspace();
+    if (!isDefined(currentWorkspaceMemberId)) {
+      enqueueErrorSnackBar({
+        message: t`Current workspace member not found.`,
+      });
+      return;
+    }
+
+    await deleteUserFromWorkspace?.({
+      variables: {
+        workspaceMemberIdToDelete: currentWorkspaceMemberId,
+      },
+    });
     await signOut();
   };
 
