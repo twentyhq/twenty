@@ -14,7 +14,7 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
+import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
 import { isAccessTokenRefreshingError } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/is-access-token-refreshing-error.utils';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
@@ -30,7 +30,7 @@ export class MicrosoftGetMessageListService {
   private readonly logger = new Logger(MicrosoftGetMessageListService.name);
   constructor(
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
-    private readonly microsoftHandleErrorService: MicrosoftHandleErrorService,
+    private readonly microsoftMessageListFetchErrorHandler: MicrosoftMessageListFetchErrorHandler,
   ) {}
 
   public async getMessageLists({
@@ -99,9 +99,7 @@ export class MicrosoftGetMessageListService {
             MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
           );
         }
-        this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
-          error,
-        );
+        this.microsoftMessageListFetchErrorHandler.handleError(error);
       });
 
     const callback: PageIteratorCallback = (data) => {
@@ -127,9 +125,7 @@ export class MicrosoftGetMessageListService {
           MessageImportDriverExceptionCode.CLIENT_NOT_AVAILABLE,
         );
       }
-      this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
-        error,
-      );
+      this.microsoftMessageListFetchErrorHandler.handleError(error);
     });
 
     return {

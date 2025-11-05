@@ -8,6 +8,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import styled from '@emotion/styled';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useGetRecordFilterDisplayValue } from '@/object-record/record-filter/hooks/useGetRecordFilterDisplayValue';
 import { isDefined } from 'twenty-shared/utils';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
@@ -38,6 +39,8 @@ export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
     currentRecordFiltersComponentState,
   );
 
+  const { getRecordFilterDisplayValue } = useGetRecordFilterDisplayValue();
+
   const recordFilter = currentRecordFilters.find(
     (recordFilter) => recordFilter.id === recordFilterId,
   );
@@ -56,9 +59,11 @@ export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
     ? getAdvancedFilterInputPlaceholderText(fieldMetadataItem)
     : 'Enter filter';
 
+  const recordFilterDisplayValue = getRecordFilterDisplayValue(recordFilter);
+
   const advancedFilterInputText = shouldUsePlaceholder
     ? placeholderText
-    : (recordFilter?.displayValue ?? '');
+    : (recordFilterDisplayValue ?? '');
 
   const isDateTimeType =
     recordFilter?.type === 'DATE' || recordFilter?.type === 'DATE_TIME';

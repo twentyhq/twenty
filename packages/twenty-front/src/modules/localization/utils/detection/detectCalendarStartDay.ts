@@ -1,10 +1,16 @@
-import { type CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { type CalendarStartDay } from 'twenty-shared';
+import { type ExcludeLiteral } from '~/types/ExcludeLiteral';
 
 const MONDAY_KEY: keyof typeof CalendarStartDay = 'MONDAY';
 const SATURDAY_KEY: keyof typeof CalendarStartDay = 'SATURDAY';
 const SUNDAY_KEY: keyof typeof CalendarStartDay = 'SUNDAY';
 
-export const detectCalendarStartDay = (): keyof typeof CalendarStartDay => {
+export type NonSystemCalendarStartDay = ExcludeLiteral<
+  keyof typeof CalendarStartDay,
+  'SYSTEM'
+>;
+
+export const detectCalendarStartDay = (): NonSystemCalendarStartDay => {
   // Use Intl.Locale to get the first day of the week from the user's locale
   // This requires a modern browser that supports Intl.Locale
   try {

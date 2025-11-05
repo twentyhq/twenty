@@ -13,7 +13,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
-import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
+import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import { type GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
@@ -25,8 +25,7 @@ export class GmailGetMessageListService {
   constructor(
     private readonly gmailGetHistoryService: GmailGetHistoryService,
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
-
-    private readonly gmailHandleErrorService: GmailHandleErrorService,
+    private readonly gmailMessageListFetchErrorHandler: GmailMessageListFetchErrorHandler,
   ) {}
 
   private async getMessageListWithoutCursor(
@@ -69,7 +68,7 @@ export class GmailGetMessageListService {
             `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
           );
 
-          this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
+          this.gmailMessageListFetchErrorHandler.handleError(error);
 
           return {
             data: {
@@ -112,10 +111,7 @@ export class GmailGetMessageListService {
         id: firstMessageExternalId,
       })
       .catch((error) => {
-        this.gmailHandleErrorService.handleGmailMessagesImportError(
-          error,
-          firstMessageExternalId as string,
-        );
+        this.gmailMessageListFetchErrorHandler.handleError(error);
       });
 
     const nextSyncCursor = firstMessageContent?.data?.historyId;

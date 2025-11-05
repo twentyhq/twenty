@@ -8,7 +8,9 @@ import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
-import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
+import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
+import { MicrosoftMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-messages-import-error-handler.service';
+import { MicrosoftNetworkErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-network-error-handler.service';
 
 import { MicrosoftGetMessageListService } from './services/microsoft-get-message-list.service';
 
@@ -25,12 +27,15 @@ import { MicrosoftGetMessageListService } from './services/microsoft-get-message
     MicrosoftGetMessageListService,
     MicrosoftGetMessagesService,
     MicrosoftFetchByBatchService,
-    MicrosoftHandleErrorService,
+    MicrosoftNetworkErrorHandler,
+    MicrosoftMessageListFetchErrorHandler,
+    MicrosoftMessagesImportErrorHandler,
   ],
   exports: [
     MicrosoftGetMessageListService,
     MicrosoftGetMessagesService,
-    MicrosoftHandleErrorService,
+    MicrosoftMessageListFetchErrorHandler,
+    MicrosoftMessagesImportErrorHandler,
   ],
 })
 export class MessagingMicrosoftDriverModule {}

@@ -7,7 +7,6 @@ import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetc
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { type ViewField } from '@/views/types/ViewField';
 import {
-  type CreateCoreViewFieldMutationVariables,
   type CreateViewFieldInput,
   type UpdateCoreViewFieldMutationVariables,
 } from '~/generated/graphql';
@@ -46,7 +45,7 @@ export const useSaveCurrentViewFields = () => {
 
         const { viewFieldsToCreate, viewFieldsToUpdate } =
           viewFieldsToSave.reduce<{
-            viewFieldsToCreate: CreateCoreViewFieldMutationVariables[];
+            viewFieldsToCreate: CreateViewFieldInput[];
             viewFieldsToUpdate: UpdateCoreViewFieldMutationVariables[];
           }>(
             (
@@ -67,7 +66,7 @@ export const useSaveCurrentViewFields = () => {
                 return {
                   viewFieldsToCreate: [
                     ...viewFieldsToCreate,
-                    { input: createViewFieldInput },
+                    createViewFieldInput,
                   ],
                   viewFieldsToUpdate,
                 };
@@ -119,7 +118,7 @@ export const useSaveCurrentViewFields = () => {
           );
 
         await Promise.all([
-          createViewFields(viewFieldsToCreate),
+          createViewFields({ inputs: viewFieldsToCreate }),
           updateViewFields(viewFieldsToUpdate),
         ]);
 

@@ -58,14 +58,12 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         fieldMetadataId: randomFieldForKanban,
       } satisfies ViewGroup);
 
-      await createViewGroups(
-        viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-          input: {
-            ...viewGroup,
-            viewId: currentViewId,
-          },
+      await createViewGroups({
+        inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
+          ...viewGroup,
+          viewId: currentViewId,
         })),
-      );
+      });
 
       return viewGroupsToCreate;
     },
@@ -174,6 +172,16 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
                 calendarFieldMetadataId,
               },
             ]);
+
+            loadRecordIndexStates(
+              {
+                ...currentView,
+                type: viewType,
+                calendarFieldMetadataId,
+                calendarLayout: ViewCalendarLayout.MONTH,
+              },
+              objectMetadataItem,
+            );
 
             if (shouldChangeIcon(currentView.icon, currentView.type)) {
               updateCurrentViewParams.icon =

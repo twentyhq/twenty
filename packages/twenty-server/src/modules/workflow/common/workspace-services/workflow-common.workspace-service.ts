@@ -67,28 +67,14 @@ export class WorkflowCommonWorkspaceService {
       },
     });
 
-    return this.getValidWorkflowVersionOrFail(workflowVersion);
-  }
-
-  async getValidWorkflowVersionOrFail(
-    workflowVersion: WorkflowVersionWorkspaceEntity | null,
-  ): Promise<WorkflowVersionWorkspaceEntity> {
     if (!workflowVersion) {
       throw new WorkflowTriggerException(
         'Workflow version not found',
-        WorkflowTriggerExceptionCode.INVALID_INPUT,
+        WorkflowTriggerExceptionCode.NOT_FOUND,
       );
     }
 
-    // FIXME: For now we will make the trigger optional. Later, we'll have to ensure the trigger is defined when publishing the flow.
-    // if (!workflowVersion.trigger) {
-    //   throw new WorkflowTriggerException(
-    //     'Workflow version does not contains trigger',
-    //     WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-    //   );
-    // }
-
-    return { ...workflowVersion, trigger: workflowVersion.trigger };
+    return workflowVersion;
   }
 
   async getObjectMetadataMaps(

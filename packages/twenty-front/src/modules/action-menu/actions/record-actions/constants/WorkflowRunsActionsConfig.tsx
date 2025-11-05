@@ -90,6 +90,7 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     NoSelectionRecordActionKeys.GO_TO_PEOPLE,
     NoSelectionRecordActionKeys.GO_TO_COMPANIES,
     NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES,
+    NoSelectionRecordActionKeys.GO_TO_DASHBOARDS,
     NoSelectionRecordActionKeys.GO_TO_SETTINGS,
     NoSelectionRecordActionKeys.GO_TO_TASKS,
     NoSelectionRecordActionKeys.GO_TO_NOTES,
@@ -146,14 +147,17 @@ export const WORKFLOW_RUNS_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
       position: 15,
     },
-    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+    [NoSelectionRecordActionKeys.GO_TO_DASHBOARDS]: {
       position: 16,
     },
-    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
       position: 17,
     },
-    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
       position: 18,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 19,
     },
   },
 });
