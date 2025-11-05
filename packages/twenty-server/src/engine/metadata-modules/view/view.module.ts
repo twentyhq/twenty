@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -24,11 +24,11 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
 @Module({
   imports: [
     TypeOrmModule.forFeature([ViewEntity]),
-    ViewFieldModule,
-    ViewFilterModule,
-    ViewFilterGroupModule,
-    ViewGroupModule,
-    ViewSortModule,
+    forwardRef(() => ViewFieldModule),
+    forwardRef(() => ViewFilterModule),
+    forwardRef(() => ViewFilterGroupModule),
+    forwardRef(() => ViewGroupModule),
+    forwardRef(() => ViewSortModule),
     I18nModule,
     FeatureFlagModule,
     PermissionsModule,

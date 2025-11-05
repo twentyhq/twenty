@@ -17,13 +17,13 @@ export class ViewVisibility1762351626807 implements MigrationInterface {
       `CREATE INDEX "IDX_VIEW_VISIBILITY" ON "core"."view" ("visibility") `,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."view" ADD CONSTRAINT "FK_e3e5907f868f10b24627e4982e4" FOREIGN KEY ("createdByUserWorkspaceId") REFERENCES "core"."userWorkspace"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."view" ADD CONSTRAINT "FK_394132f681ecbffa8ac912d1e5f" FOREIGN KEY ("createdByUserWorkspaceId") REFERENCES "core"."userWorkspace"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."view" DROP CONSTRAINT "FK_e3e5907f868f10b24627e4982e4"`,
+      `ALTER TABLE "core"."view" DROP CONSTRAINT "FK_394132f681ecbffa8ac912d1e5f"`,
     );
     await queryRunner.query(`DROP INDEX "core"."IDX_VIEW_VISIBILITY"`);
     await queryRunner.query(

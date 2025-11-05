@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -7,6 +7,7 @@ import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-g
 import { ViewFilterGroupResolver } from 'src/engine/metadata-modules/view-filter-group/resolvers/view-filter-group.resolver';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
@@ -14,6 +15,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     TypeOrmModule.forFeature([ViewFilterGroupEntity, ViewEntity]),
     PermissionsModule,
     WorkspaceCacheStorageModule,
+    forwardRef(() => ViewModule),
   ],
   controllers: [ViewFilterGroupController],
   providers: [ViewFilterGroupService, ViewFilterGroupResolver],
