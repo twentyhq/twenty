@@ -6,7 +6,7 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const allTestsUseCases = [
   ...OBJECT_METADATA_NAMES_FAILING_TEST_CASES,
