@@ -1,4 +1,5 @@
 {
+  "name": "my-application",
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
@@ -8,7 +9,7 @@
   },
   "packageManager": "yarn@4.9.2",
   "dependencies": {
-    "twenty-sdk": "^0.0.2"
+    "twenty-sdk": "^0.0.3"
   },
   "devDependencies": {
     "@types/node": "^24.7.2"

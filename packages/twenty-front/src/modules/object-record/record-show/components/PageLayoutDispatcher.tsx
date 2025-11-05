@@ -18,18 +18,10 @@ export const PageLayoutDispatcher = ({
     FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
   );
 
-  const isStandardObjectUnsupportingRecordPageLayouts =
-    targetRecordIdentifier.targetObjectNameSingular ===
-      CoreObjectNameSingular.Workflow ||
-    targetRecordIdentifier.targetObjectNameSingular ===
-      CoreObjectNameSingular.WorkflowRun ||
-    targetRecordIdentifier.targetObjectNameSingular ===
-      CoreObjectNameSingular.WorkflowVersion;
-
   if (
     targetRecordIdentifier.targetObjectNameSingular ===
       CoreObjectNameSingular.Dashboard ||
-    (isRecordPageEnabled && !isStandardObjectUnsupportingRecordPageLayouts)
+    isRecordPageEnabled
   ) {
     return (
       <PageLayoutRecordPageRenderer

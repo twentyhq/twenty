@@ -1,6 +1,6 @@
-import { safeParseRelativeDateFilterValue } from '../safeParseRelativeDateFilterValue';
+import { safeParseRelativeDateFilterJSONStringified } from '@/utils/safeParseRelativeDateFilterJSONStringified';
 
-describe('safeParseRelativeDateFilterValue', () => {
+describe('safeParseRelativeDateFilterJSONStringified', () => {
   describe('valid inputs', () => {
     describe('NEXT direction', () => {
       it('should parse NEXT direction with DAY unit', () => {
@@ -10,7 +10,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'NEXT',
@@ -26,7 +26,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'WEEK',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'NEXT',
@@ -42,7 +42,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'MONTH',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'NEXT',
@@ -58,7 +58,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'YEAR',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'NEXT',
@@ -76,7 +76,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'PAST',
@@ -92,7 +92,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'WEEK',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'PAST',
@@ -108,7 +108,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'MONTH',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'PAST',
@@ -124,7 +124,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'YEAR',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'PAST',
@@ -141,7 +141,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'THIS',
@@ -155,7 +155,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'WEEK',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'THIS',
@@ -169,7 +169,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'MONTH',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'THIS',
@@ -183,7 +183,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'YEAR',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'THIS',
@@ -198,7 +198,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           amount: undefined,
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
 
         expect(result).toEqual({
           direction: 'THIS',
@@ -211,17 +211,20 @@ describe('safeParseRelativeDateFilterValue', () => {
   describe('invalid inputs', () => {
     describe('JSON parsing errors', () => {
       it('should return undefined for invalid JSON', () => {
-        const result = safeParseRelativeDateFilterValue('invalid json');
+        const result =
+          safeParseRelativeDateFilterJSONStringified('invalid json');
         expect(result).toBeUndefined();
       });
 
       it('should return undefined for empty string', () => {
-        const result = safeParseRelativeDateFilterValue('');
+        const result = safeParseRelativeDateFilterJSONStringified('');
         expect(result).toBeUndefined();
       });
 
       it('should return undefined for unclosed JSON', () => {
-        const result = safeParseRelativeDateFilterValue('{"direction": "NEXT"');
+        const result = safeParseRelativeDateFilterJSONStringified(
+          '{"direction": "NEXT"',
+        );
         expect(result).toBeUndefined();
       });
     });
@@ -233,7 +236,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toBeUndefined();
       });
 
@@ -243,7 +246,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           amount: 1,
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toBeUndefined();
       });
 
@@ -254,7 +257,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toBeUndefined();
       });
 
@@ -265,7 +268,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'HOUR',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toBeUndefined();
       });
 
@@ -275,7 +278,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toBeUndefined();
       });
 
@@ -285,7 +288,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toBeUndefined();
       });
 
@@ -296,7 +299,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toBeUndefined();
       });
 
@@ -307,43 +310,32 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
-        expect(result).toBeUndefined();
-      });
-
-      it('should return undefined for NEXT direction with string amount', () => {
-        const input = JSON.stringify({
-          direction: 'NEXT',
-          amount: '1',
-          unit: 'DAY',
-        });
-
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toBeUndefined();
       });
 
       it('should return undefined for non-object input', () => {
-        const result = safeParseRelativeDateFilterValue('"string"');
+        const result = safeParseRelativeDateFilterJSONStringified('"string"');
         expect(result).toBeUndefined();
       });
 
       it('should return undefined for array input', () => {
-        const result = safeParseRelativeDateFilterValue('[1, 2, 3]');
+        const result = safeParseRelativeDateFilterJSONStringified('[1, 2, 3]');
         expect(result).toBeUndefined();
       });
 
       it('should return undefined for null input', () => {
-        const result = safeParseRelativeDateFilterValue('null');
+        const result = safeParseRelativeDateFilterJSONStringified('null');
         expect(result).toBeUndefined();
       });
 
       it('should return undefined for boolean input', () => {
-        const result = safeParseRelativeDateFilterValue('true');
+        const result = safeParseRelativeDateFilterJSONStringified('true');
         expect(result).toBeUndefined();
       });
 
       it('should return undefined for number input', () => {
-        const result = safeParseRelativeDateFilterValue('123');
+        const result = safeParseRelativeDateFilterJSONStringified('123');
         expect(result).toBeUndefined();
       });
     });
@@ -356,12 +348,8 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
-        expect(result).toEqual({
-          direction: 'NEXT',
-          amount: 1.5,
-          unit: 'DAY',
-        });
+        const result = safeParseRelativeDateFilterJSONStringified(input);
+        expect(result).toBeUndefined();
       });
 
       it('should return undefined for object with extra properties', () => {
@@ -372,7 +360,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           extraProperty: 'should be ignored',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toEqual({
           direction: 'NEXT',
           amount: 1,
@@ -383,7 +371,7 @@ describe('safeParseRelativeDateFilterValue', () => {
       it('should return undefined for empty object', () => {
         const input = JSON.stringify({});
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toBeUndefined();
       });
 
@@ -395,7 +383,7 @@ describe('safeParseRelativeDateFilterValue', () => {
         });
 
         // THIS direction should work with amount present, as the schema allows it
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toEqual({
           direction: 'THIS',
           amount: 1,
@@ -410,7 +398,7 @@ describe('safeParseRelativeDateFilterValue', () => {
           unit: 'DAY',
         });
 
-        const result = safeParseRelativeDateFilterValue(input);
+        const result = safeParseRelativeDateFilterJSONStringified(input);
         expect(result).toEqual({
           direction: 'NEXT',
           amount: 999999,

@@ -65,7 +65,8 @@ export class RenewTokenService {
 
     const accessToken =
       isDefined(authProvider) &&
-      targetedTokenType === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
+      targetedTokenType === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC &&
+      !isDefined(workspaceId)
         ? await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
             {
               userId: user.id,
@@ -74,7 +75,7 @@ export class RenewTokenService {
           )
         : await this.accessTokenService.generateAccessToken({
             userId: user.id,
-            workspaceId,
+            workspaceId: workspaceId as string,
             authProvider: resolvedAuthProvider,
             isImpersonating,
             impersonatorUserWorkspaceId,

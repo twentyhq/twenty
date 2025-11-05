@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Checkmark } from '@ui/display/checkmark/components/Checkmark';
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
+import { GRAY_SCALE_DARK, GRAY_SCALE_LIGHT } from '@ui/theme';
 import {
   AnimatePresence,
   type AnimationControls,
@@ -13,22 +14,22 @@ const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>
 >`
   align-items: flex-end;
-  background: ${({ variant, theme }) => {
+  background: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return theme.grayScale.gray75;
+        return GRAY_SCALE_DARK.gray4;
       case 'Light':
       default:
-        return theme.grayScale.gray15;
+        return GRAY_SCALE_LIGHT.gray4;
     }
   }};
-  border: ${({ variant, theme }) => {
+  border: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${theme.grayScale.gray70};`;
+        return `1px solid ${GRAY_SCALE_DARK.gray5};`;
       case 'Light':
       default:
-        return `1px solid ${theme.grayScale.gray20};`;
+        return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -46,42 +47,42 @@ const StyledColorSchemeBackground = styled.div<
 const StyledColorSchemeContent = styled(motion.div)<
   Pick<ColorSchemeCardProps, 'variant'>
 >`
-  background: ${({ theme, variant }) => {
+  background: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return theme.grayScale.gray75;
+        return GRAY_SCALE_DARK.gray1;
       case 'Light':
-        return theme.grayScale.gray0;
+        return GRAY_SCALE_LIGHT.gray1;
     }
   }};
 
-  border-left: ${({ variant, theme }) => {
+  border-left: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${theme.grayScale.gray60};`;
+        return `1px solid ${GRAY_SCALE_DARK.gray5};`;
       case 'Light':
       default:
-        return `1px solid ${theme.grayScale.gray20};`;
+        return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
-  border-top: ${({ variant, theme }) => {
+  border-top: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${theme.grayScale.gray60};`;
+        return `1px solid ${GRAY_SCALE_DARK.gray5};`;
       case 'Light':
       default:
-        return `1px solid ${theme.grayScale.gray20};`;
+        return `1px solid ${GRAY_SCALE_LIGHT.gray5};`;
     }
   }};
   box-sizing: border-box;
-  color: ${({ variant, theme }) => {
+  color: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return theme.grayScale.gray30;
+        return GRAY_SCALE_DARK.gray12;
       case 'Light':
       default:
-        return theme.grayScale.gray60;
+        return GRAY_SCALE_LIGHT.gray12;
     }
   }};
   display: flex;

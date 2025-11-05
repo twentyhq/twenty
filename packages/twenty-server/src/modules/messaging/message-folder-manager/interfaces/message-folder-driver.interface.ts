@@ -3,7 +3,7 @@ import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/
 
 export type MessageFolder = Pick<
   MessageFolderWorkspaceEntity,
-  'name' | 'isSynced' | 'isSentFolder' | 'externalId'
+  'name' | 'isSynced' | 'isSentFolder' | 'externalId' | 'parentFolderId'
 >;
 
 export interface MessageFolderDriver {

@@ -68,7 +68,7 @@ export const ObjectFilterDropdownBooleanSelect = () => {
               <BooleanDisplay value={option} />
               {objectFilterDropdownFilterValue === option.toString() && (
                 <StyledIconCheckContainer>
-                  <IconCheck color={theme.grayScale.gray50} size={16} />
+                  <IconCheck color={theme.grayScale.gray11} size={16} />
                 </StyledIconCheckContainer>
               )}
             </StyledBooleanSelectContainer>

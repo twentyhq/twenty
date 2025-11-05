@@ -1,4 +1,5 @@
 import { DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW } from '@/object-record/object-filter-dropdown/constants/DateOperandsThatShouldBeInitializedWithNow';
+import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/object-filter-dropdown/hooks/useUpsertObjectFilterDropdownCurrentFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -7,15 +8,18 @@ import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropd
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { getDateFilterDisplayValue } from '@/object-record/record-filter/utils/getDateFilterDisplayValue';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
+import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
+
 import {
-  type VariableDateViewFilterValueDirection,
-  type VariableDateViewFilterValueUnit,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+  isDefined,
+  type RelativeDateFilter,
+  type RelativeDateFilterDirection,
+  type RelativeDateFilterUnit,
+} from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownOperand = () => {
   const objectFilterDropdownCurrentRecordFilter = useRecoilComponentValue(
@@ -39,6 +43,10 @@ export const useApplyObjectFilterDropdownOperand = () => {
 
   const { createEmptyRecordFilterFromFieldMetadataItem } =
     useCreateEmptyRecordFilterFromFieldMetadataItem();
+
+  const { getInitialFilterValue } = useGetInitialFilterValue();
+
+  const { userTimezone } = useUserTimezone();
 
   const applyObjectFilterDropdownOperand = (
     newOperand: RecordFilterOperand,
@@ -84,27 +92,31 @@ export const useApplyObjectFilterDropdownOperand = () => {
       if (
         DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW.includes(newOperand)
       ) {
-        const newDateValue = new Date();
+        // TODO: allow to keep same value when switching between is after, is before, is and is not
+        // For now we reset with now each time we switch operand
 
-        recordFilterToUpsert.value = newDateValue.toISOString();
-        const { displayValue } = getDateFilterDisplayValue(
-          newDateValue,
+        const dateToUseAsISOString = new Date().toISOString();
+
+        const { displayValue, value } = getInitialFilterValue(
           recordFilterToUpsert.type,
+          newOperand,
+          dateToUseAsISOString,
         );
+
+        recordFilterToUpsert.value = value;
 
         recordFilterToUpsert.displayValue = displayValue;
       } else if (newOperand === RecordFilterOperand.IS_RELATIVE) {
-        const defaultRelativeDate = {
-          direction: 'THIS' as VariableDateViewFilterValueDirection,
+        const defaultRelativeDate: RelativeDateFilter = {
+          direction: 'THIS' as RelativeDateFilterDirection,
           amount: 1,
-          unit: 'DAY' as VariableDateViewFilterValueUnit,
+          unit: 'DAY' as RelativeDateFilterUnit,
+          timezone: userTimezone,
         };
 
-        recordFilterToUpsert.value = computeVariableDateViewFilterValue(
-          defaultRelativeDate.direction,
-          defaultRelativeDate.amount,
-          defaultRelativeDate.unit,
-        );
+        recordFilterToUpsert.value =
+          stringifyRelativeDateFilter(defaultRelativeDate);
+
         recordFilterToUpsert.displayValue =
           getRelativeDateDisplayValue(defaultRelativeDate);
       } else {

@@ -49,8 +49,8 @@ export const CommandMenuItemNumberInput = ({
     const numericValue = castAsNumberOrNull(draftValue);
 
     if (isDefined(onValidate)) {
-      const isInvalid = onValidate(numericValue);
-      if (isInvalid) {
+      const isValid = onValidate(numericValue);
+      if (!isValid) {
         setHasError(true);
         return;
       }
@@ -86,6 +86,7 @@ export const CommandMenuItemNumberInput = ({
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
+      error={hasError ? ' ' : undefined}
       noErrorHelper
     />
   );

@@ -9,12 +9,9 @@ export const isMinMaxRangeValid = (
   newValue: number,
   configuration: ChartConfiguration,
 ): boolean => {
-  if (!('rangeMax' in configuration || 'rangeMin' in configuration)) {
-    return false;
-  }
-
   if (settingId === CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE) {
     if (
+      'rangeMax' in configuration &&
       isDefined(configuration.rangeMax) &&
       newValue > configuration.rangeMax
     ) {
@@ -24,6 +21,7 @@ export const isMinMaxRangeValid = (
 
   if (settingId === CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE) {
     if (
+      'rangeMin' in configuration &&
       isDefined(configuration.rangeMin) &&
       newValue < configuration.rangeMin
     ) {

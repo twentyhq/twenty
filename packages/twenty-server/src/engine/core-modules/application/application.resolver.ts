@@ -57,11 +57,11 @@ export class ApplicationResolver {
 
   @Mutation(() => Boolean)
   async deleteApplication(
-    @Args() { packageJson }: DeleteApplicationInput,
+    @Args() { universalIdentifier }: DeleteApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     await this.applicationSyncService.deleteApplication({
-      applicationUniversalIdentifier: packageJson.universalIdentifier,
+      applicationUniversalIdentifier: universalIdentifier,
       workspaceId,
     });
 

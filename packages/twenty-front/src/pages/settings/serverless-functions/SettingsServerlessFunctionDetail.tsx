@@ -105,11 +105,19 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const flattenedCode = flattenSources(formValues.code);
 
-  const files = flattenedCode.map((file) => ({
-    path: file.path,
-    language: 'typescript',
-    content: file.content,
-  }));
+  const files = flattenedCode
+    .map((file) => ({
+      path: file.path,
+      language: 'typescript',
+      content: file.content,
+    }))
+    .sort((a, b) =>
+      a.path === serverlessFunction?.handlerPath
+        ? -1
+        : b.path === serverlessFunction?.handlerPath
+          ? 1
+          : 0,
+    );
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {

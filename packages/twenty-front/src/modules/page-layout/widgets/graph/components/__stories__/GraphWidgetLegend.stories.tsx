@@ -24,19 +24,16 @@ export const Default: Story = {
           {
             id: 'sales',
             label: 'Sales',
-            formattedValue: '$45,231',
             color: 'blue',
           },
           {
             id: 'marketing',
             label: 'Marketing',
-            formattedValue: '$12,543',
             color: 'green',
           },
           {
             id: 'operations',
             label: 'Operations',
-            formattedValue: '$8,765',
             color: 'red',
           },
         ]}
@@ -54,7 +51,6 @@ export const SingleItem: Story = {
           {
             id: 'revenue',
             label: 'Revenue',
-            formattedValue: '750',
             color: 'blue',
           },
         ]}

@@ -22,6 +22,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { BarChartGroupMode } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
@@ -92,15 +93,38 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     return null;
   }
 
+  const buildConfigUpdate = (
+    fieldId: string | null,
+    subFieldName: string | null,
+  ) => {
+    const isSecondaryAxis =
+      fieldMetadataIdKey === 'secondaryAxisGroupByFieldMetadataId';
+    const baseConfig = {
+      [fieldMetadataIdKey]: fieldId,
+      [subFieldNameKey]: subFieldName,
+    };
+
+    if (
+      !isSecondaryAxis ||
+      configuration.__typename !== 'BarChartConfiguration'
+    ) {
+      return baseConfig;
+    }
+
+    return {
+      ...baseConfig,
+      groupMode: isDefined(fieldId)
+        ? (configuration.groupMode ?? BarChartGroupMode.STACKED)
+        : null,
+    };
+  };
+
   const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
     if (isCompositeFieldType(fieldMetadataItem.type)) {
       setSelectedCompositeField(fieldMetadataItem);
     } else {
       updateCurrentWidgetConfig({
-        configToUpdate: {
-          [fieldMetadataIdKey]: fieldMetadataItem.id,
-          [subFieldNameKey]: null,
-        },
+        configToUpdate: buildConfigUpdate(fieldMetadataItem.id, null),
       });
       closeDropdown();
     }
@@ -108,10 +132,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
 
   const handleSelectNone = () => {
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        [fieldMetadataIdKey]: null,
-        [subFieldNameKey]: null,
-      },
+      configToUpdate: buildConfigUpdate(null, null),
     });
     closeDropdown();
   };
@@ -126,10 +147,10 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     }
 
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        [fieldMetadataIdKey]: selectedCompositeField.id,
-        [subFieldNameKey]: subFieldName,
-      },
+      configToUpdate: buildConfigUpdate(
+        selectedCompositeField.id,
+        subFieldName,
+      ),
     });
     closeDropdown();
   };

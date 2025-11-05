@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
-import { join } from 'path';
 import { spawn } from 'node:child_process';
+import { join } from 'path';
 
 import {
   type ServerlessDriver,
@@ -9,15 +9,15 @@ import {
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { SERVERLESS_TMPDIR_FOLDER } from 'src/engine/core-modules/serverless/drivers/constants/serverless-tmpdir-folder';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
+import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
+import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 import { ConsoleListener } from 'src/engine/core-modules/serverless/drivers/utils/intercept-console';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { type ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
-import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
-import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -61,27 +61,6 @@ export class LocalDriver implements ServerlessDriver {
     await this.createLayerIfNotExists(serverlessFunction);
   }
 
-  private async executeWithTimeout<T>(
-    fn: () => Promise<T>,
-    timeoutMs: number,
-  ): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      const timer = setTimeout(() => {
-        reject(new Error(`Task timed out after ${timeoutMs / 1_000} seconds`));
-      }, timeoutMs);
-
-      fn()
-        .then((result) => {
-          clearTimeout(timer);
-          resolve(result);
-        })
-        .catch((err) => {
-          clearTimeout(timer);
-          reject(err);
-        });
-    });
-  }
-
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object,
@@ -109,8 +88,10 @@ export class LocalDriver implements ServerlessDriver {
       let builtBundleFilePath = '';
 
       try {
-        builtBundleFilePath =
-          await buildServerlessFunctionInMemory(sourceTemporaryDir);
+        builtBundleFilePath = await buildServerlessFunctionInMemory({
+          sourceTemporaryDir,
+          handlerPath: serverlessFunction.handlerPath,
+        });
       } catch (error) {
         return formatBuildError(error, startTime);
       }
@@ -164,17 +145,18 @@ export class LocalDriver implements ServerlessDriver {
       });
 
       try {
-        const runnerPath = await this.writeBootstrapRunner(
-          sourceTemporaryDir,
-          builtBundleFilePath,
-        );
+        const runnerPath = await this.writeBootstrapRunner({
+          dir: sourceTemporaryDir,
+          builtFileAbsPath: builtBundleFilePath,
+          handlerName: serverlessFunction.handlerName,
+        });
 
         const { ok, result, error, stack, stdout, stderr } =
           await this.runChildWithEnv({
             runnerPath,
             env: buildEnvVar(serverlessFunction),
             payload,
-            timeoutMs: serverlessFunction.timeoutSeconds * 1_000,
+            timeoutMs: 900_000, // timeout is handled by the serverless function service
           });
 
         if (stdout)
@@ -222,26 +204,34 @@ export class LocalDriver implements ServerlessDriver {
     }
   }
 
-  async writeBootstrapRunner(dir: string, builtFileAbsPath: string) {
+  async writeBootstrapRunner({
+    dir,
+    builtFileAbsPath,
+    handlerName,
+  }: {
+    dir: string;
+    builtFileAbsPath: string;
+    handlerName: string;
+  }) {
     const runnerPath = join(dir, '__runner.cjs');
     const code = `
       // Auto-generated. Do not edit.
       const { pathToFileURL } = require('node:url');
-      
+
       (async () => {
         try {
           const builtUrl = pathToFileURL(${JSON.stringify(builtFileAbsPath)});
           const mod = await import(builtUrl.href);
-          if (typeof mod.main !== 'function') {
-            throw new Error('Export "main" not found in serverless bundle');
+          if (typeof mod.${handlerName} !== 'function') {
+            throw new Error('Export "${handlerName}" not found in serverless bundle');
           }
-      
+
           let payload = undefined;
           if (process.send) {
             process.on('message', async (msg) => {
               if (!msg || msg.type !== 'run') return;
               try {
-                const out = await mod.main(msg.payload);
+                const out = await mod.${handlerName}(msg.payload);
                 process.send && process.send({ ok: true, result: out });
                 process.exit(0);
               } catch (err) {
@@ -253,7 +243,7 @@ export class LocalDriver implements ServerlessDriver {
             // Fallback: read payload from argv[2] (JSON) and print to stdout
             const json = process.argv[2];
             payload = json ? JSON.parse(json) : undefined;
-            const out = await mod.main(payload);
+            const out = await mod.${handlerName}(payload);
             console.log(JSON.stringify({ ok: true, result: out }));
             process.exit(0);
           }

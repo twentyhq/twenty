@@ -3,10 +3,12 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -14,14 +16,14 @@ import { ApolloError } from '@apollo/client';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton } from 'twenty-ui/input';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
@@ -82,11 +84,14 @@ export const PasswordReset = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const setCurrentUser = useSetRecoilState(currentUserState);
 
   const navigate = useNavigateApp();
+  const { redirect } = useRedirect();
 
   const [email, setEmail] = useState('');
   const [isTokenValid, setIsTokenValid] = useState(false);
+  const [isTargetUserPasswordSet, setIsTargetUserPasswordSet] = useState(false);
 
   const theme = useTheme();
 
@@ -116,8 +121,12 @@ export const PasswordReset = () => {
     },
     onCompleted: (data) => {
       setIsTokenValid(true);
-      if (isNonEmptyString(data?.validatePasswordResetToken?.email)) {
-        setEmail(data.validatePasswordResetToken.email);
+      const validationResult = data?.validatePasswordResetToken;
+      if (isNonEmptyString(validationResult?.email)) {
+        setEmail(validationResult.email);
+      }
+      if (validationResult?.hasPassword) {
+        setIsTargetUserPasswordSet(validationResult.hasPassword);
       }
     },
   });
@@ -145,9 +154,18 @@ export const PasswordReset = () => {
         return;
       }
 
+      const successMessage =
+        isTargetUserPasswordSet === false
+          ? t`Password has been set`
+          : t`Password has been updated`;
+
+      setCurrentUser((currentUser) =>
+        currentUser ? { ...currentUser, hasPassword: true } : currentUser,
+      );
+
       if (isLoggedIn) {
         enqueueSuccessSnackBar({
-          message: t`Password has been updated`,
+          message: successMessage,
         });
         navigate(AppPath.Index);
         return;
@@ -167,7 +185,8 @@ export const PasswordReset = () => {
         formData.newPassword,
         token,
       );
-      navigate(AppPath.Index);
+
+      redirect(AppPath.Index);
     } catch (err) {
       logError(err);
       enqueueErrorSnackBar({
@@ -175,6 +194,9 @@ export const PasswordReset = () => {
       });
     }
   };
+
+  const passwordActionLabel =
+    isTargetUserPasswordSet === true ? t`Change Password` : t`Set Password`;
 
   return (
     isTokenValid && (
@@ -186,9 +208,7 @@ export const PasswordReset = () => {
               placeholder={workspacePublicData?.displayName}
             />
           </AnimatedEaseIn>
-          <Title animate>
-            <Trans>Reset Password</Trans>
-          </Title>
+          <Title animate>{passwordActionLabel}</Title>
           <StyledContentContainer>
             {!email ? (
               <SkeletonTheme
@@ -256,7 +276,7 @@ export const PasswordReset = () => {
 
                 <StyledMainButton
                   variant="secondary"
-                  title={t`Change Password`}
+                  title={passwordActionLabel}
                   type="submit"
                   fullWidth
                   disabled={isUpdatingPassword}

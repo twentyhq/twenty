@@ -8,7 +8,7 @@ import {
   subWeeks,
   subYears,
 } from 'date-fns';
-import { type VariableDateViewFilterValue } from 'twenty-shared/types';
+import { type RelativeDateFilter } from 'twenty-shared/utils';
 
 import {
   evaluateRelativeDateFilter,
@@ -104,7 +104,7 @@ describe('Relative Date Filter Utils', () => {
   describe('evaluateRelativeDateFilter', () => {
     describe('NEXT direction', () => {
       it('should return true for dates within the next N days', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'NEXT',
           amount: 3,
           unit: 'DAY',
@@ -146,7 +146,7 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return true for dates within the next N weeks', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'NEXT',
           amount: 2,
           unit: 'WEEK',
@@ -182,7 +182,7 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return true for dates within the next N months', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'NEXT',
           amount: 2,
           unit: 'MONTH',
@@ -218,7 +218,7 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return true for dates within the next N years', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'NEXT',
           amount: 1,
           unit: 'YEAR',
@@ -254,7 +254,7 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return false when amount is undefined', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'NEXT',
           unit: 'DAY',
         };
@@ -270,7 +270,7 @@ describe('Relative Date Filter Utils', () => {
 
     describe('PAST direction', () => {
       it('should return true for dates within the past N days', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'PAST',
           amount: 3,
           unit: 'DAY',
@@ -312,7 +312,7 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return true for dates within the past N weeks', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'PAST',
           amount: 2,
           unit: 'WEEK',
@@ -348,7 +348,7 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return true for dates within the past N months', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'PAST',
           amount: 2,
           unit: 'MONTH',
@@ -384,7 +384,7 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return true for dates within the past N years', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'PAST',
           amount: 1,
           unit: 'YEAR',
@@ -420,7 +420,7 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return false when amount is undefined', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'PAST',
           unit: 'DAY',
         };
@@ -436,7 +436,7 @@ describe('Relative Date Filter Utils', () => {
 
     describe('THIS direction', () => {
       it('should return true for dates within this day', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'THIS',
           unit: 'DAY',
         };
@@ -465,9 +465,10 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return true for dates within this week', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'THIS',
           unit: 'WEEK',
+          firstDayOfTheWeek: 'MONDAY',
         };
 
         expect(
@@ -476,12 +477,14 @@ describe('Relative Date Filter Utils', () => {
             relativeDateFilterValue,
           }),
         ).toBe(true);
+
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: new Date('2024-01-14T12:00:00Z'),
+            dateToCheck: new Date('2024-01-16T12:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(true);
+
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-01-20T12:00:00Z'),
@@ -498,14 +501,14 @@ describe('Relative Date Filter Utils', () => {
         ).toBe(false);
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: new Date('2024-01-21T12:00:00Z'),
+            dateToCheck: new Date('2024-01-22T12:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(false);
       });
 
       it('should return true for dates within this month', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'THIS',
           unit: 'MONTH',
         };
@@ -546,7 +549,7 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return true for dates within this year', () => {
-        const relativeDateFilterValue: VariableDateViewFilterValue = {
+        const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'THIS',
           unit: 'YEAR',
         };

@@ -8,21 +8,26 @@ import {
   Droppable,
 } from '@hello-pangea/dnd';
 
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListDroppableMoreButton } from '@/page-layout/components/PageLayoutTabListDroppableMoreButton';
+import { PageLayoutTabMenuItemSelectAvatar } from '@/page-layout/components/PageLayoutTabMenuItemSelectAvatar';
 import { PageLayoutTabRenderClone } from '@/page-layout/components/PageLayoutTabRenderClone';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { isPageLayoutTabDraggingComponentState } from '@/page-layout/states/isPageLayoutTabDraggingComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useContext } from 'react';
-import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   display: flex;
@@ -60,6 +65,15 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   const context = useContext(TabListComponentInstanceContext);
   const instanceId = context?.instanceId;
 
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+  );
+
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+    pageLayoutId,
+  );
+
   const isTabDragging = useRecoilComponentValue(
     isPageLayoutTabDraggingComponentState,
     instanceId,
@@ -69,6 +83,13 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
     isPageLayoutTabDraggingComponentState,
     instanceId,
   );
+
+  const setTabSettingsOpenTabId = useSetRecoilComponentState(
+    pageLayoutTabSettingsOpenTabIdComponentState,
+    pageLayoutId,
+  );
+
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
   const handleClose = () => {
     if (!isTabDragging) {
@@ -80,6 +101,14 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
     setIsTabDragging(false);
     onSelect(tabId);
     handleClose();
+  };
+
+  const handleEditClick = (tabId: string) => {
+    setTabSettingsOpenTabId(tabId);
+    navigatePageLayoutCommandMenu({
+      commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+    });
+    onClose();
   };
 
   return (
@@ -163,9 +192,8 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                                   theme.spacingMultiplicator * 2,
                               }}
                             >
-                              <MenuItemSelectAvatar
-                                text={tab.title}
-                                avatar={<TabAvatar tab={tab} />}
+                              <PageLayoutTabMenuItemSelectAvatar
+                                tab={tab}
                                 selected={tab.id === activeTabId}
                                 onClick={
                                   draggableSnapshot.isDragging
@@ -173,6 +201,8 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
                                     : () => handleTabSelect(tab.id)
                                 }
                                 disabled={disabled}
+                                showEditButton={isPageLayoutInEditMode}
+                                onEditClick={handleEditClick}
                               />
                             </div>
                           </StyledOverflowDropdownListDraggableWrapper>

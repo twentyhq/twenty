@@ -1,1 +1,0 @@
-export const GRAPH_MAXIMUM_NUMBER_OF_GROUPS = 50;

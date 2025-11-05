@@ -8,7 +8,7 @@ export const createDefaultIframeWidget = (
   id: string,
   pageLayoutTabId: string,
   title: string,
-  url: string,
+  url: string | null,
   gridPosition: GridPosition,
   objectMetadataId?: string | null,
 ): PageLayoutWidget => {

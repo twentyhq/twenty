@@ -1,0 +1,50 @@
+---
+title: Checkbox
+image: /images/user-guide/tasks/tasks_header.png
+---
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Used when a user needs to select multiple values from several options.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| checked | boolean | Indicates whether the checkbox is checked |
+| indeterminate | boolean | Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked) |
+| onChange | function | The callback function you want to trigger when the checkbox state changes |
+| onCheckedChange | function | The callback function you want to trigger when the `checked` state changes |
+| variant | string | The visual style variant of the box. Options include: `primary`, `secondary`, and `tertiary` |
+| size | string | The size of the checkbox. Has two options: `small` and `large` |
+| shape | string | The shape of the checkbox. Has two options: `squared` and `rounded` |
+
+
+
+</Tab>
+</Tabs>
+

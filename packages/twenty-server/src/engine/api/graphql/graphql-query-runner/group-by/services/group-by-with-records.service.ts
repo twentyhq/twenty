@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import isEmpty from 'lodash.isempty';
 import { ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -221,8 +221,12 @@ export class GroupByWithRecordsService {
       const conditions = groupByDefinitions
         .map((def, defIndex) => {
           const paramName = `groupValue_${groupIndex}_${defIndex}`;
+          const paramValue = group[def.alias];
 
-          queryBuilder.setParameter(paramName, group[def.alias]);
+          if (!isDefined(paramValue)) {
+            return `${def.expression} IS NULL`;
+          }
+          queryBuilder.setParameter(paramName, paramValue);
 
           return `${def.expression} = :${paramName}`;
         })
