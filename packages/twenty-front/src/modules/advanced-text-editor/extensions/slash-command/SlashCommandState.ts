@@ -3,6 +3,7 @@ import { createRoot, type Root } from 'react-dom/client';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type Editor, type Range } from '@tiptap/core';
 import type { SlashCommandItem } from './SlashCommand';
 import SlashCommandMenu from './SlashCommandMenu';
 
@@ -17,6 +18,9 @@ export class SlashCommandState {
   clickOutsideListener: ((e: MouseEvent) => void) | null = null;
   dropdownElement: HTMLElement | null = null;
   private updateCallback: (() => void) | null = null;
+  editor: Editor | null = null;
+  range: Range | null = null;
+  query: string = '';
 
   setUpdateCallback(callback: () => void): void {
     this.updateCallback = callback;
@@ -85,25 +89,14 @@ export const renderComponent = (state: SlashCommandState): void => {
   state.componentRoot.render(
     createElement(SlashCommandMenu, {
       items: state.currentItems,
-      selectedIndex: state.selectedIndex,
-      onSelect: (item) => {
-        state.currentCommand(item);
-        state.cleanup();
-      },
+      query: state.query,
+      onSelect: state.currentCommand,
       clientRect: state.currentRect,
+      editor: state.editor!,
+      range: state.range!,
     }),
   );
 };
-
-export const findDropdownElement = (): HTMLElement | null => {
-  return document.querySelector('[data-slash-command-menu]') as HTMLElement;
-};
-
-export const updateComponentRoot = (state: SlashCommandState): void => {
-  renderComponent(state);
-  state.dropdownElement = findDropdownElement();
-};
-
 export const createScrollListener = (
   state: SlashCommandState,
   getClientRect: () => DOMRect | null,

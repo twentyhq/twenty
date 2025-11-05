@@ -1,25 +1,17 @@
-import { Extension, type Editor } from '@tiptap/core';
-import Suggestion from '@tiptap/suggestion';
+import { createElement } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+
+import { Extension, type Editor, type Range } from '@tiptap/core';
+import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
+
 import {
-  IconBold,
-  IconH1,
-  IconH2,
-  IconH3,
-  IconItalic,
-  IconPilcrow,
-  IconStrikethrough,
-  IconUnderline,
-  type IconComponent,
-} from 'twenty-ui/display';
-import {
-  SlashCommandState,
-  createClickOutsideListener,
-  createScrollListener,
-  findDropdownElement,
-  handleKeyDown,
-  renderComponent,
-  updateComponentRoot,
-} from './SlashCommandState';
+  DEFAULT_SLASH_COMMANDS,
+  type SlashCommandConfig,
+} from '@/advanced-text-editor/extensions/slash-command/DefaultSlashCommands';
+import { type IconComponent } from 'twenty-ui/display';
+import SlashCommandMenu, {
+  type SlashCommandMenuProps,
+} from './SlashCommandMenu';
 
 export type SlashCommandItem = {
   id: string;
@@ -32,107 +24,10 @@ export type SlashCommandItem = {
   onSelect: () => void;
 };
 
-type SlashCommandConfig = {
-  id: string;
-  title: string;
-  description: string;
-  icon: IconComponent;
-  keywords: string[];
-  getIsActive: (editor: Editor) => boolean;
-  getIsVisible: (editor: Editor) => boolean;
-  getOnSelect: (editor: Editor) => () => void;
-};
-
-const SLASH_COMMAND_CONFIGS: SlashCommandConfig[] = [
-  {
-    id: 'paragraph',
-    title: 'Text',
-    description: 'Plain text paragraph',
-    icon: IconPilcrow,
-    keywords: ['paragraph', 'text', 'p'],
-    getIsActive: (editor) => editor.isActive('paragraph'),
-    getIsVisible: (editor) => editor.can().setParagraph?.() ?? true,
-    getOnSelect: (editor) => () => editor.chain().focus().setParagraph().run(),
-  },
-  {
-    id: 'h1',
-    title: 'Heading 1',
-    description: 'Large section heading',
-    icon: IconH1,
-    keywords: ['heading', 'h1', 'title'],
-    getIsActive: (editor) => editor.isActive('heading', { level: 1 }),
-    getIsVisible: (editor) => editor.can().setHeading?.({ level: 1 }) ?? false,
-    getOnSelect: (editor) => () =>
-      editor.chain().focus().setHeading({ level: 1 }).run(),
-  },
-  {
-    id: 'h2',
-    title: 'Heading 2',
-    description: 'Medium section heading',
-    icon: IconH2,
-    keywords: ['heading', 'h2', 'subtitle'],
-    getIsActive: (editor) => editor.isActive('heading', { level: 2 }),
-    getIsVisible: (editor) => editor.can().setHeading?.({ level: 2 }) ?? false,
-    getOnSelect: (editor) => () =>
-      editor.chain().focus().setHeading({ level: 2 }).run(),
-  },
-  {
-    id: 'h3',
-    title: 'Heading 3',
-    description: 'Small section heading',
-    icon: IconH3,
-    keywords: ['heading', 'h3', 'subheading'],
-    getIsActive: (editor) => editor.isActive('heading', { level: 3 }),
-    getIsVisible: (editor) => editor.can().setHeading?.({ level: 3 }) ?? false,
-    getOnSelect: (editor) => () =>
-      editor.chain().focus().setHeading({ level: 3 }).run(),
-  },
-  {
-    id: 'bold',
-    title: 'Bold',
-    description: 'Make text bold',
-    icon: IconBold,
-    keywords: ['bold', 'strong', 'b'],
-    getIsActive: (editor) => editor.isActive('bold'),
-    getIsVisible: (editor) => editor.can().toggleBold?.() ?? false,
-    getOnSelect: (editor) => () => editor.chain().focus().toggleBold().run(),
-  },
-  {
-    id: 'italic',
-    title: 'Italic',
-    description: 'Make text italic',
-    icon: IconItalic,
-    keywords: ['italic', 'em', 'i'],
-    getIsActive: (editor) => editor.isActive('italic'),
-    getIsVisible: (editor) => editor.can().toggleItalic?.() ?? false,
-    getOnSelect: (editor) => () => editor.chain().focus().toggleItalic().run(),
-  },
-  {
-    id: 'underline',
-    title: 'Underline',
-    description: 'Underline text',
-    icon: IconUnderline,
-    keywords: ['underline', 'u'],
-    getIsActive: (editor) => editor.isActive('underline'),
-    getIsVisible: (editor) => editor.can().toggleUnderline?.() ?? false,
-    getOnSelect: (editor) => () =>
-      editor.chain().focus().toggleUnderline().run(),
-  },
-  {
-    id: 'strike',
-    title: 'Strikethrough',
-    description: 'Strike through text',
-    icon: IconStrikethrough,
-    keywords: ['strikethrough', 'strike', 'del'],
-    getIsActive: (editor) => editor.isActive('strike'),
-    getIsVisible: (editor) => editor.can().toggleStrike?.() ?? false,
-    getOnSelect: (editor) => () => editor.chain().focus().toggleStrike().run(),
-  },
-];
-
 const createSlashCommandItem = (
   config: SlashCommandConfig,
   editor: Editor,
+  range: Range,
 ): SlashCommandItem => ({
   id: config.id,
   title: config.title,
@@ -141,15 +36,13 @@ const createSlashCommandItem = (
   keywords: config.keywords,
   isActive: () => config.getIsActive(editor),
   isVisible: () => config.getIsVisible(editor),
-  onSelect: config.getOnSelect(editor),
+  onSelect: config.getOnSelect(editor, range),
 });
 
-// Filter items based on visibility
 const filterVisibleItems = (items: SlashCommandItem[]): SlashCommandItem[] => {
   return items.filter((item) => item.isVisible?.() ?? true);
 };
 
-// Filter items based on search query
 const filterByQuery = (
   items: SlashCommandItem[],
   query: string,
@@ -166,98 +59,196 @@ const filterByQuery = (
   });
 };
 
-const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
-  const allItems = SLASH_COMMAND_CONFIGS.map((config) =>
-    createSlashCommandItem(config, editor),
+const buildItems = (
+  editor: Editor,
+  range: Range,
+  query: string,
+): SlashCommandItem[] => {
+  const allItems = DEFAULT_SLASH_COMMANDS.map((config) =>
+    createSlashCommandItem(config, editor, range),
   );
   const visibleItems = filterVisibleItems(allItems);
   return filterByQuery(visibleItems, query);
 };
 
-const createSlashCommandRenderer = () => {
-  const state = new SlashCommandState();
+type SlashCommandRendererProps = {
+  items: SlashCommandItem[];
+  command: (item: SlashCommandItem) => void;
+  clientRect?: (() => DOMRect | null) | null;
+  editor: Editor;
+  range: Range;
+  query: string;
+};
 
-  // Setting up update callback to re-render component when state changes
-  state.setUpdateCallback(() => {
-    if (state.componentRoot !== null) {
-      updateComponentRoot(state);
+class ReactRenderer {
+  componentRoot: Root | null = null;
+  containerElement: HTMLElement | null = null;
+  currentProps: SlashCommandRendererProps | null = null;
+  ref: { onKeyDown?: (props: { event: KeyboardEvent }) => boolean } | null =
+    null;
+
+  constructor(props: SlashCommandRendererProps) {
+    this.containerElement = document.createElement('div');
+    document.body.appendChild(this.containerElement);
+
+    this.componentRoot = createRoot(this.containerElement);
+    this.currentProps = props;
+    this.render(props);
+  }
+
+  render(props: SlashCommandRendererProps) {
+    if (!this.componentRoot) {
+      return;
     }
-  });
+
+    const rect = props.clientRect?.();
+    const menuProps: SlashCommandMenuProps = {
+      items: props.items,
+      onSelect: props.command,
+      clientRect: rect ?? null,
+      editor: props.editor,
+      range: props.range,
+      query: props.query,
+    };
+
+    this.componentRoot.render(
+      createElement(SlashCommandMenu, {
+        ...menuProps,
+        ref: (ref: any) => {
+          this.ref = ref;
+        },
+      }),
+    );
+  }
+
+  updateProps(props: Partial<SlashCommandRendererProps>) {
+    if (!this.componentRoot || !this.currentProps) {
+      return;
+    }
+
+    const updatedProps = { ...this.currentProps, ...props };
+    this.currentProps = updatedProps;
+    this.render(updatedProps);
+  }
+
+  destroy() {
+    if (this.componentRoot !== null) {
+      this.componentRoot.unmount();
+      this.componentRoot = null;
+    }
+
+    if (this.containerElement !== null) {
+      this.containerElement.remove();
+      this.containerElement = null;
+    }
+
+    this.currentProps = null;
+    this.ref = null;
+  }
+}
+
+const createSlashCommandRenderer = (editor: Editor) => {
+  let component: ReactRenderer | null = null;
 
   return {
     onStart: (props: {
       items: SlashCommandItem[];
       command: (item: SlashCommandItem) => void;
       clientRect?: (() => DOMRect | null) | null;
+      range: Range;
+      query: string;
     }) => {
       const rect = props.clientRect?.();
       if (!rect) {
         return;
       }
 
-      state.setCurrentItems(props.items);
-      state.setCurrentCommand(props.command);
-      state.setCurrentRect(rect);
-
-      state.scrollListener = createScrollListener(
-        state,
-        props.clientRect || (() => null),
-      );
-      state.clickOutsideListener = createClickOutsideListener(state);
-
-      window.addEventListener('scroll', state.scrollListener, true);
-      document.addEventListener('mousedown', state.clickOutsideListener);
-
-      renderComponent(state);
-      state.dropdownElement = findDropdownElement();
+      component = new ReactRenderer({
+        items: props.items,
+        command: props.command,
+        clientRect: () => rect,
+        editor,
+        range: props.range,
+        query: props.query,
+      });
     },
     onUpdate: (props: {
       items: SlashCommandItem[];
       command: (item: SlashCommandItem) => void;
       clientRect?: (() => DOMRect | null) | null;
+      range: Range;
+      query: string;
     }) => {
+      if (component === null) {
+        return;
+      }
+
       const rect = props.clientRect?.();
       if (!rect) {
         return;
       }
 
-      state.setCurrentItems(props.items);
-      state.setCurrentCommand(props.command);
-      state.setCurrentRect(rect);
-
-      if (state.currentItems.length === 0) {
-        state.cleanup();
+      if (props.items.length === 0) {
+        component.destroy();
+        component = null;
         return;
       }
 
-      updateComponentRoot(state);
+      component.updateProps({
+        items: props.items,
+        command: props.command,
+        clientRect: () => rect,
+        editor,
+        range: props.range,
+        query: props.query,
+      });
     },
     onKeyDown: (props: { event: KeyboardEvent }) => {
-      return handleKeyDown(props, state);
+      if (props.event.key === 'Escape') {
+        if (component !== null) {
+          component.destroy();
+          component = null;
+        }
+        return true;
+      }
+
+      return component?.ref?.onKeyDown?.(props) ?? false;
     },
     onExit: () => {
-      state.cleanup();
+      if (component === null) {
+        return;
+      }
+
+      component.destroy();
+      component = null;
     },
   };
 };
 
-export const SlashCommand = Extension.create({
-  name: 'slash-command',
-  addProseMirrorPlugins() {
-    const editor = this.editor;
+export type SlashCommandOptions = {
+  suggestions: Omit<SuggestionOptions, 'editor'>;
+};
 
+export const SlashCommand = Extension.create<SlashCommandOptions>({
+  name: 'slash-command',
+  addOptions: () => {
+    return {
+      suggestions: {
+        char: '/',
+        command: ({ editor, range, props }) => {
+          props.onSelect(editor, range);
+        },
+      },
+    };
+  },
+  addProseMirrorPlugins() {
     return [
       Suggestion({
         editor: this.editor,
-        char: '/',
-        startOfLine: false,
-        allowSpaces: true,
-        command: ({ editor: ed, range, props }) => {
-          ed.chain().focus().deleteRange(range).run();
-          props.onSelect();
-        },
-        items: ({ query }) => buildItems(editor, query),
-        render: createSlashCommandRenderer,
+        ...this.options.suggestions,
+        items: ({ query, editor: ed }) =>
+          buildItems(ed, ed.state.selection, query),
+        render: () => createSlashCommandRenderer(this.editor),
       }),
     ];
   },

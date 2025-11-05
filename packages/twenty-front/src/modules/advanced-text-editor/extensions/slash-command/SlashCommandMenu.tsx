@@ -5,104 +5,190 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { ThemeProvider } from '@emotion/react';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
+import { type Editor, type Range } from '@tiptap/core';
 import { motion } from 'framer-motion';
-import { type FC, useLayoutEffect } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
 
-type SlashCommandMenuProps = {
+export type SlashCommandMenuProps = {
   items: SlashCommandItem[];
-  selectedIndex: number;
   onSelect: (item: SlashCommandItem) => void;
   clientRect: DOMRect | null;
+  editor: Editor;
+  range: Range;
+  query: string;
 };
 
-export const SlashCommandMenu: FC<SlashCommandMenuProps> = ({
-  items,
-  selectedIndex,
-  onSelect,
-  clientRect,
-}) => {
-  const { refs, floatingStyles } = useFloating({
-    placement: 'bottom-start',
-    strategy: 'fixed',
-    middleware: [offset(4), flip()],
-    whileElementsMounted: autoUpdate,
-    elements: {
-      reference: clientRect
-        ? {
-            getBoundingClientRect: () => clientRect,
+export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
+  (props, parentRef) => {
+    const { items, onSelect, clientRect, editor, range, query } = props;
+
+    const colorScheme = document.documentElement.className.includes('dark')
+      ? 'Dark'
+      : 'Light';
+    const theme = colorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
+
+    const dropdownListContainer = useRef<HTMLDivElement>(null);
+    // eslint-disable-next-line @nx/workspace-no-state-useref
+    const activeCommandRef = useRef<HTMLDivElement | null>(null);
+
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    // eslint-disable-next-line @nx/workspace-no-state-useref
+    const prevSelectedIndex = useRef(0);
+    // eslint-disable-next-line @nx/workspace-no-state-useref
+    const prevQuery = useRef('');
+
+    const { refs, floatingStyles } = useFloating({
+      placement: 'bottom-start',
+      strategy: 'fixed',
+      middleware: [offset(4), flip()],
+      whileElementsMounted: autoUpdate,
+      elements: {
+        reference: clientRect
+          ? {
+              getBoundingClientRect: () => clientRect,
+            }
+          : null,
+      },
+    });
+
+    const selectItem = useCallback(
+      (index: number) => {
+        const item = items[index];
+        if (!item) {
+          return;
+        }
+
+        onSelect(item);
+      },
+      [onSelect, items],
+    );
+
+    useImperativeHandle(parentRef, () => ({
+      onKeyDown: ({ event }: { event: KeyboardEvent }) => {
+        const navigationKeys = [
+          'ArrowUp',
+          'ArrowDown',
+          'Enter',
+          'ArrowLeft',
+          'ArrowRight',
+        ];
+        if (navigationKeys.includes(event.key)) {
+          let newCommandIndex = selectedIndex;
+
+          switch (event.key) {
+            case 'ArrowLeft':
+              event.preventDefault();
+
+              editor
+                .chain()
+                .focus()
+                .insertContentAt(range, `/${prevQuery.current}`)
+                .run();
+              setTimeout(() => {
+                setSelectedIndex(prevSelectedIndex.current);
+              }, 0);
+              return true;
+            case 'ArrowUp':
+              if (!items.length) {
+                return false;
+              }
+              newCommandIndex = selectedIndex - 1;
+              if (newCommandIndex < 0) {
+                newCommandIndex = items.length - 1;
+              }
+              setSelectedIndex(newCommandIndex);
+              return true;
+            case 'ArrowDown':
+              if (!items.length) {
+                return false;
+              }
+              newCommandIndex = selectedIndex + 1;
+              if (newCommandIndex >= items.length) {
+                newCommandIndex = 0;
+              }
+              setSelectedIndex(newCommandIndex);
+              return true;
+            case 'Enter':
+              if (!items.length) {
+                return false;
+              }
+              selectItem(selectedIndex);
+
+              prevQuery.current = query;
+              prevSelectedIndex.current = selectedIndex;
+              return true;
+            default:
+              return false;
           }
-        : null,
-    },
-  });
+        }
+      },
+    }));
 
-  const colorScheme = document.documentElement.className.includes('dark')
-    ? 'Dark'
-    : 'Light';
-  const theme = colorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
+    useLayoutEffect(() => {
+      const container = dropdownListContainer?.current;
+      const activeCommandContainer = activeCommandRef?.current;
+      if (!container || !activeCommandContainer) {
+        return;
+      }
 
-  useLayoutEffect(() => {
-    if (!refs.floating.current) {
-      return;
-    }
+      const { offsetTop, offsetHeight } = activeCommandContainer;
+      container.style.transition = 'none';
+      container.scrollTop = offsetTop - offsetHeight;
+    }, [selectedIndex, dropdownListContainer, activeCommandRef]);
 
-    const floatingElement = refs.floating.current;
-    const selectedItem = floatingElement.querySelector(
-      `[data-slash-menu-item-index="${selectedIndex}"]`,
-    ) as HTMLElement | null;
-
-    if (selectedItem !== null) {
-      selectedItem.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-      });
-    }
-  }, [selectedIndex, refs]);
-
-  return (
-    <>
-      {createPortal(
-        <ThemeProvider theme={theme}>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.1 }}
-            data-slash-command-menu
-          >
-            <OverlayContainer
-              ref={refs.setFloating}
-              style={{
-                ...floatingStyles,
-                zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
-              }}
+    return (
+      <>
+        {createPortal(
+          <ThemeProvider theme={theme}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.1 }}
+              data-slash-command-menu
             >
-              <DropdownContent>
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  {items.map((item, index) => {
-                    const isSelected = index === selectedIndex;
+              <OverlayContainer
+                ref={refs.setFloating}
+                style={{
+                  ...floatingStyles,
+                  zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
+                }}
+              >
+                <DropdownContent ref={dropdownListContainer}>
+                  <DropdownMenuItemsContainer hasMaxHeight>
+                    {items.map((item, index) => {
+                      const isSelected = index === selectedIndex;
 
-                    return (
-                      <div key={item.id} data-slash-menu-item-index={index}>
-                        <MenuItemSuggestion
-                          LeftIcon={item.icon}
-                          text={item.title}
-                          selected={isSelected}
-                          onClick={() => onSelect(item)}
-                        />
-                      </div>
-                    );
-                  })}
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            </OverlayContainer>
-          </motion.div>
-        </ThemeProvider>,
-        document.body,
-      )}
-    </>
-  );
-};
+                      return (
+                        <div ref={activeCommandRef}>
+                          <MenuItemSuggestion
+                            LeftIcon={item.icon}
+                            text={item.title}
+                            selected={isSelected}
+                            onClick={() => onSelect(item)}
+                          />
+                        </div>
+                      );
+                    })}
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              </OverlayContainer>
+            </motion.div>
+          </ThemeProvider>,
+          document.body,
+        )}
+      </>
+    );
+  },
+);
 
 export default SlashCommandMenu;
