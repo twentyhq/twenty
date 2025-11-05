@@ -7,7 +7,7 @@ import { convertCoreViewGroupToViewGroup } from '@/views/utils/convertCoreViewGr
 import { convertCoreViewKeyToViewKey } from '@/views/utils/convertCoreViewKeyToViewKey';
 import { convertCoreViewOpenRecordInToViewOpenRecordIn } from '@/views/utils/convertCoreViewOpenRecordInToViewOpenRecordIn';
 import { convertCoreViewTypeToViewType } from '@/views/utils/convertCoreViewTypeToViewType';
-import { convertCoreViewVisibilityToViewVisibility } from '@/views/utils/convertCoreViewVisibilityToViewVisibility';
+import { ViewVisibility } from '~/generated-metadata/graphql';
 
 export const convertCoreViewToView = (
   coreView: CoreViewWithRelations,
@@ -17,9 +17,7 @@ export const convertCoreViewToView = (
     coreView.openRecordIn,
   );
   const convertedType = convertCoreViewTypeToViewType(coreView.type);
-  const convertedVisibility = convertCoreViewVisibilityToViewVisibility(
-    coreView.visibility,
-  );
+  const convertedVisibility = coreView.visibility ?? ViewVisibility.WORKSPACE;
 
   return {
     id: coreView.id,

@@ -14,7 +14,6 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { ViewVisibility } from '@/views/types/ViewVisibility';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
@@ -26,6 +25,7 @@ import {
   IconCopy,
 } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { ViewVisibility } from '~/generated-metadata/graphql';
 import { PermissionFlagType } from '~/generated/graphql';
 
 export const ObjectOptionsDropdownVisibilityContent = () => {

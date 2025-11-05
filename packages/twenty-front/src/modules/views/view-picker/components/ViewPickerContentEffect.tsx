@@ -7,8 +7,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { coreViewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreViewsFromObjectMetadataItemFamilySelector';
 import { viewTypeIconMapping } from '@/views/types/ViewType';
-import { ViewVisibility } from '@/views/types/ViewVisibility';
-import { PermissionFlagType } from '~/generated/graphql';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -23,6 +21,8 @@ import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPic
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewVisibility } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 
 export const ViewPickerContentEffect = () => {
   const setViewPickerSelectedIcon = useSetRecoilComponentState(

@@ -4,12 +4,12 @@ import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
-import { ViewVisibility } from '@/views/types/ViewVisibility';
 import {
   ViewKey as CoreViewKey,
   ViewOpenRecordIn as CoreViewOpenRecordIn,
   ViewType as CoreViewType,
   ViewVisibility as CoreViewVisibility,
+  ViewVisibility,
 } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
