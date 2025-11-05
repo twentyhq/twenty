@@ -12,7 +12,7 @@ type SignUpOnNewWorkspaceUtilArgs = {
   expectToFail?: boolean;
 };
 
-export const signUpOnNewWorkspace = async ({
+export const signUpInNewWorkspace = async ({
   accessToken,
   expectToFail,
 }: SignUpOnNewWorkspaceUtilArgs): CommonResponseBody<{
