@@ -338,10 +338,12 @@ export class WorkflowVersionStepWorkspaceService {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
-    return this.workflowVersionStepOperationsWorkspaceService.createStepForDuplicate({
-      step,
-      workspaceId,
-    });
+    return this.workflowVersionStepOperationsWorkspaceService.createStepForDuplicate(
+      {
+        step,
+        workspaceId,
+      },
+    );
   }
 
   async createDraftStep({

@@ -176,14 +176,15 @@ export class WorkflowVersionWorkspaceService {
     assertWorkflowVersionTriggerIsDefined(sourceVersion);
     assertWorkflowVersionHasSteps(sourceVersion);
 
-    const workflowPosition = await this.recordPositionService.buildRecordPosition({
-      value: 'first',
-      objectMetadata: {
-        isCustom: false,
-        nameSingular: 'workflow',
-      },
-      workspaceId,
-    });
+    const workflowPosition =
+      await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflow',
+        },
+        workspaceId,
+      });
 
     const insertWorkflowResult = await workflowRepository.insert({
       name: `${sourceWorkflow.name} (Copy)`,
@@ -191,16 +192,19 @@ export class WorkflowVersionWorkspaceService {
       position: workflowPosition,
     });
 
-    const newWorkflowId = (insertWorkflowResult.generatedMaps[0] as { id: string }).id;
+    const newWorkflowId = (
+      insertWorkflowResult.generatedMaps[0] as { id: string }
+    ).id;
 
-    const versionPosition = await this.recordPositionService.buildRecordPosition({
-      value: 'first',
-      objectMetadata: {
-        isCustom: false,
-        nameSingular: 'workflowVersion',
-      },
-      workspaceId,
-    });
+    const versionPosition =
+      await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflowVersion',
+        },
+        workspaceId,
+      });
 
     const insertVersionResult = await workflowVersionRepository.insert({
       workflowId: newWorkflowId,
