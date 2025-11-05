@@ -20,6 +20,7 @@ import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-he
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceManagerService } from './workspace-manager.service';
 
 @Module({
@@ -38,6 +39,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     TypeOrmModule.forFeature([UserWorkspaceEntity, WorkspaceEntity]),
     RoleModule,
     UserRoleModule,
+    ApplicationModule,
     TypeOrmModule.forFeature([
       FieldMetadataEntity,
       RoleTargetsEntity,

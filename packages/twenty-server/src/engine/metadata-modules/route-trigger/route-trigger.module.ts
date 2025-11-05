@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { RouteTriggerResolver } from 'src/engine/metadata-modules/route-trigger/resolvers/route-trigger.resolver';
@@ -16,7 +16,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
 @Module({
   imports: [
     TypeOrmModule.forFeature([RouteTriggerEntity]),
-    AuthModule,
+    TokenModule,
     WorkspaceDomainsModule,
     ServerlessFunctionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
