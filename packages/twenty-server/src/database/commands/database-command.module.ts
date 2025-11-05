@@ -10,7 +10,6 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
-import { UserCronModule } from 'src/engine/core-modules/user/user-cron.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
@@ -53,7 +52,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     DatabaseEventTriggerModule,
     WorkspaceCleanerModule,
     TrashCleanupModule,
-    UserCronModule,
     PublicDomainModule,
   ],
   providers: [
