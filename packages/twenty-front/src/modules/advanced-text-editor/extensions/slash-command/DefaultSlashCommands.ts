@@ -1,12 +1,12 @@
 import { type Editor, type Range } from '@tiptap/core';
 import {
-    type IconComponent,
-    IconH1,
-    IconH2,
-    IconH3,
-    IconList,
-    IconListNumbers,
-    IconPilcrow,
+  type IconComponent,
+  IconH1,
+  IconH2,
+  IconH3,
+  IconList,
+  IconListNumbers,
+  IconPilcrow,
 } from 'twenty-ui/display';
 
 export type SlashCommandConfig = {

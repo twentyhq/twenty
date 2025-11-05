@@ -4,7 +4,13 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { ThemeProvider } from '@emotion/react';
-import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
+import {
+  autoUpdate,
+  flip,
+  offset,
+  shift,
+  useFloating,
+} from '@floating-ui/react';
 import { type Editor, type Range } from '@tiptap/core';
 import { motion } from 'framer-motion';
 import {
@@ -37,20 +43,16 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
       : 'Light';
     const theme = colorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
 
-    const dropdownListContainer = useRef<HTMLDivElement>(null);
-    // eslint-disable-next-line @nx/workspace-no-state-useref
-    const activeCommandRef = useRef<HTMLDivElement | null>(null);
-
     const [selectedIndex, setSelectedIndex] = useState(0);
-    // eslint-disable-next-line @nx/workspace-no-state-useref
-    const prevSelectedIndex = useRef(0);
-    // eslint-disable-next-line @nx/workspace-no-state-useref
-    const prevQuery = useRef('');
+    const [prevSelectedIndex, setPrevSelectedIndex] = useState(0);
+    const [prevQuery, setPrevQuery] = useState('');
+
+    const activeCommandRef = useRef<HTMLDivElement>(null);
 
     const { refs, floatingStyles } = useFloating({
       placement: 'bottom-start',
       strategy: 'fixed',
-      middleware: [offset(4), flip()],
+      middleware: [offset(4), flip(), shift()],
       whileElementsMounted: autoUpdate,
       elements: {
         reference: clientRect
@@ -92,10 +94,10 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
               editor
                 .chain()
                 .focus()
-                .insertContentAt(range, `/${prevQuery.current}`)
+                .insertContentAt(range, `/${prevQuery}`)
                 .run();
               setTimeout(() => {
-                setSelectedIndex(prevSelectedIndex.current);
+                setSelectedIndex(prevSelectedIndex);
               }, 0);
               return true;
             case 'ArrowUp':
@@ -124,8 +126,8 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
               }
               selectItem(selectedIndex);
 
-              prevQuery.current = query;
-              prevSelectedIndex.current = selectedIndex;
+              setPrevQuery(query);
+              setPrevSelectedIndex(selectedIndex);
               return true;
             default:
               return false;
@@ -135,16 +137,16 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
     }));
 
     useLayoutEffect(() => {
-      const container = dropdownListContainer?.current;
       const activeCommandContainer = activeCommandRef?.current;
-      if (!container || !activeCommandContainer) {
+      if (!activeCommandContainer) {
         return;
       }
 
-      const { offsetTop, offsetHeight } = activeCommandContainer;
-      container.style.transition = 'none';
-      container.scrollTop = offsetTop - offsetHeight;
-    }, [selectedIndex, dropdownListContainer, activeCommandRef]);
+      activeCommandContainer.scrollIntoView({
+        behavior: 'auto',
+        block: 'nearest',
+      });
+    }, [selectedIndex]);
 
     return (
       <>
@@ -163,13 +165,16 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
                   zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
                 }}
               >
-                <DropdownContent ref={dropdownListContainer}>
+                <DropdownContent>
                   <DropdownMenuItemsContainer hasMaxHeight>
                     {items.map((item, index) => {
                       const isSelected = index === selectedIndex;
 
                       return (
-                        <div ref={activeCommandRef}>
+                        <div
+                          key={item.id}
+                          ref={isSelected ? activeCommandRef : null}
+                        >
                           <MenuItemSuggestion
                             LeftIcon={item.icon}
                             text={item.title}

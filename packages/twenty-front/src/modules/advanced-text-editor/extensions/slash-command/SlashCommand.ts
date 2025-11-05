@@ -24,6 +24,23 @@ export type SlashCommandItem = {
   onSelect: () => void;
 };
 
+type SlashCommandRendererProps = {
+  items: SlashCommandItem[];
+  command: (item: SlashCommandItem) => void;
+  clientRect?: (() => DOMRect | null) | null;
+  editor: Editor;
+  range: Range;
+  query: string;
+};
+
+type SuggestionRenderProps = {
+  items: SlashCommandItem[];
+  command: (item: SlashCommandItem) => void;
+  clientRect?: (() => DOMRect | null) | null;
+  range: Range;
+  query: string;
+};
+
 const createSlashCommandItem = (
   config: SlashCommandConfig,
   editor: Editor,
@@ -71,16 +88,7 @@ const buildItems = (
   return filterByQuery(visibleItems, query);
 };
 
-type SlashCommandRendererProps = {
-  items: SlashCommandItem[];
-  command: (item: SlashCommandItem) => void;
-  clientRect?: (() => DOMRect | null) | null;
-  editor: Editor;
-  range: Range;
-  query: string;
-};
-
-class ReactRenderer {
+class SlashCommandRenderer {
   componentRoot: Root | null = null;
   containerElement: HTMLElement | null = null;
   currentProps: SlashCommandRendererProps | null = null;
@@ -96,7 +104,7 @@ class ReactRenderer {
     this.render(props);
   }
 
-  render(props: SlashCommandRendererProps) {
+  render(props: SlashCommandRendererProps): void {
     if (!this.componentRoot) {
       return;
     }
@@ -114,14 +122,18 @@ class ReactRenderer {
     this.componentRoot.render(
       createElement(SlashCommandMenu, {
         ...menuProps,
-        ref: (ref: any) => {
+        ref: (
+          ref: {
+            onKeyDown?: (props: { event: KeyboardEvent }) => boolean;
+          } | null,
+        ) => {
           this.ref = ref;
         },
       }),
     );
   }
 
-  updateProps(props: Partial<SlashCommandRendererProps>) {
+  updateProps(props: Partial<SlashCommandRendererProps>): void {
     if (!this.componentRoot || !this.currentProps) {
       return;
     }
@@ -131,7 +143,7 @@ class ReactRenderer {
     this.render(updatedProps);
   }
 
-  destroy() {
+  destroy(): void {
     if (this.componentRoot !== null) {
       this.componentRoot.unmount();
       this.componentRoot = null;
@@ -148,22 +160,16 @@ class ReactRenderer {
 }
 
 const createSlashCommandRenderer = (editor: Editor) => {
-  let component: ReactRenderer | null = null;
+  let component: SlashCommandRenderer | null = null;
 
   return {
-    onStart: (props: {
-      items: SlashCommandItem[];
-      command: (item: SlashCommandItem) => void;
-      clientRect?: (() => DOMRect | null) | null;
-      range: Range;
-      query: string;
-    }) => {
+    onStart: (props: SuggestionRenderProps) => {
       const rect = props.clientRect?.();
       if (!rect) {
         return;
       }
 
-      component = new ReactRenderer({
+      component = new SlashCommandRenderer({
         items: props.items,
         command: props.command,
         clientRect: () => rect,
@@ -172,13 +178,7 @@ const createSlashCommandRenderer = (editor: Editor) => {
         query: props.query,
       });
     },
-    onUpdate: (props: {
-      items: SlashCommandItem[];
-      command: (item: SlashCommandItem) => void;
-      clientRect?: (() => DOMRect | null) | null;
-      range: Range;
-      query: string;
-    }) => {
+    onUpdate: (props: SuggestionRenderProps) => {
       if (component === null) {
         return;
       }
