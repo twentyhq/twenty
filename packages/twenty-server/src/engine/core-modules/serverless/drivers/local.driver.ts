@@ -156,7 +156,7 @@ export class LocalDriver implements ServerlessDriver {
             runnerPath,
             env: buildEnvVar(serverlessFunction),
             payload,
-            timeoutMs: 900_000, // 15 minutes
+            timeoutMs: 900_000, // timeout is handled by the serverless function service
           });
 
         if (stdout)

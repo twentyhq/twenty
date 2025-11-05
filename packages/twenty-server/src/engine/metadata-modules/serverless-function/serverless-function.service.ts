@@ -20,7 +20,6 @@ import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/se
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
-import { DEFAULT_SERVERLESS_FUNCTION_TIMEOUT_MS } from 'src/engine/metadata-modules/serverless-function/constants/default-serverless-function-timeout-ms.constant';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { type UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -106,7 +105,7 @@ export class ServerlessFunctionService {
     const resultServerlessFunction = await this.callWithTimeout({
       callback: () =>
         this.serverlessService.execute(functionToExecute, payload, version),
-      timeoutMs: DEFAULT_SERVERLESS_FUNCTION_TIMEOUT_MS,
+      timeoutMs: functionToExecute.timeoutSeconds * 1000,
     });
 
     if (this.twentyConfigService.get('SERVERLESS_LOGS_ENABLED')) {

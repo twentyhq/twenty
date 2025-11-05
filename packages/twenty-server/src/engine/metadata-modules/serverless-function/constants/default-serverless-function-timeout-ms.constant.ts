@@ -1,1 +1,0 @@
-export const DEFAULT_SERVERLESS_FUNCTION_TIMEOUT_MS = 300_000; // 5 minutes
