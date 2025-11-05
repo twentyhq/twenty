@@ -1,5 +1,6 @@
 import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
@@ -60,8 +61,13 @@ export const useMergePreview = ({
           setMergePreviewRecord(null);
           return;
         }
-        setMergePreviewRecord(previewRecord);
-        upsertRecordsInStore([previewRecord]);
+
+        const transformPreviewRecord = getRecordFromRecordNode<ObjectRecord>({
+          recordNode: previewRecord,
+        });
+
+        setMergePreviewRecord(transformPreviewRecord);
+        upsertRecordsInStore([transformPreviewRecord]);
       } catch {
         setMergePreviewRecord(null);
       } finally {
