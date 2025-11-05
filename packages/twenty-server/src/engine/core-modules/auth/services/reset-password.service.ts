@@ -10,7 +10,11 @@ import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, getAppPath } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  getAppPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
@@ -25,13 +29,13 @@ import { type EmailPasswordResetLinkOutput } from 'src/engine/core-modules/auth/
 import { type InvalidatePasswordOutput } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
 import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/password-reset-token.dto';
 import { type ValidatePasswordResetTokenOutput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 
 @Injectable()
 export class ResetPasswordService {
@@ -120,6 +124,7 @@ export class ResetPasswordService {
       email,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
     );
+    const hasPassword = isDefined(user.passwordHash);
 
     const workspace = await this.workspaceRepository.findOneBy({
       id: resetToken.workspaceId,
@@ -145,6 +150,7 @@ export class ResetPasswordService {
           long: true,
         },
       ),
+      hasPassword,
       locale,
     };
 
@@ -153,9 +159,11 @@ export class ResetPasswordService {
     const html = await render(emailTemplate, { pretty: true });
     const text = await render(emailTemplate, { plainText: true });
 
-    const resetPasswordMsg = msg`Action Needed to Reset Password`;
     const i18n = this.i18nService.getI18nInstance(locale);
-    const subject = i18n._(resetPasswordMsg);
+    const subjectTemplate = hasPassword
+      ? msg`Action Needed to Reset Password`
+      : msg`Action Needed to Set Password`;
+    const subject = i18n._(subjectTemplate);
 
     await this.emailService.send({
       from: `${this.twentyConfigService.get(
@@ -202,6 +210,7 @@ export class ResetPasswordService {
     return {
       id: user.id,
       email: user.email,
+      hasPassword: isDefined(user.passwordHash),
     };
   }
 
