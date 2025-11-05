@@ -1,8 +1,8 @@
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { type ObjectRecord } from 'twenty-shared/types';
 import { IconAlertCircle, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -49,7 +49,7 @@ type AIChatErrorMessageProps = {
 
 export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
   const theme = useTheme();
-  const { handleRetry } = useAgentChatContextOrThrow();
+  const { handleRetry, isStreaming } = useAgentChatContextOrThrow();
 
   return (
     <StyledErrorContainer>
@@ -67,7 +67,7 @@ export const AIChatErrorMessage = ({ error }: AIChatErrorMessageProps) => {
         size="small"
         Icon={IconRefresh}
         onClick={handleRetry}
-        disabled={status === 'streaming'}
+        disabled={isStreaming}
         title={t`Retry`}
       />
     </StyledErrorContainer>
