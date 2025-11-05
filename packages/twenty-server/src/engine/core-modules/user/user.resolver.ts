@@ -333,6 +333,13 @@ export class UserResolver {
     );
   }
 
+  @ResolveField(() => Boolean, {
+    name: 'hasPassword',
+  })
+  hasPassword(@Parent() user: UserEntity): boolean {
+    return isDefined(user.passwordHash);
+  }
+
   @ResolveField(() => String, {
     nullable: true,
   })

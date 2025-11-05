@@ -1,5 +1,5 @@
-import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -15,8 +15,7 @@ import {
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
-
-import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
+import { MicrosoftMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-messages-import-error-handler.service';
 
 describe('Microsoft get messages service', () => {
   let service: MicrosoftGetMessagesService;
@@ -25,7 +24,10 @@ describe('Microsoft get messages service', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MicrosoftGetMessagesService,
-        MicrosoftHandleErrorService,
+        {
+          provide: MicrosoftMessagesImportErrorHandler,
+          useValue: { handleError: jest.fn() },
+        },
         OAuth2ClientManagerService,
         GoogleOAuth2ClientManagerService,
         MicrosoftOAuth2ClientManagerService,

@@ -17,6 +17,7 @@ import { type PartialFieldMetadata } from 'src/engine/workspace-manager/workspac
 import { type PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 import { type UpdaterOptions } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/updater-options.interface';
 
+import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -212,21 +213,31 @@ export class WorkspaceMetadataUpdaterService {
     storage: WorkspaceSyncStorage,
     options?: UpdaterOptions,
   ): Promise<{
-    createdFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[];
-    updatedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[];
-    deletedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[];
+    createdFieldRelationMetadataCollection: FieldMetadataUpdate<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >[];
+    updatedFieldRelationMetadataCollection: FieldMetadataUpdate<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >[];
+    deletedFieldRelationMetadataCollection: FieldMetadataUpdate<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >[];
   }> {
-    let createdFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[] =
-      [];
-    let updatedFieldRelationMetadataCollection: FieldMetadataUpdate<FieldMetadataType.RELATION>[] =
-      [];
+    let createdFieldRelationMetadataCollection: FieldMetadataUpdate<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >[] = [];
+    let updatedFieldRelationMetadataCollection: FieldMetadataUpdate<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >[] = [];
 
     /**
      * Create field relation metadata
      */
     if (!options || options.actions.includes('create')) {
       createdFieldRelationMetadataCollection = await this.updateEntities<
-        FieldMetadataEntity<FieldMetadataType.RELATION>
+        FieldMetadataEntity<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >
       >(
         manager,
         FieldMetadataEntity,
@@ -240,7 +251,9 @@ export class WorkspaceMetadataUpdaterService {
      */
     if (!options || options.actions.includes('update')) {
       updatedFieldRelationMetadataCollection = await this.updateEntities<
-        FieldMetadataEntity<FieldMetadataType.RELATION>
+        FieldMetadataEntity<
+          FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+        >
       >(
         manager,
         FieldMetadataEntity,
@@ -320,12 +333,19 @@ export class WorkspaceMetadataUpdaterService {
         const fieldMetadata = originalObjectMetadataCollection
           .find((object) => object.id === indexMetadata.objectMetadataId)
           ?.fields.find((field) => {
-            if (
-              isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)
-            ) {
+            if (isFieldMetadataRelationOrMorphRelation(field)) {
               if (field.settings?.joinColumnName === column) {
                 return true;
               }
+            }
+
+            if (
+              isFieldMetadataEntityOfType(
+                field,
+                FieldMetadataType.MORPH_RELATION,
+              )
+            ) {
+              return;
             }
 
             if (field.name === column) {

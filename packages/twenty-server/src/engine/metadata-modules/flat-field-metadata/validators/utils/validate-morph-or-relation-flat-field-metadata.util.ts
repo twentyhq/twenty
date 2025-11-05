@@ -7,9 +7,11 @@ import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-mo
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
 export const validateMorphOrRelationFlatFieldMetadata = async ({
-  dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
   flatEntityToValidate: flatFieldMetadataToValidate,
-  optimisticFlatEntityMaps: optimisticFlatFieldMetadataMaps,
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+  },
   remainingFlatEntityMapsToValidate,
 }: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): Promise<
   FlatFieldMetadataValidationError[]
@@ -50,7 +52,7 @@ export const validateMorphOrRelationFlatFieldMetadata = async ({
 
   const targetRelationFlatFieldMetadata =
     remainingFlatEntityMapsToValidate?.byId[relationTargetFieldMetadataId] ??
-    optimisticFlatFieldMetadataMaps.byId[relationTargetFieldMetadataId];
+    flatFieldMetadataMaps.byId[relationTargetFieldMetadataId];
 
   if (
     isDefined(targetRelationFlatObjectMetadata) &&

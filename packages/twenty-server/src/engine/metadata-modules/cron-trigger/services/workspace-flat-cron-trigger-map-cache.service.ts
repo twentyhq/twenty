@@ -12,11 +12,11 @@ import {
   CronTriggerEntity,
 } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-flat-entity-maps.constant';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceFlatMapCache('flatCronTriggerMaps')
@@ -43,7 +43,9 @@ export class WorkspaceFlatCronTriggerMapCacheService extends WorkspaceFlatMapCac
       },
     });
 
-    return cronTriggers.reduce((flatCronTriggerMaps, cronTriggerEntity) => {
+    const flatCronTriggerMaps = createEmptyFlatEntityMaps();
+
+    for (const cronTriggerEntity of cronTriggers) {
       const flatCronTrigger = {
         ...removePropertiesFromRecord(cronTriggerEntity, [
           ...CRON_TRIGGER_ENTITY_RELATION_PROPERTIES,
@@ -52,10 +54,12 @@ export class WorkspaceFlatCronTriggerMapCacheService extends WorkspaceFlatMapCac
           cronTriggerEntity.universalIdentifier ?? cronTriggerEntity.id,
       } satisfies FlatCronTrigger;
 
-      return addFlatEntityToFlatEntityMapsOrThrow({
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
         flatEntity: flatCronTrigger,
-        flatEntityMaps: flatCronTriggerMaps,
+        flatEntityMapsToMutate: flatCronTriggerMaps,
       });
-    }, EMPTY_FLAT_ENTITY_MAPS);
+    }
+
+    return flatCronTriggerMaps;
   }
 }

@@ -166,6 +166,11 @@ msgstr "Acció necessària per evitar l'eliminació de l'espai de treball"
 msgid "Action Needed to Reset Password"
 msgstr "Acció necessària per restablir la contrasenya"
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr ""
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
@@ -584,10 +589,10 @@ msgstr "No es pot connectar a {connectFieldName}. No s'ha trobat cap registre ú
 msgid "Can't impersonate user via api key"
 msgstr "No es pot suplantar un usuari mitjançant una clau API"
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "No es pot activar una versió que no sigui esborrany o l'última publicada"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +624,6 @@ msgstr "No es pot desactivar una versió de flux de treball no activa"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "No es pot habilitar la unicitat a causa de valors duplicats existents. Reviseu i corregiu les vostres dades primer (incloent-hi els registres eliminats de forma flexible)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "No es pot tenir més d'una versió de flux de treball activa"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
@@ -1843,6 +1843,12 @@ msgstr "L'etiqueta no ha de contenir una coma"
 msgid "Language"
 msgstr "Idioma"
 
+#. js-lingui-id: hHtzNQ
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Last credentials refreshed at"
+msgstr ""
+
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Last published Version Id"
@@ -1916,6 +1922,11 @@ msgstr "Ubicació"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr "Mar7"
+
+#. js-lingui-id: hw7Mwk
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
+msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr ""
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2572,6 +2583,12 @@ msgstr "Les opcions són necessàries per als camps d'enumeració."
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "ID de disseny de pàgina"
+
+#. js-lingui-id: G1fWNt
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Parent Folder ID"
+msgstr ""
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

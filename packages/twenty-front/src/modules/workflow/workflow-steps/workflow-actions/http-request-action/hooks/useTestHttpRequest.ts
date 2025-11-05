@@ -1,12 +1,20 @@
-import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import {
+  type HttpRequestBody,
+  type HttpRequestFormData,
+} from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { TEST_HTTP_REQUEST } from '@/workflow/workflow-steps/workflow-actions/http-request-action/graphql/mutations/testHttpRequest';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
-import { type HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
-import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
+import { useMutation } from '@apollo/client';
+import { isObject, isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { resolveInput } from 'twenty-shared/utils';
-import { parseDataFromContentType } from 'twenty-shared/workflow';
-import { type HttpRequestBody } from '../constants/HttpRequest';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
+import {
+  type TestHttpRequestInput,
+  type TestHttpRequestMutation,
+  type TestHttpRequestMutationVariables,
+} from '~/generated-metadata/graphql';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;
@@ -32,59 +40,18 @@ const convertFlatVariablesToNestedContext = (flatVariables: {
 };
 
 export const useTestHttpRequest = (actionId: string) => {
+  const apolloCoreClient = useApolloCoreClient();
   const [isTesting, setIsTesting] = useState(false);
   const [httpRequestTestData, setHttpRequestTestData] = useRecoilState(
     httpRequestTestDataFamilyState(actionId),
   );
 
-  const callFetchRequest = async (
-    url: string,
-    headers: Record<string, string>,
-    method: string,
-    body?: HttpRequestBody | string,
-  ): Promise<HttpRequestTestData['output']> => {
-    const requestOptions: RequestInit = {
-      method,
-      headers: headers,
-    };
-
-    if (isMethodWithBody(method) && body !== undefined) {
-      const contentType = headers['content-type'];
-
-      requestOptions.body = parseDataFromContentType(body, contentType);
-
-      if (contentType === 'multipart/form-data') {
-        const headersCopy = { ...headers };
-        delete headersCopy['content-type'];
-        requestOptions.headers = { ...headersCopy };
-      }
-    }
-
-    const response = await fetch(url as string, requestOptions);
-
-    let responseData: string;
-    const contentType = response.headers.get('content-type');
-
-    if (contentType !== null && contentType.includes('application/json')) {
-      const jsonData = await response.json();
-      responseData = JSON.stringify(jsonData, null, 2);
-    } else {
-      responseData = await response.text();
-    }
-
-    const responseHeaders: Record<string, string> = {};
-    response.headers.forEach((value, key) => {
-      responseHeaders[key] = value;
-    });
-
-    return {
-      data: responseData,
-      status: response.status,
-      statusText: response.statusText,
-      headers: responseHeaders,
-      error: undefined,
-    };
-  };
+  const [mutate] = useMutation<
+    TestHttpRequestMutation,
+    TestHttpRequestMutationVariables
+  >(TEST_HTTP_REQUEST, {
+    client: apolloCoreClient,
+  });
   const testHttpRequest = async (
     httpRequestFormData: HttpRequestFormData,
     variableValues: { [variablePath: string]: any },
@@ -108,32 +75,54 @@ export const useTestHttpRequest = (actionId: string) => {
       );
 
       const substitutedBody: HttpRequestBody | string | undefined =
-        typeof substitutedBodyRaw === 'string' ||
-        (typeof substitutedBodyRaw === 'object' && substitutedBodyRaw !== null)
+        isString(substitutedBodyRaw) ||
+        (isObject(substitutedBodyRaw) && isDefined(substitutedBodyRaw))
           ? substitutedBodyRaw
           : undefined;
 
-      const output = await callFetchRequest(
-        substitutedUrl as string,
-        substitutedHeaders as Record<string, string>,
-        httpRequestFormData.method,
-        substitutedBody,
-      );
-
-      const contentType = output?.headers?.['content-type'];
-      const language = contentType?.includes('application/json')
-        ? 'json'
-        : 'plaintext';
-      const duration = Date.now() - startTime;
-      const outputWithDuration = {
-        ...output,
-        duration,
+      const input: TestHttpRequestInput = {
+        url: substitutedUrl as string,
+        method: httpRequestFormData.method,
+        headers: substitutedHeaders as Record<string, string>,
+        body: substitutedBody,
       };
-      setHttpRequestTestData((prev) => ({
-        ...prev,
-        output: outputWithDuration,
-        language,
-      }));
+
+      const result = await mutate({
+        variables: { input },
+      });
+
+      const duration = Date.now() - startTime;
+      const response = result?.data?.testHttpRequest;
+
+      if (!response) {
+        throw new Error('No response from server');
+      }
+
+      if (response.success === true) {
+        const resultData = isString(response.result)
+          ? response.result
+          : JSON.stringify(response.result, null, 2);
+        const language = isObject(response.result) ? 'json' : 'plaintext';
+
+        setHttpRequestTestData((prev) => ({
+          ...prev,
+          output: {
+            data: resultData,
+            status: response.status ?? 200,
+            statusText: response.statusText ?? 'OK',
+            headers: response.headers ?? {},
+            duration,
+            error: undefined,
+          },
+          language,
+        }));
+      } else {
+        throw new Error(
+          isString(response.error)
+            ? response.error
+            : JSON.stringify(response.error),
+        );
+      }
     } catch (error) {
       const duration = Date.now() - startTime;
       const errorMessage =

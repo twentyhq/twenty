@@ -166,6 +166,11 @@ msgstr "Tiltak nødvendig for å forhindre sletting av arbeidsområde"
 msgid "Action Needed to Reset Password"
 msgstr "Tiltak nødvendig for å tilbakestille passord"
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr ""
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
@@ -584,10 +589,10 @@ msgstr "Kan ikke koble til {connectFieldName}. Ingen unik post funnet med beting
 msgid "Can't impersonate user via api key"
 msgstr "Kan ikke gjøre brukeren via API-nøkkel"
 
-#. js-lingui-id: vxbVwc
+#. js-lingui-id: 874/Xl
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-last-published version"
-msgstr "Kan ikke aktivere ikke-kladd eller ikke-sist-publisert versjon"
+msgid "Cannot activate non-draft or non-deactivated version"
+msgstr ""
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -619,11 +624,6 @@ msgstr "Kan ikke deaktivere ikke-aktive arbeidsflytversjoner"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Kan ikke aktivere unikhet på grunn av eksisterende dupliserte verdier. Vennligst kontroller og rett opp i dine data først (inkludert mykt slettede poster)."
-
-#. js-lingui-id: IDMgr/
-#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
-msgid "Cannot have more than one active workflow version"
-msgstr "Kan ikke ha mer enn én aktiv arbeidsflytversjon"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
@@ -1843,6 +1843,12 @@ msgstr "Etikett må ikke inneholde en komma"
 msgid "Language"
 msgstr "Språk"
 
+#. js-lingui-id: hHtzNQ
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Last credentials refreshed at"
+msgstr ""
+
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Last published Version Id"
@@ -1916,6 +1922,11 @@ msgstr "Sted"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr "Mars"
+
+#. js-lingui-id: hw7Mwk
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
+msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
+msgstr ""
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -2572,6 +2583,12 @@ msgstr "Alternativer er påkrevet for enum-felt"
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
 msgstr "Sideoppsett ID"
+
+#. js-lingui-id: G1fWNt
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Parent Folder ID"
+msgstr ""
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts

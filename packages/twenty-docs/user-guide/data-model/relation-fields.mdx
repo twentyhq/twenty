@@ -1,0 +1,56 @@
+---
+title: Relation Fields
+info: Learn how to create relationships between objects using relation fields and configure 1-to-many relationships.
+image: /images/user-guide/fields/relations_field.png
+sectionInfo: Flexible data model designed to support your unique business processes
+---
+<Frame>
+  <img src="/images/user-guide/fields/relations_field.png" alt="Header" />
+</Frame>
+
+## What are Relation Fields?
+
+Relation fields link records from one object to records in another object. For example:
+- **People** → **Companies** (each person works for a company)
+- **Opportunities** → **People** (each deal has a contact person)
+- **Tasks** → **Opportunities** (each task relates to a specific deal)
+
+## Creating Relation Fields
+
+### 1. Add the Field
+Go to **Settings → Data Model → [Your Object]** and click **Add Field**.
+
+### 2. Choose Relation Type
+- **Field Type**: Select "Relation"
+- **Target Object**: Choose which object to connect to
+- **Relationship**: Currently supports **1-to-many** relationships only. Make sure to create the relationship in the right direction. 
+
+### 3. Configure Field Names
+You'll need to set names for both sides of the relationship:
+- **Source field name**: How the field appears on your current object
+- **Target field name**: How the reverse field appears on the target object
+
+<Warning>
+Field names cannot be edited once the relation is saved as it impacts the API structure. Choose carefully.
+</Warning>
+
+## Relating to Team Members
+
+You can create relations to any object, including **Workspace Members** (your Twenty team users). This is useful for creating ownership fields:
+
+- **Account Owner**: Link a Company to a team member who manages it
+- **Deal Owner**: Assign an Opportunity to a specific salesperson  
+
+When you create a relation to`Workspace Members`, you'll see your team members' names in dropdown selections, making it easy to assign ownership and responsibilities.
+
+## Best Practices
+
+- **Plan your relationships** before creating them
+- **Use clear, descriptive names** for both field names
+- **Test relationships** with sample data before full implementation
+
+## Upcoming Features
+- **Morph Many relationships** (Coming Q4 2025)
+- **Many-to-many relationships** (Coming Q1 2026)
+
+

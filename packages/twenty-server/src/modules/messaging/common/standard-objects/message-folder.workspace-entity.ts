@@ -92,6 +92,17 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   isSynced: boolean;
 
   @WorkspaceField({
+    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.parentFolderId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Parent Folder ID`,
+    description: msg`Parent Folder ID`,
+    icon: 'IconFolder',
+    defaultValue: null,
+  })
+  @WorkspaceIsNullable()
+  parentFolderId: string | null;
+
+  @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.externalId,
     type: FieldMetadataType.TEXT,
     label: msg`External ID`,
