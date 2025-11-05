@@ -1,7 +1,7 @@
 import { type QueryRunner } from 'typeorm';
 
 import {
-  CreateWorkspaceInput,
+  type CreateWorkspaceInput,
   WORKSPACE_FIELDS_TO_SEED,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 

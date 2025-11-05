@@ -1,6 +1,7 @@
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { v4 } from 'uuid';
+
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type CreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 export const computeWorkspaceCustomCreateApplicationInput = ({
   workspace,

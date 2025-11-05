@@ -1,4 +1,7 @@
-import { SEED_APPLE_WORKSPACE_ID, SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { generateRandomUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-random-users.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 

@@ -16,8 +16,8 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-
 import { Application } from 'cloudflare/resources/zero-trust/access/applications/applications';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';

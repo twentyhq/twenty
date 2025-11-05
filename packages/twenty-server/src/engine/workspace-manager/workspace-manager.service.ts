@@ -104,9 +104,11 @@ export class WorkspaceManagerService {
       workspaceId,
     });
 
-    const workspaceCustomApplication = computeWorkspaceCustomCreateApplicationInput({
-      workspace,
-    });
+    const workspaceCustomApplication =
+      computeWorkspaceCustomCreateApplicationInput({
+        workspace,
+      });
+
     await this.applicationService.create({
       ...workspaceCustomApplication,
       serverlessFunctionLayerId: null,

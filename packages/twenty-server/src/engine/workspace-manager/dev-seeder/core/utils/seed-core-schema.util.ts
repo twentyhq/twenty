@@ -4,8 +4,8 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import {
-  SeededWorkspacesIds,
-  SEEDER_CREATE_WORKSPACE_INPUT
+  type SeededWorkspacesIds,
+  SEEDER_CREATE_WORKSPACE_INPUT,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';

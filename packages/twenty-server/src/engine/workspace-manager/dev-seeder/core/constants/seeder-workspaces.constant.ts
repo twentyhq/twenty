@@ -1,5 +1,6 @@
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export const WORKSPACE_FIELDS_TO_SEED = [
   'id',
