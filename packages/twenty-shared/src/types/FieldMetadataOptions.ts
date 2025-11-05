@@ -1,9 +1,28 @@
-import { type FieldMetadataType, type IsExactly } from 'twenty-shared/types';
+import { type FieldMetadataType } from '@/types/FieldMetadataType';
+import { type IsExactly } from '@/types/IsExactly';
 
-import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+export type TagColor =
+  | 'green'
+  | 'turquoise'
+  | 'sky'
+  | 'blue'
+  | 'purple'
+  | 'pink'
+  | 'red'
+  | 'orange'
+  | 'yellow'
+  | 'gray';
+
+export class FieldMetadataDefaultOption {
+  id?: string;
+  position!: number;
+  label!: string;
+  value!: string;
+}
+
+export class FieldMetadataComplexOption extends FieldMetadataDefaultOption {
+  color!: TagColor;
+}
 
 type FieldMetadataOptionsMapping = {
   [FieldMetadataType.RATING]: FieldMetadataDefaultOption[];

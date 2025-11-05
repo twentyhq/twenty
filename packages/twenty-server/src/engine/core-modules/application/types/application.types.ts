@@ -1,3 +1,5 @@
+import { type FieldMetadataType } from 'twenty-shared/types';
+
 import { type HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
 
 export type PackageJson = {
@@ -66,6 +68,22 @@ export type ServerlessFunctionTriggerManifest = (
   universalIdentifier: string;
 };
 
+export type FieldManifest = {
+  universalIdentifier: string;
+  type: FieldMetadataType;
+  label: string;
+  description?: string;
+  icon?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  defaultValue?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  settings?: any;
+  isNullable?: boolean;
+  isFieldUiReadOnly?: boolean;
+};
+
 export type ObjectManifest = {
   universalIdentifier: string;
   nameSingular: string;
@@ -74,6 +92,7 @@ export type ObjectManifest = {
   labelPlural: string;
   description?: string;
   icon?: string;
+  fields?: FieldManifest[];
 };
 
 interface AgentResponseFormat {

@@ -5,6 +5,7 @@ export const VALIDATE_PASSWORD_RESET_TOKEN = gql`
     validatePasswordResetToken(passwordResetToken: $token) {
       id
       email
+      hasPassword
     }
   }
 `;

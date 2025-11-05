@@ -166,6 +166,11 @@ msgstr "Необходимо действие для предотвращени�
 msgid "Action Needed to Reset Password"
 msgstr "Необходимо действие для сброса пароля"
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr ""
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
