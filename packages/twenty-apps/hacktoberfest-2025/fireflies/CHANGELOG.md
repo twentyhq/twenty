@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.2] - 2025-11-04
+
+### Added
+- **Enhanced logging system**: Introduced configurable `AppLogger` class with log level support (debug, info, warn, error, silent)
+  - Environment-based log level configuration via `LOG_LEVEL` environment variable
+  - Test environment detection to prevent log noise during testing
+  - Context-aware logging with proper prefixes for better debugging
+- **Improved error handling**: Enhanced webhook signature verification with detailed debug logging
+- **Better debugging capabilities**: Added comprehensive logging throughout webhook processing pipeline
+
+### Enhanced
+- **Webhook signature verification**: Improved signature validation with detailed logging for troubleshooting
+- **Error messages**: More descriptive error logging for failed operations and security violations
+- **Development experience**: Better debugging information for webhook processing and API interactions
+
+
 ## [0.2.1] - 2025-11-03
 
 ### Added
