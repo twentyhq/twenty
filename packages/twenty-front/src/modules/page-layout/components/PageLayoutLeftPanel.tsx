@@ -11,10 +11,10 @@ type PageLayoutLeftPanelProps = {
 };
 
 const usePinnedLeftTab = () => {
-  return tab
-}
+  return tab;
+};
 
-const useActiveTab = () => {}
+const useActiveTab = () => {};
 
 export const PageLayoutLeftPanel = ({
   pinnedLeftTabId,
@@ -35,9 +35,7 @@ export const PageLayoutLeftPanel = ({
         isInRightDrawer={isInRightDrawer}
       />
 
-      <Context tabId>
-        <PageLayoutContent tabId={pinnedLeftTabId} isInPinnedTab />
-      </Context>
+      <PageLayoutContent tabId={pinnedLeftTabId} isInPinnedTab />
     </ShowPageLeftContainer>
   );
 };

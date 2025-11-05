@@ -9,7 +9,7 @@ import {
   type DropResult,
 } from '@hello-pangea/dnd';
 import { useId } from 'react';
-import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
+import { type PageLayoutWidget } from '~/generated/graphql';
 
 const StyledVerticalListContainer = styled.div`
   display: flex;
@@ -27,13 +27,11 @@ const StyledDraggableWrapper = styled.div<{ isDragging: boolean }>`
 type PageLayoutVerticalListEditorProps = {
   widgets: PageLayoutWidget[];
   onReorder: (result: DropResult) => void;
-  isInPinnedTab: boolean;
 };
 
 export const PageLayoutVerticalListEditor = ({
   widgets,
   onReorder,
-  isInPinnedTab,
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
@@ -69,12 +67,7 @@ export const PageLayoutVerticalListEditor = ({
                   >
                     {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                     <div {...provided.dragHandleProps}>
-                      <WidgetRenderer
-                        widget={widget}
-                        pageLayoutType={PageLayoutType.RECORD_PAGE}
-                        layoutMode="vertical-list"
-                        isInPinnedTab={isInPinnedTab}
-                      />
+                      <WidgetRenderer widget={widget} />
                     </div>
                   </StyledDraggableWrapper>
                 )}

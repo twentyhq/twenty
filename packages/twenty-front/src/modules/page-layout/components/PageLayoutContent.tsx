@@ -2,6 +2,7 @@ import { PageLayoutCanvasViewer } from '@/page-layout/components/PageLayoutCanva
 import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLayout';
 import { PageLayoutVerticalListEditor } from '@/page-layout/components/PageLayoutVerticalListEditor';
 import { PageLayoutVerticalListViewer } from '@/page-layout/components/PageLayoutVerticalListViewer';
+import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
@@ -43,7 +44,11 @@ export const PageLayoutContent = ({
 
   const activeTab = currentPageLayout?.tabs.find((tab) => tab.id === tabId);
 
-  if (!isDefined(currentPageLayout) || !isDefined(activeTab)) {
+  if (
+    !isDefined(currentPageLayout) ||
+    !isDefined(activeTab) ||
+    !isDefined(activeTab.layoutMode)
+  ) {
     return null;
   }
 
@@ -53,23 +58,48 @@ export const PageLayoutContent = ({
     isRecordPageEnabled && activeTab.layoutMode === 'vertical-list';
 
   if (isCanvasLayout) {
-    return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;
+    return (
+      <PageLayoutContentProvider
+        value={{
+          tabId: tabId,
+          layoutMode: activeTab.layoutMode,
+        }}
+      >
+        <PageLayoutCanvasViewer widgets={activeTab.widgets} />
+      </PageLayoutContentProvider>
+    );
   }
 
   if (isVerticalList) {
     return (
-      <StyledContainer>
-        {isPageLayoutInEditMode ? (
-          <PageLayoutVerticalListEditor
-            widgets={activeTab.widgets}
-            onReorder={reorderWidgets}
-          />
-        ) : (
-          <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
-        )}
-      </StyledContainer>
+      <PageLayoutContentProvider
+        value={{
+          tabId: tabId,
+          layoutMode: activeTab.layoutMode,
+        }}
+      >
+        <StyledContainer>
+          {isPageLayoutInEditMode ? (
+            <PageLayoutVerticalListEditor
+              widgets={activeTab.widgets}
+              onReorder={reorderWidgets}
+            />
+          ) : (
+            <PageLayoutVerticalListViewer widgets={activeTab.widgets} />
+          )}
+        </StyledContainer>
+      </PageLayoutContentProvider>
     );
   }
 
-  return <PageLayoutGridLayout tabId={tabId} />;
+  return (
+    <PageLayoutContentProvider
+      value={{
+        tabId: tabId,
+        layoutMode: activeTab.layoutMode,
+      }}
+    >
+      <PageLayoutGridLayout tabId={tabId} />
+    </PageLayoutContentProvider>
+  );
 };
