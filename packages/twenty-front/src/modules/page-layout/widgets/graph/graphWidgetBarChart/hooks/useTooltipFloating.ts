@@ -28,7 +28,7 @@ export const useTooltipFloating = () => {
   });
 
   return {
-    refs,
+    floatingRefs: refs,
     floatingStyles,
   };
 };

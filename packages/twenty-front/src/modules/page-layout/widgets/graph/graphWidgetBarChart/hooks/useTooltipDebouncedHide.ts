@@ -3,25 +3,28 @@ import { useDebouncedCallback } from 'use-debounce';
 
 const TOOLTIP_HIDE_DELAY_MS = 300;
 
-export const useTooltipDebouncedHide = (onHide: () => void) => {
-  const debouncedHide = useDebouncedCallback(onHide, TOOLTIP_HIDE_DELAY_MS);
+export const useTooltipDebouncedHide = (onTooltipHide: () => void) => {
+  const debouncedTooltipHide = useDebouncedCallback(
+    onTooltipHide,
+    TOOLTIP_HIDE_DELAY_MS,
+  );
 
-  const scheduleHide = useCallback(() => {
-    debouncedHide();
-  }, [debouncedHide]);
+  const scheduleTooltipHide = useCallback(() => {
+    debouncedTooltipHide();
+  }, [debouncedTooltipHide]);
 
-  const cancelHide = useCallback(() => {
-    debouncedHide.cancel();
-  }, [debouncedHide]);
+  const cancelTooltipHide = useCallback(() => {
+    debouncedTooltipHide.cancel();
+  }, [debouncedTooltipHide]);
 
-  const hideImmediately = useCallback(() => {
-    debouncedHide.cancel();
-    onHide();
-  }, [debouncedHide, onHide]);
+  const hideTooltipImmediately = useCallback(() => {
+    debouncedTooltipHide.cancel();
+    onTooltipHide();
+  }, [debouncedTooltipHide, onTooltipHide]);
 
   return {
-    scheduleHide,
-    cancelHide,
-    hideImmediately,
+    scheduleTooltipHide,
+    cancelTooltipHide,
+    hideTooltipImmediately,
   };
 };

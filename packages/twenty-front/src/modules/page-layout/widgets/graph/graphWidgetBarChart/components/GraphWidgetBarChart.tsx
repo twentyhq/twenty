@@ -97,6 +97,9 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const [hoveredBarDatum, setHoveredBarDatum] =
+    useState<ComputedDatum<BarChartDataItem> | null>(null);
+
   const formatOptions: GraphValueFormatOptions = {
     displayType,
     decimals,
@@ -110,29 +113,26 @@ export const GraphWidgetBarChart = ({
     indexBy,
   });
 
-  const [hoveredBarDatum, setHoveredBarDatum] =
-    useState<ComputedDatum<BarChartDataItem> | null>(null);
-
   const clearHoveredBarDatum = useCallback(() => {
     setHoveredBarDatum(null);
   }, []);
 
-  const { scheduleHide, cancelHide, hideImmediately } =
+  const { scheduleTooltipHide, cancelTooltipHide, hideTooltipImmediately } =
     useTooltipDebouncedHide(clearHoveredBarDatum);
 
-  const { refs, floatingStyles } = useTooltipFloating();
+  const { floatingRefs, floatingStyles } = useTooltipFloating();
 
   const showTooltipForBar = useCallback(
     (datum: ComputedDatum<BarChartDataItem>, geometry: BarGeometry) => {
-      cancelHide();
+      cancelTooltipHide();
       setHoveredBarDatum(datum);
 
       const virtualElement = createFloatingAnchorFromBarGeometry(geometry);
       if (isDefined(virtualElement)) {
-        refs.setReference(virtualElement);
+        floatingRefs.setReference(virtualElement);
       }
     },
-    [cancelHide, refs],
+    [cancelTooltipHide, floatingRefs],
   );
 
   const chartTheme = useBarChartTheme();
@@ -175,7 +175,7 @@ export const GraphWidgetBarChart = ({
         layout={layout}
         chartId={id}
         onShowTooltip={showTooltipForBar}
-        onScheduleHideTooltip={scheduleHide}
+        onScheduleHideTooltip={scheduleTooltipHide}
       />
     ),
     [
@@ -186,7 +186,7 @@ export const GraphWidgetBarChart = ({
       layout,
       id,
       showTooltipForBar,
-      scheduleHide,
+      scheduleTooltipHide,
     ],
   );
 
@@ -292,7 +292,7 @@ export const GraphWidgetBarChart = ({
       </GraphWidgetChartContainer>
       {isDefined(hoveredBarDatum) && (
         <GraphWidgetBarChartTooltip
-          floatingRef={refs.setFloating}
+          floatingRef={floatingRefs.setFloating}
           floatingStyles={floatingStyles}
           hoveredBarDatum={hoveredBarDatum}
           enrichedKeys={enrichedKeys}
@@ -300,8 +300,8 @@ export const GraphWidgetBarChart = ({
           indexBy={indexBy}
           formatOptions={formatOptions}
           enableGroupTooltip={groupMode === 'stacked'}
-          onCancelHide={cancelHide}
-          onRequestHide={hideImmediately}
+          onCancelHide={cancelTooltipHide}
+          onRequestHide={hideTooltipImmediately}
         />
       )}
       <GraphWidgetLegend
