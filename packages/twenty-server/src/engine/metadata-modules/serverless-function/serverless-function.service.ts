@@ -13,11 +13,15 @@ import { type ServerlessExecuteResult } from 'src/engine/core-modules/serverless
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SERVERLESS_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/serverless-function/serverless-function-executed';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
+import { DEFAULT_SERVERLESS_FUNCTION_TIMEOUT_MS } from 'src/engine/metadata-modules/serverless-function/constants/default-serverless-function-timeout-ms.constant';
+import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { type UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {
@@ -28,9 +32,6 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
-import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -102,11 +103,11 @@ export class ServerlessFunctionService {
         ],
       });
 
-    const resultServerlessFunction = await this.serverlessService.execute(
-      functionToExecute,
-      payload,
-      version,
-    );
+    const resultServerlessFunction = await this.callWithTimeout({
+      callback: () =>
+        this.serverlessService.execute(functionToExecute, payload, version),
+      timeoutMs: DEFAULT_SERVERLESS_FUNCTION_TIMEOUT_MS,
+    });
 
     if (this.twentyConfigService.get('SERVERLESS_LOGS_ENABLED')) {
       /* eslint-disable no-console */
@@ -469,5 +470,19 @@ export class ServerlessFunctionService {
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED,
       );
     }
+  }
+
+  private async callWithTimeout<T>({
+    callback,
+    timeoutMs,
+  }: {
+    callback: () => Promise<T>;
+    timeoutMs: number;
+  }): Promise<T> {
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Execution timeout')), timeoutMs);
+    });
+
+    return (await Promise.race([callback(), timeoutPromise])) as T;
   }
 }
