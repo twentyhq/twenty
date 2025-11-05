@@ -88,7 +88,8 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.workspaceMember,
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'workspaceMembers',
   labelSingular: msg`Workspace Member`,
   labelPlural: msg`Workspace Members`,

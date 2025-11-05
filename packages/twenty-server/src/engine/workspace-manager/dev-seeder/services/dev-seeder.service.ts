@@ -69,6 +69,7 @@ export class DevSeederService {
       await this.applicationService.findStandardTwentyApplicationsOrThrow({
         workspaceId,
       });
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,

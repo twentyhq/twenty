@@ -12,7 +12,10 @@ import {
 import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
 import { StandardApplicationEntityByApplicationUniversalIdentifier } from 'src/engine/core-modules/application/types/standard-application-entity-by-applicatin-universal-identifier';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { TWENTY_STANDARD_APPLICATION, TWENTY_WORKFLOW_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
+import {
+  TWENTY_STANDARD_APPLICATION,
+  TWENTY_WORKFLOW_APPLICATION,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 @Injectable()
 export class ApplicationService {
@@ -38,6 +41,7 @@ export class ApplicationService {
         universalIdentifier,
         workspaceId,
       );
+
       if (!isDefined(application)) {
         throw new Error(
           `Could not find standard application ${universalIdentifier}, should never occur`,

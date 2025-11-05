@@ -1,6 +1,10 @@
+import { type CamelCase } from 'type-fest';
+
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { TWENTY_STANDARD_APPLICATION, TWENTY_WORKFLOW_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
-import { CamelCase } from 'type-fest';
+import {
+  TWENTY_STANDARD_APPLICATION,
+  TWENTY_WORKFLOW_APPLICATION,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 export type SeedStandardApplicationsArgs = {
   applicationService: ApplicationService;

@@ -36,7 +36,8 @@ export const SEARCH_FIELDS_FOR_DASHBOARD: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.dashboard,
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'dashboards',
   labelSingular: msg`Dashboard`,
   labelPlural: msg`Dashboards`,

@@ -46,6 +46,7 @@ export class StandardObjectFactory {
       context.standardApplicationEntityByApplicationUniversalIdentifier[
         workspaceEntityMetadataArgs.applicationUniversalIdentifier
       ];
+
     return {
       // TODO: Remove targetTableName when we remove the old metadata
       applicationId: relatedStandardApplication.id,

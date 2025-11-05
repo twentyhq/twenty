@@ -70,7 +70,8 @@ registerEnumType(CalendarChannelContactAutoCreationPolicy, {
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.calendarChannel,
-  applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'calendarChannels',
   labelSingular: msg`Calendar Channel`,
   labelPlural: msg`Calendar Channels`,

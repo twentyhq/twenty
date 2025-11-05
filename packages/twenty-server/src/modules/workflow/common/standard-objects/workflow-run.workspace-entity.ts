@@ -82,7 +82,8 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_RUNS: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.workflowRun,
-  applicationUniversalIdentifier: TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
+  applicationUniversalIdentifier:
+    TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
   namePlural: 'workflowRuns',
   labelSingular: msg`Workflow Run`,
   labelPlural: msg`Workflow Runs`,
