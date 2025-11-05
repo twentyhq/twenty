@@ -7,7 +7,6 @@ import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/gra
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
-import { useTooltipDebouncedHide } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useTooltipDebouncedHide';
 import { useTooltipFloating } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useTooltipFloating';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
@@ -35,6 +34,7 @@ import {
 } from '@nivo/bar';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 const LEGEND_THRESHOLD = 10;
 
@@ -117,14 +117,16 @@ export const GraphWidgetBarChart = ({
     setHoveredBarDatum(null);
   }, []);
 
-  const { scheduleTooltipHide, cancelTooltipHide, hideTooltipImmediately } =
-    useTooltipDebouncedHide(clearHoveredBarDatum);
+  const debouncedClearHoveredBarDatum = useDebouncedCallback(
+    clearHoveredBarDatum,
+    300,
+  );
 
   const { floatingRefs, floatingStyles } = useTooltipFloating();
 
   const showTooltipForBar = useCallback(
     (datum: ComputedDatum<BarChartDataItem>, geometry: BarGeometry) => {
-      cancelTooltipHide();
+      debouncedClearHoveredBarDatum.cancel();
       setHoveredBarDatum(datum);
 
       const virtualElement = createFloatingAnchorFromBarGeometry(geometry);
@@ -132,7 +134,7 @@ export const GraphWidgetBarChart = ({
         floatingRefs.setReference(virtualElement);
       }
     },
-    [cancelTooltipHide, floatingRefs],
+    [debouncedClearHoveredBarDatum, floatingRefs],
   );
 
   const chartTheme = useBarChartTheme();
@@ -175,7 +177,7 @@ export const GraphWidgetBarChart = ({
         layout={layout}
         chartId={id}
         onShowTooltip={showTooltipForBar}
-        onScheduleHideTooltip={scheduleTooltipHide}
+        onScheduleHideTooltip={debouncedClearHoveredBarDatum}
       />
     ),
     [
@@ -186,7 +188,7 @@ export const GraphWidgetBarChart = ({
       layout,
       id,
       showTooltipForBar,
-      scheduleTooltipHide,
+      debouncedClearHoveredBarDatum,
     ],
   );
 
@@ -300,8 +302,11 @@ export const GraphWidgetBarChart = ({
           indexBy={indexBy}
           formatOptions={formatOptions}
           enableGroupTooltip={groupMode === 'stacked'}
-          onCancelHide={cancelTooltipHide}
-          onRequestHide={hideTooltipImmediately}
+          onCancelHide={() => debouncedClearHoveredBarDatum.cancel()}
+          onRequestHide={() => {
+            debouncedClearHoveredBarDatum.cancel();
+            clearHoveredBarDatum();
+          }}
         />
       )}
       <GraphWidgetLegend
