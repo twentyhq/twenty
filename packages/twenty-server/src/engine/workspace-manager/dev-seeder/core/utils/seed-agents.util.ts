@@ -1,4 +1,4 @@
-import { type DataSource } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
 import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
 import { SEED_APPLE_WORKSPACE_ID, SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -40,11 +40,17 @@ export const AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS = {
   YCOMBINATOR_MESSAGE_4_PART_1: '20202020-0000-4000-8000-000000000054',
 };
 
-const seedChatThreads = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
+type SeedChatThreadsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+};
+
+const seedChatThreads = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+}: SeedChatThreadsArgs) => {
   let threadId: string;
   let userWorkspaceId: string;
 
@@ -62,7 +68,7 @@ const seedChatThreads = async (
 
   const now = new Date();
 
-  await dataSource
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${agentChatThreadTableName}`, [
@@ -85,12 +91,19 @@ const seedChatThreads = async (
   return threadId;
 };
 
-const seedChatMessages = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-  threadId: string,
-) => {
+type SeedChatMessagesArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  threadId: string;
+};
+
+const seedChatMessages = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  threadId,
+}: SeedChatMessagesArgs) => {
   let messageIds: string[];
   let partIds: string[];
   let messages: Array<{
@@ -271,7 +284,7 @@ const seedChatMessages = async (
     );
   }
 
-  await dataSource
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${agentChatMessageTableName}`, [
@@ -284,7 +297,7 @@ const seedChatMessages = async (
     .values(messages)
     .execute();
 
-  await dataSource
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${agentChatMessagePartTableName}`, [
@@ -300,12 +313,27 @@ const seedChatMessages = async (
     .execute();
 };
 
-export const seedAgents = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
-  const threadId = await seedChatThreads(dataSource, schemaName, workspaceId);
+type SeedAgentsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+};
 
-  await seedChatMessages(dataSource, schemaName, workspaceId, threadId);
+export const seedAgents = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+}: SeedAgentsArgs) => {
+  const threadId = await seedChatThreads({
+    queryRunner,
+    schemaName,
+    workspaceId,
+  });
+
+  await seedChatMessages({
+    queryRunner,
+    schemaName,
+    workspaceId,
+    threadId,
+  });
 };

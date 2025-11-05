@@ -44,35 +44,54 @@ export const seedCoreSchema = async ({
         displayName: createWorkspaceStaticInput.displayName,
       },
     });
+
+    // TODO make deferred
   const customWorkspaceApplication = await applicationService.create({
     ...workspaceCustomApplicationCreateInput,
     serverlessFunctionLayerId: null,
   });
+
   const version = extractVersionMajorMinorPatch(appVersion);
-  await createWorkspace({
-    dataSource,
-    schemaName,
-    createWorkspaceInput: {
-      ...createWorkspaceStaticInput,
-      version,
-      workspaceCustomApplicationId: customWorkspaceApplication.id,
-    },
-  });
-  await seedUsers(dataSource, schemaName);
-  await seedUserWorkspaces(dataSource, schemaName, workspaceId);
+  const queryRunner = dataSource.createQueryRunner();
 
-  await seedStandardApplications({ applicationService, workspaceId });
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
 
-  await seedAgents(dataSource, schemaName, workspaceId);
+  try {
+    await createWorkspace({
+      queryRunner,
+      schemaName,
+      createWorkspaceInput: {
+        ...createWorkspaceStaticInput,
+        version,
+        workspaceCustomApplicationId: customWorkspaceApplication.id,
+      },
+    });
 
-  await seedApiKeys(dataSource, schemaName, workspaceId);
+    await seedUsers({ queryRunner, schemaName });
 
-  if (shouldSeedFeatureFlags) {
-    await seedFeatureFlags(dataSource, schemaName, workspaceId);
-  }
+    await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
 
-  if (seedBilling) {
-    await seedBillingCustomers(dataSource, schemaName, workspaceId);
-    await seedBillingSubscriptions(dataSource, schemaName, workspaceId);
+    await seedStandardApplications({ applicationService, workspaceId });
+
+    await seedAgents({ queryRunner, schemaName, workspaceId });
+
+    await seedApiKeys({ queryRunner, schemaName, workspaceId });
+
+    if (shouldSeedFeatureFlags) {
+      await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
+    }
+
+    if (seedBilling) {
+      await seedBillingCustomers({ queryRunner, schemaName, workspaceId });
+      await seedBillingSubscriptions({ queryRunner, schemaName, workspaceId });
+    }
+
+    await queryRunner.commitTransaction();
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    throw error;
+  } finally {
+    await queryRunner.release();
   }
 };
