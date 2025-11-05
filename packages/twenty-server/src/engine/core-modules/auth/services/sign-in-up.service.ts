@@ -5,11 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -38,6 +39,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { computeWorkspaceCustomCreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-workspace-custom-create-application-input';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
@@ -58,6 +60,8 @@ export class SignInUpService {
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly userService: UserService,
     private readonly metricsService: MetricsService,
+    private readonly applicationService: ApplicationService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async computePartialUserFromUserPayload(
@@ -263,7 +267,10 @@ export class SignInUpService {
         canImpersonate: false,
       });
 
-      await this.activateOnboardingForUser(user, params.workspace);
+      await this.activateOnboardingForUser({
+        user,
+        workspace: params.workspace,
+      });
 
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
         user,
@@ -289,21 +296,33 @@ export class SignInUpService {
   }
 
   private async activateOnboardingForUser(
-    user: UserEntity,
-    workspace: WorkspaceEntity,
+    {
+      user,
+      workspace,
+    }: {
+      user: UserEntity;
+      workspace: WorkspaceEntity;
+    },
+    queryRunner?: QueryRunner,
   ) {
-    await this.onboardingService.setOnboardingConnectAccountPending({
-      userId: user.id,
-      workspaceId: workspace.id,
-      value: true,
-    });
-
-    if (user.firstName === '' && user.lastName === '') {
-      await this.onboardingService.setOnboardingCreateProfilePending({
+    await this.onboardingService.setOnboardingConnectAccountPending(
+      {
         userId: user.id,
         workspaceId: workspace.id,
         value: true,
-      });
+      },
+      queryRunner,
+    );
+
+    if (user.firstName === '' && user.lastName === '') {
+      await this.onboardingService.setOnboardingCreateProfilePending(
+        {
+          userId: user.id,
+          workspaceId: workspace.id,
+          value: true,
+        },
+        queryRunner,
+      );
     }
   }
 
@@ -316,6 +335,7 @@ export class SignInUpService {
       canImpersonate: boolean;
       canAccessFullAdminPanel: boolean;
     },
+    queryRunner?: QueryRunner,
   ) {
     const userCreated = this.userRepository.create({
       ...newUserWithPicture,
@@ -323,7 +343,9 @@ export class SignInUpService {
       canAccessFullAdminPanel,
     });
 
-    const savedUser = await this.userRepository.save(userCreated);
+    const savedUser = queryRunner
+      ? await queryRunner.manager.save(UserEntity, userCreated)
+      : await this.userRepository.save(userCreated);
 
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
@@ -435,43 +457,87 @@ export class SignInUpService {
     const logo =
       isWorkEmailFound && (await isLogoUrlValid()) ? logoUrl : undefined;
 
-    const workspaceToCreate = this.workspaceRepository.create({
-      subdomain: await this.subdomainManagerService.generateSubdomain(
-        isWorkEmailFound ? { userEmail: email } : {},
-      ),
-      displayName: '',
-      inviteHash: v4(),
-      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-      logo,
-    });
+    const workspaceId = v4();
+    const workspaceCustomApplicationCreateInput =
+      computeWorkspaceCustomCreateApplicationInput({
+        workspace: {
+          id: workspaceId,
+        },
+      });
 
-    const workspace = await this.workspaceRepository.save(workspaceToCreate);
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    const isExistingUser = userData.type === 'existingUser';
-    const user = isExistingUser
-      ? userData.existingUser
-      : await this.saveNewUser(userData.newUserWithPicture, {
-          canImpersonate,
-          canAccessFullAdminPanel,
-        });
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    await this.userWorkspaceService.create({
-      userId: user.id,
-      workspaceId: workspace.id,
-      isExistingUser,
-      pictureUrl: isExistingUser
-        ? undefined
-        : userData.newUserWithPicture.picture,
-    });
+    try {
+      const workspaceCustomApplication = await this.applicationService.create(
+        {
+          ...workspaceCustomApplicationCreateInput,
+          serverlessFunctionLayerId: null,
+        },
+        queryRunner,
+      );
 
-    await this.activateOnboardingForUser(user, workspace);
+      const workspaceToCreate = this.workspaceRepository.create({
+        subdomain: await this.subdomainManagerService.generateSubdomain(
+          isWorkEmailFound ? { userEmail: email } : {},
+        ),
+        workspaceCustomApplicationId: workspaceCustomApplication.id,
+        displayName: '',
+        inviteHash: v4(),
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+        logo,
+      });
 
-    await this.onboardingService.setOnboardingInviteTeamPending({
-      workspaceId: workspace.id,
-      value: true,
-    });
+      const workspace = await queryRunner.manager.save(
+        WorkspaceEntity,
+        workspaceToCreate,
+      );
 
-    return { user, workspace };
+      const isExistingUser = userData.type === 'existingUser';
+      const user = isExistingUser
+        ? userData.existingUser
+        : await this.saveNewUser(
+            userData.newUserWithPicture,
+            {
+              canImpersonate,
+              canAccessFullAdminPanel,
+            },
+            queryRunner,
+          );
+
+      await this.userWorkspaceService.create(
+        {
+          userId: user.id,
+          workspaceId: workspace.id,
+          isExistingUser,
+          pictureUrl: isExistingUser
+            ? undefined
+            : userData.newUserWithPicture.picture,
+        },
+        queryRunner,
+      );
+
+      await this.activateOnboardingForUser({ user, workspace }, queryRunner);
+
+      await this.onboardingService.setOnboardingInviteTeamPending(
+        {
+          workspaceId: workspace.id,
+          value: true,
+        },
+        queryRunner,
+      );
+
+      await queryRunner.commitTransaction();
+
+      return { user, workspace };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async signUpWithoutWorkspace(

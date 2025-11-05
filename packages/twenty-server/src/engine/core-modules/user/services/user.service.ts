@@ -6,7 +6,7 @@ import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
-import { IsNull, Not, Repository } from 'typeorm';
+import { type QueryRunner, IsNull, Not, Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -234,11 +234,13 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     return user;
   }
 
-  async markEmailAsVerified(userId: string) {
+  async markEmailAsVerified(userId: string, queryRunner?: QueryRunner) {
     const user = await this.findUserByIdOrThrow(userId);
 
     user.isEmailVerified = true;
 
-    return await this.userRepository.save(user);
+    return queryRunner
+      ? await queryRunner.manager.save(UserEntity, user)
+      : await this.userRepository.save(user);
   }
 }
