@@ -65,10 +65,15 @@ export class DevSeederService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
+    const standardApplicationEntityByApplicationUniversalIdentifier =
+      await this.applicationService.findStandardTwentyApplicationsOrThrow({
+        workspaceId,
+      });
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
+      standardApplicationEntityByApplicationUniversalIdentifier,
     });
 
     await this.devSeederMetadataService.seed({

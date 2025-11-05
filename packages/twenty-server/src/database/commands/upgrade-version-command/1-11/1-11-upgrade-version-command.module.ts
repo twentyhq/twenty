@@ -38,3 +38,4 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
   ],
 })
 export class V1_11_UpgradeVersionCommandModule {}
+
