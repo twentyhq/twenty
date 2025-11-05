@@ -4,35 +4,28 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-type SignUpOnNewWorkspaceUtilArgs = {
+type DeleteUserUtilArgs = {
   accessToken: string;
   expectToFail?: boolean;
 };
 
-export const signUpOnNewWorkspace = async ({
+export const deleteUser = async ({
   accessToken,
   expectToFail,
-}: SignUpOnNewWorkspaceUtilArgs): CommonResponseBody<{
-  signUpInNewWorkspace: SignUpOutput;
+}: DeleteUserUtilArgs): CommonResponseBody<{
+  deleteUser: UserEntity;
 }> => {
   const mutation = gql`
-    mutation SignUpInNewWorkspace {
-      signUpInNewWorkspace {
-        loginToken {
-          token
-          expiresAt
-        }
-        workspace {
-          id
-          workspaceUrls {
-            subdomain
-            redirectUrl
-            workspaceUrl
-          }
-        }
+    mutation DeleteUser {
+      deleteUser {
+        id
+        email
+        firstName
+        lastName
+        deletedAt
       }
     }
   `;
@@ -43,21 +36,22 @@ export const signUpOnNewWorkspace = async ({
       variables: {},
     },
     accessToken,
-  );
+  )
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'Sign up on new workspace should have failed but did not',
+      errorMessage: 'Delete user should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'Sign up on new workspace has failed but should not',
+      errorMessage: 'Delete user has failed but should not',
     });
   }
 
   return { data: response.body.data, errors: response.body.errors };
 };
+
