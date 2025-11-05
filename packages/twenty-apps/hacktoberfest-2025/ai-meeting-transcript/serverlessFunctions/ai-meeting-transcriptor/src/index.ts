@@ -1,5 +1,6 @@
 import axios from 'axios';
 import OpenAI from 'openai';
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 type TranscriptWebhookPayload = {
   transcript: string;
@@ -288,4 +289,18 @@ export const main = async (
       commitmentsProcessed: analysis.commitments.length,
     },
   };
+};
+
+export const config: ServerlessFunctionConfig = {
+  universalIdentifier: 'dae52ab2-174f-4f81-a031-604ee2e81eba',
+  name: 'ai-meeting-transcriptor',
+  triggers: [
+    {
+      universalIdentifier: 'b011303d-2c24-44d4-9923-55eb060a1ff6',
+      type: 'route',
+      path: '/webhook/transcript',
+      httpMethod: 'POST',
+      isAuthRequired: false,
+    },
+  ],
 };

@@ -149,6 +149,7 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   accountOwner: '20202020-3517-4896-afac-b1d0aa362af6',
   lastSyncHistoryId: '20202020-115c-4a87-b50f-ac4367a971b9',
   authFailedAt: '20202020-d268-4c6b-baff-400d402b430a',
+  lastCredentialsRefreshedAt: '20202020-aa5e-4e85-903b-fdf90a941941',
   messageChannels: '20202020-24f7-4362-8468-042204d1e445',
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
   handleAliases: '20202020-8a3d-46be-814f-6228af16c47b',

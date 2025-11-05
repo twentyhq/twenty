@@ -2,7 +2,8 @@ import { computeAggregations } from './aggregations';
 import { buildChildRecordIndex, TwentyClient } from './client';
 import { extractRelationValues, resolveRollupConfig } from './config';
 import { getNestedValue } from './filtering';
-import type { ExecutionSummaryItem, RollupDefinition } from './types';
+import type { ExecutionSummaryItem } from './types';
+import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -60,17 +61,26 @@ const getApiCredentials = () => {
   return { apiKey, baseUrl };
 };
 
-const formatSummary = (summaries: ExecutionSummaryItem[], durationMs: number) => ({
+const formatSummary = (
+  summaries: ExecutionSummaryItem[],
+  durationMs: number,
+) => ({
   status: 'ok',
   tookMs: durationMs,
   totals: {
-    processed: summaries.reduce((accumulator, item) => accumulator + item.processed, 0),
-    updated: summaries.reduce((accumulator, item) => accumulator + item.updated, 0),
+    processed: summaries.reduce(
+      (accumulator, item) => accumulator + item.processed,
+      0,
+    ),
+    updated: summaries.reduce(
+      (accumulator, item) => accumulator + item.updated,
+      0,
+    ),
   },
   details: summaries,
 });
 
-export async function main(params: unknown): Promise<object> {
+export const main = async (params: unknown): Promise<any> => {
   const start = Date.now();
   try {
     const config = resolveRollupConfig();
@@ -92,7 +102,9 @@ export async function main(params: unknown): Promise<object> {
 
     const credentials = getApiCredentials();
     if (!credentials) {
-      console.warn('[rollup] skipping execution because TWENTY_API_KEY is not set');
+      console.warn(
+        '[rollup] skipping execution because TWENTY_API_KEY is not set',
+      );
       return { status: 'noop', reason: 'TWENTY_API_KEY not configured' };
     }
 
@@ -102,7 +114,9 @@ export async function main(params: unknown): Promise<object> {
     const summaries: ExecutionSummaryItem[] = [];
 
     for (const definition of config) {
-      const targetIds = fullRebuild ? undefined : relationCache.get(definition.relationField);
+      const targetIds = fullRebuild
+        ? undefined
+        : relationCache.get(definition.relationField);
 
       if (!fullRebuild && (!targetIds || targetIds.size === 0)) {
         summaries.push({
@@ -116,7 +130,11 @@ export async function main(params: unknown): Promise<object> {
         continue;
       }
 
-      const childIndex = await buildChildRecordIndex(definition, client, targetIds);
+      const childIndex = await buildChildRecordIndex(
+        definition,
+        client,
+        targetIds,
+      );
 
       const updates: Array<{
         id: string;
@@ -138,13 +156,21 @@ export async function main(params: unknown): Promise<object> {
         console.info(
           `[rollup] computed aggregates for ${definition.parentObject} ${parentId}: ${JSON.stringify(payload)}`,
         );
-        updates.push({ id: parentId, payload, context: { relationId: parentId } });
+        updates.push({
+          id: parentId,
+          payload,
+          context: { relationId: parentId },
+        });
       });
 
       let updatedCount = 0;
       for (const update of updates) {
         try {
-          await client.updateObject(definition.parentObject, update.id, update.payload);
+          await client.updateObject(
+            definition.parentObject,
+            update.id,
+            update.payload,
+          );
           updatedCount += 1;
           console.info(
             `[rollup] updated ${definition.parentObject} ${update.id} (relation ${update.context.relationId})`,
@@ -204,4 +230,28 @@ export async function main(params: unknown): Promise<object> {
             : 'Unknown error',
     };
   }
-}
+};
+
+export const config: ServerlessFunctionConfig = {
+  universalIdentifier: 'c3ec36c8-5b1d-421f-9172-a9e035ab9c18',
+  name: 'calculaterollups',
+  triggers: [
+    {
+      universalIdentifier: 'eec8aaf2-b0cc-47fd-b522-8d4aa5fe4bd3',
+      type: 'databaseEvent',
+      eventName: 'opportunity.*',
+    },
+    {
+      universalIdentifier: 'a3fea230-1121-44a6-b395-5811c3031f8e',
+      type: 'cron',
+      pattern: ' 0 2 * * *',
+    },
+    {
+      universalIdentifier: 'd33b0fe4-4b2b-45c0-aa2f-e617fdbba484',
+      type: 'route',
+      path: '/recalculate-all',
+      httpMethod: 'POST',
+      isAuthRequired: true,
+    },
+  ],
+};
