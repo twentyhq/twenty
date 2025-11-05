@@ -2538,6 +2538,11 @@ msgstr "Tiếng Đan Mạch"
 msgid "Dark"
 msgstr "Giao diện tối"
 
+#. js-lingui-id: w6iIMm
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Dashboards"
+msgstr ""
+
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Data"
@@ -4279,6 +4284,11 @@ msgstr "\\"
 msgid "Go to Companies"
 msgstr "Đi tới các công ty"
 
+#. js-lingui-id: dvMw7T
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Dashboards"
+msgstr ""
+
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
@@ -4320,10 +4330,10 @@ msgstr "Đi tới cài đặt"
 msgid "Go to Tasks"
 msgstr "Đi tới Công việc"
 
-#. js-lingui-id: A5WHZY
+#. js-lingui-id: 203RqP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "Go to workflows"
-msgstr "Đi đến quy trình công việc"
+msgid "Go to Workflows"
+msgstr ""
 
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -7492,10 +7502,10 @@ msgstr "Xem lịch sử phiên bản"
 msgid "See workflow"
 msgstr "Xem quy trình công việc"
 
-#. js-lingui-id: XThiR2
+#. js-lingui-id: MVYiTN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "See workflows"
-msgstr "Xem các quy trình công việc"
+msgid "See Workflows"
+msgstr ""
 
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
