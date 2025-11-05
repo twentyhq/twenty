@@ -21,10 +21,7 @@ export const createWorkspace = async ({
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.${tableName}`, [
-      ...WORKSPACE_FIELDS_TO_SEED,
-      'version',
-    ])
+    .into(`${schemaName}.${tableName}`, WORKSPACE_FIELDS_TO_SEED)
     .orIgnore()
     .values(createWorkspaceInput)
     .execute();
