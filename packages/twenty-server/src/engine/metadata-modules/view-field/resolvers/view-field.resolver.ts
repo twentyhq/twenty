@@ -100,6 +100,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => [ViewFieldDTO])
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async createManyCoreViewFields(
     @Args('inputs', { type: () => [CreateViewFieldInput] })
     createViewFieldInputs: CreateViewFieldInput[],

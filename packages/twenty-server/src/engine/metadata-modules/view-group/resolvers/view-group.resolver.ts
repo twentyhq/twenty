@@ -78,6 +78,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => [ViewGroupDTO])
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
   async createManyCoreViewGroups(
     @Args('inputs', { type: () => [CreateViewGroupInput] })
     createViewGroupInputs: CreateViewGroupInput[],
