@@ -1,4 +1,4 @@
-import { type SyncableEntityOptions } from '@/application/types/syncable-entity-options.type';
+import { type SyncableEntityOptions } from '@/application/syncable-entity-options.type';
 
 type ObjectMetadataOptions = SyncableEntityOptions & {
   nameSingular: string;
