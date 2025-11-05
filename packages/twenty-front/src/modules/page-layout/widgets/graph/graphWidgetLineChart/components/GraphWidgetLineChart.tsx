@@ -191,7 +191,7 @@ export const GraphWidgetLineChart = ({
           }
           areaOpacity={theme.name === 'dark' ? 0.8 : 1}
           colors={colors}
-          areaBlendMode={theme.name === 'dark' ? 'screen' : 'multiply'}
+          areaBlendMode={'normal'}
           defs={defs}
           fill={fill}
           axisTop={null}

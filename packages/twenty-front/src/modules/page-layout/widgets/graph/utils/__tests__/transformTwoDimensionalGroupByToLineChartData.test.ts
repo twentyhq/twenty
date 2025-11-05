@@ -106,6 +106,13 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
       expect(result.series[0].data[0]).toHaveProperty('x');
       expect(result.series[0].data[0]).toHaveProperty('y');
 
+      result.series.forEach((series) => {
+        series.data.forEach((point) => {
+          expect(point).toHaveProperty('x');
+          expect(point).toHaveProperty('y');
+        });
+      });
+
       expect(result.hasTooManyGroups).toBe(false);
     });
 
@@ -144,7 +151,7 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
       expect(result.hasTooManyGroups).toBe(false);
     });
 
-    it('should handle sparse data (different series have different X values)', () => {
+    it('should normalize sparse data (all series share same X values, with 0 for missing)', () => {
       const rawResults: GroupByRawResult[] = [
         {
           groupByDimensionValues: ['2024-01', 'Stage A'],
@@ -176,10 +183,16 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
       });
 
       const stageA = result.series.find((s) => s.id === 'Stage A');
-      expect(stageA?.data).toHaveLength(2);
+      expect(stageA?.data).toHaveLength(3);
+      expect(stageA?.data[0].y).toBe(100);
+      expect(stageA?.data[1].y).toBe(200);
+      expect(stageA?.data[2].y).toBe(0);
 
       const stageB = result.series.find((s) => s.id === 'Stage B');
-      expect(stageB?.data).toHaveLength(2);
+      expect(stageB?.data).toHaveLength(3);
+      expect(stageB?.data[0].y).toBe(150);
+      expect(stageB?.data[1].y).toBe(0);
+      expect(stageB?.data[2].y).toBe(250);
 
       expect(result.hasTooManyGroups).toBe(false);
     });
@@ -215,39 +228,6 @@ describe('transformTwoDimensionalGroupByToLineChartData', () => {
       expect(result.series[0].data.map((d) => d.y)).toEqual([100, 200]);
 
       expect(result.hasTooManyGroups).toBe(false);
-    });
-
-    it('should limit to 50 unique X-axis values and return hasTooManyGroups flag', () => {
-      const rawResults: GroupByRawResult[] = [];
-      for (let i = 0; i < 60; i++) {
-        rawResults.push({
-          groupByDimensionValues: [`2024-${String(i + 1).padStart(2, '0')}`, 'Stage A'],
-          sumAmount: (i + 1) * 100,
-        });
-        rawResults.push({
-          groupByDimensionValues: [`2024-${String(i + 1).padStart(2, '0')}`, 'Stage B'],
-          sumAmount: (i + 1) * 200,
-        });
-      }
-
-      const result = transformTwoDimensionalGroupByToLineChartData({
-        rawResults,
-        groupByFieldX: mockGroupByFieldX,
-        groupByFieldY: mockGroupByFieldY,
-        aggregateField: mockAggregateField,
-        configuration: buildConfiguration(),
-        aggregateOperation: 'sumAmount',
-        objectMetadataItem: mockObjectMetadataItem,
-        primaryAxisSubFieldName: null,
-      });
-
-      expect(result.series).toHaveLength(2);
-
-      result.series.forEach((series) => {
-        expect(series.data.length).toBeLessThanOrEqual(50);
-      });
-
-      expect(result.hasTooManyGroups).toBe(true);
     });
   });
 

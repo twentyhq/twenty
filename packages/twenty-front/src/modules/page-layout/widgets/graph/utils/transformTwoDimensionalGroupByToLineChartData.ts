@@ -37,8 +37,9 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
   objectMetadataItem,
   primaryAxisSubFieldName,
 }: TransformTwoDimensionalGroupByToLineChartDataParams): TransformTwoDimensionalGroupByToLineChartDataResult => {
-  const seriesMap = new Map<string, LineChartDataPoint[]>();
-  const xValues = new Set<string>();
+  const seriesMap = new Map<string, Map<string, number>>();
+  const allXValues: string[] = [];
+  const xValueSet = new Set<string>();
   let hasTooManyGroups = false;
 
   rawResults.forEach((result) => {
@@ -56,17 +57,17 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
     });
 
     // TODO: Add a limit to the query instead of checking here (issue: twentyhq/core-team-issues#1600)
-    const isNewX = !xValues.has(xValue);
+    const isNewX = !xValueSet.has(xValue);
 
-    if (
-      isNewX &&
-      xValues.size >= LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS
-    ) {
+    if (isNewX && xValueSet.size >= LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS) {
       hasTooManyGroups = true;
       return;
     }
 
-    xValues.add(xValue);
+    if (isNewX) {
+      xValueSet.add(xValue);
+      allXValues.push(xValue);
+    }
 
     const seriesKey = formatDimensionValue({
       value: dimensionValues[1],
@@ -85,23 +86,29 @@ export const transformTwoDimensionalGroupByToLineChartData = ({
       objectMetadataItem,
     });
 
+    if (!isDefined(aggregateValue)) return;
+
     if (!seriesMap.has(seriesKey)) {
-      seriesMap.set(seriesKey, []);
+      seriesMap.set(seriesKey, new Map());
     }
 
-    seriesMap.get(seriesKey)!.push({
-      x: xValue,
-      y: aggregateValue,
-    });
+    seriesMap.get(seriesKey)!.set(xValue, aggregateValue);
   });
 
   const series: LineChartSeries[] = Array.from(seriesMap.entries()).map(
-    ([seriesKey, dataPoints]) => ({
-      id: seriesKey,
-      label: seriesKey,
-      color: configuration.color as GraphColor,
-      data: dataPoints,
-    }),
+    ([seriesKey, xToYMap]) => {
+      const data: LineChartDataPoint[] = allXValues.map((xValue) => ({
+        x: xValue,
+        y: xToYMap.get(xValue) ?? 0,
+      }));
+
+      return {
+        id: seriesKey,
+        label: seriesKey,
+        color: configuration.color as GraphColor,
+        data,
+      };
+    },
   );
 
   return {

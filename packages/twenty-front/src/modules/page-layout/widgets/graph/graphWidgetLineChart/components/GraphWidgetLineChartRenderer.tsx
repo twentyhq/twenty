@@ -31,7 +31,7 @@ export const GraphWidgetLineChartRenderer = ({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as LineChartConfiguration,
   });
-
+  console.log('Line chart data:', JSON.stringify(series, null, 2));
   const configuration = widget.configuration as LineChartConfiguration;
 
   const filterStateKey = useMemo(
@@ -64,7 +64,7 @@ export const GraphWidgetLineChartRenderer = ({
         enablePoints={false}
         showValues={showDataLabels}
         displayType="shortNumber"
-        enableArea={false}
+        enableArea={true}
         curve="monotoneX"
         xScale={{ type: 'point' }}
         yScale={{

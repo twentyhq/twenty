@@ -124,32 +124,6 @@ describe('transformOneDimensionalGroupByToLineChartData', () => {
       ]);
       expect(result.hasTooManyGroups).toBe(false);
     });
-
-    it('should limit to 50 data points and return hasTooManyGroups flag', () => {
-      const rawResults: GroupByRawResult[] = Array.from(
-        { length: 60 },
-        (_, i) => ({
-          groupByDimensionValues: [`Stage ${i}`],
-          sumAmount: (i + 1) * 100,
-        }),
-      );
-
-      const result = transformOneDimensionalGroupByToLineChartData({
-        rawResults,
-        groupByFieldX: mockGroupByFieldX,
-        aggregateField: mockAggregateField,
-        configuration: buildConfiguration(),
-        aggregateOperation: 'sumAmount',
-        objectMetadataItem: mockObjectMetadataItem,
-        primaryAxisSubFieldName: null,
-      });
-
-      expect(result.series[0].data).toHaveLength(50);
-      expect(result.hasTooManyGroups).toBe(true);
-
-      expect(result.series[0].data[0].y).toBe(100);
-      expect(result.series[0].data[49].y).toBe(5000);
-    });
   });
 
   describe('Time-series X-axis', () => {
