@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
@@ -61,6 +61,7 @@ export class SignInUpService {
     private readonly userService: UserService,
     private readonly metricsService: MetricsService,
     private readonly applicationService: ApplicationService,
+    @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
 
