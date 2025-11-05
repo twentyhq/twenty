@@ -56,6 +56,7 @@ export class SubdomainManagerService {
   async isSubdomainAvailable(subdomain: string) {
     const existingWorkspace = await this.workspaceRepository.findOne({
       where: { subdomain: subdomain },
+      withDeleted: true,
     });
 
     return !existingWorkspace;
