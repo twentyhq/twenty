@@ -48,7 +48,7 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
     const [prevQuery, setPrevQuery] = useState('');
 
     const activeCommandRef = useRef<HTMLDivElement>(null);
-
+    const commandListContainerRef = useRef<HTMLDivElement>(null);
     const { refs, floatingStyles } = useFloating({
       placement: 'bottom-start',
       strategy: 'fixed',
@@ -137,15 +137,21 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
     }));
 
     useLayoutEffect(() => {
+      const container = commandListContainerRef?.current;
       const activeCommandContainer = activeCommandRef?.current;
-      if (!activeCommandContainer) {
+      if (!container || !activeCommandContainer) {
+        return;
+      }
+      const scrollableContainer =
+        container.firstElementChild as HTMLElement | null;
+      if (!scrollableContainer) {
         return;
       }
 
-      activeCommandContainer.scrollIntoView({
-        behavior: 'auto',
-        block: 'nearest',
-      });
+      const { offsetTop, offsetHeight } = activeCommandContainer;
+
+      scrollableContainer.style.transition = 'none';
+      scrollableContainer.scrollTop = offsetTop - offsetHeight;
     }, [selectedIndex]);
 
     return (
@@ -165,7 +171,7 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
                   zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
                 }}
               >
-                <DropdownContent>
+                <DropdownContent ref={commandListContainerRef}>
                   <DropdownMenuItemsContainer hasMaxHeight>
                     {items.map((item, index) => {
                       const isSelected = index === selectedIndex;

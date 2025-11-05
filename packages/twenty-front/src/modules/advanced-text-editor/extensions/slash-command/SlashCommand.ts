@@ -1,6 +1,3 @@
-import { createElement } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
-
 import { Extension, type Editor, type Range } from '@tiptap/core';
 import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
 
@@ -8,10 +5,8 @@ import {
   DEFAULT_SLASH_COMMANDS,
   type SlashCommandConfig,
 } from '@/advanced-text-editor/extensions/slash-command/DefaultSlashCommands';
+import { SlashCommandRenderer } from '@/advanced-text-editor/extensions/slash-command/SlashCommandRenderer';
 import { type IconComponent } from 'twenty-ui/display';
-import SlashCommandMenu, {
-  type SlashCommandMenuProps,
-} from './SlashCommandMenu';
 
 export type SlashCommandItem = {
   id: string;
@@ -21,16 +16,7 @@ export type SlashCommandItem = {
   keywords?: string[];
   isActive?: () => boolean;
   isVisible?: () => boolean;
-  onSelect: () => void;
-};
-
-type SlashCommandRendererProps = {
-  items: SlashCommandItem[];
-  command: (item: SlashCommandItem) => void;
-  clientRect?: (() => DOMRect | null) | null;
-  editor: Editor;
-  range: Range;
-  query: string;
+  command: (options: { editor: Editor; range: Range }) => void;
 };
 
 type SuggestionRenderProps = {
@@ -44,7 +30,6 @@ type SuggestionRenderProps = {
 const createSlashCommandItem = (
   config: SlashCommandConfig,
   editor: Editor,
-  range: Range,
 ): SlashCommandItem => ({
   id: config.id,
   title: config.title,
@@ -53,7 +38,10 @@ const createSlashCommandItem = (
   keywords: config.keywords,
   isActive: () => config.getIsActive(editor),
   isVisible: () => config.getIsVisible(editor),
-  onSelect: config.getOnSelect(editor, range),
+  command: ({ editor: ed, range }) => {
+    const onSelect = config.getOnSelect(ed, range);
+    onSelect();
+  },
 });
 
 const filterVisibleItems = (items: SlashCommandItem[]): SlashCommandItem[] => {
@@ -76,157 +64,23 @@ const filterByQuery = (
   });
 };
 
-const buildItems = (
-  editor: Editor,
-  range: Range,
-  query: string,
-): SlashCommandItem[] => {
+const buildItems = (editor: Editor, query: string): SlashCommandItem[] => {
   const allItems = DEFAULT_SLASH_COMMANDS.map((config) =>
-    createSlashCommandItem(config, editor, range),
+    createSlashCommandItem(config, editor),
   );
   const visibleItems = filterVisibleItems(allItems);
   return filterByQuery(visibleItems, query);
 };
 
-class SlashCommandRenderer {
-  componentRoot: Root | null = null;
-  containerElement: HTMLElement | null = null;
-  currentProps: SlashCommandRendererProps | null = null;
-  ref: { onKeyDown?: (props: { event: KeyboardEvent }) => boolean } | null =
-    null;
-
-  constructor(props: SlashCommandRendererProps) {
-    this.containerElement = document.createElement('div');
-    document.body.appendChild(this.containerElement);
-
-    this.componentRoot = createRoot(this.containerElement);
-    this.currentProps = props;
-    this.render(props);
-  }
-
-  render(props: SlashCommandRendererProps): void {
-    if (!this.componentRoot) {
-      return;
-    }
-
-    const rect = props.clientRect?.();
-    const menuProps: SlashCommandMenuProps = {
-      items: props.items,
-      onSelect: props.command,
-      clientRect: rect ?? null,
-      editor: props.editor,
-      range: props.range,
-      query: props.query,
-    };
-
-    this.componentRoot.render(
-      createElement(SlashCommandMenu, {
-        ...menuProps,
-        ref: (
-          ref: {
-            onKeyDown?: (props: { event: KeyboardEvent }) => boolean;
-          } | null,
-        ) => {
-          this.ref = ref;
-        },
-      }),
-    );
-  }
-
-  updateProps(props: Partial<SlashCommandRendererProps>): void {
-    if (!this.componentRoot || !this.currentProps) {
-      return;
-    }
-
-    const updatedProps = { ...this.currentProps, ...props };
-    this.currentProps = updatedProps;
-    this.render(updatedProps);
-  }
-
-  destroy(): void {
-    if (this.componentRoot !== null) {
-      this.componentRoot.unmount();
-      this.componentRoot = null;
-    }
-
-    if (this.containerElement !== null) {
-      this.containerElement.remove();
-      this.containerElement = null;
-    }
-
-    this.currentProps = null;
-    this.ref = null;
-  }
-}
-
-const createSlashCommandRenderer = (editor: Editor) => {
-  let component: SlashCommandRenderer | null = null;
-
-  return {
-    onStart: (props: SuggestionRenderProps) => {
-      const rect = props.clientRect?.();
-      if (!rect) {
-        return;
-      }
-
-      component = new SlashCommandRenderer({
-        items: props.items,
-        command: props.command,
-        clientRect: () => rect,
-        editor,
-        range: props.range,
-        query: props.query,
-      });
-    },
-    onUpdate: (props: SuggestionRenderProps) => {
-      if (component === null) {
-        return;
-      }
-
-      const rect = props.clientRect?.();
-      if (!rect) {
-        return;
-      }
-
-      if (props.items.length === 0) {
-        component.destroy();
-        component = null;
-        return;
-      }
-
-      component.updateProps({
-        items: props.items,
-        command: props.command,
-        clientRect: () => rect,
-        editor,
-        range: props.range,
-        query: props.query,
-      });
-    },
-    onKeyDown: (props: { event: KeyboardEvent }) => {
-      if (props.event.key === 'Escape') {
-        if (component !== null) {
-          component.destroy();
-          component = null;
-        }
-        return true;
-      }
-
-      return component?.ref?.onKeyDown?.(props) ?? false;
-    },
-    onExit: () => {
-      if (component === null) {
-        return;
-      }
-
-      component.destroy();
-      component = null;
-    },
-  };
-};
-
 export type SlashCommandOptions = {
   suggestions: Omit<SuggestionOptions, 'editor'>;
+};
+
+const closeMenu = (component: SlashCommandRenderer | null) => {
+  if (component !== null) {
+    component.destroy();
+    component = null;
+  }
 };
 
 export const SlashCommand = Extension.create<SlashCommandOptions>({
@@ -236,7 +90,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
       suggestions: {
         char: '/',
         command: ({ editor, range, props }) => {
-          props.onSelect(editor, range);
+          props.command({ editor, range });
         },
       },
     };
@@ -246,9 +100,69 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
       Suggestion({
         editor: this.editor,
         ...this.options.suggestions,
-        items: ({ query, editor: ed }) =>
-          buildItems(ed, ed.state.selection, query),
-        render: () => createSlashCommandRenderer(this.editor),
+        items: ({ query, editor: ed }) => buildItems(ed, query),
+        render: () => {
+          let component: SlashCommandRenderer | null = null;
+
+          return {
+            onStart: (props: SuggestionRenderProps) => {
+              const rect = props.clientRect?.();
+              if (!rect) {
+                return;
+              }
+
+              component = new SlashCommandRenderer({
+                items: props.items,
+                command: (item: SlashCommandItem) => {
+                  props.command(item);
+                  closeMenu(component);
+                },
+                clientRect: () => rect,
+                editor: this.editor,
+                range: props.range,
+                query: props.query,
+              });
+            },
+            onUpdate: (props: SuggestionRenderProps) => {
+              if (component === null) {
+                return;
+              }
+
+              const rect = props.clientRect?.();
+              if (!rect) {
+                return;
+              }
+
+              if (props.items.length === 0) {
+                closeMenu(component);
+                return;
+              }
+
+              component.updateProps({
+                items: props.items,
+                command: (item: SlashCommandItem) => {
+                  props.command(item);
+                  closeMenu(component);
+                },
+                clientRect: () => rect,
+                editor: this.editor,
+                range: props.range,
+                query: props.query,
+              });
+            },
+            onKeyDown: (props: { event: KeyboardEvent }) => {
+              if (props.event.key === 'Escape') {
+                closeMenu(component);
+                return true;
+              }
+
+              return component?.ref?.onKeyDown?.(props) ?? false;
+            },
+            onExit: () => {
+              closeMenu(component);
+            },
+          };
+        },
       }),
     ];
   },
