@@ -52,8 +52,6 @@ export const seedCoreSchema = async ({
   await queryRunner.startTransaction();
 
   try {
-    // Create application within the transaction using queryRunner
-    // The FK constraint is DEFERRABLE INITIALLY DEFERRED, so it won't fail here
     const customWorkspaceApplication = await applicationService.create(
       {
         ...workspaceCustomApplicationCreateInput,
