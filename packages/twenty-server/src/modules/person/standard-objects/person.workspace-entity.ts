@@ -88,6 +88,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Emails`,
     description: msg`Contact’s Emails`,
     icon: 'IconMail',
+    settings: {
+      maxNumberOfValues: 1,
+    },
   })
   @WorkspaceIsUnique()
   emails: EmailsMetadata;
@@ -137,6 +140,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Phones`,
     description: msg`Contact’s phone numbers`,
     icon: 'IconPhone',
+    settings: {
+      maxNumberOfValues: 1,
+    },
   })
   phones: PhonesMetadata;
 

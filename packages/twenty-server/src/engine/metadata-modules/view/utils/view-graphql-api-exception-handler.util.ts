@@ -2,6 +2,7 @@ import { type I18n } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  ForbiddenError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -43,6 +44,10 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new NotFoundError(error.message);
       case ViewExceptionCode.INVALID_VIEW_DATA:
         throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewExceptionCode.VIEW_UPDATE_PERMISSION_DENIED:
+        throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {

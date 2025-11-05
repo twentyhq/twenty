@@ -2,6 +2,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilter';
+import { useCanEditView } from '@/views/hooks/useCanEditView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewFiltersToCreate } from '@/views/utils/getViewFiltersToCreate';
 import { getViewFiltersToDelete } from '@/views/utils/getViewFiltersToDelete';
@@ -11,6 +12,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFiltersToViewFilters = () => {
+  const { canEditView } = useCanEditView();
   const { createViewFilters, updateViewFilters, deleteViewFilters } =
     usePersistViewFilterRecords();
 
@@ -23,7 +25,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
   const saveRecordFiltersToViewFilters = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        if (!isDefined(currentView)) {
+        if (!canEditView || !isDefined(currentView)) {
           return;
         }
 
@@ -107,6 +109,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
         }
       },
     [
+      canEditView,
       currentView,
       currentRecordFiltersCallbackState,
       createViewFilters,

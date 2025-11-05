@@ -1,12 +1,14 @@
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { useCanEditView } from '@/views/hooks/useCanEditView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveAnyFieldFilterToView = () => {
+  const { canEditView } = useCanEditView();
   const { updateView } = usePersistView();
 
   const { currentView } = useGetCurrentViewOnly();
@@ -18,7 +20,7 @@ export const useSaveAnyFieldFilterToView = () => {
   const saveAnyFieldFilterToView = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        if (!isDefined(currentView)) {
+        if (!canEditView || !isDefined(currentView)) {
           return;
         }
 
@@ -42,7 +44,7 @@ export const useSaveAnyFieldFilterToView = () => {
           });
         }
       },
-    [updateView, anyFieldFilterValueCallbackState, currentView],
+    [canEditView, updateView, anyFieldFilterValueCallbackState, currentView],
   );
 
   return {

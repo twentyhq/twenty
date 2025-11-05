@@ -9,6 +9,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import {
   ViewException,
   ViewExceptionCode,
@@ -230,6 +231,40 @@ export class ViewService {
     }
 
     return viewName;
+  }
+
+  filterViewsByVisibility<T extends ViewEntity>(
+    views: T[],
+    currentUserWorkspaceId?: string,
+  ): T[] {
+    return views.filter((view) => {
+      if (view.visibility === ViewVisibility.WORKSPACE) {
+        return true;
+      }
+
+      if (view.visibility === ViewVisibility.UNLISTED) {
+        return view.createdByUserWorkspaceId === currentUserWorkspaceId;
+      }
+
+      return false;
+    });
+  }
+
+  canUserUpdateView(
+    view: ViewEntity,
+    userWorkspaceId: string | undefined,
+    userHasViewsPermission: boolean,
+  ): boolean {
+    // Users with VIEWS permission can edit all views
+    if (userHasViewsPermission) {
+      return true;
+    }
+
+    // Users without VIEWS permission can only edit unlisted views they created
+    return (
+      view.visibility === ViewVisibility.UNLISTED &&
+      view.createdByUserWorkspaceId === userWorkspaceId
+    );
   }
 
   async flushGraphQLCache(workspaceId: string): Promise<void> {
