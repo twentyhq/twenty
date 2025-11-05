@@ -30,7 +30,6 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     getIsActive: (editor) => editor.isActive('paragraph'),
     getIsVisible: (editor) => editor.can().setParagraph?.() ?? true,
     getOnSelect: (editor, range) => () => {
-      console.log('getOnSelect', editor, range);
       return editor.chain().focus().deleteRange(range).setParagraph().run();
     },
   },

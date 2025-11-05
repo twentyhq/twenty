@@ -3,7 +3,7 @@ import { createRoot, type Root } from 'react-dom/client';
 
 import type { SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
 import SlashCommandMenu, {
-    type SlashCommandMenuProps,
+  type SlashCommandMenuProps,
 } from '@/advanced-text-editor/extensions/slash-command/SlashCommandMenu';
 import type { Editor, Range } from '@tiptap/core';
 
