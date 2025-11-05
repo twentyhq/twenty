@@ -5986,8 +5986,8 @@ msgstr "لا توجد بيانات قياسات متاحة"
 
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
-#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
+#: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "لا توجد نماذج متاحة. يرجى تهيئة نماذج الذكاء الاصطناعي في إعدادات مكان العمل الخاص بك."
 
