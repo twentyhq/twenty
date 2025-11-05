@@ -86,6 +86,11 @@ export class WorkspaceManagerService {
         workspaceId,
       });
 
+    await createStandardApplications({
+      applicationService: this.applicationService,
+      workspaceId,
+    });
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
@@ -98,11 +103,6 @@ export class WorkspaceManagerService {
     this.logger.log(
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
-
-    await createStandardApplications({
-      applicationService: this.applicationService,
-      workspaceId,
-    });
 
     const workspaceCustomApplication =
       computeWorkspaceCustomCreateApplicationInput({

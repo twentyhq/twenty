@@ -68,6 +68,7 @@ import { TwoFactorAuthenticationModule } from '../two-factor-authentication/two-
 
 import { AuthResolver } from './auth.resolver';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AuthService } from './services/auth.service';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 
@@ -113,6 +114,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     AuditModule,
     SubdomainManagerModule,
     DomainServerConfigModule,
+    ApplicationModule
   ],
   controllers: [
     GoogleAuthController,
