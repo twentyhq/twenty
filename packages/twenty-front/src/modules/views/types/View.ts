@@ -35,6 +35,6 @@ export type View = {
   openRecordIn: ViewOpenRecordInType;
   anyFieldFilterValue?: string | null;
   visibility: ViewVisibility;
-  createdById?: string | null;
+  createdByUserWorkspaceId?: string | null;
   __typename: 'View';
 };

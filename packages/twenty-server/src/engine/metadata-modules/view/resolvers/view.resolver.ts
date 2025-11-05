@@ -1,12 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
+    Args,
+    Context,
+    Mutation,
+    Parent,
+    Query,
+    ResolveField,
+    Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
@@ -42,6 +42,13 @@ import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/up
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
+import {
+    ViewException,
+    ViewExceptionCode,
+    ViewExceptionMessageKey,
+    generateViewExceptionMessage,
+    generateViewUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -180,14 +187,14 @@ export class ViewResolver {
       return await this.viewV2Service.createOne({
         createViewInput: input,
         workspaceId: workspace.id,
-        createdById: userWorkspaceId ?? '',
+        createdByUserWorkspaceId: userWorkspaceId ?? '',
       });
     }
 
     const createdView = await this.viewService.create({
       ...input,
       workspaceId: workspace.id,
-      createdById: userWorkspaceId ?? '',
+      createdByUserWorkspaceId: userWorkspaceId ?? '',
     });
 
     return createdView;
@@ -213,7 +220,17 @@ export class ViewResolver {
     );
 
     if (!canUpdate) {
-      throw new Error('You do not have permission to update this view');
+      throw new ViewException(
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_UPDATE_PERMISSION_DENIED,
+        ),
+        ViewExceptionCode.VIEW_UPDATE_PERMISSION_DENIED,
+        {
+          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+            ViewExceptionMessageKey.VIEW_UPDATE_PERMISSION_DENIED,
+          ),
+        },
+      );
     }
 
     if (
@@ -229,7 +246,7 @@ export class ViewResolver {
 
       if (!permissions.permissionFlags[PermissionFlagType.VIEWS]) {
         throw new Error(
-          'You need manage views permission to create workspace-level views',
+          'You need manage views permission to update workspace-level views',
         );
       }
     }

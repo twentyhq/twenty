@@ -35,5 +35,5 @@ export type GraphQLView = {
   calendarLayout?: ViewCalendarLayout | null;
   calendarFieldMetadataId?: string | null;
   visibility: ViewVisibility;
-  createdById?: string | null;
+  createdByUserWorkspaceId?: string | null;
 };

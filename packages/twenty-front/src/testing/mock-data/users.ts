@@ -1,16 +1,16 @@
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-  FeatureFlagKey,
-  OnboardingStatus,
-  PermissionFlagType,
-  SubscriptionInterval,
-  SubscriptionStatus,
-  type User,
-  type Workspace,
-  WorkspaceActivationStatus,
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+    FeatureFlagKey,
+    OnboardingStatus,
+    PermissionFlagType,
+    SubscriptionInterval,
+    SubscriptionStatus,
+    type User,
+    type Workspace,
+    WorkspaceActivationStatus,
+    WorkspaceMemberDateFormatEnum,
+    WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -193,6 +193,7 @@ export const mockedUserData: MockedUser = {
   workspaceMember: mockedWorkspaceMemberData,
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
+    id: 'mock-user-workspace-id',
     permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
     twoFactorAuthenticationMethodSummary: [],
     objectsPermissions: generatedMockObjectMetadataItems.map((item) => ({

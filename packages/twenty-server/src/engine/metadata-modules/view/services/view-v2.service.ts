@@ -27,11 +27,11 @@ export class ViewV2Service {
   async createOne({
     createViewInput,
     workspaceId,
-    createdById,
+    createdByUserWorkspaceId,
   }: {
     createViewInput: CreateViewInput;
     workspaceId: string;
-    createdById?: string;
+    createdByUserWorkspaceId?: string;
   }): Promise<ViewDTO> {
     const {
       flatObjectMetadataMaps,
@@ -51,7 +51,7 @@ export class ViewV2Service {
     const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
       createViewInput,
       workspaceId,
-      createdById,
+      createdByUserWorkspaceId,
     });
 
     const validateAndBuildResult =

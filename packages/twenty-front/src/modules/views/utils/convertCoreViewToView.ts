@@ -50,7 +50,7 @@ export const convertCoreViewToView = (
     openRecordIn: convertedOpenRecordIn,
     anyFieldFilterValue: coreView.anyFieldFilterValue ?? null,
     visibility: convertedVisibility,
-    createdById: coreView.createdById,
+    createdByUserWorkspaceId: coreView.createdByUserWorkspaceId,
     __typename: 'View',
   };
 };

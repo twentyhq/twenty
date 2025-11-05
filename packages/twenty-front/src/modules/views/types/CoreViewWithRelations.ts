@@ -1,15 +1,15 @@
 import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
 import {
-  type AggregateOperations,
-  type CoreViewField,
-  type CoreViewFilter,
-  type CoreViewFilterGroup,
-  type CoreViewGroup,
-  type ViewCalendarLayout,
-  type ViewKey,
-  type ViewOpenRecordIn,
-  type ViewType,
-  type ViewVisibility,
+    type AggregateOperations,
+    type CoreViewField,
+    type CoreViewFilter,
+    type CoreViewFilterGroup,
+    type CoreViewGroup,
+    type ViewCalendarLayout,
+    type ViewKey,
+    type ViewOpenRecordIn,
+    type ViewType,
+    type ViewVisibility,
 } from '~/generated-metadata/graphql';
 
 export type CoreViewWithRelations = {
@@ -39,6 +39,6 @@ export type CoreViewWithRelations = {
   openRecordIn: ViewOpenRecordIn;
   anyFieldFilterValue?: string | null;
   visibility: ViewVisibility;
-  createdById?: string | null;
+  createdByUserWorkspaceId?: string | null;
   __typename?: 'CoreView';
 };

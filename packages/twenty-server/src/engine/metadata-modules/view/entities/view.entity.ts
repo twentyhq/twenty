@@ -1,16 +1,16 @@
 import {
-  Check,
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  Relation,
-  UpdateDateColumn,
+    Check,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    Index,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    Relation,
+    UpdateDateColumn,
 } from 'typeorm';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
@@ -162,12 +162,12 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   visibility: ViewVisibility;
 
   @Column({ nullable: true, type: 'uuid' })
-  createdById: string | null;
+  createdByUserWorkspaceId: string | null;
 
   @ManyToOne(() => UserWorkspaceEntity, {
     onDelete: 'SET NULL',
   })
-  @JoinColumn({ name: 'createdById' })
+  @JoinColumn({ name: 'createdByUserWorkspaceId' })
   createdBy: Relation<UserWorkspaceEntity>;
 
   @ManyToOne(() => WorkspaceEntity, {

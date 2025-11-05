@@ -28,7 +28,7 @@ export const VIEW_FRAGMENT = gql`
     calendarFieldMetadataId
     calendarLayout
     visibility
-    createdById
+    createdByUserWorkspaceId
     viewFields {
       ...ViewFieldFragment
     }

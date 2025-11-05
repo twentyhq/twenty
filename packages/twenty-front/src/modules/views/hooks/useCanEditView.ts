@@ -7,7 +7,8 @@ export const useCanEditView = () => {
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
 
   const canEditView =
-    !!currentView && currentView.createdById === currentUserWorkspace?.id;
+    !!currentView &&
+    currentView.createdByUserWorkspaceId === currentUserWorkspace?.id;
 
   return { canEditView };
 };

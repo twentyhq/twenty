@@ -10,11 +10,11 @@ import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visi
 export const fromCreateViewInputToFlatViewToCreate = ({
   createViewInput: rawCreateViewInput,
   workspaceId,
-  createdById,
+  createdByUserWorkspaceId,
 }: {
   createViewInput: CreateViewInput;
   workspaceId: string;
-  createdById?: string;
+  createdByUserWorkspaceId?: string;
 }): FlatView => {
   const { objectMetadataId, ...createViewInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -48,7 +48,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? viewId,
     visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
-    createdById: createdById ?? null,
+    createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     viewFieldIds: [],
     viewFilterIds: [],
     viewGroupIds: [],

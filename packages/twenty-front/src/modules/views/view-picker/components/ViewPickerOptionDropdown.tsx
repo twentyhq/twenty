@@ -13,11 +13,11 @@ import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/sta
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 import {
-  IconHeart,
-  IconLock,
-  IconPencil,
-  IconTrash,
-  useIcons,
+    IconHeart,
+    IconLock,
+    IconPencil,
+    IconTrash,
+    useIcons,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
@@ -25,7 +25,12 @@ type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
   view: Pick<
     View,
-    'id' | 'name' | 'icon' | '__typename' | 'visibility' | 'createdById'
+    | 'id'
+    | 'name'
+    | 'icon'
+    | '__typename'
+    | 'visibility'
+    | 'createdByUserWorkspaceId'
   >;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
@@ -53,7 +58,8 @@ export const ViewPickerOptionDropdown = ({
   const { createFavorite } = useCreateFavorite();
 
   // Check if user can edit this view (they must be the creator)
-  const canEditView = view.createdById === currentUserWorkspace?.id;
+  const canEditView =
+    view.createdByUserWorkspaceId === currentUserWorkspace?.id;
 
   const isFavorite = favorites.some(
     (favorite) =>

@@ -104,5 +104,5 @@ export class ViewDTO {
   visibility: ViewVisibility;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  createdById?: string | null;
+  createdByUserWorkspaceId?: string | null;
 }
