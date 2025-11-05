@@ -28,7 +28,6 @@ describe.skip('Failing workspace creation flow (integration)', () => {
       expectToFail: true,
     });
 
-    console.log(errors);
     expectOneNotInternalServerErrorSnapshot({
       errors,
     });
