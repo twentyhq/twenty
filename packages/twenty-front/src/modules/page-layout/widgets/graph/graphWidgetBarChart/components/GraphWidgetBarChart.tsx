@@ -70,7 +70,7 @@ export const GraphWidgetBarChart = ({
   yAxisLabel,
   id,
   layout = 'vertical',
-  groupMode = 'grouped',
+  groupMode,
   seriesLabels,
   rangeMin,
   rangeMax,

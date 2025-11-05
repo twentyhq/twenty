@@ -1,6 +1,6 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ChangePassword } from '@/settings/profile/components/ChangePassword';
+import { SetOrChangePassword } from '@/settings/profile/components/SetOrChangePassword';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
@@ -83,7 +83,7 @@ export const SettingsProfile = () => {
         </Section>
         {canChangePassword && (
           <Section>
-            <ChangePassword />
+            <SetOrChangePassword />
           </Section>
         )}
         <Section>

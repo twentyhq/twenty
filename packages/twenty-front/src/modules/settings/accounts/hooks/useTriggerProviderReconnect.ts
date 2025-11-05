@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -26,7 +27,10 @@ export const useTriggerProviderReconnect = () => {
         return;
       }
 
-      await triggerApisOAuth(provider, options);
+      await triggerApisOAuth(provider, {
+        ...options,
+        redirectLocation: getSettingsPath(SettingsPath.Accounts),
+      });
     },
     [triggerApisOAuth, navigate],
   );
