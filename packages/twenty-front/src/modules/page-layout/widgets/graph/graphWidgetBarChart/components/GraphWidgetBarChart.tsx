@@ -1,17 +1,13 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
+import { GraphWidgetBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartTooltip';
 import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
-import {
-  type BarDatumWithGeometry,
-  useBarChartFloatingTooltip,
-} from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartFloatingTooltip';
+import { useBarChartFloatingTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartFloatingTooltip';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
-import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartValueRange';
@@ -27,7 +23,6 @@ import {
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { FloatingPortal } from '@floating-ui/react';
 import { type ComputedBarDatum, ResponsiveBar } from '@nivo/bar';
 import { useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -116,22 +111,6 @@ export const GraphWidgetBarChart = ({
     hideTooltip,
   } = useBarChartFloatingTooltip();
 
-  const handleBarMouseEnter = (datum: BarDatumWithGeometry) => {
-    showTooltipForBar(datum);
-  };
-
-  const handleBarMouseLeave = () => {
-    scheduleTooltipHide();
-  };
-
-  const handleTooltipMouseEnter = () => {
-    cancelTooltipHide();
-  };
-
-  const handleTooltipMouseLeave = () => {
-    hideTooltip();
-  };
-
   const chartTheme = useBarChartTheme();
 
   const { barConfigs, enrichedKeys } = useBarChartData({
@@ -141,14 +120,6 @@ export const GraphWidgetBarChart = ({
     series,
     colorRegistry,
     seriesLabels,
-  });
-
-  const { renderTooltip: getTooltipData } = useBarChartTooltip({
-    enrichedKeys,
-    data,
-    indexBy,
-    formatOptions,
-    enableGroupTooltip: groupMode === 'stacked',
   });
 
   const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
@@ -168,22 +139,6 @@ export const GraphWidgetBarChart = ({
       axisFontSize: chartTheme.axis.ticks.text.fontSize,
     });
 
-  const renderTooltip = (datum: Parameters<typeof getTooltipData>[0]) => {
-    const tooltipData = getTooltipData(datum);
-    if (!isDefined(tooltipData)) return null;
-
-    return (
-      <GraphWidgetTooltip
-        items={tooltipData.tooltipItems}
-        showClickHint={tooltipData.showClickHint}
-        indexLabel={tooltipData.indexLabel}
-        interactive
-        scrollable
-        highlightedKey={tooltipData.hoveredKey}
-      />
-    );
-  };
-
   const BarItemWithContext = useMemo(
     () => (props: any) => (
       <CustomBarItem
@@ -195,9 +150,20 @@ export const GraphWidgetBarChart = ({
         indexBy={indexBy}
         layout={layout}
         chartId={id}
+        onShowTooltip={showTooltipForBar}
+        onScheduleHideTooltip={scheduleTooltipHide}
       />
     ),
-    [keys, groupMode, data, indexBy, layout, id],
+    [
+      keys,
+      groupMode,
+      data,
+      indexBy,
+      layout,
+      id,
+      showTooltipForBar,
+      scheduleTooltipHide,
+    ],
   );
 
   const TotalsLayer = ({
@@ -296,25 +262,23 @@ export const GraphWidgetBarChart = ({
           label={(d) => formatGraphValue(Number(d.value), formatOptions)}
           tooltip={() => null}
           onClick={handleBarClick}
-          onMouseEnter={handleBarMouseEnter}
-          onMouseLeave={handleBarMouseLeave}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
       {isDefined(hoveredBarDatum) && (
-        <FloatingPortal>
-          <div
-            ref={refs.setFloating}
-            style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
-            role="tooltip"
-            aria-live="polite"
-            onMouseEnter={handleTooltipMouseEnter}
-            onMouseLeave={handleTooltipMouseLeave}
-          >
-            {renderTooltip(hoveredBarDatum)}
-          </div>
-        </FloatingPortal>
+        <GraphWidgetBarChartTooltip
+          floatingRef={refs.setFloating}
+          floatingStyles={floatingStyles}
+          hoveredBarDatum={hoveredBarDatum}
+          enrichedKeys={enrichedKeys}
+          data={data}
+          indexBy={indexBy}
+          formatOptions={formatOptions}
+          enableGroupTooltip={groupMode === 'stacked'}
+          onCancelHide={cancelTooltipHide}
+          onRequestHide={hideTooltip}
+        />
       )}
       <GraphWidgetLegend
         show={shouldShowLegend}

@@ -18,6 +18,8 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   indexBy?: string;
   layout?: 'vertical' | 'horizontal';
   chartId?: string;
+  onShowTooltip?: (datum: BarDatumWithGeometry) => void;
+  onScheduleHideTooltip?: () => void;
 };
 
 const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
@@ -66,6 +68,8 @@ export const CustomBarItem = <D extends BarDatum>({
   indexBy,
   layout = 'vertical',
   chartId,
+  onShowTooltip,
+  onScheduleHideTooltip,
 }: CustomBarItemProps<D>) => {
   const theme = useTheme();
   const { showTooltipFromEvent, showTooltipAt, hideTooltip } = useTooltip();
@@ -98,17 +102,20 @@ export const CustomBarItem = <D extends BarDatum>({
         barAbsoluteX: bar.absX,
         barAbsoluteY: bar.absY,
       } as BarDatumWithGeometry;
+
+      onShowTooltip?.(barDatumWithGeometry);
       onMouseEnter?.(barDatumWithGeometry as typeof barData, event);
       showTooltipFromEvent(renderTooltip(), event);
     },
-    [barData, bar, onMouseEnter, showTooltipFromEvent, renderTooltip],
+    [barData, bar, onShowTooltip, onMouseEnter, showTooltipFromEvent, renderTooltip],
   );
   const handleMouseLeave = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
+      onScheduleHideTooltip?.();
       onMouseLeave?.(barData, event);
       hideTooltip();
     },
-    [barData, hideTooltip, onMouseLeave],
+    [barData, onScheduleHideTooltip, hideTooltip, onMouseLeave],
   );
 
   const handleFocus = useCallback(() => {
