@@ -441,16 +441,3 @@ export const WithLists: Story = {
     });
   },
 };
-export const WithSlashCommand: Story = {
-  args: {
-    placeholder: "Type '/' to open commands",
-    enableSlashCommand: true,
-  },
-};
-
-export const SlashCommandDisabled: Story = {
-  args: {
-    placeholder: 'Slash commands disabled. Regular typing only.',
-    enableSlashCommand: false,
-  },
-};

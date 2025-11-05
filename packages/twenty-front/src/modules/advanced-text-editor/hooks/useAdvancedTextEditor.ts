@@ -3,6 +3,7 @@ import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizabl
 import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
 import { getInitialAdvancedTextEditorContent } from '@/workflow/workflow-variables/utils/getInitialAdvancedTextEditorContent';
 import { VariableTag } from '@/workflow/workflow-variables/utils/variableTag';
+import { t } from '@lingui/core/macro';
 import { Bold } from '@tiptap/extension-bold';
 import { Document } from '@tiptap/extension-document';
 import { HardBreak } from '@tiptap/extension-hard-break';
@@ -51,7 +52,7 @@ export const useAdvancedTextEditor = (
       Paragraph,
       Text,
       Placeholder.configure({
-        placeholder: placeholder ?? "Enter text or Type '/' for commands",
+        placeholder: placeholder ?? t`Enter text or Type '/' for commands`,
       }),
       VariableTag,
       HardBreak.configure({
