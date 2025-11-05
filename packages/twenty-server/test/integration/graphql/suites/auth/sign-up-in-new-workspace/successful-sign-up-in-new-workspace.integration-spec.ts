@@ -1,4 +1,3 @@
-import { afterEach } from 'node:test';
 import { AuthTokenPair } from 'src/engine/core-modules/auth/dto/auth-token-pair.dto';
 import { getCurrentUser } from 'test/integration/graphql/utils/current-user.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';

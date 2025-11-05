@@ -1,5 +1,3 @@
-import { afterEach } from 'node:test';
-import { AuthTokenPair } from 'src/engine/core-modules/auth/dto/auth-token-pair.dto';
 import { SignUpInput } from 'src/engine/core-modules/auth/dto/sign-up.input';
 import { getCurrentUser } from 'test/integration/graphql/utils/current-user.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
@@ -9,97 +7,87 @@ import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-i
 import { isDefined } from 'twenty-shared/utils';
 
 describe('Successful User Sign Up (integration)', () => {
-  let createdUserAccessToken: AuthTokenPair | undefined;
+  let createdUserAccessToken: string | undefined;
 
   afterEach(async () => {
-    if (!isDefined(createdUserAccessToken)) {
-      return;
-    }
+    if (isDefined(createdUserAccessToken)) {
+      await deleteUser({
+        accessToken: createdUserAccessToken,
+        expectToFail: false,
+      });
 
-    await deleteUser({
-      accessToken: createdUserAccessToken.accessOrWorkspaceAgnosticToken.token,
-      expectToFail: false,
-    });
+      createdUserAccessToken = undefined;
+    }
   });
-  it('should sign up delete and signup a new user successfully', async () => {
+
+
+  it('should sign up, delete and signup same new user successfully', async () => {
     const input: SignUpInput = {
       email: `test-123@example.com`,
       password: 'Test123!@#',
     };
-    {
-      const { data } = await signUp({
-        input,
 
-        expectToFail: false,
-      });
-      createdUserAccessToken = data.signUp.tokens;
+    const { data: firstSignUpData } = await signUp({
+      input,
+      expectToFail: false,
+    });
+    createdUserAccessToken =
+      firstSignUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 
-      expect(
-        data.signUp.tokens.accessOrWorkspaceAgnosticToken.token,
-      ).toBeDefined();
-      expect(data.signUp.tokens.refreshToken.token).toBeDefined();
-      expect(
-        data.signUp.availableWorkspaces.availableWorkspacesForSignIn,
-      ).toEqual([]);
-      expect(
-        data.signUp.availableWorkspaces.availableWorkspacesForSignUp,
-      ).toEqual([]);
-    }
+    expect(
+      firstSignUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token,
+    ).toBeDefined();
+    expect(firstSignUpData.signUp.tokens.refreshToken.token).toBeDefined();
+    expect(
+      firstSignUpData.signUp.availableWorkspaces.availableWorkspacesForSignIn,
+    ).toEqual([]);
+    expect(
+      firstSignUpData.signUp.availableWorkspaces.availableWorkspacesForSignUp,
+    ).toEqual([]);
 
-    {
-      const {
-        data: { currentUser },
-      } = await getCurrentUser({
-        accessToken:
-          createdUserAccessToken.accessOrWorkspaceAgnosticToken.token,
-        expectToFail: false,
-      });
-
-      expect(currentUser.deletedAt).toBeNull();
-      expect(currentUser).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...currentUser }),
-      );
-    }
-
-    await deleteUser({
-      accessToken: createdUserAccessToken.accessOrWorkspaceAgnosticToken.token,
+    const {
+      data: { currentUser: currentUserAfterSignUp },
+    } = await getCurrentUser({
+      accessToken: createdUserAccessToken,
       expectToFail: false,
     });
 
-    {
-      const { errors } = await getCurrentUser({
-        accessToken:
-          createdUserAccessToken.accessOrWorkspaceAgnosticToken.token,
-        expectToFail: true,
-      });
+    expect(currentUserAfterSignUp.deletedAt).toBeNull();
+    expect(currentUserAfterSignUp).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny({ ...currentUserAfterSignUp }),
+    );
 
-      expectOneNotInternalServerErrorSnapshot({
-        errors,
-      });
-    }
+    await deleteUser({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
 
-    {
-      const { data } = await signUp({
-        input,
+    const { errors: getCurrentUserAfterDeleteErrors } = await getCurrentUser({
+      accessToken: createdUserAccessToken,
+      expectToFail: true,
+    });
 
-        expectToFail: false,
-      });
-      createdUserAccessToken = data.signUp.tokens;
-    }
+    expectOneNotInternalServerErrorSnapshot({
+      errors: getCurrentUserAfterDeleteErrors,
+    });
 
-    {
-      const {
-        data: { currentUser },
-      } = await getCurrentUser({
-        accessToken:
-          createdUserAccessToken.accessOrWorkspaceAgnosticToken.token,
-        expectToFail: false,
-      });
+    const { data: secondSignUpData } = await signUp({
+      input,
+      expectToFail: false,
+    });
+    createdUserAccessToken =
+      secondSignUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 
-      expect(currentUser.deletedAt).toBeNull();
-      expect(currentUser).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...currentUser }),
-      );
-    }
+    const {
+      data: { currentUser: currentUserAfterSecondSignUp },
+    } = await getCurrentUser({
+      accessToken: createdUserAccessToken,
+      expectToFail: false,
+    });
+
+    expect(currentUserAfterSecondSignUp.deletedAt).toBeNull();
+    expect(currentUserAfterSecondSignUp).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny({ ...currentUserAfterSecondSignUp }),
+    );
   });
 });

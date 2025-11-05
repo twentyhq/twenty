@@ -99,6 +99,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     userValidator.assertIsDefinedOrThrow(user);
 
+    // Seems duplicated
     const prepareForUserDeletionInWorkspaces = await Promise.all(
       user.userWorkspaces.map(async (userWorkspace) => {
         const { workspaceId } = userWorkspace;
@@ -170,6 +171,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       ),
     );
 
+    // Shouldn't we ?
     const deletedAt = new Date();
     await this.userRepository.update(user.id, {
       deletedAt,
@@ -179,6 +181,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       ...user,
       deletedAt,
     };
+    ///
   }
 
   async hasUserAccessToWorkspaceOrThrow(userId: string, workspaceId: string) {
