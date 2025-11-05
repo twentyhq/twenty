@@ -9,7 +9,10 @@ import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphW
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
 import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
-import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import {
+  formatGraphValue,
+  type GraphValueFormatOptions,
+} from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
@@ -22,6 +25,7 @@ type GraphWidgetLineChartProps = {
   showLegend?: boolean;
   showGrid?: boolean;
   enablePoints?: boolean;
+  showValues?: boolean;
   xAxisLabel?: string;
   yAxisLabel?: string;
   id: string;
@@ -72,6 +76,7 @@ export const GraphWidgetLineChart = ({
   showLegend = true,
   showGrid = true,
   enablePoints = false,
+  showValues = false,
   xAxisLabel,
   yAxisLabel,
   id,
@@ -180,6 +185,10 @@ export const GraphWidgetLineChart = ({
           enablePoints={enablePoints}
           pointSize={6}
           pointBorderWidth={0}
+          enablePointLabel={showValues}
+          pointLabel={(point) =>
+            formatGraphValue(Number(point.data.y), formatOptions)
+          }
           areaOpacity={theme.name === 'dark' ? 0.8 : 1}
           colors={colors}
           areaBlendMode={theme.name === 'dark' ? 'screen' : 'multiply'}
