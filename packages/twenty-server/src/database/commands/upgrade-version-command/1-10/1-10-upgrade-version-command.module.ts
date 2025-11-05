@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddWorkflowRunStopStatusesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-add-workflow-run-stop-statuses.command';
 import { CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-clean-orphaned-kanban-aggregate-operation-field-metadata-id.command';
 import { CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-create-view-kanban-field-metadata-id-foreign-key-migration.command';
+import { FlushCacheCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-flush-cache.command';
 import { MakeSureDashboardNamingAvailableCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-make-sure-dashboard-naming-available.command';
 import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-author-to-created-by.command';
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
@@ -18,6 +19,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
       DataSourceEntity,
     ]),
     WorkspaceSchemaManagerModule,
+    WorkspaceCacheStorageModule,
     ObjectMetadataModule,
   ],
   providers: [
@@ -42,6 +45,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     MakeSureDashboardNamingAvailableCommand,
     SeedDashboardViewCommand,
     CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
+    FlushCacheCommand,
   ],
   exports: [
     MigrateAttachmentAuthorToCreatedByCommand,
@@ -53,6 +57,7 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     MakeSureDashboardNamingAvailableCommand,
     SeedDashboardViewCommand,
     CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
+    FlushCacheCommand,
   ],
 })
 export class V1_10_UpgradeVersionCommandModule {}

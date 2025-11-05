@@ -23,13 +23,25 @@ const formatValidationErrors = (errors: ValidationError[]): string => {
     .join('; ');
 };
 
-const validateGraphConfiguration = (
-  configuration: Record<string, unknown>,
-): WidgetConfigurationInterface | null => {
+const validateGraphConfiguration = ({
+  configuration,
+  isDashboardV2Enabled,
+}: {
+  configuration: Record<string, unknown>;
+  isDashboardV2Enabled: boolean;
+}): WidgetConfigurationInterface | null => {
   const graphType = configuration.graphType as GraphType;
 
   if (!graphType || !Object.values(GraphType).includes(graphType)) {
     return null;
+  }
+
+  const v2ChartTypes = [GraphType.PIE, GraphType.LINE, GraphType.GAUGE];
+
+  if (v2ChartTypes.includes(graphType) && !isDashboardV2Enabled) {
+    throw new Error(
+      `Chart type ${graphType} requires IS_DASHBOARD_V2_ENABLED feature flag`,
+    );
   }
 
   switch (graphType) {
@@ -135,10 +147,15 @@ const validateIframeConfiguration = (
   return instance;
 };
 
-export const validateAndTransformWidgetConfiguration = (
-  type: WidgetType,
-  configuration: unknown,
-): WidgetConfigurationInterface | null => {
+export const validateAndTransformWidgetConfiguration = ({
+  type,
+  configuration,
+  isDashboardV2Enabled,
+}: {
+  type: WidgetType;
+  configuration: unknown;
+  isDashboardV2Enabled: boolean;
+}): WidgetConfigurationInterface | null => {
   if (!configuration || typeof configuration !== 'object') {
     throw new Error('Invalid configuration: not an object');
   }
@@ -146,9 +163,10 @@ export const validateAndTransformWidgetConfiguration = (
   try {
     switch (type) {
       case WidgetType.GRAPH:
-        return validateGraphConfiguration(
-          configuration as Record<string, unknown>,
-        );
+        return validateGraphConfiguration({
+          configuration: configuration as Record<string, unknown>,
+          isDashboardV2Enabled,
+        });
       case WidgetType.IFRAME:
         return validateIframeConfiguration(configuration);
       default:
