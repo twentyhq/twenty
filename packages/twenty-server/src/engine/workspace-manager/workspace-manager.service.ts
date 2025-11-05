@@ -81,15 +81,15 @@ export class WorkspaceManagerService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const standardApplicationEntityByApplicationUniversalIdentifier =
-      await this.applicationService.findStandardTwentyApplicationsOrThrow({
-        workspaceId,
-      });
-
     await createStandardApplications({
       applicationService: this.applicationService,
       workspaceId,
     });
+
+    const standardApplicationEntityByApplicationUniversalIdentifier =
+      await this.applicationService.findStandardTwentyApplicationsOrThrow({
+        workspaceId,
+      });
 
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
