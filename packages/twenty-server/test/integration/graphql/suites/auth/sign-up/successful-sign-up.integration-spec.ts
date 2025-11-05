@@ -3,6 +3,7 @@ import { AuthTokenPair } from 'src/engine/core-modules/auth/dto/auth-token-pair.
 import { SignUpInput } from 'src/engine/core-modules/auth/dto/sign-up.input';
 import { getCurrentUser } from 'test/integration/graphql/utils/current-user.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { isDefined } from 'twenty-shared/utils';
@@ -54,7 +55,7 @@ describe('Successful User Sign Up (integration)', () => {
         expectToFail: false,
       });
 
-      expect(currentUser.currentWorkspace).toBeNull();
+      expect(currentUser.deletedAt).toBeNull();
       expect(currentUser).toMatchSnapshot(
         extractRecordIdsAndDatesAsExpectAny({ ...currentUser }),
       );
@@ -66,6 +67,27 @@ describe('Successful User Sign Up (integration)', () => {
     });
 
     {
+      const { errors } = await getCurrentUser({
+        accessToken:
+          createdUserAccessToken.accessOrWorkspaceAgnosticToken.token,
+        expectToFail: true,
+      });
+
+      expectOneNotInternalServerErrorSnapshot({
+        errors,
+      });
+    }
+
+    {
+      const { data } = await signUp({
+        input,
+
+        expectToFail: false,
+      });
+      createdUserAccessToken = data.signUp.tokens;
+    }
+
+    {
       const {
         data: { currentUser },
       } = await getCurrentUser({
@@ -74,17 +96,10 @@ describe('Successful User Sign Up (integration)', () => {
         expectToFail: false,
       });
 
-      expect(currentUser.deletedAt).toBeDefined();
+      expect(currentUser.deletedAt).toBeNull();
       expect(currentUser).toMatchSnapshot(
         extractRecordIdsAndDatesAsExpectAny({ ...currentUser }),
       );
-    }
-
-    {
-      await signUp({
-        input,
-        expectToFail: false,
-      });
     }
   });
 });

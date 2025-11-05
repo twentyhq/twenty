@@ -170,7 +170,15 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       ),
     );
 
-    return user;
+    const deletedAt = new Date();
+    await this.userRepository.update(user.id, {
+      deletedAt,
+    });
+
+    return {
+      ...user,
+      deletedAt,
+    };
   }
 
   async hasUserAccessToWorkspaceOrThrow(userId: string, workspaceId: string) {
