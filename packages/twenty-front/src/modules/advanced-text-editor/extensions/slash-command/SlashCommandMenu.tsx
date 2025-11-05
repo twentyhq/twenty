@@ -18,6 +18,7 @@ import {
   useCallback,
   useImperativeHandle,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -28,7 +29,7 @@ import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
 export type SlashCommandMenuProps = {
   items: SlashCommandItem[];
   onSelect: (item: SlashCommandItem) => void;
-  clientRect: DOMRect | null;
+  clientRect: (() => DOMRect | null) | null;
   editor: Editor;
   range: Range;
   query: string;
@@ -36,7 +37,7 @@ export type SlashCommandMenuProps = {
 
 export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
   (props, parentRef) => {
-    const { items, onSelect, clientRect, editor, range, query } = props;
+    const { items, onSelect, editor, range, query } = props;
 
     const colorScheme = document.documentElement.className.includes('dark')
       ? 'Dark'
@@ -49,17 +50,33 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
 
     const activeCommandRef = useRef<HTMLDivElement>(null);
     const commandListContainerRef = useRef<HTMLDivElement>(null);
+
+    const positionReference = useMemo(
+      () => ({
+        getBoundingClientRect: () => {
+          const start = editor.view.coordsAtPos(range.from);
+          return new DOMRect(
+            start.left,
+            start.top,
+            0,
+            start.bottom - start.top,
+          );
+        },
+      }),
+      [editor, range],
+    );
+
     const { refs, floatingStyles } = useFloating({
       placement: 'bottom-start',
       strategy: 'fixed',
       middleware: [offset(4), flip(), shift()],
-      whileElementsMounted: autoUpdate,
+      whileElementsMounted: (reference, floating, update) => {
+        return autoUpdate(reference, floating, update, {
+          animationFrame: true,
+        });
+      },
       elements: {
-        reference: clientRect
-          ? {
-              getBoundingClientRect: () => clientRect,
-            }
-          : null,
+        reference: positionReference,
       },
     });
 

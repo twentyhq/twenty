@@ -10,7 +10,7 @@ import type { Editor, Range } from '@tiptap/core';
 type SlashCommandRendererProps = {
   items: SlashCommandItem[];
   command: (item: SlashCommandItem) => void;
-  clientRect?: (() => DOMRect | null) | null;
+  clientRect: (() => DOMRect | null) | null;
   editor: Editor;
   range: Range;
   query: string;
@@ -37,11 +37,10 @@ export class SlashCommandRenderer {
       return;
     }
 
-    const rect = props.clientRect?.();
     const menuProps: SlashCommandMenuProps = {
       items: props.items,
       onSelect: props.command,
-      clientRect: rect ?? null,
+      clientRect: props.clientRect,
       editor: props.editor,
       range: props.range,
       query: props.query,

@@ -106,8 +106,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
 
           return {
             onStart: (props: SuggestionRenderProps) => {
-              const rect = props.clientRect?.();
-              if (!rect) {
+              if (!props.clientRect) {
                 return;
               }
 
@@ -117,7 +116,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
                   props.command(item);
                   closeMenu(component);
                 },
-                clientRect: () => rect,
+                clientRect: props.clientRect,
                 editor: this.editor,
                 range: props.range,
                 query: props.query,
@@ -128,8 +127,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
                 return;
               }
 
-              const rect = props.clientRect?.();
-              if (!rect) {
+              if (!props.clientRect) {
                 return;
               }
 
@@ -144,7 +142,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
                   props.command(item);
                   closeMenu(component);
                 },
-                clientRect: () => rect,
+                clientRect: props.clientRect,
                 editor: this.editor,
                 range: props.range,
                 query: props.query,
