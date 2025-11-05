@@ -13,11 +13,12 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
 import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
-import { useId } from 'react';
+import { useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetLineChartProps = {
@@ -97,6 +98,8 @@ export const GraphWidgetLineChart = ({
   const instanceId = useId();
   const colorRegistry = createGraphColorRegistry(theme);
   const chartTheme = useLineChartTheme();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [chartWidth, setChartWidth] = useState(0);
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -131,7 +134,11 @@ export const GraphWidgetLineChart = ({
       formatOptions,
     });
 
-  const axisBottomConfig = getLineChartAxisBottomConfig(xAxisLabel);
+  const axisBottomConfig = getLineChartAxisBottomConfig(
+    xAxisLabel,
+    chartWidth,
+    data,
+  );
   const axisLeftConfig = getLineChartAxisLeftConfig(yAxisLabel, formatOptions);
 
   const onPointClick = (
@@ -172,7 +179,14 @@ export const GraphWidgetLineChart = ({
       <GraphWidgetChartContainer
         $isClickable={hasClickableItems}
         $cursorSelector="svg g circle"
+        ref={containerRef}
       >
+        <NodeDimensionEffect
+          elementRef={containerRef}
+          onDimensionChange={({ width }) => {
+            setChartWidth(width);
+          }}
+        />
         <ResponsiveLine
           data={nivoData}
           margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
