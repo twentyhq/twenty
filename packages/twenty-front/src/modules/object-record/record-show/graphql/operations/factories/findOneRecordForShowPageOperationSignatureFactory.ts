@@ -28,15 +28,15 @@ export const buildFindOneRecordForShowPageOperationSignature: RecordGqlOperation
     }),
     noteTargets: generateActivityTargetGqlFields({
       activityObjectNameSingular: CoreObjectNameSingular.Note,
-      depth: 0,
+      depth: 1,
       objectMetadataItems,
-      shouldOnlyLoadActivityIdentifiers: true,
+      shouldOnlyLoadActivityIdentifiers: false,
     }),
     taskTargets: generateActivityTargetGqlFields({
       activityObjectNameSingular: CoreObjectNameSingular.Task,
-      depth: 0,
+      depth: 1,
       objectMetadataItems,
-      shouldOnlyLoadActivityIdentifiers: true,
+      shouldOnlyLoadActivityIdentifiers: false,
     }),
   },
 });
