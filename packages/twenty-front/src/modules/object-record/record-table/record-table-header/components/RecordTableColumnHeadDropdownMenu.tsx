@@ -9,7 +9,6 @@ import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/us
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
@@ -24,7 +23,6 @@ import {
   IconSortDescending,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   recordField: RecordField;
@@ -46,8 +44,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
-  const hasViewPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
-
   const isLabelIdentifier = useRecoilValue(
     isFieldMetadataItemLabelIdentifierSelector({
       fieldMetadataItemId: recordField.fieldMetadataItemId,
@@ -55,7 +51,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   );
 
   const secondVisibleRecordField = visibleRecordFields[1];
-  const canMove = isLabelIdentifier !== true && hasViewPermission;
+  const canMove = isLabelIdentifier !== true;
   const canMoveLeft =
     recordField.fieldMetadataItemId !==
       secondVisibleRecordField?.fieldMetadataItemId && canMove;
