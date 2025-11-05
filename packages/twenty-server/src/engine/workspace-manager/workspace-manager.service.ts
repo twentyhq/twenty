@@ -79,10 +79,16 @@ export class WorkspaceManagerService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
+    const standardApplicationEntityByApplicationUniversalIdentifier =
+      await this.applicationService.findStandardTwentyApplicationsOrThrow({
+        workspaceId,
+      });
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
+      standardApplicationEntityByApplicationUniversalIdentifier,
     });
 
     const dataSourceMetadataCreationEnd = performance.now();
