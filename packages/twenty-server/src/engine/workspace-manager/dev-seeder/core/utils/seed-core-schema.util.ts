@@ -3,18 +3,26 @@ import { type DataSource } from 'typeorm';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
+import { SEEDER_CREATEA_WORKSPACE_INPUT } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
 import { seedStandardApplications } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-standard-applications.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
-import { seedWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
-import { createWorkspaceCustomApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/create-workspace-custom-application';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+  createWorkspace,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
+import { computeWorkspaceCustomCreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-workspace-custom-create-application-input';
+import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 type SeedCoreSchemaArgs = {
   dataSource: DataSource;
-  workspaceId: string;
+  workspaceId:
+    | typeof SEED_APPLE_WORKSPACE_ID
+    | typeof SEED_YCOMBINATOR_WORKSPACE_ID;
   appVersion: string | undefined;
   applicationService: ApplicationService;
   seedBilling?: boolean;
@@ -31,23 +39,32 @@ export const seedCoreSchema = async ({
 }: SeedCoreSchemaArgs) => {
   const schemaName = 'core';
 
-  const workspace = await seedWorkspace({
+  const createWorkspaceStaticInput =
+    SEEDER_CREATEA_WORKSPACE_INPUT[workspaceId];
+  const workspaceCustomApplicationCreateInput = computeWorkspaceCustomCreateApplicationInput({
+    workspace: {
+      id: workspaceId,
+      displayName: createWorkspaceStaticInput.displayName,
+    },
+  });
+  const customWorkspaceApplication = await applicationService.create({
+    ...workspaceCustomApplicationCreateInput,
+    serverlessFunctionLayerId: null,
+  });
+  const version = extractVersionMajorMinorPatch(appVersion);
+  await createWorkspace({
     dataSource,
     schemaName,
-    workspaceId,
-    appVersion,
+    createWorkspaceInput: {
+      ...createWorkspaceStaticInput,
+      version,
+      workspaceCustomApplicationId: customWorkspaceApplication.id,
+    },
   });
   await seedUsers(dataSource, schemaName);
   await seedUserWorkspaces(dataSource, schemaName, workspaceId);
 
   await seedStandardApplications({ applicationService, workspaceId });
-  const workspaceCustomApplication = createWorkspaceCustomApplication({
-    workspace,
-  });
-  await applicationService.create({
-    ...workspaceCustomApplication,
-    serverlessFunctionLayerId: null,
-  });
 
   await seedAgents(dataSource, schemaName, workspaceId);
 

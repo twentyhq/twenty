@@ -2,10 +2,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { CreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { v4 } from 'uuid';
 
-export const createWorkspaceCustomApplication = ({
+export const computeWorkspaceCustomCreateApplicationInput = ({
   workspace,
 }: {
-  workspace: WorkspaceEntity;
+  workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
 }) =>
   ({
     description: 'Workspace custom application',
