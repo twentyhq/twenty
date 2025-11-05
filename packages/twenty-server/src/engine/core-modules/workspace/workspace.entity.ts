@@ -9,6 +9,8 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -275,9 +277,16 @@ export class WorkspaceEntity {
   @Column({ type: 'varchar', nullable: false, default: 'auto' })
   routerModel: ModelId;
 
-  @Field(() => String, { nullable: false }) // TODO challenge: Should this be a field now ?
-  @Column({ nullable: false, type: 'uuid' }) // add check that attest it's always a application id
+  @Field(() => String, { nullable: false })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceCustomApplicationId: string;
+
+  @ManyToOne(() => ApplicationEntity, {
+    onDelete: 'RESTRICT',
+    nullable: false,
+  })
+  @JoinColumn({ name: 'workspaceCustomApplicationId' })
+  workspaceCustomApplication: Relation<ApplicationEntity>;
 
   @OneToMany(() => ApplicationEntity, (application) => application.workspace, {
     onDelete: 'CASCADE',

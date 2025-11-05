@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { type QueryRunner, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -112,19 +112,26 @@ export class ApplicationService {
     });
   }
 
-  async create(data: {
-    universalIdentifier?: string;
-    name: string;
-    description?: string;
-    version?: string;
-    serverlessFunctionLayerId: string | null;
-    sourcePath: string;
-    workspaceId: string;
-  }): Promise<ApplicationEntity> {
+  async create(
+    data: {
+      universalIdentifier?: string;
+      name: string;
+      description?: string;
+      version?: string;
+      serverlessFunctionLayerId: string | null;
+      sourcePath: string;
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<ApplicationEntity> {
     const application = this.applicationRepository.create({
       ...data,
       sourceType: 'local',
     });
+
+    if (queryRunner) {
+      return queryRunner.manager.save(ApplicationEntity, application);
+    }
 
     return this.applicationRepository.save(application);
   }
