@@ -139,6 +139,7 @@ describe('WorkspaceEntityManager', () => {
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
+        IS_TIMELINE_ACTIVITY_MIGRATED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),

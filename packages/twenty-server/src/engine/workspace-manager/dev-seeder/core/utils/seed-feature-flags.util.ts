@@ -86,6 +86,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED,
+        workspaceId: workspaceId,
+        value: false,
+      },
     ])
     .execute();
 };
