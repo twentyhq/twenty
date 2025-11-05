@@ -1,6 +1,6 @@
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 
 type PageLayoutMainContentProps = {
@@ -10,11 +10,7 @@ type PageLayoutMainContentProps = {
 export const PageLayoutMainContent = ({
   tabId,
 }: PageLayoutMainContentProps) => {
-  const { currentPageLayout } = useCurrentPageLayout();
-
-  if (!currentPageLayout) {
-    throw new Error('No current page layout found');
-  }
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const activeTab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
   const layoutMode = getTabLayoutMode({

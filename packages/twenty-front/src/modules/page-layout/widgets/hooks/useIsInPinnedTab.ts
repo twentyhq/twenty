@@ -1,5 +1,5 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,11 +10,7 @@ export const useIsInPinnedTab = () => {
 
   const { tabId } = usePageLayoutContentContext();
   const { isInRightDrawer } = useLayoutRenderingContext();
-  const { currentPageLayout } = useCurrentPageLayout();
-
-  if (!isDefined(currentPageLayout)) {
-    throw new Error('No current page layout found');
-  }
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const { pinnedLeftTab } = getTabsByDisplayMode({
     pageLayout: currentPageLayout,

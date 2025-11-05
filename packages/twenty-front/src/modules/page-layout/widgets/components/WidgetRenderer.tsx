@@ -1,5 +1,5 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWidget';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
@@ -15,7 +15,6 @@ import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/W
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { type MouseEvent } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/display';
 import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
@@ -49,10 +48,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const { layoutMode } = usePageLayoutContentContext();
   const { isInPinnedTab } = useIsInPinnedTab();
 
-  const { currentPageLayout } = useCurrentPageLayout();
-  if (!isDefined(currentPageLayout)) {
-    throw new Error('No current page layout found');
-  }
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const showHeader = layoutMode !== 'canvas' && !isInPinnedTab;
 
