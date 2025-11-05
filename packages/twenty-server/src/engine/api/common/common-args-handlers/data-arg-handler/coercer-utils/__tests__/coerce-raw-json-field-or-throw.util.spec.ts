@@ -9,10 +9,10 @@ describe('coerceRawJsonFieldOrThrow', () => {
       expect(result).toBeNull();
     });
 
-    it('should return null when value is an empty object', () => {
+    it('should return empty object when value is an empty object', () => {
       const result = coerceRawJsonFieldOrThrow({}, 'testField');
 
-      expect(result).toBeNull();
+      expect(result).toEqual({});
     });
 
     it('should return the value when it is a valid JSON object', () => {

@@ -8,10 +8,10 @@ describe('coerceTextFieldOrThrow', () => {
       expect(result).toBeNull();
     });
 
-    it('should return null when value is an empty string', () => {
+    it('should return empty string when value is an empty string', () => {
       const result = coerceTextFieldOrThrow('', 'testField');
 
-      expect(result).toBeNull();
+      expect(result).toEqual('');
     });
 
     it('should return the string when value is a regular string', () => {

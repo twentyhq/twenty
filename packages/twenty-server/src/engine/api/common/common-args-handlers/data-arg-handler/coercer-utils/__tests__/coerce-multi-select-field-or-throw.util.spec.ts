@@ -15,14 +15,14 @@ describe('coerceMultiSelectFieldOrThrow', () => {
       expect(result).toBeNull();
     });
 
-    it('should return null when value is an empty array', () => {
+    it('should return empty array when value is an empty array', () => {
       const result = coerceMultiSelectFieldOrThrow(
         [],
         validOptions,
         'testField',
       );
 
-      expect(result).toBeNull();
+      expect(result).toEqual([]);
     });
 
     it('should return the value when it contains one valid option', () => {
@@ -46,18 +46,23 @@ describe('coerceMultiSelectFieldOrThrow', () => {
 
       expect(result).toEqual(arrayValue);
     });
+
+    it('should return the value when value is a string in options', () => {
+      const result = coerceMultiSelectFieldOrThrow(
+        'option1',
+        validOptions,
+        'testField',
+      );
+
+      coerceMultiSelectFieldOrThrow('option1', validOptions, 'testField'),
+        expect(result).toEqual(['option1']);
+    });
   });
 
   describe('invalid inputs', () => {
     it('should throw when value is undefined', () => {
       expect(() =>
         coerceMultiSelectFieldOrThrow(undefined, validOptions, 'testField'),
-      ).toThrow(CommonDataCoercerException);
-    });
-
-    it('should throw when value is a string', () => {
-      expect(() =>
-        coerceMultiSelectFieldOrThrow('option1', validOptions, 'testField'),
       ).toThrow(CommonDataCoercerException);
     });
 

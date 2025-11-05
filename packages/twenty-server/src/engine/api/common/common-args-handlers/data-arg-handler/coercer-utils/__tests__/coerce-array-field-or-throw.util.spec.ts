@@ -9,10 +9,10 @@ describe('coerceArrayFieldOrThrow', () => {
       expect(result).toBeNull();
     });
 
-    it('should return null when value is an empty array', () => {
+    it('should return empty array when value is an empty array', () => {
       const result = coerceArrayFieldOrThrow([], 'testField');
 
-      expect(result).toBeNull();
+      expect(result).toEqual([]);
     });
 
     it('should return the value when it is a valid array with strings', () => {
@@ -21,6 +21,12 @@ describe('coerceArrayFieldOrThrow', () => {
 
       expect(result).toEqual(arrayValue);
     });
+
+    it('should return the value when value is a string', () => {
+      const result = coerceArrayFieldOrThrow('item1', 'testField');
+
+      expect(result).toEqual(['item1']);
+    });
   });
 
   describe('invalid inputs', () => {
@@ -28,12 +34,6 @@ describe('coerceArrayFieldOrThrow', () => {
       expect(() => coerceArrayFieldOrThrow(undefined, 'testField')).toThrow(
         CommonDataCoercerException,
       );
-    });
-
-    it('should throw when value is a string', () => {
-      expect(() =>
-        coerceArrayFieldOrThrow('not an array', 'testField'),
-      ).toThrow(CommonDataCoercerException);
     });
 
     it('should throw when value is a number', () => {
