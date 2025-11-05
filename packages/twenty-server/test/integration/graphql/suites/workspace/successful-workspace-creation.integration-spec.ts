@@ -2,6 +2,9 @@ import { activateWorkspace } from 'test/integration/graphql/utils/activate-works
 import { signUpOnNewWorkspace } from 'test/integration/graphql/utils/sign-up-on-new-workspace.util';
 
 describe('Successful workspace creation flow (integration)', () => {
+  let createdUserToken: string;
+  afterEach(async () => {});
+
   it('should create a workspace in pending status via signUpOnNewWorkspace', async () => {
     const { data } = await signUpOnNewWorkspace({
       accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -11,7 +14,9 @@ describe('Successful workspace creation flow (integration)', () => {
     expect(data.signUpInNewWorkspace.loginToken.token).toBeDefined();
     expect(data.signUpInNewWorkspace.loginToken.expiresAt).toBeDefined();
     expect(data.signUpInNewWorkspace.workspace.id).toBeDefined();
-    expect(data.signUpInNewWorkspace.workspace.workspaceUrls.subdomainUrl).toBeDefined();
+    expect(
+      data.signUpInNewWorkspace.workspace.workspaceUrls.subdomainUrl,
+    ).toBeDefined();
   });
 
   it('should create and activate a workspace successfully', async () => {
