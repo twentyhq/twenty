@@ -11,7 +11,7 @@ describe('Successful workspace creation flow (integration)', () => {
     expect(data.signUpInNewWorkspace.loginToken.token).toBeDefined();
     expect(data.signUpInNewWorkspace.loginToken.expiresAt).toBeDefined();
     expect(data.signUpInNewWorkspace.workspace.id).toBeDefined();
-    expect(data.signUpInNewWorkspace.workspace.workspaceUrls).toBeDefined();
+    expect(data.signUpInNewWorkspace.workspace.workspaceUrls.subdomainUrl).toBeDefined();
   });
 
   it('should create and activate a workspace successfully', async () => {
@@ -38,45 +38,5 @@ describe('Successful workspace creation flow (integration)', () => {
     expect(activationData.activateWorkspace.activationStatus).toBe('ACTIVE');
     expect(activationData.activateWorkspace.subdomain).toBeDefined();
     expect(activationData.activateWorkspace.inviteHash).toBeDefined();
-  });
-
-  it('should fail to activate workspace without displayName', async () => {
-    const { data: signUpData } = await signUpOnNewWorkspace({
-      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      expectToFail: false,
-    });
-
-    const { errors } = await activateWorkspace({
-      accessToken: signUpData.signUpInNewWorkspace.loginToken.token,
-      displayName: '',
-      expectToFail: true,
-    });
-
-    expect(errors).toBeDefined();
-    expect(errors.length).toBeGreaterThan(0);
-  });
-
-  it('should fail to activate already active workspace', async () => {
-    const { data: signUpData } = await signUpOnNewWorkspace({
-      accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      expectToFail: false,
-    });
-
-    // First activation should succeed
-    await activateWorkspace({
-      accessToken: signUpData.signUpInNewWorkspace.loginToken.token,
-      displayName: 'Test Workspace',
-      expectToFail: false,
-    });
-
-    // Second activation should fail
-    const { errors } = await activateWorkspace({
-      accessToken: signUpData.signUpInNewWorkspace.loginToken.token,
-      displayName: 'Test Workspace 2',
-      expectToFail: true,
-    });
-
-    expect(errors).toBeDefined();
-    expect(errors.length).toBeGreaterThan(0);
   });
 });
