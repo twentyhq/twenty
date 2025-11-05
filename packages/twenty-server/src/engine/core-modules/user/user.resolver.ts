@@ -417,6 +417,7 @@ export class UserResolver {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMemberToDelete = await workspaceMemberRepository.findOne({
@@ -426,7 +427,9 @@ export class UserResolver {
     });
 
     if (!isDefined(workspaceMemberToDelete)) {
-      throw new BadRequestException('User to delete not found');
+      throw new BadRequestException(
+        'Workspace member to delete not found in workspace',
+      );
     }
 
     const workspaceMemberToDeleteIsAuthenticatedUser =

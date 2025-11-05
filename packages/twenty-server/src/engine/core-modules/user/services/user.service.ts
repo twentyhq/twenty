@@ -51,6 +51,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     return await workspaceMemberRepository.findOne({
@@ -69,6 +70,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     return await workspaceMemberRepository.find({ withDeleted: withDeleted });
@@ -83,6 +85,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     return await workspaceMemberRepository.find({
@@ -141,7 +144,9 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       throw new Error('User workspace not found.');
     }
 
-    this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(userWorkspace);
+    await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
+      userWorkspace,
+    );
 
     if (user.userWorkspaces.length === 1) {
       await this.userRepository.softDelete(userId);
@@ -164,6 +169,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMembers = await workspaceMemberRepository.find();
@@ -246,6 +252,15 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       where: {
         email,
       },
+    });
+  }
+
+  async findUserByEmailWithWorkspaces(email: string) {
+    return await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: { userWorkspaces: true },
     });
   }
 
