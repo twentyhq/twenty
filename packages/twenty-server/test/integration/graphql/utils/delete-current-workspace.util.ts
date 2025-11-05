@@ -4,35 +4,28 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-type SignUpOnNewWorkspaceUtilArgs = {
+type DeleteCurrentWorkspaceUtilArgs = {
   accessToken: string;
   expectToFail?: boolean;
 };
 
-export const signUpOnNewWorkspace = async ({
+export const deleteCurrentWorkspace = async ({
   accessToken,
   expectToFail,
-}: SignUpOnNewWorkspaceUtilArgs): CommonResponseBody<{
-  signUpInNewWorkspace: SignUpOutput;
+}: DeleteCurrentWorkspaceUtilArgs): CommonResponseBody<{
+  deleteCurrentWorkspace: WorkspaceEntity;
 }> => {
   const mutation = gql`
-    mutation SignUpInNewWorkspace {
-      signUpInNewWorkspace {
-        loginToken {
-          token
-          expiresAt
-        }
-        workspace {
-          id
-          workspaceUrls {
-            subdomain
-            redirectUrl
-            workspaceUrl
-          }
-        }
+    mutation DeleteCurrentWorkspace {
+      deleteCurrentWorkspace {
+        id
+        displayName
+        subdomain
+        activationStatus
+        deletedAt
       }
     }
   `;
@@ -48,16 +41,17 @@ export const signUpOnNewWorkspace = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'Sign up on new workspace should have failed but did not',
+      errorMessage: 'Delete current workspace should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'Sign up on new workspace has failed but should not',
+      errorMessage: 'Delete current workspace has failed but should not',
     });
   }
 
   return { data: response.body.data, errors: response.body.errors };
 };
+
