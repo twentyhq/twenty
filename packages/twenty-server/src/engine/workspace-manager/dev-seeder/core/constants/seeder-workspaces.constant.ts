@@ -1,8 +1,4 @@
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-    SEED_APPLE_WORKSPACE_ID,
-    SEED_YCOMBINATOR_WORKSPACE_ID,
-} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 export const WORKSPACE_FIELDS_TO_SEED = [
@@ -22,7 +18,15 @@ export type CreateWorkspaceInput = Pick<
   (typeof WORKSPACE_FIELDS_TO_SEED)[number]
 >;
 
-export const SEEDER_CREATEA_WORKSPACE_INPUT = {
+export const SEED_APPLE_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+export const SEED_YCOMBINATOR_WORKSPACE_ID =
+  '3b8e6458-5fc1-4e63-8563-008ccddaa6db';
+
+export type SeededWorkspacesIds =
+  | typeof SEED_APPLE_WORKSPACE_ID
+  | typeof SEED_YCOMBINATOR_WORKSPACE_ID;
+
+export const SEEDER_CREATE_WORKSPACE_INPUT = {
   [SEED_APPLE_WORKSPACE_ID]: {
     id: SEED_APPLE_WORKSPACE_ID,
     displayName: 'Apple',
@@ -42,6 +46,6 @@ export const SEEDER_CREATEA_WORKSPACE_INPUT = {
     isTwoFactorAuthenticationEnforced: false,
   },
 } as const satisfies Record<
-  string,
+  SeededWorkspacesIds,
   Omit<CreateWorkspaceInput, 'version' | 'workspaceCustomApplicationId'>
 >;

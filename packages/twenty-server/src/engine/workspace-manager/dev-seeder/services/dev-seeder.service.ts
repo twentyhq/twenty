@@ -12,6 +12,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { SeededWorkspacesIds } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { seedCoreSchema } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-core-schema.util';
 import { seedPageLayoutTabs } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layout-tabs.util';
@@ -39,7 +40,7 @@ export class DevSeederService {
     private readonly coreDataSource: DataSource,
   ) {}
 
-  public async seedDev(workspaceId: string): Promise<void> {
+  public async seedDev(workspaceId: SeededWorkspacesIds): Promise<void> {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 

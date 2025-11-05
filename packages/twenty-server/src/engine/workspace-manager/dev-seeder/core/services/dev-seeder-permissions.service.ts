@@ -12,14 +12,11 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { SEED_APPLE_WORKSPACE_ID, SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import {
   RANDOM_USER_WORKSPACE_IDS,
   USER_WORKSPACE_DATA_SEED_IDS,
 } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
-import {
-  SEED_APPLE_WORKSPACE_ID,
-  SEED_YCOMBINATOR_WORKSPACE_ID,
-} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
 import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 

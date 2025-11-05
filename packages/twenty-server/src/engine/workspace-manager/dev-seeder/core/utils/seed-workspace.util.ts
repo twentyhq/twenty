@@ -7,10 +7,6 @@ import {
 
 const tableName = 'workspace';
 
-export const SEED_APPLE_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-export const SEED_YCOMBINATOR_WORKSPACE_ID =
-  '3b8e6458-5fc1-4e63-8563-008ccddaa6db';
-
 export type SeedWorkspaceArgs = {
   dataSource: DataSource;
   schemaName: string;
