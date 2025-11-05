@@ -221,6 +221,20 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
+  @WorkspaceRelation({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities2,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activities`,
+    description: msg`Timeline Activities linked to the opportunity.`,
+    icon: 'IconTimelineEvent',
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivityOpportunity',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  timelineActivities2: Relation<TimelineActivityWorkspaceEntity[]>;
+
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
     type: FieldMetadataType.TEXT,

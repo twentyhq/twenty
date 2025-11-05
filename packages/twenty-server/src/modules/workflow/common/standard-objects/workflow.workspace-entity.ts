@@ -195,6 +195,18 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: WORKFLOW_STANDARD_FIELD_IDS.timelineActivities2,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activities`,
+    description: msg`Timeline activities linked to the workflow`,
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivityWorkflow',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  timelineActivities2: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
     standardId: WORKFLOW_STANDARD_FIELD_IDS.attachments,
     type: RelationType.ONE_TO_MANY,
     label: msg`Attachments`,

@@ -283,4 +283,16 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.timelineActivities2,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activities`,
+    description: msg`Timeline activities linked to the run`,
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivityWorkflowRun',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  timelineActivities2: Relation<TimelineActivityWorkspaceEntity[]>;
 }

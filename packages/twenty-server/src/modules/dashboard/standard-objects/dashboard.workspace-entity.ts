@@ -99,6 +99,19 @@ export class DashboardWorkspaceEntity extends BaseWorkspaceEntity {
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
+    standardId: DASHBOARD_STANDARD_FIELD_IDS.timelineActivities2,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Timeline Activities`,
+    description: msg`Timeline activities linked to the dashboard`,
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivityDashboard',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  timelineActivities2: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
     standardId: DASHBOARD_STANDARD_FIELD_IDS.favorites,
     type: RelationType.ONE_TO_MANY,
     label: msg`Favorites`,
