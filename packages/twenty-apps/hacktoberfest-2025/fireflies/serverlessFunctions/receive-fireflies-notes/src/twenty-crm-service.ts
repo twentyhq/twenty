@@ -1,3 +1,4 @@
+import { createLogger } from './logger';
 import type {
   Contact,
   CreateMeetingResponse,
@@ -11,6 +12,8 @@ import type {
   MeetingCreateInput,
 } from './types';
 
+const logger = createLogger('20 CRM Service');
+
 export class TwentyCrmService {
   private apiKey: string;
   private apiUrl: string;
@@ -18,6 +21,7 @@ export class TwentyCrmService {
 
   constructor(apiKey: string, apiUrl: string) {
     if (!apiKey) {
+      logger.critical('TWENTY_API_KEY is required but not provided - this is a critical configuration error');
       throw new Error('TWENTY_API_KEY is required');
     }
     this.apiKey = apiKey;
@@ -225,13 +229,13 @@ export class TwentyCrmService {
     const participantsWithEmails = participants.filter(p => p.email && p.email.trim());
     const participantsNameOnly = participants.filter(p => !p.email || !p.email.trim());
 
-    // Process participants with emails (original logic)
+    // Process participants with emails
     if (participantsWithEmails.length > 0) {
       const emailContactIds = await this.createContactsWithEmails(participantsWithEmails);
       newContactIds.push(...emailContactIds);
     }
 
-    // Process participants with names only (new logic)
+    // Process participants with names only
     if (participantsNameOnly.length > 0) {
       const nameContactIds = await this.createContactsNameOnly(participantsNameOnly);
       newContactIds.push(...nameContactIds);
@@ -249,8 +253,7 @@ export class TwentyCrmService {
       if (!existing) {
         unique.push(participant);
       } else {
-        // eslint-disable-next-line no-console
-        console.warn(`[fireflies] Duplicate participant email detected: ${participant.email}. Using first occurrence.`);
+        logger.warn(`Duplicate participant email detected: ${participant.email}. Using first occurrence.`);
       }
       return unique;
     }, []);
@@ -281,8 +284,7 @@ export class TwentyCrmService {
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         if (errorMessage.includes('Duplicate Emails') || errorMessage.includes('BAD_USER_INPUT')) {
-          // eslint-disable-next-line no-console
-          console.warn(`[fireflies] Skipping contact creation for ${participant.email} due to duplicate email constraint: ${errorMessage}`);
+            logger.warn(`Skipping contact creation for ${participant.email} due to duplicate email constraint: ${errorMessage}`);
           continue;
         }
         throw error;
@@ -303,8 +305,7 @@ export class TwentyCrmService {
       if (!existing) {
         unique.push(participant);
       } else {
-        // eslint-disable-next-line no-console
-        console.warn(`[fireflies] Duplicate participant name detected: ${participant.name}. Using first occurrence.`);
+        logger.warn(`Duplicate participant name detected: ${participant.name}. Using first occurrence.`);
       }
       return unique;
     }, []);
@@ -313,8 +314,7 @@ export class TwentyCrmService {
       // Check if we already have a contact with this exact name to avoid duplicates
       const existingContact = await this.findContactByName(participant.name);
       if (existingContact) {
-        // eslint-disable-next-line no-console
-        console.warn(`[fireflies] Contact with name "${participant.name}" already exists. Skipping creation.`);
+        logger.warn(`Contact with name "${participant.name}" already exists. Skipping creation.`);
         continue;
       }
 
@@ -342,12 +342,10 @@ export class TwentyCrmService {
         }
         newContactIds.push(response.data.createPerson.id);
 
-        // eslint-disable-next-line no-console
-        console.log(`[fireflies] Created contact for name-only participant: ${participant.name}`);
+        logger.debug(`Created contact for name-only participant: ${participant.name}`);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        // eslint-disable-next-line no-console
-        console.warn(`[fireflies] Failed to create contact for ${participant.name}: ${errorMessage}`);
+        logger.warn(`Failed to create contact for ${participant.name}: ${errorMessage}`);
         // Continue processing other participants instead of failing completely
         continue;
       }
@@ -446,8 +444,7 @@ export class TwentyCrmService {
 
     // Debug: log the variables being sent
     if (!this.isTestEnvironment) {
-      // eslint-disable-next-line no-console
-      console.log('[fireflies] createMeeting variables:', JSON.stringify(variables, null, 2));
+      logger.debug('createMeeting variables:', JSON.stringify(variables, null, 2));
     }
 
     const response = await this.gqlRequest<CreateMeetingResponse>(mutation, variables);
@@ -503,8 +500,7 @@ export class TwentyCrmService {
 
       return json;
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('[twenty-crm] GraphQL request error:', error);
+      logger.error('GraphQL request error:', error);
       throw error;
     }
   }
@@ -519,8 +515,7 @@ export class TwentyCrmService {
     const variables = { data: meetingData };
 
     if (!this.isTestEnvironment) {
-      // eslint-disable-next-line no-console
-      console.log('[fireflies] createFailedMeeting variables:', JSON.stringify(variables, null, 2));
+      logger.debug('createFailedMeeting variables:', JSON.stringify(variables, null, 2));
     }
 
     const response = await this.gqlRequest<CreateMeetingResponse>(mutation, variables);
