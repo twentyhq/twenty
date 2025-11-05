@@ -12,6 +12,7 @@ export type CurrentUser = Pick<
   | 'userVars'
   | 'firstName'
   | 'lastName'
+  | 'hasPassword'
 >;
 
 export const currentUserState = createState<CurrentUser | null>({
