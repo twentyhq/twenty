@@ -6,8 +6,8 @@ import {
   useRecordIndexLazyFetchRecords,
 } from '../useRecordIndexLazyFetchRecords';
 
-import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { ViewType } from '@/views/types/ViewType';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -132,8 +132,11 @@ describe('useRecordData', () => {
 
       const { result } = renderHook(
         () => {
-          const { columnDefinitions } =
-            useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+          const { visibleBoardFields } = useObjectOptionsForBoard({
+            objectNameSingular: objectMetadataItem.nameSingular,
+            recordBoardId: recordIndexId,
+            viewBarId: recordIndexId,
+          });
 
           const lazyFetchResult = useRecordIndexLazyFetchRecords({
             recordIndexId,
@@ -144,7 +147,7 @@ describe('useRecordData', () => {
           });
 
           return {
-            columnDefinitions,
+            visibleBoardFields,
             lazyFetchResult,
           };
         },
@@ -158,7 +161,7 @@ describe('useRecordData', () => {
       await waitFor(() => {
         expect(callback).toHaveBeenCalledWith(
           [mockPerson],
-          result.current.columnDefinitions,
+          result.current.visibleBoardFields,
         );
       });
     });
