@@ -117,11 +117,17 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       ],
     };
 
+    const commands_1110: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '1.6.0': commands_160,
       '1.7.0': commands_170,
       '1.8.0': commands_180,
       '1.10.0': commands_1100,
+      '1.11.0': commands_1110,
     };
   }
 
