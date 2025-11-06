@@ -57,6 +57,7 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
       this.logger.log(
         `Skipping twenty standard application as it already exists`,
       );
+
       return;
     }
 

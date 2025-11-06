@@ -32,6 +32,7 @@ describe('Successful user and workspace creation', () => {
 
       expectToFail: false,
     });
+
     createdUserAccessToken =
       data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 
@@ -73,8 +74,8 @@ describe('Successful user and workspace creation', () => {
     });
 
     jestExpectToBeDefined(currentUser.currentWorkspace);
-    const { inviteHash, ...expectedCurrentWorkspace } =
-      activateWorkspaceData;
+    const { inviteHash: _, ...expectedCurrentWorkspace } = activateWorkspaceData;
+
     expect(currentUser.currentWorkspace).toMatchObject(
       expectedCurrentWorkspace,
     );

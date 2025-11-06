@@ -62,13 +62,13 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 
 import { TwoFactorAuthenticationMethodEntity } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationModule } from '../two-factor-authentication/two-factor-authentication.module';
 
 import { AuthResolver } from './auth.resolver';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AuthService } from './services/auth.service';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 
@@ -114,7 +114,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     AuditModule,
     SubdomainManagerModule,
     DomainServerConfigModule,
-    ApplicationModule
+    ApplicationModule,
   ],
   controllers: [
     GoogleAuthController,

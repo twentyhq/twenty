@@ -173,6 +173,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     // Shouldn't we ?
     const deletedAt = new Date();
+
     await this.userRepository.update(user.id, {
       deletedAt,
     });
