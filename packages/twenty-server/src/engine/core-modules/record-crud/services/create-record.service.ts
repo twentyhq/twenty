@@ -73,8 +73,12 @@ export class CreateRecordService {
       });
 
       const validObjectRecord = Object.fromEntries(
-        Object.entries(objectRecord).filter(([key]) =>
-          isDefined(objectMetadataItemWithFieldsMaps.fieldIdByName[key]),
+        Object.entries(objectRecord).filter(
+          ([key]) =>
+            isDefined(objectMetadataItemWithFieldsMaps.fieldIdByName[key]) ||
+            isDefined(
+              objectMetadataItemWithFieldsMaps.fieldIdByJoinColumnName[key],
+            ),
         ),
       );
 

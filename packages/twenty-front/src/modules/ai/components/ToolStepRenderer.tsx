@@ -3,11 +3,10 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { JsonTree } from 'twenty-ui/json-visualizer';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { type ToolInput } from '@/ai/types/ToolInput';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
 import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
 import { useLingui } from '@lingui/react/macro';
@@ -96,26 +95,22 @@ const StyledJsonContainer = styled.div`
 
 type TabType = 'output' | 'input';
 
-export const ToolStepRenderer = ({
-  input,
-  output,
-  toolName,
-}: {
-  input: ToolInput;
-  output: ToolUIPart['output'];
-  toolName: string;
-}) => {
+export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('output');
 
-  const isExpandable = isDefined(output);
+  const { input, output, type, errorText } = toolPart;
+  const toolName = type.split('-')[1];
+
+  const hasError = isDefined(errorText);
+  const isExpandable = isDefined(output) || hasError;
 
   const isTwoFirstDepths = ({ depth }: { depth: number }) => depth < 2;
 
-  if (!output) {
+  if (!output && !hasError) {
     return (
       <StyledContainer>
         <StyledLoadingContainer>
@@ -129,11 +124,12 @@ export const ToolStepRenderer = ({
     );
   }
 
-  const displayMessage =
-    output &&
-    typeof output === 'object' &&
-    'message' in output &&
-    typeof output.message === 'string'
+  const displayMessage = hasError
+    ? 'Tool execution failed'
+    : output &&
+        typeof output === 'object' &&
+        'message' in output &&
+        typeof output.message === 'string'
       ? output.message
       : getToolDisplayMessage(input, toolName, true);
 
@@ -165,33 +161,41 @@ export const ToolStepRenderer = ({
       {isExpandable && (
         <AnimatedExpandableContainer isExpanded={isExpanded}>
           <StyledContentContainer>
-            <StyledTabContainer>
-              <StyledTab
-                isActive={activeTab === 'output'}
-                onClick={() => setActiveTab('output')}
-              >
-                Output
-              </StyledTab>
-              <StyledTab
-                isActive={activeTab === 'input'}
-                onClick={() => setActiveTab('input')}
-              >
-                Input
-              </StyledTab>
-            </StyledTabContainer>
+            {hasError ? (
+              <StyledJsonContainer>{errorText}</StyledJsonContainer>
+            ) : (
+              <>
+                <StyledTabContainer>
+                  <StyledTab
+                    isActive={activeTab === 'output'}
+                    onClick={() => setActiveTab('output')}
+                  >
+                    Output
+                  </StyledTab>
+                  <StyledTab
+                    isActive={activeTab === 'input'}
+                    onClick={() => setActiveTab('input')}
+                  >
+                    Input
+                  </StyledTab>
+                </StyledTabContainer>
 
-            <StyledJsonContainer>
-              <JsonTree
-                value={(activeTab === 'output' ? result : input) as JsonValue}
-                shouldExpandNodeInitially={isTwoFirstDepths}
-                emptyArrayLabel={t`Empty Array`}
-                emptyObjectLabel={t`Empty Object`}
-                emptyStringLabel={t`[empty string]`}
-                arrowButtonCollapsedLabel={t`Expand`}
-                arrowButtonExpandedLabel={t`Collapse`}
-                onNodeValueClick={copyToClipboard}
-              />
-            </StyledJsonContainer>
+                <StyledJsonContainer>
+                  <JsonTree
+                    value={
+                      (activeTab === 'output' ? result : input) as JsonValue
+                    }
+                    shouldExpandNodeInitially={isTwoFirstDepths}
+                    emptyArrayLabel={t`Empty Array`}
+                    emptyObjectLabel={t`Empty Object`}
+                    emptyStringLabel={t`[empty string]`}
+                    arrowButtonCollapsedLabel={t`Expand`}
+                    arrowButtonExpandedLabel={t`Collapse`}
+                    onNodeValueClick={copyToClipboard}
+                  />
+                </StyledJsonContainer>
+              </>
+            )}
           </StyledContentContainer>
         </AnimatedExpandableContainer>
       )}

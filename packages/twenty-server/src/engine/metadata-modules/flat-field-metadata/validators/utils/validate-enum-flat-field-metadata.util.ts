@@ -5,11 +5,10 @@ import {
   FieldMetadataType,
   type EnumFieldMetadataType,
   type NonNullableRequired,
+  type FieldMetadataOptions,
 } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
-
-import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
 import {
   type FieldMetadataComplexOption,
