@@ -10,7 +10,6 @@ import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
@@ -41,9 +40,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     useRecoilState(agentChatInputState);
 
   const scrollWrapperId = `scroll-wrapper-ai-chat-${currentAIChatThread}`;
-
-  const { scrollWrapperHTMLElement } =
-    useScrollWrapperHTMLElement(scrollWrapperId);
 
   const { sendMessage, messages, status, error, regenerate } = useChat({
     transport: new DefaultChatTransport({
