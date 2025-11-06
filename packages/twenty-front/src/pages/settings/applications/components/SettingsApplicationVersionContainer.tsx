@@ -8,7 +8,9 @@ import type { Application } from '~/generated/graphql';
 export const SettingsApplicationVersionContainer = ({
   application,
 }: {
-  application?: Omit<Application, 'objects' | 'universalIdentifier'> & { objects: { id: string }[] };
+  application?: Omit<Application, 'objects' | 'universalIdentifier'> & {
+    objects: { id: string }[];
+  };
 }) => {
   const loading = !isDefined(application);
 
