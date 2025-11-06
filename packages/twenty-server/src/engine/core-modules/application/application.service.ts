@@ -59,9 +59,15 @@ export class ApplicationService {
     return application;
   }
 
-  async findById(id: string): Promise<ApplicationEntity | null> {
+  async findById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
     return this.applicationRepository.findOne({
-      where: { id },
+      where: { id, workspaceId },
     });
   }
 
@@ -122,8 +128,12 @@ export class ApplicationService {
     return this.applicationRepository.save(application);
   }
 
-  async update(
-    id: string,
+  async update({
+    data,
+    id,
+    workspaceId,
+  }: {
+    id: string;
     data: {
       name?: string;
       description?: string;
@@ -132,11 +142,12 @@ export class ApplicationService {
       packageJson?: PackageJson;
       yarnLock?: string;
       packageChecksum?: string;
-    },
-  ): Promise<ApplicationEntity> {
+    };
+    workspaceId: string;
+  }): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
 
-    const updatedApplication = await this.findById(id);
+    const updatedApplication = await this.findById({ id, workspaceId });
 
     if (!updatedApplication) {
       throw new Error(`Failed to update application with id ${id}`);

@@ -54,13 +54,28 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const twentyStandardApplication =
-      await this.applicationService.findByUniversalIdentifier({
-        workspaceId,
-        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-      });
+    const workspace = await this.workspaceRepository.findOneOrFail({
+      where: {
+        id: workspaceId,
+      },
+    });
 
-    if (!isDefined(twentyStandardApplication)) {
+    const [twentyStandardApplication, workspaceCustomApplication] =
+      await Promise.all([
+        this.applicationService.findByUniversalIdentifier({
+          workspaceId,
+          universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        }),
+        this.applicationService.findById({
+          id: workspace.workspaceCustomApplicationId,
+          workspaceId,
+        }),
+      ]);
+
+    if (
+      !isDefined(twentyStandardApplication) ||
+      !isDefined(workspaceCustomApplication)
+    ) {
       throw new Error('Failed to find twenty standard application');
     }
 
@@ -70,7 +85,10 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
           workspaceId,
           dataSourceId: dataSourceMetadata.id,
           featureFlags,
-          twentyStandardApplication,
+          applications: {
+            twentyStandardApplication,
+            workspaceCustomApplication,
+          },
         },
         { applyChanges: !options.dryRun },
       );

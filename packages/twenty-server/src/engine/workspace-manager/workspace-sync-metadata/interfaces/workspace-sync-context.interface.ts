@@ -5,5 +5,8 @@ export interface WorkspaceSyncContext {
   workspaceId: string;
   dataSourceId: string;
   featureFlags: FeatureFlagMap;
-  twentyStandardApplication: ApplicationEntity;
+  applications: {
+    twentyStandardApplication: ApplicationEntity;
+    workspaceCustomApplication: ApplicationEntity;
+  };
 }

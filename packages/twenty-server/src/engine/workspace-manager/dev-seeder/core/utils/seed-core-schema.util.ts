@@ -51,7 +51,7 @@ export const seedCoreSchema = async ({
   await queryRunner.startTransaction();
 
   try {
-    const customWorkspaceApplication = await applicationService.create(
+    const workspaceCustomApplication = await applicationService.create(
       {
         ...workspaceCustomApplicationCreateInput,
         serverlessFunctionLayerId: null,
@@ -59,13 +59,13 @@ export const seedCoreSchema = async ({
       queryRunner,
     );
 
-    await createWorkspace({
+    const workspace = await createWorkspace({
       queryRunner,
       schemaName,
       createWorkspaceInput: {
         ...createWorkspaceStaticInput,
         version,
-        workspaceCustomApplicationId: customWorkspaceApplication.id,
+        workspaceCustomApplicationId: workspaceCustomApplication.id,
       },
     });
 
@@ -73,12 +73,13 @@ export const seedCoreSchema = async ({
 
     await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
 
-    await applicationService.createTwentyStandardApplication(
-      {
-        workspaceId,
-      },
-      queryRunner,
-    );
+    const twentyStandardApplication =
+      await applicationService.createTwentyStandardApplication(
+        {
+          workspaceId,
+        },
+        queryRunner,
+      );
 
     await seedAgents({ queryRunner, schemaName, workspaceId });
 
@@ -94,6 +95,12 @@ export const seedCoreSchema = async ({
     }
 
     await queryRunner.commitTransaction();
+
+    return {
+      workspaceCustomApplication,
+      workspace,
+      twentyStandardApplication,
+    };
   } catch (error) {
     await queryRunner.rollbackTransaction();
     throw error;

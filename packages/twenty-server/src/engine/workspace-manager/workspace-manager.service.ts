@@ -21,6 +21,7 @@ import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceManagerService {
@@ -79,18 +80,31 @@ export class WorkspaceManagerService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const twentyStandardApplication =
-      await this.applicationService.createTwentyStandardApplication({
-        workspaceId,
-      });
+    const [twentyStandardApplication, workspaceCustomApplication] =
+      await Promise.all([
+        await this.applicationService.createTwentyStandardApplication({
+          workspaceId,
+        }),
+        await this.applicationService.findById({
+          id: workspace.workspaceCustomApplicationId,
+          workspaceId,
+        }),
+      ]);
 
-    // TODO prastoin Retrieve custom app here and apply universalIdentifier and so on to all sub entities
+    if (!isDefined(workspaceCustomApplication)) {
+      throw new Error(
+        'TODO prastoin find correct exception, could not find workspace custom application should never occur',
+      );
+    }
 
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
-      twentyStandardApplication,
+      applications: {
+        twentyStandardApplication,
+        workspaceCustomApplication,
+      },
     });
 
     const dataSourceMetadataCreationEnd = performance.now();

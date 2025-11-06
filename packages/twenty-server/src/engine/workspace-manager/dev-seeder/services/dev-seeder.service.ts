@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -21,7 +20,6 @@ import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/c
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -46,13 +44,14 @@ export class DevSeederService {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
-    await seedCoreSchema({
-      dataSource: this.coreDataSource,
-      workspaceId,
-      applicationService: this.applicationService,
-      seedBilling: isBillingEnabled,
-      appVersion,
-    });
+    const { workspaceCustomApplication, twentyStandardApplication } =
+      await seedCoreSchema({
+        dataSource: this.coreDataSource,
+        workspaceId,
+        applicationService: this.applicationService,
+        seedBilling: isBillingEnabled,
+        appVersion,
+      });
 
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
@@ -68,23 +67,11 @@ export class DevSeederService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const twentyStandardApplication =
-      await this.applicationService.findByUniversalIdentifier({
-        workspaceId,
-        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-      });
-
-    if (!isDefined(twentyStandardApplication)) {
-      throw new Error(
-        'Seeder failed to find twenty standard application, should never occur',
-      );
-    }
-
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
-      twentyStandardApplication,
+      applications: { twentyStandardApplication, workspaceCustomApplication },
     });
 
     await this.devSeederMetadataService.seed({

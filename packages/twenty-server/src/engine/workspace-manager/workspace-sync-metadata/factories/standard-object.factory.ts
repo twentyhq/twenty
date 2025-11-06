@@ -45,7 +45,7 @@ export class StandardObjectFactory {
 
     return {
       // TODO: Remove targetTableName when we remove the old metadata
-      applicationId: context.twentyStandardApplication.id,
+      applicationId: context.applications.twentyStandardApplication.id,
       labelIdentifierFieldMetadataId: null,
       imageIdentifierFieldMetadataId: null,
       duplicateCriteria: [],
