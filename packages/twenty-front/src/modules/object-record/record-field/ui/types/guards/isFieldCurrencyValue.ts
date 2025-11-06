@@ -4,7 +4,7 @@ import { CurrencyCode } from 'twenty-shared/constants';
 import { type FieldCurrencyValue } from '../FieldMetadata';
 
 const currencySchema = z.object({
-  currencyCode: z.enum(CurrencyCode).nullable(),
+  currencyCode: z.union([z.enum(CurrencyCode), z.literal('')]).nullable(),
   amountMicros: z.number().nullable(),
 });
 
