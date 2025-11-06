@@ -1,6 +1,7 @@
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import { PageLayoutGridResizeHandle } from '@/page-layout/components/PageLayoutGridResizeHandle';
+import { ReactGridLayoutCardWrapper } from '@/page-layout/components/ReactGridLayoutCardWrapper';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
@@ -180,7 +181,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
           }
         >
           {gridLayoutItems.map((item) => (
-            <div key={item.id} data-select-disable="true">
+            <ReactGridLayoutCardWrapper key={item.id}>
               {item.type === 'placeholder' ? (
                 <WidgetPlaceholder />
               ) : (
@@ -190,7 +191,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
                   layoutMode="grid"
                 />
               )}
-            </div>
+            </ReactGridLayoutCardWrapper>
           ))}
         </ResponsiveGridLayout>
       </StyledGridContainer>
