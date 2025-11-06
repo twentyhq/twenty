@@ -9,6 +9,7 @@ import { WorkspaceMemberCreateManyPreQueryHook } from 'src/modules/workspace-mem
 import { WorkspaceMemberCreateOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-create-one.pre-query.hook';
 import { WorkspaceMemberDeleteManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook';
 import { WorkspaceMemberDeleteOnePostQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-delete-one.post-query.hook';
+import { WorkspaceMemberDeleteOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook';
 import { WorkspaceMemberDestroyManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-destroy-many.pre-query.hook';
 import { WorkspaceMemberDestroyOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-destroy-one.pre-query.hook';
 import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
@@ -22,6 +23,7 @@ import { WorkspaceMemberUpdateOnePreQueryHook } from 'src/modules/workspace-memb
     WorkspaceMemberPreQueryHookService,
     WorkspaceMemberCreateOnePreQueryHook,
     WorkspaceMemberCreateManyPreQueryHook,
+    WorkspaceMemberDeleteOnePreQueryHook,
     WorkspaceMemberDeleteOnePostQueryHook,
     WorkspaceMemberDeleteManyPreQueryHook,
     WorkspaceMemberDestroyOnePreQueryHook,
