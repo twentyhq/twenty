@@ -17,11 +17,18 @@ export const PageHeaderActionMenuButtons = () => {
 
   const pinnedActions = actions.filter((entry) => entry.isPinned);
 
+  const actionsWithPositionForAnimation = pinnedActions.map(
+    (action, index) => ({
+      action,
+      position: pinnedActions.length - index - 1,
+    }),
+  );
+
   return (
     <>
-      {pinnedActions.map((action, index) => (
+      {actionsWithPositionForAnimation.map(({ action, position }) => (
         <StyledActionContainer
-          key={pinnedActions.length - index - 1}
+          key={position}
           layout
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: 'unset', opacity: 1 }}
