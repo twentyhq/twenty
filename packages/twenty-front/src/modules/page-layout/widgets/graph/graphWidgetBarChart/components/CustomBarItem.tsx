@@ -1,17 +1,11 @@
 import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
 import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
-import { type BarGeometry } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/createFloatingAnchorFromBarGeometry';
-import {
-  type BarDatum,
-  type BarItemProps,
-  type ComputedDatum,
-} from '@nivo/bar';
+import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { Text } from '@nivo/text';
 import { useTheme } from '@nivo/theming';
-import { useTooltip } from '@nivo/tooltip';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
-import { createElement, useCallback, useMemo, type MouseEvent } from 'react';
+import { useCallback, useMemo, type MouseEvent } from 'react';
 import styled from 'styled-components';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,8 +16,6 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   indexBy?: string;
   layout?: 'vertical' | 'horizontal';
   chartId?: string;
-  onShowTooltip?: (datum: ComputedDatum<D>, geometry: BarGeometry) => void;
-  onScheduleHideTooltip?: () => void;
 };
 
 const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
@@ -59,7 +51,6 @@ export const CustomBarItem = <D extends BarDatum>({
   onClick,
   onMouseEnter,
   onMouseLeave,
-  tooltip,
   isFocusable,
   ariaLabel,
   ariaLabelledBy,
@@ -72,16 +63,8 @@ export const CustomBarItem = <D extends BarDatum>({
   indexBy,
   layout = 'vertical',
   chartId,
-  onShowTooltip,
-  onScheduleHideTooltip,
 }: CustomBarItemProps<D>) => {
   const theme = useTheme();
-  const { showTooltipFromEvent, showTooltipAt, hideTooltip } = useTooltip();
-
-  const renderTooltip = useMemo(
-    () => () => createElement(tooltip, { ...bar, ...barData }),
-    [tooltip, bar, barData],
-  );
 
   const handleClick = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
@@ -89,50 +72,20 @@ export const CustomBarItem = <D extends BarDatum>({
     },
     [bar, barData, onClick],
   );
-  const handleTooltip = useCallback(
-    (event: MouseEvent<SVGRectElement>) =>
-      showTooltipFromEvent(renderTooltip(), event),
-    [showTooltipFromEvent, renderTooltip],
-  );
+
   const handleMouseEnter = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
-      const geometry: BarGeometry = {
-        element: event.currentTarget,
-        width: bar.width,
-        height: bar.height,
-        absoluteX: bar.absX,
-        absoluteY: bar.absY,
-      };
-
-      onShowTooltip?.(barData, geometry);
       onMouseEnter?.(barData, event);
-      showTooltipFromEvent(renderTooltip(), event);
     },
-    [
-      barData,
-      bar,
-      onShowTooltip,
-      onMouseEnter,
-      showTooltipFromEvent,
-      renderTooltip,
-    ],
+    [barData, onMouseEnter],
   );
+
   const handleMouseLeave = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
-      onScheduleHideTooltip?.();
       onMouseLeave?.(barData, event);
-      hideTooltip();
     },
-    [barData, onScheduleHideTooltip, hideTooltip, onMouseLeave],
+    [barData, onMouseLeave],
   );
-
-  const handleFocus = useCallback(() => {
-    showTooltipAt(renderTooltip(), [bar.absX + bar.width / 2, bar.absY]);
-  }, [showTooltipAt, renderTooltip, bar]);
-
-  const handleBlur = useCallback(() => {
-    hideTooltip();
-  }, [hideTooltip]);
 
   const isNegativeValue = useMemo(
     () => isNumber(barData.value) && barData.value < 0,
@@ -271,11 +224,8 @@ export const CustomBarItem = <D extends BarDatum>({
           aria-disabled={ariaDisabled ? ariaDisabled(barData) : undefined}
           aria-hidden={ariaHidden ? ariaHidden(barData) : undefined}
           onMouseEnter={isInteractive ? handleMouseEnter : undefined}
-          onMouseMove={isInteractive ? handleTooltip : undefined}
           onMouseLeave={isInteractive ? handleMouseLeave : undefined}
           onClick={isInteractive ? handleClick : undefined}
-          onFocus={isInteractive && isFocusable ? handleFocus : undefined}
-          onBlur={isInteractive && isFocusable ? handleBlur : undefined}
           data-testid={`bar.item.${barData.id}.${barData.index}`}
         />
 

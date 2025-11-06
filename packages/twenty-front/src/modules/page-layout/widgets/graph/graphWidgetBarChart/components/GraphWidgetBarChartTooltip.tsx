@@ -2,18 +2,17 @@ import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/Graph
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
+import { useTooltipFloating } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useTooltipFloating';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import { FloatingPortal } from '@floating-ui/react';
 import { motion } from 'framer-motion';
 import { type ComputedDatum } from '@nivo/bar';
-import { type CSSProperties } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetBarChartTooltipProps = {
-  floatingRef: (node: HTMLElement | null) => void;
-  floatingStyles: CSSProperties;
   hoveredBarDatum: ComputedDatum<BarChartDataItem>;
+  hoveredBarElement: SVGRectElement | null;
   enrichedKeys: BarChartEnrichedKey[];
   data: BarChartDataItem[];
   indexBy: string;
@@ -24,9 +23,8 @@ type GraphWidgetBarChartTooltipProps = {
 };
 
 export const GraphWidgetBarChartTooltip = ({
-  floatingRef,
-  floatingStyles,
   hoveredBarDatum,
+  hoveredBarElement,
   enrichedKeys,
   data,
   indexBy,
@@ -36,6 +34,8 @@ export const GraphWidgetBarChartTooltip = ({
   onRequestHide,
 }: GraphWidgetBarChartTooltipProps) => {
   const theme = useTheme();
+
+  const { refs, floatingStyles } = useTooltipFloating(hoveredBarElement);
 
   const { renderTooltip: getTooltipData } = useBarChartTooltip({
     enrichedKeys,
@@ -54,7 +54,7 @@ export const GraphWidgetBarChartTooltip = ({
   return (
     <FloatingPortal>
       <div
-        ref={floatingRef}
+        ref={refs.setFloating}
         style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
         role="tooltip"
         aria-live="polite"
