@@ -242,7 +242,6 @@ export {
   IconMessage,
   IconMessageCirclePlus,
   IconMinus,
-  IconMinusVertical,
   IconMoneybag,
   IconMoodSmile,
   IconMoon,
