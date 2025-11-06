@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type CreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
-import { v4 } from 'uuid';
 
 export const computeWorkspaceCustomCreateApplicationInput = ({
   workspace,
