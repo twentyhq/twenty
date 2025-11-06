@@ -1,6 +1,6 @@
-import { getCurrentUser } from 'test/integration/graphql/utils/current-user.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
+import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { isDefined } from 'twenty-shared/utils';

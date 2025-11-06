@@ -6,7 +6,7 @@ export const TWENTY_STANDARD_APPLICATION = {
   description:
     'Twenty is an open-source CRM that allows you to manage your sales and customer relationships',
   version: '1.0.0',
-  sourcePath: 'cli-sync', // TODO double check value
+  sourcePath: 'cli-sync',
   sourceType: 'local',
 } as const satisfies CreateApplicationInput;
 

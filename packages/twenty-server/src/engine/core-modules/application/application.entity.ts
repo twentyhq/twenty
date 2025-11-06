@@ -51,7 +51,7 @@ export class ApplicationEntity {
   sourceType: 'local';
 
   @Column({ nullable: false, type: 'text' })
-  sourcePath: string; // what's that ?
+  sourcePath: string;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

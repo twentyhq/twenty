@@ -5,6 +5,7 @@ export const APPLICATION_GQL_FIELDS = `
   name
   description
   version
+  universalIdentifier
 `;
 
 export const findManyApplicationsQueryFactory = (
