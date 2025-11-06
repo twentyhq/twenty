@@ -1,7 +1,8 @@
 import { msg } from '@lingui/core/macro';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
+
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
