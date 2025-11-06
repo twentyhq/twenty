@@ -1,10 +1,11 @@
-import { SignUpInput } from 'src/engine/core-modules/auth/dto/sign-up.input';
 import { getCurrentUser } from 'test/integration/graphql/utils/current-user.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type SignUpInput } from 'src/engine/core-modules/auth/dto/sign-up.input';
 
 describe('Successful User Sign Up (integration)', () => {
   let createdUserAccessToken: string | undefined;
@@ -30,6 +31,7 @@ describe('Successful User Sign Up (integration)', () => {
       input,
       expectToFail: false,
     });
+
     createdUserAccessToken =
       firstSignUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 
@@ -74,6 +76,7 @@ describe('Successful User Sign Up (integration)', () => {
       input,
       expectToFail: false,
     });
+
     createdUserAccessToken =
       secondSignUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 

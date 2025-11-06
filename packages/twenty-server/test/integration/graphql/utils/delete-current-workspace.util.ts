@@ -1,11 +1,10 @@
 import gql from 'graphql-tag';
-
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type DeleteCurrentWorkspaceUtilArgs = {
   accessToken: string;
@@ -54,4 +53,3 @@ export const deleteCurrentWorkspace = async ({
 
   return { data: response.body.data, errors: response.body.errors };
 };
-

@@ -1,11 +1,10 @@
 import gql from 'graphql-tag';
-
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-
-import { AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+
+import { type AuthTokens } from 'src/engine/core-modules/auth/dto/auth-tokens.dto';
 
 type GetAuthTokensFromLoginTokenUtilArgs = {
   loginToken: string;
@@ -21,7 +20,10 @@ export const getAuthTokensFromLoginToken = async ({
   getAuthTokensFromLoginToken: AuthTokens;
 }> => {
   const mutation = gql`
-    mutation GetAuthTokensFromLoginToken($loginToken: String!, $origin: String!) {
+    mutation GetAuthTokensFromLoginToken(
+      $loginToken: String!
+      $origin: String!
+    ) {
       getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
         tokens {
           accessOrWorkspaceAgnosticToken {
@@ -51,17 +53,18 @@ export const getAuthTokensFromLoginToken = async ({
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
-      errorMessage: 'Get auth tokens from login token should have failed but did not',
+      errorMessage:
+        'Get auth tokens from login token should have failed but did not',
     });
   }
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'Get auth tokens from login token has failed but should not',
+      errorMessage:
+        'Get auth tokens from login token has failed but should not',
     });
   }
 
   return { data: response.body.data, errors: response.body.errors };
 };
-

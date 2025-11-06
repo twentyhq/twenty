@@ -1,11 +1,10 @@
 import gql from 'graphql-tag';
-
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 type CurrentUserUtilArgs = {
   accessToken: string;
@@ -74,4 +73,3 @@ export const getCurrentUser = async ({
 
   return { data: response.body.data, errors: response.body.errors };
 };
-
