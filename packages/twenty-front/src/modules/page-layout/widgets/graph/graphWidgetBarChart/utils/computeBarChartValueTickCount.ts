@@ -1,14 +1,21 @@
-const MIN_TICK_SPACING_HEIGHT_RATIO = 2.5;
+import { BAR_CHART_MINIMUM_WIDTH_PER_TICK } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumWidthPerTick';
+import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
 
 type ComputeBarChartValueTickCountProps = {
-  height: number;
+  axisSize: number;
   axisFontSize: number;
+  layout: 'vertical' | 'horizontal';
 };
 
 export const computeBarChartValueTickCount = ({
-  height,
+  axisSize,
   axisFontSize,
+  layout,
 }: ComputeBarChartValueTickCountProps): number => {
-  const minHeightPerTick = axisFontSize * MIN_TICK_SPACING_HEIGHT_RATIO;
-  return Math.max(1, Math.floor(height / minHeightPerTick));
+  const minTickSize =
+    layout === 'vertical'
+      ? BAR_CHART_MINIMUM_WIDTH_PER_TICK
+      : computeMinHeightPerTick({ axisFontSize });
+
+  return Math.max(1, Math.floor(axisSize / minTickSize));
 };

@@ -1,0 +1,1 @@
+export const BAR_CHART_MINIMUM_WIDTH_PER_TICK = 100;
