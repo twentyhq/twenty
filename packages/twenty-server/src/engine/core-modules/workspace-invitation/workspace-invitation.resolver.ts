@@ -88,15 +88,6 @@ export class WorkspaceInvitationResolver {
     @AuthUser() user: UserEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendInvitationsOutput> {
-    let workspaceLogoWithToken = '';
-
-    if (workspace.logo) {
-      workspaceLogoWithToken = this.fileService.signFileUrl({
-        url: workspace.logo,
-        workspaceId: workspace.id,
-      });
-    }
-
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
@@ -112,7 +103,7 @@ export class WorkspaceInvitationResolver {
 
     return await this.workspaceInvitationService.sendInvitations(
       sendInviteLinkInput.emails,
-      { ...workspace, logo: workspaceLogoWithToken },
+      workspace,
       workspaceMember,
     );
   }
