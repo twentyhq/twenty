@@ -187,7 +187,7 @@ export class WorkflowVersionWorkspaceService {
       });
 
     const insertWorkflowResult = await workflowRepository.insert({
-      name: `${sourceWorkflow.name} (Copy)`,
+      name: `${sourceWorkflow.name} (Duplicate)`,
       statuses: [WorkflowStatus.DRAFT],
       position: workflowPosition,
     });
