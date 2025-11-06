@@ -158,8 +158,8 @@ const updateUpdatedByField = async (
 }`;
   const variables = {
     "idToUpdate": recordId,
-      "input": {
-      "updatedById": userId
+    "input": {
+      "updatedById": userId,
     }
   }; // TODO: find a root cause and fix the request
   const options = {
@@ -178,7 +178,7 @@ const updateUpdatedByField = async (
     console.log(graphQLQuery, variables);
     const response = await axios.request(options);
     console.log(response.data);
-    return response.status === 200;
+    return response.data.errors === undefined;
   }
   catch (error) {
     if (axios.isAxiosError(error)) {
