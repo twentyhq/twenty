@@ -7,8 +7,7 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "baseUrl": "."
+    }
   },
   "files": [],
   "include": [],
