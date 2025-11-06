@@ -123,18 +123,15 @@ export class ViewResolver {
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
   ): Promise<ViewEntity[]> {
-    let views: ViewEntity[];
-
     if (objectMetadataId) {
-      views = await this.viewService.findByObjectMetadataId(
+      return this.viewService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
+        userWorkspaceId,
       );
-    } else {
-      views = await this.viewService.findByWorkspaceId(workspace.id);
     }
 
-    return this.viewService.filterViewsByVisibility(views, userWorkspaceId);
+    return this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
   }
 
   @Query(() => ViewDTO, { nullable: true })
@@ -212,46 +209,12 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard())
   async updateCoreView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const existingView = await this.viewService.findById(id, workspace.id);
-
-    if (!isDefined(existingView)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    // Check if trying to change to workspace visibility without permission
-    if (
-      isDefined(input.visibility) &&
-      input.visibility === ViewVisibility.WORKSPACE &&
-      !hasViewsPermission
-    ) {
-      throw new Error(
-        'You need manage views permission to update workspace-level views',
-      );
-    }
-
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -265,16 +228,11 @@ export class ViewResolver {
       });
     }
 
-    const updatedView = await this.viewService.updateWithEntity(
-      existingView,
-      input,
-    );
-
-    return updatedView;
+    return this.viewService.update(id, workspace.id, input);
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard())
   async deleteCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -300,7 +258,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard())
   async destroyCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -15,7 +15,28 @@ export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition)
   const isMutation = typedTokenHelpers.nodeHasDecoratorsNamed(node, ['Mutation']);
 
   const hasAuthGuards = typedTokenHelpers.nodeHasAuthGuards(node);
-  const hasPermissionsGuard = typedTokenHelpers.nodeHasPermissionsGuard(node);
+  let hasPermissionsGuard = typedTokenHelpers.nodeHasPermissionsGuard(node);
+
+  // Fallback: explicitly detect factory-style ViewPermissionGuard()
+  if (!hasPermissionsGuard && node.decorators) {
+    hasPermissionsGuard = node.decorators.some((decorator) => {
+      if (
+        decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression &&
+        decorator.expression.callee.type ===
+          TSESTree.AST_NODE_TYPES.Identifier &&
+        decorator.expression.callee.name === 'UseGuards'
+      ) {
+        return decorator.expression.arguments.some((arg) => {
+          return (
+            arg.type === TSESTree.AST_NODE_TYPES.CallExpression &&
+            arg.callee.type === TSESTree.AST_NODE_TYPES.Identifier &&
+            arg.callee.name === 'ViewPermissionGuard'
+          );
+        });
+      }
+      return false;
+    });
+  }
 
   const findClassDeclaration = (
     node: TSESTree.Node
@@ -35,9 +56,29 @@ export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition)
     ? typedTokenHelpers.nodeHasAuthGuards(classNode)
     : false;
 
-  const hasPermissionsGuardOnResolver = classNode
+  let hasPermissionsGuardOnResolver = classNode
     ? typedTokenHelpers.nodeHasPermissionsGuard(classNode)
     : false;
+
+  if (!hasPermissionsGuardOnResolver && classNode?.decorators) {
+    hasPermissionsGuardOnResolver = classNode.decorators.some((decorator) => {
+      if (
+        decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression &&
+        decorator.expression.callee.type ===
+          TSESTree.AST_NODE_TYPES.Identifier &&
+        decorator.expression.callee.name === 'UseGuards'
+      ) {
+        return decorator.expression.arguments.some((arg) => {
+          return (
+            arg.type === TSESTree.AST_NODE_TYPES.CallExpression &&
+            arg.callee.type === TSESTree.AST_NODE_TYPES.Identifier &&
+            arg.callee.name === 'ViewPermissionGuard'
+          );
+        });
+      }
+      return false;
+    });
+  }
 
   // Basic requirement: all resolvers need auth guards
   const missingAuthGuard = hasGraphQLResolverDecorator &&

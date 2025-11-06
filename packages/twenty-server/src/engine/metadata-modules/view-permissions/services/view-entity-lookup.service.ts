@@ -7,6 +7,7 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { type ViewChildEntityKind } from 'src/engine/metadata-modules/view-permissions/types/view-permissions.types';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 
 @Injectable()
@@ -24,44 +25,64 @@ export class ViewEntityLookupService {
     private readonly viewSortRepository: Repository<ViewSortEntity>,
   ) {}
 
-  async findViewIdByEntityId(
+  async findViewIdByEntityIdAndKind(
+    kind: ViewChildEntityKind,
     entityId: string,
     workspaceId: string,
   ): Promise<string> {
-    const viewField = await this.viewFieldRepository.findOne({
-      where: { id: entityId, workspaceId },
-      select: ['viewId'],
-    });
+    switch (kind) {
+      case 'viewField': {
+        const row = await this.viewFieldRepository.findOne({
+          where: { id: entityId, workspaceId },
+          select: ['viewId'],
+        });
 
-    if (viewField) return viewField.viewId;
+        if (row) return row.viewId;
+        break;
+      }
 
-    const viewFilter = await this.viewFilterRepository.findOne({
-      where: { id: entityId, workspaceId },
-      select: ['viewId'],
-    });
+      case 'viewFilter': {
+        const row = await this.viewFilterRepository.findOne({
+          where: { id: entityId, workspaceId },
+          select: ['viewId'],
+        });
 
-    if (viewFilter) return viewFilter.viewId;
+        if (row) return row.viewId;
+        break;
+      }
 
-    const viewFilterGroup = await this.viewFilterGroupRepository.findOne({
-      where: { id: entityId, workspaceId },
-      select: ['viewId'],
-    });
+      case 'viewFilterGroup': {
+        const row = await this.viewFilterGroupRepository.findOne({
+          where: { id: entityId, workspaceId },
+          select: ['viewId'],
+        });
 
-    if (viewFilterGroup) return viewFilterGroup.viewId;
+        if (row) return row.viewId;
+        break;
+      }
 
-    const viewGroup = await this.viewGroupRepository.findOne({
-      where: { id: entityId, workspaceId },
-      select: ['viewId'],
-    });
+      case 'viewGroup': {
+        const row = await this.viewGroupRepository.findOne({
+          where: { id: entityId, workspaceId },
+          select: ['viewId'],
+        });
 
-    if (viewGroup) return viewGroup.viewId;
+        if (row) return row.viewId;
+        break;
+      }
 
-    const viewSort = await this.viewSortRepository.findOne({
-      where: { id: entityId, workspaceId },
-      select: ['viewId'],
-    });
+      case 'viewSort': {
+        const row = await this.viewSortRepository.findOne({
+          where: { id: entityId, workspaceId },
+          select: ['viewId'],
+        });
 
-    if (viewSort) return viewSort.viewId;
+        if (row) return row.viewId;
+        break;
+      }
+      default:
+        break;
+    }
 
     throw new Error(`Could not find entity with id ${entityId}`);
   }

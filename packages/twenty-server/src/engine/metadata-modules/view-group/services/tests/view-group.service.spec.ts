@@ -309,16 +309,17 @@ describe('ViewGroupService', () => {
       const workspaceId = 'workspace-id';
 
       jest
-        .spyOn(viewGroupService, 'findByIdIncludingDeleted')
+        .spyOn(viewGroupRepository, 'findOne')
         .mockResolvedValue(mockViewGroup);
       jest.spyOn(viewGroupRepository, 'delete').mockResolvedValue({} as any);
 
       const result = await viewGroupService.destroy(id, workspaceId);
 
-      expect(viewGroupService.findByIdIncludingDeleted).toHaveBeenCalledWith(
-        id,
-        workspaceId,
-      );
+      expect(viewGroupRepository.findOne).toHaveBeenCalledWith({
+        where: { id, workspaceId },
+        relations: ['workspace', 'view'],
+        withDeleted: true,
+      });
       expect(viewGroupRepository.delete).toHaveBeenCalledWith(id);
       expect(result).toEqual(mockViewGroup);
     });

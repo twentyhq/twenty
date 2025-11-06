@@ -18,6 +18,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -53,14 +54,16 @@ export class ViewController {
   async findMany(
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<ViewDTO[]> {
     const views = objectMetadataId
       ? await this.viewService.findByObjectMetadataId(
           workspace.id,
           objectMetadataId,
+          userWorkspaceId,
         )
-      : await this.viewService.findByWorkspaceId(workspace.id);
+      : await this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
 
     return this.processViewsWithTemplates(views, workspace.id, locale);
   }

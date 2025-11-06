@@ -28,44 +28,80 @@ export class ViewService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
-    return this.viewRepository.find({
-      where: {
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-      order: { position: 'ASC' },
-      relations: [
-        'workspace',
-        'viewFields',
-        'viewFilters',
-        'viewSorts',
-        'viewGroups',
-        'viewFilterGroups',
-      ],
-    });
+  async findByWorkspaceId(
+    workspaceId: string,
+    userWorkspaceId?: string,
+  ): Promise<ViewEntity[]> {
+    const queryBuilder = this.viewRepository
+      .createQueryBuilder('view')
+      .leftJoinAndSelect('view.workspace', 'workspace')
+      .leftJoinAndSelect('view.viewFields', 'viewFields')
+      .leftJoinAndSelect('view.viewFilters', 'viewFilters')
+      .leftJoinAndSelect('view.viewSorts', 'viewSorts')
+      .leftJoinAndSelect('view.viewGroups', 'viewGroups')
+      .leftJoinAndSelect('view.viewFilterGroups', 'viewFilterGroups')
+      .where('view.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('view.deletedAt IS NULL')
+      .orderBy('view.position', 'ASC');
+
+    // Apply visibility filtering at the database layer
+    if (isDefined(userWorkspaceId)) {
+      queryBuilder.andWhere(
+        '(view.visibility = :workspaceVisibility OR (view.visibility = :unlistedVisibility AND view.createdByUserWorkspaceId = :userWorkspaceId))',
+        {
+          workspaceVisibility: ViewVisibility.WORKSPACE,
+          unlistedVisibility: ViewVisibility.UNLISTED,
+          userWorkspaceId,
+        },
+      );
+    } else {
+      // If no user context, only return workspace-level views
+      queryBuilder.andWhere('view.visibility = :workspaceVisibility', {
+        workspaceVisibility: ViewVisibility.WORKSPACE,
+      });
+    }
+
+    return queryBuilder.getMany();
   }
 
   async findByObjectMetadataId(
     workspaceId: string,
     objectMetadataId: string,
+    userWorkspaceId?: string,
   ): Promise<ViewEntity[]> {
-    return this.viewRepository.find({
-      where: {
-        workspaceId,
+    const queryBuilder = this.viewRepository
+      .createQueryBuilder('view')
+      .leftJoinAndSelect('view.workspace', 'workspace')
+      .leftJoinAndSelect('view.viewFields', 'viewFields')
+      .leftJoinAndSelect('view.viewFilters', 'viewFilters')
+      .leftJoinAndSelect('view.viewSorts', 'viewSorts')
+      .leftJoinAndSelect('view.viewGroups', 'viewGroups')
+      .leftJoinAndSelect('view.viewFilterGroups', 'viewFilterGroups')
+      .where('view.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('view.objectMetadataId = :objectMetadataId', {
         objectMetadataId,
-        deletedAt: IsNull(),
-      },
-      order: { position: 'ASC' },
-      relations: [
-        'workspace',
-        'viewFields',
-        'viewFilters',
-        'viewSorts',
-        'viewGroups',
-        'viewFilterGroups',
-      ],
-    });
+      })
+      .andWhere('view.deletedAt IS NULL')
+      .orderBy('view.position', 'ASC');
+
+    // Apply visibility filtering at the database layer
+    if (isDefined(userWorkspaceId)) {
+      queryBuilder.andWhere(
+        '(view.visibility = :workspaceVisibility OR (view.visibility = :unlistedVisibility AND view.createdByUserWorkspaceId = :userWorkspaceId))',
+        {
+          workspaceVisibility: ViewVisibility.WORKSPACE,
+          unlistedVisibility: ViewVisibility.UNLISTED,
+          userWorkspaceId,
+        },
+      );
+    } else {
+      // If no user context, only return workspace-level views
+      queryBuilder.andWhere('view.visibility = :workspaceVisibility', {
+        workspaceVisibility: ViewVisibility.WORKSPACE,
+      });
+    }
+
+    return queryBuilder.getMany();
   }
 
   async findById(id: string, workspaceId: string): Promise<ViewEntity | null> {
@@ -169,21 +205,14 @@ export class ViewService {
       );
     }
 
-    return this.updateWithEntity(existingView, updateData);
-  }
-
-  async updateWithEntity(
-    entity: ViewEntity,
-    updateData: Partial<ViewEntity>,
-  ): Promise<ViewEntity> {
     const updatedView = await this.viewRepository.save({
-      id: entity.id,
+      id,
       ...updateData,
     });
 
-    await this.flushGraphQLCache(entity.workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
-    return { ...entity, ...updatedView };
+    return { ...existingView, ...updatedView };
   }
 
   async delete(id: string, workspaceId: string): Promise<ViewEntity> {
@@ -199,15 +228,11 @@ export class ViewService {
       );
     }
 
-    return this.deleteWithEntity(view);
-  }
+    await this.viewRepository.softDelete(id);
 
-  async deleteWithEntity(entity: ViewEntity): Promise<ViewEntity> {
-    await this.viewRepository.softDelete(entity.id);
+    await this.flushGraphQLCache(workspaceId);
 
-    await this.flushGraphQLCache(entity.workspaceId);
-
-    return entity;
+    return view;
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
@@ -223,12 +248,8 @@ export class ViewService {
       );
     }
 
-    return this.destroyWithEntity(view);
-  }
-
-  async destroyWithEntity(entity: ViewEntity): Promise<boolean> {
-    await this.viewRepository.delete(entity.id);
-    await this.flushGraphQLCache(entity.workspaceId);
+    await this.viewRepository.delete(id);
+    await this.flushGraphQLCache(workspaceId);
 
     return true;
   }
@@ -271,34 +292,15 @@ export class ViewService {
     return viewName;
   }
 
-  filterViewsByVisibility<T extends ViewEntity>(
-    views: T[],
-    currentUserWorkspaceId?: string,
-  ): T[] {
-    return views.filter((view) => {
-      if (view.visibility === ViewVisibility.WORKSPACE) {
-        return true;
-      }
-
-      if (view.visibility === ViewVisibility.UNLISTED) {
-        return view.createdByUserWorkspaceId === currentUserWorkspaceId;
-      }
-
-      return false;
-    });
-  }
-
   canUserUpdateView(
     view: ViewEntity,
     userWorkspaceId: string | undefined,
     userHasViewsPermission: boolean,
   ): boolean {
-    // Users with VIEWS permission can edit all views
     if (userHasViewsPermission) {
       return true;
     }
 
-    // Users without VIEWS permission can only edit unlisted views they created
     return (
       view.visibility === ViewVisibility.UNLISTED &&
       view.createdByUserWorkspaceId === userWorkspaceId

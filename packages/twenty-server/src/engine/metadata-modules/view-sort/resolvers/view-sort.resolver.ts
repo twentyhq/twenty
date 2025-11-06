@@ -6,17 +6,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
-import {
-  ViewSortException,
-  ViewSortExceptionCode,
-  ViewSortExceptionMessageKey,
-  generateViewSortExceptionMessage,
-} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
-import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewSortDTO)
@@ -47,7 +41,7 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard('viewSort'))
   async createCoreViewSort(
     @Args('input') input: CreateViewSortInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -59,75 +53,32 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard('viewSort'))
   async updateCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewSortInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    const viewSort = await this.viewSortService.findById(id, workspace.id);
-
-    if (!isDefined(viewSort)) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          id,
-        ),
-        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
-      );
-    }
-
-    return this.viewSortService.updateWithEntity(viewSort, input);
+    return this.viewSortService.update(id, workspace.id, input);
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard('viewSort'))
   async deleteCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const viewSort = await this.viewSortService.findById(id, workspace.id);
-
-    if (!isDefined(viewSort)) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          id,
-        ),
-        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
-      );
-    }
-
-    const deletedViewSort =
-      await this.viewSortService.deleteWithEntity(viewSort);
+    const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
 
     return isDefined(deletedViewSort);
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard('viewSort'))
   async destroyCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const viewSort = await this.viewSortService.findByIdIncludingDeleted(
-      id,
-      workspace.id,
-    );
-
-    if (!isDefined(viewSort)) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          id,
-        ),
-        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
-      );
-    }
-
-    const deletedViewSort =
-      await this.viewSortService.destroyWithEntity(viewSort);
-
-    return isDefined(deletedViewSort);
+    return this.viewSortService.destroy(id, workspace.id);
   }
 }

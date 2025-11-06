@@ -7,7 +7,6 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
-import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
 import { ViewEntityLookupService } from 'src/engine/metadata-modules/view-permissions/services/view-entity-lookup.service';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -28,7 +27,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     PermissionsModule,
     WorkspaceCacheStorageModule,
   ],
-  providers: [ViewService, ViewEntityLookupService, ViewPermissionGuard],
-  exports: [ViewService, ViewPermissionGuard, ViewEntityLookupService],
+  providers: [ViewService, ViewEntityLookupService],
+  exports: [ViewService, ViewEntityLookupService],
 })
 export class ViewPermissionsModule {}

@@ -9,12 +9,6 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
-import {
-  ViewFilterGroupException,
-  ViewFilterGroupExceptionCode,
-  ViewFilterGroupExceptionMessageKey,
-  generateViewFilterGroupExceptionMessage,
-} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -49,7 +43,7 @@ export class ViewFilterGroupResolver {
   }
 
   @Mutation(() => ViewFilterGroupDTO)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard('viewFilterGroup'))
   async createCoreViewFilterGroup(
     @Args('input') input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -61,82 +55,35 @@ export class ViewFilterGroupResolver {
   }
 
   @Mutation(() => ViewFilterGroupDTO)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard('viewFilterGroup'))
   async updateCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ViewFilterGroupDTO> {
-    const viewFilterGroup = await this.viewFilterGroupService.findById(
-      id,
-      workspace.id,
-    );
-
-    if (!isDefined(viewFilterGroup)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-          id,
-        ),
-        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
-      );
-    }
-
-    return this.viewFilterGroupService.updateWithEntity(viewFilterGroup, input);
+    return this.viewFilterGroupService.update(id, workspace.id, input);
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard('viewFilterGroup'))
   async deleteCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const viewFilterGroup = await this.viewFilterGroupService.findById(
+    const deletedViewFilterGroup = await this.viewFilterGroupService.delete(
       id,
       workspace.id,
     );
-
-    if (!isDefined(viewFilterGroup)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-          id,
-        ),
-        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
-      );
-    }
-
-    const deletedViewFilterGroup =
-      await this.viewFilterGroupService.deleteWithEntity(viewFilterGroup);
 
     return isDefined(deletedViewFilterGroup);
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard('viewFilterGroup'))
   async destroyCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
-    const viewFilterGroup =
-      await this.viewFilterGroupService.findByIdIncludingDeleted(
-        id,
-        workspace.id,
-      );
-
-    if (!isDefined(viewFilterGroup)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-          id,
-        ),
-        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
-      );
-    }
-
-    const deletedViewFilterGroup =
-      await this.viewFilterGroupService.destroyWithEntity(viewFilterGroup);
-
-    return isDefined(deletedViewFilterGroup);
+    return this.viewFilterGroupService.destroy(id, workspace.id);
   }
 }

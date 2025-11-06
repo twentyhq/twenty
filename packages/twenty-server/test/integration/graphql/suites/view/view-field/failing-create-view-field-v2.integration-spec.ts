@@ -16,7 +16,6 @@ import {
 
 import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 
-// Helper to normalize UUIDs in error messages for snapshot testing
 const normalizeErrorMessage = (error: any) => {
   const UUID_REGEX =
     /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;

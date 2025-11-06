@@ -1,10 +1,10 @@
 import { TSESTree } from '@typescript-eslint/utils';
 
 export const typedTokenHelpers = {
-  nodeHasDecoratorsNamed(
+  nodeHasDecoratorsNamed: (
     node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration,
     decoratorNames: string[]
-  ): boolean {
+  ): boolean => {
     if (!node.decorators) {
       return false;
     }
@@ -25,9 +25,9 @@ export const typedTokenHelpers = {
     });
   },
 
-  nodeHasAuthGuards(
+  nodeHasAuthGuards: (
     node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration
-  ): boolean {
+  ): boolean => {
     if (!node.decorators) {
       return false;
     }
@@ -54,9 +54,9 @@ export const typedTokenHelpers = {
     });
   },
 
-  nodeHasPermissionsGuard(
+  nodeHasPermissionsGuard: (
     node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration
-  ): boolean {
+  ): boolean => {
     if (!node.decorators) {
       return false;
     }
@@ -67,13 +67,17 @@ export const typedTokenHelpers = {
         decorator.expression.callee.type === TSESTree.AST_NODE_TYPES.Identifier &&
         decorator.expression.callee.name === 'UseGuards'
       ) {
-        // Check if any argument is SettingsPermissionsGuard, CustomPermissionGuard, ViewPermissionGuard, or NoPermissionGuard
+        // Check if any argument is SettingsPermissionsGuard, ViewPermissionGuard (factory),
+        // or identifier guards: CustomPermissionGuard, ViewPermissionGuard, NoPermissionGuard
         return decorator.expression.arguments.some((arg) => {
           // SettingsPermissionsGuard(PermissionFlagType.XXX)
           if (arg.type === TSESTree.AST_NODE_TYPES.CallExpression) {
             const callee = arg.callee;
             if (callee.type === TSESTree.AST_NODE_TYPES.Identifier) {
-              return callee.name === 'SettingsPermissionsGuard';
+              return (
+                callee.name === 'SettingsPermissionsGuard' ||
+                callee.name === 'ViewPermissionGuard'
+              );
             }
           }
           // CustomPermissionGuard, ViewPermissionGuard, or NoPermissionGuard

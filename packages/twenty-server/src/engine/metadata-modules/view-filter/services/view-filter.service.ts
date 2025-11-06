@@ -65,22 +65,6 @@ export class ViewFilterService {
     return viewFilter || null;
   }
 
-  async findByIdIncludingDeleted(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewFilterEntity | null> {
-    const viewFilter = await this.viewFilterRepository.findOne({
-      where: {
-        id,
-        workspaceId,
-      },
-      relations: ['workspace', 'view', 'viewFilterGroup'],
-      withDeleted: true,
-    });
-
-    return viewFilter || null;
-  }
-
   async create(
     viewFilterData: Partial<ViewFilterEntity>,
   ): Promise<ViewFilterEntity> {
@@ -154,21 +138,14 @@ export class ViewFilterService {
       );
     }
 
-    return this.updateWithEntity(existingViewFilter, updateData);
-  }
-
-  async updateWithEntity(
-    entity: ViewFilterEntity,
-    updateData: Partial<ViewFilterEntity>,
-  ): Promise<ViewFilterEntity> {
     const updatedViewFilter = await this.viewFilterRepository.save({
-      id: entity.id,
+      id,
       ...updateData,
     });
 
-    await this.flushGraphQLCache(entity.workspaceId);
+    await this.flushGraphQLCache(workspaceId);
 
-    return { ...entity, ...updatedViewFilter };
+    return { ...existingViewFilter, ...updatedViewFilter };
   }
 
   async delete(id: string, workspaceId: string): Promise<ViewFilterEntity> {
@@ -184,19 +161,22 @@ export class ViewFilterService {
       );
     }
 
-    return this.deleteWithEntity(viewFilter);
-  }
+    await this.viewFilterRepository.softDelete(id);
 
-  async deleteWithEntity(entity: ViewFilterEntity): Promise<ViewFilterEntity> {
-    await this.viewFilterRepository.softDelete(entity.id);
+    await this.flushGraphQLCache(workspaceId);
 
-    await this.flushGraphQLCache(entity.workspaceId);
-
-    return entity;
+    return viewFilter;
   }
 
   async destroy(id: string, workspaceId: string): Promise<ViewFilterEntity> {
-    const viewFilter = await this.findByIdIncludingDeleted(id, workspaceId);
+    const viewFilter = await this.viewFilterRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: ['workspace', 'view', 'viewFilterGroup'],
+      withDeleted: true,
+    });
 
     if (!isDefined(viewFilter)) {
       throw new ViewFilterException(
@@ -208,15 +188,11 @@ export class ViewFilterService {
       );
     }
 
-    return this.destroyWithEntity(viewFilter);
-  }
+    await this.viewFilterRepository.delete(id);
 
-  async destroyWithEntity(entity: ViewFilterEntity): Promise<ViewFilterEntity> {
-    await this.viewFilterRepository.delete(entity.id);
+    await this.flushGraphQLCache(workspaceId);
 
-    await this.flushGraphQLCache(entity.workspaceId);
-
-    return entity;
+    return viewFilter;
   }
 
   private async flushGraphQLCache(workspaceId: string): Promise<void> {
