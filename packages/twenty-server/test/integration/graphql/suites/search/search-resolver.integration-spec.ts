@@ -163,7 +163,6 @@ describe('SearchResolver', () => {
     };
   }>[] = [
     {
-      only: true,
       title:
         'should return all records for "isSearchable:true" objects when no search input is provided',
       context: {
