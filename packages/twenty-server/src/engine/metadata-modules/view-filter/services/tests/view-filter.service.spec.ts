@@ -325,13 +325,16 @@ describe('ViewFilterService', () => {
       const workspaceId = 'workspace-id';
 
       jest
-        .spyOn(viewFilterService, 'findById')
+        .spyOn(viewFilterService, 'findByIdIncludingDeleted')
         .mockResolvedValue(mockViewFilter);
       jest.spyOn(viewFilterRepository, 'delete').mockResolvedValue({} as any);
 
       const result = await viewFilterService.destroy(id, workspaceId);
 
-      expect(viewFilterService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(viewFilterService.findByIdIncludingDeleted).toHaveBeenCalledWith(
+        id,
+        workspaceId,
+      );
       expect(viewFilterRepository.delete).toHaveBeenCalledWith(id);
       expect(result).toEqual(mockViewFilter);
     });

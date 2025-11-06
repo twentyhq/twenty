@@ -118,7 +118,7 @@ exports[`View Field Resolver - Failing Create Operation - v2 should fail to crea
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View (id: f33b6577-c403-4b42-a3d6-880218374239) not found",
+  "message": "View (id: {{UUID}}) not found",
   "name": "NotFoundError",
 }
 `;

@@ -344,7 +344,7 @@ describe('ViewFilterGroupService', () => {
       const workspaceId = 'workspace-id';
 
       jest
-        .spyOn(viewFilterGroupService, 'findById')
+        .spyOn(viewFilterGroupService, 'findByIdIncludingDeleted')
         .mockResolvedValue(mockViewFilterGroup);
       jest
         .spyOn(viewFilterGroupRepository, 'delete')
@@ -352,10 +352,9 @@ describe('ViewFilterGroupService', () => {
 
       const result = await viewFilterGroupService.destroy(id, workspaceId);
 
-      expect(viewFilterGroupService.findById).toHaveBeenCalledWith(
-        id,
-        workspaceId,
-      );
+      expect(
+        viewFilterGroupService.findByIdIncludingDeleted,
+      ).toHaveBeenCalledWith(id, workspaceId);
       expect(viewFilterGroupRepository.delete).toHaveBeenCalledWith(id);
       expect(result).toEqual(true);
     });
