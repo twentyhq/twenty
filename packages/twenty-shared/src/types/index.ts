@@ -18,7 +18,56 @@ export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
+export type {
+  FieldMetadataDefaultValueFunctionNames,
+  FieldMetadataClassValidation,
+  FieldMetadataFunctionDefaultValue,
+  FieldMetadataDefaultValueForType,
+  FieldMetadataDefaultValueForAnyType,
+  FieldMetadataDefaultValue,
+  FieldMetadataDefaultSerializableValue,
+} from './FieldMetadataDefaultValue';
+export {
+  fieldMetadataDefaultValueFunctionName,
+  FieldMetadataDefaultValueString,
+  FieldMetadataDefaultValueRawJson,
+  FieldMetadataDefaultValueRichTextV2,
+  FieldMetadataDefaultValueRichText,
+  FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValueBoolean,
+  FieldMetadataDefaultValueStringArray,
+  FieldMetadataDefaultValueDateTime,
+  FieldMetadataDefaultValueDate,
+  FieldMetadataDefaultValueCurrency,
+  FieldMetadataDefaultValueFullName,
+  FieldMetadataDefaultValueUuidFunction,
+  FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueAddress,
+  FieldMetadataDefaultValueLinks,
+  FieldMetadataDefaultActor,
+  FieldMetadataDefaultValueEmails,
+  FieldMetadataDefaultValuePhones,
+  FieldMetadataDefaultArray,
+} from './FieldMetadataDefaultValue';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
+export type { TagColor, FieldMetadataOptions } from './FieldMetadataOptions';
+export {
+  FieldMetadataDefaultOption,
+  FieldMetadataComplexOption,
+} from './FieldMetadataOptions';
+export type {
+  FieldNumberVariant,
+  FieldMetadataNumberSettings,
+  FieldMetadataTextSettings,
+  FieldMetadataDateSettings,
+  FieldMetadataDateTimeSettings,
+  FieldMetadataRelationSettings,
+  FieldMetadataAddressSettings,
+  FieldMetadataTsVectorSettings,
+  AllFieldMetadataSettings,
+  FieldMetadataSettings,
+} from './FieldMetadataSettings';
+export { NumberDataType, DateDisplayFormat } from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldRatingValue } from './FieldRatingValue';
 export type {
@@ -85,6 +134,7 @@ export type {
 } from './RecordGqlOperationFilter';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
+export { RelationOnDeleteAction } from './RelationOnDeleteAction.type';
 export { RelationType } from './RelationType';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
