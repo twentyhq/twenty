@@ -225,10 +225,20 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     return await this.userWorkspaceRepository.count({ where: { userId } });
   }
 
-  async deleteUserWorkspace(userWorkspaceId: string): Promise<void> {
-    await this.roleTargetsRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
-
-    await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
+  async deleteUserWorkspace({
+    userWorkspaceId,
+    softDelete = false,
+  }: {
+    userWorkspaceId: string;
+    softDelete?: boolean;
+  }): Promise<void> {
+    if (softDelete) {
+      await this.roleTargetsRepository.softRemove({ userWorkspaceId });
+      await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
+    } else {
+      await this.roleTargetsRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
+      await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
+    }
   }
 
   async findAvailableWorkspacesByEmail(email: string) {

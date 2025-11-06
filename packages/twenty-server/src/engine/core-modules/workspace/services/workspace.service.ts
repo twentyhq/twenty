@@ -247,7 +247,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   }
 
   async deleteMetadataSchemaCacheAndUserWorkspace(workspace: WorkspaceEntity) {
-    await this.userWorkspaceService.deleteUserWorkspace(workspace.id);
+    await this.userWorkspaceService.deleteUserWorkspace({
+      userWorkspaceId: workspace.id,
+    });
 
     if (this.billingService.isBillingEnabled()) {
       await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
@@ -258,7 +260,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     return workspace;
   }
 
-  async deleteWorkspace(id: string) {
+  async deleteWorkspace(id: string, softDelete = false) {
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -274,7 +276,11 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     });
 
     for (const userWorkspace of userWorkspaces) {
-      await this.handleRemoveWorkspaceMember(id, userWorkspace.userId);
+      await this.handleRemoveWorkspaceMember(
+        id,
+        userWorkspace.userId,
+        softDelete,
+      );
     }
     this.logger.log(`workspace ${id} user workspaces deleted`);
 
@@ -286,6 +292,18 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspaceId: workspace.id,
     });
     this.logger.log(`workspace ${id} cache flushed`);
+
+    if (softDelete) {
+      if (this.billingService.isBillingEnabled()) {
+        await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
+      }
+
+      await this.workspaceRepository.softDelete({ id });
+
+      this.logger.log(`workspace ${id} soft deleted`);
+
+      return workspace;
+    }
 
     await this.deleteMetadataSchemaCacheAndUserWorkspace(workspace);
 
@@ -308,19 +326,36 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     return workspace;
   }
 
-  async handleRemoveWorkspaceMember(workspaceId: string, userId: string) {
-    await this.userWorkspaceRepository.delete({
-      userId,
-      workspaceId,
-    });
-
+  async handleRemoveWorkspaceMember(
+    workspaceId: string,
+    userId: string,
+    softDelete = false,
+  ) {
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId,
       },
     });
 
-    if (userWorkspaces.length === 0) {
+    const userWorkspaceOfRemovedWorkspaceMember = userWorkspaces?.find(
+      (userWorkspace: UserWorkspaceEntity) =>
+        userWorkspace.workspaceId === workspaceId,
+    );
+
+    if (isDefined(userWorkspaceOfRemovedWorkspaceMember)) {
+      await this.userWorkspaceService.deleteUserWorkspace({
+        userWorkspaceId: userWorkspaceOfRemovedWorkspaceMember.id,
+        softDelete,
+      });
+    }
+
+    const hasOtherUserWorkspaces = isDefined(
+      userWorkspaceOfRemovedWorkspaceMember,
+    )
+      ? userWorkspaces.length > 1
+      : userWorkspaces.length > 0;
+
+    if (!hasOtherUserWorkspaces) {
       await this.userRepository.softDelete(userId);
     }
   }

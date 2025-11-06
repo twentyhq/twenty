@@ -93,6 +93,8 @@ export class WorkspaceMemberDeleteOnePostQueryHook
       );
     }
 
-    await this.userWorkspaceService.deleteUserWorkspace(userWorkspace.id);
+    await this.userWorkspaceService.deleteUserWorkspace({
+      userWorkspaceId: userWorkspace.id,
+    });
   }
 }

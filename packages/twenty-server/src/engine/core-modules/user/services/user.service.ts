@@ -32,8 +32,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
@@ -171,6 +169,12 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     const userWorkspaceId = userWorkspace.id;
 
+    if (workspaceMembers.length === 1) {
+      await this.workspaceService.deleteWorkspace(workspaceId);
+
+      return;
+    }
+
     if (workspaceMembers.length > 1) {
       try {
         await this.userRoleService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
@@ -205,13 +209,9 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     await workspaceMemberRepository.delete({ userId: userWorkspace.userId });
 
-    await this.userWorkspaceService.deleteUserWorkspace(userWorkspaceId);
-
-    if (workspaceMembers.length === 1) {
-      await this.workspaceService.deleteWorkspace(workspaceId);
-
-      return;
-    }
+    await this.userWorkspaceService.deleteUserWorkspace({
+      userWorkspaceId,
+    });
   }
 
   async hasUserAccessToWorkspaceOrThrow(userId: string, workspaceId: string) {
