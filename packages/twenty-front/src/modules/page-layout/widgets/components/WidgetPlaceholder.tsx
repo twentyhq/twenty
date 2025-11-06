@@ -51,6 +51,7 @@ export const WidgetPlaceholder = () => {
       isDragging={false}
     >
       <WidgetCardHeader
+        isWidgetCardHovered={false}
         isInEditMode={isPageLayoutInEditMode}
         title={t`Add Widget`}
         isEmpty

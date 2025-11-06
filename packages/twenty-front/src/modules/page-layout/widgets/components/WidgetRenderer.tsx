@@ -12,7 +12,7 @@ import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
-import { type MouseEvent } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
 import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
@@ -61,6 +61,16 @@ export const WidgetRenderer = ({
     deletePageLayoutWidget(widget.id);
   };
 
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
   return (
     <WidgetCard
       onClick={isPageLayoutInEditMode ? handleClick : undefined}
@@ -68,9 +78,12 @@ export const WidgetRenderer = ({
       pageLayoutType={pageLayoutType}
       layoutMode={layoutMode}
       isEditing={isEditing}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {layoutMode !== 'canvas' && (
         <WidgetCardHeader
+          isWidgetCardHovered={isHovered}
           isInEditMode={isPageLayoutInEditMode}
           title={widget.title}
           onRemove={handleRemove}
