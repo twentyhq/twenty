@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import { type ObjectRecord } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
@@ -14,6 +15,7 @@ type TimelineActivityPayloadWorkspaceIdAndObjectSingularName = {
   })[];
   workspaceId: string;
   objectSingularName: string;
+  isFeatureFlagTimelineActivtyMigrated: boolean;
 };
 
 @Injectable()
@@ -26,11 +28,13 @@ export class TimelineActivityRepository {
     objectSingularName,
     workspaceId,
     payloads,
+    isFeatureFlagTimelineActivtyMigrated,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const recentTimelineActivities = await this.findRecentTimelineActivities({
       objectSingularName,
       workspaceId,
       payloads,
+      isFeatureFlagTimelineActivtyMigrated,
     });
 
     const payloadsWithDiff = payloads
@@ -50,10 +54,17 @@ export class TimelineActivityRepository {
     const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
       [];
 
+    const timelineActivityPropertyName =
+      await this.getTimelineActivityPropertyName(
+        objectSingularName,
+        workspaceId,
+        isFeatureFlagTimelineActivtyMigrated,
+      );
+
     for (const payload of payloadsWithDiff) {
       const recentTimelineActivity = recentTimelineActivities.find(
         (timelineActivity) =>
-          timelineActivity[`${objectSingularName}Id`] === payload.recordId &&
+          timelineActivity[timelineActivityPropertyName] === payload.recordId &&
           timelineActivity.workspaceMemberId === payload.workspaceMemberId &&
           (!isDefined(payload.linkedRecordId) ||
             timelineActivity.linkedRecordId === payload.linkedRecordId) &&
@@ -81,6 +92,7 @@ export class TimelineActivityRepository {
       objectSingularName,
       payloads: payloadsToInsert,
       workspaceId,
+      isFeatureFlagTimelineActivtyMigrated,
     });
   }
 
@@ -88,6 +100,7 @@ export class TimelineActivityRepository {
     objectSingularName,
     workspaceId,
     payloads,
+    isFeatureFlagTimelineActivtyMigrated,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     const timelineActivityTypeORMRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -100,8 +113,15 @@ export class TimelineActivityRepository {
 
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
+    const timelineActivityPropertyName =
+      await this.getTimelineActivityPropertyName(
+        objectSingularName,
+        workspaceId,
+        isFeatureFlagTimelineActivtyMigrated,
+      );
+
     const whereConditions: Record<string, unknown> = {
-      [`${objectSingularName}Id`]: In(
+      [timelineActivityPropertyName]: In(
         payloads.map((payload) => payload.recordId),
       ),
       name: In(payloads.map((payload) => payload.name)),
@@ -122,6 +142,7 @@ export class TimelineActivityRepository {
     objectSingularName,
     workspaceId,
     payloads,
+    isFeatureFlagTimelineActivtyMigrated,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
     if (payloads.length === 0) {
       return;
@@ -136,12 +157,19 @@ export class TimelineActivityRepository {
         },
       );
 
+    const timelineActivityPropertyName =
+      await this.getTimelineActivityPropertyName(
+        objectSingularName,
+        workspaceId,
+        isFeatureFlagTimelineActivtyMigrated,
+      );
+
     return timelineActivityTypeORMRepository.insert(
       payloads.map((payload) => ({
         name: payload.name,
         properties: payload.properties,
         workspaceMemberId: payload.workspaceMemberId,
-        [`${objectSingularName}Id`]: payload.recordId,
+        [timelineActivityPropertyName]: payload.recordId,
         linkedRecordCachedName: payload.linkedRecordCachedName ?? '',
         linkedRecordId: payload.linkedRecordId,
         linkedObjectMetadataId: payload.linkedObjectMetadataId,
@@ -173,5 +201,20 @@ export class TimelineActivityRepository {
       properties: properties,
       workspaceMemberId: workspaceMemberId,
     });
+  }
+
+  private async getTimelineActivityPropertyName(
+    objectSingularName: string,
+    workspaceId: string,
+    isFeatureFlagTimelineActivtyMigrated: boolean,
+  ) {
+    console.log(
+      'isFeatureFlagTimelineActivtyMigrated',
+      isFeatureFlagTimelineActivtyMigrated,
+    );
+
+    return isFeatureFlagTimelineActivtyMigrated
+      ? `timelineActivity${capitalize(objectSingularName)}Id`
+      : `${objectSingularName}Id`;
   }
 }
