@@ -6,7 +6,7 @@ exports[`View Field Resolver - Failing Update Operation - v2 should fail to upda
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View field (id: 20202020-0000-4000-8000-000000000001) not found",
+  "message": "View field to update not found",
   "name": "NotFoundError",
 }
 `;

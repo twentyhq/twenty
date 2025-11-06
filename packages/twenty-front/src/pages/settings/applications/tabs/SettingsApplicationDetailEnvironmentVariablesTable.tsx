@@ -8,9 +8,9 @@ import { useMemo, useState } from 'react';
 import { H2Title, IconSearch } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
-    type EnvironmentVariable,
-    SettingsApplicationDetailEnvironmentVariablesTableRow,
-    StyledApplicationEnvironmentVariableTableRow,
+  type EnvironmentVariable,
+  SettingsApplicationDetailEnvironmentVariablesTableRow,
+  StyledApplicationEnvironmentVariableTableRow,
 } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTableRow';
 
 const StyledSearchInput = styled(SettingsTextInput)`

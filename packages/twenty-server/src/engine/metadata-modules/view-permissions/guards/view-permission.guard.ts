@@ -53,14 +53,10 @@ export const ViewPermissionGuard = (
         request.workspace.id,
       );
 
+      // If view doesn't exist, allow the operation so the service can handle
+      // the NOT_FOUND error with proper context (delete/update/destroy-specific messages)
       if (!view) {
-        throw new ViewException(
-          generateViewExceptionMessage(
-            ViewExceptionMessageKey.VIEW_NOT_FOUND,
-            viewId,
-          ),
-          ViewExceptionCode.VIEW_NOT_FOUND,
-        );
+        return true;
       }
 
       return this.canUserAccessView(
@@ -88,8 +84,14 @@ export const ViewPermissionGuard = (
       }
 
       // Bulk create operations (createManyCoreViewFields, etc.)
-      if (inputs && inputs[0] && typeof inputs[0].viewId === 'string') {
-        return inputs[0].viewId;
+      // Return null for empty arrays (no items to validate)
+      if (inputs) {
+        if (inputs.length === 0) {
+          return null;
+        }
+        if (inputs[0] && typeof inputs[0].viewId === 'string') {
+          return inputs[0].viewId;
+        }
       }
 
       // Update/delete operations on child entities with top-level id arg

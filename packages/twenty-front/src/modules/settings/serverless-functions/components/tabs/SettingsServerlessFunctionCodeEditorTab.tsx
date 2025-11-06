@@ -1,6 +1,6 @@
 import {
-    type File,
-    SettingsServerlessFunctionCodeEditor,
+  type File,
+  SettingsServerlessFunctionCodeEditor,
 } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditor';
 import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/serverless-functions/constants/SettingsServerlessFunctionTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
