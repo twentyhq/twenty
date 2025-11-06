@@ -11,14 +11,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import {
-  createStandardApplications,
-  SeedStandardApplicationsArgs,
-} from 'src/engine/workspace-manager/dev-seeder/core/utils/create-standard-applications.util';
-import {
-  TWENTY_STANDARD_APPLICATION,
-  TWENTY_WORKFLOW_APPLICATION,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 @Command({
   name: 'upgrade:1-11:seed-standard-applications',
@@ -50,7 +43,7 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
         workspaceId,
         universalIdentifier: In([
           TWENTY_STANDARD_APPLICATION,
-          TWENTY_WORKFLOW_APPLICATION,
+          TWENTY_STANDARD_APPLICATION,
         ]),
       },
     });
@@ -59,44 +52,27 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
       existingApplications.map((app) => app.universalIdentifier),
     );
 
-    const applicationToSync: SeedStandardApplicationsArgs['applicationsToSeed'] =
-      {
-        twentyStandard: !existingIds.has(
-          TWENTY_STANDARD_APPLICATION.universalIdentifier,
-        ),
-        twentyWorkflows: !existingIds.has(
-          TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
-        ),
-      };
-
     // TODO refactor logging to be more human readable
-    this.logger.log(
-      `About to seed twenty standard: ${applicationToSync.twentyStandard} and twenty workflow: ${applicationToSync.twentyWorkflows}`,
-    );
-    if (!options.dryRun) {
-      try {
-        await createStandardApplications({
-          applicationService: this.applicationService,
-          workspaceId,
-          applicationsToSeed: {
-            twentyStandard: !existingIds.has(
-              TWENTY_STANDARD_APPLICATION.universalIdentifier,
-            ),
-            twentyWorkflows: !existingIds.has(
-              TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
-            ),
-          },
-        });
+    if (existingIds.has(TWENTY_STANDARD_APPLICATION.universalIdentifier)) {
+      this.logger.log(
+        `Skipping twenty standard application as it already exists`,
+      );
+      return;
+    }
 
-        this.logger.log(
-          `Successfully seeded twenty standard: ${applicationToSync.twentyStandard} and twenty workflow: ${applicationToSync.twentyWorkflows}`,
-        );
-      } catch (e) {
-        this.logger.error(
-          `Failed to seed twenty standard: ${applicationToSync.twentyStandard} and twenty workflow: ${applicationToSync.twentyWorkflows}`,
-          e,
-        );
-      }
+    this.logger.log(`About to seed twenty standard application`);
+    if (options.dryRun) {
+      return;
+    }
+
+    try {
+      await this.applicationService.createTwentyStandardApplication({
+        workspaceId,
+      });
+
+      this.logger.log(`Successfully seeded twenty standard`);
+    } catch (e) {
+      this.logger.error(`Failed to seed twenty standard`, e);
     }
   }
 }

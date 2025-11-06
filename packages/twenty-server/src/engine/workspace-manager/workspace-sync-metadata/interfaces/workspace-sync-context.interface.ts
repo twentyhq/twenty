@@ -1,10 +1,9 @@
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
-import { type StandardApplicationEntityByApplicationUniversalIdentifier } from 'src/engine/core-modules/application/types/standard-application-entity-by-applicatin-universal-identifier';
-
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 export interface WorkspaceSyncContext {
   workspaceId: string;
   dataSourceId: string;
   featureFlags: FeatureFlagMap;
-  standardApplicationEntityByApplicationUniversalIdentifier: StandardApplicationEntityByApplicationUniversalIdentifier;
+  twentyStandardApplication: ApplicationEntity;
 }

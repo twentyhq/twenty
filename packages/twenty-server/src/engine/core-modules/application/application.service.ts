@@ -10,12 +10,8 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
-import { StandardApplicationEntityByApplicationUniversalIdentifier } from 'src/engine/core-modules/application/types/standard-application-entity-by-applicatin-universal-identifier';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import {
-  TWENTY_STANDARD_APPLICATION,
-  TWENTY_WORKFLOW_APPLICATION,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 @Injectable()
 export class ApplicationService {
@@ -24,37 +20,6 @@ export class ApplicationService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
-
-  async findStandardTwentyApplicationsOrThrow({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<StandardApplicationEntityByApplicationUniversalIdentifier> {
-    const standardApplicationIdByApplicationUniversalIdentifier =
-      {} as StandardApplicationEntityByApplicationUniversalIdentifier;
-
-    for (const universalIdentifier of [
-      TWENTY_STANDARD_APPLICATION.universalIdentifier,
-      TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
-    ] as const) {
-      const application = await this.findByUniversalIdentifier(
-        universalIdentifier,
-        workspaceId,
-      );
-
-      if (!isDefined(application)) {
-        throw new Error(
-          `Could not find standard application ${universalIdentifier}, should never occur`,
-        );
-      }
-
-      standardApplicationIdByApplicationUniversalIdentifier[
-        universalIdentifier
-      ] = application;
-    }
-
-    return standardApplicationIdByApplicationUniversalIdentifier;
-  }
 
   async findManyApplications(
     workspaceId: string,
@@ -100,16 +65,37 @@ export class ApplicationService {
     });
   }
 
-  async findByUniversalIdentifier(
-    universalIdentifier: string,
-    workspaceId: string,
-  ) {
+  async findByUniversalIdentifier({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }) {
     return this.applicationRepository.findOne({
       where: {
         universalIdentifier,
         workspaceId,
       },
     });
+  }
+
+  async createTwentyStandardApplication(
+    {
+      workspaceId,
+    }: {
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    return await this.create(
+      {
+        ...TWENTY_STANDARD_APPLICATION,
+        serverlessFunctionLayerId: null,
+        workspaceId,
+      },
+      queryRunner,
+    );
   }
 
   async create(
@@ -160,10 +146,10 @@ export class ApplicationService {
   }
 
   async delete(universalIdentifier: string, workspaceId: string) {
-    const application = await this.findByUniversalIdentifier(
+    const application = await this.findByUniversalIdentifier({
       universalIdentifier,
       workspaceId,
-    );
+    });
 
     if (!isDefined(application)) {
       throw new Error(`Application does not exist`);

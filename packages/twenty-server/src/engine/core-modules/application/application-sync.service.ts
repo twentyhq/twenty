@@ -103,8 +103,10 @@ export class ApplicationSyncService {
     workspaceId: string;
   }): Promise<ApplicationEntity> {
     const application = await this.applicationService.findByUniversalIdentifier(
-      manifest.application.universalIdentifier,
-      workspaceId,
+      {
+        universalIdentifier: manifest.application.universalIdentifier,
+        workspaceId,
+      },
     );
 
     const name = manifest.application.displayName ?? packageJson.name;
@@ -951,8 +953,7 @@ export class ApplicationSyncService {
     );
 
     const application = await this.applicationService.findByUniversalIdentifier(
-      applicationUniversalIdentifier,
-      workspaceId,
+      { universalIdentifier: applicationUniversalIdentifier, workspaceId },
     );
 
     if (!isDefined(application)) {
