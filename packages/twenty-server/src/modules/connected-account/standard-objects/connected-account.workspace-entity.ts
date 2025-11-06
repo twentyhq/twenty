@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import {
   ConnectedAccountProvider,
   FieldMetadataType,
-  RelationOnDeleteAction
+  RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
