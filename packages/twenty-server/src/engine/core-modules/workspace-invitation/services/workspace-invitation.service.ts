@@ -9,7 +9,7 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, IsNull, Repository } from 'typeorm';
 
 import {
@@ -210,14 +210,16 @@ export class WorkspaceInvitationService {
   ) {
     const appToken = await this.getOneWorkspaceInvitation(workspaceId, email);
 
-    if (appToken) {
-      if (queryRunner) {
-        await queryRunner.manager
-          .getRepository(AppTokenEntity)
-          .delete(appToken.id);
-      } else {
-        await this.appTokenRepository.delete(appToken.id);
-      }
+    if (!isDefined(appToken)) {
+      return;
+    }
+
+    if (queryRunner) {
+      await queryRunner.manager
+        .getRepository(AppTokenEntity)
+        .delete(appToken.id);
+    } else {
+      await this.appTokenRepository.delete(appToken.id);
     }
   }
 

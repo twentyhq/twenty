@@ -1,13 +1,21 @@
-import { findManyApplicationsQueryFactory } from 'test/integration/graphql/utils/find-many-applications-query-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import gql from 'graphql-tag';
 
 import { type ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 
+export const APPLICATION_GQL_FIELDS = `
+  id
+  name
+  description
+  version
+  universalIdentifier
+`;
+
 export const findManyApplications = async ({
-  gqlFields,
+  gqlFields = APPLICATION_GQL_FIELDS,
   expectToFail,
   accessToken,
 }: {
@@ -17,9 +25,19 @@ export const findManyApplications = async ({
 }): CommonResponseBody<{
   findManyApplications: ApplicationDTO[];
 }> => {
-  const graphqlOperation = findManyApplicationsQueryFactory(gqlFields);
-
-  const response = await makeGraphqlAPIRequest(graphqlOperation, accessToken);
+  const response = await makeGraphqlAPIRequest(
+    {
+      query: gql`
+    query FindManyApplications {
+      findManyApplications {
+        ${gqlFields}
+      }
+    }
+  `,
+      variables: {},
+    },
+    accessToken,
+  );
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

@@ -52,7 +52,6 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
       existingApplications.map((app) => app.universalIdentifier),
     );
 
-    // TODO refactor logging to be more human readable
     if (existingIds.has(TWENTY_STANDARD_APPLICATION.universalIdentifier)) {
       this.logger.log(
         `Skipping twenty standard application as it already exists`,
