@@ -1,14 +1,14 @@
 import { SettingsAdminTableCard } from '@/settings/admin-panel/components/SettingsAdminTableCard';
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
 import type { Application } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 export const SettingsApplicationVersionContainer = ({
   application,
 }: {
-  application?: Omit<Application, 'objects'> & { objects: { id: string }[] };
+  application?: Omit<Application, 'objects' | 'universalIdentifier'> & { objects: { id: string }[] };
 }) => {
   const loading = !isDefined(application);
 
