@@ -589,9 +589,9 @@ msgstr "{connectFieldName}에 연결할 수 없습니다. 조건에 맞는 고�
 msgid "Can't impersonate user via api key"
 msgstr "API 키를 통해 사용자를 가장할 수 없습니다."
 
-#. js-lingui-id: 874/Xl
+#. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-deactivated version"
+msgid "Cannot activate non-draft or non-last-published version"
 msgstr ""
 
 #. js-lingui-id: LIPsWu
@@ -624,6 +624,11 @@ msgstr "활성화되지 않은 워크플로우 버전을 비활성화할 수 없
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "중복된 값이 존재하여 고유성을 설정할 수 없습니다. 먼저 데이터 검토 및 수정하십시오 (소프트 삭제된 기록 포함)."
+
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
+msgstr ""
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
