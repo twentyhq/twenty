@@ -43,7 +43,7 @@ export const activateWorkspace = async ({
       },
     },
     accessToken,
-  )
+  );
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
