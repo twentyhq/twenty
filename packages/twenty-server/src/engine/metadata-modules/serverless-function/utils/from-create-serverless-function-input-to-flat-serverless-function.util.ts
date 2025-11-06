@@ -30,8 +30,10 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     id,
     name: rawCreateServerlessFunctionInput.name,
     description: rawCreateServerlessFunctionInput.description ?? null,
-    handlerPath: DEFAULT_HANDLER_PATH,
-    handlerName: DEFAULT_HANDLER_NAME,
+    handlerPath:
+      rawCreateServerlessFunctionInput.handlerPath ?? DEFAULT_HANDLER_PATH,
+    handlerName:
+      rawCreateServerlessFunctionInput.handlerName ?? DEFAULT_HANDLER_NAME,
     universalIdentifier:
       rawCreateServerlessFunctionInput.universalIdentifier ?? v4(),
     createdAt: currentDate,
