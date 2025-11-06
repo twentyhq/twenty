@@ -122,7 +122,9 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
           name: 'contextVariant',
           values: [
             'Record Page - Default',
+            'Record Page - Default - Pinned',
             'Record Page - Restriction',
+            'Record Page - Restriction - Pinned',
             'Dashboard - Default',
             'Dashboard - Restriction',
           ],
@@ -131,11 +133,13 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
               ? PageLayoutType.RECORD_PAGE
               : PageLayoutType.DASHBOARD;
             const hasRestriction = contextName.includes('Restriction');
+            const isInPinnedTab = contextName.includes('Pinned');
 
             return {
               pageLayoutType,
               contextVariant: contextName,
               hasRestriction,
+              isInPinnedTab,
             };
           },
         },
