@@ -92,9 +92,13 @@ export class UpsertRecordService {
         });
 
       const uniqueFieldsToUpdate = fieldsToUpdateArray
-        .map((field) => objectMetadataItemWithFieldsMaps.fieldIdByName[field])
+        .map(
+          (field) =>
+            objectMetadataItemWithFieldsMaps.fieldIdByName[field] ||
+            objectMetadataItemWithFieldsMaps.fieldIdByJoinColumnName[field],
+        )
         .map((fieldId) => objectMetadataItemWithFieldsMaps.fieldsById[fieldId])
-        .filter((field) => field.isUnique || field.name === 'id');
+        .filter((field) => field && (field.isUnique || field.name === 'id'));
 
       const conflictPathsUniqueFieldsToUpdate = uniqueFieldsToUpdate.flatMap(
         (field) => {

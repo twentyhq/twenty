@@ -8,13 +8,13 @@ import {
   FieldMetadataType,
   ObjectRecord,
   RelationType,
+  FieldMetadataRelationSettings,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-import { FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
@@ -134,9 +134,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const recordsToMerge = await context.repository.find({
       where: { id: In(args.ids) },
       select: columnsToSelect,
-      ...(args.dryRun
-        ? { relations: args.selectedFieldsResult.relations }
-        : {}),
     });
 
     if (recordsToMerge.length !== args.ids.length) {
@@ -144,6 +141,23 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         'One or more records not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
+    }
+
+    if (args.dryRun && args.selectedFieldsResult.relations) {
+      await this.processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps: context.objectMetadataMaps,
+        parentObjectMetadataItem: context.objectMetadataItemWithFieldMaps,
+        parentObjectRecords: recordsToMerge as ObjectRecord[],
+        relations: args.selectedFieldsResult.relations as Record<
+          string,
+          FindOptionsRelations<ObjectLiteral>
+        >,
+        limit: QUERY_MAX_RECORDS,
+        authContext: context.authContext,
+        workspaceDataSource: context.workspaceDataSource,
+        rolePermissionConfig: context.rolePermissionConfig,
+        selectedFields: args.selectedFieldsResult.select,
+      });
     }
 
     return recordsToMerge as ObjectRecord[];

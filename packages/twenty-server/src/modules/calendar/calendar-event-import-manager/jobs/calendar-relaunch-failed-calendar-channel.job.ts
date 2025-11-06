@@ -48,7 +48,8 @@ export class CalendarRelaunchFailedCalendarChannelJob {
 
     if (
       !calendarChannel ||
-      calendarChannel.syncStage !== CalendarChannelSyncStage.FAILED
+      calendarChannel.syncStage !== CalendarChannelSyncStage.FAILED ||
+      calendarChannel.syncStatus !== CalendarChannelSyncStatus.FAILED_UNKNOWN
     ) {
       return;
     }

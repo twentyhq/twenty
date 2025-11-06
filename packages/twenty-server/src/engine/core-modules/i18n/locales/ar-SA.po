@@ -166,6 +166,11 @@ msgstr "العمل المطلوب لمنع حذف مساحة العمل"
 msgid "Action Needed to Reset Password"
 msgstr "العمل المطلوب لإعادة تعيين كلمة المرور"
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr ""
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
@@ -584,9 +589,9 @@ msgstr "لا يمكن الاتصال بـ {connectFieldName}. لم يتم الع
 msgid "Can't impersonate user via api key"
 msgstr "لا يمكن تقمص دور المستخدم عبر مفتاح API"
 
-#. js-lingui-id: 874/Xl
+#. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-deactivated version"
+msgid "Cannot activate non-draft or non-last-published version"
 msgstr ""
 
 #. js-lingui-id: LIPsWu
@@ -619,6 +624,11 @@ msgstr "لا يمكن تعطيل إصدار سير العمل غير النشط"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "لا يمكن تمكين التفرد بسبب وجود قيم مكررة موجودة. يُرجى مراجعة بياناتك وإصلاحها أولاً (بما في ذلك السجلات المحذوفة مؤقتًا)."
+
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
+msgstr ""
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts

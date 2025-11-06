@@ -1,10 +1,14 @@
+import { createLogger } from './logger';
 import type { FirefliesMeetingData, FirefliesParticipant, SummaryFetchConfig } from './types';
+
+const logger = createLogger('fireflies-api');
 
 export class FirefliesApiClient {
   private apiKey: string;
 
   constructor(apiKey: string) {
     if (!apiKey) {
+      logger.critical('FIREFLIES_API_KEY is required but not provided - this is a critical configuration error');
       throw new Error('FIREFLIES_API_KEY is required');
     }
     this.apiKey = apiKey;
@@ -108,26 +112,22 @@ export class FirefliesApiClient {
   ): Promise<{ data: FirefliesMeetingData; summaryReady: boolean }> {
     // immediate_only: single attempt, no retries
     if (config.strategy === 'immediate_only') {
-      // eslint-disable-next-line no-console
-      console.log(`[fireflies-api] fetching meeting ${meetingId} (strategy: immediate_only)`);
+      logger.debug(`fetching meeting ${meetingId} (strategy: immediate_only)`);
       const meetingData = await this.fetchMeetingData(meetingId, { timeout: 10000 });
       const ready = this.isSummaryReady(meetingData);
-      // eslint-disable-next-line no-console
-      console.log(`[fireflies-api] summary ready: ${ready}`);
+      logger.debug(`summary ready: ${ready}`);
       return { data: meetingData, summaryReady: ready };
     }
 
     // immediate_with_retry: retry with exponential backoff
-    // eslint-disable-next-line no-console
-    console.log(`[fireflies-api] fetching meeting ${meetingId} (strategy: immediate_with_retry, maxAttempts: ${config.retryAttempts})`);
+    logger.debug(`fetching meeting ${meetingId} (strategy: immediate_with_retry, maxAttempts: ${config.retryAttempts})`);
 
     for (let attempt = 1; attempt <= config.retryAttempts; attempt++) {
       try {
         const meetingData = await this.fetchMeetingData(meetingId, { timeout: 10000 });
         const ready = this.isSummaryReady(meetingData);
 
-        // eslint-disable-next-line no-console
-        console.log(`[fireflies-api] attempt ${attempt}/${config.retryAttempts}: summary ready=${ready}`);
+        logger.debug(`attempt ${attempt}/${config.retryAttempts}: summary ready=${ready}`);
 
         if (ready) {
           return { data: meetingData, summaryReady: true };
@@ -135,26 +135,22 @@ export class FirefliesApiClient {
 
         if (attempt < config.retryAttempts) {
           const delayMs = config.retryDelay * attempt;
-          // eslint-disable-next-line no-console
-          console.log(`[fireflies-api] summary not ready, waiting ${delayMs}ms before retry ${attempt + 1}`);
+          logger.debug(`summary not ready, waiting ${delayMs}ms before retry ${attempt + 1}`);
           await new Promise(resolve => setTimeout(resolve, delayMs));
         } else {
-          // eslint-disable-next-line no-console
-          console.log(`[fireflies-api] max retries reached, returning partial data`);
+          logger.debug(`max retries reached, returning partial data`);
           return { data: meetingData, summaryReady: false };
         }
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
-        // eslint-disable-next-line no-console
-        console.error(`[fireflies-api] attempt ${attempt}/${config.retryAttempts} failed: ${errorMsg}`);
+        logger.error(`attempt ${attempt}/${config.retryAttempts} failed: ${errorMsg}`);
 
         if (attempt === config.retryAttempts) {
           throw error;
         }
 
         const delayMs = config.retryDelay * attempt;
-        // eslint-disable-next-line no-console
-        console.log(`[fireflies-api] retrying in ${delayMs}ms...`);
+        logger.debug(`retrying in ${delayMs}ms...`);
         await new Promise(resolve => setTimeout(resolve, delayMs));
       }
     }
@@ -174,18 +170,12 @@ export class FirefliesApiClient {
     const participantsWithEmails: FirefliesParticipant[] = [];
     const participantsNameOnly: FirefliesParticipant[] = [];
 
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] === PARTICIPANT EXTRACTION DEBUG ===');
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] participants field:', JSON.stringify(transcript.participants));
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] meeting_attendees field:', JSON.stringify(transcript.meeting_attendees));
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] speakers field:', transcript.speakers?.map((s: any) => s.name));
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] meeting_attendance field:', transcript.meeting_attendance?.map((a: any) => a.name));
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] organizer_email:', transcript.organizer_email);
+    logger.debug('=== PARTICIPANT EXTRACTION DEBUG ===');
+    logger.debug('participants field:', JSON.stringify(transcript.participants));
+    logger.debug('meeting_attendees field:', JSON.stringify(transcript.meeting_attendees));
+    logger.debug('speakers field:', transcript.speakers?.map((s: any) => s.name));
+    logger.debug('meeting_attendance field:', transcript.meeting_attendance?.map((a: any) => a.name));
+    logger.debug('organizer_email:', transcript.organizer_email);
 
     // Helper function to check if a string is an email
     const isEmail = (str: string): boolean => {
@@ -214,12 +204,14 @@ export class FirefliesApiClient {
         parts.forEach(part => {
           const emailMatch = part.match(/<([^>]+)>/);
           const email = emailMatch ? emailMatch[1] : '';
-          const name = part.replace(/[<>]/g, '').trim();
+          // Extract name properly: if there's an email in angle brackets, get the part before it
+          const name = emailMatch
+            ? part.substring(0, part.indexOf('<')).trim()
+            : part.trim();
 
           // Skip if the "name" is actually an email address
           if (isEmail(name)) {
-            // eslint-disable-next-line no-console
-            console.log(`[fireflies-api] Skipping participant with email as name: "${name}"`);
+            logger.debug(`Skipping participant with email as name: "${name}"`);
             return;
           }
 
@@ -230,8 +222,7 @@ export class FirefliesApiClient {
 
           // Skip duplicates
           if (isDuplicate(name, email)) {
-            // eslint-disable-next-line no-console
-            console.log(`[fireflies-api] Skipping duplicate participant: "${name}" <${email}>`);
+            logger.debug(`Skipping duplicate participant: "${name}" <${email}>`);
             return;
           }
 
@@ -252,8 +243,7 @@ export class FirefliesApiClient {
 
         // Skip if name is actually an email
         if (isEmail(name)) {
-          // eslint-disable-next-line no-console
-          console.log(`[fireflies-api] Skipping attendee with email as name: "${name}"`);
+          logger.debug(`Skipping attendee with email as name: "${name}"`);
           return;
         }
 
@@ -274,8 +264,7 @@ export class FirefliesApiClient {
 
         // Skip if name is actually an email
         if (isEmail(name)) {
-          // eslint-disable-next-line no-console
-          console.log(`[fireflies-api] Skipping speaker with email as name: "${name}"`);
+          logger.debug(`Skipping speaker with email as name: "${name}"`);
           return;
         }
 
@@ -292,8 +281,7 @@ export class FirefliesApiClient {
 
         // Skip if name is actually an email or contains comma-separated emails
         if (isEmail(name) || name.includes(',')) {
-          // eslint-disable-next-line no-console
-          console.log(`[fireflies-api] Skipping attendance with email/list as name: "${name}"`);
+          logger.debug(`Skipping attendance with email/list as name: "${name}"`);
           return;
         }
 
@@ -372,14 +360,10 @@ export class FirefliesApiClient {
     // Return participants with emails first, then name-only participants
     const allParticipants = [...participantsWithEmails, ...participantsNameOnly];
 
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] === EXTRACTED PARTICIPANTS ===');
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] With emails:', participantsWithEmails.length, JSON.stringify(participantsWithEmails));
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] Name only:', participantsNameOnly.length, JSON.stringify(participantsNameOnly));
-    // eslint-disable-next-line no-console
-    console.log('[fireflies-api] Total:', allParticipants.length);
+    logger.debug('=== EXTRACTED PARTICIPANTS ===');
+    logger.debug('With emails:', participantsWithEmails.length, JSON.stringify(participantsWithEmails));
+    logger.debug('Name only:', participantsNameOnly.length, JSON.stringify(participantsNameOnly));
+    logger.debug('Total:', allParticipants.length);
 
     return allParticipants;
   }
