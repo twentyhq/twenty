@@ -7,10 +7,10 @@ export const computeCategoryTickValues = ({
   rightMargin,
 }: {
   width: number;
-  values: (string | number)[];
+  values: (string | number | Date)[];
   leftMargin: number;
   rightMargin: number;
-}): (string | number)[] => {
+}): (string | number | Date)[] => {
   if (width === 0 || values.length === 0) return [];
 
   const horizontalMargins = leftMargin + rightMargin;

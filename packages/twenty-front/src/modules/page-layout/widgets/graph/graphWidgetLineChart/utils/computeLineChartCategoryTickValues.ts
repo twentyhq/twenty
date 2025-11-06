@@ -10,7 +10,7 @@ export const computeLineChartCategoryTickValues = ({
 }: {
   width: number;
   data: LineChartSeries[];
-}): (string | number)[] => {
+}): (string | number | Date)[] => {
   if (data.length === 0 || data[0].data.length === 0) return [];
 
   const values = data[0].data.map((point) => point.x);

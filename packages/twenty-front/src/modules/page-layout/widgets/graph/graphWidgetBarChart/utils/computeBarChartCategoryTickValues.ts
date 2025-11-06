@@ -16,9 +16,9 @@ export const computeBarChartCategoryTickValues = ({
   layout: 'vertical' | 'horizontal';
   xAxisLabel?: string;
   yAxisLabel?: string;
-}): (string | number)[] => {
+}): (string | number | Date)[] => {
   const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
-  const values = data.map((item) => item[indexBy] as string | number);
+  const values = data.map((item) => item[indexBy]);
 
   return computeCategoryTickValues({
     width,
