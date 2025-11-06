@@ -413,23 +413,30 @@ describe('UserWorkspaceService', () => {
         user.id,
         workspace.id,
       );
-      expect(service.create).toHaveBeenCalledWith({
-        workspaceId: workspace.id,
-        userId: user.id,
-        isExistingUser: true,
-      });
+      expect(service.create).toHaveBeenCalled();
+      expect(service.create).toHaveBeenCalledWith(
+        {
+          workspaceId: workspace.id,
+          userId: user.id,
+          isExistingUser: true,
+        },
+        undefined,
+      );
       expect(service.createWorkspaceMember).toHaveBeenCalledWith(
         workspace.id,
         user,
       );
-      expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith({
-        workspaceId: workspace.id,
-        userWorkspaceId: userWorkspace.id,
-        roleId: workspace.defaultRoleId,
-      });
+      expect(userRoleService.assignRoleToUserWorkspace).toHaveBeenCalledWith(
+        {
+          workspaceId: workspace.id,
+          userWorkspaceId: userWorkspace.id,
+          roleId: workspace.defaultRoleId,
+        },
+        undefined,
+      );
       expect(
         workspaceInvitationService.invalidateWorkspaceInvitation,
-      ).toHaveBeenCalledWith(workspace.id, user.email);
+      ).toHaveBeenCalledWith(workspace.id, user.email, undefined);
     });
 
     it('should not add user to workspace if already in workspace', async () => {

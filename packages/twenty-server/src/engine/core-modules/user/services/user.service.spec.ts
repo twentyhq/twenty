@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -40,6 +41,7 @@ describe('UserService', () => {
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
+            update: jest.fn(),
           },
         },
         {
@@ -57,6 +59,10 @@ describe('UserService', () => {
           useValue: {
             validateUserWorkspaceIsNotUniqueAdminOrThrow: jest.fn(),
           },
+        },
+        {
+          provide: ApplicationService,
+          useValue: {},
         },
       ],
     }).compile();
