@@ -20,12 +20,13 @@ type PageLayoutGridResizeHandleProps = {
 const createCornerIconStyle =
   (vertical: 'top' | 'bottom', horizontal: 'left' | 'right') =>
   ({ theme }: { theme: Theme }) => css`
-    left: ${vertical === 'top' ? theme.spacing(1) : 'unset'};
-    right: ${vertical === 'bottom' ? theme.spacing(1) : 'unset'};
-    top: ${horizontal === 'left' ? theme.spacing(1) : 'unset'};
-    bottom: ${horizontal === 'right' ? theme.spacing(1) : 'unset'};
+    left: ${horizontal === 'left' ? theme.spacing(1) : 'unset'};
+    right: ${horizontal === 'right' ? theme.spacing(1) : 'unset'};
+    top: ${vertical === 'top' ? theme.spacing(1) : 'unset'};
+    bottom: ${vertical === 'bottom' ? theme.spacing(1) : 'unset'};
 
-    cursor: ${vertical === 'top' || horizontal === 'left'
+    cursor: ${(vertical === 'top' && horizontal === 'left') ||
+    (vertical === 'bottom' && horizontal === 'right')
       ? 'nwse-resize'
       : 'nesw-resize'};
     position: absolute;
