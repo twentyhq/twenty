@@ -53,10 +53,22 @@ export const ViewPermissionGuard = (
         request.workspace.id,
       );
 
-      // If view doesn't exist, allow the operation so the service can handle
-      // the NOT_FOUND error with proper context (delete/update/destroy-specific messages)
+      // If view doesn't exist:
+      // - For direct view operations: allow through to service for proper error message
+      // - For child entity operations: throw NOT_FOUND (parent view must exist)
       if (!view) {
-        return true;
+        if (!childEntityKind) {
+          // Direct view operations - let service handle NOT_FOUND
+          return true;
+        }
+        // Child entity operations - view must exist for child to be valid
+        throw new ViewException(
+          generateViewExceptionMessage(
+            ViewExceptionMessageKey.VIEW_NOT_FOUND,
+            viewId,
+          ),
+          ViewExceptionCode.VIEW_NOT_FOUND,
+        );
       }
 
       return this.canUserAccessView(
@@ -84,7 +96,6 @@ export const ViewPermissionGuard = (
       }
 
       // Bulk create operations (createManyCoreViewFields, etc.)
-      // Return null for empty arrays (no items to validate)
       if (inputs) {
         if (inputs.length === 0) {
           return null;

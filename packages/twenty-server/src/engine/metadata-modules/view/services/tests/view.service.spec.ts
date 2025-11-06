@@ -7,6 +7,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import {
   ViewException,
   ViewExceptionCode,
@@ -37,22 +38,12 @@ describe('ViewService', () => {
     kanbanAggregateOperation: null,
     kanbanAggregateOperationFieldMetadataId: null,
     anyFieldFilterValue: null,
+    visibility: ViewVisibility.WORKSPACE,
+    createdByUserWorkspaceId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
   } as ViewEntity;
-
-  const createMockQueryBuilder = () => {
-    const mockQueryBuilder = {
-      leftJoinAndSelect: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
-      andWhere: jest.fn().mockReturnThis(),
-      orderBy: jest.fn().mockReturnThis(),
-      getMany: jest.fn(),
-    };
-
-    return mockQueryBuilder;
-  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -67,7 +58,6 @@ describe('ViewService', () => {
             save: jest.fn(),
             softDelete: jest.fn(),
             delete: jest.fn(),
-            createQueryBuilder: jest.fn(),
           },
         },
         {
@@ -97,73 +87,106 @@ describe('ViewService', () => {
   });
 
   describe('findByWorkspaceId', () => {
-    it('should return views for a workspace with userWorkspaceId', async () => {
+    it('should return workspace views and user-owned unlisted views', async () => {
       const workspaceId = 'workspace-id';
       const userWorkspaceId = 'user-workspace-id';
-      const expectedViews = [mockView];
-      const mockQueryBuilder = createMockQueryBuilder();
+      const workspaceView = {
+        ...mockView,
+        id: 'workspace-view',
+        visibility: ViewVisibility.WORKSPACE,
+      } as ViewEntity;
+      const userUnlistedView = {
+        ...mockView,
+        id: 'user-unlisted-view',
+        visibility: ViewVisibility.UNLISTED,
+        createdByUserWorkspaceId: userWorkspaceId,
+      } as ViewEntity;
+      const otherUserUnlistedView = {
+        ...mockView,
+        id: 'other-user-unlisted-view',
+        visibility: ViewVisibility.UNLISTED,
+        createdByUserWorkspaceId: 'other-user-workspace-id',
+      } as ViewEntity;
+      const allViews = [workspaceView, userUnlistedView, otherUserUnlistedView];
 
-      mockQueryBuilder.getMany.mockResolvedValue(expectedViews);
-      jest
-        .spyOn(viewRepository, 'createQueryBuilder')
-        .mockReturnValue(mockQueryBuilder as any);
+      jest.spyOn(viewRepository, 'find').mockResolvedValue(allViews);
 
       const result = await viewService.findByWorkspaceId(
         workspaceId,
         userWorkspaceId,
       );
 
-      expect(viewRepository.createQueryBuilder).toHaveBeenCalledWith('view');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-        'view.workspaceId = :workspaceId',
-        { workspaceId },
-      );
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
-        'view.deletedAt IS NULL',
-      );
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
-        '(view.visibility = :workspaceVisibility OR (view.visibility = :unlistedVisibility AND view.createdByUserWorkspaceId = :userWorkspaceId))',
-        expect.objectContaining({
-          userWorkspaceId,
-        }),
-      );
-      expect(result).toEqual(expectedViews);
+      expect(viewRepository.find).toHaveBeenCalledWith({
+        where: {
+          workspaceId,
+          deletedAt: expect.anything(),
+        },
+        order: { position: 'ASC' },
+        relations: [
+          'workspace',
+          'viewFields',
+          'viewFilters',
+          'viewSorts',
+          'viewGroups',
+          'viewFilterGroups',
+        ],
+      });
+      expect(result).toEqual([workspaceView, userUnlistedView]);
+      expect(result).not.toContain(otherUserUnlistedView);
     });
 
     it('should return only workspace views when no userWorkspaceId provided', async () => {
       const workspaceId = 'workspace-id';
-      const expectedViews = [mockView];
-      const mockQueryBuilder = createMockQueryBuilder();
+      const workspaceView = {
+        ...mockView,
+        id: 'workspace-view',
+        visibility: ViewVisibility.WORKSPACE,
+      } as ViewEntity;
+      const unlistedView = {
+        ...mockView,
+        id: 'unlisted-view',
+        visibility: ViewVisibility.UNLISTED,
+        createdByUserWorkspaceId: 'some-user-workspace-id',
+      } as ViewEntity;
+      const allViews = [workspaceView, unlistedView];
 
-      mockQueryBuilder.getMany.mockResolvedValue(expectedViews);
-      jest
-        .spyOn(viewRepository, 'createQueryBuilder')
-        .mockReturnValue(mockQueryBuilder as any);
+      jest.spyOn(viewRepository, 'find').mockResolvedValue(allViews);
 
       const result = await viewService.findByWorkspaceId(workspaceId);
 
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
-        'view.visibility = :workspaceVisibility',
-        expect.objectContaining({
-          workspaceVisibility: 'WORKSPACE',
-        }),
-      );
-      expect(result).toEqual(expectedViews);
+      expect(result).toEqual([workspaceView]);
+      expect(result).not.toContain(unlistedView);
     });
   });
 
   describe('findByObjectMetadataId', () => {
-    it('should return views for an object metadata id with userWorkspaceId', async () => {
+    it('should return workspace views and user-owned unlisted views for an object', async () => {
       const workspaceId = 'workspace-id';
       const objectMetadataId = 'object-id';
       const userWorkspaceId = 'user-workspace-id';
-      const expectedViews = [mockView];
-      const mockQueryBuilder = createMockQueryBuilder();
+      const workspaceView = {
+        ...mockView,
+        id: 'workspace-view',
+        visibility: ViewVisibility.WORKSPACE,
+        objectMetadataId,
+      } as ViewEntity;
+      const userUnlistedView = {
+        ...mockView,
+        id: 'user-unlisted-view',
+        visibility: ViewVisibility.UNLISTED,
+        createdByUserWorkspaceId: userWorkspaceId,
+        objectMetadataId,
+      } as ViewEntity;
+      const otherUserUnlistedView = {
+        ...mockView,
+        id: 'other-user-unlisted-view',
+        visibility: ViewVisibility.UNLISTED,
+        createdByUserWorkspaceId: 'other-user-workspace-id',
+        objectMetadataId,
+      } as ViewEntity;
+      const allViews = [workspaceView, userUnlistedView, otherUserUnlistedView];
 
-      mockQueryBuilder.getMany.mockResolvedValue(expectedViews);
-      jest
-        .spyOn(viewRepository, 'createQueryBuilder')
-        .mockReturnValue(mockQueryBuilder as any);
+      jest.spyOn(viewRepository, 'find').mockResolvedValue(allViews);
 
       const result = await viewService.findByObjectMetadataId(
         workspaceId,
@@ -171,47 +194,53 @@ describe('ViewService', () => {
         userWorkspaceId,
       );
 
-      expect(viewRepository.createQueryBuilder).toHaveBeenCalledWith('view');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-        'view.workspaceId = :workspaceId',
-        { workspaceId },
-      );
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
-        'view.objectMetadataId = :objectMetadataId',
-        { objectMetadataId },
-      );
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
-        '(view.visibility = :workspaceVisibility OR (view.visibility = :unlistedVisibility AND view.createdByUserWorkspaceId = :userWorkspaceId))',
-        expect.objectContaining({
-          userWorkspaceId,
-        }),
-      );
-      expect(result).toEqual(expectedViews);
+      expect(viewRepository.find).toHaveBeenCalledWith({
+        where: {
+          workspaceId,
+          objectMetadataId,
+          deletedAt: expect.anything(),
+        },
+        order: { position: 'ASC' },
+        relations: [
+          'workspace',
+          'viewFields',
+          'viewFilters',
+          'viewSorts',
+          'viewGroups',
+          'viewFilterGroups',
+        ],
+      });
+      expect(result).toEqual([workspaceView, userUnlistedView]);
+      expect(result).not.toContain(otherUserUnlistedView);
     });
 
     it('should return only workspace views when no userWorkspaceId provided', async () => {
       const workspaceId = 'workspace-id';
       const objectMetadataId = 'object-id';
-      const expectedViews = [mockView];
-      const mockQueryBuilder = createMockQueryBuilder();
+      const workspaceView = {
+        ...mockView,
+        id: 'workspace-view',
+        visibility: ViewVisibility.WORKSPACE,
+        objectMetadataId,
+      } as ViewEntity;
+      const unlistedView = {
+        ...mockView,
+        id: 'unlisted-view',
+        visibility: ViewVisibility.UNLISTED,
+        createdByUserWorkspaceId: 'some-user-workspace-id',
+        objectMetadataId,
+      } as ViewEntity;
+      const allViews = [workspaceView, unlistedView];
 
-      mockQueryBuilder.getMany.mockResolvedValue(expectedViews);
-      jest
-        .spyOn(viewRepository, 'createQueryBuilder')
-        .mockReturnValue(mockQueryBuilder as any);
+      jest.spyOn(viewRepository, 'find').mockResolvedValue(allViews);
 
       const result = await viewService.findByObjectMetadataId(
         workspaceId,
         objectMetadataId,
       );
 
-      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
-        'view.visibility = :workspaceVisibility',
-        expect.objectContaining({
-          workspaceVisibility: 'WORKSPACE',
-        }),
-      );
-      expect(result).toEqual(expectedViews);
+      expect(result).toEqual([workspaceView]);
+      expect(result).not.toContain(unlistedView);
     });
   });
 

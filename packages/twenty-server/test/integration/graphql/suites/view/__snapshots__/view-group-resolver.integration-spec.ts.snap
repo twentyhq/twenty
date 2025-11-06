@@ -6,7 +6,7 @@ exports[`View Group Resolver deleteCoreViewGroup should throw an error when dele
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View group (id: 20202020-0000-4000-8000-000000000003) not found",
+  "message": "View group to delete not found",
   "name": "NotFoundError",
 }
 `;
@@ -17,7 +17,7 @@ exports[`View Group Resolver destroyCoreViewGroup should throw an error when des
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View group (id: 20202020-0000-4000-8000-000000000003) not found",
+  "message": "View group to destroy not found",
   "name": "NotFoundError",
 }
 `;
@@ -28,7 +28,7 @@ exports[`View Group Resolver updateCoreViewGroup should throw an error when upda
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View group (id: 20202020-0000-4000-8000-000000000003) not found",
+  "message": "View group to update not found",
   "name": "NotFoundError",
 }
 `;

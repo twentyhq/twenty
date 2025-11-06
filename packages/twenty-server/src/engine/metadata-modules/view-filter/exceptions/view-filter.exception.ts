@@ -18,7 +18,6 @@ export class ViewFilterException extends CustomException {
 export enum ViewFilterExceptionCode {
   VIEW_FILTER_NOT_FOUND = 'VIEW_FILTER_NOT_FOUND',
   INVALID_VIEW_FILTER_DATA = 'INVALID_VIEW_FILTER_DATA',
-  VIEW_FILTER_UPDATE_PERMISSION_DENIED = 'VIEW_FILTER_UPDATE_PERMISSION_DENIED',
   VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
@@ -28,7 +27,6 @@ export enum ViewFilterExceptionMessageKey {
   VIEW_FILTER_NOT_FOUND = 'VIEW_FILTER_NOT_FOUND',
   INVALID_VIEW_FILTER_DATA = 'INVALID_VIEW_FILTER_DATA',
   FIELD_METADATA_ID_REQUIRED = 'FIELD_METADATA_ID_REQUIRED',
-  VIEW_FILTER_UPDATE_PERMISSION_DENIED = 'VIEW_FILTER_UPDATE_PERMISSION_DENIED',
   VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
@@ -47,8 +45,6 @@ export const generateViewFilterExceptionMessage = (
       return `Invalid view filter data${id ? ` for view filter id: ${id}` : ''}`;
     case ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return 'FieldMetadataId is required';
-    case ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED:
-      return 'You do not have permission to update this view';
     case ViewFilterExceptionMessageKey.VIEW_NOT_FOUND:
       return `View${id ? ` (id: ${id})` : ''} not found`;
     default:
@@ -66,7 +62,5 @@ export const generateViewFilterUserFriendlyExceptionMessage = (
       return msg`ViewId is required to create a view filter.`;
     case ViewFilterExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return msg`FieldMetadataId is required to create a view filter.`;
-    case ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED:
-      return msg`You don't have permission to update this view.`;
   }
 };

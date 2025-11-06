@@ -156,10 +156,8 @@ export class ViewResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    // Default visibility to UNLISTED if not provided
     const visibility = input.visibility ?? ViewVisibility.UNLISTED;
 
-    // Check permission if trying to create a workspace-level view
     if (visibility === ViewVisibility.WORKSPACE && isDefined(userWorkspaceId)) {
       const permissions =
         await this.permissionsService.getUserWorkspacePermissions({
@@ -182,7 +180,6 @@ export class ViewResolver {
       }
     }
 
-    // Set the visibility explicitly
     input.visibility = visibility;
 
     const isWorkspaceMigrationV2Enabled =

@@ -6,7 +6,7 @@ exports[`Update core view should throw error when updating non-existent view 1`]
     "code": "NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "View (id: 20202020-0000-4000-8000-000000000000) not found",
+  "message": "View to update not found",
   "name": "NotFoundError",
 }
 `;

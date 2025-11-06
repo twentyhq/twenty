@@ -70,10 +70,6 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
-      case ViewFieldExceptionCode.VIEW_FIELD_UPDATE_PERMISSION_DENIED:
-        throw new ForbiddenError(error.message, {
-          userFriendlyMessage: error.userFriendlyMessage,
-        });
       default: {
         return assertUnreachable(error.code);
       }
@@ -88,10 +84,6 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new NotFoundError(error.message);
       case ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA:
         throw new UserInputError(error.message, {
-          userFriendlyMessage: error.userFriendlyMessage,
-        });
-      case ViewFilterExceptionCode.VIEW_FILTER_UPDATE_PERMISSION_DENIED:
-        throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
@@ -110,10 +102,6 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
-      case ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED:
-        throw new ForbiddenError(error.message, {
-          userFriendlyMessage: error.userFriendlyMessage,
-        });
       default: {
         return assertUnreachable(error.code);
       }
@@ -130,10 +118,6 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
-      case ViewGroupExceptionCode.VIEW_GROUP_UPDATE_PERMISSION_DENIED:
-        throw new ForbiddenError(error.message, {
-          userFriendlyMessage: error.userFriendlyMessage,
-        });
       default: {
         return assertUnreachable(error.code);
       }
@@ -148,10 +132,6 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new NotFoundError(error.message);
       case ViewSortExceptionCode.INVALID_VIEW_SORT_DATA:
         throw new UserInputError(error.message, {
-          userFriendlyMessage: error.userFriendlyMessage,
-        });
-      case ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED:
-        throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {

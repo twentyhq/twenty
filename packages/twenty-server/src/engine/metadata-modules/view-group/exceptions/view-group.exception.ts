@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -17,7 +18,6 @@ export class ViewGroupException extends CustomException {
 export enum ViewGroupExceptionCode {
   VIEW_GROUP_NOT_FOUND = 'VIEW_GROUP_NOT_FOUND',
   INVALID_VIEW_GROUP_DATA = 'INVALID_VIEW_GROUP_DATA',
-  VIEW_GROUP_UPDATE_PERMISSION_DENIED = 'VIEW_GROUP_UPDATE_PERMISSION_DENIED',
   VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
@@ -27,7 +27,6 @@ export enum ViewGroupExceptionMessageKey {
   VIEW_GROUP_NOT_FOUND = 'VIEW_GROUP_NOT_FOUND',
   INVALID_VIEW_GROUP_DATA = 'INVALID_VIEW_GROUP_DATA',
   FIELD_METADATA_ID_REQUIRED = 'FIELD_METADATA_ID_REQUIRED',
-  VIEW_GROUP_UPDATE_PERMISSION_DENIED = 'VIEW_GROUP_UPDATE_PERMISSION_DENIED',
   VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
@@ -46,12 +45,10 @@ export const generateViewGroupExceptionMessage = (
       return `Invalid view group data${id ? ` for view group id: ${id}` : ''}`;
     case ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return 'FieldMetadataId is required';
-    case ViewGroupExceptionMessageKey.VIEW_GROUP_UPDATE_PERMISSION_DENIED:
-      return 'You do not have permission to update this view';
     case ViewGroupExceptionMessageKey.VIEW_NOT_FOUND:
       return `View${id ? ` (id: ${id})` : ''} not found`;
     default:
-      return 'unknown';
+      assertUnreachable(key);
   }
 };
 
@@ -65,10 +62,5 @@ export const generateViewGroupUserFriendlyExceptionMessage = (
       return msg`ViewId is required to create a view group.`;
     case ViewGroupExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return msg`FieldMetadataId is required to create a view group.`;
-    case ViewGroupExceptionMessageKey.VIEW_GROUP_UPDATE_PERMISSION_DENIED:
-      return msg`You don't have permission to update this view.`;
-    default: {
-      return msg`unknown`;
-    }
   }
 };

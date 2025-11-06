@@ -32,36 +32,37 @@ export class ViewService {
     workspaceId: string,
     userWorkspaceId?: string,
   ): Promise<ViewEntity[]> {
-    const queryBuilder = this.viewRepository
-      .createQueryBuilder('view')
-      .leftJoinAndSelect('view.workspace', 'workspace')
-      .leftJoinAndSelect('view.viewFields', 'viewFields')
-      .leftJoinAndSelect('view.viewFilters', 'viewFilters')
-      .leftJoinAndSelect('view.viewSorts', 'viewSorts')
-      .leftJoinAndSelect('view.viewGroups', 'viewGroups')
-      .leftJoinAndSelect('view.viewFilterGroups', 'viewFilterGroups')
-      .where('view.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('view.deletedAt IS NULL')
-      .orderBy('view.position', 'ASC');
+    const views = await this.viewRepository.find({
+      where: {
+        workspaceId,
+        deletedAt: IsNull(),
+      },
+      order: { position: 'ASC' },
+      relations: [
+        'workspace',
+        'viewFields',
+        'viewFilters',
+        'viewSorts',
+        'viewGroups',
+        'viewFilterGroups',
+      ],
+    });
 
-    // Apply visibility filtering at the database layer
-    if (isDefined(userWorkspaceId)) {
-      queryBuilder.andWhere(
-        '(view.visibility = :workspaceVisibility OR (view.visibility = :unlistedVisibility AND view.createdByUserWorkspaceId = :userWorkspaceId))',
-        {
-          workspaceVisibility: ViewVisibility.WORKSPACE,
-          unlistedVisibility: ViewVisibility.UNLISTED,
-          userWorkspaceId,
-        },
-      );
-    } else {
-      // If no user context, only return workspace-level views
-      queryBuilder.andWhere('view.visibility = :workspaceVisibility', {
-        workspaceVisibility: ViewVisibility.WORKSPACE,
-      });
-    }
+    return views.filter((view) => {
+      if (view.visibility === ViewVisibility.WORKSPACE) {
+        return true;
+      }
 
-    return queryBuilder.getMany();
+      if (
+        view.visibility === ViewVisibility.UNLISTED &&
+        isDefined(userWorkspaceId) &&
+        view.createdByUserWorkspaceId === userWorkspaceId
+      ) {
+        return true;
+      }
+
+      return false;
+    });
   }
 
   async findByObjectMetadataId(
@@ -69,39 +70,39 @@ export class ViewService {
     objectMetadataId: string,
     userWorkspaceId?: string,
   ): Promise<ViewEntity[]> {
-    const queryBuilder = this.viewRepository
-      .createQueryBuilder('view')
-      .leftJoinAndSelect('view.workspace', 'workspace')
-      .leftJoinAndSelect('view.viewFields', 'viewFields')
-      .leftJoinAndSelect('view.viewFilters', 'viewFilters')
-      .leftJoinAndSelect('view.viewSorts', 'viewSorts')
-      .leftJoinAndSelect('view.viewGroups', 'viewGroups')
-      .leftJoinAndSelect('view.viewFilterGroups', 'viewFilterGroups')
-      .where('view.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('view.objectMetadataId = :objectMetadataId', {
+    const views = await this.viewRepository.find({
+      where: {
+        workspaceId,
         objectMetadataId,
-      })
-      .andWhere('view.deletedAt IS NULL')
-      .orderBy('view.position', 'ASC');
+        deletedAt: IsNull(),
+      },
+      order: { position: 'ASC' },
+      relations: [
+        'workspace',
+        'viewFields',
+        'viewFilters',
+        'viewSorts',
+        'viewGroups',
+        'viewFilterGroups',
+      ],
+    });
 
-    // Apply visibility filtering at the database layer
-    if (isDefined(userWorkspaceId)) {
-      queryBuilder.andWhere(
-        '(view.visibility = :workspaceVisibility OR (view.visibility = :unlistedVisibility AND view.createdByUserWorkspaceId = :userWorkspaceId))',
-        {
-          workspaceVisibility: ViewVisibility.WORKSPACE,
-          unlistedVisibility: ViewVisibility.UNLISTED,
-          userWorkspaceId,
-        },
-      );
-    } else {
-      // If no user context, only return workspace-level views
-      queryBuilder.andWhere('view.visibility = :workspaceVisibility', {
-        workspaceVisibility: ViewVisibility.WORKSPACE,
-      });
-    }
+    // Apply visibility filtering
+    return views.filter((view) => {
+      if (view.visibility === ViewVisibility.WORKSPACE) {
+        return true;
+      }
 
-    return queryBuilder.getMany();
+      if (
+        view.visibility === ViewVisibility.UNLISTED &&
+        isDefined(userWorkspaceId) &&
+        view.createdByUserWorkspaceId === userWorkspaceId
+      ) {
+        return true;
+      }
+
+      return false;
+    });
   }
 
   async findById(id: string, workspaceId: string): Promise<ViewEntity | null> {
