@@ -75,7 +75,7 @@ export class TimelineActivityService {
       {} as Record<string, TimelineActivityPayload[]>,
     );
 
-    const isFeatureFlagTimelineActivtyMigrated =
+    const isFeatureFlagTimelineActivityMigrated =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED,
         workspaceId,
@@ -86,7 +86,7 @@ export class TimelineActivityService {
         objectSingularName,
         workspaceId,
         payloads: payloadsByObjectSingularName[objectSingularName],
-        isFeatureFlagTimelineActivtyMigrated,
+        isFeatureFlagTimelineActivityMigrated,
       });
     }
   }

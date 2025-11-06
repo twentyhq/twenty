@@ -75,7 +75,7 @@ export class CalendarEventParticipantListener {
         .filter(isDefined);
     });
 
-    const isFeatureFlagTimelineActivtyMigrated =
+    const isFeatureFlagTimelineActivityMigrated =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED,
         batchEvent.workspaceId,
@@ -85,7 +85,7 @@ export class CalendarEventParticipantListener {
       objectSingularName: 'person',
       workspaceId: batchEvent.workspaceId,
       payloads: timelineActivityPayloads.filter(isDefined),
-      isFeatureFlagTimelineActivtyMigrated,
+      isFeatureFlagTimelineActivityMigrated,
     });
   }
 }
