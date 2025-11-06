@@ -7,8 +7,9 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -17,6 +18,8 @@ import { recordGroupFieldMetadataComponentState } from '@/object-record/record-g
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewType } from '@/views/types/ViewType';
+import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -47,7 +50,7 @@ export const useRecordIndexLazyFetchRecords = ({
   callback,
   viewType = ViewType.Table,
 }: UseRecordDataOptions) => {
-  const { hiddenBoardFields } = useObjectOptionsForBoard({
+  const { hiddenBoardFields, visibleBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
@@ -93,15 +96,62 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreAnyFieldFilterValue,
   });
 
-  const { columnDefinitions } =
-    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
-
   const finalColumns = [
-    ...columnDefinitions,
+    ...visibleBoardFields,
     ...(hiddenKanbanFieldColumn && viewType === ViewType.Kanban
       ? [hiddenKanbanFieldColumn]
       : []),
   ];
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const recordGqlFields = useMemo(() => {
+    if (visibleBoardFields.length === 0) {
+      return undefined;
+    }
+
+    const visibleFieldMetadataItems = visibleBoardFields
+      .map((column) =>
+        objectMetadataItem.fields.find(
+          (field) => field.id === column.fieldMetadataId,
+        ),
+      )
+      .filter(isDefined);
+
+    if (visibleFieldMetadataItems.length === 0) {
+      return undefined;
+    }
+
+    const fieldsToInclude = [
+      ...visibleFieldMetadataItems,
+      ...(isDefined(recordGroupFieldMetadata?.id)
+        ? [
+            objectMetadataItem.fields.find(
+              (field) => field.id === recordGroupFieldMetadata.id,
+            ),
+          ].filter(isDefined)
+        : []),
+    ];
+
+    const generatedFields = generateDepthRecordGqlFieldsFromFields({
+      objectMetadataItems,
+      fields: fieldsToInclude,
+      depth: 1,
+    });
+
+    return {
+      id: true,
+      ...generatedFields,
+      createdAt: true,
+      updatedAt: true,
+      deletedAt: true,
+    };
+  }, [
+    visibleBoardFields,
+    objectMetadataItem,
+    objectMetadataItems,
+    recordGroupFieldMetadata,
+  ]);
 
   const { progress, isDownloading, fetchAllRecords } = useLazyFetchAllRecords({
     ...findManyRecordsParams,
@@ -109,6 +159,7 @@ export const useRecordIndexLazyFetchRecords = ({
     limit: pageSize,
     delayMs,
     maximumRequests,
+    recordGqlFields,
   });
 
   const getTableData = async () => {
