@@ -7,6 +7,8 @@ import { type PageLayoutType } from '~/generated/graphql';
 export type WidgetCardContentProps = {
   children?: ReactNode;
   pageLayoutType: PageLayoutType;
+  isInPinnedTab: boolean;
+  isPageLayoutInEditMode: boolean;
   layoutMode: PageLayoutTabLayoutMode;
   className?: string;
 };
@@ -20,7 +22,13 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentProps>`
   box-sizing: border-box;
   padding: ${({ theme }) => theme.spacing(2)};
 
-  ${({ theme, pageLayoutType, layoutMode }) => {
+  ${({
+    theme,
+    pageLayoutType,
+    layoutMode,
+    isPageLayoutInEditMode,
+    isInPinnedTab,
+  }) => {
     if (layoutMode === 'canvas') {
       return css`
         padding: 0;
@@ -32,6 +40,13 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentProps>`
         return css`
           border: 1px solid ${theme.border.color.medium};
           border-radius: ${theme.border.radius.md};
+
+          ${isInPinnedTab &&
+          !isPageLayoutInEditMode &&
+          css`
+            border: none;
+            padding: 0;
+          `}
         `;
 
       default:

@@ -1771,6 +1771,7 @@ export type Mutation = {
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
+  deleteUserFromWorkspace: UserWorkspace;
   deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
@@ -2226,6 +2227,11 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 
 export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
   twoFactorAuthenticationMethodId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteUserFromWorkspaceArgs = {
+  workspaceMemberIdToDelete: Scalars['String'];
 };
 
 
