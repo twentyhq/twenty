@@ -458,8 +458,9 @@ export class ServerlessFunctionService {
 
   private async throttleExecution(workspaceId: string) {
     try {
-      await this.throttlerService.throttle(
+      await this.throttlerService.tokenBucketThrottleOrThrow(
         `${workspaceId}-serverless-function-execution`,
+        1,
         this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL'),
       );
