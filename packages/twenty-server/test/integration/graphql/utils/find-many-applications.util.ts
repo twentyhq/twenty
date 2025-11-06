@@ -9,15 +9,17 @@ import { type ApplicationDTO } from 'src/engine/core-modules/application/dtos/ap
 export const findManyApplications = async ({
   gqlFields,
   expectToFail,
+  accessToken,
 }: {
   gqlFields?: string;
   expectToFail?: boolean;
+  accessToken?: string;
 }): CommonResponseBody<{
   findManyApplications: ApplicationDTO[];
 }> => {
   const graphqlOperation = findManyApplicationsQueryFactory(gqlFields);
 
-  const response = await makeGraphqlAPIRequest(graphqlOperation);
+  const response = await makeGraphqlAPIRequest(graphqlOperation, accessToken);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

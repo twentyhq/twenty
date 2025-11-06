@@ -20,7 +20,6 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
-import { computeWorkspaceCustomCreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-workspace-custom-create-application-input';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 @Injectable()
@@ -85,6 +84,8 @@ export class WorkspaceManagerService {
         workspaceId,
       });
 
+    // Retrieve custom app here and apply universalIdentifier and so on to all sub entities
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
@@ -97,18 +98,6 @@ export class WorkspaceManagerService {
     this.logger.log(
       `Metadata creation took ${dataSourceMetadataCreationEnd - dataSourceMetadataCreationStart}ms`,
     );
-
-    const workspaceCustomApplication =
-      computeWorkspaceCustomCreateApplicationInput({
-        workspace,
-      });
-
-    await this.applicationService.create({
-      ...workspaceCustomApplication,
-      serverlessFunctionLayerId: null,
-    });
-
-    // TODO seed workspace custom application and associate everything below with it
 
     await this.setupDefaultRoles(workspaceId, userId);
 
