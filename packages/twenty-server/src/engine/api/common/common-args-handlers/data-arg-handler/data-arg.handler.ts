@@ -37,18 +37,13 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 @Injectable()
 export class DataArgHandler {
-  constructor(
-    private readonly recordPositionService: RecordPositionService,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+  constructor(private readonly recordPositionService: RecordPositionService) {}
 
   async coerce({
     partialRecordInputs,
@@ -68,12 +63,6 @@ export class DataArgHandler {
     const workspace = authContext.workspace;
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-    const isNullEquivalenceEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_NULL_EQUIVALENCY_ENABLED,
-        workspace.id,
-      );
 
     const coercedRecords: Partial<ObjectRecord>[] = [];
 
@@ -123,11 +112,7 @@ export class DataArgHandler {
             coercedValue = coerceNumberFieldOrThrow(value, key);
             break;
           case FieldMetadataType.TEXT:
-            coercedValue = coerceTextFieldOrThrow(
-              value,
-              key,
-              isNullEquivalenceEnabled,
-            );
+            coercedValue = coerceTextFieldOrThrow(value, key);
             break;
           case FieldMetadataType.DATE_TIME:
           case FieldMetadataType.DATE:
@@ -141,7 +126,6 @@ export class DataArgHandler {
               value,
               fieldMetadata.options?.map((option) => option.value),
               key,
-              isNullEquivalenceEnabled,
             );
             break;
           case FieldMetadataType.SELECT:
@@ -156,25 +140,16 @@ export class DataArgHandler {
               value,
               fieldMetadata.options?.map((option) => option.value),
               key,
-              isNullEquivalenceEnabled,
             );
             break;
           case FieldMetadataType.UUID:
             coercedValue = coerceUUIDFieldOrThrow(value, key);
             break;
           case FieldMetadataType.ARRAY:
-            coercedValue = coerceArrayFieldOrThrow(
-              value,
-              key,
-              isNullEquivalenceEnabled,
-            );
+            coercedValue = coerceArrayFieldOrThrow(value, key);
             break;
           case FieldMetadataType.RAW_JSON:
-            coercedValue = coerceRawJsonFieldOrThrow(
-              value,
-              key,
-              isNullEquivalenceEnabled,
-            );
+            coercedValue = coerceRawJsonFieldOrThrow(value, key);
             break;
           case FieldMetadataType.RELATION:
           case FieldMetadataType.MORPH_RELATION: {
@@ -215,11 +190,7 @@ export class DataArgHandler {
             coercedValue = coerceCurrencyFieldOrThrow(value, key);
             break;
           case FieldMetadataType.ACTOR:
-            coercedValue = coerceActorFieldOrThrow(
-              value,
-              key,
-              isNullEquivalenceEnabled,
-            );
+            coercedValue = coerceActorFieldOrThrow(value, key);
             break;
           case FieldMetadataType.RICH_TEXT_V2:
             coercedValue = await coerceRichTextV2FieldOrThrow(value, key);
