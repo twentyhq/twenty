@@ -2,7 +2,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroup';
-import { useCanEditView } from '@/views/hooks/useCanEditView';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewFilterGroupsToCreate } from '@/views/utils/getViewFilterGroupsToCreate';
 import { getViewFilterGroupsToDelete } from '@/views/utils/getViewFilterGroupsToDelete';
@@ -12,7 +12,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
-  const { canEditView } = useCanEditView();
+  const { canPersistChanges } = useCanPersistViewChanges();
   const {
     createViewFilterGroups,
     updateViewFilterGroups,
@@ -27,7 +27,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
   const saveRecordFilterGroupsToViewFilterGroups = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        if (!canEditView || !isDefined(currentView)) {
+        if (!canPersistChanges || !isDefined(currentView)) {
           return;
         }
 
@@ -70,7 +70,7 @@ export const useSaveRecordFilterGroupsToViewFilterGroups = () => {
         await deleteViewFilterGroups(viewFilterGroupIdsToDelete);
       },
     [
-      canEditView,
+      canPersistChanges,
       currentView,
       currentRecordFilterGroupsCallbackState,
       createViewFilterGroups,

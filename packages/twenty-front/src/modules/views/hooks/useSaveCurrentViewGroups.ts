@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
-import { useCanEditView } from '@/views/hooks/useCanEditView';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,7 +11,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewGroups = () => {
-  const { canEditView } = useCanEditView();
+  const { canPersistChanges } = useCanPersistViewChanges();
   const { createViewGroups, updateViewGroups } = usePersistViewGroupRecords();
 
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
@@ -23,7 +23,7 @@ export const useSaveCurrentViewGroups = () => {
   const saveViewGroup = useRecoilCallback(
     ({ snapshot }) =>
       async (viewGroupToSave: ViewGroup) => {
-        if (!canEditView) {
+        if (!canPersistChanges) {
           return;
         }
 
@@ -82,7 +82,7 @@ export const useSaveCurrentViewGroups = () => {
         ]);
       },
     [
-      canEditView,
+      canPersistChanges,
       currentViewIdCallbackState,
       getViewFromPrefetchState,
       updateViewGroups,
@@ -92,7 +92,7 @@ export const useSaveCurrentViewGroups = () => {
   const saveViewGroups = useRecoilCallback(
     ({ snapshot }) =>
       async (viewGroupsToSave: ViewGroup[]) => {
-        if (!canEditView) {
+        if (!canPersistChanges) {
           return;
         }
 
@@ -171,7 +171,7 @@ export const useSaveCurrentViewGroups = () => {
         ]);
       },
     [
-      canEditView,
+      canPersistChanges,
       createViewGroups,
       currentViewIdCallbackState,
       getViewFromPrefetchState,

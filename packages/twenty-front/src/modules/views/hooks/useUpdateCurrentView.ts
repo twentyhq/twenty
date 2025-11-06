@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useCanEditView } from '@/views/hooks/useCanEditView';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useUpdateCoreViewMutation } from '~/generated-metadata/graphql';
 
 export const useUpdateCurrentView = () => {
-  const { canEditView } = useCanEditView();
+  const { canPersistChanges } = useCanPersistViewChanges();
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
   );
@@ -24,7 +24,7 @@ export const useUpdateCurrentView = () => {
   const updateCurrentView = useRecoilCallback(
     ({ snapshot }) =>
       async (view: Partial<GraphQLView>) => {
-        if (!canEditView) {
+        if (!canPersistChanges) {
           return;
         }
 
@@ -59,7 +59,7 @@ export const useUpdateCurrentView = () => {
         }
       },
     [
-      canEditView,
+      canPersistChanges,
       currentViewIdCallbackState,
       refreshCoreViewsByObjectMetadataId,
       updateOneCoreView,

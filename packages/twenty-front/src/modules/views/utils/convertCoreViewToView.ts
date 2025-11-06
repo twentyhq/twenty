@@ -17,7 +17,6 @@ export const convertCoreViewToView = (
     coreView.openRecordIn,
   );
   const convertedType = convertCoreViewTypeToViewType(coreView.type);
-  const convertedVisibility = coreView.visibility ?? ViewVisibility.WORKSPACE;
 
   return {
     id: coreView.id,
@@ -49,7 +48,7 @@ export const convertCoreViewToView = (
     icon: coreView.icon,
     openRecordIn: convertedOpenRecordIn,
     anyFieldFilterValue: coreView.anyFieldFilterValue ?? null,
-    visibility: convertedVisibility,
+    visibility: coreView.visibility ?? ViewVisibility.UNLISTED,
     createdByUserWorkspaceId: coreView.createdByUserWorkspaceId,
     __typename: 'View',
   };

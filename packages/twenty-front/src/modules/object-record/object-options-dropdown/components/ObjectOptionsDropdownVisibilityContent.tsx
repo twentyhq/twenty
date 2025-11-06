@@ -57,6 +57,18 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
     resetContent();
   };
 
+  const handleCopyLink = () => {
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl);
+    enqueueSuccessSnackBar({
+      message: t`Link copied to clipboard`,
+      options: {
+        icon: <IconCopy size={theme.icon.size.md} />,
+        duration: 2000,
+      },
+    });
+  };
+
   const currentVisibility = currentView?.visibility ?? ViewVisibility.WORKSPACE;
 
   return (
@@ -94,8 +106,6 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                   selected={currentVisibility === ViewVisibility.WORKSPACE}
                   focused={selectedItemId === ViewVisibility.WORKSPACE}
                   onClick={() =>
-                    hasViewsPermission &&
-                    canPersistChanges &&
                     handleVisibilityChange(ViewVisibility.WORKSPACE)
                   }
                   disabled={!hasViewsPermission || !canPersistChanges}
@@ -125,10 +135,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               contextualText={t`Visible to you`}
               selected={currentVisibility === ViewVisibility.UNLISTED}
               focused={selectedItemId === ViewVisibility.UNLISTED}
-              onClick={() =>
-                canPersistChanges &&
-                handleVisibilityChange(ViewVisibility.UNLISTED)
-              }
+              onClick={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
               disabled={!canPersistChanges}
             />
           </SelectableListItem>
@@ -137,31 +144,11 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
               <DropdownMenuSeparator />
               <SelectableListItem
                 itemId="Copy view link"
-                onEnter={() => {
-                  const currentUrl = window.location.href;
-                  navigator.clipboard.writeText(currentUrl);
-                  enqueueSuccessSnackBar({
-                    message: t`Link copied to clipboard`,
-                    options: {
-                      icon: <IconCopy size={theme.icon.size.md} />,
-                      duration: 2000,
-                    },
-                  });
-                }}
+                onEnter={handleCopyLink}
               >
                 <MenuItem
                   focused={selectedItemId === 'Copy view link'}
-                  onClick={() => {
-                    const currentUrl = window.location.href;
-                    navigator.clipboard.writeText(currentUrl);
-                    enqueueSuccessSnackBar({
-                      message: t`Link copied to clipboard`,
-                      options: {
-                        icon: <IconCopy size={theme.icon.size.md} />,
-                        duration: 2000,
-                      },
-                    });
-                  }}
+                  onClick={handleCopyLink}
                   LeftIcon={IconCopy}
                   text={t`Copy view link`}
                 />

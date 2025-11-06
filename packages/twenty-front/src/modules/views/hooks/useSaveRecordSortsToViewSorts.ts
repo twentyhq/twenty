@@ -2,7 +2,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSort';
-import { useCanEditView } from '@/views/hooks/useCanEditView';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewSortsToCreate } from '@/views/utils/getViewSortsToCreate';
 import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
@@ -12,7 +12,7 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordSortsToViewSorts = () => {
-  const { canEditView } = useCanEditView();
+  const { canPersistChanges } = useCanPersistViewChanges();
   const { createViewSorts, updateViewSorts, deleteViewSorts } =
     usePersistViewSortRecords();
 
@@ -25,7 +25,7 @@ export const useSaveRecordSortsToViewSorts = () => {
   const saveRecordSortsToViewSorts = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        if (!canEditView || !isDefined(currentView)) {
+        if (!canPersistChanges || !isDefined(currentView)) {
           return;
         }
 
@@ -60,7 +60,7 @@ export const useSaveRecordSortsToViewSorts = () => {
         await deleteViewSorts(viewSortsToDelete);
       },
     [
-      canEditView,
+      canPersistChanges,
       currentView,
       currentRecordSortsCallbackState,
       createViewSorts,

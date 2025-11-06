@@ -9,11 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
-import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
-import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { ViewEntityLookupService } from 'src/engine/metadata-modules/view-permissions/services/view-entity-lookup.service';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import {
@@ -29,11 +25,7 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 export class ViewPermissionGuard implements CanActivate {
   constructor(
     private readonly viewService: ViewService,
-    private readonly viewFieldService: ViewFieldService,
-    private readonly viewFilterService: ViewFilterService,
-    private readonly viewFilterGroupService: ViewFilterGroupService,
-    private readonly viewGroupService: ViewGroupService,
-    private readonly viewSortService: ViewSortService,
+    private readonly viewEntityLookupService: ViewEntityLookupService,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -87,60 +79,23 @@ export class ViewPermissionGuard implements CanActivate {
 
     // Update/delete operations on child entities - need to fetch entity to get viewId
     if (input && typeof input.id === 'string') {
-      const entity = await this.fetchChildEntityById(input.id, workspaceId);
-
-      return entity.viewId;
+      return await this.viewEntityLookupService.findViewIdByEntityId(
+        input.id,
+        workspaceId,
+      );
     }
 
     // Bulk delete operations on child entities
     const ids = args.ids as string[] | undefined;
 
     if (ids && ids[0]) {
-      const entity = await this.fetchChildEntityById(ids[0], workspaceId);
-
-      return entity.viewId;
+      return await this.viewEntityLookupService.findViewIdByEntityId(
+        ids[0],
+        workspaceId,
+      );
     }
 
     throw new Error('Could not extract viewId from arguments');
-  }
-
-  private async fetchChildEntityById(
-    entityId: string,
-    workspaceId: string,
-  ): Promise<{ viewId: string }> {
-    const viewField = await this.viewFieldService.findById(
-      entityId,
-      workspaceId,
-    );
-
-    if (viewField) return viewField;
-
-    const viewFilter = await this.viewFilterService.findById(
-      entityId,
-      workspaceId,
-    );
-
-    if (viewFilter) return viewFilter;
-
-    const viewFilterGroup = await this.viewFilterGroupService.findById(
-      entityId,
-      workspaceId,
-    );
-
-    if (viewFilterGroup) return viewFilterGroup;
-
-    const viewGroup = await this.viewGroupService.findById(
-      entityId,
-      workspaceId,
-    );
-
-    if (viewGroup) return viewGroup;
-
-    const viewSort = await this.viewSortService.findById(entityId, workspaceId);
-
-    if (viewSort) return viewSort;
-
-    throw new Error(`Could not find entity with id ${entityId}`);
   }
 
   private async canUserAccessView(

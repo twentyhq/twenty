@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -9,8 +9,8 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
 import { ViewGroupResolver } from 'src/engine/metadata-modules/view-group/resolvers/view-group.resolver';
 import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
+import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
@@ -22,7 +22,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     PermissionsModule,
     WorkspaceMigrationV2Module,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
-    forwardRef(() => ViewModule),
+    ViewPermissionsModule,
   ],
   controllers: [ViewGroupController],
   providers: [ViewGroupService, ViewGroupV2Service, ViewGroupResolver],

@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistViewField } from '@/views/hooks/internal/usePersistViewField';
-import { useCanEditView } from '@/views/hooks/useCanEditView';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { type ViewField } from '@/views/types/ViewField';
@@ -15,7 +15,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewFields = () => {
-  const { canEditView } = useCanEditView();
+  const { canPersistChanges } = useCanPersistViewChanges();
   const { createViewFields, updateViewFields } = usePersistViewField();
 
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
@@ -27,7 +27,7 @@ export const useSaveCurrentViewFields = () => {
   const saveViewFields = useRecoilCallback(
     ({ set, snapshot }) =>
       async (viewFieldsToSave: Omit<ViewField, 'definition'>[]) => {
-        if (!canEditView) {
+        if (!canPersistChanges) {
           return;
         }
 
@@ -131,7 +131,7 @@ export const useSaveCurrentViewFields = () => {
         set(isPersistingViewFieldsState, false);
       },
     [
-      canEditView,
+      canPersistChanges,
       createViewFields,
       currentViewIdCallbackState,
       getViewFromPrefetchState,
