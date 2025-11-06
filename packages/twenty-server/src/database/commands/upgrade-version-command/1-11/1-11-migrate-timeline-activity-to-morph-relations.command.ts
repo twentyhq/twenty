@@ -1,8 +1,7 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -12,7 +11,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Command({
   name: 'upgrade:1-11:migrate-timeline-activity-to-morph-relations',
@@ -25,6 +24,8 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly featureFlagService: FeatureFlagService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
@@ -38,9 +39,7 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       workspaceId,
     );
 
-    this.logger.log(
-      `Migrating timeline activity relations to morph relations for workspace ${workspaceId}`,
-    );
+    this.logger.log(`Migrating timelineActivity for workspace ${workspaceId}`);
 
     if (isMigrated) {
       this.logger.log(
@@ -58,123 +57,47 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       return;
     }
 
-    const timelineActivityRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<TimelineActivityWorkspaceEntity>(
-        workspaceId,
-        'timelineActivity',
-      );
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const tableName = 'timelineActivity';
 
-    const timelineActivities = await timelineActivityRepository.find({
-      select: [
-        'id',
-        'companyId',
-        'personId',
-        'opportunityId',
-        'noteId',
-        'taskId',
-        'workflowId',
-        'workflowVersionId',
-        'workflowRunId',
-        'dashboardId',
-        'timelineActivityCompanyId',
-        'timelineActivityPersonId',
-        'timelineActivityOpportunityId',
-        'timelineActivityNoteId',
-        'timelineActivityTaskId',
-        'timelineActivityWorkflowId',
-        'timelineActivityWorkflowVersionId',
-        'timelineActivityWorkflowRunId',
-        'timelineActivityDashboardId',
-      ],
-    });
+    const fieldMigrations = [
+      { old: 'companyId', new: 'timelineActivityCompanyId' },
+      { old: 'personId', new: 'timelineActivityPersonId' },
+      { old: 'opportunityId', new: 'timelineActivityOpportunityId' },
+      { old: 'noteId', new: 'timelineActivityNoteId' },
+      { old: 'taskId', new: 'timelineActivityTaskId' },
+      { old: 'workflowId', new: 'timelineActivityWorkflowId' },
+      { old: 'workflowVersionId', new: 'timelineActivityWorkflowVersionId' },
+      { old: 'workflowRunId', new: 'timelineActivityWorkflowRunId' },
+      { old: 'dashboardId', new: 'timelineActivityDashboardId' },
+    ];
 
-    this.logger.log(
-      `Found ${timelineActivities.length} timeline activities to process`,
-    );
-
-    let migratedCount = 0;
-
-    for (const timelineActivity of timelineActivities) {
-      const updates: Partial<TimelineActivityWorkspaceEntity> = {};
-
-      if (
-        isDefined(timelineActivity.companyId) &&
-        !isDefined(timelineActivity.timelineActivityCompanyId)
-      ) {
-        updates.timelineActivityCompanyId = timelineActivity.companyId;
-      }
-
-      if (
-        isDefined(timelineActivity.personId) &&
-        !isDefined(timelineActivity.timelineActivityPersonId)
-      ) {
-        updates.timelineActivityPersonId = timelineActivity.personId;
-      }
-
-      if (
-        isDefined(timelineActivity.opportunityId) &&
-        !isDefined(timelineActivity.timelineActivityOpportunityId)
-      ) {
-        updates.timelineActivityOpportunityId = timelineActivity.opportunityId;
-      }
-
-      if (
-        isDefined(timelineActivity.noteId) &&
-        !isDefined(timelineActivity.timelineActivityNoteId)
-      ) {
-        updates.timelineActivityNoteId = timelineActivity.noteId;
-      }
-
-      if (
-        isDefined(timelineActivity.taskId) &&
-        !isDefined(timelineActivity.timelineActivityTaskId)
-      ) {
-        updates.timelineActivityTaskId = timelineActivity.taskId;
-      }
-
-      if (
-        isDefined(timelineActivity.workflowId) &&
-        !isDefined(timelineActivity.timelineActivityWorkflowId)
-      ) {
-        updates.timelineActivityWorkflowId = timelineActivity.workflowId;
-      }
-
-      if (
-        isDefined(timelineActivity.workflowVersionId) &&
-        !isDefined(timelineActivity.timelineActivityWorkflowVersionId)
-      ) {
-        updates.timelineActivityWorkflowVersionId =
-          timelineActivity.workflowVersionId;
-      }
-
-      if (
-        isDefined(timelineActivity.workflowRunId) &&
-        !isDefined(timelineActivity.timelineActivityWorkflowRunId)
-      ) {
-        updates.timelineActivityWorkflowRunId = timelineActivity.workflowRunId;
-      }
-
-      if (
-        isDefined(timelineActivity.dashboardId) &&
-        !isDefined(timelineActivity.timelineActivityDashboardId)
-      ) {
-        updates.timelineActivityDashboardId = timelineActivity.dashboardId;
-      }
-
-      if (Object.keys(updates).length > 0) {
-        await timelineActivityRepository.update(
-          { id: timelineActivity.id },
-          updates,
+    for (const { old: oldField, new: newField } of fieldMigrations) {
+      try {
+        const result = await this.coreDataSource.query(
+          `UPDATE "${schemaName}"."${tableName}"
+           SET "${newField}" = "${oldField}"
+           WHERE "${oldField}" IS NOT NULL
+             AND "${newField}" IS NULL`,
         );
-        migratedCount++;
+
+        const rowsUpdated = result[1] || 0;
+
+        if (rowsUpdated > 0) {
+          this.logger.log(
+            `Migrated ${rowsUpdated} records for ${oldField} → ${newField}`,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error migrating ${oldField} → ${newField} for workspace ${workspaceId}`,
+          error,
+        );
       }
     }
 
-    this.logger.log(
-      `Successfully migrated ${migratedCount} timeline activities for workspace ${workspaceId}`,
-    );
+    this.logger.log(`✅ Successfully migrated timeline activity records`);
 
-    // Set the feature flag to indicate migration is complete
     await this.featureFlagService.enableFeatureFlags(
       [FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED],
       workspaceId,
