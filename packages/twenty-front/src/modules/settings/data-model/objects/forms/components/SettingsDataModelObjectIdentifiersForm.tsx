@@ -2,7 +2,6 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +13,7 @@ import { isLabelIdentifierFieldMetadataTypes } from 'twenty-shared/utils';
 import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { type z } from 'zod';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
   objectMetadataItemSchema.pick({
@@ -42,7 +42,7 @@ const StyledContainer = styled.div`
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
-  const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
+  const readonly = isObjectMetadataSettingsReadOnly({ objectMetadataItem });
   const formConfig = useForm<SettingsDataModelObjectIdentifiersFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectIdentifiersFormSchema),
