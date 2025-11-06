@@ -20,6 +20,7 @@ import {
   ViewSortExceptionCode,
   ViewSortExceptionMessageKey,
   generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -75,10 +76,15 @@ export class ViewSortResolver {
     });
 
     if (!isDefined(view)) {
-      throw new Error('View not found');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_NOT_FOUND,
+          input.viewId,
+        ),
+        ViewSortExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
-    // Get user permissions
     const permissions = isDefined(userWorkspaceId)
       ? await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -96,7 +102,17 @@ export class ViewSortResolver {
     );
 
     if (!canUpdate) {
-      throw new Error('You do not have permission to update this view');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+        ),
+        ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+        {
+          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+          ),
+        },
+      );
     }
 
     return this.viewSortService.create({
@@ -134,10 +150,15 @@ export class ViewSortResolver {
     });
 
     if (!isDefined(view)) {
-      throw new Error('View not found');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_NOT_FOUND,
+          viewSort.viewId,
+        ),
+        ViewSortExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
-    // Get user permissions
     const permissions = isDefined(userWorkspaceId)
       ? await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -155,7 +176,17 @@ export class ViewSortResolver {
     );
 
     if (!canUpdate) {
-      throw new Error('You do not have permission to update this view');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+        ),
+        ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+        {
+          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+          ),
+        },
+      );
     }
 
     return this.viewSortService.updateWithEntity(viewSort, input);
@@ -189,10 +220,15 @@ export class ViewSortResolver {
     });
 
     if (!isDefined(view)) {
-      throw new Error('View not found');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_NOT_FOUND,
+          viewSort.viewId,
+        ),
+        ViewSortExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
-    // Get user permissions
     const permissions = isDefined(userWorkspaceId)
       ? await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -210,7 +246,17 @@ export class ViewSortResolver {
     );
 
     if (!canUpdate) {
-      throw new Error('You do not have permission to update this view');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+        ),
+        ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+        {
+          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+          ),
+        },
+      );
     }
 
     const deletedViewSort =
@@ -250,10 +296,15 @@ export class ViewSortResolver {
     });
 
     if (!isDefined(view)) {
-      throw new Error('View not found');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_NOT_FOUND,
+          viewSort.viewId,
+        ),
+        ViewSortExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
-    // Get user permissions
     const permissions = isDefined(userWorkspaceId)
       ? await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -271,7 +322,17 @@ export class ViewSortResolver {
     );
 
     if (!canUpdate) {
-      throw new Error('You do not have permission to update this view');
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+        ),
+        ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+        {
+          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
+          ),
+        },
+      );
     }
 
     const deletedViewSort =

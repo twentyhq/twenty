@@ -20,6 +20,7 @@ import {
   ViewFilterGroupExceptionCode,
   ViewFilterGroupExceptionMessageKey,
   generateViewFilterGroupExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -75,10 +76,15 @@ export class ViewFilterGroupResolver {
     });
 
     if (!isDefined(view)) {
-      throw new Error('View not found');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_NOT_FOUND,
+          input.viewId,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
-    // Get user permissions
     const permissions = isDefined(userWorkspaceId)
       ? await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -96,7 +102,18 @@ export class ViewFilterGroupResolver {
     );
 
     if (!canUpdate) {
-      throw new Error('You do not have permission to update this view');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+        {
+          userFriendlyMessage:
+            generateViewFilterGroupUserFriendlyExceptionMessage(
+              ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+            ),
+        },
+      );
     }
 
     return this.viewFilterGroupService.create({
@@ -137,10 +154,15 @@ export class ViewFilterGroupResolver {
     });
 
     if (!isDefined(view)) {
-      throw new Error('View not found');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_NOT_FOUND,
+          viewFilterGroup.viewId,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
-    // Get user permissions
     const permissions = isDefined(userWorkspaceId)
       ? await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -158,7 +180,18 @@ export class ViewFilterGroupResolver {
     );
 
     if (!canUpdate) {
-      throw new Error('You do not have permission to update this view');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+        {
+          userFriendlyMessage:
+            generateViewFilterGroupUserFriendlyExceptionMessage(
+              ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+            ),
+        },
+      );
     }
 
     return this.viewFilterGroupService.updateWithEntity(viewFilterGroup, input);
@@ -195,10 +228,15 @@ export class ViewFilterGroupResolver {
     });
 
     if (!isDefined(view)) {
-      throw new Error('View not found');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_NOT_FOUND,
+          viewFilterGroup.viewId,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
-    // Get user permissions
     const permissions = isDefined(userWorkspaceId)
       ? await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -216,7 +254,18 @@ export class ViewFilterGroupResolver {
     );
 
     if (!canUpdate) {
-      throw new Error('You do not have permission to update this view');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+        {
+          userFriendlyMessage:
+            generateViewFilterGroupUserFriendlyExceptionMessage(
+              ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+            ),
+        },
+      );
     }
 
     const deletedViewFilterGroup =
@@ -257,10 +306,15 @@ export class ViewFilterGroupResolver {
     });
 
     if (!isDefined(view)) {
-      throw new Error('View not found');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_NOT_FOUND,
+          viewFilterGroup.viewId,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
-    // Get user permissions
     const permissions = isDefined(userWorkspaceId)
       ? await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -278,7 +332,18 @@ export class ViewFilterGroupResolver {
     );
 
     if (!canUpdate) {
-      throw new Error('You do not have permission to update this view');
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+        {
+          userFriendlyMessage:
+            generateViewFilterGroupUserFriendlyExceptionMessage(
+              ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED,
+            ),
+        },
+      );
     }
 
     const deletedViewFilterGroup =

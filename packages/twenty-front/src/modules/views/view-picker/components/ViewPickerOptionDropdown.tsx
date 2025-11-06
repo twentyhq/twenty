@@ -58,7 +58,6 @@ export const ViewPickerOptionDropdown = ({
   const { sortedFavorites: favorites } = useFavorites();
   const { createFavorite } = useCreateFavorite();
 
-  // Check if user can edit this view
   // Users with VIEWS permission can edit all views
   // Users without VIEWS permission can only edit unlisted views (which are always their own, filtered by backend)
   const canEditView =

@@ -1,5 +1,5 @@
-import { msg, t } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
+import { msg, t } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
@@ -18,6 +18,8 @@ export class ViewSortException extends CustomException {
 export enum ViewSortExceptionCode {
   VIEW_SORT_NOT_FOUND = 'VIEW_SORT_NOT_FOUND',
   INVALID_VIEW_SORT_DATA = 'INVALID_VIEW_SORT_DATA',
+  VIEW_SORT_UPDATE_PERMISSION_DENIED = 'VIEW_SORT_UPDATE_PERMISSION_DENIED',
+  VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
 export enum ViewSortExceptionMessageKey {
@@ -26,6 +28,8 @@ export enum ViewSortExceptionMessageKey {
   VIEW_SORT_NOT_FOUND = 'VIEW_SORT_NOT_FOUND',
   INVALID_VIEW_SORT_DATA = 'INVALID_VIEW_SORT_DATA',
   FIELD_METADATA_ID_REQUIRED = 'FIELD_METADATA_ID_REQUIRED',
+  VIEW_SORT_UPDATE_PERMISSION_DENIED = 'VIEW_SORT_UPDATE_PERMISSION_DENIED',
+  VIEW_NOT_FOUND = 'VIEW_NOT_FOUND',
 }
 
 export const generateViewSortExceptionMessage = (
@@ -54,6 +58,12 @@ export const generateViewSortExceptionMessage = (
     case ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       message = t`FieldMetadataId is required`;
       break;
+    case ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED:
+      message = t`You do not have permission to update this view`;
+      break;
+    case ViewSortExceptionMessageKey.VIEW_NOT_FOUND:
+      message = id ? t`View (id: ${id}) not found` : t`View not found`;
+      break;
     default:
       assertUnreachable(key);
   }
@@ -71,5 +81,7 @@ export const generateViewSortUserFriendlyExceptionMessage = (
       return msg`ViewId is required to create a view sort.`;
     case ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return msg`FieldMetadataId is required to create a view sort.`;
+    case ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED:
+      return msg`You don't have permission to update this view.`;
   }
 };

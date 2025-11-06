@@ -60,8 +60,14 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
     switch (error.code) {
       case ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND:
         throw new NotFoundError(error.message);
+      case ViewFieldExceptionCode.VIEW_NOT_FOUND:
+        throw new NotFoundError(error.message);
       case ViewFieldExceptionCode.INVALID_VIEW_FIELD_DATA:
         throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewFieldExceptionCode.VIEW_FIELD_UPDATE_PERMISSION_DENIED:
+        throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
@@ -74,8 +80,14 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
     switch (error.code) {
       case ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND:
         throw new NotFoundError(error.message);
+      case ViewFilterExceptionCode.VIEW_NOT_FOUND:
+        throw new NotFoundError(error.message);
       case ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA:
         throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewFilterExceptionCode.VIEW_FILTER_UPDATE_PERMISSION_DENIED:
+        throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
@@ -88,8 +100,14 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
     switch (error.code) {
       case ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND:
         throw new NotFoundError(error.message);
+      case ViewFilterGroupExceptionCode.VIEW_NOT_FOUND:
+        throw new NotFoundError(error.message);
       case ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA:
         throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_UPDATE_PERMISSION_DENIED:
+        throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
@@ -102,8 +120,14 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
     switch (error.code) {
       case ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND:
         throw new NotFoundError(error.message);
+      case ViewGroupExceptionCode.VIEW_NOT_FOUND:
+        throw new NotFoundError(error.message);
       case ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA:
         throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewGroupExceptionCode.VIEW_GROUP_UPDATE_PERMISSION_DENIED:
+        throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
@@ -116,8 +140,14 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
     switch (error.code) {
       case ViewSortExceptionCode.VIEW_SORT_NOT_FOUND:
         throw new NotFoundError(error.message);
+      case ViewSortExceptionCode.VIEW_NOT_FOUND:
+        throw new NotFoundError(error.message);
       case ViewSortExceptionCode.INVALID_VIEW_SORT_DATA:
         throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      case ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED:
+        throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
       default: {
