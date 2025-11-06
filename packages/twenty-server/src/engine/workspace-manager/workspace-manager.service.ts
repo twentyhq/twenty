@@ -17,7 +17,6 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { createStandardApplications } from 'src/engine/workspace-manager/dev-seeder/core/utils/create-standard-applications.util';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
@@ -81,13 +80,8 @@ export class WorkspaceManagerService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    await createStandardApplications({
-      applicationService: this.applicationService,
-      workspaceId,
-    });
-
-    const standardApplicationEntityByApplicationUniversalIdentifier =
-      await this.applicationService.findStandardTwentyApplicationsOrThrow({
+    const twentyStandardApplication =
+      await this.applicationService.createTwentyStandardApplication({
         workspaceId,
       });
 
@@ -95,7 +89,7 @@ export class WorkspaceManagerService {
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
-      standardApplicationEntityByApplicationUniversalIdentifier,
+      twentyStandardApplication,
     });
 
     const dataSourceMetadataCreationEnd = performance.now();

@@ -13,8 +13,8 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKFLOW_AUTOMATED_TRIGGER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { AutomatedTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
-import { TWENTY_WORKFLOW_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 import { WorkflowWorkspaceEntity } from './workflow.workspace-entity';
 
@@ -26,7 +26,7 @@ export enum AutomatedTriggerType {
 @WorkspaceEntity({
   universalIdentifier: STANDARD_OBJECT_IDS.workflowAutomatedTrigger,
   applicationUniversalIdentifier:
-    TWENTY_WORKFLOW_APPLICATION.universalIdentifier,
+    TWENTY_STANDARD_APPLICATION.universalIdentifier,
   namePlural: 'workflowAutomatedTriggers',
   labelSingular: msg`WorkflowAutomatedTrigger`,
   labelPlural: msg`WorkflowAutomatedTriggers`,

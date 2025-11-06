@@ -42,14 +42,10 @@ export class StandardObjectFactory {
     ) {
       return undefined;
     }
-    const relatedStandardApplication =
-      context.standardApplicationEntityByApplicationUniversalIdentifier[
-        workspaceEntityMetadataArgs.applicationUniversalIdentifier
-      ];
 
     return {
       // TODO: Remove targetTableName when we remove the old metadata
-      applicationId: relatedStandardApplication.id,
+      applicationId: context.twentyStandardApplication.id,
       labelIdentifierFieldMetadataId: null,
       imageIdentifierFieldMetadataId: null,
       duplicateCriteria: [],

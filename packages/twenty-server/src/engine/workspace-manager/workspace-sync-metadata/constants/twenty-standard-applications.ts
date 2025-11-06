@@ -10,15 +10,6 @@ export const TWENTY_STANDARD_APPLICATION = {
   sourceType: 'local',
 } as const satisfies CreateApplicationInput;
 
-export const TWENTY_WORKFLOW_APPLICATION = {
-  universalIdentifier: '20202020-a1cf-4cda-896c-0c19bbba6f00',
-  name: 'Twenty Workflows',
-  description: 'Workflow automation engine for Twenty CRM',
-  version: '1.0.0',
-  sourcePath: 'cli-sync',
-  sourceType: 'local',
-} as const satisfies CreateApplicationInput;
-
 export type CreateApplicationInput = Omit<
   ApplicationEntity,
   | 'workspaceId'
@@ -34,5 +25,4 @@ export type CreateApplicationInput = Omit<
   | 'serverlessFunctions'
 >;
 export type TwentyStandardApplicationUniversalIdentifiers =
-  | (typeof TWENTY_STANDARD_APPLICATION)['universalIdentifier']
-  | (typeof TWENTY_WORKFLOW_APPLICATION)['universalIdentifier'];
+  (typeof TWENTY_STANDARD_APPLICATION)['universalIdentifier'];

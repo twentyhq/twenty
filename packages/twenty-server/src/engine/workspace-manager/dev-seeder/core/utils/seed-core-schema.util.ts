@@ -7,7 +7,6 @@ import {
   type SeededWorkspacesIds,
   SEEDER_CREATE_WORKSPACE_INPUT,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { createStandardApplications } from 'src/engine/workspace-manager/dev-seeder/core/utils/create-standard-applications.util';
 import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
@@ -74,11 +73,12 @@ export const seedCoreSchema = async ({
 
     await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
 
-    await createStandardApplications({
-      applicationService,
-      workspaceId,
+    await applicationService.createTwentyStandardApplication(
+      {
+        workspaceId,
+      },
       queryRunner,
-    });
+    );
 
     await seedAgents({ queryRunner, schemaName, workspaceId });
 

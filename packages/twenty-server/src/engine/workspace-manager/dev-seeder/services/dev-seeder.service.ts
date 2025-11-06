@@ -20,7 +20,9 @@ import { seedPageLayoutWidgets } from 'src/engine/workspace-manager/dev-seeder/c
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class DevSeederService {
@@ -66,16 +68,23 @@ export class DevSeederService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const standardApplicationEntityByApplicationUniversalIdentifier =
-      await this.applicationService.findStandardTwentyApplicationsOrThrow({
+    const twentyStandardApplication =
+      await this.applicationService.findByUniversalIdentifier({
         workspaceId,
+        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
       });
+
+    if (!isDefined(twentyStandardApplication)) {
+      throw new Error(
+        'Seeder failed to find twenty standard application, should never occur',
+      );
+    }
 
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
-      standardApplicationEntityByApplicationUniversalIdentifier,
+      twentyStandardApplication,
     });
 
     await this.devSeederMetadataService.seed({
