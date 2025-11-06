@@ -152,12 +152,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       await this.userRepository.softDelete(userId);
     }
 
-    return await this.userWorkspaceRepository.findOne({
-      where: {
-        id: userWorkspace.id,
-      },
-      withDeleted: true,
-    });
+    return userWorkspace;
   }
 
   async removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
