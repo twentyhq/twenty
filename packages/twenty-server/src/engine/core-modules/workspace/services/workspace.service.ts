@@ -373,7 +373,8 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       'isGoogleAuthEnabled' in payload ||
       'isMicrosoftAuthEnabled' in payload ||
       'isPasswordAuthEnabled' in payload ||
-      'isPublicInviteLinkEnabled' in payload
+      'isPublicInviteLinkEnabled' in payload ||
+      'editableProfileFields' in payload
     ) {
       if (!userWorkspaceId) {
         throw new Error('Missing userWorkspaceId in authContext');

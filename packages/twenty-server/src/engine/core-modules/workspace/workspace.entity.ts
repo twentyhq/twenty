@@ -258,6 +258,10 @@ export class WorkspaceEntity {
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 
+  @Field(() => [String], { nullable: true })
+  @Column('simple-array', { nullable: true })
+  editableProfileFields: string[] | null;
+
   // TODO: set as non nullable
   @Column({ nullable: true, type: 'uuid' })
   defaultRoleId: string | null;
