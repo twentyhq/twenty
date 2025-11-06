@@ -84,7 +84,7 @@ export class WorkspaceManagerService {
         workspaceId,
       });
 
-    // Retrieve custom app here and apply universalIdentifier and so on to all sub entities
+    // TODO prastoin Retrieve custom app here and apply universalIdentifier and so on to all sub entities
 
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
