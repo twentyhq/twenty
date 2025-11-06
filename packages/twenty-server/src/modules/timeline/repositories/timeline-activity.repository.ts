@@ -208,11 +208,6 @@ export class TimelineActivityRepository {
     workspaceId: string,
     isFeatureFlagTimelineActivtyMigrated: boolean,
   ) {
-    console.log(
-      'isFeatureFlagTimelineActivtyMigrated',
-      isFeatureFlagTimelineActivtyMigrated,
-    );
-
     return isFeatureFlagTimelineActivtyMigrated
       ? `timelineActivity${capitalize(objectSingularName)}Id`
       : `${objectSingularName}Id`;
