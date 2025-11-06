@@ -6,7 +6,9 @@ import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/sett
 export const SettingsApplicationDetailSettingsTab = ({
   application,
 }: {
-  application?: Omit<Application, 'objects' | 'universalIdentifier'> & { objects: { id: string }[] };
+  application?: Omit<Application, 'objects' | 'universalIdentifier'> & {
+    objects: { id: string }[];
+  };
 }) => {
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
 
