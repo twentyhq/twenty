@@ -1,4 +1,4 @@
-import { css, useTheme } from '@emotion/react';
+import { css, type Theme, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { forwardRef } from 'react';
 import {
@@ -17,56 +17,40 @@ type PageLayoutGridResizeHandleProps = {
   style?: React.CSSProperties;
 };
 
-const StyledBottomRightIcon = styled(IconRadiusBottomRight)`
-  bottom: ${({ theme }) => theme.spacing(1)};
-  cursor: nwse-resize;
-  position: absolute;
-  right: ${({ theme }) => theme.spacing(1)};
-  color: transparent;
-  display: none;
+const createCornerIconStyle =
+  (vertical: 'top' | 'bottom', horizontal: 'left' | 'right') =>
+  ({ theme }: { theme: Theme }) => css`
+    left: ${vertical === 'top' ? theme.spacing(1) : 'unset'};
+    right: ${vertical === 'bottom' ? theme.spacing(1) : 'unset'};
+    top: ${horizontal === 'left' ? theme.spacing(1) : 'unset'};
+    bottom: ${horizontal === 'right' ? theme.spacing(1) : 'unset'};
 
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
+    cursor: ${vertical === 'top' || horizontal === 'left'
+      ? 'nwse-resize'
+      : 'nesw-resize'};
+    position: absolute;
+    color: transparent;
+    display: none;
+
+    :hover {
+      color: ${theme.font.color.tertiary};
+    }
+  `;
+
+const StyledBottomRightIcon = styled(IconRadiusBottomRight)`
+  ${createCornerIconStyle('bottom', 'right')}
 `;
 
 const StyledBottomLeftIcon = styled(IconRadiusBottomLeft)`
-  bottom: ${({ theme }) => theme.spacing(1)};
-  cursor: nesw-resize;
-  position: absolute;
-  left: ${({ theme }) => theme.spacing(1)};
-  color: transparent;
-  display: none;
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
+  ${createCornerIconStyle('bottom', 'left')}
 `;
 
 const StyledTopLeftIcon = styled(IconRadiusTopLeft)`
-  top: ${({ theme }) => theme.spacing(1)};
-  cursor: nwse-resize;
-  position: absolute;
-  left: ${({ theme }) => theme.spacing(1)};
-  color: transparent;
-  display: none;
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
+  ${createCornerIconStyle('top', 'left')}
 `;
 
 const StyledTopRightIcon = styled(IconRadiusTopRight)`
-  top: ${({ theme }) => theme.spacing(1)};
-  cursor: nesw-resize;
-  position: absolute;
-  right: ${({ theme }) => theme.spacing(1)};
-  color: transparent;
-  display: none;
-
-  :hover {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
+  ${createCornerIconStyle('top', 'right')}
 `;
 
 const StyledVerticalHandle = styled.div`
@@ -143,67 +127,52 @@ const StyledVerticalHandleWrapper = styled.div<{
   }
 `;
 
+const CORNER_ICONS = {
+  se: StyledBottomRightIcon,
+  sw: StyledBottomLeftIcon,
+  ne: StyledTopRightIcon,
+  nw: StyledTopLeftIcon,
+};
+
 export const PageLayoutGridResizeHandle = forwardRef<
   HTMLDivElement,
   PageLayoutGridResizeHandleProps
->((props, ref) => {
-  const theme = useTheme();
-  const {
-    handleAxis = 'se',
-    onMouseDown,
-    onMouseUp,
-    onTouchEnd,
-    className,
-    style,
-  } = props;
+>(
+  (
+    { handleAxis, onMouseDown, onMouseUp, onTouchEnd, className, style },
+    ref,
+  ) => {
+    const theme = useTheme();
 
-  return (
-    <div
-      ref={ref}
-      onMouseDown={onMouseDown}
-      onMouseUp={onMouseUp}
-      onTouchEnd={onTouchEnd}
-      className={className}
-      style={style}
-    >
-      {(handleAxis === 'w' || handleAxis === 'e') && (
-        <StyledVerticalHandleWrapper handleAxis={handleAxis}>
-          <StyledVerticalHandle className="widget-card-resize-handle" />
-        </StyledVerticalHandleWrapper>
-      )}
-      {(handleAxis === 'n' || handleAxis === 's') && (
-        <StyledHorizontalHandleWrapper handleAxis={handleAxis}>
-          <StyledHorizontalHandle className="widget-card-resize-handle" />
-        </StyledHorizontalHandleWrapper>
-      )}
-      {handleAxis === 'se' && (
-        <StyledBottomRightIcon
-          size={theme.spacing(4)}
-          stroke={theme.spacing(1)}
-          className="widget-card-resize-handle"
-        />
-      )}
-      {handleAxis === 'sw' && (
-        <StyledBottomLeftIcon
-          size={theme.spacing(4)}
-          stroke={theme.spacing(1)}
-          className="widget-card-resize-handle"
-        />
-      )}
-      {handleAxis === 'ne' && (
-        <StyledTopRightIcon
-          size={theme.spacing(4)}
-          stroke={theme.spacing(1)}
-          className="widget-card-resize-handle"
-        />
-      )}
-      {handleAxis === 'nw' && (
-        <StyledTopLeftIcon
-          size={theme.spacing(4)}
-          stroke={theme.spacing(1)}
-          className="widget-card-resize-handle"
-        />
-      )}
-    </div>
-  );
-});
+    const CornerIcon = CORNER_ICONS[handleAxis as keyof typeof CORNER_ICONS];
+
+    return (
+      <div
+        ref={ref}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        onTouchEnd={onTouchEnd}
+        className={className}
+        style={style}
+      >
+        {(handleAxis === 'w' || handleAxis === 'e') && (
+          <StyledVerticalHandleWrapper handleAxis={handleAxis}>
+            <StyledVerticalHandle className="widget-card-resize-handle" />
+          </StyledVerticalHandleWrapper>
+        )}
+        {(handleAxis === 'n' || handleAxis === 's') && (
+          <StyledHorizontalHandleWrapper handleAxis={handleAxis}>
+            <StyledHorizontalHandle className="widget-card-resize-handle" />
+          </StyledHorizontalHandleWrapper>
+        )}
+        {CornerIcon && (
+          <CornerIcon
+            size={theme.spacing(4)}
+            stroke={theme.spacing(1)}
+            className="widget-card-resize-handle"
+          />
+        )}
+      </div>
+    );
+  },
+);
