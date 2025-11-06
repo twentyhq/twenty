@@ -12,7 +12,7 @@ import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectT
 export const SettingsApplicationDetailContentTab = ({
   application,
 }: {
-  application?: Omit<Application, 'objects'> & { objects: { id: string }[] };
+  application?: Omit<Application, 'objects' | 'universalIdentifier'> & { objects: { id: string }[] };
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
