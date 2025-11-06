@@ -58,13 +58,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
   const isStreaming = status === 'streaming';
 
-  const scrollToBottom = () => {
-    scrollWrapperHTMLElement?.scroll({
-      top: scrollWrapperHTMLElement.scrollHeight,
-      behavior: 'smooth',
-    });
-  };
-
   const isLoading =
     !currentAIChatThread || isStreaming || agentChatSelectedFiles.length > 0;
 
@@ -105,7 +98,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     );
 
     setAgentChatUploadedFiles([]);
-    setTimeout(scrollToBottom, 100);
   };
 
   return {
