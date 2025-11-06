@@ -147,7 +147,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               viewType === ViewType.Calendar
                 ? calendarFieldMetadataId
                 : undefined,
-            visibility: visibility,
+            visibility,
           },
         });
 

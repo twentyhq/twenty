@@ -1,20 +1,13 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
@@ -26,12 +19,10 @@ import {
   ViewFieldExceptionCode,
   ViewFieldExceptionMessageKey,
   generateViewFieldExceptionMessage,
-  generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldV2Service } from 'src/engine/metadata-modules/view-field/services/view-field-v2.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFieldDTO)
@@ -40,12 +31,8 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 export class ViewFieldResolver {
   constructor(
     private readonly viewFieldService: ViewFieldService,
-    private readonly viewService: ViewService,
-    private readonly permissionsService: PermissionsService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewFieldV2Service: ViewFieldV2Service,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 
   @Query(() => [ViewFieldDTO])
@@ -65,11 +52,10 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async updateCoreViewField(
     @Args('input') updateViewFieldInput: UpdateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO> {
     const viewField = await this.viewFieldService.findById(
       updateViewFieldInput.id,
@@ -83,54 +69,6 @@ export class ViewFieldResolver {
           updateViewFieldInput.id,
         ),
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
-      );
-    }
-
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: viewField.viewId,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_NOT_FOUND,
-          viewField.viewId,
-        ),
-        ViewFieldExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewFieldExceptionCode.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-            ViewFieldExceptionMessageKey.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-          ),
-        },
       );
     }
 
@@ -155,60 +93,11 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async createCoreViewField(
     @Args('input') createViewFieldInput: CreateViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO> {
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: createViewFieldInput.viewId,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_NOT_FOUND,
-          createViewFieldInput.viewId,
-        ),
-        ViewFieldExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewFieldExceptionCode.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-            ViewFieldExceptionMessageKey.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-          ),
-        },
-      );
-    }
-
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -229,7 +118,7 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => [ViewFieldDTO])
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(ViewPermissionGuard)
   async createManyCoreViewFields(
     @Args('inputs', { type: () => [CreateViewFieldInput] })
     createViewFieldInputs: CreateViewFieldInput[],
@@ -255,11 +144,10 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async deleteCoreViewField(
     @Args('input') deleteViewFieldInput: DeleteViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO> {
     const viewField = await this.viewFieldService.findById(
       deleteViewFieldInput.id,
@@ -273,54 +161,6 @@ export class ViewFieldResolver {
           deleteViewFieldInput.id,
         ),
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
-      );
-    }
-
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: viewField.viewId,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_NOT_FOUND,
-          viewField.viewId,
-        ),
-        ViewFieldExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewFieldExceptionCode.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-            ViewFieldExceptionMessageKey.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-          ),
-        },
       );
     }
 
@@ -345,11 +185,10 @@ export class ViewFieldResolver {
   }
 
   @Mutation(() => ViewFieldDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async destroyCoreViewField(
     @Args('input') destroyViewFieldInput: DestroyViewFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO> {
     const viewField = await this.viewFieldService.findByIdIncludingDeleted(
       destroyViewFieldInput.id,
@@ -363,54 +202,6 @@ export class ViewFieldResolver {
           destroyViewFieldInput.id,
         ),
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
-      );
-    }
-
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: viewField.viewId,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_NOT_FOUND,
-          viewField.viewId,
-        ),
-        ViewFieldExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewFieldExceptionCode.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-            ViewFieldExceptionMessageKey.VIEW_FIELD_UPDATE_PERMISSION_DENIED,
-          ),
-        },
       );
     }
 

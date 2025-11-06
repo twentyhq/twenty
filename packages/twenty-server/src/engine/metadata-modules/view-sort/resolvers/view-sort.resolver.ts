@@ -1,17 +1,11 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
@@ -20,24 +14,16 @@ import {
   ViewSortExceptionCode,
   ViewSortExceptionMessageKey,
   generateViewSortExceptionMessage,
-  generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewSortDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewSortResolver {
-  constructor(
-    private readonly viewSortService: ViewSortService,
-    private readonly viewService: ViewService,
-    private readonly permissionsService: PermissionsService,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
-  ) {}
+  constructor(private readonly viewSortService: ViewSortService) {}
 
   @Query(() => [ViewSortDTO])
   async getCoreViewSorts(
@@ -61,60 +47,11 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async createCoreViewSort(
     @Args('input') input: CreateViewSortInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewSortDTO> {
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: input.viewId,
-        workspaceId: workspace.id,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_NOT_FOUND,
-          input.viewId,
-        ),
-        ViewSortExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
-            ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-          ),
-        },
-      );
-    }
-
     return this.viewSortService.create({
       ...input,
       workspaceId: workspace.id,
@@ -122,12 +59,11 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => ViewSortDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async updateCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewSortInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewSortDTO> {
     const viewSort = await this.viewSortService.findById(id, workspace.id);
 
@@ -141,63 +77,14 @@ export class ViewSortResolver {
       );
     }
 
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: viewSort.viewId,
-        workspaceId: workspace.id,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_NOT_FOUND,
-          viewSort.viewId,
-        ),
-        ViewSortExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
-            ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-          ),
-        },
-      );
-    }
-
     return this.viewSortService.updateWithEntity(viewSort, input);
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async deleteCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<boolean> {
     const viewSort = await this.viewSortService.findById(id, workspace.id);
 
@@ -211,54 +98,6 @@ export class ViewSortResolver {
       );
     }
 
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: viewSort.viewId,
-        workspaceId: workspace.id,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_NOT_FOUND,
-          viewSort.viewId,
-        ),
-        ViewSortExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
-            ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-          ),
-        },
-      );
-    }
-
     const deletedViewSort =
       await this.viewSortService.deleteWithEntity(viewSort);
 
@@ -266,11 +105,10 @@ export class ViewSortResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async destroyCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<boolean> {
     const viewSort = await this.viewSortService.findByIdIncludingDeleted(
       id,
@@ -284,54 +122,6 @@ export class ViewSortResolver {
           id,
         ),
         ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
-      );
-    }
-
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: viewSort.viewId,
-        workspaceId: workspace.id,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_NOT_FOUND,
-          viewSort.viewId,
-        ),
-        ViewSortExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewSortExceptionCode.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
-            ViewSortExceptionMessageKey.VIEW_SORT_UPDATE_PERMISSION_DENIED,
-          ),
-        },
       );
     }
 

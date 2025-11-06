@@ -96,7 +96,6 @@ export class CreateViewInput {
   @IsEnum(ViewVisibility)
   @Field(() => ViewVisibility, {
     nullable: true,
-    defaultValue: ViewVisibility.WORKSPACE,
   })
   visibility?: ViewVisibility;
 

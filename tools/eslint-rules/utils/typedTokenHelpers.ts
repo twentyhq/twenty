@@ -67,7 +67,7 @@ export const typedTokenHelpers = {
         decorator.expression.callee.type === TSESTree.AST_NODE_TYPES.Identifier &&
         decorator.expression.callee.name === 'UseGuards'
       ) {
-        // Check if any argument is SettingsPermissionsGuard, CustomPermissionGuard, or NoPermissionGuard
+        // Check if any argument is SettingsPermissionsGuard, CustomPermissionGuard, ViewPermissionGuard, or NoPermissionGuard
         return decorator.expression.arguments.some((arg) => {
           // SettingsPermissionsGuard(PermissionFlagType.XXX)
           if (arg.type === TSESTree.AST_NODE_TYPES.CallExpression) {
@@ -76,10 +76,13 @@ export const typedTokenHelpers = {
               return callee.name === 'SettingsPermissionsGuard';
             }
           }
-          // CustomPermissionGuard or NoPermissionGuard
+          // CustomPermissionGuard, ViewPermissionGuard, or NoPermissionGuard
           if (arg.type === TSESTree.AST_NODE_TYPES.Identifier) {
-            return arg.name === 'CustomPermissionGuard' ||
-                   arg.name === 'NoPermissionGuard';
+            return (
+              arg.name === 'CustomPermissionGuard' ||
+              arg.name === 'ViewPermissionGuard' ||
+              arg.name === 'NoPermissionGuard'
+            );
           }
           return false;
         });

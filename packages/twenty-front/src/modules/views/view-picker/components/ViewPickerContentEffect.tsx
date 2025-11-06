@@ -86,15 +86,12 @@ export const ViewPickerContentEffect = () => {
 
       if (viewPickerMode === 'create-empty') {
         setViewPickerSelectedIcon(defaultIcon);
-        setViewPickerVisibility(
-          hasViewPermission
-            ? ViewVisibility.WORKSPACE
-            : ViewVisibility.UNLISTED,
-        );
       } else {
         setViewPickerSelectedIcon(referenceView.icon);
-        setViewPickerVisibility(referenceView.visibility);
       }
+      setViewPickerVisibility(
+        hasViewPermission ? referenceView.visibility : ViewVisibility.UNLISTED,
+      );
       setViewPickerInputName(referenceView.name);
       setViewPickerType(referenceView.type);
     }

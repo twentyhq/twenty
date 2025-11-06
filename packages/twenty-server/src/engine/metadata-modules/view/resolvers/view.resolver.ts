@@ -21,7 +21,6 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -49,6 +48,7 @@ import {
   generateViewExceptionMessage,
   generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-permission.guard';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -159,11 +159,11 @@ export class ViewResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    if (
-      isDefined(input.visibility) &&
-      input.visibility === ViewVisibility.WORKSPACE &&
-      isDefined(userWorkspaceId)
-    ) {
+    // Default visibility to UNLISTED if not provided
+    const visibility = input.visibility ?? ViewVisibility.UNLISTED;
+
+    // Check permission if trying to create a workspace-level view
+    if (visibility === ViewVisibility.WORKSPACE && isDefined(userWorkspaceId)) {
       const permissions =
         await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -171,11 +171,22 @@ export class ViewResolver {
         });
 
       if (!permissions.permissionFlags[PermissionFlagType.VIEWS]) {
-        throw new Error(
-          'You need manage views permission to create workspace-level views',
+        throw new ViewException(
+          generateViewExceptionMessage(
+            ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
+          ),
+          ViewExceptionCode.VIEW_CREATE_PERMISSION_DENIED,
+          {
+            userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+              ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
+            ),
+          },
         );
       }
     }
+
+    // Set the visibility explicitly
+    input.visibility = visibility;
 
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -201,7 +212,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async updateCoreView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
@@ -220,7 +231,6 @@ export class ViewResolver {
       );
     }
 
-    // Get user permissions first
     const permissions = isDefined(userWorkspaceId)
       ? await this.permissionsService.getUserWorkspacePermissions({
           userWorkspaceId,
@@ -230,26 +240,6 @@ export class ViewResolver {
 
     const hasViewsPermission =
       permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      existingView,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewExceptionCode.VIEW_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.VIEW_UPDATE_PERMISSION_DENIED,
-          ),
-        },
-      );
-    }
 
     // Check if trying to change to workspace visibility without permission
     if (
@@ -284,7 +274,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(ViewPermissionGuard)
   async deleteCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -310,7 +300,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.VIEWS))
+  @UseGuards(ViewPermissionGuard)
   async destroyCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

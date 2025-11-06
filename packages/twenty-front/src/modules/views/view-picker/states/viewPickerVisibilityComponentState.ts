@@ -5,6 +5,6 @@ import { ViewVisibility } from '~/generated-metadata/graphql';
 export const viewPickerVisibilityComponentState =
   createComponentState<ViewVisibility>({
     key: 'viewPickerVisibilityComponentState',
-    defaultValue: ViewVisibility.WORKSPACE,
+    defaultValue: ViewVisibility.UNLISTED,
     componentInstanceContext: ViewComponentInstanceContext,
   });

@@ -109,7 +109,7 @@ export const SettingsRolePermissionsToolSection = ({
       {
         key: PermissionFlagType.VIEWS,
         name: t`Manage Views`,
-        description: t`Create, edit, and delete views`,
+        description: t`Create, edit, and delete workspace views`,
         Icon: IconTable,
         isToolPermission: true,
       },

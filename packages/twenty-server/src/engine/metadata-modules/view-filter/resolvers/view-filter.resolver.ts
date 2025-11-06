@@ -1,19 +1,13 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
@@ -24,12 +18,10 @@ import {
   ViewFilterExceptionCode,
   ViewFilterExceptionMessageKey,
   generateViewFilterExceptionMessage,
-  generateViewFilterUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
-import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterDTO)
@@ -38,12 +30,8 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/
 export class ViewFilterResolver {
   constructor(
     private readonly viewFilterService: ViewFilterService,
-    private readonly viewService: ViewService,
-    private readonly permissionsService: PermissionsService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewFilterV2Service: ViewFilterV2Service,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 
   @Query(() => [ViewFilterDTO])
@@ -68,60 +56,11 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async createCoreViewFilter(
     @Args('input') createViewFilterInput: CreateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: createViewFilterInput.viewId,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewFilterException(
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_NOT_FOUND,
-          createViewFilterInput.viewId,
-        ),
-        ViewFilterExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewFilterException(
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewFilterExceptionCode.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
-            ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-          ),
-        },
-      );
-    }
-
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -142,11 +81,10 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async updateCoreViewFilter(
     @Args('input') updateViewFilterInput: UpdateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
     const viewFilter = await this.viewFilterService.findById(
       updateViewFilterInput.id,
@@ -160,54 +98,6 @@ export class ViewFilterResolver {
           updateViewFilterInput.id,
         ),
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
-      );
-    }
-
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: viewFilter.viewId,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewFilterException(
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_NOT_FOUND,
-          viewFilter.viewId,
-        ),
-        ViewFilterExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewFilterException(
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewFilterExceptionCode.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
-            ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-          ),
-        },
       );
     }
 
@@ -231,11 +121,10 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async deleteCoreViewFilter(
     @Args('input') deleteViewFilterInput: DeleteViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
     const viewFilter = await this.viewFilterService.findById(
       deleteViewFilterInput.id,
@@ -249,54 +138,6 @@ export class ViewFilterResolver {
           deleteViewFilterInput.id,
         ),
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
-      );
-    }
-
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: viewFilter.viewId,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewFilterException(
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_NOT_FOUND,
-          viewFilter.viewId,
-        ),
-        ViewFilterExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewFilterException(
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewFilterExceptionCode.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
-            ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-          ),
-        },
       );
     }
 
@@ -320,11 +161,10 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async destroyCoreViewFilter(
     @Args('input') destroyViewFilterInput: DestroyViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
     const viewFilter = await this.viewFilterService.findByIdIncludingDeleted(
       destroyViewFilterInput.id,
@@ -338,54 +178,6 @@ export class ViewFilterResolver {
           destroyViewFilterInput.id,
         ),
         ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
-      );
-    }
-
-    const view = await this.viewRepository.findOne({
-      where: {
-        id: viewFilter.viewId,
-        workspaceId,
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (!isDefined(view)) {
-      throw new ViewFilterException(
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_NOT_FOUND,
-          viewFilter.viewId,
-        ),
-        ViewFilterExceptionCode.VIEW_NOT_FOUND,
-      );
-    }
-
-    const permissions = isDefined(userWorkspaceId)
-      ? await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId,
-        })
-      : null;
-
-    const hasViewsPermission =
-      permissions?.permissionFlags[PermissionFlagType.VIEWS] ?? false;
-
-    const canUpdate = this.viewService.canUserUpdateView(
-      view,
-      userWorkspaceId,
-      hasViewsPermission,
-    );
-
-    if (!canUpdate) {
-      throw new ViewFilterException(
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-        ),
-        ViewFilterExceptionCode.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-        {
-          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
-            ViewFilterExceptionMessageKey.VIEW_FILTER_UPDATE_PERMISSION_DENIED,
-          ),
-        },
       );
     }
 

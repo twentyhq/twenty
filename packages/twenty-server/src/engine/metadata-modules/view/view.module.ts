@@ -14,6 +14,7 @@ import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-gro
 import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewController } from 'src/engine/metadata-modules/view/controllers/view.controller';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-permission.guard';
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
@@ -40,7 +41,12 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   controllers: [ViewController],
-  providers: [ViewService, ViewResolver, ViewV2Service],
-  exports: [ViewService, ViewV2Service, TypeOrmModule.forFeature([ViewEntity])],
+  providers: [ViewService, ViewResolver, ViewV2Service, ViewPermissionGuard],
+  exports: [
+    ViewService,
+    ViewV2Service,
+    ViewPermissionGuard,
+    TypeOrmModule.forFeature([ViewEntity]),
+  ],
 })
 export class ViewModule {}
