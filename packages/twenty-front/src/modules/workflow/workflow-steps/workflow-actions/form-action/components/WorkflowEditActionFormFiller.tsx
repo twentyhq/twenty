@@ -15,6 +15,7 @@ import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/fo
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -33,6 +34,7 @@ export const WorkflowEditActionFormFiller = ({
   action,
   actionOptions,
 }: WorkflowEditActionFormFillerProps) => {
+  const { t } = useLingui();
   const { getIcon } = useIcons();
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
@@ -201,7 +203,7 @@ export const WorkflowEditActionFormFiller = ({
         <RightDrawerFooter
           actions={[
             <CmdEnterActionButton
-              title="Submit"
+              title={t`Submit`}
               onClick={onSubmit}
               disabled={!canSubmit}
             />,

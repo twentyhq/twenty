@@ -10,6 +10,7 @@ import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread
 import { messageThreadComponentState } from '@/command-menu/pages/message-thread/states/messageThreadComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp } from 'twenty-ui/display';
@@ -172,7 +173,7 @@ export const CommandMenuMessageThreadPage = () => {
         <StyledButtonContainer isMobile={isMobile}>
           <Button
             onClick={handleReplyClick}
-            title="Reply"
+            title={t`Reply`}
             Icon={IconArrowBackUp}
             disabled={!canReply}
           />

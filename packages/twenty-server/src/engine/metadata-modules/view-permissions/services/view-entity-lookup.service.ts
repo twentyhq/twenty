@@ -29,7 +29,7 @@ export class ViewEntityLookupService {
     kind: ViewChildEntityKind,
     entityId: string,
     workspaceId: string,
-  ): Promise<string> {
+  ): Promise<string | null> {
     switch (kind) {
       case 'viewField': {
         const row = await this.viewFieldRepository.findOne({
@@ -84,6 +84,6 @@ export class ViewEntityLookupService {
         break;
     }
 
-    throw new Error(`Could not find entity with id ${entityId}`);
+    return null;
   }
 }

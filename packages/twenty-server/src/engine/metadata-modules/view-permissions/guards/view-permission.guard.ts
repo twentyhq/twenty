@@ -41,6 +41,13 @@ export const ViewPermissionGuard = (
       const args = gqlContext.getArgs();
 
       const viewId = await this.extractViewId(args, request.workspace.id);
+
+      // If viewId is null, the entity doesn't exist - allow the operation
+      // so the service can handle the NOT_FOUND error properly
+      if (!viewId) {
+        return true;
+      }
+
       const view = await this.viewService.findByIdIncludingDeleted(
         viewId,
         request.workspace.id,
@@ -66,7 +73,7 @@ export const ViewPermissionGuard = (
     private async extractViewId(
       args: Record<string, unknown>,
       workspaceId: string,
-    ): Promise<string> {
+    ): Promise<string | null> {
       // Direct view operations (updateCoreView, deleteCoreView, etc.)
       if (!childEntityKind && typeof args.id === 'string') {
         return args.id;
@@ -85,7 +92,16 @@ export const ViewPermissionGuard = (
         return inputs[0].viewId;
       }
 
-      // Update/delete operations on child entities - fetch viewId by entity type
+      // Update/delete operations on child entities with top-level id arg
+      if (childEntityKind && typeof args.id === 'string') {
+        return await this.viewEntityLookupService.findViewIdByEntityIdAndKind(
+          childEntityKind,
+          args.id,
+          workspaceId,
+        );
+      }
+
+      // Update/delete operations on child entities with id in input
       if (input && typeof input.id === 'string') {
         if (!childEntityKind) {
           throw new Error(

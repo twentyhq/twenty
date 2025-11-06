@@ -115,7 +115,7 @@ export const UpdateViewButtonGroup = () => {
       {currentView?.key !== 'INDEX' ? (
         <ButtonGroup size="small" accent="blue">
           <Button
-            title="Update view"
+            title={t`Update view`}
             onClick={handleUpdateViewClick}
             disabled={!canPersistChanges}
           />
