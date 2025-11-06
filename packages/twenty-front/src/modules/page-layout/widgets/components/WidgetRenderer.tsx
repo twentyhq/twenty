@@ -1,11 +1,13 @@
+import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWidget';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
-import { type PageLayoutTabLayoutMode } from '@/page-layout/types/PageLayoutTabLayoutMode';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
+import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
@@ -18,15 +20,9 @@ import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
 type WidgetRendererProps = {
   widget: PageLayoutWidget;
-  pageLayoutType: PageLayoutType;
-  layoutMode: PageLayoutTabLayoutMode;
 };
 
-export const WidgetRenderer = ({
-  widget,
-  pageLayoutType,
-  layoutMode,
-}: WidgetRendererProps) => {
+export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const theme = useTheme();
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget();
   const { handleEditWidget } = useEditPageLayoutWidget();
@@ -48,6 +44,13 @@ export const WidgetRenderer = ({
   const isDragging = draggingWidgetId === widget.id;
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
+
+  const { layoutMode } = usePageLayoutContentContext();
+  const { isInPinnedTab } = useIsInPinnedTab();
+
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+
+  const showHeader = layoutMode !== 'canvas' && !isInPinnedTab;
 
   const handleClick = () => {
     handleEditWidget({
@@ -73,15 +76,16 @@ export const WidgetRenderer = ({
 
   return (
     <WidgetCard
-      onClick={isPageLayoutInEditMode ? handleClick : undefined}
-      isDragging={isDragging}
-      pageLayoutType={pageLayoutType}
-      layoutMode={layoutMode}
       isEditing={isEditing}
+      isDragging={isDragging}
+      layoutMode={layoutMode}
+      pageLayoutType={currentPageLayout.type}
+      isInPinnedTab={isInPinnedTab}
+      onClick={isPageLayoutInEditMode ? handleClick : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {layoutMode !== 'canvas' && (
+      {showHeader && (
         <WidgetCardHeader
           isWidgetCardHovered={isHovered}
           isInEditMode={isPageLayoutInEditMode}
@@ -99,11 +103,13 @@ export const WidgetRenderer = ({
       )}
 
       <WidgetCardContent
-        pageLayoutType={pageLayoutType}
         layoutMode={layoutMode}
+        pageLayoutType={currentPageLayout.type}
+        isInPinnedTab={isInPinnedTab}
+        isPageLayoutInEditMode={isPageLayoutInEditMode}
       >
         {hasAccess && <WidgetContentRenderer widget={widget} />}
-        {!hasAccess && pageLayoutType === PageLayoutType.DASHBOARD && (
+        {!hasAccess && currentPageLayout.type === PageLayoutType.DASHBOARD && (
           <IconLock
             color={theme.font.color.tertiary}
             stroke={theme.icon.stroke.sm}

@@ -1,8 +1,11 @@
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -17,7 +20,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { PageLayoutType } from '~/generated/graphql';
 
 export const WidgetPlaceholder = () => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -33,6 +35,10 @@ export const WidgetPlaceholder = () => {
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const { layoutMode } = usePageLayoutContentContext();
+  const { isInPinnedTab } = useIsInPinnedTab();
+
   const handleClick = () => {
     if (!isPageLayoutInEditMode) {
       setIsPageLayoutInEditMode(true);
@@ -44,11 +50,12 @@ export const WidgetPlaceholder = () => {
 
   return (
     <WidgetCard
-      onClick={handleClick}
-      pageLayoutType={PageLayoutType.DASHBOARD}
-      layoutMode="grid"
+      layoutMode={layoutMode}
+      pageLayoutType={currentPageLayout.type}
+      isInPinnedTab={isInPinnedTab}
       isEditing={false}
       isDragging={false}
+      onClick={handleClick}
     >
       <WidgetCardHeader
         isWidgetCardHovered={false}

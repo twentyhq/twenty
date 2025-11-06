@@ -73,6 +73,7 @@ export const Default: Story = {
   args: {
     pageLayoutType: PageLayoutType.DASHBOARD,
     layoutMode: 'grid',
+    isInPinnedTab: false,
     isEditing: false,
     isDragging: false,
   },
@@ -80,6 +81,7 @@ export const Default: Story = {
     <WidgetCard
       pageLayoutType={args.pageLayoutType}
       layoutMode={args.layoutMode}
+      isInPinnedTab={args.isInPinnedTab}
       isEditing={args.isEditing}
       isDragging={args.isDragging}
     >
@@ -92,6 +94,8 @@ export const Default: Story = {
       <WidgetCardContent
         pageLayoutType={args.pageLayoutType}
         layoutMode={args.layoutMode}
+        isInPinnedTab={args.isInPinnedTab}
+        isPageLayoutInEditMode={args.isEditing}
       >
         <StyledMockContent>Widget</StyledMockContent>
       </WidgetCardContent>
@@ -119,7 +123,9 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
           name: 'contextVariant',
           values: [
             'Record Page - Default',
+            'Record Page - Default - Pinned',
             'Record Page - Restriction',
+            'Record Page - Restriction - Pinned',
             'Dashboard - Default',
             'Dashboard - Restriction',
           ],
@@ -128,11 +134,13 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
               ? PageLayoutType.RECORD_PAGE
               : PageLayoutType.DASHBOARD;
             const hasRestriction = contextName.includes('Restriction');
+            const isInPinnedTab = contextName.includes('Pinned');
 
             return {
               pageLayoutType,
               contextVariant: contextName,
               hasRestriction,
+              isInPinnedTab,
             };
           },
         },
@@ -171,7 +179,9 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
     const isReadMode = args.state === 'Read Mode';
     const pageLayoutType = args.pageLayoutType || PageLayoutType.DASHBOARD;
     const layoutMode = args.layoutMode || 'grid';
+    const isInPinnedTab = args.isInPinnedTab || false;
     const hasRestriction = args.hasRestriction || false;
+    const isPageLayoutInEditMode = false;
 
     return (
       <PageLayoutTestWrapper>
@@ -182,6 +192,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
             isEditing={args.isEditing ?? false}
             pageLayoutType={pageLayoutType}
             layoutMode={layoutMode}
+            isInPinnedTab={isInPinnedTab}
           >
             <WidgetCardHeader
               forbiddenDisplay={
@@ -195,6 +206,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
             <WidgetCardContent
               pageLayoutType={pageLayoutType}
               layoutMode={layoutMode}
+              isInPinnedTab={isInPinnedTab}
+              isPageLayoutInEditMode={isPageLayoutInEditMode}
             >
               <StyledMockContent>Widget</StyledMockContent>
             </WidgetCardContent>
