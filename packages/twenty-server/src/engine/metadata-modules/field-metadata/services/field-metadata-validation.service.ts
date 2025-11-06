@@ -17,10 +17,9 @@ import {
   ALLOWED_ADDRESS_SUBFIELDS,
   type AllowedAddressSubField,
   FieldMetadataType,
+  type FieldMetadataSettings,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';

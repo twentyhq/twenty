@@ -158,6 +158,7 @@ export class MicrosoftAPIsService {
             await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
               workspaceId,
               'workspaceMember',
+              { shouldBypassPermissionChecks: true },
             );
 
           const workspaceMember = await workspaceMemberRepository.findOneOrFail(
