@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { MigrateTimelineActivityToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-migrate-timeline-activity-to-morph-relations.command';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -21,11 +23,12 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
       ViewEntity,
       DataSourceEntity,
     ]),
+    FeatureFlagModule,
     WorkspaceSchemaManagerModule,
     WorkspaceCacheStorageModule,
     ObjectMetadataModule,
   ],
-  providers: [],
+  providers: [MigrateTimelineActivityToMorphRelationsCommand],
   exports: [],
 })
 export class V1_11_UpgradeVersionCommandModule {}
