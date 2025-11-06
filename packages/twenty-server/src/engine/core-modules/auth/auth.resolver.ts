@@ -76,11 +76,11 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
+import { ApiKeyToken } from './dto/api-key-token.dto';
+import { AuthTokens } from './dto/auth-tokens.dto';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginTokenOutput } from './dto/login-token.dto';
 import { SignUpInput } from './dto/sign-up.input';
-import { ApiKeyToken } from './dto/api-key-token.dto';
-import { AuthTokens } from './dto/auth-tokens.dto';
 import { UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistOutput } from './dto/user-exists.dto';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
