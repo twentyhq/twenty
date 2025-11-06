@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type Repository, type UpdateResult } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -43,6 +44,7 @@ describe('UserService', () => {
             findOne: jest.fn(),
             save: jest.fn(),
             softDelete: jest.fn(),
+            update: jest.fn(),
           },
         },
         {
@@ -66,6 +68,10 @@ describe('UserService', () => {
           useValue: {
             deleteUserWorkspace: jest.fn(),
           },
+        },
+        {
+          provide: ApplicationService,
+          useValue: {},
         },
       ],
     }).compile();
