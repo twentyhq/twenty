@@ -589,9 +589,9 @@ msgstr "Nem lehet csatlakozni ehhez: {connectFieldName}. Nem található egyedi 
 msgid "Can't impersonate user via api key"
 msgstr "Nem lehet felhasználót megszemélyesíteni API kulccsal."
 
-#. js-lingui-id: 874/Xl
+#. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-deactivated version"
+msgid "Cannot activate non-draft or non-last-published version"
 msgstr ""
 
 #. js-lingui-id: LIPsWu
@@ -624,6 +624,11 @@ msgstr "Nem lehet letiltani nem aktív munkafolyamat verziót"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Az egyediség nem engedélyezhető a meglévő, ismétlődő értékek miatt. Kérjük, először tekintse át és javítsa adatait (beleértve a lágyan törölt rekordokat is)."
+
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
+msgstr ""
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
