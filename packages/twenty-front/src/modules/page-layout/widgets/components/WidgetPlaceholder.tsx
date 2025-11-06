@@ -58,6 +58,7 @@ export const WidgetPlaceholder = () => {
       onClick={handleClick}
     >
       <WidgetCardHeader
+        isWidgetCardHovered={false}
         isInEditMode={isPageLayoutInEditMode}
         title={t`Add Widget`}
         isEmpty

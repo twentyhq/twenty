@@ -86,6 +86,7 @@ export const Default: Story = {
       isDragging={args.isDragging}
     >
       <WidgetCardHeader
+        isWidgetCardHovered={false}
         isInEditMode={true}
         onRemove={() => {}}
         title="Widget name"
@@ -200,6 +201,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetCard> = {
               isInEditMode={!isReadMode}
               onRemove={!isReadMode ? () => {} : undefined}
               title="Widget name"
+              isWidgetCardHovered={args.state === 'Hover'}
             />
             <WidgetCardContent
               pageLayoutType={pageLayoutType}

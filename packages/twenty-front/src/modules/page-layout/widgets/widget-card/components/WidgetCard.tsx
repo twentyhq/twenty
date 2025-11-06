@@ -16,6 +16,8 @@ export type WidgetCardProps = {
   isDragging: boolean;
   isInPinnedTab: boolean;
   className?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 const StyledWidgetCard = styled.div<{
@@ -64,12 +66,8 @@ const StyledWidgetCard = styled.div<{
           !isEditing &&
           css`
             &:hover {
-              cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
               border: 1px solid ${theme.border.color.strong};
-
-              .widget-card-remove-button {
-                display: flex !important;
-              }
+              cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
             }
           `}
 
@@ -105,12 +103,8 @@ const StyledWidgetCard = styled.div<{
           !isEditing &&
           css`
             &:hover {
-              cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
               border: 1px solid ${theme.border.color.strong};
-
-              .widget-card-remove-button {
-                display: flex !important;
-              }
+              cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
             }
           `}
 
@@ -157,6 +151,8 @@ export const WidgetCard = ({
   isDragging,
   isInPinnedTab,
   className,
+  onMouseEnter,
+  onMouseLeave,
 }: WidgetCardProps) => {
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
@@ -172,6 +168,8 @@ export const WidgetCard = ({
       isDragging={isDragging}
       isInPinnedTab={isInPinnedTab}
       className={className}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {children}
     </StyledWidgetCard>

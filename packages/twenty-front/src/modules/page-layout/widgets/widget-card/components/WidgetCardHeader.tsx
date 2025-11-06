@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
@@ -5,9 +6,11 @@ import { IconTrash, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
+import { AnimatePresence, motion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 
 export type WidgetCardHeaderProps = {
+  isWidgetCardHovered: boolean;
   isInEditMode: boolean;
   isEmpty?: boolean;
   title: string;
@@ -39,11 +42,14 @@ const StyledRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-const StyledIconButton = styled(IconButton)`
-  display: none;
+const StyledIconButtonContainer = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const WidgetCardHeader = ({
+  isWidgetCardHovered = false,
   isEmpty = false,
   isInEditMode = false,
   title,
@@ -51,28 +57,43 @@ export const WidgetCardHeader = ({
   forbiddenDisplay,
   className,
 }: WidgetCardHeaderProps) => {
+  const theme = useTheme();
+
   return (
     <StyledWidgetCardHeader className={className}>
-      {!isEmpty && isInEditMode && (
-        <WidgetGrip
-          className="drag-handle"
-          onClick={(e) => e.stopPropagation()}
-        />
-      )}
+      <AnimatePresence>
+        {!isEmpty && isInEditMode && (
+          <WidgetGrip
+            className="drag-handle"
+            onClick={(e) => e.stopPropagation()}
+          />
+        )}
+      </AnimatePresence>
       <StyledTitleContainer>
         <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
       </StyledTitleContainer>
       <StyledRightContainer>
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
-        {!isEmpty && isInEditMode && onRemove && (
-          <StyledIconButton
-            onClick={onRemove}
-            Icon={IconTrash}
-            variant="tertiary"
-            size="small"
-            className="widget-card-remove-button"
-          />
-        )}
+        <AnimatePresence>
+          {!isEmpty && isInEditMode && onRemove && isWidgetCardHovered && (
+            <StyledIconButtonContainer
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 'auto', opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{
+                duration: theme.animation.duration.fast,
+                ease: 'easeInOut',
+              }}
+            >
+              <IconButton
+                onClick={onRemove}
+                Icon={IconTrash}
+                variant="tertiary"
+                size="small"
+              />
+            </StyledIconButtonContainer>
+          )}
+        </AnimatePresence>
       </StyledRightContainer>
     </StyledWidgetCardHeader>
   );
