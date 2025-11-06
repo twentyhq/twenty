@@ -277,8 +277,10 @@ export class WorkspaceEntity {
   @Column({ type: 'varchar', nullable: false, default: 'auto' })
   routerModel: ModelId;
 
-  @Field(() => String, { nullable: false })
-  @Column({ nullable: false, type: 'uuid' })
+  // TODO prastoin
+  // Temporarily setting as nullable for retro compatibility, not udpating TypeScript types
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'uuid' })
   workspaceCustomApplicationId: string;
 
   @ManyToOne(() => ApplicationEntity, {
