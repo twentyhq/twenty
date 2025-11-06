@@ -1,4 +1,3 @@
-import { AuthTokenPair } from 'src/engine/core-modules/auth/dto/auth-token-pair.dto';
 import { getCurrentUser } from 'test/integration/graphql/utils/current-user.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
@@ -7,7 +6,7 @@ import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-i
 import { isDefined } from 'twenty-shared/utils';
 
 describe('Successful User Sign Up In New Workspace (integration)', () => {
-  let createdUserAccessToken: AuthTokenPair | undefined;
+  let createdUserAccessToken: string | undefined;
 
   afterEach(async () => {
     if (!isDefined(createdUserAccessToken)) {
@@ -15,10 +14,11 @@ describe('Successful User Sign Up In New Workspace (integration)', () => {
     }
 
     await deleteUser({
-      accessToken: createdUserAccessToken.accessOrWorkspaceAgnosticToken.token,
+      accessToken: createdUserAccessToken,
       expectToFail: false,
     });
   });
+
   it('should sign up a new user successfully', async () => {
     const { data } = await signUp({
       input: {
@@ -28,17 +28,17 @@ describe('Successful User Sign Up In New Workspace (integration)', () => {
 
       expectToFail: false,
     });
-    createdUserAccessToken = data.signUp.tokens;
+    createdUserAccessToken = data.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 
-    const { data: signUpInNewWorkspaceData } = await signUpInNewWorkspace({
-      accessToken: createdUserAccessToken.accessOrWorkspaceAgnosticToken.token,
+    await signUpInNewWorkspace({
+      accessToken: createdUserAccessToken,
       expectToFail: false,
     });
 
     const {
       data: { currentUser },
     } = await getCurrentUser({
-      accessToken: createdUserAccessToken.accessOrWorkspaceAgnosticToken.token,
+      accessToken: createdUserAccessToken,
       expectToFail: false,
     });
 
