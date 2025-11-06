@@ -22,6 +22,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
@@ -80,6 +81,31 @@ export const AIChatTab = () => {
   const { createChatThread } = useCreateNewAIChatThread();
   const { navigateCommandMenu } = useCommandMenu();
 
+  const handleScrollToBottom = (element: HTMLDivElement | null) => {
+    if (!isDefined(element)) {
+      return;
+    }
+
+    const scrollElement = document.getElementById(
+      `scroll-wrapper-${scrollWrapperId}`,
+    );
+
+    if (!isDefined(scrollElement)) {
+      return;
+    }
+
+    const isAtTop = scrollElement.scrollTop < 10;
+    const isNearBottom =
+      scrollElement.scrollHeight -
+        scrollElement.scrollTop -
+        scrollElement.clientHeight <
+      100;
+
+    if (isAtTop || isNearBottom || isStreaming) {
+      element.scrollIntoView();
+    }
+  };
+
   return (
     <StyledContainer
       isDraggingFile={isDraggingFile}
@@ -109,6 +135,7 @@ export const AIChatTab = () => {
                   />
                 );
               })}
+              <div ref={handleScrollToBottom} />
             </StyledScrollWrapper>
           )}
           {messages.length === 0 && <AIChatEmptyState />}
