@@ -12,6 +12,7 @@ import {
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { AgentResolver } from 'src/engine/metadata-modules/agent/agent.resolver';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
 // Mock the agent service
@@ -92,6 +93,14 @@ describe('agentResolver', () => {
           useValue: {
             assignRoleToAgent: jest.fn(),
             removeRoleFromAgent: jest.fn(),
+          },
+        },
+        {
+          provide: PermissionsService,
+          useValue: {
+            userHasWorkspaceSettingPermission: jest
+              .fn()
+              .mockResolvedValue(true),
           },
         },
       ],

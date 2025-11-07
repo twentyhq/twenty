@@ -1427,11 +1427,6 @@ msgstr "Поље за ажурирање није пронађено"
 msgid "Field used for full-text search"
 msgstr "Поље коришћено за текстуалну претрагу"
 
-#. js-lingui-id: s3HtdT
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "FieldMetadataId is required"
-msgstr "FieldMetadataId је обавезно"
-
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
@@ -1699,16 +1694,6 @@ msgstr "Неважећи uuid {id}"
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Неважећи верификациони код. Молимо покушајте поново."
-
-#. js-lingui-id: 8xkULN
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data"
-msgstr "Неисправни подаци за сортирање приказа"
-
-#. js-lingui-id: I0OzaR
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data for view sort id: {id}"
-msgstr "Неисправни подаци за сортирање приказа за ID сортирања: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3254,6 +3239,11 @@ msgstr "Није могуће пронаћи подразумијевану ул
 msgid "The executor of the workflow"
 msgstr "Извршилац радног процеса"
 
+#. js-lingui-id: o6DGfJ
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
+msgstr ""
+
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
@@ -3539,11 +3529,6 @@ msgstr "Јединствено поље не може имати подразу�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "Уникатан индекс не може бити креиран за поље {fieldName} типа {fieldType}"
-
-#. js-lingui-id: rtir7c
-#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
-msgid "unknown"
-msgstr ""
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -3834,16 +3819,6 @@ msgstr "Метаподаци агрегационог поља Канбан пр
 msgid "View not found"
 msgstr "Приказ није пронађен"
 
-#. js-lingui-id: znNExx
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort (id: {id}) not found"
-msgstr "Сортирање приказа (ID: {id}) није пронађено"
-
-#. js-lingui-id: 3zMs+f
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort not found"
-msgstr "Сортирање приказа није пронађено"
-
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
@@ -3869,11 +3844,6 @@ msgstr "Поглед са истим ИД-ом већ постоји"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "ViewId"
 msgstr "Виев ИД"
-
-#. js-lingui-id: kpQRY2
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "ViewId is required"
-msgstr "ViewId је обавезан"
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -4152,11 +4122,6 @@ msgstr "Позиција члана простора за рад"
 msgid "Workspace Members"
 msgstr "Чланови простора за рад"
 
-#. js-lingui-id: bBr+RW
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "WorkspaceId is required"
-msgstr "WorkspaceId је обавезан"
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
@@ -4246,15 +4211,20 @@ msgstr ""
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Немате дозволу да имитирате кориснике. Молимо контактирајте администратора ваше радне површине за приступ."
 
-#. js-lingui-id: k7P8yU
+#. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage security settings. Please contact your workspace administrator."
-msgstr "Немате дозволу да управљате безбедносним подешавањима. Молимо контактирајте администратора ваше радне површине."
+msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
+msgstr ""
 
-#. js-lingui-id: svchJc
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage workspace settings. Please contact your workspace administrator."
-msgstr "Немате дозволу да управљате подешавањима радне површине. Молимо контактирајте администратора ваше радне површине."
+#. js-lingui-id: M1he8p
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to create workspace-level views."
+msgstr ""
+
+#. js-lingui-id: QmL9y9
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to modify this view."
+msgstr ""
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts

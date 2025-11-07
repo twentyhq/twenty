@@ -4,12 +4,14 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateViewAggregate = () => {
+  const { canPersistChanges } = useCanPersistViewChanges();
   const currentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
@@ -32,6 +34,10 @@ export const useUpdateViewAggregate = () => {
       kanbanAggregateOperation: ExtendedAggregateOperations | null;
       objectMetadataId: string;
     }) => {
+      if (!canPersistChanges) {
+        return;
+      }
+
       const convertedKanbanAggregateOperation = isDefined(
         kanbanAggregateOperation,
       )
@@ -60,6 +66,7 @@ export const useUpdateViewAggregate = () => {
       refreshCoreViewsByObjectMetadataId(objectMetadataId);
     },
     [
+      canPersistChanges,
       currentViewId,
       updateView,
       setRecordIndexKanbanAggregateOperationState,

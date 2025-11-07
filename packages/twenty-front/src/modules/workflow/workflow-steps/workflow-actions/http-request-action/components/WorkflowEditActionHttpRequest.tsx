@@ -18,6 +18,7 @@ import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/htt
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
 import {
@@ -90,6 +91,7 @@ export const WorkflowEditActionHttpRequest = ({
   action,
   actionOptions,
 }: WorkflowEditActionHttpRequestProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const activeTabId = useRecoilComponentValue(
@@ -229,7 +231,7 @@ export const WorkflowEditActionHttpRequest = ({
             activeTabId === WorkflowHttpRequestTabId.TEST
               ? [
                   <CmdEnterActionButton
-                    title="Test"
+                    title={t`Test`}
                     onClick={handleTestRequest}
                     disabled={isTesting}
                   />,

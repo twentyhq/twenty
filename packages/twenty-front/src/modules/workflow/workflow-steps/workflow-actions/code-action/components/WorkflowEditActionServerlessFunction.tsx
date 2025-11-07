@@ -500,7 +500,7 @@ export const WorkflowEditActionServerlessFunction = ({
               activeTabId === WorkflowServerlessFunctionTabId.TEST
                 ? [
                     <CmdEnterActionButton
-                      title="Test"
+                      title={t`Test`}
                       onClick={handleRunFunction}
                       disabled={isTesting}
                     />,

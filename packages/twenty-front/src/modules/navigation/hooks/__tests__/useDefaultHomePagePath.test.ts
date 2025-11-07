@@ -9,7 +9,11 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { AppPath } from 'twenty-shared/types';
-import { ViewOpenRecordIn, ViewType } from '~/generated/graphql';
+import {
+  ViewOpenRecordIn,
+  ViewType,
+  ViewVisibility,
+} from '~/generated/graphql';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
@@ -53,6 +57,8 @@ const renderHooks = ({
               kanbanAggregateOperationFieldMetadataId: '',
               position: 0,
               viewFilters: [],
+              visibility: ViewVisibility.WORKSPACE,
+              createdByUserWorkspaceId: null,
             },
           ]);
         } else {
