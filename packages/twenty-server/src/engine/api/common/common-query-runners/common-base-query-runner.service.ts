@@ -6,8 +6,8 @@ import { Omit } from 'zod/v4/core/util.cjs';
 import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
-import { DataArgHandler } from 'src/engine/api/common/common-args-handlers/data-arg-handler/data-arg.handler';
-import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-handlers/query-runner-args.factory';
+import { DataArgProcessor } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor';
+import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -57,7 +57,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
   @Inject()
-  protected readonly dataArgHandler: DataArgHandler;
+  protected readonly dataArgProcessor: DataArgProcessor;
   @Inject()
   protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
   @Inject()

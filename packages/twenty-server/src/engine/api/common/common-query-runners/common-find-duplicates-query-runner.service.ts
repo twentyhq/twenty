@@ -171,7 +171,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           ),
         ) ?? [],
       ),
-      data: await this.dataArgHandler.coerce({
+      data: await this.dataArgProcessor.process({
         partialRecordInputs: args.data,
         authContext,
         objectMetadataItemWithFieldMaps,

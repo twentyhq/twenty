@@ -65,7 +65,7 @@ export class CommonUpdateOneQueryRunnerService extends CommonBaseQueryRunnerServ
     return {
       ...args,
       data: (
-        await this.dataArgHandler.coerce({
+        await this.dataArgProcessor.process({
           partialRecordInputs: [args.data],
           authContext,
           objectMetadataItemWithFieldMaps,

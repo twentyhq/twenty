@@ -53,7 +53,7 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
   ): Promise<CommonInput<CreateOneQueryArgs>> {
     const { authContext, objectMetadataItemWithFieldMaps } = queryRunnerContext;
 
-    const coercedData = await this.dataArgHandler.coerce({
+    const coercedData = await this.dataArgProcessor.process({
       partialRecordInputs: [args.data],
       authContext,
       objectMetadataItemWithFieldMaps,
