@@ -23,7 +23,10 @@ import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  WorkflowActionType,
+  type WorkflowAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
 export class WorkflowVersionWorkspaceService {
@@ -252,12 +255,32 @@ export class WorkflowVersionWorkspaceService {
       : undefined;
 
     const remappedSteps: WorkflowAction[] = sourceToClonedPairs.map(
-      ({ source, duplicated }) => ({
-        ...duplicated,
-        nextStepIds: (source.nextStepIds ?? []).map(
-          (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
-        ),
-      }),
+      ({ source, duplicated }) => {
+        const remappedStep = {
+          ...duplicated,
+          nextStepIds: (source.nextStepIds ?? []).map(
+            (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
+          ),
+        };
+
+        if (
+          remappedStep.type === WorkflowActionType.ITERATOR &&
+          isDefined(remappedStep.settings?.input?.initialLoopStepIds)
+        ) {
+          remappedStep.settings = {
+            ...remappedStep.settings,
+            input: {
+              ...remappedStep.settings.input,
+              initialLoopStepIds:
+                remappedStep.settings.input.initialLoopStepIds.map(
+                  (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
+                ),
+            },
+          };
+        }
+
+        return remappedStep;
+      },
     );
 
     await workflowVersionRepository.update(newDraftVersion.id, {
