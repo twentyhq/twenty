@@ -14,9 +14,20 @@ export class UpdateViewPermissionGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
+
+    let viewId: string | null = null;
+
+    // For GraphQL: extract from args
     const args = gqlContext.getArgs();
 
-    const viewId = typeof args.id === 'string' ? args.id : null;
+    if (typeof args?.id === 'string') {
+      viewId = args.id;
+    }
+
+    // For REST: extract from URL params
+    if (!viewId && typeof request.params?.id === 'string') {
+      viewId = request.params.id;
+    }
 
     return this.viewAccessService.canUserModifyView(
       viewId,

@@ -1,7 +1,7 @@
 import {
-  Injectable,
-  type CanActivate,
-  type ExecutionContext,
+    Injectable,
+    type CanActivate,
+    type ExecutionContext,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -18,9 +18,21 @@ export class DeleteViewFilterPermissionGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
+
+    let entityId = '';
+
+    // For GraphQL: extract from args.input.id
     const args = gqlContext.getArgs();
 
-    const entityId = typeof args.input?.id === 'string' ? args.input.id : '';
+    if (typeof args?.input?.id === 'string') {
+      entityId = args.input.id;
+    }
+
+    // For REST: extract from URL params
+    if (!entityId && typeof request.params?.id === 'string') {
+      entityId = request.params.id;
+    }
+
     const viewId = entityId
       ? await this.viewEntityLookupService.findViewIdByEntityIdAndKind(
           'viewFilter',

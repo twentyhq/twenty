@@ -18,9 +18,21 @@ export class DeleteViewSortPermissionGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
+
+    let entityId = '';
+
+    // For GraphQL: extract from args.id
     const args = gqlContext.getArgs();
 
-    const entityId = typeof args.id === 'string' ? args.id : '';
+    if (typeof args?.id === 'string') {
+      entityId = args.id;
+    }
+
+    // For REST: extract from URL params
+    if (!entityId && typeof request.params?.id === 'string') {
+      entityId = request.params.id;
+    }
+
     const viewId = entityId
       ? await this.viewEntityLookupService.findViewIdByEntityIdAndKind(
           'viewSort',

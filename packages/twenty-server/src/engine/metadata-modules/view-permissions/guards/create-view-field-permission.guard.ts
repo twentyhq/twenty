@@ -1,7 +1,7 @@
 import {
-  Injectable,
-  type CanActivate,
-  type ExecutionContext,
+    Injectable,
+    type CanActivate,
+    type ExecutionContext,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -14,18 +14,26 @@ export class CreateViewFieldPermissionGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
+
+    let viewId: string | null = null;
+
+    // For GraphQL: extract from args.input or args.inputs
     const args = gqlContext.getArgs();
 
-    // Try single create with input.viewId
-    let viewId =
-      typeof args.input?.viewId === 'string' ? args.input.viewId : null;
+    if (typeof args?.input?.viewId === 'string') {
+      viewId = args.input.viewId;
+    }
 
-    // If not found, try bulk create with inputs[0].viewId
-    if (!viewId && Array.isArray(args.inputs) && args.inputs.length > 0) {
+    if (!viewId && Array.isArray(args?.inputs) && args.inputs.length > 0) {
       viewId =
         typeof args.inputs[0]?.viewId === 'string'
           ? args.inputs[0].viewId
           : null;
+    }
+
+    // For REST: extract from request body
+    if (!viewId && typeof request.body?.viewId === 'string') {
+      viewId = request.body.viewId;
     }
 
     return this.viewAccessService.canUserModifyViewByChildEntity(

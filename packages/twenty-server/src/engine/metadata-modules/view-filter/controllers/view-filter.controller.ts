@@ -1,14 +1,14 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-  UseFilters,
-  UseGuards,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseFilters,
+    UseGuards,
 } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -22,15 +22,18 @@ import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import {
-  generateViewFilterExceptionMessage,
-  generateViewFilterUserFriendlyExceptionMessage,
-  ViewFilterException,
-  ViewFilterExceptionCode,
-  ViewFilterExceptionMessageKey,
+    generateViewFilterExceptionMessage,
+    generateViewFilterUserFriendlyExceptionMessage,
+    ViewFilterException,
+    ViewFilterExceptionCode,
+    ViewFilterExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { ViewFilterRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter';
 import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { CreateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-permission.guard';
+import { DeleteViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-permission.guard';
+import { UpdateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-permission.guard';
 
 @Controller('rest/metadata/viewFilters')
 @UseGuards(WorkspaceAuthGuard)
@@ -80,6 +83,7 @@ export class ViewFilterController {
   }
 
   @Post()
+  @UseGuards(CreateViewFilterPermissionGuard)
   async create(
     @Body() input: CreateViewFilterInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -104,6 +108,7 @@ export class ViewFilterController {
   }
 
   @Patch(':id')
+  @UseGuards(UpdateViewFilterPermissionGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFilterInput,
@@ -137,6 +142,7 @@ export class ViewFilterController {
   }
 
   @Delete(':id')
+  @UseGuards(DeleteViewFilterPermissionGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

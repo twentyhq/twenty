@@ -1,7 +1,7 @@
 import {
-  Injectable,
-  type CanActivate,
-  type ExecutionContext,
+    Injectable,
+    type CanActivate,
+    type ExecutionContext,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -14,10 +14,20 @@ export class CreateViewFilterPermissionGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
+
+    let viewId: string | null = null;
+
+    // For GraphQL: extract from args.input
     const args = gqlContext.getArgs();
 
-    const viewId =
-      typeof args.input?.viewId === 'string' ? args.input.viewId : null;
+    if (typeof args?.input?.viewId === 'string') {
+      viewId = args.input.viewId;
+    }
+
+    // For REST: extract from request body
+    if (!viewId && typeof request.body?.viewId === 'string') {
+      viewId = request.body.viewId;
+    }
 
     return this.viewAccessService.canUserModifyViewByChildEntity(
       viewId,
