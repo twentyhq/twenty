@@ -14,6 +14,7 @@ import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { addPendingPlaceholderToLayouts } from '@/page-layout/utils/addPendingPlaceholderToLayouts';
 import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterPendingPlaceholderFromLayouts';
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
@@ -77,6 +78,10 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const setDraggingWidgetId = useSetRecoilComponentState(
     pageLayoutDraggingWidgetIdComponentState,
+  );
+
+  const setResizingWidgetId = useSetRecoilComponentState(
+    pageLayoutResizingWidgetIdComponentState,
   );
 
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
@@ -172,6 +177,12 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
           }}
           onDragStop={() => {
             setDraggingWidgetId(null);
+          }}
+          onResizeStart={(_layout, _oldItem, newItem) => {
+            setResizingWidgetId(newItem.i);
+          }}
+          onResizeStop={() => {
+            setResizingWidgetId(null);
           }}
           onLayoutChange={handleLayoutChangeWithoutPendingPlaceholder}
           onBreakpointChange={(newBreakpoint) =>
