@@ -112,8 +112,6 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
 
-  const isTwoFirstDepths = ({ depth }: { depth: number }) => depth < 2;
-
   if (!output && !hasError) {
     return (
       <StyledContainer>
@@ -189,7 +187,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
                     value={
                       (activeTab === 'output' ? result : input) as JsonValue
                     }
-                    shouldExpandNodeInitially={isTwoFirstDepths}
+                    shouldExpandNodeInitially={() => false}
                     emptyArrayLabel={t`Empty Array`}
                     emptyObjectLabel={t`Empty Object`}
                     emptyStringLabel={t`[empty string]`}
