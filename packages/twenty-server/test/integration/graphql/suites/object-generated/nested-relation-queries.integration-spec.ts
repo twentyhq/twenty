@@ -9,7 +9,9 @@ import {
 import {
   TEST_PET_ID_1,
   TEST_PET_ID_2,
+  TEST_PET_ID_3,
 } from 'test/integration/constants/test-pet-ids.constants';
+import { TEST_ROCKET_ID_1 } from 'test/integration/constants/test-rocket-ids.constants';
 import { TEST_SURVEY_RESULT_1_ID } from 'test/integration/constants/test-survery-result-ids.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -687,5 +689,46 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       updatePetOwnerSurveyResultDisconnectOp,
     );
     expect(response.body.data.updatePet.ownerSurveyResult).toBeFalsy();
+  });
+
+  xit('should fail to create a morph relation on both target objects', async () => {
+    const PET_OBJECT_NAME = 'pet';
+    const TEST_PET_ID = TEST_PET_ID_3;
+    const TEST_ROCKET_ID = TEST_ROCKET_ID_1;
+
+    await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: PET_OBJECT_NAME,
+        gqlFields: 'id',
+        data: {
+          id: TEST_PET_ID,
+          name: 'Test Pet 3',
+        },
+      }),
+    );
+
+    const TEST_SURVEY_RESULT_ID = TEST_SURVEY_RESULT_1_ID;
+
+    const updatePetOwnerSurveyResultOp = updateOneOperationFactory({
+      objectMetadataSingularName: PET_OBJECT_NAME,
+      recordId: TEST_PET_ID,
+      gqlFields: PET_GQL_FIELDS_WITH_OWNER,
+      data: {
+        ownerSurveyResult: {
+          connect: {
+            where: { id: TEST_SURVEY_RESULT_ID },
+          },
+        },
+        ownerRocket: {
+          connect: {
+            where: { id: TEST_ROCKET_ID },
+          },
+        },
+      },
+    });
+
+    let response = await makeGraphqlAPIRequest(updatePetOwnerSurveyResultOp);
+
+    expect(response.body.errors).toBeTruthy();
   });
 });
