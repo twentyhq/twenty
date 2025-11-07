@@ -42,6 +42,7 @@ export const useUpdateChartSettingToggle = ({
     }
 
     const newValue = !getChartSettingsValues(settingId);
+
     updateCurrentWidgetConfig({
       configToUpdate: {
         [configKey]: newValue,

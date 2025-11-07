@@ -30,6 +30,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -42,6 +43,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(RoleTargetsEntity)
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
@@ -220,6 +223,22 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
   async countUserWorkspaces(userId: string): Promise<number> {
     return await this.userWorkspaceRepository.count({ where: { userId } });
+  }
+
+  async deleteUserWorkspace({
+    userWorkspaceId,
+    softDelete = false,
+  }: {
+    userWorkspaceId: string;
+    softDelete?: boolean;
+  }): Promise<void> {
+    if (softDelete) {
+      await this.roleTargetsRepository.softRemove({ userWorkspaceId });
+      await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
+    } else {
+      await this.roleTargetsRepository.delete({ userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
+      await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
+    }
   }
 
   async findAvailableWorkspacesByEmail(email: string) {

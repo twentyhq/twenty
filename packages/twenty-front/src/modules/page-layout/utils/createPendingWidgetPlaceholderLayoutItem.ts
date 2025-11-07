@@ -16,5 +16,5 @@ export const createPendingWidgetPlaceholderLayoutItem = (
   h: Math.max(draggedArea.h, DEFAULT_WIDGET_SIZE.default.h),
   minW: DEFAULT_WIDGET_SIZE.minimum.w,
   minH: DEFAULT_WIDGET_SIZE.minimum.h,
-  static: true,
+  static: false,
 });

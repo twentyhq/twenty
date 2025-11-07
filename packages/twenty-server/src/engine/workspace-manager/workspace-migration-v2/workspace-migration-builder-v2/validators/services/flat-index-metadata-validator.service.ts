@@ -18,7 +18,9 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 @Injectable()
 export class FlatIndexValidatorService {
   public validateFlatIndexDeletion({
-    optimisticFlatEntityMaps: optimisticFlatIndexMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatIndexMaps: optimisticFlatIndexMaps,
+    },
     flatEntityToValidate: { id: indexIdToDelete },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.index
@@ -48,8 +50,11 @@ export class FlatIndexValidatorService {
 
   public validateFlatIndexCreation({
     flatEntityToValidate: flatIndexToValidate,
-    optimisticFlatEntityMaps: optimisticFlatIndexMaps,
-    mutableDependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatIndexMaps: optimisticFlatIndexMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.index
   >): FailedFlatEntityValidation<FlatIndexMetadata> {
@@ -77,8 +82,7 @@ export class FlatIndexValidatorService {
 
     const relatedObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: flatIndexToValidate.objectMetadataId,
-      flatEntityMaps:
-        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
+      flatEntityMaps: flatObjectMetadataMaps,
     });
 
     if (!isDefined(relatedObjectMetadata)) {
@@ -117,8 +121,7 @@ export class FlatIndexValidatorService {
       flatIndexToValidate.flatIndexFieldMetadatas.forEach((flatIndexField) => {
         const relatedFlatField = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: flatIndexField.fieldMetadataId,
-          flatEntityMaps:
-            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+          flatEntityMaps: flatFieldMetadataMaps,
         });
 
         if (!isDefined(relatedFlatField)) {

@@ -51,7 +51,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
     },
     "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-  "message": "Multiple validation errors occurred while creating view field",
+  "message": "Multiple validation errors occurred while creating view fields",
   "name": "GraphQLError",
 }
 `;

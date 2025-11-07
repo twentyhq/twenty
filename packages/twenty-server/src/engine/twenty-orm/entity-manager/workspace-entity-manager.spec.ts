@@ -138,6 +138,7 @@ describe('WorkspaceEntityManager', () => {
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
+        IS_DASHBOARD_V2_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
@@ -163,6 +164,8 @@ describe('WorkspaceEntityManager', () => {
         IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
+        IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
+        IS_DASHBOARD_V2_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;

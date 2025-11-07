@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ServerlessFunctionExceptionCode } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
@@ -16,7 +16,9 @@ export class FlatServerlessFunctionValidatorService {
 
   public validateFlatServerlessFunctionUpdate({
     flatEntityId,
-    optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatServerlessFunctionMaps: optimisticFlatServerlessFunctionMaps,
+    },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.serverlessFunction
   >): FailedFlatEntityValidation<FlatServerlessFunction> {
@@ -45,7 +47,9 @@ export class FlatServerlessFunctionValidatorService {
 
   public validateFlatServerlessFunctionDeletion({
     flatEntityToValidate: { id: serverlessFunctionIdToDelete },
-    optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatServerlessFunctionMaps: optimisticFlatServerlessFunctionMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.serverlessFunction
   >): FailedFlatEntityValidation<FlatServerlessFunction> {
@@ -74,7 +78,9 @@ export class FlatServerlessFunctionValidatorService {
 
   public async validateFlatServerlessFunctionCreation({
     flatEntityToValidate: flatServerlessFunctionToValidate,
-    optimisticFlatEntityMaps: optimisticFlatServerlessFunctionMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatServerlessFunctionMaps: optimisticFlatServerlessFunctionMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.serverlessFunction
   >): Promise<FailedFlatEntityValidation<FlatServerlessFunction>> {

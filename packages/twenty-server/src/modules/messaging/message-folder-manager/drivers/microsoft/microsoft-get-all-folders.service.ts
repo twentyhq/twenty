@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   MessageFolder,
   MessageFolderDriver,
@@ -9,13 +11,13 @@ import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
 import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder';
-import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
 
 type MicrosoftGraphFolder = {
   id: string;
   displayName: string;
   childFolderCount?: number;
   parentFolderId?: string;
+  wellKnownName?: string;
 };
 
 const MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT = 999;
@@ -56,6 +58,7 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
         });
 
       const folders = (response.value as MicrosoftGraphFolder[]) || [];
+      const rootFolderId = this.getRootFolderId(folders);
       const folderInfos: MessageFolder[] = [];
 
       for (const folder of folders) {
@@ -63,7 +66,9 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
           continue;
         }
 
-        const standardFolder = getStandardFolderByRegex(folder.displayName);
+        const standardFolder = this.getStandardFolderFromWellKnownName(
+          folder.wellKnownName,
+        );
         const isSentFolder = this.isSentFolder(standardFolder);
         const isSynced = this.shouldSyncByDefault(standardFolder);
 
@@ -72,6 +77,10 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
           name: folder.displayName,
           isSynced,
           isSentFolder,
+          parentFolderId: this.getParentFolderId(
+            folder.parentFolderId,
+            rootFolderId,
+          ),
         });
       }
 
@@ -104,5 +113,58 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
     }
 
     return true;
+  }
+
+  private getStandardFolderFromWellKnownName(
+    wellKnownName?: string,
+  ): StandardFolder | null {
+    if (!isDefined(wellKnownName)) {
+      return null;
+    }
+
+    switch (wellKnownName.toLowerCase()) {
+      case 'inbox':
+        return StandardFolder.INBOX;
+      case 'drafts':
+        return StandardFolder.DRAFTS;
+      case 'sentitems':
+        return StandardFolder.SENT;
+      case 'deleteditems':
+        return StandardFolder.TRASH;
+      case 'junkemail':
+        return StandardFolder.JUNK;
+      default:
+        return null;
+    }
+  }
+
+  /*
+   * All Microsoft folders have a parentFolderId including the standard folders
+   * which point to root node which doesn't exits in the API response.
+   * We remove this to simplify the folder hierarchy on frontend.
+   */
+  private getRootFolderId(folders: MicrosoftGraphFolder[]): string | null {
+    for (const folder of folders) {
+      if (isDefined(folder.wellKnownName) && isDefined(folder.parentFolderId)) {
+        return folder.parentFolderId;
+      }
+    }
+
+    return null;
+  }
+
+  private getParentFolderId(
+    parentFolderId: string | undefined,
+    rootFolderId: string | null,
+  ): string | null {
+    if (!isDefined(parentFolderId)) {
+      return null;
+    }
+
+    if (parentFolderId === rootFolderId) {
+      return null;
+    }
+
+    return parentFolderId;
   }
 }

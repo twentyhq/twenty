@@ -19,8 +19,10 @@ export class FlatObjectMetadataValidatorService {
   public validateFlatObjectMetadataUpdate({
     flatEntityId,
     flatEntityUpdates,
-    optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-    mutableDependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): FailedFlatEntityValidation<FlatObjectMetadata> {
@@ -82,8 +84,7 @@ export class FlatObjectMetadataValidatorService {
       validationResult.errors.push(
         ...validateFlatObjectMetadataIdentifiers({
           flatObjectMetadata: updatedFlatObjectMetadata,
-          flatFieldMetadataMaps:
-            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+          flatFieldMetadataMaps,
         }),
       );
     }
@@ -93,7 +94,9 @@ export class FlatObjectMetadataValidatorService {
 
   public validateFlatObjectMetadataDeletion({
     flatEntityToValidate: { id: objectMetadataToDeleteId },
-    optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+    },
     buildOptions,
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
@@ -155,8 +158,10 @@ export class FlatObjectMetadataValidatorService {
 
   public async validateFlatObjectMetadataCreation({
     flatEntityToValidate: flatObjectMetadataToValidate,
-    optimisticFlatEntityMaps: optimisticFlatObjectMetadataMaps,
-    mutableDependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): Promise<FailedFlatEntityValidation<FlatObjectMetadata>> {
@@ -194,8 +199,7 @@ export class FlatObjectMetadataValidatorService {
     objectValidationResult.errors.push(
       ...validateFlatObjectMetadataIdentifiers({
         flatObjectMetadata: flatObjectMetadataToValidate,
-        flatFieldMetadataMaps:
-          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
+        flatFieldMetadataMaps,
       }),
     );
     objectValidationResult.errors.push(

@@ -82,15 +82,7 @@ export const AIChatAssistantMessageRenderer = ({
       default:
         {
           if (isToolUIPart(part)) {
-            const { output, input, type } = part;
-            return (
-              <ToolStepRenderer
-                key={index}
-                input={input}
-                output={output}
-                toolName={type.split('-')[1]}
-              />
-            );
+            return <ToolStepRenderer key={index} toolPart={part} />;
           }
         }
         return null;

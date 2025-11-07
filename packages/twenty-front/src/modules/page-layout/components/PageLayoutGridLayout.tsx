@@ -113,8 +113,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   const isLayoutEmpty =
     !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
 
-  const hasPendingPlaceholder =
-    isDefined(pageLayoutDraggedArea) && !isLayoutEmpty;
+  const hasPendingPlaceholder = isDefined(pageLayoutDraggedArea);
 
   const baseLayouts = isLayoutEmpty
     ? EMPTY_LAYOUT
@@ -185,11 +184,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
               {item.type === 'placeholder' ? (
                 <WidgetPlaceholder />
               ) : (
-                <WidgetRenderer
-                  widget={item.widget}
-                  pageLayoutType={currentPageLayout.type}
-                  layoutMode="grid"
-                />
+                <WidgetRenderer widget={item.widget} />
               )}
             </div>
           ))}

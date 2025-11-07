@@ -1,0 +1,22 @@
+{
+  "name": "twenty-browser-extension",
+  "description": "Twenty Lead capture extension",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@webext-core/messaging": "^2.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "twenty-ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.39",
+    "@types/react-dom": "^18.2.15",
+    "@wxt-dev/module-react": "^1.1.3",
+    "typescript": "^5.9.2",
+    "wxt": "^0.20.6"
+  }
+}

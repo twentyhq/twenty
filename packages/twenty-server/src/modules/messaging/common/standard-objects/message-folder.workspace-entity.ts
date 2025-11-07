@@ -1,10 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -90,6 +89,17 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: false,
   })
   isSynced: boolean;
+
+  @WorkspaceField({
+    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.parentFolderId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Parent Folder ID`,
+    description: msg`Parent Folder ID`,
+    icon: 'IconFolder',
+    defaultValue: null,
+  })
+  @WorkspaceIsNullable()
+  parentFolderId: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.externalId,

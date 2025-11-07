@@ -10,7 +10,6 @@ import { useDebounce } from 'use-debounce';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -47,6 +46,7 @@ import {
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
+  useDeleteUserWorkspaceMutation,
   useGetWorkspaceInvitationsQuery,
   useImpersonateMutation,
 } from '~/generated-metadata/graphql';
@@ -142,23 +142,27 @@ export const SettingsWorkspaceMembers = () => {
     fetchMoreRecords,
     hasNextPage,
     loading,
+    refetch: refetchWorkspaceMembers,
   } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     filter: searchServerFilter,
   });
-  const { deleteOneRecord: deleteOneWorkspaceMember } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
 
   const { resendInvitation } = useResendWorkspaceInvitation();
   const { deleteWorkspaceInvitation } = useDeleteWorkspaceInvitation();
+  const [deleteUserFromWorkspace] = useDeleteUserWorkspaceMutation();
 
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
-    await deleteOneWorkspaceMember?.(workspaceMemberId);
+    await deleteUserFromWorkspace?.({
+      variables: {
+        workspaceMemberIdToDelete: workspaceMemberId,
+      },
+    });
     setWorkspaceMemberToDelete(undefined);
+    refetchWorkspaceMembers();
   };
 
   const handleImpersonate = async (targetWorkspaceMember: WorkspaceMember) => {
@@ -485,18 +489,19 @@ export const SettingsWorkspaceMembers = () => {
       </SettingsPageContainer>
       <ConfirmationModal
         modalId={WORKSPACE_MEMBER_DELETION_MODAL_ID}
-        title={t`Account Deletion`}
+        title={t`Remove member from workspace`}
         subtitle={
           <Trans>
-            This action cannot be undone. This will permanently delete this user
-            and remove them from all their assignments.
+            This action cannot be undone. This will permanently remove this
+            member from this workspace and remove them from all their
+            assignments.
           </Trans>
         }
         onConfirmClick={() =>
           workspaceMemberToDelete &&
           handleRemoveWorkspaceMember(workspaceMemberToDelete)
         }
-        confirmButtonText={t`Delete account`}
+        confirmButtonText={t`Remove member`}
       />
     </SubMenuTopBarContainer>
   );

@@ -129,8 +129,11 @@ export class AuthService {
     }
 
     throw new AuthException(
-      "You're not member of this workspace.",
+      'User is not a member of the workspace.',
       AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      {
+        userFriendlyMessage: msg`User is not a member of the workspace.`,
+      },
     );
   }
 

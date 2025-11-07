@@ -19,8 +19,10 @@ export class FlatDatabaseEventTriggerValidatorService {
   public validateFlatDatabaseEventTriggerUpdate({
     flatEntityId,
     flatEntityUpdates,
-    optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-    mutableDependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatDatabaseEventTriggerMaps: optimisticFlatDatabaseEventTriggerMaps,
+      flatServerlessFunctionMaps,
+    },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
   >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
@@ -54,8 +56,9 @@ export class FlatDatabaseEventTriggerValidatorService {
     };
 
     const serverlessFunction =
-      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps
-        ?.byId?.[updatedFlatDatabaseEventTrigger.serverlessFunctionId];
+      flatServerlessFunctionMaps.byId[
+        updatedFlatDatabaseEventTrigger.serverlessFunctionId
+      ];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({
@@ -70,7 +73,9 @@ export class FlatDatabaseEventTriggerValidatorService {
 
   public validateFlatDatabaseEventTriggerDeletion({
     flatEntityToValidate: { id: databaseEventTriggerIdToDelete },
-    optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatDatabaseEventTriggerMaps: optimisticFlatDatabaseEventTriggerMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
   >): FailedFlatEntityValidation<FlatDatabaseEventTrigger> {
@@ -101,8 +106,10 @@ export class FlatDatabaseEventTriggerValidatorService {
 
   public async validateFlatDatabaseEventTriggerCreation({
     flatEntityToValidate: flatDatabaseEventTriggerToValidate,
-    optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-    mutableDependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatDatabaseEventTriggerMaps: optimisticFlatDatabaseEventTriggerMaps,
+      flatServerlessFunctionMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.databaseEventTrigger
   >): Promise<FailedFlatEntityValidation<FlatDatabaseEventTrigger>> {
@@ -130,8 +137,9 @@ export class FlatDatabaseEventTriggerValidatorService {
     }
 
     const serverlessFunction =
-      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps
-        ?.byId?.[flatDatabaseEventTriggerToValidate.serverlessFunctionId];
+      flatServerlessFunctionMaps?.byId?.[
+        flatDatabaseEventTriggerToValidate.serverlessFunctionId
+      ];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({

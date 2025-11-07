@@ -2,9 +2,9 @@ import { msg } from '@lingui/core/macro';
 import {
   ConnectedAccountProvider,
   FieldMetadataType,
+  RelationOnDeleteAction,
 } from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -69,6 +69,16 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconKey',
   })
   refreshToken: string;
+
+  @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastCredentialsRefreshedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: msg`Last credentials refreshed at`,
+    description: msg`Last credentials refreshed at`,
+    icon: 'IconHistory',
+  })
+  @WorkspaceIsNullable()
+  lastCredentialsRefreshedAt: Date | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
