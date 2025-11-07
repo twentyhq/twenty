@@ -70,12 +70,12 @@ const StyledHorizontalHandle = styled.div`
 `;
 
 const StyledHorizontalHandleWrapper = styled.div<{
-  handleAxis: WidgetHorizontalHandleAxis;
+  widgetHandleAxis: WidgetHorizontalHandleAxis;
 }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: row-resize;
-  transform: ${({ handleAxis }) =>
-    handleAxis === 'n' ? 'translateY(-50%)' : 'translateY(50%)'};
+  transform: ${({ widgetHandleAxis }) =>
+    widgetHandleAxis === 'n' ? 'translateY(-50%)' : 'translateY(50%)'};
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)};
 
   :hover {
@@ -86,12 +86,12 @@ const StyledHorizontalHandleWrapper = styled.div<{
 `;
 
 const StyledVerticalHandleWrapper = styled.div<{
-  handleAxis: WidgetVerticalHandleAxis;
+  widgetHandleAxis: WidgetVerticalHandleAxis;
 }>`
   cursor: col-resize;
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  transform: ${({ handleAxis }) =>
-    handleAxis === 'w' ? 'translateX(-50%)' : 'translateX(50%)'};
+  transform: ${({ widgetHandleAxis }) =>
+    widgetHandleAxis === 'w' ? 'translateX(-50%)' : 'translateX(50%)'};
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)};
 
   :hover {
@@ -102,57 +102,57 @@ const StyledVerticalHandleWrapper = styled.div<{
 `;
 
 const StyledResizeHandleWrapper = styled.div<{
-  handleAxis?: WidgetHandleAxis;
+  widgetHandleAxis?: WidgetHandleAxis;
 }>`
   position: absolute;
-  ${({ theme, handleAxis }) => {
-    if (handleAxis === 'w') {
+  ${({ theme, widgetHandleAxis }) => {
+    if (widgetHandleAxis === 'w') {
       return css`
         left: ${theme.spacing(2)};
         top: 50%;
         transform: translateY(-50%);
       `;
     }
-    if (handleAxis === 'e') {
+    if (widgetHandleAxis === 'e') {
       return css`
         right: ${theme.spacing(2)};
         top: 50%;
         transform: translateY(-50%);
       `;
     }
-    if (handleAxis === 'n') {
+    if (widgetHandleAxis === 'n') {
       return css`
         top: ${theme.spacing(2)};
         left: 50%;
         transform: translateX(-50%);
       `;
     }
-    if (handleAxis === 's') {
+    if (widgetHandleAxis === 's') {
       return css`
         bottom: ${theme.spacing(2)};
         left: 50%;
         transform: translateX(-50%);
       `;
     }
-    if (handleAxis === 'se') {
+    if (widgetHandleAxis === 'se') {
       return css`
         bottom: ${theme.spacing(0.5)};
         right: ${theme.spacing(0.5)};
       `;
     }
-    if (handleAxis === 'sw') {
+    if (widgetHandleAxis === 'sw') {
       return css`
         bottom: ${theme.spacing(0.5)};
         left: ${theme.spacing(0.5)};
       `;
     }
-    if (handleAxis === 'ne') {
+    if (widgetHandleAxis === 'ne') {
       return css`
         right: ${theme.spacing(0.5)};
         top: ${theme.spacing(0.5)};
       `;
     }
-    if (handleAxis === 'nw') {
+    if (widgetHandleAxis === 'nw') {
       return css`
         left: ${theme.spacing(0.5)};
         top: ${theme.spacing(0.5)};
@@ -162,19 +162,28 @@ const StyledResizeHandleWrapper = styled.div<{
 `;
 
 const isVerticalHandle = (
-  axis?: WidgetHandleAxis,
-): axis is WidgetVerticalHandleAxis => axis === 'w' || axis === 'e';
+  widgetHandleAxis?: WidgetHandleAxis,
+): widgetHandleAxis is WidgetVerticalHandleAxis =>
+  widgetHandleAxis === 'w' || widgetHandleAxis === 'e';
 
 const isHorizontalHandle = (
-  axis?: WidgetHandleAxis,
-): axis is WidgetHorizontalHandleAxis => axis === 'n' || axis === 's';
+  widgetHandleAxis?: WidgetHandleAxis,
+): widgetHandleAxis is WidgetHorizontalHandleAxis =>
+  widgetHandleAxis === 'n' || widgetHandleAxis === 's';
 
 export const PageLayoutGridResizeHandle = forwardRef<
   HTMLDivElement,
   PageLayoutGridResizeHandleProps
 >(
   (
-    { handleAxis, onMouseDown, onMouseUp, onTouchEnd, className, style },
+    {
+      handleAxis: widgetHandleAxis,
+      onMouseDown,
+      onMouseUp,
+      onTouchEnd,
+      className,
+      style,
+    },
     ref,
   ) => {
     const theme = useTheme();
@@ -187,37 +196,37 @@ export const PageLayoutGridResizeHandle = forwardRef<
         onTouchEnd={onTouchEnd}
         className={className}
         style={style}
-        handleAxis={handleAxis}
+        widgetHandleAxis={widgetHandleAxis}
       >
-        {isVerticalHandle(handleAxis) && (
-          <StyledVerticalHandleWrapper handleAxis={handleAxis}>
+        {isVerticalHandle(widgetHandleAxis) && (
+          <StyledVerticalHandleWrapper widgetHandleAxis={widgetHandleAxis}>
             <StyledVerticalHandle />
           </StyledVerticalHandleWrapper>
         )}
-        {isHorizontalHandle(handleAxis) && (
-          <StyledHorizontalHandleWrapper handleAxis={handleAxis}>
+        {isHorizontalHandle(widgetHandleAxis) && (
+          <StyledHorizontalHandleWrapper widgetHandleAxis={widgetHandleAxis}>
             <StyledHorizontalHandle />
           </StyledHorizontalHandleWrapper>
         )}
-        {handleAxis === 'ne' && (
+        {widgetHandleAxis === 'ne' && (
           <StyledTopRightIcon
             size={theme.icon.size.lg}
             stroke={theme.icon.stroke.lg}
           />
         )}
-        {handleAxis === 'nw' && (
+        {widgetHandleAxis === 'nw' && (
           <StyledTopLeftIcon
             size={theme.icon.size.lg}
             stroke={theme.icon.stroke.lg}
           />
         )}
-        {handleAxis === 'se' && (
+        {widgetHandleAxis === 'se' && (
           <StyledBottomRightIcon
             size={theme.icon.size.lg}
             stroke={theme.icon.stroke.lg}
           />
         )}
-        {handleAxis === 'sw' && (
+        {widgetHandleAxis === 'sw' && (
           <StyledBottomLeftIcon
             size={theme.icon.size.lg}
             stroke={theme.icon.stroke.lg}
