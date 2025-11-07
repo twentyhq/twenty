@@ -14,7 +14,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EmailVerificationContext } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -276,10 +278,10 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     const normalizedEmail = newEmail.trim().toLowerCase();
 
     if (normalizedEmail === user.email) {
-      throw new UserException(
-        'New email must be different from current email',
-        UserExceptionCode.EMAIL_ALREADY_IN_USE,
-      );
+      throw new UserInputError('New email must be different from current email', {
+        subCode: UserExceptionCode.EMAIL_UNCHANGED,
+        userFriendlyMessage: msg`New email must be different from current email`,
+      });
     }
 
     const existingUser = await this.userRepository.findOne({
@@ -287,10 +289,10 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     });
 
     if (existingUser && existingUser.id !== user.id) {
-      throw new UserException(
-        'Email already in use',
-        UserExceptionCode.EMAIL_ALREADY_IN_USE,
-      );
+      throw new UserInputError('Email already in use', {
+        subCode: UserExceptionCode.EMAIL_ALREADY_IN_USE,
+        userFriendlyMessage: msg`Email already in use`,
+      });
     }
 
     user.email = normalizedEmail;
@@ -308,13 +310,14 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         workspace,
       );
 
-    await this.emailVerificationService.sendVerificationEmail(
-      user.id,
-      normalizedEmail,
-      workspaceDomainConfig,
-      user.locale || SOURCE_LOCALE,
+    await this.emailVerificationService.sendVerificationEmail({
+      userId: user.id,
+      email: normalizedEmail,
+      workspace: workspaceDomainConfig,
+      locale: user.locale || SOURCE_LOCALE,
       verifyEmailRedirectPath,
-    );
+      context: EmailVerificationContext.EMAIL_UPDATE,
+    });
   }
 
   private async enqueueWorkspaceMemberEmailUpdate(

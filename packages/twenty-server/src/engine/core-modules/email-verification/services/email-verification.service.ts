@@ -23,6 +23,7 @@ import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
+import { EmailVerificationContext } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -43,13 +44,21 @@ export class EmailVerificationService {
     private readonly i18nService: I18nService,
   ) {}
 
-  async sendVerificationEmail(
-    userId: string,
-    email: string,
-    workspace: WorkspaceDomainConfig | undefined,
-    locale: keyof typeof APP_LOCALES,
-    verifyEmailRedirectPath?: string,
-  ) {
+  async sendVerificationEmail({
+    userId,
+    email,
+    workspace,
+    locale,
+    verifyEmailRedirectPath,
+    context = EmailVerificationContext.SIGN_UP,
+  }: {
+    userId: string;
+    email: string;
+    workspace: WorkspaceDomainConfig | undefined;
+    locale: keyof typeof APP_LOCALES;
+    verifyEmailRedirectPath?: string;
+    context?: EmailVerificationContext;
+  }) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
     }
@@ -79,6 +88,7 @@ export class EmailVerificationService {
     const emailData = {
       link: verificationLink.toString(),
       locale,
+      isEmailUpdate: context === EmailVerificationContext.EMAIL_UPDATE,
     };
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
@@ -88,7 +98,10 @@ export class EmailVerificationService {
       plainText: true,
     });
 
-    const emailVerificationMsg = msg`Welcome to Twenty: Please Confirm Your Email`;
+    const emailVerificationMsg =
+      context === EmailVerificationContext.EMAIL_UPDATE
+        ? msg`Please confirm your updated email`
+        : msg`Welcome to Twenty: Please Confirm Your Email`;
     const i18n = this.i18nService.getI18nInstance(locale);
     const subject = i18n._(emailVerificationMsg);
 
@@ -157,7 +170,13 @@ export class EmailVerificationService {
       await this.appTokenRepository.delete(existingToken.id);
     }
 
-    await this.sendVerificationEmail(user.id, email, workspace, locale);
+    await this.sendVerificationEmail({
+      userId: user.id,
+      email,
+      workspace,
+      locale,
+      context: EmailVerificationContext.SIGN_UP,
+    });
 
     return { success: true };
   }

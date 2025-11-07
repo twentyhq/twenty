@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class EditableProfileFields1762440785035 implements MigrationInterface {
-  name = 'EditableProfileFields1762440785035';
+export class EditableProfileFields1762488656872 implements MigrationInterface {
+  name = 'EditableProfileFields1762488656872';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "editableProfileFields" text`,
+      `ALTER TABLE "core"."workspace" ADD "editableProfileFields" text DEFAULT 'email'`,
     );
   }
 
