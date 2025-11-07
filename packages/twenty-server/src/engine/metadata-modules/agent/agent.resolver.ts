@@ -8,7 +8,7 @@ import {
   FeatureFlagGuard,
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateAgentHandoffInput } from 'src/engine/metadata-modules/agent/dtos/create-agent-handoff.input';
 import { RemoveAgentHandoffInput } from 'src/engine/metadata-modules/agent/dtos/remove-agent-handoff.input';
@@ -72,7 +72,7 @@ export class AgentResolver {
 
   @Mutation(() => AgentDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -85,7 +85,7 @@ export class AgentResolver {
 
   @Mutation(() => AgentDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async updateOneAgent(
     @Args('input') input: UpdateAgentInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -95,7 +95,7 @@ export class AgentResolver {
 
   @Mutation(() => AgentDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async deleteOneAgent(
     @Args('input') { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -105,7 +105,7 @@ export class AgentResolver {
 
   @Mutation(() => Boolean)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async createAgentHandoff(
     @Args('input') input: CreateAgentHandoffInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -122,7 +122,7 @@ export class AgentResolver {
 
   @Mutation(() => Boolean)
   @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async removeAgentHandoff(
     @Args('input') input: RemoveAgentHandoffInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

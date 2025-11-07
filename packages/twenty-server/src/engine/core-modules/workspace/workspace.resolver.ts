@@ -62,7 +62,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -148,7 +148,7 @@ export class WorkspaceResolver {
   @Mutation(() => SignedFileDTO)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: WorkspaceEntity,
@@ -194,7 +194,7 @@ export class WorkspaceResolver {
   @Mutation(() => WorkspaceEntity)
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
     return this.workspaceService.deleteWorkspace(id);
@@ -386,7 +386,7 @@ export class WorkspaceResolver {
   @Mutation(() => DomainValidRecords, { nullable: true })
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
+    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async checkCustomDomainValidRecords(
     @AuthWorkspace() workspace: WorkspaceEntity,
