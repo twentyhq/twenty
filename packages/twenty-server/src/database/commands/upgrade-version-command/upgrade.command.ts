@@ -77,6 +77,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanOrphanedUserWorkspacesCommand: CleanOrphanedUserWorkspacesCommand,
     protected readonly cleanOrphanedRoleTargetsCommand: CleanOrphanedRoleTargetsCommand,
     protected readonly seedStandardApplicationsCommand: CreateTwentyStandardApplicationCommand,
+    protected readonly createTwentyStandardApplicationCommand: CreateTwentyStandardApplicationCommand,
   ) {
     super(
       workspaceRepository,
@@ -126,7 +127,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1110: VersionCommands = {
-      beforeSyncMetadata: [this.seedStandardApplicationsCommand],
+      beforeSyncMetadata: [
+        this.seedStandardApplicationsCommand,
+        this.createTwentyStandardApplicationCommand,
+      ],
       afterSyncMetadata: [
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,

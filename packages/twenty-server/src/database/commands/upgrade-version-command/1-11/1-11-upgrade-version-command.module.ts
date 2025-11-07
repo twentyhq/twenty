@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AssociateStandardEntitiesToTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-associate-standard-entities-to-twenty-standard-application.command';
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
@@ -34,11 +35,13 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
     CreateTwentyStandardApplicationCommand,
+    AssociateStandardEntitiesToTwentyStandardApplicationCommand,
   ],
   exports: [
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
     CreateTwentyStandardApplicationCommand,
+    AssociateStandardEntitiesToTwentyStandardApplicationCommand,
   ],
 })
 export class V1_11_UpgradeVersionCommandModule {}
