@@ -259,12 +259,13 @@ export const main = async (params: {
 }): Promise<object | undefined> => {
   if (TWENTY_API_KEY === '' || STRIPE_API_KEY === '') {
     console.warn('Missing variables');
-    return {};
+    throw new Error("Missing variables")
   }
 
   try {
     // TODO: add validation of signature key from Stripe
     const { properties } = params;
+    console.log(properties);
     const stripe = properties as stripeResponse;
     const allowed_types = [
       'customer.subscription.created',
@@ -272,6 +273,12 @@ export const main = async (params: {
     ];
     if (!allowed_types.includes(stripe.type)) {
       console.error('Wrong webhook');
+      throw new Error("Wrong type of webhook")
+    }
+
+    const stripeCustomer = await getStripeCustomerData(stripe.customer);
+    if (stripeCustomer?.businessName === undefined || stripeCustomer?.businessName === '') {
+      console.warn('Set customer business name in Stripe');
       return {};
     }
 
@@ -280,10 +287,10 @@ export const main = async (params: {
       companyObject?.fields.find((field) => field.name === 'seats') ===
       undefined
     ) {
-      const t: boolean | undefined = companyObject?.id
+      const seatsFieldCreated: boolean | undefined = companyObject?.id
         ? await createFields(companyObject?.id, 'seats')
         : false;
-      if (t === false) {
+      if (!seatsFieldCreated) {
         console.error('Seats field creation failed');
         return {};
       }
@@ -292,40 +299,35 @@ export const main = async (params: {
       companyObject?.fields.find((field) => field.name === 'subStatus') ===
       undefined
     ) {
-      const t: boolean | undefined = companyObject?.id
+      const subStatusFieldCreated: boolean | undefined = companyObject?.id
         ? await createFields(companyObject?.id, 'subStatus')
         : false;
-      if (t === false) {
+      if (!subStatusFieldCreated) {
         console.error('Sub status field creation failed');
         return {};
       }
     }
 
-    const stripeCustomer = await getStripeCustomerData(stripe.customer);
-    if (stripeCustomer?.businessName) {
-      console.warn('Set customer business name in Stripe');
-      return {};
-    }
     const twentyCustomer = await checkIfCompanyExistsInTwenty(
       stripeCustomer?.businessName,
     );
     if (Object.keys(twentyCustomer).length === 0) {
-      const a = await createTwentyCustomer(
+      const twentyCustomerCreated = await createTwentyCustomer(
         stripeCustomer?.businessName,
         stripe.items.data[0].quantity,
         stripe.status.toUpperCase(),
       );
-      if (Object.keys(a).length === 0) {
+      if (Object.keys(twentyCustomerCreated).length === 0) {
         console.error('Creation of Stripe customer in Twenty failed');
         return {};
       }
     } else {
-      const a = await updateTwentyCompany(
+      const twentyCompanyUpdated = await updateTwentyCompany(
         twentyCustomer.id,
         stripe.items.data[0].quantity,
         stripe.status.toUpperCase() as stripeStatus,
       );
-      if (!a) {
+      if (!twentyCompanyUpdated) {
         console.error('Update of Stripe customer in Twenty failed');
         return {};
       }
@@ -346,8 +348,8 @@ export const config: ServerlessFunctionConfig = {
     {
       universalIdentifier: '55f58e19-d832-43c4-9f8b-3f29fc05c162',
       type: 'route',
-      path: '/stripe',
-      httpMethod: 'POST',
+      path: '/webhook/stripe',
+      httpMethod: 'GET',
       isAuthRequired: false,
     },
   ],

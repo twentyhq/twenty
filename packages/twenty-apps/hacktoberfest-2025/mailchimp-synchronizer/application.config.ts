@@ -27,6 +27,11 @@ const config: ApplicationConfig = {
       value: '',
       description: 'Required to send requests to Mailchimp',
     },
+    MAILCHIMP_AUDIENCE_ID: {
+      universalIdentifier: '5492f06f-bb29-4c93-9436-b4736a396376',
+      value: '',
+      description: 'Required to send requests to Mailchimp',
+    },
     IS_EMAIL_CONSTRAINT: {
       universalIdentifier: '62626c57-470f-4866-be1e-5b4d7ec09f9f',
       value: 'false',
@@ -55,11 +60,6 @@ const config: ApplicationConfig = {
       universalIdentifier: '9d753e1e-4408-40ca-b0f0-5c7e8625c2aa',
       value: 'false',
       description: 'Set to true if you want to update record if it exists',
-    },
-    MAILCHIMP_AUDIENCE_ID: {
-      universalIdentifier: '5492f06f-bb29-4c93-9436-b4736a396376',
-      value: '',
-      description: 'Required to send requests to Mailchimp',
     },
   },
 };

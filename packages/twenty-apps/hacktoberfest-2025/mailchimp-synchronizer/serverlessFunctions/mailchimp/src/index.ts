@@ -94,7 +94,7 @@ const checkAddress = (address: twentyAddress): mailchimpAddress => {
 
 const checkAudiencePermissions = async (
   audienceId: string,
-): Promise<string[]> => {
+): Promise<string[] | undefined> => {
   const options = {
     method: 'GET',
     headers: {
@@ -109,7 +109,6 @@ const checkAudiencePermissions = async (
     if (axios.isAxiosError(error)) {
       throw error;
     }
-    throw error;
   }
 };
 
@@ -211,13 +210,13 @@ export const main = async (params: {
       return {};
     }
 
-    const audiencePermissions: string[] = await checkAudiencePermissions(
+    const audiencePermissions: string[] | undefined = await checkAudiencePermissions(
       MAILCHIMP_AUDIENCE_ID,
     );
 
     if (
       IS_EMAIL_CONSTRAINT &&
-      audiencePermissions.includes('Email') &&
+      audiencePermissions?.includes('Email') &&
       !email
     ) {
       console.error('Email is empty');
@@ -226,7 +225,7 @@ export const main = async (params: {
 
     if (
       IS_PHONE_CONSTRAINT &&
-      audiencePermissions.includes('SMS') &&
+      audiencePermissions?.includes('SMS') &&
       !phoneNumber
     ) {
       console.error('Phone number is empty');
