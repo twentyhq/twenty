@@ -1427,11 +1427,6 @@ msgstr "Поле для обновления не найдено"
 msgid "Field used for full-text search"
 msgstr "Поле, используемое для полнотекстового поиска"
 
-#. js-lingui-id: s3HtdT
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "FieldMetadataId is required"
-msgstr "Требуется FieldMetadataId"
-
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
@@ -1699,16 +1694,6 @@ msgstr "Недействительный UUID {id}"
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Недействительный код подтверждения. Пожалуйста, попробуйте снова."
-
-#. js-lingui-id: 8xkULN
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data"
-msgstr "Недопустимые данные сортировки представления"
-
-#. js-lingui-id: I0OzaR
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data for view sort id: {id}"
-msgstr "Недопустимые данные сортировки представления для идентификатора сортировки: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3254,6 +3239,11 @@ msgstr "Стандартная роль для этой рабочей обла�
 msgid "The executor of the workflow"
 msgstr "Исполнитель потока работ"
 
+#. js-lingui-id: o6DGfJ
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
+msgstr ""
+
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
@@ -3539,11 +3529,6 @@ msgstr "Уникальное поле не может иметь значени�
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "Уникальный индекс не может быть создан для поля {fieldName} типа {fieldType}"
-
-#. js-lingui-id: rtir7c
-#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
-msgid "unknown"
-msgstr ""
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -3834,16 +3819,6 @@ msgstr "Метаданные агрегированного поля канба�
 msgid "View not found"
 msgstr "Представление не найдено"
 
-#. js-lingui-id: znNExx
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort (id: {id}) not found"
-msgstr "Сортировка представления (id: {id}) не найдена"
-
-#. js-lingui-id: 3zMs+f
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort not found"
-msgstr "Сортировка представления не найдена"
-
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
@@ -3869,11 +3844,6 @@ msgstr "Просмотр с тем же идентификатором уже с
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "ViewId"
 msgstr "Посмотреть ID"
-
-#. js-lingui-id: kpQRY2
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "ViewId is required"
-msgstr "Требуется идентификатор представления (ViewId)"
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -4152,11 +4122,6 @@ msgstr "Позиция участника рабочего пространст�
 msgid "Workspace Members"
 msgstr "Участники рабочего пространства"
 
-#. js-lingui-id: bBr+RW
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "WorkspaceId is required"
-msgstr "Требуется идентификатор рабочего пространства (WorkspaceId)"
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
@@ -4246,15 +4211,20 @@ msgstr ""
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "У вас нет разрешения на работу от имени пользователей. Пожалуйста, обратитесь к администратору вашей рабочей группы за доступом."
 
-#. js-lingui-id: k7P8yU
+#. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage security settings. Please contact your workspace administrator."
-msgstr "У вас нет разрешения на управление настройками безопасности. Пожалуйста, обратитесь к администратору вашей рабочей группы."
+msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
+msgstr ""
 
-#. js-lingui-id: svchJc
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage workspace settings. Please contact your workspace administrator."
-msgstr "У вас нет разрешения на управление настройками рабочей группы. Пожалуйста, обратитесь к администратору вашей рабочей группы."
+#. js-lingui-id: M1he8p
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to create workspace-level views."
+msgstr ""
+
+#. js-lingui-id: QmL9y9
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to modify this view."
+msgstr ""
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
