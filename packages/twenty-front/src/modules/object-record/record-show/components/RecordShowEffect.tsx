@@ -7,6 +7,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 type RecordShowEffectProps = {
   objectNameSingular: string;
@@ -17,7 +18,6 @@ export const RecordShowEffect = ({
   objectNameSingular,
   recordId,
 }: RecordShowEffectProps) => {
-
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -48,12 +48,24 @@ export const RecordShowEffect = ({
     [recordId],
   );
 
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular,
+    // Important: inclure lastViewedAt si ce n’est pas déjà dans la signature
+    recordGqlFields: {
+      ...FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE.fields,
+      lastViewedAt: true,
+    },
+  });
+
   useEffect(() => {
     if (!loading && isDefined(record)) {
       setRecordStore(record);
+      updateOneRecord({
+        idToUpdate: recordId,
+        optimisticRecord: { lastViewedAt: new Date().toISOString() },
+      });
     }
-  }, [record, setRecordStore, loading]);
-
+  }, [record, setRecordStore, loading, updateOneRecord, recordId]);
 
   return <></>;
 };
