@@ -8,12 +8,12 @@ import {
   IconRadiusTopRight,
 } from 'twenty-ui/display';
 
-type HandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
-type HorizontalHandleAxis = 'n' | 's';
-type VerticalHandleAxis = 'e' | 'w';
+type WidgetHandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
+type WidgetHorizontalHandleAxis = 'n' | 's';
+type WidgetVerticalHandleAxis = 'e' | 'w';
 
 type PageLayoutGridResizeHandleProps = {
-  handleAxis?: HandleAxis;
+  handleAxis?: WidgetHandleAxis;
   onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
   onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
   onTouchEnd?: React.TouchEventHandler<HTMLDivElement>;
@@ -70,7 +70,7 @@ const StyledHorizontalHandle = styled.div`
 `;
 
 const StyledHorizontalHandleWrapper = styled.div<{
-  handleAxis: HorizontalHandleAxis;
+  handleAxis: WidgetHorizontalHandleAxis;
 }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: row-resize;
@@ -86,7 +86,7 @@ const StyledHorizontalHandleWrapper = styled.div<{
 `;
 
 const StyledVerticalHandleWrapper = styled.div<{
-  handleAxis: VerticalHandleAxis;
+  handleAxis: WidgetVerticalHandleAxis;
 }>`
   cursor: col-resize;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -102,7 +102,7 @@ const StyledVerticalHandleWrapper = styled.div<{
 `;
 
 const StyledResizeHandleWrapper = styled.div<{
-  handleAxis?: HandleAxis;
+  handleAxis?: WidgetHandleAxis;
 }>`
   position: absolute;
   ${({ theme, handleAxis }) => {
@@ -161,11 +161,13 @@ const StyledResizeHandleWrapper = styled.div<{
   }}
 `;
 
-const isVerticalHandle = (axis?: HandleAxis): axis is VerticalHandleAxis =>
-  axis === 'w' || axis === 'e';
+const isVerticalHandle = (
+  axis?: WidgetHandleAxis,
+): axis is WidgetVerticalHandleAxis => axis === 'w' || axis === 'e';
 
-const isHorizontalHandle = (axis?: HandleAxis): axis is HorizontalHandleAxis =>
-  axis === 'n' || axis === 's';
+const isHorizontalHandle = (
+  axis?: WidgetHandleAxis,
+): axis is WidgetHorizontalHandleAxis => axis === 'n' || axis === 's';
 
 export const PageLayoutGridResizeHandle = forwardRef<
   HTMLDivElement,
