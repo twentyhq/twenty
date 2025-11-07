@@ -50,10 +50,6 @@ export class MessageImportExceptionHandlerService {
       };
     }
 
-    this.exceptionHandlerService.captureExceptions([exception], {
-      workspace: { id: workspaceId },
-    });
-
     if ('code' in exception) {
       switch (exception.code) {
         case MessageImportDriverExceptionCode.NOT_FOUND:
@@ -90,10 +86,16 @@ export class MessageImportExceptionHandlerService {
         case MessageImportDriverExceptionCode.UNKNOWN:
         case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
         default:
+          this.exceptionHandlerService.captureExceptions([exception], {
+            workspace: { id: workspaceId },
+          });
           await this.handleUnknownException(messageChannel, workspaceId);
           break;
       }
     } else {
+      this.exceptionHandlerService.captureExceptions([exception], {
+        workspace: { id: workspaceId },
+      });
       await this.handleUnknownException(messageChannel, workspaceId);
     }
   }
