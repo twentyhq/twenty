@@ -19,6 +19,7 @@ import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -81,24 +82,19 @@ export const AIChatTab = () => {
   const { createChatThread } = useCreateNewAIChatThread();
   const { navigateCommandMenu } = useCommandMenu();
 
+  const { scrollWrapperHTMLElement } =
+    useScrollWrapperHTMLElement(scrollWrapperId);
+
   const handleScrollToBottom = (element: HTMLDivElement | null) => {
-    if (!isDefined(element)) {
+    if (!isDefined(element) || !isDefined(scrollWrapperHTMLElement)) {
       return;
     }
 
-    const scrollElement = document.getElementById(
-      `scroll-wrapper-${scrollWrapperId}`,
-    );
-
-    if (!isDefined(scrollElement)) {
-      return;
-    }
-
-    const isAtTop = scrollElement.scrollTop < 10;
+    const isAtTop = scrollWrapperHTMLElement.scrollTop < 10;
     const isNearBottom =
-      scrollElement.scrollHeight -
-        scrollElement.scrollTop -
-        scrollElement.clientHeight <
+      scrollWrapperHTMLElement.scrollHeight -
+        scrollWrapperHTMLElement.scrollTop -
+        scrollWrapperHTMLElement.clientHeight <
       100;
 
     if (isAtTop || isNearBottom || isStreaming) {
