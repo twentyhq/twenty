@@ -76,3 +76,4 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
     }
   }
 }
+
