@@ -460,7 +460,6 @@ msgid "Account added successfully. Sync started."
 msgstr "Konto zostało pomyślnie dodane. Synchronizacja rozpoczęta."
 
 #. js-lingui-id: nD0Y+a
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Account Deletion"
 msgstr "Usuwanie konta"
@@ -1713,8 +1712,7 @@ msgstr "Zmień typ węzła"
 
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
-#: src/modules/settings/profile/components/ChangePassword.tsx
-#: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Change Password"
 msgstr "Zmień hasło"
 
@@ -2459,6 +2457,11 @@ msgstr "Aktualna wartość z serwera środowiska. Ustaw wartość własną, aby 
 msgid "Current version"
 msgstr "Bieżąca wersja"
 
+#. js-lingui-id: 0b3reS
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Current workspace member not found."
+msgstr ""
+
 #. js-lingui-id: 8Tg/JR
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -2538,6 +2541,11 @@ msgstr "duński"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Dark"
 msgstr "Ciemne"
+
+#. js-lingui-id: w6iIMm
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Dashboards"
+msgstr ""
 
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
@@ -2822,7 +2830,6 @@ msgid "Delete {objectLabelPlural}"
 msgstr "Usuń {objectLabelPlural}"
 
 #. js-lingui-id: ZDGm40
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -2833,6 +2840,11 @@ msgstr "Usuń konto"
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data"
 msgstr "Usuń konto i wszystkie powiązane dane"
+
+#. js-lingui-id: kvHBHg
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Delete account and all the associated data or leave workspace"
+msgstr ""
 
 #. js-lingui-id: YMNj8z
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -4280,6 +4292,11 @@ msgstr "Globalne"
 msgid "Go to Companies"
 msgstr "Idź do Firm"
 
+#. js-lingui-id: dvMw7T
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Dashboards"
+msgstr ""
+
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
@@ -4321,10 +4338,10 @@ msgstr "Przejdź do ustawień"
 msgid "Go to Tasks"
 msgstr "Przejdź do zadań"
 
-#. js-lingui-id: A5WHZY
+#. js-lingui-id: 203RqP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "Go to workflows"
-msgstr "Przejdź do przepływów pracy"
+msgid "Go to Workflows"
+msgstr ""
 
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -5137,6 +5154,13 @@ msgstr "Pozostaw puste, jeśli nie potrzebujesz importu e-maili."
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Leave blank if you don't need to send emails."
 msgstr "Pozostaw puste, jeśli nie potrzebujesz wysyłać e-maili."
+
+#. js-lingui-id: qvRaz1
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Leave workspace"
+msgstr ""
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6427,6 +6451,11 @@ msgstr "Nie znaleziono strony"
 msgid "Password"
 msgstr "Hasło"
 
+#. js-lingui-id: 2OUR5i
+#: src/pages/auth/PasswordReset.tsx
+msgid "Password has been set"
+msgstr ""
+
 #. js-lingui-id: BxQ79w
 #: src/pages/auth/PasswordReset.tsx
 msgid "Password has been updated"
@@ -6619,6 +6648,12 @@ msgstr "Proszę wpisać \"{confirmationValue}\", aby potwierdzić usunięcie teg
 msgid "Please type \"yes\" to confirm you want to delete this webhook."
 msgstr "Proszę wpisać \"yes\", aby potwierdzić, że chcesz usunąć ten webhook."
 
+#. js-lingui-id: dzcUZq
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Please type in your email to confirm."
+msgstr ""
+
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"
@@ -6788,8 +6823,13 @@ msgstr "Wydajność kolejki"
 msgid "Queue: {queueName}"
 msgstr "Kolejka: {queueName}"
 
+#. js-lingui-id: BT7pY+
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
+msgid "Receive an email containing password set link"
+msgstr ""
+
 #. js-lingui-id: v3xM25
-#: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "Otrzymaj e-mail z linkiem do aktualizacji hasła"
 
@@ -6933,6 +6973,16 @@ msgstr "Usuń przekazanie"
 msgid "Remove Handoff"
 msgstr "Usuń Przekazanie"
 
+#. js-lingui-id: 99VIgC
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Remove member"
+msgstr ""
+
+#. js-lingui-id: FzY1pn
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Remove member from workspace"
+msgstr ""
+
 #. js-lingui-id: 00Lxnh
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
@@ -6975,11 +7025,6 @@ msgstr "Zresetuj"
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "Reset 2FA"
 msgstr "Resetuj 2FA"
-
-#. js-lingui-id: KbS2K9
-#: src/pages/auth/PasswordReset.tsx
-msgid "Reset Password"
-msgstr "Zresetuj hasło"
 
 #. js-lingui-id: 1IWc1n
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
@@ -7488,10 +7533,10 @@ msgstr "Zobacz historię wersji"
 msgid "See workflow"
 msgstr "Zobacz przepływ pracy"
 
-#. js-lingui-id: XThiR2
+#. js-lingui-id: MVYiTN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "See workflows"
-msgstr "Zobacz przepływy pracy"
+msgid "See Workflows"
+msgstr ""
 
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -7655,6 +7700,12 @@ msgstr "Ustaw widoczność e-maila, zarządzaj swoją listą blokowanych i więc
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Set global workspace preferences"
 msgstr "Ustaw globalne preferencje przestrzeni roboczej"
+
+#. js-lingui-id: 2gHjVM
+#: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
+msgid "Set Password"
+msgstr ""
 
 #. js-lingui-id: qNbuWB
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
@@ -8398,10 +8449,12 @@ msgstr "trzeci"
 msgid "Third"
 msgstr "Trzeci"
 
-#. js-lingui-id: hqCwGc
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
-msgstr "Tej czynności nie można cofnąć. Spowoduje to trwałe usunięcie tego użytkownika i usunięcie go z wszystkich przypisanych zadań."
+#. js-lingui-id: Ox1hE7
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
+"            entire account."
+msgstr ""
 
 #. js-lingui-id: bNY3MH
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
@@ -8417,6 +8470,16 @@ msgstr "Tej czynności nie można cofnąć. Spowoduje to trwałe usunięcie cał
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "This action cannot be undone. This will permanently remove the handoff configuration."
 msgstr "Tej operacji nie można cofnąć. Spowoduje to trwałe usunięcie konfiguracji przekazania."
+
+#. js-lingui-id: fTuKde
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
+msgstr ""
+
+#. js-lingui-id: Ik52hF
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "This action cannot be undone. This will permanently remove your membership from this workspace."
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx

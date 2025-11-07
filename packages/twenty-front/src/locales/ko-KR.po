@@ -460,7 +460,6 @@ msgid "Account added successfully. Sync started."
 msgstr "계정이 성공적으로 추가되었습니다. 동기화가 시작되었습니다."
 
 #. js-lingui-id: nD0Y+a
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Account Deletion"
 msgstr "계정 삭제"
@@ -1713,8 +1712,7 @@ msgstr "노드 유형 변경"
 
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
-#: src/modules/settings/profile/components/ChangePassword.tsx
-#: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Change Password"
 msgstr "비밀번호 변경"
 
@@ -2459,6 +2457,11 @@ msgstr "서버 환경에서의 현재 값입니다. 덮어쓰려면 사용자 �
 msgid "Current version"
 msgstr "현재 버전"
 
+#. js-lingui-id: 0b3reS
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Current workspace member not found."
+msgstr ""
+
 #. js-lingui-id: 8Tg/JR
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -2538,6 +2541,11 @@ msgstr "덴마크어"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Dark"
 msgstr "다크"
+
+#. js-lingui-id: w6iIMm
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Dashboards"
+msgstr ""
 
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
@@ -2822,7 +2830,6 @@ msgid "Delete {objectLabelPlural}"
 msgstr "{objectLabelPlural} 삭제"
 
 #. js-lingui-id: ZDGm40
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -2833,6 +2840,11 @@ msgstr "계정 삭제"
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data"
 msgstr "계정 및 모든 관련 데이터 삭제"
+
+#. js-lingui-id: kvHBHg
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Delete account and all the associated data or leave workspace"
+msgstr ""
 
 #. js-lingui-id: YMNj8z
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -4280,6 +4292,11 @@ msgstr "글로벌"
 msgid "Go to Companies"
 msgstr "회사로 이동"
 
+#. js-lingui-id: dvMw7T
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Dashboards"
+msgstr ""
+
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
@@ -4321,10 +4338,10 @@ msgstr "설정으로 이동"
 msgid "Go to Tasks"
 msgstr "작업으로 이동"
 
-#. js-lingui-id: A5WHZY
+#. js-lingui-id: 203RqP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "Go to workflows"
-msgstr "워크플로우로 이동"
+msgid "Go to Workflows"
+msgstr ""
 
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -5137,6 +5154,13 @@ msgstr "이메일을 가져올 필요가 없다면 비워 두세요."
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Leave blank if you don't need to send emails."
 msgstr "이메일을 보낼 필요가 없다면 비워 두세요."
+
+#. js-lingui-id: qvRaz1
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Leave workspace"
+msgstr ""
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6427,6 +6451,11 @@ msgstr "페이지를 찾을 수 없음"
 msgid "Password"
 msgstr "비밀번호"
 
+#. js-lingui-id: 2OUR5i
+#: src/pages/auth/PasswordReset.tsx
+msgid "Password has been set"
+msgstr ""
+
 #. js-lingui-id: BxQ79w
 #: src/pages/auth/PasswordReset.tsx
 msgid "Password has been updated"
@@ -6619,6 +6648,12 @@ msgstr "\"{confirmationValue}\"을 입력하여 이 API 키를 삭제할 것인�
 msgid "Please type \"yes\" to confirm you want to delete this webhook."
 msgstr "\"yes\" 을 입력하여 이 Webhook을 삭제할 것인지 확인하세요."
 
+#. js-lingui-id: dzcUZq
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Please type in your email to confirm."
+msgstr ""
+
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"
@@ -6788,8 +6823,13 @@ msgstr "대기열 성능"
 msgid "Queue: {queueName}"
 msgstr "큐: {queueName}"
 
+#. js-lingui-id: BT7pY+
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
+msgid "Receive an email containing password set link"
+msgstr ""
+
 #. js-lingui-id: v3xM25
-#: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "비밀번호 업데이트 링크가 포함된 이메일 받기"
 
@@ -6933,6 +6973,16 @@ msgstr "핸드오프 제거"
 msgid "Remove Handoff"
 msgstr "핸드오프 제거"
 
+#. js-lingui-id: 99VIgC
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Remove member"
+msgstr ""
+
+#. js-lingui-id: FzY1pn
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Remove member from workspace"
+msgstr ""
+
 #. js-lingui-id: 00Lxnh
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
@@ -6975,11 +7025,6 @@ msgstr "초기화"
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "Reset 2FA"
 msgstr "이중 인증 재설정"
-
-#. js-lingui-id: KbS2K9
-#: src/pages/auth/PasswordReset.tsx
-msgid "Reset Password"
-msgstr "비밀번호 재설정"
 
 #. js-lingui-id: 1IWc1n
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
@@ -7488,10 +7533,10 @@ msgstr "버전 기록 보기"
 msgid "See workflow"
 msgstr "워크플로우 보기"
 
-#. js-lingui-id: XThiR2
+#. js-lingui-id: MVYiTN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "See workflows"
-msgstr "워크플로우들 보기"
+msgid "See Workflows"
+msgstr ""
 
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -7655,6 +7700,12 @@ msgstr "이메일 공개 여부 설정, 차단 목록 관리 등을 할 수 있�
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Set global workspace preferences"
 msgstr "전역 작업 공간 환경설정 설정"
+
+#. js-lingui-id: 2gHjVM
+#: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
+msgid "Set Password"
+msgstr ""
 
 #. js-lingui-id: qNbuWB
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
@@ -8398,10 +8449,12 @@ msgstr "셋째"
 msgid "Third"
 msgstr "셋째"
 
-#. js-lingui-id: hqCwGc
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
-msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 사용자가 영구적으로 삭제되고 모든 할당에서 제거됩니다."
+#. js-lingui-id: Ox1hE7
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
+"            entire account."
+msgstr ""
 
 #. js-lingui-id: bNY3MH
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
@@ -8417,6 +8470,16 @@ msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 전체 워크
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "This action cannot be undone. This will permanently remove the handoff configuration."
 msgstr "이 작업은 취소할 수 없습니다. 이렇게 하면 핸드오프 구성이 영구적으로 제거됩니다."
+
+#. js-lingui-id: fTuKde
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
+msgstr ""
+
+#. js-lingui-id: Ik52hF
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "This action cannot be undone. This will permanently remove your membership from this workspace."
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx

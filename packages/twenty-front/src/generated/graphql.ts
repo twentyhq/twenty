@@ -1775,6 +1775,7 @@ export type Mutation = {
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
+  deleteUserFromWorkspace: UserWorkspace;
   deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
@@ -2231,6 +2232,11 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 
 export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
   twoFactorAuthenticationMethodId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteUserFromWorkspaceArgs = {
+  workspaceMemberIdToDelete: Scalars['String'];
 };
 
 
@@ -4313,6 +4319,7 @@ export type User = {
   disabled?: Maybe<Scalars['Boolean']>;
   email: Scalars['String'];
   firstName: Scalars['String'];
+  hasPassword: Scalars['Boolean'];
   id: Scalars['UUID'];
   isEmailVerified: Scalars['Boolean'];
   lastName: Scalars['String'];
@@ -4380,6 +4387,7 @@ export type ValidateApprovedAccessDomainInput = {
 export type ValidatePasswordResetTokenOutput = {
   __typename?: 'ValidatePasswordResetTokenOutput';
   email: Scalars['String'];
+  hasPassword: Scalars['Boolean'];
   id: Scalars['UUID'];
 };
 

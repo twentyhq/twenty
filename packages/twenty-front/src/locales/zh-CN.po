@@ -460,7 +460,6 @@ msgid "Account added successfully. Sync started."
 msgstr "账户添加成功。同步已开始。"
 
 #. js-lingui-id: nD0Y+a
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Account Deletion"
 msgstr "删除账户"
@@ -1713,8 +1712,7 @@ msgstr "更改节点类型"
 
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
-#: src/modules/settings/profile/components/ChangePassword.tsx
-#: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Change Password"
 msgstr "更改密码"
 
@@ -2459,6 +2457,11 @@ msgstr "来自服务器环境的当前值。设置自定义值以覆盖。"
 msgid "Current version"
 msgstr "当前版本"
 
+#. js-lingui-id: 0b3reS
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Current workspace member not found."
+msgstr ""
+
 #. js-lingui-id: 8Tg/JR
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -2538,6 +2541,11 @@ msgstr "丹麦语"
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Dark"
 msgstr "深色"
+
+#. js-lingui-id: w6iIMm
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Dashboards"
+msgstr ""
 
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
@@ -2822,7 +2830,6 @@ msgid "Delete {objectLabelPlural}"
 msgstr "删除 {objectLabelPlural}"
 
 #. js-lingui-id: ZDGm40
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -2833,6 +2840,11 @@ msgstr "删除账户"
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data"
 msgstr "删除账户和所有相关数据"
+
+#. js-lingui-id: kvHBHg
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Delete account and all the associated data or leave workspace"
+msgstr ""
 
 #. js-lingui-id: YMNj8z
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -4280,6 +4292,11 @@ msgstr "全局"
 msgid "Go to Companies"
 msgstr "前往公司"
 
+#. js-lingui-id: dvMw7T
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Go to Dashboards"
+msgstr ""
+
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
 msgid "Go to Draft"
@@ -4321,10 +4338,10 @@ msgstr "转到设置"
 msgid "Go to Tasks"
 msgstr "前往任务"
 
-#. js-lingui-id: A5WHZY
+#. js-lingui-id: 203RqP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "Go to workflows"
-msgstr "访问工作流"
+msgid "Go to Workflows"
+msgstr ""
 
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -5137,6 +5154,13 @@ msgstr "如果不需要导入电子邮件，请留空。"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Leave blank if you don't need to send emails."
 msgstr "如果不需要发送电子邮件，请留空。"
+
+#. js-lingui-id: qvRaz1
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Leave workspace"
+msgstr ""
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -6427,6 +6451,11 @@ msgstr "页面未找到"
 msgid "Password"
 msgstr "密码"
 
+#. js-lingui-id: 2OUR5i
+#: src/pages/auth/PasswordReset.tsx
+msgid "Password has been set"
+msgstr ""
+
 #. js-lingui-id: BxQ79w
 #: src/pages/auth/PasswordReset.tsx
 msgid "Password has been updated"
@@ -6619,6 +6648,12 @@ msgstr "请键入\"{confirmationValue}\"确认要删除此 API 密钥。请注�
 msgid "Please type \"yes\" to confirm you want to delete this webhook."
 msgstr "请输入\"yes\"以确认您要删除此 webhook。"
 
+#. js-lingui-id: dzcUZq
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Please type in your email to confirm."
+msgstr ""
+
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"
@@ -6788,8 +6823,13 @@ msgstr "队列性能"
 msgid "Queue: {queueName}"
 msgstr "队列：{queueName}"
 
+#. js-lingui-id: BT7pY+
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
+msgid "Receive an email containing password set link"
+msgstr ""
+
 #. js-lingui-id: v3xM25
-#: src/modules/settings/profile/components/ChangePassword.tsx
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password update link"
 msgstr "接收包含密码更新链接的电子邮件"
 
@@ -6933,6 +6973,16 @@ msgstr "移除交接"
 msgid "Remove Handoff"
 msgstr "移除交接"
 
+#. js-lingui-id: 99VIgC
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Remove member"
+msgstr ""
+
+#. js-lingui-id: FzY1pn
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Remove member from workspace"
+msgstr ""
+
 #. js-lingui-id: 00Lxnh
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
@@ -6975,11 +7025,6 @@ msgstr "重置"
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "Reset 2FA"
 msgstr "重置 2FA"
-
-#. js-lingui-id: KbS2K9
-#: src/pages/auth/PasswordReset.tsx
-msgid "Reset Password"
-msgstr "重置密码"
 
 #. js-lingui-id: 1IWc1n
 #: src/modules/command-menu/components/ResetContextToSelectionCommandButton.tsx
@@ -7488,10 +7533,10 @@ msgstr "查看版本历史"
 msgid "See workflow"
 msgstr "查看工作流"
 
-#. js-lingui-id: XThiR2
+#. js-lingui-id: MVYiTN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
-msgid "See workflows"
-msgstr "查看工作流"
+msgid "See Workflows"
+msgstr ""
 
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -7655,6 +7700,12 @@ msgstr "设置电子邮件可见性、管理黑名单等。"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Set global workspace preferences"
 msgstr "设置全局工作区首选项"
+
+#. js-lingui-id: 2gHjVM
+#: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/profile/components/SetOrChangePassword.tsx
+msgid "Set Password"
+msgstr ""
 
 #. js-lingui-id: qNbuWB
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
@@ -8398,10 +8449,12 @@ msgstr "第三"
 msgid "Third"
 msgstr "第三"
 
-#. js-lingui-id: hqCwGc
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
-msgstr "此操作无法撤销。这将永久删除该用户，并将其从所有任务中移除。"
+#. js-lingui-id: Ox1hE7
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
+"            entire account."
+msgstr ""
 
 #. js-lingui-id: bNY3MH
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
@@ -8417,6 +8470,16 @@ msgstr "此操作无法撤销。这将永久删除您的整个工作区。 <0/> 
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "This action cannot be undone. This will permanently remove the handoff configuration."
 msgstr "此操作无法撤销。这将永久删除交接配置。"
+
+#. js-lingui-id: fTuKde
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
+msgstr ""
+
+#. js-lingui-id: Ik52hF
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "This action cannot be undone. This will permanently remove your membership from this workspace."
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx

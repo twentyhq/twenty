@@ -59,7 +59,7 @@ export const mapDBPartToUIMessagePart = (
           return {
             type: part.type as `tool-${string}`,
             toolCallId: part.toolCallId!,
-            input: part.toolInput,
+            input: part.toolInput ?? {},
             output: part.toolOutput,
             errorText: part.errorMessage!,
             state: part.state,

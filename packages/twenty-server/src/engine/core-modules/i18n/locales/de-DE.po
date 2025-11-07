@@ -166,6 +166,11 @@ msgstr "Aktion erforderlich, um die Löschung des Arbeitsbereichs zu verhindern"
 msgid "Action Needed to Reset Password"
 msgstr "Aktion erforderlich, um das Passwort zurückzusetzen"
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr ""
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
@@ -584,9 +589,9 @@ msgstr "Keine Verbindung zu {connectFieldName}. Kein eindeutiger Eintrag mit dem
 msgid "Can't impersonate user via api key"
 msgstr "Nutzer kann nicht über API-Schlüssel imitiert werden"
 
-#. js-lingui-id: 874/Xl
+#. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-deactivated version"
+msgid "Cannot activate non-draft or non-last-published version"
 msgstr ""
 
 #. js-lingui-id: LIPsWu
@@ -619,6 +624,11 @@ msgstr "Nicht-aktive Workflow-Version kann nicht deaktiviert werden"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Die Einzigartigkeit kann aufgrund vorhandener doppelter Werte nicht aktiviert werden. Bitte überprüfen und korrigieren Sie zuerst Ihre Daten (einschließlich weich gelöschter Datensätze)."
+
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
+msgstr ""
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
@@ -3582,6 +3592,12 @@ msgstr "Benutzer-E-Mail"
 msgid "User Id"
 msgstr "Benutzer-ID"
 
+#. js-lingui-id: pMOjQa
+#: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User is not a member of the workspace."
+msgstr ""
+
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User is not part of the workspace"
@@ -4219,6 +4235,11 @@ msgstr "Sie können keine Berechtigungen für Systemobjekte setzen, da diese von
 #: src/engine/guards/settings-permissions.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Sie haben keine Berechtigung, auf diese Funktion zuzugreifen. Bitte kontaktieren Sie Ihren Arbeitsbereichsadministrator, um Zugriff zu erhalten."
+
+#. js-lingui-id: P69VwK
+#: src/engine/core-modules/user/user.resolver.ts
+msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
+msgstr ""
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts

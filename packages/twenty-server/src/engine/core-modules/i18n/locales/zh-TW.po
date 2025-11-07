@@ -166,6 +166,11 @@ msgstr "需要採取行動以防止工作區刪除"
 msgid "Action Needed to Reset Password"
 msgstr "需要採取行動以重設密碼"
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr ""
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
@@ -584,9 +589,9 @@ msgstr "無法連接至 {connectFieldName}。未找到符合條件的唯一記�
 msgid "Can't impersonate user via api key"
 msgstr "無法通過API金鑰冒充用戶"
 
-#. js-lingui-id: 874/Xl
+#. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-deactivated version"
+msgid "Cannot activate non-draft or non-last-published version"
 msgstr ""
 
 #. js-lingui-id: LIPsWu
@@ -619,6 +624,11 @@ msgstr "無法禁用非活動工作流版本"
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "由於現有的重複值，無法啟用唯一性。請先檢查並修正您的資料（包括已軟刪除的記錄）。"
+
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
+msgstr ""
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
@@ -3582,6 +3592,12 @@ msgstr "用戶電子郵件"
 msgid "User Id"
 msgstr "用戶 ID"
 
+#. js-lingui-id: pMOjQa
+#: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User is not a member of the workspace."
+msgstr ""
+
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User is not part of the workspace"
@@ -4219,6 +4235,11 @@ msgstr "您不能在系統物件上設置權限，因為它們由平台管理。
 #: src/engine/guards/settings-permissions.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "您無權訪問此功能。請與您的工作區管理員聯繫以獲取訪問權限。"
+
+#. js-lingui-id: P69VwK
+#: src/engine/core-modules/user/user.resolver.ts
+msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
+msgstr ""
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts

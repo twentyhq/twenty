@@ -45,9 +45,9 @@ export class WorkflowTriggerResolver {
     @Args('workflowVersionId', { type: () => UUIDScalarType })
     workflowVersionId: string,
   ) {
-    return this.workflowTriggerWorkspaceService.activateWorkflowVersion({
+    return this.workflowTriggerWorkspaceService.activateWorkflowVersion(
       workflowVersionId,
-    });
+    );
   }
 
   @Mutation(() => Boolean)

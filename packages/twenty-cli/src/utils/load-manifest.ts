@@ -31,6 +31,9 @@ import {
   isFunctionExpression,
   isExportAssignment,
   Modifier,
+  isPropertyDeclaration,
+  isNoSubstitutionTemplateLiteral,
+  isTemplateExpression,
 } from 'typescript';
 import {
   AppManifest,
@@ -39,6 +42,7 @@ import {
   PackageJson,
   ServerlessFunctionManifest,
   Sources,
+  FieldMetadata,
 } from '../types/config.types';
 import { posix, relative, sep, resolve, join } from 'path';
 import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
@@ -53,11 +57,10 @@ type JSONValue =
   | { [k: string]: JSONValue };
 
 const getProgramFromTsconfig = (
-  appPath?: string,
+  appPath: string,
   tsconfigPath = 'tsconfig.json',
 ) => {
-  const basePath = appPath ?? process.cwd();
-  const configFile = readConfigFile(join(basePath, tsconfigPath), sys.readFile);
+  const configFile = readConfigFile(join(appPath, tsconfigPath), sys.readFile);
   if (configFile.error)
     throw new Error(
       formatDiagnosticsWithColorAndContext([configFile.error], {
@@ -66,7 +69,7 @@ const getProgramFromTsconfig = (
         getNewLine: () => sys.newLine,
       }),
     );
-  const parsed = parseJsonConfigFileContent(configFile.config, sys, basePath);
+  const parsed = parseJsonConfigFileContent(configFile.config, sys, appPath);
   if (parsed.errors.length) {
     throw new Error(
       formatDiagnosticsWithColorAndContext(parsed.errors, {
@@ -95,6 +98,25 @@ const exprToValue = (expr: Expression): JSONValue => {
   if (expr.kind === SyntaxKind.TrueKeyword) return true;
   if (expr.kind === SyntaxKind.FalseKeyword) return false;
   if (expr.kind === SyntaxKind.NullKeyword) return null;
+
+  if (isPropertyAccessExpression(expr)) {
+    if (isIdentifier(expr.expression) && isIdentifier(expr.name)) {
+      return expr.name.text;
+    }
+    return String(expr.getText());
+  }
+
+  if (isNoSubstitutionTemplateLiteral(expr)) {
+    return expr.text;
+  }
+  if (isTemplateExpression(expr)) {
+    let out = expr.head.text;
+    for (const span of expr.templateSpans) {
+      const v = exprToValue(span.expression);
+      out += String(v) + span.literal.text;
+    }
+    return out;
+  }
 
   if (isArrayLiteralExpression(expr)) {
     return expr.elements.map((e) =>
@@ -155,7 +177,42 @@ const collectObjects = (program: Program) => {
         if (objectDec) {
           const cfg = getFirstArgObject(objectDec);
           if (cfg && typeof cfg === 'object' && !Array.isArray(cfg)) {
-            manifest.push({ ...(cfg as any) } as ObjectManifest);
+            const fields: Array<Record<string, JSONValue>> = [];
+
+            for (const member of node.members) {
+              if (!isPropertyDeclaration(member)) {
+                continue;
+              }
+
+              const fieldDec = getDecorators(member)?.find((d) =>
+                isDecoratorNamed(d, 'FieldMetadata'),
+              );
+
+              if (!fieldDec) {
+                continue;
+              }
+
+              const fieldCfg = getFirstArgObject(fieldDec);
+
+              if (!fieldCfg) {
+                continue;
+              }
+
+              // Try to attach the TypeScript property name as "name"
+              let name: string | undefined;
+              if (member.name && isIdentifier(member.name)) {
+                name = member.name.text;
+              } else {
+                // fallback to AST text if not a simple identifier
+                name = member.name?.getText?.() ?? undefined;
+              }
+
+              fields.push({
+                ...(fieldCfg as FieldMetadata),
+                ...(name ? { name } : {}),
+              });
+            }
+            manifest.push({ ...(cfg as any), fields } as ObjectManifest);
           }
         }
       }
@@ -300,13 +357,13 @@ const findHandlerAndConfig = (
   };
 };
 
-const posixRelativeFromCwd = (absPath: string) => {
-  const rel = relative(process.cwd(), absPath);
+const posixRelativeFromCwd = (fileName: string, appPath: string) => {
+  const rel = relative(appPath, fileName);
   // normalize to posix separators for portability / manifest stability
   return rel.split(sep).join(posix.sep);
 };
 
-const collectServerlessFunctions = (program: Program) => {
+const collectServerlessFunctions = (program: Program, appPath: string) => {
   const serverlessFunctions: ServerlessFunctionManifest[] = [];
 
   for (const sf of program.getSourceFiles()) {
@@ -315,7 +372,7 @@ const collectServerlessFunctions = (program: Program) => {
     try {
       const { handlerName, configObject } = findHandlerAndConfig(sf);
 
-      const handlerPath = posixRelativeFromCwd(sf.fileName);
+      const handlerPath = posixRelativeFromCwd(sf.fileName, appPath);
 
       serverlessFunctions.push({
         ...configObject,
@@ -458,7 +515,7 @@ export const loadManifest = async (
   const [objects, serverlessFunctions, application, sources] =
     await Promise.all([
       Promise.resolve(collectObjects(program)),
-      Promise.resolve(collectServerlessFunctions(program)),
+      Promise.resolve(collectServerlessFunctions(program, appPath)),
       Promise.resolve(extractTwentyAppConfig(program)),
       loadFolderContentIntoJson(appPath),
     ]);
