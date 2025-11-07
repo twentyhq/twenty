@@ -13,6 +13,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useTheme } from '@emotion/react';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { Button } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
@@ -65,7 +66,7 @@ export const CommandMenuActionMenuDropdown = () => {
       dropdownId={dropdownId}
       data-select-disable
       clickableComponent={
-        <Button title="Options" hotkeys={[getOsControlSymbol(), 'O']} />
+        <Button title={t`Options`} hotkeys={[getOsControlSymbol(), 'O']} />
       }
       dropdownPlacement="top-end"
       dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}

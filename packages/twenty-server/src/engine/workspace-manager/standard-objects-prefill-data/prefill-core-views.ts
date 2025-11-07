@@ -10,6 +10,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
 import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
@@ -140,6 +141,7 @@ export const createCoreViews = async (
       kanbanAggregateOperationFieldMetadataId,
       workspaceId,
       anyFieldFilterValue: null,
+      visibility: ViewVisibility.WORKSPACE,
     }),
   );
 

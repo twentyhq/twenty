@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { SupportButtonSkeletonLoader } from '@/support/components/SupportButtonSkeletonLoader';
 import { useSupportChat } from '@/support/hooks/useSupportChat';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { IconHelpCircle } from 'twenty-ui/display';
 import { Button, LightIconButton } from 'twenty-ui/input';
@@ -30,7 +31,7 @@ export const SupportButton = () => {
       <Button
         variant="tertiary"
         size="small"
-        title="Support"
+        title={t`Support`}
         Icon={IconHelpCircle}
       />
     </StyledButtonContainer>

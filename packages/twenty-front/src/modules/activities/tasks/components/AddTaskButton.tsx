@@ -3,6 +3,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -34,7 +35,7 @@ export const AddTaskButton = ({
       Icon={IconPlus}
       size="small"
       variant="secondary"
-      title="Add task"
+      title={t`Add task`}
       onClick={() =>
         openCreateActivity({
           targetableObjects: [activityTargetableObject],
