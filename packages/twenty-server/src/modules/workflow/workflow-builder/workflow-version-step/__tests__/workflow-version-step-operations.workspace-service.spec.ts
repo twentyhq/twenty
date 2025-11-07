@@ -310,5 +310,56 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       expect(duplicateStep.settings).toEqual(originalStep.settings);
       expect(duplicateStep.nextStepIds).toEqual([]);
     });
+
+    it('should duplicate iterator step with cleared initialLoopStepIds', async () => {
+      const originalStep = {
+        id: 'original-iterator-id',
+        type: WorkflowActionType.ITERATOR,
+        name: 'Iterator Step',
+        valid: true,
+        position: { x: 100, y: 200 },
+        settings: {
+          input: {
+            items: ['item1', 'item2', 'item3'],
+            initialLoopStepIds: ['loop-step-1', 'loop-step-2'],
+          },
+          outputSchema: {},
+          errorHandlingOptions: {
+            continueOnFailure: { value: false },
+            retryOnFailure: { value: false },
+          },
+        },
+        nextStepIds: ['next-step'],
+      } as unknown as WorkflowAction;
+
+      const clonedStep = await service.cloneStep({
+        step: originalStep,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(clonedStep.id).not.toBe('original-iterator-id');
+      expect(clonedStep.type).toBe(WorkflowActionType.ITERATOR);
+      expect(clonedStep.nextStepIds).toEqual([]);
+      expect(clonedStep.position).toEqual({ x: 100, y: 200 });
+
+      const iteratorResult = clonedStep as unknown as {
+        settings: {
+          input: {
+            items: string[];
+            initialLoopStepIds: string[];
+          };
+        };
+      };
+
+      // Verify that items are preserved
+      expect(iteratorResult.settings.input.items).toEqual([
+        'item1',
+        'item2',
+        'item3',
+      ]);
+
+      // Verify that initialLoopStepIds are cleared when cloning
+      expect(iteratorResult.settings.input.initialLoopStepIds).toEqual([]);
+    });
   });
 });

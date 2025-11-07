@@ -498,7 +498,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           ...step,
           id: v4(),
-          name: step.name,
           nextStepIds: [],
           position: duplicatedStepPosition,
           settings: {
@@ -511,11 +510,25 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.ITERATOR: {
+        return {
+          ...step,
+          id: v4(),
+          nextStepIds: [],
+          position: duplicatedStepPosition,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              initialLoopStepIds: [],
+            },
+          },
+        };
+      }
       default: {
         return {
           ...step,
           id: v4(),
-          name: step.name,
           nextStepIds: [],
           position: duplicatedStepPosition,
         };
