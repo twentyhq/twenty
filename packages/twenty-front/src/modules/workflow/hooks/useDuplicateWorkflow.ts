@@ -6,7 +6,7 @@ import {
   type DuplicateWorkflowInput,
   type WorkflowVersionDto,
 } from '~/generated/graphql';
-import { DUPLICATE_WORKFLOW } from '@/workflow/graphql/mutations/duplicate-workflow.mutation';
+import { DUPLICATE_WORKFLOW } from '@/workflow/graphql/mutations/duplicateWorkflow';
 
 export const useDuplicateWorkflow = () => {
   const apolloCoreClient = useApolloCoreClient();
