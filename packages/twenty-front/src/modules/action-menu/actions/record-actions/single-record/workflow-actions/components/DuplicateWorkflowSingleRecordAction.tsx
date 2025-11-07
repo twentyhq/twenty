@@ -3,7 +3,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDuplicateWorkflow } from '@/workflow/hooks/useDuplicateWorkflow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -13,14 +13,9 @@ export const DuplicateWorkflowSingleRecordAction = () => {
   const workflow = useWorkflowWithCurrentVersion(recordId);
   const { duplicateWorkflow } = useDuplicateWorkflow();
   const navigate = useNavigateApp();
-  const [hasNavigated, setHasNavigated] = useState(false);
 
   const handleClick = async () => {
-    if (
-      !isDefined(workflow) ||
-      !isDefined(workflow.currentVersion) ||
-      hasNavigated
-    ) {
+    if (!isDefined(workflow) || !isDefined(workflow.currentVersion)) {
       return;
     }
 
@@ -29,13 +24,11 @@ export const DuplicateWorkflowSingleRecordAction = () => {
       workflowVersionIdToCopy: workflow.currentVersion.id,
     });
 
-    if (isDefined(result?.workflowId)) {
+    if (isNonEmptyString(result?.workflowId)) {
       navigate(AppPath.RecordShowPage, {
         objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: result?.workflowId,
+        objectRecordId: result.workflowId,
       });
-
-      setHasNavigated(true);
     }
   };
 
