@@ -1,7 +1,7 @@
 import {
-    Injectable,
-    type CanActivate,
-    type ExecutionContext,
+  Injectable,
+  type CanActivate,
+  type ExecutionContext,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 

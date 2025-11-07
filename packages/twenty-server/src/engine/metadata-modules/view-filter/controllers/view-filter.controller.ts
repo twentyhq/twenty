@@ -1,14 +1,14 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Patch,
-    Post,
-    Query,
-    UseFilters,
-    UseGuards,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -22,11 +22,11 @@ import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import {
-    generateViewFilterExceptionMessage,
-    generateViewFilterUserFriendlyExceptionMessage,
-    ViewFilterException,
-    ViewFilterExceptionCode,
-    ViewFilterExceptionMessageKey,
+  generateViewFilterExceptionMessage,
+  generateViewFilterUserFriendlyExceptionMessage,
+  ViewFilterException,
+  ViewFilterExceptionCode,
+  ViewFilterExceptionMessageKey,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { ViewFilterRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter';
 import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';

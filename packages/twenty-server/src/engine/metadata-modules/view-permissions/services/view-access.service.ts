@@ -51,16 +51,11 @@ export class ViewAccessService {
     userWorkspaceId: string | undefined,
     workspaceId: string,
   ): Promise<boolean> {
-    // If viewId is null, the entity doesn't exist
-    // For child entity operations, throw NOT_FOUND (parent view must exist)
+    // If viewId is null, the child entity doesn't exist
+    // Allow through so the service can throw the proper entity-specific error
+    // (e.g., "View field not found" instead of generic "View not found")
     if (!viewId) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          'unknown',
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
+      return true;
     }
 
     const view = await this.viewService.findByIdIncludingDeleted(
@@ -68,15 +63,9 @@ export class ViewAccessService {
       workspaceId,
     );
 
-    // Child entity operations - view must exist for child to be valid
+    // If view doesn't exist, allow through to service for proper error message
     if (!view) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          viewId,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-      );
+      return true;
     }
 
     return this.checkViewAccess(view, userWorkspaceId, workspaceId);
