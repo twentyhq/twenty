@@ -126,9 +126,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1110: VersionCommands = {
-      beforeSyncMetadata: [
-        this.seedStandardApplicationsCommand
-      ],
+      beforeSyncMetadata: [this.seedStandardApplicationsCommand],
       afterSyncMetadata: [
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,

@@ -25,20 +25,20 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
       ViewEntity,
       UserWorkspaceEntity,
       RoleTargetsEntity,
-      ApplicationEntity
+      ApplicationEntity,
     ]),
     WorkspaceSchemaManagerModule,
-    ApplicationModule
+    ApplicationModule,
   ],
   providers: [
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
-    SeedStandardApplicationsCommand
+    SeedStandardApplicationsCommand,
   ],
   exports: [
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
-    SeedStandardApplicationsCommand
+    SeedStandardApplicationsCommand,
   ],
 })
 export class V1_11_UpgradeVersionCommandModule {}
