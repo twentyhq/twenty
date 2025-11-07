@@ -31,6 +31,9 @@ import {
 import { ViewGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter';
 import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
+import { CreateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-group-permission.guard';
+import { DeleteViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-group-permission.guard';
+import { UpdateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-group-permission.guard';
 
 @Controller('rest/metadata/viewGroups')
 @UseGuards(WorkspaceAuthGuard)
@@ -80,6 +83,7 @@ export class ViewGroupController {
   }
 
   @Post()
+  @UseGuards(CreateViewGroupPermissionGuard)
   async create(
     @Body() input: CreateViewGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -104,6 +108,7 @@ export class ViewGroupController {
   }
 
   @Patch(':id')
+  @UseGuards(UpdateViewGroupPermissionGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewGroupInput,
@@ -137,6 +142,7 @@ export class ViewGroupController {
   }
 
   @Delete(':id')
+  @UseGuards(DeleteViewGroupPermissionGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

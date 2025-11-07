@@ -59,6 +59,8 @@ import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -112,7 +114,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => WorkspaceEntity)
-  @UseGuards(UserAuthGuard, WorkspaceAuthGuard)
+  @UseGuards(UserAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
     @AuthUser() user: UserEntity,
@@ -122,7 +124,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => WorkspaceEntity)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -307,8 +309,11 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => [ViewDTO])
-  async views(@Parent() workspace: WorkspaceEntity): Promise<ViewDTO[]> {
-    return this.viewService.findByWorkspaceId(workspace.id);
+  async views(
+    @Parent() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+  ): Promise<ViewDTO[]> {
+    return this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
   }
 
   @Query(() => PublicWorkspaceDataOutput)
@@ -379,7 +384,10 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => DomainValidRecords, { nullable: true })
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
+  )
   async checkCustomDomainValidRecords(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<DomainValidRecords | undefined> {

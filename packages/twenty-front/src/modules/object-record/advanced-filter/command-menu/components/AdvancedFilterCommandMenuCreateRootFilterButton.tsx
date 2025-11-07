@@ -8,6 +8,7 @@ import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUp
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
+import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
@@ -86,8 +87,8 @@ export const AdvancedFilterCommandMenuCreateRootFilterButton = ({
       variant="secondary"
       accent="default"
       onClick={addRootRecordFilterGroup}
-      ariaLabel="Add filter"
-      title="Add filter"
+      ariaLabel={t`Add filter`}
+      title={t`Add filter`}
       disabled={readonly}
     />
   );

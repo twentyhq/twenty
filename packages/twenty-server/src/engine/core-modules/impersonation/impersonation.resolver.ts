@@ -10,6 +10,7 @@ import {
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { ImpersonatePermissionGuard } from 'src/engine/guards/impersonate-permission.guard';
 import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -25,6 +26,7 @@ export class ImpersonationResolver {
     UserAuthGuard,
     NoImpersonationGuard,
     ImpersonatePermissionGuard,
+    CustomPermissionGuard,
   )
   @Mutation(() => ImpersonateOutput)
   async impersonate(

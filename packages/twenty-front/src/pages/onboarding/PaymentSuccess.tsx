@@ -5,6 +5,7 @@ import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingM
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { AppPath } from 'twenty-shared/types';
@@ -75,7 +76,7 @@ export const PaymentSuccess = () => {
         <SubTitle>Your account has been activated.</SubTitle>
       </StyledTitleContainer>
       <MainButton
-        title="Start"
+        title={t`Start`}
         width={200}
         onClick={navigateWithSubscriptionCheck}
         Icon={() => (isLoading ? <Loader /> : null)}
