@@ -50,8 +50,7 @@ export const objectRecordChangedValues = (
       // Temporary ignore workflow json fields changes
       if (
         isWorkflowAutomatedTriggerSettings(objectMetadataItem, key) ||
-        isWorkflowVersionStepsOrTrigger(objectMetadataItem, key) ||
-        isWorkflowRunState(objectMetadataItem, key)
+        isWorkflowVersionStepsOrTrigger(objectMetadataItem, key)
       ) {
         return acc;
       }
