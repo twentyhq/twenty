@@ -1,8 +1,8 @@
 import { type MessageDescriptor } from '@lingui/core';
 import {
-  type FieldMetadataType,
-  type FieldMetadataSettings,
   type FieldMetadataOptions,
+  type FieldMetadataSettings,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
@@ -10,6 +10,7 @@ import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/fiel
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface WorkspaceFieldOptions<
@@ -106,6 +107,9 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isActive: options.isActive,
       asExpression: options.asExpression,
       generatedType: options.generatedType,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      universalIdentifier: options.standardId,
     });
   };
 }

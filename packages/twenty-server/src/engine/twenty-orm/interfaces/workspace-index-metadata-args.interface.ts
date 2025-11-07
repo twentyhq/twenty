@@ -1,6 +1,7 @@
 import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { type IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { TwentyStandardApplicationUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 export interface WorkspaceIndexMetadataArgs {
   /**
@@ -38,4 +39,8 @@ export interface WorkspaceIndexMetadataArgs {
    * Field gate.
    */
   readonly gate?: Gate;
+
+  readonly universalIdentifier: string;
+
+  readonly applicationUniversalIdentifier: TwentyStandardApplicationUniversalIdentifiers;
 }

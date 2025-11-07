@@ -1,14 +1,15 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { isDefined, isUUID } from 'class-validator';
+import { type RelationOnDeleteAction } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
 import { type ObjectType } from 'typeorm';
-import { type RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 interface WorkspaceRelationMinimumBaseOptions<TClass> {
@@ -131,6 +132,9 @@ export function WorkspaceRelation<TClass extends object>(
       isMorphRelation: options.isMorphRelation ?? false,
       morphId: options.isMorphRelation ? options.morphId : undefined,
       isLabelSyncedWithName,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      universalIdentifier: options.standardId,
     });
   };
 }

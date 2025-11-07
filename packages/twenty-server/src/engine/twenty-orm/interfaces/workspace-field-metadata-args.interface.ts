@@ -1,13 +1,14 @@
 import {
-  type FieldMetadataType,
-  type FieldMetadataSettings,
   type FieldMetadataOptions,
+  type FieldMetadataSettings,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { TwentyStandardApplicationUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 export interface WorkspaceFieldMetadataArgs {
   /**
@@ -114,4 +115,8 @@ export interface WorkspaceFieldMetadataArgs {
   readonly asExpression?: string;
 
   readonly isLabelSyncedWithName: boolean;
+
+  readonly universalIdentifier: string;
+
+  readonly applicationUniversalIdentifier: TwentyStandardApplicationUniversalIdentifiers;
 }

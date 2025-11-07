@@ -1,10 +1,11 @@
-import { type ObjectType } from 'typeorm';
 import { type RelationOnDeleteAction } from 'twenty-shared/types';
+import { type ObjectType } from 'typeorm';
 
 import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { TwentyStandardApplicationUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 export interface WorkspaceRelationMetadataArgs {
   /**
@@ -101,4 +102,8 @@ export interface WorkspaceRelationMetadataArgs {
    * Morph id.
    */
   readonly morphId?: string;
+
+  readonly universalIdentifier: string;
+
+  readonly applicationUniversalIdentifier: TwentyStandardApplicationUniversalIdentifiers;
 }
