@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -84,7 +84,6 @@ export class DevSeederService {
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
-      twentyStandardApplication,
     });
 
     await this.devSeederMetadataService.seed({
