@@ -121,6 +121,7 @@ describe('SearchResolver', () => {
     await deleteAllRecords('dashboard');
     await deleteAllRecords('_pet');
     await deleteAllRecords('_surveyResult');
+    await deleteAllRecords('_rocket');
 
     try {
       await performCreateManyOperation(

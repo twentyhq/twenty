@@ -195,10 +195,11 @@ export class WorkflowExecutorWorkspaceService {
     const isIteratorStep = isWorkflowIteratorAction(executedStep);
 
     if (isIteratorStep) {
-      const iteratorStepResult =
-        executedStepResult.result as WorkflowIteratorResult;
+      const iteratorStepResult = executedStepResult.result as
+        | WorkflowIteratorResult
+        | undefined;
 
-      if (!iteratorStepResult.hasProcessedAllItems) {
+      if (!iteratorStepResult?.hasProcessedAllItems) {
         return isString(executedStep.settings.input.initialLoopStepIds)
           ? JSON.parse(executedStep.settings.input.initialLoopStepIds)
           : executedStep.settings.input.initialLoopStepIds;
