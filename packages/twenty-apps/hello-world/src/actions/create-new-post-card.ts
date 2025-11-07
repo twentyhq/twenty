@@ -2,21 +2,16 @@ import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 import { Twenty } from 'twenty-sdk/client';
 import { type PostCard } from '../objects/postCard';
 
-export const main = async (params: { recipient: string }): Promise<string> => {
+export const main = async (params: { recipient: string }): Promise<object> => {
   const coreClient = new Twenty(process.env.TWENTY_API_KEY, {
     baseUrl: process.env.TWENTY_BASE_URL,
-    type: 'core',
   });
-
   try {
     const { data } = await coreClient.createOne<PostCard>('postCards', {
-      name: `Post card to ${params.recipient}`,
-      recipientName: `test + ${params.recipient}`,
+      name: params.recipient ?? 'Unknown',
     });
 
-    console.log(`New post card to created`, data.createPostCard);
-
-    return 'data';
+    return data;
   } catch (error) {
     console.error(error);
     throw error;
