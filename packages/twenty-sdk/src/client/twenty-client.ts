@@ -36,8 +36,8 @@ export class Twenty {
   private readonly type: TwentyApiType;
   private readonly baseUrl: string;
 
-  constructor(apiKey: string, options: TwentyClientOptions) {
-    this.apiKey = apiKey;
+  constructor(apiKey: string | undefined, options: TwentyClientOptions) {
+    this.apiKey = apiKey ?? process.env.TWENTY_API_URL ?? '';
     this.type = options.type;
     this.baseUrl = (
       options.baseUrl ??

@@ -1,25 +1,21 @@
-import axios from 'axios';
 import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import { Twenty } from 'twenty-sdk/client';
+import { type PostCard } from '../objects/postCard';
 
 export const main = async (params: { recipient: string }): Promise<string> => {
-  const { recipient } = params;
-
-  const options = {
-    method: 'POST',
-    url: 'http://localhost:3000/rest/postCards',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
-    },
-    data: { name: recipient ?? 'Unknown' },
-  };
+  const coreClient = new Twenty(process.env.TWENTY_API_KEY, {
+    baseUrl: process.env.TWENTY_BASE_URL,
+    type: 'core',
+  });
 
   try {
-    const { data } = await axios.request(options);
+    const { data } = await coreClient.createOne<PostCard>('postCards', {
+      name: params.recipient ?? 'Unknown',
+    });
 
-    console.log(`New post card to "${recipient}" created`);
+    console.log(`New post card to "${data.createPostCard.name}" created`);
 
-    return data;
+    return 'data';
   } catch (error) {
     console.error(error);
     throw error;
