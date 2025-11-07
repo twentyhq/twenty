@@ -18,7 +18,7 @@ export const useTimelineActivities = (
   );
 
   const targetableObjectFieldIdName = isTimelineActivityMigrated
-    ? `timelineActivity${capitalize(targetableObject.targetObjectNameSingular)}Id`
+    ? `target${capitalize(targetableObject.targetObjectNameSingular)}Id`
     : getActivityTargetObjectFieldIdName({
         nameSingular: targetableObject.targetObjectNameSingular,
       });
