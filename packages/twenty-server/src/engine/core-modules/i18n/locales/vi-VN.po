@@ -4197,7 +4197,7 @@ msgid "You cannot set permissions on system objects as they are managed by the p
 msgstr "Bạn không thể thiết lập quyền hạn trên đối tượng hệ thống vì chúng được quản lý bởi nền tảng."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/guards/settings-permissions.guard.ts
+#: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Bạn không có quyền truy cập vào tính năng này. Vui lòng liên hệ quản trị viên không gian làm việc của bạn để được truy cập."
 
