@@ -351,14 +351,12 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         };
       };
 
-      // Verify that items are preserved
       expect(iteratorResult.settings.input.items).toEqual([
         'item1',
         'item2',
         'item3',
       ]);
 
-      // Verify that initialLoopStepIds are cleared when cloning
       expect(iteratorResult.settings.input.initialLoopStepIds).toEqual([]);
     });
   });
