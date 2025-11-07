@@ -184,11 +184,7 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
               {item.type === 'placeholder' ? (
                 <WidgetPlaceholder />
               ) : (
-                <WidgetRenderer
-                  widget={item.widget}
-                  pageLayoutType={currentPageLayout.type}
-                  layoutMode="grid"
-                />
+                <WidgetRenderer widget={item.widget} />
               )}
             </div>
           ))}

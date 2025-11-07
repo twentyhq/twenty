@@ -9,6 +9,7 @@ import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constan
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { AnimatePresence } from 'framer-motion';
 import {
   type IconComponent,
   IconX,
@@ -100,43 +101,45 @@ export const PageHeader = ({
   );
 
   return (
-    <StyledTopBarContainer className={className} isMobile={isMobile}>
-      <StyledLeftContainer>
-        {!isMobile && !isNavigationDrawerExpanded && (
-          <NavigationDrawerCollapseButton direction="right" />
-        )}
-        {hasClosePageButton && (
-          <LightIconButton
-            Icon={IconX}
-            size="small"
-            accent="tertiary"
-            onClick={() => onClosePage?.()}
-          />
-        )}
-
-        <StyledTopBarIconStyledTitleContainer>
-          {Icon && (
-            <StyledIconContainer>
-              <Icon size={theme.icon.size.md} />
-            </StyledIconContainer>
+    <AnimatePresence initial={false}>
+      <StyledTopBarContainer className={className} isMobile={isMobile}>
+        <StyledLeftContainer>
+          {!isMobile && !isNavigationDrawerExpanded && (
+            <NavigationDrawerCollapseButton direction="right" />
           )}
-          {title && (
-            <StyledTitleContainer data-testid="top-bar-title">
-              {typeof title === 'string' ? (
-                <OverflowingTextWithTooltip text={title} />
-              ) : (
-                title
-              )}
-            </StyledTitleContainer>
+          {hasClosePageButton && (
+            <LightIconButton
+              Icon={IconX}
+              size="small"
+              accent="tertiary"
+              onClick={() => onClosePage?.()}
+            />
           )}
-        </StyledTopBarIconStyledTitleContainer>
-      </StyledLeftContainer>
 
-      <StyledPageActionContainer
-        data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
-      >
-        {children}
-      </StyledPageActionContainer>
-    </StyledTopBarContainer>
+          <StyledTopBarIconStyledTitleContainer>
+            {Icon && (
+              <StyledIconContainer>
+                <Icon size={theme.icon.size.md} />
+              </StyledIconContainer>
+            )}
+            {title && (
+              <StyledTitleContainer data-testid="top-bar-title">
+                {typeof title === 'string' ? (
+                  <OverflowingTextWithTooltip text={title} />
+                ) : (
+                  title
+                )}
+              </StyledTitleContainer>
+            )}
+          </StyledTopBarIconStyledTitleContainer>
+        </StyledLeftContainer>
+
+        <StyledPageActionContainer
+          data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
+        >
+          {children}
+        </StyledPageActionContainer>
+      </StyledTopBarContainer>
+    </AnimatePresence>
   );
 };

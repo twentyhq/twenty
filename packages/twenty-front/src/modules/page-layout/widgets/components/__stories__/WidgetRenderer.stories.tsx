@@ -12,9 +12,15 @@ import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreCl
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
+import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
+import {
+  PAGE_LAYOUT_TEST_INSTANCE_ID,
+  PageLayoutTestWrapper,
+} from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
   GraphOrderBy,
   GraphType,
@@ -124,6 +130,21 @@ const meta: Meta<typeof WidgetRenderer> = {
           generatedMockObjectMetadataItems,
         );
         snapshot.set(shouldAppBeLoadingState, false);
+        snapshot.set(
+          pageLayoutPersistedComponentState.atomFamily({
+            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          }),
+          {
+            id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+            name: 'Mock Page Layout',
+            type: PageLayoutType.DASHBOARD,
+            objectMetadataId: companyObjectMetadataItem.id,
+            tabs: [],
+            createdAt: '2024-01-01T00:00:00Z',
+            updatedAt: '2024-01-01T00:00:00Z',
+            deletedAt: null,
+          },
+        );
       };
 
       return (
@@ -131,7 +152,26 @@ const meta: Meta<typeof WidgetRenderer> = {
           <JestMetadataAndApolloMocksWrapper>
             <CoreClientProviderWrapper>
               <PageLayoutTestWrapper initializeState={initializeState}>
-                <Story />
+                <LayoutRenderingProvider
+                  value={{
+                    isInRightDrawer: false,
+                    layoutType: PageLayoutType.DASHBOARD,
+                    targetRecordIdentifier: {
+                      id: companyObjectMetadataItem.id,
+                      targetObjectNameSingular:
+                        companyObjectMetadataItem.nameSingular,
+                    },
+                  }}
+                >
+                  <PageLayoutContentProvider
+                    value={{
+                      layoutMode: 'grid',
+                      tabId: 'fields',
+                    }}
+                  >
+                    <Story />
+                  </PageLayoutContentProvider>
+                </LayoutRenderingProvider>
               </PageLayoutTestWrapper>
             </CoreClientProviderWrapper>
           </JestMetadataAndApolloMocksWrapper>
@@ -183,11 +223,7 @@ export const WithNumberChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        layoutMode="grid"
-        pageLayoutType={PageLayoutType.DASHBOARD}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -222,11 +258,7 @@ export const WithGaugeChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '400px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        layoutMode="grid"
-        pageLayoutType={PageLayoutType.DASHBOARD}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -264,11 +296,7 @@ export const WithBarChart: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        layoutMode="grid"
-        pageLayoutType={PageLayoutType.DASHBOARD}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -310,11 +338,7 @@ export const SmallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '100px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        layoutMode="grid"
-        pageLayoutType={PageLayoutType.DASHBOARD}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -359,11 +383,7 @@ export const MediumWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '400px', height: '250px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        layoutMode="grid"
-        pageLayoutType={PageLayoutType.DASHBOARD}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -408,11 +428,7 @@ export const LargeWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '600px', height: '400px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        layoutMode="grid"
-        pageLayoutType={PageLayoutType.DASHBOARD}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -454,11 +470,7 @@ export const WideWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '800px', height: '200px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        layoutMode="grid"
-        pageLayoutType={PageLayoutType.DASHBOARD}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
@@ -503,11 +515,7 @@ export const TallWidget: Story = {
   },
   render: (args) => (
     <div style={{ width: '300px', height: '500px' }}>
-      <WidgetRenderer
-        widget={args.widget}
-        layoutMode="grid"
-        pageLayoutType={PageLayoutType.DASHBOARD}
-      />
+      <WidgetRenderer widget={args.widget} />
     </div>
   ),
 };
