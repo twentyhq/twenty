@@ -7,7 +7,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -15,7 +15,14 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import {
+  UpdateWorkspaceMemberEmailJob,
+  type UpdateWorkspaceMemberEmailJobData,
+} from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
   UserException,
@@ -24,7 +31,6 @@ import {
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -45,7 +51,8 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly dataSourceService: DataSourceService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly workspaceQueueService: MessageQueueService,
   ) {
     super(userRepository);
   }
@@ -291,31 +298,10 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     await this.userRepository.save(user);
 
-    const userWorkspaceIds =
-      await this.userWorkspaceService.findWorkspaceIdsByUserId(user.id);
-
-    const dataSources = await this.dataSourceService.getManyDataSourceMetadata({
-      where: {
-        workspaceId: In(userWorkspaceIds),
-      },
-      order: { createdAt: 'DESC' },
+    await this.enqueueWorkspaceMemberEmailUpdate({
+      userId: user.id,
+      email: normalizedEmail,
     });
-
-    for (const dataSource of dataSources) {
-      const workspaceId = dataSource.workspaceId;
-
-      const workspaceMemberRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      await workspaceMemberRepository.update(
-        { userId: user.id },
-        { userEmail: user.email },
-      );
-    }
 
     const workspaceDomainConfig =
       this.workspaceDomainsService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
@@ -328,6 +314,18 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       workspaceDomainConfig,
       user.locale || SOURCE_LOCALE,
       verifyEmailRedirectPath,
+    );
+  }
+
+  private async enqueueWorkspaceMemberEmailUpdate(
+    data: UpdateWorkspaceMemberEmailJobData,
+  ) {
+    await this.workspaceQueueService.add<UpdateWorkspaceMemberEmailJobData>(
+      UpdateWorkspaceMemberEmailJob.name,
+      data,
+      {
+        retryLimit: 2,
+      },
     );
   }
 }
