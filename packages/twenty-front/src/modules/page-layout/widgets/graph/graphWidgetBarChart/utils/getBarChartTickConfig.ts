@@ -1,10 +1,10 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { calculateMaxTickLabelLength } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateMaxTickLabelLength';
+import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
 import { computeBarChartValueTickCount } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartValueTickCount';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 
-const AVERAGE_CHARACTER_WIDTH_RATIO = 0.6;
-const MIN_TICK_LABEL_LENGTH = 5;
 const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
 
 export type BarChartTickConfig = {
@@ -12,37 +12,6 @@ export type BarChartTickConfig = {
   numberOfValueTicks: number;
   maxBottomAxisTickLabelLength: number;
   maxLeftAxisTickLabelLength: number;
-};
-
-const calculateWidthPerTick = ({
-  layout,
-  availableWidth,
-  categoryTickCount,
-  valueTickCount,
-}: {
-  layout: 'vertical' | 'horizontal';
-  availableWidth: number;
-  categoryTickCount: number;
-  valueTickCount: number;
-}): number => {
-  if (layout === 'vertical') {
-    return categoryTickCount > 0 ? availableWidth / categoryTickCount : 0;
-  }
-
-  return valueTickCount > 0 ? availableWidth / valueTickCount : 0;
-};
-
-const calculateMaxTickLabelLength = ({
-  widthPerTick,
-  axisFontSize,
-}: {
-  widthPerTick: number;
-  axisFontSize: number;
-}): number => {
-  const averageCharacterWidth = axisFontSize * AVERAGE_CHARACTER_WIDTH_RATIO;
-  const calculatedLength = Math.floor(widthPerTick / averageCharacterWidth);
-
-  return Math.max(MIN_TICK_LABEL_LENGTH, calculatedLength);
 };
 
 export const getBarChartTickConfig = ({
