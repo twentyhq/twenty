@@ -11,6 +11,12 @@ const config: ApplicationConfig = {
       description: 'Twenty API Key',
       isSecret: true,
     },
+    TWENTY_BASE_URL: {
+      universalIdentifier: '5a9eb79b-9dab-48bd-95a7-c4ae700673aa',
+      description: 'Twenty API base url',
+      value: 'http://localhost:3000',
+      isSecret: false,
+    },
   },
 };
 

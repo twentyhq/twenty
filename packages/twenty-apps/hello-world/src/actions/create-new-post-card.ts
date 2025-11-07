@@ -10,10 +10,11 @@ export const main = async (params: { recipient: string }): Promise<string> => {
 
   try {
     const { data } = await coreClient.createOne<PostCard>('postCards', {
-      name: params.recipient ?? 'Unknown',
+      name: `Post card to ${params.recipient}`,
+      recipientName: `test + ${params.recipient}`,
     });
 
-    console.log(`New post card to "${data.createPostCard.name}" created`);
+    console.log(`New post card to created`, data.createPostCard);
 
     return 'data';
   } catch (error) {
