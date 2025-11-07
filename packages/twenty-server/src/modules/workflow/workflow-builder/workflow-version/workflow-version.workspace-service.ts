@@ -264,17 +264,16 @@ export class WorkflowVersionWorkspaceService {
         };
 
         if (
-          remappedStep.type === WorkflowActionType.ITERATOR &&
-          isDefined(remappedStep.settings?.input?.initialLoopStepIds)
+          source.type === WorkflowActionType.ITERATOR &&
+          isDefined(source.settings?.input?.initialLoopStepIds)
         ) {
           remappedStep.settings = {
             ...remappedStep.settings,
             input: {
               ...remappedStep.settings.input,
-              initialLoopStepIds:
-                remappedStep.settings.input.initialLoopStepIds.map(
-                  (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
-                ),
+              initialLoopStepIds: source.settings.input.initialLoopStepIds.map(
+                (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
+              ),
             },
           };
         }
