@@ -75,6 +75,8 @@ export class CleanOrphanedRoleTargetsCommand extends ActiveOrSuspendedWorkspaces
         );
       });
 
+      this.hasRunOnce = true;
+
       return;
     }
 
