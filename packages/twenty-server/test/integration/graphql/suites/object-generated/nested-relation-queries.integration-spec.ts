@@ -12,7 +12,7 @@ import {
   TEST_PET_ID_3,
 } from 'test/integration/constants/test-pet-ids.constants';
 import { TEST_ROCKET_ID_1 } from 'test/integration/constants/test-rocket-ids.constants';
-import { TEST_SURVEY_RESULT_1_ID } from 'test/integration/constants/test-survery-result-ids.constants';
+import { TEST_SURVEY_RESULT_1_ID } from 'test/integration/constants/test-survey-result-ids.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
@@ -691,6 +691,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     expect(response.body.data.updatePet.ownerSurveyResult).toBeFalsy();
   });
 
+  // TODO: run this test when validations are implemented in commonAPI
   xit('should fail to create a morph relation on both target objects', async () => {
     const PET_OBJECT_NAME = 'pet';
     const TEST_PET_ID = TEST_PET_ID_3;
