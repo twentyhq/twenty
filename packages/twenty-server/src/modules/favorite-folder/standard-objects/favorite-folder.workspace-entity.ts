@@ -11,13 +11,11 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { FAVORITE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @WorkspaceEntity({
-  universalIdentifier: STANDARD_OBJECT_IDS.favoriteFolder,
-  applicationUniversalIdentifier:
-    TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  standardId: STANDARD_OBJECT_IDS.favoriteFolder,
+
   namePlural: 'favoriteFolders',
   labelSingular: msg`Favorite Folder`,
   labelPlural: msg`Favorite Folders`,

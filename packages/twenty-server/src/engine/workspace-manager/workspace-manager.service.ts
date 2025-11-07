@@ -79,18 +79,10 @@ export class WorkspaceManagerService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const twentyStandardApplication =
-      await this.applicationService.createTwentyStandardApplication({
-        workspaceId,
-      });
-
-    // TODO prastoin Retrieve custom app here and apply universalIdentifier and so on to all sub entities
-
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
-      twentyStandardApplication,
     });
 
     const dataSourceMetadataCreationEnd = performance.now();

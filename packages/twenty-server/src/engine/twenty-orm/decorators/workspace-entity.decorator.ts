@@ -2,11 +2,11 @@ import { type MessageDescriptor } from '@lingui/core';
 
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { type TwentyStandardApplicationUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 interface WorkspaceEntityOptions {
+  standardId: string;
   namePlural: string;
   labelSingular: MessageDescriptor;
   labelPlural: MessageDescriptor;
@@ -15,8 +15,6 @@ interface WorkspaceEntityOptions {
   shortcut?: string;
   labelIdentifierStandardId?: string;
   imageIdentifierStandardId?: string;
-  universalIdentifier: string;
-  applicationUniversalIdentifier: TwentyStandardApplicationUniversalIdentifiers;
 }
 
 export function WorkspaceEntity(
@@ -53,10 +51,8 @@ export function WorkspaceEntity(
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
     metadataArgsStorage.addEntities({
-      applicationUniversalIdentifier: options.applicationUniversalIdentifier,
-      universalIdentifier: options.universalIdentifier,
       target,
-      standardId: options.universalIdentifier,
+      standardId: options.standardId,
       nameSingular: objectName,
       namePlural: options.namePlural,
       labelSingular: options.labelSingular?.message ?? '',
