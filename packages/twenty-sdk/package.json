@@ -7,7 +7,8 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "application"
+    "application",
+    "client"
   ],
   "scripts": {
     "build": "vite build"
@@ -27,12 +28,20 @@
       "types": "./dist/application/index.d.ts",
       "import": "./dist/application.mjs",
       "require": "./dist/application.cjs"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "import": "./dist/client.mjs",
+      "require": "./dist/client.cjs"
     }
   },
   "typesVersions": {
     "*": {
       "application": [
         "dist/application/index.d.ts"
+      ],
+      "client": [
+        "dist/client/index.d.ts"
       ]
     }
   }
