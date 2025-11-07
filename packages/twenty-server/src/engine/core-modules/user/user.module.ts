@@ -25,6 +25,8 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
 import { UserService } from './services/user.service';
 
 @Module({
@@ -49,8 +51,14 @@ import { UserService } from './services/user.service';
     UserRoleModule,
     FeatureFlagModule,
     PermissionsModule,
+    EmailVerificationModule,
+    WorkspaceDomainsModule,
   ],
   exports: [UserService, WorkspaceMemberTranspiler],
-  providers: [UserService, UserResolver, WorkspaceMemberTranspiler],
+  providers: [
+    UserService,
+    UserResolver,
+    WorkspaceMemberTranspiler,
+  ],
 })
 export class UserModule {}

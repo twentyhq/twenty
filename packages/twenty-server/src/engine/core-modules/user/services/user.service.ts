@@ -4,18 +4,27 @@ import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
-import { IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import {
+  UserException,
+  UserExceptionCode,
+} from 'src/engine/core-modules/user/user.exception';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -30,9 +39,13 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly userRoleService: UserRoleService,
+    private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly dataSourceService: DataSourceService,
   ) {
     super(userRepository);
   }
@@ -240,5 +253,81 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     user.isEmailVerified = true;
 
     return await this.userRepository.save(user);
+  }
+
+  async updateUserEmail({
+    user,
+    workspace,
+    newEmail,
+    verifyEmailRedirectPath,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    newEmail: string;
+    verifyEmailRedirectPath?: string;
+  }): Promise<void> {
+    const normalizedEmail = newEmail.trim().toLowerCase();
+
+    if (normalizedEmail === user.email) {
+      throw new UserException(
+        'New email must be different from current email',
+        UserExceptionCode.EMAIL_ALREADY_IN_USE,
+      );
+    }
+
+    const existingUser = await this.userRepository.findOne({
+      where: { email: normalizedEmail },
+    });
+
+    if (existingUser && existingUser.id !== user.id) {
+      throw new UserException(
+        'Email already in use',
+        UserExceptionCode.EMAIL_ALREADY_IN_USE,
+      );
+    }
+
+    user.email = normalizedEmail;
+    user.isEmailVerified = false;
+
+    await this.userRepository.save(user);
+
+    const userWorkspaceIds =
+      await this.userWorkspaceService.findWorkspaceIdsByUserId(user.id);
+
+    const dataSources = await this.dataSourceService.getManyDataSourceMetadata({
+      where: {
+        workspaceId: In(userWorkspaceIds),
+      },
+      order: { createdAt: 'DESC' },
+    });
+
+    for (const dataSource of dataSources) {
+      const workspaceId = dataSource.workspaceId;
+
+      const workspaceMemberRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+          workspaceId,
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      await workspaceMemberRepository.update(
+        { userId: user.id },
+        { userEmail: user.email },
+      );
+    }
+
+    const workspaceDomainConfig =
+      this.workspaceDomainsService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
+        workspace,
+      );
+
+    await this.emailVerificationService.sendVerificationEmail(
+      user.id,
+      normalizedEmail,
+      workspaceDomainConfig,
+      user.locale || SOURCE_LOCALE,
+      verifyEmailRedirectPath,
+    );
   }
 }

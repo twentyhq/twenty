@@ -4,4 +4,5 @@ export class UserException extends CustomException<UserExceptionCode> {}
 
 export enum UserExceptionCode {
   USER_NOT_FOUND = 'USER_NOT_FOUND',
+  EMAIL_ALREADY_IN_USE = 'EMAIL_ALREADY_IN_USE',
 }

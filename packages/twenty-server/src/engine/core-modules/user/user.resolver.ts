@@ -37,6 +37,7 @@ import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modul
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
+import { UpdateUserEmailInput } from 'src/engine/core-modules/user/dtos/update-user-email.input';
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import {
@@ -49,10 +50,17 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -84,7 +92,6 @@ export class UserResolver {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
-
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
@@ -433,5 +440,46 @@ export class UserResolver {
       user,
       authProvider,
     );
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(UserAuthGuard, WorkspaceAuthGuard)
+  async updateUserEmail(
+    @Args() { newEmail, verifyEmailRedirectPath }: UpdateUserEmailInput,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
+  ) {
+    const editableFields = workspace.editableProfileFields || [];
+
+    if (!editableFields.includes('email')) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    const hasPermission =
+      await this.permissionsService.userHasWorkspaceSettingPermission({
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        setting: PermissionFlagType.PROFILE_INFORMATION,
+      });
+
+    if (!hasPermission) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    await this.userService.updateUserEmail({
+      user,
+      workspace,
+      newEmail,
+      verifyEmailRedirectPath,
+    });
+
+    return true;
   }
 }
