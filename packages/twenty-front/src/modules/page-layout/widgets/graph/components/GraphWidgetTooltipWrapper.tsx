@@ -21,9 +21,7 @@ export const GraphWidgetTooltipWrapper = ({
   onHide,
 }: GraphWidgetTooltipWrapperProps) => {
   const theme = useTheme();
-  const { refs, floatingStyles } = useTooltipFloating(
-    anchorElement as SVGRectElement | null,
-  );
+  const { refs, floatingStyles } = useTooltipFloating(anchorElement);
 
   if (!isVisible || !isDefined(anchorElement) || !isDefined(content)) {
     return null;
