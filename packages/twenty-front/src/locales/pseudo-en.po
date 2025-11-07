@@ -455,7 +455,6 @@ msgid "Account added successfully. Sync started."
 msgstr ""
 
 #. js-lingui-id: nD0Y+a
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Account Deletion"
 msgstr ""
@@ -2453,6 +2452,11 @@ msgstr ""
 msgid "Current version"
 msgstr ""
 
+#. js-lingui-id: 0b3reS
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Current workspace member not found."
+msgstr ""
+
 #. js-lingui-id: 8Tg/JR
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -2821,7 +2825,6 @@ msgid "Delete {objectLabelPlural}"
 msgstr ""
 
 #. js-lingui-id: ZDGm40
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -2831,6 +2834,11 @@ msgstr ""
 #. js-lingui-id: gAz0S5
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data"
+msgstr ""
+
+#. js-lingui-id: kvHBHg
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Delete account and all the associated data or leave workspace"
 msgstr ""
 
 #. js-lingui-id: YMNj8z
@@ -5142,6 +5150,13 @@ msgstr ""
 msgid "Leave blank if you don't need to send emails."
 msgstr ""
 
+#. js-lingui-id: qvRaz1
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Leave workspace"
+msgstr ""
+
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"
@@ -6628,6 +6643,12 @@ msgstr ""
 msgid "Please type \"yes\" to confirm you want to delete this webhook."
 msgstr ""
 
+#. js-lingui-id: dzcUZq
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "Please type in your email to confirm."
+msgstr ""
+
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Plural"
@@ -6945,6 +6966,16 @@ msgstr ""
 #. js-lingui-id: OwOSPx
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Remove Handoff"
+msgstr ""
+
+#. js-lingui-id: 99VIgC
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Remove member"
+msgstr ""
+
+#. js-lingui-id: FzY1pn
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "Remove member from workspace"
 msgstr ""
 
 #. js-lingui-id: 00Lxnh
@@ -8413,9 +8444,11 @@ msgstr ""
 msgid "Third"
 msgstr ""
 
-#. js-lingui-id: hqCwGc
-#: src/pages/settings/SettingsWorkspaceMembers.tsx
-msgid "This action cannot be undone. This will permanently delete this user and remove them from all their assignments."
+#. js-lingui-id: Ox1hE7
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid ""
+"This action cannot be undone. This will permanently delete your\n"
+"            entire account."
 msgstr ""
 
 #. js-lingui-id: bNY3MH
@@ -8431,6 +8464,16 @@ msgstr ""
 #. js-lingui-id: igSFzI
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "This action cannot be undone. This will permanently remove the handoff configuration."
+msgstr ""
+
+#. js-lingui-id: fTuKde
+#: src/pages/settings/SettingsWorkspaceMembers.tsx
+msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
+msgstr ""
+
+#. js-lingui-id: Ik52hF
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "This action cannot be undone. This will permanently remove your membership from this workspace."
 msgstr ""
 
 #. js-lingui-id: SLIRqz

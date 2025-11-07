@@ -23,6 +23,7 @@ export type SettingsDataModelRelationFieldPreviewSubWidgetProps = {
 const StyledCard = styled(Card)`
   border-radius: ${({ theme }) => theme.border.radius.md};
   color: ${({ theme }) => theme.font.color.primary};
+  margin: auto;
 `;
 
 const StyledCardContent = styled(CardContent)`

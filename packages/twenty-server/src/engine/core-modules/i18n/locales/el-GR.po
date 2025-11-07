@@ -589,9 +589,9 @@ msgstr "Δεν είναι δυνατή η σύνδεση με το {connectField
 msgid "Can't impersonate user via api key"
 msgstr "Δεν είναι δυνατή η προσωποποίηση χρήστη μέσω του κλειδιού api"
 
-#. js-lingui-id: 874/Xl
+#. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
-msgid "Cannot activate non-draft or non-deactivated version"
+msgid "Cannot activate non-draft or non-last-published version"
 msgstr ""
 
 #. js-lingui-id: LIPsWu
@@ -624,6 +624,11 @@ msgstr "Δεν είναι δυνατή η απενεργοποίηση μη εν
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr "Δεν είναι δυνατή η ενεργοποίηση της μοναδικότητας λόγω υπαρχόντων διπλότυπων τιμών. Παρακαλώ επανεξετάστε και διορθώστε τα δεδομένα σας πρώτα (συμπεριλαμβανομένων των μαλακί καταγραμμένων εγγραφών)."
+
+#. js-lingui-id: IDMgr/
+#: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
+msgid "Cannot have more than one active workflow version"
+msgstr ""
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
@@ -3587,6 +3592,12 @@ msgstr "Ηλεκτρονικό ταχυδρομείο χρήστη"
 msgid "User Id"
 msgstr "Αναγνωριστικό Χρήστη"
 
+#. js-lingui-id: pMOjQa
+#: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User is not a member of the workspace."
+msgstr ""
+
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User is not part of the workspace"
@@ -4224,6 +4235,11 @@ msgstr "Δεν μπορείτε να ορίσετε άδειες σε αντικ
 #: src/engine/guards/settings-permissions.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Δεν έχετε άδεια για πρόσβαση σε αυτή τη λειτουργία. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας για πρόσβαση."
+
+#. js-lingui-id: P69VwK
+#: src/engine/core-modules/user/user.resolver.ts
+msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
+msgstr ""
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
