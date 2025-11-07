@@ -206,7 +206,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Timeline Activities`,
     description: msg`Timeline activities linked to the version`,
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    inverseSideFieldKey: 'timelineActivityWorkflowVersion',
+    inverseSideFieldKey: 'targetWorkflowVersion',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsSystem()

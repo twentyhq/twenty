@@ -303,7 +303,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Events linked to the person`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    inverseSideFieldKey: 'timelineActivityPerson',
+    inverseSideFieldKey: 'targetPerson',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()

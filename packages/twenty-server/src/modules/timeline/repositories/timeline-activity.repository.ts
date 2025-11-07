@@ -205,7 +205,7 @@ export class TimelineActivityRepository {
     isFeatureFlagTimelineActivityMigrated: boolean,
   ) {
     return isFeatureFlagTimelineActivityMigrated
-      ? `timelineActivity${capitalize(objectSingularName)}Id`
+      ? `target${capitalize(objectSingularName)}Id`
       : `${objectSingularName}Id`;
   }
 }

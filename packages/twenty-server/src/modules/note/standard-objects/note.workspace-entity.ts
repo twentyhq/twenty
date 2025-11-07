@@ -135,7 +135,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the note.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    inverseSideFieldKey: 'timelineActivityNote',
+    inverseSideFieldKey: 'targetNote',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()

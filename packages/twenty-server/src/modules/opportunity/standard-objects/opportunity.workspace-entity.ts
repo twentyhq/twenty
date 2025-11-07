@@ -227,7 +227,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Timeline Activities linked to the opportunity.`,
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    inverseSideFieldKey: 'timelineActivityOpportunity',
+    inverseSideFieldKey: 'targetOpportunity',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()

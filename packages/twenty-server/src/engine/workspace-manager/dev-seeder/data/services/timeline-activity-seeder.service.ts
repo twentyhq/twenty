@@ -43,11 +43,11 @@ type TimelineActivitySeedData = Pick<
   | 'noteId'
   | 'taskId'
   | 'opportunityId'
-  | 'timelineActivityNoteId'
-  | 'timelineActivityTaskId'
-  | 'timelineActivityPersonId'
-  | 'timelineActivityCompanyId'
-  | 'timelineActivityOpportunityId'
+  | 'targetNoteId'
+  | 'targetTaskId'
+  | 'targetPersonId'
+  | 'targetCompanyId'
+  | 'targetOpportunityId'
 > & {
   properties: string; // JSON stringified for raw insertion
   createdAt: string; // ISO string for raw insertion
@@ -263,11 +263,11 @@ export class TimelineActivitySeederService {
           'noteId',
           'taskId',
           'opportunityId',
-          'timelineActivityNoteId',
-          'timelineActivityTaskId',
-          'timelineActivityPersonId',
-          'timelineActivityCompanyId',
-          'timelineActivityOpportunityId',
+          'targetNoteId',
+          'targetTaskId',
+          'targetPersonId',
+          'targetCompanyId',
+          'targetOpportunityId',
           'createdAt',
           'updatedAt',
           'happensAt',
@@ -305,11 +305,11 @@ export class TimelineActivitySeederService {
       noteId: null,
       taskId: null,
       opportunityId: null,
-      timelineActivityNoteId: null,
-      timelineActivityTaskId: null,
-      timelineActivityPersonId: null,
-      timelineActivityCompanyId: null,
-      timelineActivityOpportunityId: null,
+      targetNoteId: null,
+      targetTaskId: null,
+      targetPersonId: null,
+      targetCompanyId: null,
+      targetOpportunityId: null,
       createdAt: creationDate,
       updatedAt: creationDate,
       happensAt: creationDate,
@@ -596,11 +596,11 @@ export class TimelineActivitySeederService {
       noteId: null,
       taskId: null,
       opportunityId: null,
-      timelineActivityNoteId: null,
-      timelineActivityTaskId: null,
-      timelineActivityPersonId: null,
-      timelineActivityCompanyId: null,
-      timelineActivityOpportunityId: null,
+      targetNoteId: null,
+      targetTaskId: null,
+      targetPersonId: null,
+      targetCompanyId: null,
+      targetOpportunityId: null,
       createdAt: creationDate,
       updatedAt: creationDate,
       happensAt: creationDate,
