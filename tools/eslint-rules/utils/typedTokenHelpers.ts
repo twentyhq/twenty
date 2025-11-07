@@ -3,7 +3,7 @@ import { TSESTree } from '@typescript-eslint/utils';
 export const typedTokenHelpers = {
   nodeHasDecoratorsNamed: (
     node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration,
-    decoratorNames: string[]
+    decoratorNames: string[],
   ): boolean => {
     if (!node.decorators) {
       return false;
@@ -14,7 +14,9 @@ export const typedTokenHelpers = {
         return decoratorNames.includes(decorator.expression.name);
       }
 
-      if (decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression) {
+      if (
+        decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression
+      ) {
         const callee = decorator.expression.callee;
         if (callee.type === TSESTree.AST_NODE_TYPES.Identifier) {
           return decoratorNames.includes(callee.name);
@@ -26,7 +28,7 @@ export const typedTokenHelpers = {
   },
 
   nodeHasAuthGuards: (
-    node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration
+    node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration,
   ): boolean => {
     if (!node.decorators) {
       return false;
@@ -36,15 +38,18 @@ export const typedTokenHelpers = {
       // Check for @UseGuards() call expression
       if (
         decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression &&
-        decorator.expression.callee.type === TSESTree.AST_NODE_TYPES.Identifier &&
+        decorator.expression.callee.type ===
+          TSESTree.AST_NODE_TYPES.Identifier &&
         decorator.expression.callee.name === 'UseGuards'
       ) {
         // Check the arguments for UserAuthGuard, WorkspaceAuthGuard, or PublicEndpoint
         return decorator.expression.arguments.some((arg) => {
           if (arg.type === TSESTree.AST_NODE_TYPES.Identifier) {
-            return arg.name === 'UserAuthGuard' ||
-                   arg.name === 'WorkspaceAuthGuard' ||
-                   arg.name === 'PublicEndpointGuard';
+            return (
+              arg.name === 'UserAuthGuard' ||
+              arg.name === 'WorkspaceAuthGuard' ||
+              arg.name === 'PublicEndpointGuard'
+            );
           }
           return false;
         });
@@ -55,7 +60,7 @@ export const typedTokenHelpers = {
   },
 
   nodeHasPermissionsGuard: (
-    node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration
+    node: TSESTree.MethodDefinition | TSESTree.ClassDeclaration,
   ): boolean => {
     if (!node.decorators) {
       return false;
@@ -64,29 +69,22 @@ export const typedTokenHelpers = {
     return node.decorators.some((decorator) => {
       if (
         decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression &&
-        decorator.expression.callee.type === TSESTree.AST_NODE_TYPES.Identifier &&
+        decorator.expression.callee.type ===
+          TSESTree.AST_NODE_TYPES.Identifier &&
         decorator.expression.callee.name === 'UseGuards'
       ) {
-        // Check if any argument is SettingsPermissionsGuard, ViewPermissionGuard (factory),
-        // or identifier guards: CustomPermissionGuard, ViewPermissionGuard, NoPermissionGuard
+        // Check if any argument ends with PermissionGuard
         return decorator.expression.arguments.some((arg) => {
-          // SettingsPermissionsGuard(PermissionFlagType.XXX)
+          // Factory-style guards: SettingsPermissionsGuard(PermissionFlagType.XXX)
           if (arg.type === TSESTree.AST_NODE_TYPES.CallExpression) {
             const callee = arg.callee;
             if (callee.type === TSESTree.AST_NODE_TYPES.Identifier) {
-              return (
-                callee.name === 'SettingsPermissionsGuard' ||
-                callee.name === 'ViewPermissionGuard'
-              );
+              return callee.name.endsWith('PermissionGuard');
             }
           }
-          // CustomPermissionGuard, ViewPermissionGuard, or NoPermissionGuard
+          // Identifier guards: CustomPermissionGuard, NoPermissionGuard, etc.
           if (arg.type === TSESTree.AST_NODE_TYPES.Identifier) {
-            return (
-              arg.name === 'CustomPermissionGuard' ||
-              arg.name === 'ViewPermissionGuard' ||
-              arg.name === 'NoPermissionGuard'
-            );
+            return arg.name.endsWith('PermissionGuard');
           }
           return false;
         });

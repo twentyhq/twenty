@@ -34,7 +34,9 @@ import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
-import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
+import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
+import { DestroyViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-permission.guard';
+import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
@@ -206,7 +208,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(ViewPermissionGuard())
+  @UseGuards(UpdateViewPermissionGuard)
   async updateCoreView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
@@ -229,7 +231,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard())
+  @UseGuards(DeleteViewPermissionGuard)
   async deleteCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -255,7 +257,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard())
+  @UseGuards(DestroyViewPermissionGuard)
   async destroyCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

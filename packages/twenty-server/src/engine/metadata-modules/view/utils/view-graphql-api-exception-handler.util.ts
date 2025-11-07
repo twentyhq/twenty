@@ -50,7 +50,7 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
-      case ViewExceptionCode.VIEW_UPDATE_PERMISSION_DENIED:
+      case ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED:
         throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });

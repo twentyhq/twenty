@@ -6,40 +6,23 @@ import { typedTokenHelpers } from '../utils/typedTokenHelpers';
 // NOTE: The rule will be available in ESLint configs as "@nx/workspace-graphql-resolvers-should-be-guarded"
 export const RULE_NAME = 'graphql-resolvers-should-be-guarded';
 
-export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition) => {
+export const graphqlResolversShouldBeGuarded = (
+  node: TSESTree.MethodDefinition,
+) => {
   const hasGraphQLResolverDecorator = typedTokenHelpers.nodeHasDecoratorsNamed(
     node,
-    ['Query', 'Mutation', 'Subscription']
+    ['Query', 'Mutation', 'Subscription'],
   );
 
-  const isMutation = typedTokenHelpers.nodeHasDecoratorsNamed(node, ['Mutation']);
+  const isMutation = typedTokenHelpers.nodeHasDecoratorsNamed(node, [
+    'Mutation',
+  ]);
 
   const hasAuthGuards = typedTokenHelpers.nodeHasAuthGuards(node);
-  let hasPermissionsGuard = typedTokenHelpers.nodeHasPermissionsGuard(node);
-
-  // Fallback: explicitly detect factory-style ViewPermissionGuard()
-  if (!hasPermissionsGuard && node.decorators) {
-    hasPermissionsGuard = node.decorators.some((decorator) => {
-      if (
-        decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression &&
-        decorator.expression.callee.type ===
-          TSESTree.AST_NODE_TYPES.Identifier &&
-        decorator.expression.callee.name === 'UseGuards'
-      ) {
-        return decorator.expression.arguments.some((arg) => {
-          return (
-            arg.type === TSESTree.AST_NODE_TYPES.CallExpression &&
-            arg.callee.type === TSESTree.AST_NODE_TYPES.Identifier &&
-            arg.callee.name === 'ViewPermissionGuard'
-          );
-        });
-      }
-      return false;
-    });
-  }
+  const hasPermissionsGuard = typedTokenHelpers.nodeHasPermissionsGuard(node);
 
   const findClassDeclaration = (
-    node: TSESTree.Node
+    node: TSESTree.Node,
   ): TSESTree.ClassDeclaration | null => {
     if (node.type === TSESTree.AST_NODE_TYPES.ClassDeclaration) {
       return node;
@@ -48,7 +31,7 @@ export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition)
       return findClassDeclaration(node.parent);
     }
     return null;
-  }
+  };
 
   const classNode = findClassDeclaration(node);
 
@@ -56,39 +39,17 @@ export const graphqlResolversShouldBeGuarded = (node: TSESTree.MethodDefinition)
     ? typedTokenHelpers.nodeHasAuthGuards(classNode)
     : false;
 
-  let hasPermissionsGuardOnResolver = classNode
+  const hasPermissionsGuardOnResolver = classNode
     ? typedTokenHelpers.nodeHasPermissionsGuard(classNode)
     : false;
 
-  if (!hasPermissionsGuardOnResolver && classNode?.decorators) {
-    hasPermissionsGuardOnResolver = classNode.decorators.some((decorator) => {
-      if (
-        decorator.expression.type === TSESTree.AST_NODE_TYPES.CallExpression &&
-        decorator.expression.callee.type ===
-          TSESTree.AST_NODE_TYPES.Identifier &&
-        decorator.expression.callee.name === 'UseGuards'
-      ) {
-        return decorator.expression.arguments.some((arg) => {
-          return (
-            arg.type === TSESTree.AST_NODE_TYPES.CallExpression &&
-            arg.callee.type === TSESTree.AST_NODE_TYPES.Identifier &&
-            arg.callee.name === 'ViewPermissionGuard'
-          );
-        });
-      }
-      return false;
-    });
-  }
-
   // Basic requirement: all resolvers need auth guards
-  const missingAuthGuard = hasGraphQLResolverDecorator &&
-                           !hasAuthGuards &&
-                           !hasAuthGuardsOnResolver;
+  const missingAuthGuard =
+    hasGraphQLResolverDecorator && !hasAuthGuards && !hasAuthGuardsOnResolver;
 
   // Additional requirement: mutations need permission guards
-  const missingPermissionGuard = isMutation &&
-                                  !hasPermissionsGuard &&
-                                  !hasPermissionsGuardOnResolver;
+  const missingPermissionGuard =
+    isMutation && !hasPermissionsGuard && !hasPermissionsGuardOnResolver;
 
   return missingAuthGuard || missingPermissionGuard;
 };

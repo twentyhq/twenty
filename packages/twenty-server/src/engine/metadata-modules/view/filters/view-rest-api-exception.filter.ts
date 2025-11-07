@@ -67,7 +67,7 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
             response,
             400,
           );
-        case ViewExceptionCode.VIEW_UPDATE_PERMISSION_DENIED:
+        case ViewExceptionCode.VIEW_MODIFY_PERMISSION_DENIED:
           return this.httpExceptionHandlerService.handleError(
             exception as CustomException,
             response,

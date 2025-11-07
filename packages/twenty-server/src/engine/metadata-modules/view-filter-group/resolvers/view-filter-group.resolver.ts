@@ -10,7 +10,10 @@ import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-fil
 import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
-import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
+import { CreateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-group-permission.guard';
+import { DeleteViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-group-permission.guard';
+import { DestroyViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-filter-group-permission.guard';
+import { UpdateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-group-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterGroupDTO)
@@ -43,7 +46,7 @@ export class ViewFilterGroupResolver {
   }
 
   @Mutation(() => ViewFilterGroupDTO)
-  @UseGuards(ViewPermissionGuard('viewFilterGroup'))
+  @UseGuards(CreateViewFilterGroupPermissionGuard)
   async createCoreViewFilterGroup(
     @Args('input') input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -55,7 +58,7 @@ export class ViewFilterGroupResolver {
   }
 
   @Mutation(() => ViewFilterGroupDTO)
-  @UseGuards(ViewPermissionGuard('viewFilterGroup'))
+  @UseGuards(UpdateViewFilterGroupPermissionGuard)
   async updateCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFilterGroupInput,
@@ -65,7 +68,7 @@ export class ViewFilterGroupResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard('viewFilterGroup'))
+  @UseGuards(DeleteViewFilterGroupPermissionGuard)
   async deleteCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -79,7 +82,7 @@ export class ViewFilterGroupResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(ViewPermissionGuard('viewFilterGroup'))
+  @UseGuards(DestroyViewFilterGroupPermissionGuard)
   async destroyCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
