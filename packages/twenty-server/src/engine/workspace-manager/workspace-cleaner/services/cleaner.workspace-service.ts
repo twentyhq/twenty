@@ -299,7 +299,6 @@ export class CleanerWorkspaceService {
             await this.workspaceService.handleRemoveWorkspaceMember(
               workspace.id,
               userWorkspace.userId,
-              false,
             );
           }
 

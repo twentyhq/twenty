@@ -1813,6 +1813,7 @@ export type Mutation = {
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
+  deleteUserFromWorkspace: UserWorkspace;
   deleteWebhook: Scalars['Boolean'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
@@ -2292,6 +2293,11 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 
 export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
   twoFactorAuthenticationMethodId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteUserFromWorkspaceArgs = {
+  workspaceMemberIdToDelete: Scalars['String'];
 };
 
 
@@ -5916,6 +5922,13 @@ export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }
 
 
 export type DeleteUserAccountMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', id: string } };
+
+export type DeleteUserWorkspaceMutationVariables = Exact<{
+  workspaceMemberIdToDelete: Scalars['String'];
+}>;
+
+
+export type DeleteUserWorkspaceMutation = { __typename?: 'Mutation', deleteUserFromWorkspace: { __typename?: 'UserWorkspace', id: string } };
 
 export type UploadProfilePictureMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -12389,6 +12402,39 @@ export function useDeleteUserAccountMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteUserAccountMutationHookResult = ReturnType<typeof useDeleteUserAccountMutation>;
 export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAccountMutation>;
 export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
+export const DeleteUserWorkspaceDocument = gql`
+    mutation DeleteUserWorkspace($workspaceMemberIdToDelete: String!) {
+  deleteUserFromWorkspace(workspaceMemberIdToDelete: $workspaceMemberIdToDelete) {
+    id
+  }
+}
+    `;
+export type DeleteUserWorkspaceMutationFn = Apollo.MutationFunction<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>;
+
+/**
+ * __useDeleteUserWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserWorkspaceMutation, { data, loading, error }] = useDeleteUserWorkspaceMutation({
+ *   variables: {
+ *      workspaceMemberIdToDelete: // value for 'workspaceMemberIdToDelete'
+ *   },
+ * });
+ */
+export function useDeleteUserWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>(DeleteUserWorkspaceDocument, options);
+      }
+export type DeleteUserWorkspaceMutationHookResult = ReturnType<typeof useDeleteUserWorkspaceMutation>;
+export type DeleteUserWorkspaceMutationResult = Apollo.MutationResult<DeleteUserWorkspaceMutation>;
+export type DeleteUserWorkspaceMutationOptions = Apollo.BaseMutationOptions<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>;
 export const UploadProfilePictureDocument = gql`
     mutation UploadProfilePicture($file: Upload!) {
   uploadProfilePicture(file: $file) {

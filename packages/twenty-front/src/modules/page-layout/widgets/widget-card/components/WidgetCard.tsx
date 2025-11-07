@@ -14,13 +14,17 @@ export type WidgetCardProps = {
   onClick?: () => void;
   isEditing: boolean;
   isDragging: boolean;
+  isInPinnedTab: boolean;
   className?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 const StyledWidgetCard = styled.div<{
   onClick?: () => void;
   pageLayoutType: PageLayoutType;
   layoutMode: PageLayoutTabLayoutMode;
+  isInPinnedTab: boolean;
   isPageLayoutInEditMode: boolean;
   isEditing: boolean;
   isDragging: boolean;
@@ -39,6 +43,7 @@ const StyledWidgetCard = styled.div<{
     isPageLayoutInEditMode,
     isEditing,
     isDragging,
+    isInPinnedTab,
     onClick,
   }) => {
     if (layoutMode === 'canvas') {
@@ -48,7 +53,7 @@ const StyledWidgetCard = styled.div<{
     }
 
     switch (pageLayoutType) {
-      case PageLayoutType.DASHBOARD:
+      case PageLayoutType.DASHBOARD: {
         return css`
           background: ${theme.background.secondary};
           border: 1px solid ${theme.border.color.light};
@@ -61,12 +66,8 @@ const StyledWidgetCard = styled.div<{
           !isEditing &&
           css`
             &:hover {
-              cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
               border: 1px solid ${theme.border.color.strong};
-
-              .widget-card-remove-button {
-                display: flex !important;
-              }
+              cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
             }
           `}
 
@@ -87,8 +88,9 @@ const StyledWidgetCard = styled.div<{
             border: 1px solid ${theme.color.blue} !important;
           `}
         `;
+      }
 
-      case PageLayoutType.RECORD_PAGE:
+      case PageLayoutType.RECORD_PAGE: {
         return css`
           background: ${theme.background.primary};
           border: 1px solid transparent;
@@ -101,12 +103,8 @@ const StyledWidgetCard = styled.div<{
           !isEditing &&
           css`
             &:hover {
-              cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
               border: 1px solid ${theme.border.color.strong};
-
-              .widget-card-remove-button {
-                display: flex !important;
-              }
+              cursor: ${isDefined(onClick) ? 'pointer' : 'default'};
             }
           `}
 
@@ -126,10 +124,20 @@ const StyledWidgetCard = styled.div<{
               ${theme.background.secondary};
             border: 1px solid ${theme.color.blue} !important;
           `}
+
+          ${isInPinnedTab &&
+          !isPageLayoutInEditMode &&
+          css`
+            border: none;
+            padding: 0;
+            border-radius: 0;
+            background: ${theme.background.secondary};
+          `}
         `;
+      }
 
       default:
-        return '';
+        return undefined;
     }
   }}
 `;
@@ -141,7 +149,10 @@ export const WidgetCard = ({
   onClick,
   isEditing,
   isDragging,
+  isInPinnedTab,
   className,
+  onMouseEnter,
+  onMouseLeave,
 }: WidgetCardProps) => {
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
@@ -155,7 +166,10 @@ export const WidgetCard = ({
       isPageLayoutInEditMode={isPageLayoutInEditMode}
       isEditing={isEditing}
       isDragging={isDragging}
+      isInPinnedTab={isInPinnedTab}
       className={className}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {children}
     </StyledWidgetCard>
