@@ -24,6 +24,16 @@ const isWorkflowAutomatedTriggerSettings = (
   );
 };
 
+const isWorkflowRunState = (
+  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
+  key: string,
+) => {
+  return (
+    objectMetadataItem.standardId === STANDARD_OBJECT_IDS.workflowRun &&
+    key === 'state'
+  );
+};
+
 export const objectRecordChangedValues = (
   oldRecord: Partial<ObjectRecord>,
   newRecord: Partial<ObjectRecord>,
@@ -40,7 +50,9 @@ export const objectRecordChangedValues = (
       // Temporary ignore workflow json fields changes
       if (
         isWorkflowAutomatedTriggerSettings(objectMetadataItem, key) ||
-        isWorkflowVersionStepsOrTrigger(objectMetadataItem, key)
+        isWorkflowVersionStepsOrTrigger(objectMetadataItem, key) ||
+        // TODO: remove this so workflowRun updates are taken into account
+        isWorkflowRunState(objectMetadataItem, key)
       ) {
         return acc;
       }
