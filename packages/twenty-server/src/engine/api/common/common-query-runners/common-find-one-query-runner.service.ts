@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
@@ -23,12 +23,16 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { RedisFieldRepository } from 'src/engine/twenty-orm/repository/redis-fields.repository';
+import { redisKeyBuilder } from 'src/engine/twenty-orm/utils/redis-key-builder.util';
 
 @Injectable()
 export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerService<
   FindOneQueryArgs,
   ObjectRecord
 > {
+  @Inject()
+  protected readonly redisFieldRepository: RedisFieldRepository;
   protected readonly operationName = CommonQueryNames.FIND_ONE;
 
   async run(
@@ -97,6 +101,20 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
         workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
+      });
+    }
+
+    if (isDefined(authContext.user?.id) && isDefined(objectRecords[0].id)) {
+      const key = redisKeyBuilder({
+        workspaceId: authContext.workspace.id,
+        userId: authContext.user?.id,
+        objectMetadataId: objectMetadataItemWithFieldMaps.id,
+      });
+
+      await this.redisFieldRepository.setZSetEntry({
+        key,
+        id: objectRecords[0].id,
+        score: Date.now(),
       });
     }
 

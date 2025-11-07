@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type IResolvers } from '@graphql-tools/utils';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -12,7 +12,6 @@ import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-res
 import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { WorkspaceResolverBuilderService } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.service';
-import { EXTERNAL_FIELD_DRIVERS, type ExternalFieldDrivers } from 'src/engine/twenty-orm/storage/external-field-drivers.token';
 import {
   AuthException,
   AuthExceptionCode,
@@ -59,8 +58,6 @@ export class WorkspaceResolverFactory {
     private readonly groupByResolverFactory: GroupByResolverFactory,
     private readonly workspaceResolverBuilderService: WorkspaceResolverBuilderService,
     private readonly featureFlagService: FeatureFlagService,
-    @Inject(EXTERNAL_FIELD_DRIVERS)
-    private readonly externalFieldDrivers: ExternalFieldDrivers,
   ) {}
 
   async create(
@@ -142,7 +139,6 @@ export class WorkspaceResolverFactory {
             authContext,
             objectMetadataMaps,
             objectMetadataItemWithFieldMaps: objectMetadata,
-            externalFieldDrivers: this.externalFieldDrivers,
           });
         }
       }
@@ -173,7 +169,6 @@ export class WorkspaceResolverFactory {
             authContext,
             objectMetadataMaps,
             objectMetadataItemWithFieldMaps: objectMetadata,
-            externalFieldDrivers: this.externalFieldDrivers,
           });
         }
       }

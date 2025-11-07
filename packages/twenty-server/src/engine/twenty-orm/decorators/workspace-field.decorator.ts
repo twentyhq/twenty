@@ -30,7 +30,7 @@ export interface WorkspaceFieldOptions<
   isActive?: boolean;
   generatedType?: 'STORED' | 'VIRTUAL';
   asExpression?: string;
-  storage?: 'postgres' | 'redis';
+  isVirtualField?: boolean;
 }
 
 export function WorkspaceField<T extends FieldMetadataType>(
@@ -107,7 +107,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isActive: options.isActive,
       asExpression: options.asExpression,
       generatedType: options.generatedType,
-      storage: options.storage ?? 'postgres',
+      storage: options.settings?.storage ?? 'postgres',
     });
   };
 }

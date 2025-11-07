@@ -73,8 +73,9 @@ export abstract class BaseWorkspaceEntity {
     defaultValue: null,
     settings: {
       displayFormat: DateDisplayFormat.RELATIVE,
+      storage: 'redis',
     },
-    storage: 'redis',
+    isVirtualField: true,
   })
   @WorkspaceIsFieldUIReadOnly()
   @WorkspaceIsNullable()

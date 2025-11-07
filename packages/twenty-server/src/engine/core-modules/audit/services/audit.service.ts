@@ -15,46 +15,13 @@ import {
 } from 'src/engine/core-modules/audit/utils/analytics.utils';
 import { type PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { RedisFieldRepository } from 'src/engine/twenty-orm/repository/redis-fields.repository';
-import { OBJECT_RECORD_VIEWED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-viewed';
-import { redisKeyBuilder } from 'src/engine/twenty-orm/utils/redis-key-builder.util';
 
 @Injectable()
 export class AuditService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly clickHouseService: ClickHouseService,
-    private readonly redisFieldRepository: RedisFieldRepository,
   ) {}
-
-  private async writeEventInRedis({
-    userId,
-    workspaceId,
-    objectMetadataId,
-    recordId,
-  }: TrackEventProperties<typeof OBJECT_RECORD_VIEWED_EVENT> & {
-    userId?: string;
-    workspaceId?: string;
-  }) {
-    if (!userId || !workspaceId || !objectMetadataId || !recordId) {
-      return new AuditException(
-        `Properties missing: userId, workspaceId, objectMetadataId, recordId are required`,
-        AuditExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const key = redisKeyBuilder({
-      workspaceId,
-      userId,
-      objectMetadataId,
-    });
-
-    await this.redisFieldRepository.setZSetEntry({
-      key,
-      id: recordId,
-      score: Date.now(),
-    });
-  }
 
   createContext(context?: {
     workspaceId?: string | null | undefined;
@@ -72,15 +39,6 @@ export class AuditService {
         event: T,
         properties: TrackEventProperties<T>,
       ) => {
-        if (event === OBJECT_RECORD_VIEWED_EVENT) {
-          await this.writeEventInRedis({
-            ...(properties as TrackEventProperties<
-              typeof OBJECT_RECORD_VIEWED_EVENT
-            >),
-            ...userIdAndWorkspaceId,
-          });
-        }
-
         return this.preventIfDisabled(() =>
           this.clickHouseService.insert('workspaceEvent', [
             { ...userIdAndWorkspaceId, ...makeTrackEvent(event, properties) },

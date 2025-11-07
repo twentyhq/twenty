@@ -41,7 +41,7 @@ export class RedisStorageDriver {
     if (entries.length === 0) return;
 
     return this.redisFieldSqlFactory.buildZSetDateTimeParts(
-      entries,
+      entries.slice(0, 100),
       tableAlias,
       {
         cteName: `${fieldName}Records`,

@@ -1,5 +1,4 @@
 import { type AllowedAddressSubField } from '@/types/AddressFieldsType';
-import { type FieldMetadataMultiItemSettings } from '@/types/FieldMetadataMultiItemSettings';
 import { type RelationType } from '@/types/RelationType';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
@@ -17,40 +16,50 @@ export enum DateDisplayFormat {
   CUSTOM = 'CUSTOM',
 }
 
+export type CommonFieldMetadataSettings = {
+  storage?: 'postgres' | 'redis';
+};
+
+type WithCommon<T> = T extends null ? null : T & CommonFieldMetadataSettings;
+
 export type FieldNumberVariant = 'number' | 'percentage';
 
-export type FieldMetadataNumberSettings = {
+export type FieldMetadataNumberSettings = WithCommon<{
   dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
-};
+}>;
 
-export type FieldMetadataTextSettings = {
+export type FieldMetadataTextSettings = WithCommon<{
   displayedMaxRows?: number;
-};
+}>;
 
-export type FieldMetadataDateSettings = {
+export type FieldMetadataDateSettings = WithCommon<{
   displayFormat?: DateDisplayFormat;
-};
+}>;
 
-export type FieldMetadataDateTimeSettings = {
+export type FieldMetadataDateTimeSettings = WithCommon<{
   displayFormat?: DateDisplayFormat;
-};
+}>;
 
-export type FieldMetadataRelationSettings = {
+export type FieldMetadataRelationSettings = WithCommon<{
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
-};
+}>;
 
-export type FieldMetadataAddressSettings = {
+export type FieldMetadataAddressSettings = WithCommon<{
   subFields?: AllowedAddressSubField[];
-};
+}>;
 
-export type FieldMetadataTsVectorSettings = {
+export type FieldMetadataTsVectorSettings = WithCommon<{
   asExpression?: string;
   generatedType?: 'STORED' | 'VIRTUAL';
-};
+}>;
+
+export type FieldMetadataMultiItemSettings = WithCommon<{
+  maxNumberOfValues?: number;
+}>;
 
 type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;

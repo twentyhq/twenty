@@ -49,13 +49,13 @@ export {
   FieldMetadataDefaultValuePhones,
   FieldMetadataDefaultArray,
 } from './FieldMetadataDefaultValue';
-export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export type { TagColor, FieldMetadataOptions } from './FieldMetadataOptions';
 export {
   FieldMetadataDefaultOption,
   FieldMetadataComplexOption,
 } from './FieldMetadataOptions';
 export type {
+  CommonFieldMetadataSettings,
   FieldNumberVariant,
   FieldMetadataNumberSettings,
   FieldMetadataTextSettings,
@@ -64,6 +64,7 @@ export type {
   FieldMetadataRelationSettings,
   FieldMetadataAddressSettings,
   FieldMetadataTsVectorSettings,
+  FieldMetadataMultiItemSettings,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
 } from './FieldMetadataSettings';
