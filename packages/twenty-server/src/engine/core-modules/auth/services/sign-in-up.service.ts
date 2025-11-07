@@ -27,6 +27,8 @@ import {
   type SignInUpNewUserPayload,
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -55,6 +57,7 @@ export class SignInUpService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly userService: UserService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async computePartialUserFromUserPayload(
@@ -338,6 +341,11 @@ export class SignInUpService {
       ],
       undefined,
     );
+
+    this.metricsService.incrementCounter({
+      key: MetricsKeys.SignUpSuccess,
+      shouldStoreInCache: false,
+    });
 
     return savedUser;
   }

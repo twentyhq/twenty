@@ -58,8 +58,7 @@ export class CalendarEventListFetchJob {
 
     switch (calendarChannel.syncStage) {
       case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_SCHEDULED:
-      case CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING: // DEPRECATED
-      case CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING: // WILL BE DEPRECATED
+      case CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING:
         await this.calendarFetchEventsService.fetchCalendarEvents(
           calendarChannel,
           calendarChannel.connectedAccount,

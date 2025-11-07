@@ -9,7 +9,11 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "strict": true,
+    "allowUnreachableCode": false,
+    "strictNullChecks": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": false,
     "target": "es2018",
     "module": "esnext",
     "lib": ["es2020", "dom"],
@@ -17,6 +21,10 @@
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true
   },
-  "exclude": ["node_modules", "dist"],
-  "include": ["**/*.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }

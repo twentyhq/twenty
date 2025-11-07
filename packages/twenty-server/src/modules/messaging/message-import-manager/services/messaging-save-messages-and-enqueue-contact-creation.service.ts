@@ -21,8 +21,8 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
-import { isGroupEmail } from 'src/utils/is-group-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()

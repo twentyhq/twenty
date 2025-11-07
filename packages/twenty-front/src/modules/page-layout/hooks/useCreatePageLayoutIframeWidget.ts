@@ -1,4 +1,4 @@
-import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
+import { WIDGET_SIZES } from '@/page-layout/constants/WidgetSizes';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -13,7 +13,9 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
+import { type PageLayoutWidget, WidgetType } from '~/generated/graphql';
 
 export const useCreatePageLayoutIframeWidget = (
   pageLayoutIdFromProps?: string,
@@ -45,7 +47,7 @@ export const useCreatePageLayoutIframeWidget = (
 
   const createPageLayoutIframeWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (title: string, url: string) => {
+      (title: string, url: string | null): PageLayoutWidget => {
         const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
@@ -54,13 +56,16 @@ export const useCreatePageLayoutIframeWidget = (
           .getLoadable(pageLayoutDraggedAreaState)
           .getValue();
 
-        if (!activeTabId) {
-          return;
+        if (!isDefined(activeTabId)) {
+          throw new Error(
+            'A tab must be selected to create a new iframe widget',
+          );
         }
 
         const widgetId = uuidv4();
-        const defaultIframeSize = { w: 6, h: 6 };
-        const minimumSize = DEFAULT_WIDGET_SIZE.minimum;
+        const iframeSize = WIDGET_SIZES[WidgetType.IFRAME]!;
+        const defaultIframeSize = iframeSize.default;
+        const minimumSize = iframeSize.minimum;
         const position = getDefaultWidgetPosition(
           pageLayoutDraggedArea,
           defaultIframeSize,
@@ -104,6 +109,8 @@ export const useCreatePageLayoutIframeWidget = (
         }));
 
         set(pageLayoutDraggedAreaState, null);
+
+        return newWidget;
       },
     [
       activeTabId,

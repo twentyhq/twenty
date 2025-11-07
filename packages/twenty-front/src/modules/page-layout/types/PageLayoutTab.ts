@@ -1,3 +1,4 @@
+import { type PageLayoutTabLayoutMode } from '@/page-layout/types/PageLayoutTabLayoutMode';
 import { type ModifiedProperties, type Nullable } from 'twenty-shared/types';
 import {
   type PageLayoutTab as PageLayoutTabGenerated,
@@ -12,6 +13,5 @@ export type PageLayoutTab = Omit<PageLayoutTabGenerated, 'widgets'> & {
   /**
    * Only available behind IS_RECORD_PAGE_LAYOUT_ENABLED for now.
    */
-  layoutMode?: 'grid' | 'vertical-list';
-  selfDisplayMode?: 'pinned-left';
+  layoutMode?: PageLayoutTabLayoutMode;
 };

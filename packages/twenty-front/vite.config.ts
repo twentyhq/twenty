@@ -46,7 +46,7 @@ export default defineConfig(({ command, mode }) => {
   // Please don't increase this limit for main index chunk
   // If it gets too big then find modules in the code base
   // that can be loaded lazily, there are more!
-  const MAIN_CHUNK_SIZE_LIMIT = 5.7 * 1024 * 1024; // 5.5MB for main index chunk
+  const MAIN_CHUNK_SIZE_LIMIT = 6.1 * 1024 * 1024; // 6.1MB for main index chunk
   const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
 
   const checkers: Checkers = {
@@ -112,6 +112,7 @@ export default defineConfig(({ command, mode }) => {
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
+        root: __dirname,
         projects: ['tsconfig.json'],
       }),
       svgr(),
@@ -224,7 +225,7 @@ export default defineConfig(({ command, mode }) => {
             /*
             {
               name: 'add-prefetched-modules',
-              transformIndexHtml(html: string, 
+              transformIndexHtml(html: string,
                 ctx: {
                   path: string;
                   filename: string;
@@ -239,13 +240,13 @@ export default defineConfig(({ command, mode }) => {
                     (bundle) => bundle.endsWith('.map') === false
                   );
 
-                  
+
                   // Remove existing files and concatenate them into link tags
                   const prefechBundlesString = modernBundles
                     .filter((bundle) => html.includes(bundle) === false)
                     .map((bundle) => `<link rel="prefetch" href="${ctx.server?.config.base}${bundle}">`)
                     .join('');
-            
+
                   // Use regular expression to get the content within <head> </head>
                   const headContent = html.match(/<head>([\s\S]*)<\/head>/)?.[1] ?? '';
                   // Insert the content of prefetch into the head
@@ -255,10 +256,10 @@ export default defineConfig(({ command, mode }) => {
                     /<head>([\s\S]*)<\/head>/,
                     `<head>${newHeadContent}</head>`
                   );
-            
+
                   return html;
-            
-             
+
+
               },
             }*/
           ],

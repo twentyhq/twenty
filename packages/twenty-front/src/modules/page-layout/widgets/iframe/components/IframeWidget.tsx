@@ -1,24 +1,30 @@
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
-import { type PageLayoutWidget } from '~/generated-metadata/graphql';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { type PageLayoutWidget } from '~/generated-metadata/graphql';
 
-const StyledContainer = styled.div`
-  background: ${({ theme }) => theme.background.transparent.lighter};
+const StyledContainer = styled.div<{ $isEditMode: boolean }>`
   border-radius: ${({ theme }) => theme.border.radius.md};
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
   position: relative;
   width: 100%;
+  pointer-events: ${({ $isEditMode }) => ($isEditMode ? 'none' : 'auto')};
 `;
 
-const StyledIframe = styled.iframe`
+const StyledIframe = styled.iframe<{ $isEditMode: boolean }>`
   border: none;
   flex: 1;
   height: 100%;
   width: 100%;
+  pointer-events: ${({ $isEditMode }) => ($isEditMode ? 'none' : 'auto')};
 `;
 
 const StyledLoadingContainer = styled.div`
@@ -44,30 +50,19 @@ const StyledErrorContainer = styled.div`
   text-align: center;
 `;
 
-const StyledErrorMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledErrorUrl = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-top: ${({ theme }) => theme.spacing(1)};
-  word-break: break-all;
-`;
-
 export type IframeWidgetProps = {
   widget: PageLayoutWidget;
 };
 
 export const IframeWidget = ({ widget }: IframeWidgetProps) => {
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
+
   const configuration = widget.configuration;
 
   if (!configuration || !('url' in configuration)) {
-    throw new Error(
-      `Invalid configuration for widget ${widget.id}: missing url`,
-    );
+    throw new Error(`Invalid configuration for widget ${widget.id}`);
   }
 
   const url = configuration.url;
@@ -85,25 +80,25 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
     setHasError(true);
   };
 
-  if (hasError) {
+  if (hasError || !isDefined(url)) {
     return (
-      <StyledContainer>
+      <StyledContainer $isEditMode={isPageLayoutInEditMode}>
         <StyledErrorContainer>
-          <StyledErrorMessage>Failed to load content</StyledErrorMessage>
-          <StyledErrorUrl>{url}</StyledErrorUrl>
+          <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />
         </StyledErrorContainer>
       </StyledContainer>
     );
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer $isEditMode={isPageLayoutInEditMode}>
       {isLoading && (
         <StyledLoadingContainer>
           <ChartSkeletonLoader />
         </StyledLoadingContainer>
       )}
       <StyledIframe
+        $isEditMode={isPageLayoutInEditMode}
         src={url}
         title={title}
         onLoad={handleIframeLoad}

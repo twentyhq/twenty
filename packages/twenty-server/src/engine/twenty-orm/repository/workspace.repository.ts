@@ -18,6 +18,7 @@ import {
 import { type PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -67,6 +68,8 @@ export class WorkspaceRepository<
     alias?: string,
     queryRunner?: QueryRunner,
   ): WorkspaceSelectQueryBuilder<U> {
+    assertIsDefinedOrThrow(alias);
+
     const queryBuilder = super.createQueryBuilder(
       alias,
       queryRunner,
@@ -78,7 +81,7 @@ export class WorkspaceRepository<
 
     queryBuilder.select(`${alias}.id`, `${alias}_id`);
 
-    return new WorkspaceSelectQueryBuilder(
+    const workspaceSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
       queryBuilder,
       this.objectRecordsPermissions,
       this.internalContext,
@@ -86,6 +89,11 @@ export class WorkspaceRepository<
       this.authContext,
       this.featureFlagMap,
     );
+
+    // Trigger external storage preparation lazily without awaiting, to keep sync signature
+    workspaceSelectQueryBuilder.prepareExternalStorage(alias);
+
+    return workspaceSelectQueryBuilder;
   }
 
   /**

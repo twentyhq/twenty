@@ -72,7 +72,7 @@ export class WorkspaceSSOIdentityProviderEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<WorkspaceEntity>;
 
-  @Column()
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @CreateDateColumn({ type: 'timestamptz' })

@@ -12,7 +12,6 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
@@ -21,11 +20,9 @@ import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/field
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
-import { ApolloError } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -36,6 +33,7 @@ import { Section } from 'twenty-ui/layout';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 //TODO: fix this type
 export type SettingsDataModelFieldEditFormValues = z.infer<
@@ -59,8 +57,6 @@ export const SettingsObjectFieldEdit = () => {
     setShouldNavigateBackToMemorizedUrlOnSave,
   ] = useRecoilState(shouldNavigateBackToMemorizedUrlOnSaveState);
 
-  const { enqueueErrorSnackBar } = useSnackBar();
-
   const { objectNamePlural = '', fieldName = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -68,7 +64,7 @@ export const SettingsObjectFieldEdit = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
+  const readonly = isObjectMetadataSettingsReadOnly({ objectMetadataItem });
 
   const { deactivateMetadataField, activateMetadataField } =
     useFieldMetadataItem();
@@ -127,47 +123,47 @@ export const SettingsObjectFieldEdit = () => {
     const { dirtyFields } = formConfig.formState;
     setNewNameDuringSave(formValues.name);
 
-    try {
-      if (
-        formValues.type === FieldMetadataType.RELATION &&
-        'relation' in formValues &&
-        'relation' in dirtyFields
-      ) {
-        const { relationFieldMetadataItem } =
-          getRelationMetadata({
-            fieldMetadataItem: fieldMetadataItem,
-          }) ?? {};
+    if (
+      formValues.type === FieldMetadataType.RELATION &&
+      'relation' in formValues &&
+      'relation' in dirtyFields
+    ) {
+      const { relationFieldMetadataItem } =
+        getRelationMetadata({
+          fieldMetadataItem: fieldMetadataItem,
+        }) ?? {};
 
-        if (isDefined(relationFieldMetadataItem)) {
-          await updateOneFieldMetadataItem({
-            objectMetadataId: objectMetadataItem.id,
-            fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
-            updatePayload: formValues.relation.field,
-          });
-        }
-      }
-
-      const otherDirtyFields = omit(dirtyFields, 'relation');
-
-      if (Object.keys(otherDirtyFields).length > 0) {
-        const formattedInput = Object.fromEntries(
-          Object.entries(formatFieldMetadataItemInput(formValues)).filter(
-            ([key]) => Object.keys(otherDirtyFields).includes(key),
-          ),
-        );
-
-        await updateOneFieldMetadataItem({
+      if (isDefined(relationFieldMetadataItem)) {
+        const result = await updateOneFieldMetadataItem({
           objectMetadataId: objectMetadataItem.id,
-          fieldMetadataIdToUpdate: fieldMetadataItem.id,
-          updatePayload: formattedInput,
+          fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
+          updatePayload: formValues.relation.field,
         });
 
+        if (result.status === 'failed') {
+          return;
+        }
+      }
+    }
+
+    const otherDirtyFields = omit(dirtyFields, 'relation');
+
+    if (Object.keys(otherDirtyFields).length > 0) {
+      const formattedInput = Object.fromEntries(
+        Object.entries(formatFieldMetadataItemInput(formValues)).filter(
+          ([key]) => Object.keys(otherDirtyFields).includes(key),
+        ),
+      );
+
+      const updateResult = await updateOneFieldMetadataItem({
+        objectMetadataId: objectMetadataItem.id,
+        fieldMetadataIdToUpdate: fieldMetadataItem.id,
+        updatePayload: formattedInput,
+      });
+
+      if (updateResult.status === 'successful') {
         navigateBackOrToSettings();
       }
-    } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
-      });
     }
   };
 
@@ -198,10 +194,15 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
-    await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
-    navigateSettings(SettingsPath.ObjectDetail, {
-      objectNamePlural,
-    });
+    const deactivationResult = await deactivateMetadataField(
+      fieldMetadataItem.id,
+      objectMetadataItem.id,
+    );
+    if (deactivationResult.status === 'successful') {
+      navigateSettings(SettingsPath.ObjectDetail, {
+        objectNamePlural,
+      });
+    }
   };
 
   const handleActivate = async () => {
@@ -209,10 +210,16 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
-    await activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
-    navigateSettings(SettingsPath.ObjectDetail, {
-      objectNamePlural,
-    });
+    const activationResult = await activateMetadataField(
+      fieldMetadataItem.id,
+      objectMetadataItem.id,
+    );
+
+    if (activationResult.status === 'successful') {
+      navigateSettings(SettingsPath.ObjectDetail, {
+        objectNamePlural,
+      });
+    }
   };
 
   return (

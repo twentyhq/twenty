@@ -11,6 +11,12 @@ import { DEFAULT_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultRecor
 import { DEFAULT_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultRecordPageLayoutId';
 import { DEFAULT_TASK_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultTaskRecordPageLayout';
 import { DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultTaskRecordPageLayoutId';
+import { DEFAULT_WORKFLOW_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowPageLayout';
+import { DEFAULT_WORKFLOW_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowPageLayoutId';
+import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowRunPageLayout';
+import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowRunPageLayoutId';
+import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowVersionPageLayout';
+import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowVersionPageLayoutId';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -37,6 +43,12 @@ const getDefaultLayoutById = (layoutId: string): PageLayout => {
       return DEFAULT_NOTE_RECORD_PAGE_LAYOUT;
     case DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID:
       return DEFAULT_TASK_RECORD_PAGE_LAYOUT;
+    case DEFAULT_WORKFLOW_PAGE_LAYOUT_ID:
+      return DEFAULT_WORKFLOW_PAGE_LAYOUT;
+    case DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID:
+      return DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT;
+    case DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID:
+      return DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT;
     case DEFAULT_RECORD_PAGE_LAYOUT_ID:
     default:
       return DEFAULT_RECORD_PAGE_LAYOUT;
@@ -60,7 +72,10 @@ export const PageLayoutInitializationQueryEffect = ({
     pageLayoutId === DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID ||
     pageLayoutId === DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID ||
     pageLayoutId === DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID ||
-    pageLayoutId === DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID;
+    pageLayoutId === DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_WORKFLOW_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID ||
+    pageLayoutId === DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID;
 
   const { data } = useQuery(FIND_ONE_PAGE_LAYOUT, {
     variables: {

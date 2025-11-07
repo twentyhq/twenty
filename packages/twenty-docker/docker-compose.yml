@@ -48,6 +48,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       test: curl --fail http://localhost:3000/healthz
       interval: 5s
@@ -123,6 +125,11 @@ services:
     image: redis
     restart: always
     command: ["--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   db-data:

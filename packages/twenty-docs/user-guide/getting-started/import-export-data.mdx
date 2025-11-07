@@ -1,0 +1,117 @@
+---
+title: Import/Export Data
+info: "Learn how to import and export data."
+image: /images/user-guide/import-export-data/cloud.png
+sectionInfo: Discover Twenty, an open-source CRM.
+---
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Header" />
+</Frame>
+
+## Import Data
+- You can import data for any object using a .csv, .xlsx, or .xls file.
+- Each of the files you upload needs to contain **only one type of object** (for example, only People records). 
+- You can use the Import to **create or update records**.
+
+### Download a sample file to match the expected formatting
+1. Go to a view with the object you're about to import. 
+2. Click on the `⋮` icon on the top right and then select `Import records`.
+3. Click on `Download sample file`.
+
+### Prepare your csv
+Below are a few items to check before uploading your file. 
+- Limit the number of records to **10,000 per file**.
+- **Remove duplicates** from your file.
+  - The unicity on `People` is set by default by the `id` and the `email`. You also have the ability to define custom fields from `People` as unique when configuring your data model.
+  - The unicity on `Companies` is set by default by the `id` and the `domain`. You also have the ability to define custom fields from `Companies` as unique when configuring your data model.
+  - For any other object, including custom objects, you have the ability to define some field(s) as unique. Make sure to not include duplicates when preparing your files.
+- We recommend using the syntax ```https://domain.com``` when uploading your domains, as this is the one used by our connector with your mailbox and calendar.
+- You can **import the relations between objects** by providing one of the unique fields of the associated record. 
+  - Example: You want to attach a person to a company. Add a column in the file containing all the `People` records that contains the `id` of the company -- or its `domain`. You will be able to map this field during the upload.
+<Warning>
+**Important note:**
+- Relations between objects in Twenty are "One to Many". This means each record of object A can be attached to several records of object B. But each record of object B can belong to only one record of object A.    
+*For example, one company can be attached to several people. And one person can belong to only one company.*
+
+- To upload relations via the Import function, you need to provide the `id` (or any other unique field) of the attached object in the file containing the records on the "Many side" of the relationship.  
+*For example, you provide the `id` or `domain` of the company when uploading people records. You do not provide the people's `id` (or `email`) when uploading the file with companies.*
+</Warning>
+
+
+### Upload your file
+1. Go to a view with the object you're about to import. 
+2. Click on the `⋮` icon on the top right and then select `Import records`.
+3. Click on `Select file`.
+4. Validate the mapping of the fields.
+  - You don't have to import all of them, you can choose the "Do not map" option. 
+  - For relationships, it is recommended to only map one of the unique fields. 
+  - You might need to also map the values of your select type and multi-select type fields.
+5. Click on `Next Steps` and `Review the rows with errors`. Cells with an issue are highlighted. **You can either remove the row or update the cell directly from there**.
+6. Once you're done, click on `Confirm`
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
+
+
+### Import FAQ
+
+<details>
+<summary>I see duplicates issues when uploading my file, what should I do?</summary>
+
+Please refer to the section **Prepare your csv** above in this article, it contains guideline about what will be considered a duplicate.  
+
+</details>
+
+<details>
+<summary>Can I import relations between objects?</summary>
+
+Yes, please refer to the section **Prepare your csv** above in this article, it contains a section about the import of relations. 
+
+</details>
+
+<details>
+<summary>Can I update existing records using the Import function?</summary>
+
+Yes you can update existing records using the Import function. Make sure to provide the id (or any other unique field) when re-uploading your records.
+
+</details>
+
+<details>
+<summary>Can I migrate the `id` from my other tool(s)?</summary>
+
+Yes. You need to create a field that you define as unique in your data model that will contain the `id` from your other tool(s). Please note that the name `id` is protected as it is used for the Twenty id.  
+If you want to create relations between objects using this field, refer to the section **Prepare your csv** above in this article. It contains a section about the import of relations. 
+
+</details>
+
+
+## Export Data
+
+You can download data from most of your objects and up to 20,000 records per export.
+To export data from an object:
+
+1. Visit the object index.
+2. Choose the view for data export. Configure the columns you want to download by hiding or adding columns and find the records you need by filtering your view.
+3. Access the side panel through the `⋮` icon on the top right.
+4. Click on `Export view`.
+5. Select the save location for the CSV data. Note that exporting may take time with a large record count.
+
+<div style={{padding:'71.24% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
+  <iframe 
+    src="https://player.vimeo.com/video/926226303?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479" 
+    frameBorder="0" 
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
+    style={{
+      position:'absolute',
+      top:0,
+      left:0,
+      width:'100%',
+      height:'100%',
+      borderRadius: '16px', 
+      border:'2px solid black'
+    }}
+    title="Export data"
+  ></iframe>
+</div>
+<script src="https://player.vimeo.com/api/player.js"></script>
+
+

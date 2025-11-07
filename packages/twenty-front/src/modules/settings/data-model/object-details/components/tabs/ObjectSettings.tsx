@@ -10,7 +10,7 @@ import { H2Title, IconArchive } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 type ObjectSettingsProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -28,15 +28,19 @@ const StyledFormSection = styled(Section)`
 
 export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const { t } = useLingui();
-  const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
+  const readonly = isObjectMetadataSettingsReadOnly({ objectMetadataItem });
   const navigate = useNavigateSettings();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+
   const handleDisable = async () => {
-    await updateOneObjectMetadataItem({
+    const result = await updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
       updatePayload: { isActive: false },
     });
-    navigate(SettingsPath.Objects);
+
+    if (result.status === 'successful') {
+      navigate(SettingsPath.Objects);
+    }
   };
 
   return (

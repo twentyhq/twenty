@@ -126,6 +126,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       objectMetadataMaps,
     });
 
+    if (isDefined(args.offset)) {
+      queryBuilder.skip(args.offset);
+    }
+
     const objectRecords = (await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
@@ -139,10 +143,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       limit,
       isForwardPagination,
     );
-
-    if (objectRecords.length > limit) {
-      objectRecords.pop();
-    }
 
     if (!isForwardPagination) {
       objectRecords.reverse();

@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMPTY_ALL_FLAT_ENTITY_MAPS } from 'src/engine/metadata-modules/flat-entity/constant/empty-all-flat-entity-maps.constant';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { EMPTY_ORCHESTRATOR_ACTIONS_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
+import { MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
+import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration-v2/constant/empty-orchestrator-failure-report.constant';
 import {
   WorkspaceMigrationOrchestratorBuildArgs,
@@ -65,10 +67,30 @@ export class WorkspaceMigrationBuildOrchestratorService {
         };
       },
       {
-        ...EMPTY_ALL_FLAT_ENTITY_MAPS,
+        ...createEmptyAllFlatEntityMaps(),
         ...dependencyAllFlatEntityMaps,
       },
     );
+  }
+
+  private mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation<
+    T extends AllMetadataName,
+  >({
+    allFlatEntityMaps,
+    flatEntityMapsAndRelatedFlatEntityMaps,
+  }: {
+    flatEntityMapsAndRelatedFlatEntityMaps: MetadataFlatEntityAndRelatedFlatEntityMaps<T>;
+    allFlatEntityMaps: AllFlatEntityMaps;
+  }) {
+    const flatEntityMapsKeys = Object.keys(
+      flatEntityMapsAndRelatedFlatEntityMaps,
+    ) as (keyof MetadataFlatEntityAndRelatedFlatEntityMaps<T>)[];
+
+    for (const flatEntityMapsKey of flatEntityMapsKeys) {
+      // @ts-expect-error TODO improve
+      allFlatEntityMaps[flatEntityMapsKey] =
+        flatEntityMapsAndRelatedFlatEntityMaps[flatEntityMapsKey];
+    }
   }
 
   public async buildWorkspaceMigration({
@@ -81,10 +103,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
     | WorkspaceMigrationOrchestratorSuccessfulResult
   > {
     const orchestratorActionsReport = structuredClone({
-      ...EMPTY_ORCHESTRATOR_ACTIONS_REPORT,
+      ...createEmptyOrchestratorActionsReport(),
     });
     const orchestratorFailureReport = structuredClone(
-      EMPTY_ORCHESTRATOR_FAILURE_REPORT,
+      EMPTY_ORCHESTRATOR_FAILURE_REPORT(),
     );
 
     const optimisticAllFlatEntityMaps = this.setupOptimisticCache({
@@ -144,8 +166,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatObjectMetadataMaps =
-        objectResult.optimisticFlatEntityMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            objectResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (objectResult.status === 'fail') {
         orchestratorFailureReport.objectMetadata.push(...objectResult.errors);
@@ -171,10 +198,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatFieldMetadataMaps =
-        fieldResult.optimisticFlatEntityMaps;
-      optimisticAllFlatEntityMaps.flatObjectMetadataMaps =
-        fieldResult.dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            fieldResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (fieldResult.status === 'fail') {
         orchestratorFailureReport.fieldMetadata.push(...fieldResult.errors);
@@ -201,10 +231,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatIndexMaps =
-        indexResult.optimisticFlatEntityMaps;
-      optimisticAllFlatEntityMaps.flatObjectMetadataMaps =
-        indexResult.dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            indexResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (indexResult.status === 'fail') {
         orchestratorFailureReport.index.push(...indexResult.errors);
@@ -231,10 +264,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatViewMaps =
-        viewResult.optimisticFlatEntityMaps;
-      optimisticAllFlatEntityMaps.flatObjectMetadataMaps =
-        viewResult.dependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            viewResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (viewResult.status === 'fail') {
         orchestratorFailureReport.view.push(...viewResult.errors);
@@ -263,12 +299,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatViewFieldMaps =
-        viewFieldResult.optimisticFlatEntityMaps;
-      optimisticAllFlatEntityMaps.flatViewMaps =
-        viewFieldResult.dependencyOptimisticFlatEntityMaps.flatViewMaps;
-      optimisticAllFlatEntityMaps.flatFieldMetadataMaps =
-        viewFieldResult.dependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            viewFieldResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (viewFieldResult.status === 'fail') {
         orchestratorFailureReport.viewField.push(...viewFieldResult.errors);
@@ -295,10 +332,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatViewFilterMaps =
-        viewFilterResult.optimisticFlatEntityMaps;
-      optimisticAllFlatEntityMaps.flatViewMaps =
-        viewFilterResult.dependencyOptimisticFlatEntityMaps.flatViewMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            viewFilterResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (viewFilterResult.status === 'fail') {
         orchestratorFailureReport.viewFilter.push(...viewFilterResult.errors);
@@ -325,10 +365,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatViewGroupMaps =
-        viewGroupResult.optimisticFlatEntityMaps;
-      optimisticAllFlatEntityMaps.flatViewMaps =
-        viewGroupResult.dependencyOptimisticFlatEntityMaps.flatViewMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            viewGroupResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (viewGroupResult.status === 'fail') {
         orchestratorFailureReport.viewGroup.push(...viewGroupResult.errors);
@@ -354,8 +397,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatServerlessFunctionMaps =
-        serverlessFunctionResult.optimisticFlatEntityMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            serverlessFunctionResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (serverlessFunctionResult.status === 'fail') {
         orchestratorFailureReport.serverlessFunction.push(
@@ -387,8 +435,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatDatabaseEventTriggerMaps =
-        databaseEventTriggerResult.optimisticFlatEntityMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            databaseEventTriggerResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (databaseEventTriggerResult.status === 'fail') {
         orchestratorFailureReport.databaseEventTrigger.push(
@@ -418,8 +471,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatCronTriggerMaps =
-        cronTriggerResult.optimisticFlatEntityMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            cronTriggerResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (cronTriggerResult.status === 'fail') {
         orchestratorFailureReport.cronTrigger.push(...cronTriggerResult.errors);
@@ -446,8 +504,13 @@ export class WorkspaceMigrationBuildOrchestratorService {
           },
         );
 
-      optimisticAllFlatEntityMaps.flatRouteTriggerMaps =
-        routeTriggerResult.optimisticFlatEntityMaps;
+      this.mergeFlatEntityMapsAndRelatedFlatEntityMapsInAllFlatEntityMapsThroughMutation(
+        {
+          allFlatEntityMaps: optimisticAllFlatEntityMaps,
+          flatEntityMapsAndRelatedFlatEntityMaps:
+            routeTriggerResult.optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
+        },
+      );
 
       if (routeTriggerResult.status === 'fail') {
         orchestratorFailureReport.routeTrigger.push(

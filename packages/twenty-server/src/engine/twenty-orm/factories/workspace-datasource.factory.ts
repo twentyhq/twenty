@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
+import { EXTERNAL_FIELD_DRIVERS, type ExternalFieldDrivers } from 'src/engine/twenty-orm/storage/external-field-drivers.token';
 import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema, Repository } from 'typeorm';
 
@@ -57,6 +58,8 @@ export class WorkspaceDatasourceFactory {
       string,
       ObjectsPermissionsByRoleId
     >,
+    @Inject(EXTERNAL_FIELD_DRIVERS)
+    private readonly externalFieldDrivers: ExternalFieldDrivers,
   ) {}
 
   private async safelyDestroyDataSource(
@@ -177,6 +180,7 @@ export class WorkspaceDatasourceFactory {
               objectMetadataMaps: cachedObjectMetadataMaps,
               featureFlagsMap: cachedFeatureFlagMap,
               eventEmitterService: this.workspaceEventEmitter,
+              externalFieldDrivers: this.externalFieldDrivers,
             },
             {
               url:

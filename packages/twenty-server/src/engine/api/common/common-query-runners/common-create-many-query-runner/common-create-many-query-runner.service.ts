@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,7 +29,7 @@ import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-s
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -47,6 +48,16 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
+    if (args.data.length > QUERY_MAX_RECORDS) {
+      throw new CommonQueryRunnerException(
+        `Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        CommonQueryRunnerExceptionCode.UPSERT_MAX_RECORDS_EXCEEDED,
+        {
+          userFriendlyMessage: msg`Maximum number of records to upsert is ${QUERY_MAX_RECORDS}.`,
+        },
+      );
+    }
+
     const {
       repository,
       authContext,
@@ -276,7 +287,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       repository.objectRecordsPermissions?.[objectMetadataItemWithFieldMaps.id]
         ?.restrictedFields;
 
-    const selectOptions = getAllSelectableFields({
+    const selectOptions = getAllSelectableColumnNames({
       restrictedFields: restrictedFields ?? {},
       objectMetadata: {
         objectMetadataMapItem: objectMetadataItemWithFieldMaps,

@@ -75,7 +75,6 @@ export const formatDimensionValue = ({
 
     case FieldMetadataType.DATE:
     case FieldMetadataType.DATE_TIME: {
-      // TODO: granularity will be passed from the graph configuration when implemented
       if (
         dateGranularity ===
           ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||

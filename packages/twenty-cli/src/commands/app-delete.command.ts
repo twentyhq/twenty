@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { ApiService } from '../services/api.service';
 import { ApiResponse } from '../types/config.types';
-import { loadManifest } from '../utils/app-manifest-loader';
+import { loadManifest } from '../utils/load-manifest';
 
 export class AppDeleteCommand {
   private apiService = new ApiService();
@@ -25,9 +25,11 @@ export class AppDeleteCommand {
         process.exit(1);
       }
 
-      const { packageJson } = await loadManifest(appPath);
+      const { manifest } = await loadManifest(appPath);
 
-      const result = await this.apiService.deleteApplication(packageJson);
+      const result = await this.apiService.deleteApplication(
+        manifest.application.universalIdentifier,
+      );
 
       if (!result.success) {
         console.error(chalk.red('❌ Deletion failed:'), result.error);

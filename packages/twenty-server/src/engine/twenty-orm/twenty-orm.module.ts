@@ -21,6 +21,8 @@ import { RedisFieldRepository } from 'src/engine/twenty-orm/repository/redis-fie
 import { RedisFieldsDataSource } from 'src/engine/twenty-orm/datasource/redis-fields-data-source.service';
 import { RedisStorageDriver } from 'src/engine/twenty-orm/storage/drivers/redis-storage.driver';
 import { RedisFieldSqlFactory } from 'src/engine/twenty-orm/factories/redis-field-sql.factory';
+import { ExternalFieldDriversProvider } from 'src/engine/twenty-orm/storage/external-field-drivers.provider';
+import { EXTERNAL_FIELD_DRIVERS } from 'src/engine/twenty-orm/storage/external-field-drivers.token';
 
 import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
 
@@ -50,6 +52,8 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
     RedisFieldsDataSource,
     RedisStorageDriver,
     RedisFieldSqlFactory,
+    // External Field Drivers registry provider
+    ExternalFieldDriversProvider,
   ],
   exports: [
     EntitySchemaFactory,
@@ -59,6 +63,8 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
     TwentyORMGlobalManager,
     PgPoolSharedModule,
     ScopedWorkspaceContextFactory,
+    // Export the registry so it can be injected elsewhere
+    EXTERNAL_FIELD_DRIVERS,
   ],
 })
 export class TwentyORMModule {}

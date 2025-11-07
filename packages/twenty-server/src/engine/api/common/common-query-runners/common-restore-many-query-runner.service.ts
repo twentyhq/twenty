@@ -24,7 +24,6 @@ import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runne
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerService<
@@ -51,14 +50,9 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const tableName = computeTableName(
-      objectMetadataItemWithFieldMaps.nameSingular,
-      objectMetadataItemWithFieldMaps.isCustom,
-    );
-
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
-      tableName,
+      objectMetadataItemWithFieldMaps.nameSingular,
       args.filter,
     );
 

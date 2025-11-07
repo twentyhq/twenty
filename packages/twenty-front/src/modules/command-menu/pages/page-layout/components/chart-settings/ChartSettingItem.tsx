@@ -14,7 +14,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 type ChartSettingItemProps = {
   item: ChartSettingsItem;
-  isDisabled: boolean;
   configuration: ChartConfiguration;
   getChartSettingsValues: (
     itemId: CHART_CONFIGURATION_SETTING_IDS,
@@ -27,7 +26,6 @@ type ChartSettingItemProps = {
 
 export const ChartSettingItem = ({
   item,
-  isDisabled,
   configuration,
   getChartSettingsValues,
   onToggleChange,
@@ -68,7 +66,7 @@ export const ChartSettingItem = ({
               value={stringValue}
               onChange={onInputChange}
               onValidate={(value) =>
-                isDefined(value) &&
+                !isDefined(value) ||
                 isMinMaxRangeValid(
                   item.id as
                     | CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE
@@ -92,7 +90,7 @@ export const ChartSettingItem = ({
       <SelectableListItem
         key={item.id}
         itemId={item.id}
-        onEnter={isDisabled ? undefined : onToggleChange}
+        onEnter={onToggleChange}
       >
         <CommandMenuItemToggle
           LeftIcon={item.Icon}
@@ -106,18 +104,14 @@ export const ChartSettingItem = ({
   }
 
   return (
-    <SelectableListItem
-      key={item.id}
-      itemId={item.id}
-      onEnter={isDisabled ? undefined : onDropdownOpen}
-    >
+    <SelectableListItem key={item.id} itemId={item.id} onEnter={onDropdownOpen}>
       <CommandMenuItemDropdown
         Icon={item.Icon}
         label={t(item.label)}
         id={item.id}
         dropdownId={item.id}
         dropdownComponents={
-          <DropdownContent>
+          <DropdownContent widthInPixels={item.dropdownWidth}>
             {item.DropdownContent && <item.DropdownContent />}
           </DropdownContent>
         }
@@ -125,7 +119,6 @@ export const ChartSettingItem = ({
         description={getChartSettingsValues(item.id) as string}
         contextualTextPosition={'right'}
         hasSubMenu
-        disabled={isDisabled}
       />
     </SelectableListItem>
   );

@@ -38,7 +38,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(messageChannelIds, {
-      syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
     });
   }
 
@@ -131,7 +131,7 @@ export class MessageChannelSyncStatusService {
 
     await messageChannelRepository.update(messageChannelIds, {
       syncStatus: MessageChannelSyncStatus.ACTIVE,
-      syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
       throttleFailureCount: 0,
       syncStageStartedAt: null,
       syncedAt: new Date().toISOString(),
@@ -190,31 +190,35 @@ export class MessageChannelSyncStatusService {
       eventIds: messageChannelIds,
     });
 
-    const connectedAccountRepository =
-      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
-        'connectedAccount',
+    if (
+      syncStatus === MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS
+    ) {
+      const connectedAccountRepository =
+        await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+          'connectedAccount',
+        );
+
+      const messageChannels = await messageChannelRepository.find({
+        select: ['id', 'connectedAccountId'],
+        where: { id: Any(messageChannelIds) },
+      });
+
+      const connectedAccountIds = messageChannels.map(
+        (messageChannel) => messageChannel.connectedAccountId,
       );
 
-    const messageChannels = await messageChannelRepository.find({
-      select: ['id', 'connectedAccountId'],
-      where: { id: Any(messageChannelIds) },
-    });
+      await connectedAccountRepository.update(
+        { id: Any(connectedAccountIds) },
+        {
+          authFailedAt: new Date(),
+        },
+      );
 
-    const connectedAccountIds = messageChannels.map(
-      (messageChannel) => messageChannel.connectedAccountId,
-    );
-
-    await connectedAccountRepository.update(
-      { id: Any(connectedAccountIds) },
-      {
-        authFailedAt: new Date(),
-      },
-    );
-
-    await this.addToAccountsToReconnect(
-      messageChannels.map((messageChannel) => messageChannel.id),
-      workspaceId,
-    );
+      await this.addToAccountsToReconnect(
+        messageChannels.map((messageChannel) => messageChannel.id),
+        workspaceId,
+      );
+    }
   }
 
   private async addToAccountsToReconnect(

@@ -9,12 +9,18 @@ import { MemoryRouter } from 'react-router-dom';
 import { type MutableSnapshot } from 'recoil';
 
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { shouldAppBeLoadingState } from '@/object-metadata/states/shouldAppBeLoadingState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { PageLayoutTestWrapper } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
+import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
+import {
+  PAGE_LAYOUT_TEST_INSTANCE_ID,
+  PageLayoutTestWrapper,
+} from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
+import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import {
   GraphOrderBy,
   GraphType,
@@ -23,6 +29,7 @@ import {
 import {
   AggregateOperations,
   AxisNameDisplay,
+  PageLayoutType,
   type PageLayoutWidget,
 } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -122,7 +129,22 @@ const meta: Meta<typeof WidgetRenderer> = {
           objectMetadataItemsState,
           generatedMockObjectMetadataItems,
         );
-        snapshot.set(isAppWaitingForFreshObjectMetadataState, false);
+        snapshot.set(shouldAppBeLoadingState, false);
+        snapshot.set(
+          pageLayoutPersistedComponentState.atomFamily({
+            instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          }),
+          {
+            id: PAGE_LAYOUT_TEST_INSTANCE_ID,
+            name: 'Mock Page Layout',
+            type: PageLayoutType.DASHBOARD,
+            objectMetadataId: companyObjectMetadataItem.id,
+            tabs: [],
+            createdAt: '2024-01-01T00:00:00Z',
+            updatedAt: '2024-01-01T00:00:00Z',
+            deletedAt: null,
+          },
+        );
       };
 
       return (
@@ -130,7 +152,26 @@ const meta: Meta<typeof WidgetRenderer> = {
           <JestMetadataAndApolloMocksWrapper>
             <CoreClientProviderWrapper>
               <PageLayoutTestWrapper initializeState={initializeState}>
-                <Story />
+                <LayoutRenderingProvider
+                  value={{
+                    isInRightDrawer: false,
+                    layoutType: PageLayoutType.DASHBOARD,
+                    targetRecordIdentifier: {
+                      id: companyObjectMetadataItem.id,
+                      targetObjectNameSingular:
+                        companyObjectMetadataItem.nameSingular,
+                    },
+                  }}
+                >
+                  <PageLayoutContentProvider
+                    value={{
+                      layoutMode: 'grid',
+                      tabId: 'fields',
+                    }}
+                  >
+                    <Story />
+                  </PageLayoutContentProvider>
+                </LayoutRenderingProvider>
               </PageLayoutTestWrapper>
             </CoreClientProviderWrapper>
           </JestMetadataAndApolloMocksWrapper>

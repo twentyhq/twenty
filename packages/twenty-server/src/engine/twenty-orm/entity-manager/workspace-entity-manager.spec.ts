@@ -8,6 +8,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
+import type { ExternalFieldDrivers } from 'src/engine/twenty-orm/storage/external-field-drivers.token';
 
 import { WorkspaceEntityManager } from './workspace-entity-manager';
 
@@ -131,25 +132,23 @@ describe('WorkspaceEntityManager', () => {
         IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_RELATION_CONNECT_ENABLED: false,
-        IS_CORE_VIEW_SYNCING_ENABLED: false,
-        IS_CORE_VIEW_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,
         IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
-        IS_CALENDAR_VIEW_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
-        IS_DYNAMIC_SEARCH_FIELDS_ENABLED: false,
-        IS_COMMON_API_ENABLED: false,
         IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
+        IS_DASHBOARD_V2_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
         emitDatabaseBatchEvent: jest.fn(),
         emitCustomBatchEvent: jest.fn(),
       } as any,
+      externalFieldDrivers: {
+        redis: jest.fn(),
+      } as unknown as ExternalFieldDrivers,
     } as WorkspaceInternalContext;
 
     mockDataSource = {
@@ -163,18 +162,14 @@ describe('WorkspaceEntityManager', () => {
         IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_RELATION_CONNECT_ENABLED: false,
-        IS_CORE_VIEW_SYNCING_ENABLED: false,
-        IS_CORE_VIEW_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,
         IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
-        IS_CALENDAR_VIEW_ENABLED: false,
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
-        IS_DYNAMIC_SEARCH_FIELDS_ENABLED: false,
-        IS_COMMON_API_ENABLED: false,
+        IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
+        IS_DASHBOARD_V2_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;

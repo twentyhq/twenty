@@ -32,11 +32,20 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
+    key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
     metadata: {
-      label: 'Calendar View',
-      description: 'View and manage calendar events',
-      imagePath: 'https://twenty.com/images/lab/is-calendar-view-enabled.png',
+      label: 'Dashboards',
+      description: 'Enable dashboards',
+      imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
+    },
+  },
+  {
+    key: FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
+    metadata: {
+      label: 'Morph Relations',
+      description:
+        'Create polymorphic relationships that can link to multiple object types',
+      imagePath: 'https://twenty.com/images/lab/is-morph-relation-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

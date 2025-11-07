@@ -30,13 +30,8 @@ export class UpsertRecordService {
   ) {}
 
   async execute(params: UpsertRecordParams): Promise<ToolOutput> {
-    const {
-      objectName,
-      objectRecord,
-      fieldsToUpdate,
-      workspaceId,
-      rolePermissionConfig,
-    } = params;
+    const { objectName, objectRecord, workspaceId, rolePermissionConfig } =
+      params;
 
     if (!workspaceId) {
       return {
@@ -54,7 +49,9 @@ export class UpsertRecordService {
           rolePermissionConfig,
         );
 
-      const fieldsToUpdateArray = fieldsToUpdate || Object.keys(objectRecord);
+      const fieldsToUpdateArray = Object.keys(objectRecord).filter((field) =>
+        isDefined(objectRecord[field]),
+      );
 
       const { objectMetadataItemWithFieldsMaps } =
         await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
@@ -95,9 +92,13 @@ export class UpsertRecordService {
         });
 
       const uniqueFieldsToUpdate = fieldsToUpdateArray
-        .map((field) => objectMetadataItemWithFieldsMaps.fieldIdByName[field])
+        .map(
+          (field) =>
+            objectMetadataItemWithFieldsMaps.fieldIdByName[field] ||
+            objectMetadataItemWithFieldsMaps.fieldIdByJoinColumnName[field],
+        )
         .map((fieldId) => objectMetadataItemWithFieldsMaps.fieldsById[fieldId])
-        .filter((field) => field.isUnique || field.name === 'id');
+        .filter((field) => field && (field.isUnique || field.name === 'id'));
 
       const conflictPathsUniqueFieldsToUpdate = uniqueFieldsToUpdate.flatMap(
         (field) => {

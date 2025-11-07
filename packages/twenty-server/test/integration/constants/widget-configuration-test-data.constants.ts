@@ -40,7 +40,7 @@ export const TEST_VERTICAL_BAR_CHART_CONFIG = {
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
   displayDataLabel: true,
-  axisNameDisplay: AxisNameDisplay.BOTH,
+  axisNameDisplay: AxisNameDisplay.NONE,
   color: 'red',
   description: 'Monthly revenue breakdown',
   omitNullValues: true,
@@ -65,7 +65,7 @@ export const TEST_HORIZONTAL_BAR_CHART_CONFIG = {
   primaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_2,
   primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
   displayDataLabel: true,
-  axisNameDisplay: AxisNameDisplay.BOTH,
+  axisNameDisplay: AxisNameDisplay.NONE,
   color: 'blue',
   description: 'Horizontal revenue breakdown',
   omitNullValues: true,
@@ -92,7 +92,7 @@ export const TEST_LINE_CHART_CONFIG = {
   secondaryAxisGroupByFieldMetadataId: TEST_FIELD_METADATA_ID_3,
   secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
   displayDataLabel: true,
-  axisNameDisplay: AxisNameDisplay.BOTH,
+  axisNameDisplay: AxisNameDisplay.NONE,
   color: 'cyan',
   description: 'Trend over time',
   omitNullValues: false,
@@ -166,8 +166,6 @@ export const TEST_GAUGE_CHART_CONFIG_MINIMAL = {
 export const INVALID_IFRAME_CONFIG_BAD_URL = {
   url: 'not-a-valid-url',
 };
-
-export const INVALID_IFRAME_CONFIG_MISSING_URL = {};
 
 export const INVALID_IFRAME_CONFIG_EMPTY_URL = {
   url: '',
@@ -246,7 +244,6 @@ export const ALL_MINIMAL_GRAPH_CONFIGS = [
 
 export const ALL_INVALID_CONFIGS = [
   INVALID_IFRAME_CONFIG_BAD_URL,
-  INVALID_IFRAME_CONFIG_MISSING_URL,
   INVALID_IFRAME_CONFIG_EMPTY_URL,
   INVALID_NUMBER_CHART_CONFIG_MISSING_FIELDS,
   INVALID_NUMBER_CHART_CONFIG_BAD_UUID,

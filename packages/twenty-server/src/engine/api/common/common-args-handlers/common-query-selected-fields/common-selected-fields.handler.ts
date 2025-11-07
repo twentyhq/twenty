@@ -1,12 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { getAllSelectableFields } from 'src/engine/api/rest/core/rest-to-common-args-handlers/utils/get-all-selectable-fields.util';
 import { MAX_DEPTH } from 'src/engine/api/rest/input-request-parsers/constants/max-depth.constant';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -86,8 +90,9 @@ export class CommonSelectedFieldsHandler {
         objectMetadataMaps.byId[field.relationTargetObjectMetadataId];
 
       if (!isDefined(relationTargetObjectMetadata)) {
-        throw new BadRequestException(
+        throw new CommonQueryRunnerException(
           `Object metadata relation target not found for relation creation payload`,
+          CommonQueryRunnerExceptionCode.BAD_REQUEST,
         );
       }
       const relationFieldSelectFields = getAllSelectableFields({

@@ -45,7 +45,6 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 @Injectable()
@@ -160,6 +159,30 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
       );
     }
+    if (payload.isGoogleAuthBypassEnabled && !authProvidersBySystem.google) {
+      throw new WorkspaceException(
+        'Google auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
+    if (
+      payload.isMicrosoftAuthBypassEnabled &&
+      !authProvidersBySystem.microsoft
+    ) {
+      throw new WorkspaceException(
+        'Microsoft auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
+    if (
+      payload.isPasswordAuthBypassEnabled &&
+      !authProvidersBySystem.password
+    ) {
+      throw new WorkspaceException(
+        'Password auth is not enabled in the system.',
+        WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
+      );
+    }
 
     try {
       return await this.workspaceRepository.save({
@@ -204,11 +227,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
 
-    await this.featureFlagService.enableFeatureFlags(
-      DEFAULT_FEATURE_FLAGS,
-      workspace.id,
-    );
-
     await this.workspaceManagerService.init({
       workspaceId: workspace.id,
       userId: user.id,
@@ -229,7 +247,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   }
 
   async deleteMetadataSchemaCacheAndUserWorkspace(workspace: WorkspaceEntity) {
-    await this.userWorkspaceRepository.delete({ workspaceId: workspace.id });
+    await this.userWorkspaceService.deleteUserWorkspace({
+      userWorkspaceId: workspace.id,
+    });
 
     if (this.billingService.isBillingEnabled()) {
       await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
@@ -241,12 +261,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   }
 
   async deleteWorkspace(id: string, softDelete = false) {
-    //TODO: delete all logs when #611 closed
-
-    this.logger.log(
-      `${softDelete ? 'Soft' : 'Hard'} deleting workspace ${id} ...`,
-    );
-
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
       withDeleted: true,
@@ -317,25 +331,31 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     userId: string,
     softDelete = false,
   ) {
-    if (softDelete) {
-      await this.userWorkspaceRepository.softDelete({
-        userId,
-        workspaceId,
-      });
-    } else {
-      await this.userWorkspaceRepository.delete({
-        userId,
-        workspaceId,
-      });
-    }
-
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         userId,
       },
     });
 
-    if (userWorkspaces.length === 0) {
+    const userWorkspaceOfRemovedWorkspaceMember = userWorkspaces?.find(
+      (userWorkspace: UserWorkspaceEntity) =>
+        userWorkspace.workspaceId === workspaceId,
+    );
+
+    if (isDefined(userWorkspaceOfRemovedWorkspaceMember)) {
+      await this.userWorkspaceService.deleteUserWorkspace({
+        userWorkspaceId: userWorkspaceOfRemovedWorkspaceMember.id,
+        softDelete,
+      });
+    }
+
+    const hasOtherUserWorkspaces = isDefined(
+      userWorkspaceOfRemovedWorkspaceMember,
+    )
+      ? userWorkspaces.length > 1
+      : userWorkspaces.length > 0;
+
+    if (!hasOtherUserWorkspaces) {
       await this.userRepository.softDelete(userId);
     }
   }

@@ -31,7 +31,7 @@ export const useLineChartTooltip = ({
       return {
         items: [],
         showClickHint: false,
-        title: undefined,
+        indexLabel: undefined,
       };
     }
 
@@ -42,12 +42,11 @@ export const useLineChartTooltip = ({
         );
         if (!enrichedSeriesItem) return null;
 
+        const value = Number(point.data.y || 0);
         return {
           label: enrichedSeriesItem.label,
-          formattedValue: formatGraphValue(
-            Number(point.data.y || 0),
-            formatOptions,
-          ),
+          formattedValue: formatGraphValue(value, formatOptions),
+          value,
           dotColor: enrichedSeriesItem.colorScheme.solid,
         };
       })
@@ -67,7 +66,7 @@ export const useLineChartTooltip = ({
     return {
       items: tooltipItems,
       showClickHint: hasClickablePoint,
-      title: isDefined(xValue) ? String(xValue) : undefined,
+      indexLabel: isDefined(xValue) ? String(xValue) : undefined,
     };
   };
 
@@ -78,19 +77,18 @@ export const useLineChartTooltip = ({
     const series = dataMap[point.seriesId];
     const dataPoint = series?.data[point.indexInSeries];
 
+    const value = Number(point.data.y || 0);
     return {
       items: [
         {
           label: enrichedSeriesItem.label,
-          formattedValue: formatGraphValue(
-            Number(point.data.y || 0),
-            formatOptions,
-          ),
+          formattedValue: formatGraphValue(value, formatOptions),
+          value,
           dotColor: enrichedSeriesItem.colorScheme.solid,
         },
       ],
       showClickHint: isDefined(dataPoint?.to),
-      title: isDefined(point.data.x) ? String(point.data.x) : undefined,
+      indexLabel: isDefined(point.data.x) ? String(point.data.x) : undefined,
     };
   };
 

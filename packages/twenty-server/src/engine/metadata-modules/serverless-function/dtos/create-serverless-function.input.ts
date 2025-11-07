@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
-import { ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
+import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 
 @InputType()
 export class CreateServerlessFunctionInput {
@@ -44,5 +44,15 @@ export class CreateServerlessFunctionInput {
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
   @IsOptional()
-  code?: ServerlessFunctionCode;
+  code?: Sources;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  handlerName?: string;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  handlerPath?: string;
 }

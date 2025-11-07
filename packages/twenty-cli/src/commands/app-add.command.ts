@@ -5,31 +5,18 @@ import inquirer from 'inquirer';
 import path from 'path';
 import camelcase from 'lodash.camelcase';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { HTTPMethod } from '../types/config.types';
-import { parseJsoncFile, writeJsoncFile } from '../utils/jsonc-parser';
 import { getSchemaUrls } from '../utils/schema-validator';
 import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
-import { getDecoratedClass } from '../utils/get-decorated-class';
+import { getObjectMetadataDecoratedClass } from '../utils/get-object-metadata-decorated-class';
+import { getServerlessFunctionBaseFile } from '../utils/get-serverless-function-base-file';
+
+const ROOT_FOLDER = 'src';
 
 export enum SyncableEntity {
   AGENT = 'agent',
   OBJECT = 'object',
   SERVERLESS_FUNCTION = 'serverlessFunction',
-  TRIGGER = 'trigger',
 }
-
-const getFolderName = (entity: SyncableEntity) => {
-  switch (entity) {
-    case SyncableEntity.AGENT:
-      return 'agents';
-    case SyncableEntity.OBJECT:
-      return 'objects';
-    case SyncableEntity.SERVERLESS_FUNCTION:
-      return 'serverlessFunctions';
-    default:
-      throw new Error(`Unknown entity type: ${entity}`);
-  }
-};
 
 export const isSyncableEntity = (value: string): value is SyncableEntity => {
   return Object.values(SyncableEntity).includes(value as SyncableEntity);
@@ -38,21 +25,11 @@ export const isSyncableEntity = (value: string): value is SyncableEntity => {
 export class AppAddCommand {
   async execute(entityType?: SyncableEntity): Promise<void> {
     try {
-      const appPath = CURRENT_EXECUTION_DIRECTORY;
+      const appPath = path.join(CURRENT_EXECUTION_DIRECTORY, ROOT_FOLDER);
+
+      await fs.ensureDir(appPath);
 
       const entity = entityType ?? (await this.getEntity());
-
-      const appExists = await fs.pathExists(appPath);
-
-      if (!appExists) {
-        console.error(chalk.red('App does not exist'));
-        process.exit(1);
-      }
-
-      if (entity === SyncableEntity.TRIGGER) {
-        await this.addTriggerToServerlessFunction(appPath);
-        return;
-      }
 
       const entityName = await this.getEntityName(entity);
 
@@ -64,7 +41,7 @@ export class AppAddCommand {
 
         const objectFileName = `${camelcase(entityName)}.ts`;
 
-        const decoratedObject = getDecoratedClass({
+        const decoratedObject = getObjectMetadataDecoratedClass({
           data: entityData,
           name: entityName,
         });
@@ -74,18 +51,20 @@ export class AppAddCommand {
         return;
       }
 
-      const folderName = getFolderName(entity);
+      if (entity === SyncableEntity.SERVERLESS_FUNCTION) {
+        const objectFileName = `${camelcase(entityName)}.ts`;
 
-      const entitiesDir = path.join(appPath, folderName, entityName);
+        const decoratedServerlessFunction = getServerlessFunctionBaseFile({
+          name: entityName,
+        });
 
-      await fs.ensureDir(entitiesDir);
+        await fs.writeFile(
+          path.join(appPath, objectFileName),
+          decoratedServerlessFunction,
+        );
 
-      await writeJsoncFile(
-        path.join(entitiesDir, `${entity}.manifest.jsonc`),
-        entityData,
-      );
-
-      await this.addEntityInitFiles(entity, entitiesDir);
+        return;
+      }
     } catch (error) {
       console.error(
         chalk.red(`Add new entity failed:`),
@@ -123,11 +102,7 @@ export class AppAddCommand {
         name: 'entity',
         message: `What entity do you want to create?`,
         default: '',
-        choices: [
-          SyncableEntity.SERVERLESS_FUNCTION,
-          SyncableEntity.OBJECT,
-          SyncableEntity.TRIGGER,
-        ],
+        choices: [SyncableEntity.SERVERLESS_FUNCTION, SyncableEntity.OBJECT],
       },
     ]);
 
@@ -211,179 +186,5 @@ export class AppAddCommand {
     }
 
     return entityToCreateData;
-  }
-
-  private async addTriggerToServerlessFunction(appPath: string) {
-    const serverlessFunctionsDir = path.join(appPath, 'serverlessFunctions');
-
-    if (!(await fs.pathExists(serverlessFunctionsDir))) {
-      console.error(chalk.red('No serverless functions found in this app'));
-      process.exit(1);
-    }
-
-    const serverlessFunctions = await fs.readdir(serverlessFunctionsDir);
-
-    if (serverlessFunctions.length === 0) {
-      console.error(chalk.red('No serverless functions found in this app'));
-      process.exit(1);
-    }
-
-    const { serverlessFunctionName } = await inquirer.prompt<{
-      serverlessFunctionName: string;
-    }>([
-      {
-        type: 'list',
-        name: 'serverlessFunctionName',
-        message: 'Select a serverless function to add a trigger to:',
-        choices: serverlessFunctions,
-      },
-    ]);
-
-    const { triggerType } = await inquirer.prompt<{ triggerType: string }>([
-      {
-        type: 'list',
-        name: 'triggerType',
-        message: 'Select the type of trigger:',
-        choices: ['databaseEvent', 'cron', 'route'],
-      },
-    ]);
-
-    let triggerData: any;
-
-    if (triggerType === 'databaseEvent') {
-      triggerData = await this.createDatabaseEventTrigger();
-    } else if (triggerType === 'cron') {
-      triggerData = await this.createCronTrigger();
-    } else if (triggerType === 'route') {
-      triggerData = await this.createRouteTrigger();
-    }
-
-    const manifestPath = path.join(
-      serverlessFunctionsDir,
-      serverlessFunctionName,
-      'serverlessFunction.manifest.jsonc',
-    );
-
-    const manifest = await parseJsoncFile(manifestPath);
-
-    if (!manifest.triggers) {
-      manifest.triggers = [];
-    }
-
-    manifest.triggers.push(triggerData);
-
-    await writeJsoncFile(manifestPath, manifest);
-
-    console.log(
-      chalk.green(`✅ Trigger added successfully to ${serverlessFunctionName}`),
-    );
-  }
-
-  private async createDatabaseEventTrigger() {
-    const uuid = randomUUID();
-
-    const { eventName } = await inquirer.prompt<{ eventName: string }>([
-      {
-        type: 'input',
-        name: 'eventName',
-        message:
-          'Enter the database event name (e.g. company.created, *.updated, person.*):',
-        validate: (input) => {
-          if (input.length === 0) {
-            return 'Event name is required';
-          }
-          if (!/^(?:[a-zA-Z]+|\*)\.(created|updated|deleted|\*)$/.test(input)) {
-            return 'Event name must be in format: (objectName|*).(created|updated|deleted|*)';
-          }
-          return true;
-        },
-      },
-    ]);
-
-    return {
-      universalIdentifier: uuid,
-      type: 'databaseEvent',
-      eventName,
-    };
-  }
-
-  private async createCronTrigger() {
-    const uuid = randomUUID();
-
-    const { schedule } = await inquirer.prompt<{ schedule: string }>([
-      {
-        type: 'input',
-        name: 'schedule',
-        message: 'Enter the cron schedule (e.g., 0 9 * * * for daily at 9 AM):',
-        validate: (input) => {
-          if (input.length === 0) {
-            return 'Schedule is required';
-          }
-
-          const parts = input.trim().split(/\s+/);
-
-          if (parts.length < 5 || parts.length > 6) {
-            return 'Cron schedule must have 5 or 6 fields (e.g., 0 9 * * *)';
-          }
-          return true;
-        },
-      },
-    ]);
-
-    return {
-      universalIdentifier: uuid,
-      type: 'cron',
-      schedule,
-    };
-  }
-
-  private async createRouteTrigger() {
-    const uuid = randomUUID();
-
-    const { path } = await inquirer.prompt<{ path: string }>([
-      {
-        type: 'input',
-        name: 'path',
-        message: 'Enter the route path (e.g., /webhook/company):',
-        validate: (input) => {
-          if (input.length === 0) {
-            return 'Path is required';
-          }
-          if (!input.startsWith('/')) {
-            return 'Path must start with /';
-          }
-          return true;
-        },
-      },
-    ]);
-
-    const { httpMethod } = await inquirer.prompt<{ httpMethod: HTTPMethod }>([
-      {
-        type: 'list',
-        name: 'httpMethod',
-        message: 'Select the HTTP method:',
-        choices: Object.values(HTTPMethod),
-        default: HTTPMethod.GET,
-      },
-    ]);
-
-    const { isAuthRequired } = await inquirer.prompt<{
-      isAuthRequired: boolean;
-    }>([
-      {
-        type: 'confirm',
-        name: 'isAuthRequired',
-        message: 'Is authentication required?',
-        default: true,
-      },
-    ]);
-
-    return {
-      universalIdentifier: uuid,
-      type: 'route',
-      path,
-      httpMethod,
-      isAuthRequired,
-    };
   }
 }

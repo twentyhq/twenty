@@ -31,7 +31,7 @@ describe('ThrottlerService', () => {
     jest.clearAllMocks();
   });
 
-  describe('tokenBucketThrottle', () => {
+  describe('tokenBucketThrottleOrThrow', () => {
     const key = 'test-throttle-key';
     const maxTokens = 100;
     const timeWindow = 1000; // 1 second
@@ -39,7 +39,7 @@ describe('ThrottlerService', () => {
     it('should allow request when tokens are available (first request)', async () => {
       cacheStorageService.get.mockResolvedValue(null);
 
-      await service.tokenBucketThrottle(key, 10, maxTokens, timeWindow);
+      await service.tokenBucketThrottleOrThrow(key, 10, maxTokens, timeWindow);
 
       expect(cacheStorageService.get).toHaveBeenCalledWith(key);
       expect(cacheStorageService.set).toHaveBeenCalledWith(
@@ -60,7 +60,7 @@ describe('ThrottlerService', () => {
         lastRefillAt: now - 100,
       });
 
-      await service.tokenBucketThrottle(key, 10, maxTokens, timeWindow);
+      await service.tokenBucketThrottleOrThrow(key, 10, maxTokens, timeWindow);
 
       expect(cacheStorageService.get).toHaveBeenCalledWith(key);
       expect(cacheStorageService.set).toHaveBeenCalledWith(
@@ -82,11 +82,11 @@ describe('ThrottlerService', () => {
       });
 
       await expect(
-        service.tokenBucketThrottle(key, 10, maxTokens, timeWindow),
+        service.tokenBucketThrottleOrThrow(key, 10, maxTokens, timeWindow),
       ).rejects.toThrow(ThrottlerException);
 
       await expect(
-        service.tokenBucketThrottle(key, 10, maxTokens, timeWindow),
+        service.tokenBucketThrottleOrThrow(key, 10, maxTokens, timeWindow),
       ).rejects.toThrow('Limit reached');
 
       expect(cacheStorageService.set).not.toHaveBeenCalled();
@@ -105,7 +105,7 @@ describe('ThrottlerService', () => {
 
       jest.spyOn(Date, 'now').mockReturnValue(now);
 
-      await service.tokenBucketThrottle(key, 10, maxTokens, timeWindow);
+      await service.tokenBucketThrottleOrThrow(key, 10, maxTokens, timeWindow);
 
       expect(cacheStorageService.set).toHaveBeenCalledWith(
         key,
@@ -130,7 +130,7 @@ describe('ThrottlerService', () => {
 
       jest.spyOn(Date, 'now').mockReturnValue(now);
 
-      await service.tokenBucketThrottle(key, 10, maxTokens, timeWindow);
+      await service.tokenBucketThrottleOrThrow(key, 10, maxTokens, timeWindow);
 
       // Available tokens should be capped at maxTokens (100)
       expect(cacheStorageService.set).toHaveBeenCalledWith(

@@ -58,18 +58,37 @@ export const useHandleDragOneCalendarCard = () => {
           .getLoadable(calendarDayRecordIdsSelector(destinationDate))
           .getValue() as string[];
 
-        const recordsWithPosition = extractRecordPositions(
-          destinationRecordIds,
-          snapshot,
-        );
+        const targetDayIsEmpty = destinationRecordIds.length === 0;
 
-        const targetRecordId = destinationRecordIds[destinationIndex];
+        let newPosition: number;
 
-        const newPosition = computeNewPositionOfDraggedRecord({
-          arrayOfRecordsWithPosition: recordsWithPosition,
-          idOfItemToMove: recordId,
-          idOfTargetItem: targetRecordId,
-        });
+        if (targetDayIsEmpty) {
+          newPosition = 1;
+        } else {
+          const recordsWithPosition = extractRecordPositions(
+            destinationRecordIds,
+            snapshot,
+          );
+
+          const isDroppedAfterList =
+            destinationIndex >= recordsWithPosition.length;
+
+          const targetRecord = isDroppedAfterList
+            ? recordsWithPosition.at(-1)
+            : recordsWithPosition.at(destinationIndex);
+
+          if (!isDefined(targetRecord)) {
+            throw new Error(
+              `targetRecord cannot be found in passed recordsWithPosition, this should not happen.`,
+            );
+          }
+
+          newPosition = computeNewPositionOfDraggedRecord({
+            arrayOfRecordsWithPosition: recordsWithPosition,
+            idOfItemToMove: recordId,
+            idOfTargetItem: targetRecord.id,
+          });
+        }
 
         const targetDate = parse(destinationDate, 'yyyy-MM-dd', new Date());
         const currentFieldValue = record[calendarFieldMetadata.name];

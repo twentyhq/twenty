@@ -8,7 +8,7 @@ import {
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { type QueryBuilderCteOptions } from 'typeorm/query-builder/QueryBuilderCte';
 import { DriverUtils } from 'typeorm/driver/DriverUtils';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type SelectQuery } from 'typeorm/query-builder/SelectQuery';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -31,9 +31,8 @@ import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repositor
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { type RedisStorageDriver } from 'src/engine/twenty-orm/storage/drivers/redis-storage.driver';
 import { EXTERNAL_STORAGE_ALIAS } from 'src/engine/twenty-orm/utils/external-storage-alias.constant';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
@@ -43,6 +42,8 @@ export class WorkspaceSelectQueryBuilder<
   internalContext: WorkspaceInternalContext;
   authContext?: AuthContext;
   featureFlagMap?: FeatureFlagMap;
+  private externalStorageInitPromise: Promise<void> | null = null;
+
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
     objectRecordsPermissions: ObjectsPermissions,
@@ -59,17 +60,43 @@ export class WorkspaceSelectQueryBuilder<
     this.featureFlagMap = featureFlagMap;
   }
 
-  async appendExternalFields(
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-    drivers: {
-      redis: RedisStorageDriver;
-    },
-  ) {
+  prepareExternalStorage(alias: string): void {
+    if (!this.externalStorageInitPromise) {
+      this.externalStorageInitPromise = this.appendExternalFields(alias);
+    }
+  }
+
+  private async ensureExternalStorageReady(): Promise<void> {
+    if (this.externalStorageInitPromise) {
+      await this.externalStorageInitPromise;
+      this.externalStorageInitPromise = null;
+    }
+  }
+
+  async appendExternalFields(alias: string) {
+    const objectMetadataMapItem = getObjectMetadataMapItemByNameSingular(
+      this.internalContext.objectMetadataMaps,
+      alias,
+    );
+
+    assertIsDefinedOrThrow(objectMetadataMapItem);
+
     await Promise.all(
-      Object.values(objectMetadataItemWithFieldMaps.fieldsById).map(
-        async (field) => {
-          if (field.storage === 'redis' && isDefined(this.authContext?.user)) {
-            const parts = await drivers.redis.collectData(
+      Object.values(objectMetadataMapItem.fieldsById).map(async (field) => {
+        if (
+          isDefined(field.storage) &&
+          field.storage !== 'postgres' &&
+          !isDefined(this.internalContext.externalFieldDrivers[field.storage])
+        ) {
+          throw new TwentyORMException(
+            `External storage driver "${field.storage}" not found`,
+            TwentyORMExceptionCode.EXTERNAL_STORAGE_DRIVER_MISSING,
+          );
+        }
+        // todo: move this logic to the driver scoped function
+        if (field.storage === 'redis' && isDefined(this.authContext?.user)) {
+          const parts =
+            await this.internalContext.externalFieldDrivers.redis.collectData(
               {
                 userId: this.authContext?.user.id,
                 workspaceId: this.internalContext.workspaceId,
@@ -79,25 +106,20 @@ export class WorkspaceSelectQueryBuilder<
               this.alias,
             );
 
-            if (isDefined(parts)) {
-              this.addCommonTableExpression(parts.cteSql, parts.cteName, {
-                columnNames: parts.cteColumns,
-              });
+          if (isDefined(parts)) {
+            this.addCommonTableExpression(parts.cteSql, parts.cteName, {
+              columnNames: parts.cteColumns,
+            });
 
-              this.leftJoin(
-                parts.cteName,
-                `${field.name}Records`,
-                parts.joinOn,
-              );
+            this.leftJoin(parts.cteName, `${field.name}Records`, parts.joinOn);
 
-              this.addSelect(
-                parts.selectExpr,
-                `${EXTERNAL_STORAGE_ALIAS}_${this.alias}_${field.name}`,
-              );
-            }
+            this.addSelect(
+              parts.selectExpr,
+              `${EXTERNAL_STORAGE_ALIAS}_${this.alias}_${field.name}`,
+            );
           }
-        },
-      ),
+        }
+      }),
     );
   }
 
@@ -180,7 +202,7 @@ export class WorkspaceSelectQueryBuilder<
   override clone(): this {
     const clonedQueryBuilder = super.clone();
 
-    return new WorkspaceSelectQueryBuilder(
+    const cloned = new WorkspaceSelectQueryBuilder(
       clonedQueryBuilder,
       this.objectRecordsPermissions,
       this.internalContext,
@@ -188,11 +210,16 @@ export class WorkspaceSelectQueryBuilder<
       this.authContext,
       this.featureFlagMap,
     ) as this;
+
+    cloned.externalStorageInitPromise = this.externalStorageInitPromise;
+
+    return cloned;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   override async execute(): Promise<any> {
     try {
+      await this.ensureExternalStorageReady();
       this.validatePermissions();
 
       const mainAliasTarget = this.getMainAliasTarget();
@@ -222,6 +249,7 @@ export class WorkspaceSelectQueryBuilder<
 
   override async getMany(): Promise<T[]> {
     try {
+      await this.ensureExternalStorageReady();
       this.validatePermissions();
 
       const mainAliasTarget = this.getMainAliasTarget();
@@ -273,22 +301,24 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override getRawOne<U = any>(): Promise<U | undefined> {
+  override async getRawOne<U = any>(): Promise<U | undefined> {
     try {
+      await this.ensureExternalStorageReady();
       this.validatePermissions();
 
-      return super.getRawOne();
+      return await super.getRawOne();
     } catch (error) {
       throw computeTwentyORMException(error);
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  override getRawMany<U = any>(): Promise<U[]> {
+  override async getRawMany<U = any>(): Promise<U[]> {
     try {
+      await this.ensureExternalStorageReady();
       this.validatePermissions();
 
-      return super.getRawMany();
+      return await super.getRawMany();
     } catch (error) {
       throw computeTwentyORMException(error);
     }
@@ -296,6 +326,7 @@ export class WorkspaceSelectQueryBuilder<
 
   override async getOne(): Promise<T | null> {
     try {
+      await this.ensureExternalStorageReady();
       this.validatePermissions();
 
       const mainAliasTarget = this.getMainAliasTarget();
@@ -323,6 +354,7 @@ export class WorkspaceSelectQueryBuilder<
 
   override async getOneOrFail(): Promise<T> {
     try {
+      await this.ensureExternalStorageReady();
       this.validatePermissions();
 
       const mainAliasTarget = this.getMainAliasTarget();
@@ -346,11 +378,12 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
-  override getCount(): Promise<number> {
+  override async getCount(): Promise<number> {
     try {
+      await this.ensureExternalStorageReady();
       this.validatePermissions();
 
-      return super.getCount();
+      return await super.getCount();
     } catch (error) {
       throw computeTwentyORMException(error);
     }
@@ -365,6 +398,7 @@ export class WorkspaceSelectQueryBuilder<
 
   override async getManyAndCount(): Promise<[T[], number]> {
     try {
+      await this.ensureExternalStorageReady();
       this.validatePermissions();
 
       const mainAliasTarget = this.getMainAliasTarget();

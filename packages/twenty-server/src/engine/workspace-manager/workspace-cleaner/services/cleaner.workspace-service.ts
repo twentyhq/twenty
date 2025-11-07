@@ -299,7 +299,6 @@ export class CleanerWorkspaceService {
             await this.workspaceService.handleRemoveWorkspaceMember(
               workspace.id,
               userWorkspace.userId,
-              false,
             );
           }
 
@@ -356,6 +355,10 @@ export class CleanerWorkspaceService {
             );
             if (!dryRun) {
               await this.workspaceService.deleteWorkspace(workspace.id);
+              this.metricsService.incrementCounter({
+                key: MetricsKeys.CronJobDeletedWorkspace,
+                shouldStoreInCache: false,
+              });
             }
             deletedWorkspacesCount++;
           }
@@ -450,11 +453,6 @@ export class CleanerWorkspaceService {
 
       if (!dryRun) {
         await this.workspaceService.deleteWorkspace(workspace.id);
-
-        this.metricsService.incrementCounter({
-          key: MetricsKeys.CronJobDeletedWorkspace,
-          shouldStoreInCache: false,
-        });
       }
 
       this.logger.log(

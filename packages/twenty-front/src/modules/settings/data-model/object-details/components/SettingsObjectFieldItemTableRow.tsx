@@ -28,9 +28,9 @@ import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
@@ -66,7 +66,7 @@ export const SettingsObjectFieldItemTableRow = ({
   const { fieldMetadataItem, identifierType, objectMetadataItem } =
     settingsObjectDetailTableItem;
 
-  const readonly = isObjectMetadataReadOnly({
+  const readonly = isObjectMetadataSettingsReadOnly({
     objectMetadataItem,
   });
 
@@ -127,10 +127,14 @@ export const SettingsObjectFieldItemTableRow = ({
       return;
     }
 
-    await deactivateMetadataField(
+    const deactivationResult = await deactivateMetadataField(
       activeFieldMetadatItem.id,
       objectMetadataItem.id,
     );
+
+    if (deactivationResult.status === 'failed') {
+      return;
+    }
 
     // TODO: Add optimistic rendering for core views
     const deletedViewIds: string[] = [];
@@ -159,6 +163,7 @@ export const SettingsObjectFieldItemTableRow = ({
     if (readonly) {
       return;
     }
+
     updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
       updatePayload: {

@@ -1,0 +1,91 @@
+---
+title: Data Model FAQ
+info: Frequently asked questions about data model configuration, limitations, and upcoming features.
+image: /images/user-guide/what-is-twenty/faq.png
+sectionInfo: Flexible data model designed to support your unique business processes
+---
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/faq.png" alt="Header" />
+</Frame>
+
+## Object Management
+
+<AccordionGroup>
+<Accordion title="Can I reorder objects in the left navigation bar?">
+Not yet. Object ordering in the navigation is currently fixed, but this feature is planned for a future release.
+</Accordion>
+
+<Accordion title="Can I hide objects from the left navigation bar?">
+All active objects appear in the navigation. You can deactivate objects you don't need under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Can I delete standard objects (People, Companies, etc.)?">
+You can deactivate any standard objects but you cannot hard delete them.
+</Accordion>
+</AccordionGroup>
+
+## Field Capabilities
+
+<AccordionGroup>
+<Accordion title="Can I create formula fields?">
+Formula fields are coming in **Q1 2026**. In the meantime, you can use workflows to calculate and update field values automatically.
+</Accordion>
+
+<Accordion title="Can I have nested fields in my objects?">
+Nested fields are coming in **Q1 2026**. Currently, you can use workflows to bring field values from related objects. For example, to display a company's industry on a Person record, create a custom field on People and use a workflow to synchronize the value.
+</Accordion>
+
+<Accordion title="Why can't I update relation field names?">
+Relation field names impact the API structure and cannot be changed after creation. If you need to rename a relation field, you'll need to create a new one and delete the old one.
+</Accordion>
+
+<Accordion title="Why do I need different singular and plural names?">
+Our GraphQL API uses both forms for different operations:
+- `createPerson` (singular) for single record actions
+- `createPeople` (plural) for bulk operations
+
+This creates limitations when singular and plural forms are the same, but it improves the developer experience.
+</Accordion>
+
+<Accordion title="Why are some field names protected?">
+Certain field names like `Type` or `Application` are reserved for system use. Choose alternative names like `Category` or `Classification` instead.
+</Accordion>
+</AccordionGroup>
+
+## Advanced Features
+
+<AccordionGroup>
+<Accordion title="Can I create many-to-many relationships?">
+Many-to-many relationships are coming in **Q1 2026**. Currently, create an intermediate object with two 1-to-many relationships as a workaround.
+</Accordion>
+
+<Accordion title="What are Morph Many relationships?">
+Morph Many relationships (coming **Q4 2025**) allow one object to relate to multiple different object types. For example, an Opportunity could relate to either a Person or a Company.
+</Accordion>
+
+<Accordion title="Can I reorder fields in objects?">
+Field reordering will be available with custom layouts in **Q4 2025**. Currently, fields appear in the alphabetical order.
+</Accordion>
+</AccordionGroup>
+
+## Access and Permissions
+
+<AccordionGroup>
+<Accordion title="Where can I see and edit my data model?">
+You can access your Data Model under **Settings → Data Model**.
+</Accordion>
+
+<Accordion title="Why can't I see the Data Model under Settings?">
+Reach out to your workspace administrator. Data model access is usually restricted to administrators only.
+</Accordion>
+
+<Accordion title="How many custom objects or fields can I create?">
+You can create as many custom objects and fields as you need - the price won't change.
+</Accordion>
+</AccordionGroup>
+
+## Need More Help?
+
+Check our [implementation services](/user-guide/getting-started/implementation-services) to get help with complex data model design.
+
+

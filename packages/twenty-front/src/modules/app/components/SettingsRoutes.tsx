@@ -235,38 +235,6 @@ const SettingsDevelopersWebhookDetail = lazy(() =>
   })),
 );
 
-const SettingsIntegrationDatabase = lazy(() =>
-  import('~/pages/settings/integrations/SettingsIntegrationDatabase').then(
-    (module) => ({
-      default: module.SettingsIntegrationDatabase,
-    }),
-  ),
-);
-
-const SettingsIntegrationNewDatabaseConnection = lazy(() =>
-  import(
-    '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection'
-  ).then((module) => ({
-    default: module.SettingsIntegrationNewDatabaseConnection,
-  })),
-);
-
-const SettingsIntegrationEditDatabaseConnection = lazy(() =>
-  import(
-    '~/pages/settings/integrations/SettingsIntegrationEditDatabaseConnection'
-  ).then((module) => ({
-    default: module.SettingsIntegrationEditDatabaseConnection,
-  })),
-);
-
-const SettingsIntegrationShowDatabaseConnection = lazy(() =>
-  import(
-    '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection'
-  ).then((module) => ({
-    default: module.SettingsIntegrationShowDatabaseConnection,
-  })),
-);
-
 const SettingsObjectNewFieldSelect = lazy(() =>
   import(
     '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect'
@@ -567,22 +535,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.Integrations}
           element={<SettingsIntegrations />}
-        />
-        <Route
-          path={SettingsPath.IntegrationDatabase}
-          element={<SettingsIntegrationDatabase />}
-        />
-        <Route
-          path={SettingsPath.IntegrationNewDatabaseConnection}
-          element={<SettingsIntegrationNewDatabaseConnection />}
-        />
-        <Route
-          path={SettingsPath.IntegrationEditDatabaseConnection}
-          element={<SettingsIntegrationEditDatabaseConnection />}
-        />
-        <Route
-          path={SettingsPath.IntegrationDatabaseConnection}
-          element={<SettingsIntegrationShowDatabaseConnection />}
         />
       </Route>
 

@@ -7,11 +7,12 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
-import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroupRecords';
-import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
-import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
-import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
+import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { usePersistViewField } from '@/views/hooks/internal/usePersistViewField';
+import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilter';
+import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroup';
+import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
+import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSort';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
@@ -28,14 +29,11 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
-import {
-  type CreateCoreViewFieldMutationVariables,
-  useCreateCoreViewMutation,
-} from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
-  const [createCoreViewMutation] = useCreateCoreViewMutation();
+  const { createView } = usePersistView();
+
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
@@ -45,15 +43,15 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
     anyFieldFilterValueComponentState,
   );
 
-  const { createViewFieldRecords } = usePersistViewFieldRecords();
+  const { createViewFields } = usePersistViewField();
 
-  const { createViewSortRecords } = usePersistViewSortRecords();
+  const { createViewSorts } = usePersistViewSortRecords();
 
-  const { createViewGroupRecords } = usePersistViewGroupRecords();
+  const { createViewGroups } = usePersistViewGroupRecords();
 
-  const { createViewFilterRecords } = usePersistViewFilterRecords();
+  const { createViewFilters } = usePersistViewFilterRecords();
 
-  const { createViewFilterGroupRecords } = usePersistViewFilterGroupRecords();
+  const { createViewFilterGroups } = usePersistViewFilterGroupRecords();
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -120,50 +118,62 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         const viewType = type ?? sourceView.type;
 
-        const result = await createCoreViewMutation({
-          variables: {
-            input: {
-              id: id ?? v4(),
-              name: name ?? sourceView.name,
-              icon: icon ?? sourceView.icon,
-              key: null,
-              kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
-                ? sourceView.kanbanAggregateOperation
+        const result = await createView({
+          input: {
+            id: id ?? v4(),
+            name: name ?? sourceView.name,
+            icon: icon ?? sourceView.icon,
+            key: null,
+            kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
+              ? sourceView.kanbanAggregateOperation
+              : undefined,
+            kanbanAggregateOperationFieldMetadataId:
+              shouldCopyFiltersAndSortsAndAggregate
+                ? sourceView.kanbanAggregateOperationFieldMetadataId
                 : undefined,
-              kanbanAggregateOperationFieldMetadataId:
-                shouldCopyFiltersAndSortsAndAggregate
-                  ? sourceView.kanbanAggregateOperationFieldMetadataId
-                  : undefined,
-              type: convertViewTypeToCore(viewType),
-              objectMetadataId: sourceView.objectMetadataId,
-              openRecordIn: convertViewOpenRecordInToCore(
-                sourceView.openRecordIn,
-              ),
-              anyFieldFilterValue: anyFieldFilterValue,
-              calendarLayout:
-                viewType === ViewType.Calendar
-                  ? ViewCalendarLayout.MONTH
-                  : undefined,
-              calendarFieldMetadataId:
-                viewType === ViewType.Calendar
-                  ? calendarFieldMetadataId
-                  : undefined,
-            },
+            type: convertViewTypeToCore(viewType),
+            objectMetadataId: sourceView.objectMetadataId,
+            openRecordIn: convertViewOpenRecordInToCore(
+              sourceView.openRecordIn,
+            ),
+            anyFieldFilterValue: anyFieldFilterValue,
+            calendarLayout:
+              viewType === ViewType.Calendar
+                ? ViewCalendarLayout.MONTH
+                : undefined,
+            calendarFieldMetadataId:
+              viewType === ViewType.Calendar
+                ? calendarFieldMetadataId
+                : undefined,
           },
         });
-        const newViewId = result.data?.createCoreView.id;
+
+        if (result.status === 'failed') {
+          set(isPersistingViewFieldsState, false);
+          return undefined;
+        }
+
+        const newViewId = result.response.data?.createCoreView.id;
 
         if (isUndefinedOrNull(newViewId)) {
+          set(isPersistingViewFieldsState, false);
           throw new Error('Failed to create view');
         }
 
-        await createViewFieldRecords(
-          sourceView.viewFields.map<CreateCoreViewFieldMutationVariables>(
+        const fieldResult = await createViewFields({
+          inputs: sourceView.viewFields.map(
             ({ __typename, id: _id, ...viewField }) => ({
-              input: { ...viewField, id: v4(), viewId: newViewId },
+              ...viewField,
+              id: v4(),
+              viewId: newViewId,
             }),
           ),
-        );
+        });
+
+        if (fieldResult.status === 'failed') {
+          set(isPersistingViewFieldsState, false);
+          return undefined;
+        }
 
         if (type === ViewType.Kanban) {
           if (!isDefined(kanbanFieldMetadataId)) {
@@ -194,14 +204,17 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             fieldMetadataId: kanbanFieldMetadataId,
           } satisfies ViewGroup);
 
-          await createViewGroupRecords(
-            viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
-              input: {
-                ...viewGroup,
-                viewId: newViewId,
-              },
+          const groupResult = await createViewGroups({
+            inputs: viewGroupsToCreate.map(({ __typename, ...viewGroup }) => ({
+              ...viewGroup,
+              viewId: newViewId,
             })),
-          );
+          });
+
+          if (groupResult.status === 'failed') {
+            set(isPersistingViewFieldsState, false);
+            return undefined;
+          }
         }
 
         if (shouldCopyFiltersAndSortsAndAggregate === true) {
@@ -232,9 +245,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               id: v4(),
             }));
 
-          await createViewFilterGroupRecords(viewFilterGroupsToCreate, {
+          await createViewFilterGroups(viewFilterGroupsToCreate, {
             id: newViewId,
           });
+
           const createViewFilterInputs = viewFiltersToCreate.map(
             (viewFilter) => ({
               input: {
@@ -249,8 +263,15 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               },
             }),
           );
-          await createViewFilterRecords(createViewFilterInputs);
-          await createViewSortRecords(viewSortsToCreate, { id: newViewId });
+
+          const filterResult = await createViewFilters(createViewFilterInputs);
+
+          if (filterResult.status === 'failed') {
+            set(isPersistingViewFieldsState, false);
+            return undefined;
+          }
+
+          await createViewSorts(viewSortsToCreate, { id: newViewId });
         }
 
         await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
@@ -260,18 +281,18 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       },
     [
       currentViewIdCallbackState,
-      createViewFieldRecords,
-      createCoreViewMutation,
+      createViewFields,
+      createView,
       anyFieldFilterValue,
       objectMetadataItem.fields,
       objectMetadataItem.id,
-      createViewGroupRecords,
+      createViewGroups,
       currentRecordFilterGroups,
       currentRecordFilters,
       currentRecordSorts,
-      createViewFilterGroupRecords,
-      createViewFilterRecords,
-      createViewSortRecords,
+      createViewFilterGroups,
+      createViewFilters,
+      createViewSorts,
       refreshCoreViewsByObjectMetadataId,
     ],
   );

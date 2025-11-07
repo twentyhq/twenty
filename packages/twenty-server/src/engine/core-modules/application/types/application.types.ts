@@ -1,51 +1,58 @@
+import { type FieldMetadataType } from 'twenty-shared/types';
+
 import { type HTTPMethod } from 'src/engine/metadata-modules/route-trigger/route-trigger.entity';
-import { type ServerlessFunctionCode } from 'src/engine/metadata-modules/serverless-function/types/serverless-function-code.type';
 
 export type PackageJson = {
-  $schema?: string;
-  universalIdentifier: string;
   name: string;
-  description?: string;
+  license: string;
   engines: {
     node: string;
     npm: string;
     yarn: string;
   };
-  env?: EnvManifest;
-  icon?: string;
+  packageManager: string;
   version: string;
   dependencies?: object;
   devDependencies?: object;
 };
 
-export type EnvManifest = Record<string, EnvVariableManifest>;
-
-export type EnvVariableManifest = {
+type ApplicationVariable = {
+  universalIdentifier: string;
   value?: string;
   description?: string;
-  isSecret: boolean;
+  isSecret?: boolean;
 };
 
-export type AppManifest = PackageJson & {
-  agents: AgentManifest[];
+type Sources = { [key: string]: string | Sources };
+
+type Application = {
+  universalIdentifier: string;
+  displayName?: string;
+  description?: string;
+  icon?: string;
+  applicationVariables?: Record<string, ApplicationVariable>;
+};
+export type AppManifest = {
+  application: Application;
   objects: ObjectManifest[];
   serverlessFunctions: ServerlessFunctionManifest[];
+  sources: Sources;
 };
 
 export type ServerlessFunctionManifest = {
-  $schema?: string;
   universalIdentifier: string;
-  name: string;
+  name?: string;
   description?: string;
   timeoutSeconds?: number;
+  handlerPath: string;
+  handlerName: string;
   triggers: ServerlessFunctionTriggerManifest[];
-  code: ServerlessFunctionCode;
 };
 
 export type ServerlessFunctionTriggerManifest = (
   | {
       type: 'cron';
-      schedule: string;
+      pattern: string;
     }
   | {
       type: 'databaseEvent';
@@ -61,15 +68,31 @@ export type ServerlessFunctionTriggerManifest = (
   universalIdentifier: string;
 };
 
+export type FieldManifest = {
+  universalIdentifier: string;
+  type: FieldMetadataType;
+  label: string;
+  description?: string;
+  icon?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  defaultValue?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  settings?: any;
+  isNullable?: boolean;
+  isFieldUiReadOnly?: boolean;
+};
+
 export type ObjectManifest = {
-  $schema?: string;
-  standardId: string;
+  universalIdentifier: string;
   nameSingular: string;
   namePlural: string;
   labelSingular: string;
   labelPlural: string;
   description?: string;
   icon?: string;
+  fields?: FieldManifest[];
 };
 
 interface AgentResponseFormat {

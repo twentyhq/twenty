@@ -9,6 +9,7 @@ import { AppDeleteCommand } from './app-delete.command';
 import { AppDevCommand } from './app-dev.command';
 import { AppInitCommand } from './app-init.command';
 import { AppSyncCommand } from './app-sync.command';
+import { formatPath } from '../utils/format-path';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
@@ -22,19 +23,22 @@ export class AppCommand {
     appCommand.description('Application development commands');
 
     appCommand
-      .command('dev')
+      .command('dev [appPath]')
       .description('Watch and sync local application changes')
       .option('-d, --debounce <ms>', 'Debounce delay in milliseconds', '1000')
-      .action(async (options) => {
-        await this.devCommand.execute(options);
+      .action(async (appPath, options) => {
+        await this.devCommand.execute({
+          ...options,
+          appPath: formatPath(appPath),
+        });
       });
 
     appCommand
-      .command('sync')
+      .command('sync [appPath]')
       .description('Sync application to Twenty')
-      .action(async () => {
+      .action(async (appPath?: string) => {
         try {
-          const result = await this.syncCommand.execute();
+          const result = await this.syncCommand.execute(formatPath(appPath));
           if (!result.success) {
             process.exit(1);
           }
@@ -44,11 +48,12 @@ export class AppCommand {
       });
 
     appCommand
-      .command('delete')
+      .command('delete [appPath]')
       .description('Delete application from Twenty')
-      .action(async () => {
+      .action(async (appPath?: string) => {
         try {
           const result = await this.deleteCommand.execute({
+            appPath: formatPath(appPath),
             askForConfirmation: true,
           });
           if (!result.success) {

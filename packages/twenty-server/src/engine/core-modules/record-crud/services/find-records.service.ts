@@ -11,7 +11,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
+import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -125,7 +125,7 @@ export class FindRecordsService {
       return queryBuilder;
     }
 
-    const selectableFields = getAllSelectableFields({
+    const selectableFields = getAllSelectableColumnNames({
       restrictedFields,
       objectMetadata: {
         objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
@@ -177,7 +177,7 @@ export class FindRecordsService {
       withFilterQueryBuilder,
       orderByWithIdCondition,
       objectName,
-      false,
+      true,
     );
 
     const queryBuilderWithSelect = this.applyRestrictedFieldsToQueryBuilder(

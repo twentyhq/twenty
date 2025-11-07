@@ -50,6 +50,7 @@ export interface FindManyQueryArgs {
   last?: number;
   before?: string;
   after?: string;
+  offset?: number;
 }
 
 export interface CreateManyQueryArgs {
@@ -64,6 +65,7 @@ export interface CreateOneQueryArgs {
 export interface GroupByQueryArgs {
   filter?: ObjectRecordFilter;
   orderBy?: OrderByWithGroupBy;
+  orderByForRecords?: ObjectRecordOrderBy;
   groupBy: ObjectRecordGroupBy;
   viewId?: string;
   includeRecords?: boolean;

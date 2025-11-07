@@ -1,14 +1,14 @@
-import { Trans, useLingui } from '@lingui/react/macro';
-
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ChangePassword } from '@/settings/profile/components/ChangePassword';
+import { SetOrChangePassword } from '@/settings/profile/components/SetOrChangePassword';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { useCanChangePassword } from '@/settings/profile/hooks/useCanChangePassword';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconShield, Status } from 'twenty-ui/display';
@@ -24,6 +24,8 @@ export const SettingsProfile = () => {
   const has2FAMethod =
     currentUserWorkspaceTwoFactorAuthenticationMethods['TOTP']?.status ===
     'VERIFIED';
+
+  const { canChangePassword } = useCanChangePassword();
 
   return (
     <SubMenuTopBarContainer
@@ -79,9 +81,11 @@ export const SettingsProfile = () => {
             />
           </UndecoratedLink>
         </Section>
-        <Section>
-          <ChangePassword />
-        </Section>
+        {canChangePassword && (
+          <Section>
+            <SetOrChangePassword />
+          </Section>
+        )}
         <Section>
           <DeleteAccount />
         </Section>

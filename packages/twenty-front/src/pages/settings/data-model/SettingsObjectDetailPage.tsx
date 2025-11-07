@@ -14,8 +14,10 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -28,13 +30,11 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { MAIN_COLORS } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -67,7 +67,7 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemByNamePlural(objectNamePlural) ??
     findActiveObjectMetadataItemByNamePlural(updatedObjectNamePlural);
 
-  const readonly = isObjectMetadataReadOnly({ objectMetadataItem });
+  const readonly = isObjectMetadataSettingsReadOnly({ objectMetadataItem });
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
@@ -90,6 +90,8 @@ export const SettingsObjectDetailPage = () => {
     updatedObjectNamePlural,
     setUpdatedObjectNamePlural,
   ]);
+
+  const theme = useTheme();
 
   if (!isDefined(objectMetadataItem)) return <></>;
 
@@ -114,8 +116,8 @@ export const SettingsObjectDetailPage = () => {
       pill: (
         <IconPoint
           size={12}
-          color={MAIN_COLORS.yellow}
-          fill={MAIN_COLORS.yellow}
+          color={theme.color.yellow}
+          fill={theme.color.yellow}
         />
       ),
     },

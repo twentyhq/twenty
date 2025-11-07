@@ -45,8 +45,9 @@ export class SubdomainManagerService {
       ? extractedSubdomain
       : generateRandomSubdomain();
 
-    const existingWorkspaceCount = await this.workspaceRepository.countBy({
-      subdomain,
+    const existingWorkspaceCount = await this.workspaceRepository.count({
+      where: { subdomain },
+      withDeleted: true,
     });
 
     return `${subdomain}${existingWorkspaceCount > 0 ? `-${Math.random().toString(36).substring(2, 10)}` : ''}`;
@@ -55,6 +56,7 @@ export class SubdomainManagerService {
   async isSubdomainAvailable(subdomain: string) {
     const existingWorkspace = await this.workspaceRepository.findOne({
       where: { subdomain: subdomain },
+      withDeleted: true,
     });
 
     return !existingWorkspace;
