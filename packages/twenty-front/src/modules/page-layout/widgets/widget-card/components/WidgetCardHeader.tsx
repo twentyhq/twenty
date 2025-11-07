@@ -17,7 +17,7 @@ export type WidgetCardHeaderProps = {
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
   className?: string;
-  isResizing: boolean;
+  isResizing?: boolean;
 };
 
 const StyledWidgetCardHeader = styled.div`
