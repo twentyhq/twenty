@@ -1,13 +1,12 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
-import { getBarChartTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickValues';
+import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 
-const MAX_LEFT_AXIS_LABEL_LENGTH = 10;
 const LEFT_AXIS_LEGEND_OFFSET_PADDING = 5;
 const TICK_PADDING = 5;
 const BOTTOM_AXIS_LEGEND_OFFSET = 40;
@@ -35,17 +34,21 @@ export const getBarChartAxisConfigs = ({
   formatOptions,
   axisFontSize = 11,
 }: GetBarChartAxisConfigsProps) => {
-  const { categoryTickValues, numberOfValueTicks, maxBottomTickLabelLength } =
-    getBarChartTickValues({
-      width,
-      height,
-      data,
-      indexBy,
-      xAxisLabel,
-      yAxisLabel,
-      axisFontSize,
-      layout,
-    });
+  const {
+    categoryTickValues,
+    numberOfValueTicks,
+    maxBottomAxisTickLabelLength,
+    maxLeftAxisTickLabelLength,
+  } = getBarChartTickConfig({
+    width,
+    height,
+    data,
+    indexBy,
+    xAxisLabel,
+    yAxisLabel,
+    axisFontSize,
+    layout,
+  });
 
   const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
@@ -60,7 +63,7 @@ export const getBarChartAxisConfigs = ({
         legendPosition: 'middle' as const,
         legendOffset: BOTTOM_AXIS_LEGEND_OFFSET,
         format: (value: string | number) =>
-          truncateTickLabel(String(value), maxBottomTickLabelLength),
+          truncateTickLabel(String(value), maxBottomAxisTickLabelLength),
       },
       axisLeft: {
         tickSize: 0,
@@ -73,7 +76,7 @@ export const getBarChartAxisConfigs = ({
         format: (value: number) =>
           truncateTickLabel(
             formatGraphValue(value, formatOptions ?? {}),
-            MAX_LEFT_AXIS_LABEL_LENGTH,
+            maxLeftAxisTickLabelLength,
           ),
       },
     };
@@ -91,7 +94,7 @@ export const getBarChartAxisConfigs = ({
       format: (value: number) =>
         truncateTickLabel(
           formatGraphValue(value, formatOptions ?? {}),
-          maxBottomTickLabelLength,
+          maxBottomAxisTickLabelLength,
         ),
     },
     axisLeft: {
@@ -103,7 +106,7 @@ export const getBarChartAxisConfigs = ({
       legendPosition: 'middle' as const,
       legendOffset: -margins.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
       format: (value: string | number) =>
-        truncateTickLabel(String(value), MAX_LEFT_AXIS_LABEL_LENGTH),
+        truncateTickLabel(String(value), maxLeftAxisTickLabelLength),
     },
   };
 };
