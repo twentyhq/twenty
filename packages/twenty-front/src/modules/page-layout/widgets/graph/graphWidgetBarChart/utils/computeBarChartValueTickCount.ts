@@ -14,8 +14,8 @@ export const computeBarChartValueTickCount = ({
 }: ComputeBarChartValueTickCountProps): number => {
   const minTickSize =
     layout === 'vertical'
-      ? BAR_CHART_MINIMUM_WIDTH_PER_TICK
-      : computeMinHeightPerTick({ axisFontSize });
+      ? computeMinHeightPerTick({ axisFontSize })
+      : BAR_CHART_MINIMUM_WIDTH_PER_TICK;
 
   return Math.max(1, Math.floor(axisSize / minTickSize));
 };
