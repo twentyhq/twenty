@@ -77,10 +77,10 @@ export class DataArgProcessor {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const coercedRecords: Partial<ObjectRecord>[] = [];
+    const processedRecords: Partial<ObjectRecord>[] = [];
 
     for (const record of partialRecordInputs) {
-      const coercedRecord: Partial<ObjectRecord> = {};
+      const processedRecord: Partial<ObjectRecord> = {};
 
       for (const [key, value] of Object.entries(record)) {
         const fieldMetadataId =
@@ -112,14 +112,18 @@ export class DataArgProcessor {
           continue;
         }
 
-        coercedRecord[key] = this.processField(fieldMetadata, key, value);
+        processedRecord[key] = await this.processField(
+          fieldMetadata,
+          key,
+          value,
+        );
       }
-      coercedRecords.push(coercedRecord);
+      processedRecords.push(processedRecord);
     }
 
     const overriddenPositionRecords =
       await this.recordPositionService.overridePositionOnRecords({
-        partialRecordInputs: coercedRecords,
+        partialRecordInputs: processedRecords,
         workspaceId: workspace.id,
         objectMetadata: {
           isCustom: objectMetadataItemWithFieldMaps.isCustom,

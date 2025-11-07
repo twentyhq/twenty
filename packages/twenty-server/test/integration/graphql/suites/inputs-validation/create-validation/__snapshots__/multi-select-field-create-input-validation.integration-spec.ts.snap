@@ -10,8 +10,8 @@ exports[`Create input validation - MULTI_SELECT Gql create input - failure MULTI
 
 exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":"not-a-select-option"} 1`] = `"["Invalid value 'not-a-select-option' for multi select field \\"multiSelectField\\""]"`;
 
-exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":{}} 1`] = `"["Invalid value {} for array field \\"multiSelectField\\""]"`;
+exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":{}} 1`] = `"["Invalid value {} for field \\"multiSelectField - Array values need to be string\\""]"`;
 
-exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":1} 1`] = `"["Invalid value 1 for array field \\"multiSelectField\\""]"`;
+exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":1} 1`] = `"["Invalid value 1 for field \\"multiSelectField - Array values need to be string\\""]"`;
 
-exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":true} 1`] = `"["Invalid value true for array field \\"multiSelectField\\""]"`;
+exports[`Create input validation - MULTI_SELECT Rest create input - failure MULTI_SELECT - should fail with : {"multiSelectField":true} 1`] = `"["Invalid value true for field \\"multiSelectField - Array values need to be string\\""]"`;

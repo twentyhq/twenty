@@ -2,4 +2,4 @@
 
 exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":"not-an-email"} 1`] = `"Expected type "EmailsCreateInput" to be an object."`;
 
-exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":"not-an-email"} 1`] = `"["Invalid value 'not-an-email' for emails field \\"emailsField\\" - undefined"]"`;
+exports[`Create input validation - EMAILS Rest create input - failure EMAILS - should fail with : {"emailsField":"not-an-email"} 1`] = `"["Invalid value 'not-an-email' for raw json field \\"emailsField\\""]"`;

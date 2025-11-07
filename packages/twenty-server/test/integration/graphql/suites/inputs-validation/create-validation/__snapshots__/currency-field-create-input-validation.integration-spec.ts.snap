@@ -2,4 +2,4 @@
 
 exports[`Create input validation - CURRENCY Gql create input - failure CURRENCY - should fail with : {"currencyField":"not-a-currency"} 1`] = `"Expected type "CurrencyCreateInput" to be an object."`;
 
-exports[`Create input validation - CURRENCY Rest create input - failure CURRENCY - should fail with : {"currencyField":"not-a-currency"} 1`] = `"["Invalid value 'not-a-currency' for currency field \\"currencyField\\" - undefined"]"`;
+exports[`Create input validation - CURRENCY Rest create input - failure CURRENCY - should fail with : {"currencyField":"not-a-currency"} 1`] = `"["Invalid value 'not-a-currency' for raw json field \\"currencyField\\""]"`;
