@@ -13,7 +13,7 @@ export class RedisFieldSqlFactory {
       valueColumnName: string;
     },
   ) {
-    const joinOn = `"${options.cteName}"."${options.idColumnName}"::uuid = ${tableAlias}.id::uuid`;
+    const joinOn = `"${options.cteName}"."${options.idColumnName}"::uuid = "${tableAlias}".id::uuid`;
     const selectExpr = `"${options.cteName}"."${options.valueColumnName}"`;
     const values = entries
       .map(
