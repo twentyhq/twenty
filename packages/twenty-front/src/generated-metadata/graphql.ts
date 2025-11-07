@@ -6304,7 +6304,7 @@ export type DuplicateWorkflowMutationVariables = Exact<{
 }>;
 
 
-export type DuplicateWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'WorkflowVersionDTO', id: string, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } };
+export type DuplicateWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'WorkflowVersionDTO', id: string, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string, workflowId: string } };
 
 export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
   input: DuplicateWorkflowVersionStepInput;
@@ -14100,6 +14100,7 @@ export const DuplicateWorkflowDocument = gql`
     steps
     createdAt
     updatedAt
+    workflowId
   }
 }
     `;
