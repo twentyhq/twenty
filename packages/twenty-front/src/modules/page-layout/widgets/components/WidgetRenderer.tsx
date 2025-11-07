@@ -97,6 +97,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         <WidgetCardHeader
           isWidgetCardHovered={isHovered}
           isInEditMode={isPageLayoutInEditMode}
+          isResizing={isResizing}
           title={widget.title}
           onRemove={handleRemove}
           forbiddenDisplay={
