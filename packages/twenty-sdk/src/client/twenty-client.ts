@@ -17,7 +17,7 @@ import {
 } from './types';
 
 export type TwentyClientOptions = {
-  type: TwentyApiType;
+  type?: TwentyApiType;
   baseUrl?: string;
 };
 
@@ -38,7 +38,7 @@ export class Twenty {
 
   constructor(apiKey: string | undefined, options: TwentyClientOptions) {
     this.apiKey = apiKey ?? process.env.TWENTY_API_URL ?? '';
-    this.type = options.type;
+    this.type = options.type ?? ('core' as TwentyApiType);
     this.baseUrl = (
       options.baseUrl ??
       process.env.TWENTY_API_URL ??
