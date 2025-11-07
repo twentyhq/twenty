@@ -10,6 +10,7 @@ export const DUPLICATE_WORKFLOW = gql`
       steps
       createdAt
       updatedAt
+      workflowId
     }
   }
 `;
