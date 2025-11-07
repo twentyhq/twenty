@@ -1,12 +1,13 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
-import { GraphWidgetBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartTooltip';
 import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
+import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartValueRange';
@@ -14,23 +15,23 @@ import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { useGraphWidgetTooltip } from '@/page-layout/widgets/graph/contexts/GraphWidgetTooltipContext';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
+
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { AnimatePresence } from 'framer-motion';
 import {
+  ResponsiveBar,
   type ComputedBarDatum,
   type ComputedDatum,
-  ResponsiveBar,
 } from '@nivo/bar';
 import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useDebouncedCallback } from 'use-debounce';
 
 const LEGEND_THRESHOLD = 10;
 
@@ -93,11 +94,6 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [hoveredBar, setHoveredBar] = useState<{
-    datum: ComputedDatum<BarChartDataItem>;
-    element: SVGRectElement;
-  } | null>(null);
-
   const formatOptions: GraphValueFormatOptions = {
     displayType,
     decimals,
@@ -111,30 +107,6 @@ export const GraphWidgetBarChart = ({
     indexBy,
   });
 
-  const clearHoveredBar = useCallback(() => {
-    setHoveredBar(null);
-  }, []);
-
-  const debouncedClearHoveredBar = useDebouncedCallback(clearHoveredBar, 300);
-
-  const handleBarEnter = useCallback(
-    (
-      datum: ComputedDatum<BarChartDataItem>,
-      event: MouseEvent<SVGRectElement>,
-    ) => {
-      debouncedClearHoveredBar.cancel();
-      setHoveredBar({
-        datum,
-        element: event.currentTarget,
-      });
-    },
-    [debouncedClearHoveredBar],
-  );
-
-  const handleBarLeave = useCallback(() => {
-    debouncedClearHoveredBar();
-  }, [debouncedClearHoveredBar]);
-
   const chartTheme = useBarChartTheme();
 
   const { barConfigs, enrichedKeys } = useBarChartData({
@@ -145,6 +117,41 @@ export const GraphWidgetBarChart = ({
     colorRegistry,
     seriesLabels,
   });
+
+  const tooltip = useGraphWidgetTooltip();
+
+  const { renderTooltip: getTooltipData } = useBarChartTooltip({
+    enrichedKeys,
+    data,
+    indexBy,
+    formatOptions,
+    enableGroupTooltip: groupMode === 'stacked',
+  });
+
+  const handleBarEnter = useCallback(
+    (
+      datum: ComputedDatum<BarChartDataItem>,
+      event: MouseEvent<SVGRectElement>,
+    ) => {
+      const tooltipData = getTooltipData(datum);
+      if (!isDefined(tooltipData)) return;
+
+      tooltip.show(
+        event.currentTarget,
+        <GraphWidgetTooltip
+          items={tooltipData.tooltipItems}
+          showClickHint={tooltipData.showClickHint}
+          indexLabel={tooltipData.indexLabel}
+          highlightedKey={tooltipData.hoveredKey}
+        />,
+      );
+    },
+    [tooltip, getTooltipData],
+  );
+
+  const handleBarLeave = useCallback(() => {
+    tooltip.scheduleHide();
+  }, [tooltip]);
 
   const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
 
@@ -281,24 +288,6 @@ export const GraphWidgetBarChart = ({
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
-      <AnimatePresence>
-        {isDefined(hoveredBar) && (
-          <GraphWidgetBarChartTooltip
-            hoveredBarDatum={hoveredBar.datum}
-            hoveredBarElement={hoveredBar.element}
-            enrichedKeys={enrichedKeys}
-            data={data}
-            indexBy={indexBy}
-            formatOptions={formatOptions}
-            enableGroupTooltip={groupMode === 'stacked'}
-            onCancelHide={() => debouncedClearHoveredBar.cancel()}
-            onRequestHide={() => {
-              debouncedClearHoveredBar.cancel();
-              clearHoveredBar();
-            }}
-          />
-        )}
-      </AnimatePresence>
       <GraphWidgetLegend
         show={shouldShowLegend}
         items={enrichedKeys.map((item) => {

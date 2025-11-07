@@ -39,8 +39,8 @@ const StyledTooltipRowContainer = styled.div<{ scrollable?: boolean }>`
   overflow-y: ${({ scrollable }) => (scrollable ? 'auto' : 'visible')};
 `;
 
-const StyledDot = styled.div<{ color: string }>`
-  background: ${({ color }) => color};
+const StyledDot = styled.div<{ dotColor: string }>`
+  background: ${({ dotColor }) => dotColor};
   border-radius: 50%;
   height: 6px;
   width: 6px;
@@ -164,7 +164,7 @@ export const GraphWidgetTooltip = ({
                 shouldHighlight && highlightedKey === item.key;
               return (
                 <StyledTooltipRow key={index}>
-                  <StyledDot color={item.dotColor} />
+                  <StyledDot dotColor={item.dotColor} />
                   <StyledTooltipRowRightContent>
                     <StyledTooltipLabel isHighlighted={isHighlighted}>
                       {item.label}
