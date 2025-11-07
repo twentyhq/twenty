@@ -156,7 +156,7 @@ export class ViewResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const visibility = input.visibility ?? ViewVisibility.UNLISTED;
+    const visibility = input.visibility ?? ViewVisibility.WORKSPACE;
 
     if (visibility === ViewVisibility.WORKSPACE && isDefined(userWorkspaceId)) {
       const permissions =

@@ -8,7 +8,7 @@ export class ViewVisibility1762351626807 implements MigrationInterface {
       `CREATE TYPE "core"."view_visibility_enum" AS ENUM('WORKSPACE', 'UNLISTED')`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."view" ADD "visibility" "core"."view_visibility_enum" NOT NULL DEFAULT 'UNLISTED'`,
+      `ALTER TABLE "core"."view" ADD "visibility" "core"."view_visibility_enum" NOT NULL DEFAULT 'WORKSPACE'`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."view" ADD "createdByUserWorkspaceId" uuid`,

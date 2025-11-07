@@ -157,7 +157,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     type: 'enum',
     enum: Object.values(ViewVisibility),
     nullable: false,
-    default: ViewVisibility.UNLISTED,
+    default: ViewVisibility.WORKSPACE,
   })
   visibility: ViewVisibility;
 
