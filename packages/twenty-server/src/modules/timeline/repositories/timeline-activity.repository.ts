@@ -57,7 +57,6 @@ export class TimelineActivityRepository {
     const timelineActivityPropertyName =
       await this.getTimelineActivityPropertyName(
         objectSingularName,
-        workspaceId,
         isFeatureFlagTimelineActivityMigrated,
       );
 
@@ -116,7 +115,6 @@ export class TimelineActivityRepository {
     const timelineActivityPropertyName =
       await this.getTimelineActivityPropertyName(
         objectSingularName,
-        workspaceId,
         isFeatureFlagTimelineActivityMigrated,
       );
 
@@ -160,7 +158,6 @@ export class TimelineActivityRepository {
     const timelineActivityPropertyName =
       await this.getTimelineActivityPropertyName(
         objectSingularName,
-        workspaceId,
         isFeatureFlagTimelineActivityMigrated,
       );
 
@@ -205,7 +202,6 @@ export class TimelineActivityRepository {
 
   private async getTimelineActivityPropertyName(
     objectSingularName: string,
-    workspaceId: string,
     isFeatureFlagTimelineActivityMigrated: boolean,
   ) {
     return isFeatureFlagTimelineActivityMigrated
