@@ -4197,7 +4197,7 @@ msgid "You cannot set permissions on system objects as they are managed by the p
 msgstr "您不能在系統物件上設置權限，因為它們由平台管理。"
 
 #. js-lingui-id: EFQeXU
-#: src/engine/guards/settings-permissions.guard.ts
+#: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "您無權訪問此功能。請與您的工作區管理員聯繫以獲取訪問權限。"
 

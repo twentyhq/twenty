@@ -4197,7 +4197,7 @@ msgid "You cannot set permissions on system objects as they are managed by the p
 msgstr "לא ניתן להגדיר הרשאות על אובייקטי מערכת מאחר שהם מנוהלים על ידי הפלטפורמה."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/guards/settings-permissions.guard.ts
+#: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "אין לך הרשאה לגשת לתכונה זו. אנא פנה למנהל המרחב שלך לקבלת גישה."
 

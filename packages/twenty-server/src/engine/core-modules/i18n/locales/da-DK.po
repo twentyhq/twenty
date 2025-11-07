@@ -4197,7 +4197,7 @@ msgid "You cannot set permissions on system objects as they are managed by the p
 msgstr "Du kan ikke indstille tilladelser på systemobjekter, da de administreres af platformen."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/guards/settings-permissions.guard.ts
+#: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Du har ikke adgang til denne funktion. Kontakt venligst din workspace administrator for adgang."
 

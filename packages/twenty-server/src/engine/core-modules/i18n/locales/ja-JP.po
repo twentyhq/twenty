@@ -4197,7 +4197,7 @@ msgid "You cannot set permissions on system objects as they are managed by the p
 msgstr "システムオブジェクトにはアクセス権を設定できません。それらはプラットフォームによって管理されています。"
 
 #. js-lingui-id: EFQeXU
-#: src/engine/guards/settings-permissions.guard.ts
+#: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "この機能へのアクセス権がありません。アクセスにはワークスペース管理者に連絡してください。"
 
