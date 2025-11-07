@@ -66,7 +66,7 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       { old: 'opportunityId', new: 'targetOpportunityId' },
       { old: 'noteId', new: 'targetNoteId' },
       { old: 'taskId', new: 'targetTaskId' },
-      { old: 'workflowId', new: 'txwargetWorkflowId' },
+      { old: 'workflowId', new: 'targetWorkflowId' },
       { old: 'workflowVersionId', new: 'targetWorkflowVersionId' },
       { old: 'workflowRunId', new: 'targetWorkflowRunId' },
       { old: 'dashboardId', new: 'targetDashboardId' },

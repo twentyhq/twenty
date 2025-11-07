@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
@@ -436,4 +437,20 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   custom: Relation<CustomWorkspaceEntity>;
+
+  @WorkspaceDynamicRelation({
+    type: RelationType.MANY_TO_ONE,
+    argsFactory: (oppositeObjectMetadata) => ({
+      standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.custom,
+      name: oppositeObjectMetadata.nameSingular,
+      label: oppositeObjectMetadata.labelSingular,
+      description: `Timeline Activity ${oppositeObjectMetadata.labelSingular}`,
+      joinColumn: `target${capitalize(oppositeObjectMetadata.nameSingular)}Id`,
+      icon: 'IconTimeline',
+    }),
+    inverseSideTarget: () => CustomWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities2',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  targetCustom: Relation<CustomWorkspaceEntity>;
 }
