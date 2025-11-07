@@ -11,6 +11,13 @@ const LEFT_AXIS_LEGEND_OFFSET_PADDING = 5;
 const TICK_PADDING = 5;
 const BOTTOM_AXIS_LEGEND_OFFSET = 40;
 
+const COMMON_AXIS_CONFIG = {
+  tickSize: 0,
+  tickPadding: TICK_PADDING,
+  tickRotation: 0,
+  legendPosition: 'middle' as const,
+};
+
 type GetBarChartAxisConfigsProps = {
   width: number;
   height: number;
@@ -55,23 +62,17 @@ export const getBarChartAxisConfigs = ({
   if (layout === 'vertical') {
     return {
       axisBottom: {
-        tickSize: 0,
-        tickPadding: TICK_PADDING,
-        tickRotation: 0,
+        ...COMMON_AXIS_CONFIG,
         tickValues: categoryTickValues,
         legend: xAxisLabel,
-        legendPosition: 'middle' as const,
         legendOffset: BOTTOM_AXIS_LEGEND_OFFSET,
         format: (value: string | number) =>
           truncateTickLabel(String(value), maxBottomAxisTickLabelLength),
       },
       axisLeft: {
-        tickSize: 0,
-        tickPadding: TICK_PADDING,
-        tickRotation: 0,
+        ...COMMON_AXIS_CONFIG,
         tickValues: numberOfValueTicks,
         legend: yAxisLabel,
-        legendPosition: 'middle' as const,
         legendOffset: -margins.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
         format: (value: number) =>
           truncateTickLabel(
@@ -84,12 +85,9 @@ export const getBarChartAxisConfigs = ({
 
   return {
     axisBottom: {
-      tickSize: 0,
-      tickPadding: TICK_PADDING,
-      tickRotation: 0,
+      ...COMMON_AXIS_CONFIG,
       tickValues: numberOfValueTicks,
       legend: yAxisLabel,
-      legendPosition: 'middle' as const,
       legendOffset: BOTTOM_AXIS_LEGEND_OFFSET,
       format: (value: number) =>
         truncateTickLabel(
@@ -98,12 +96,9 @@ export const getBarChartAxisConfigs = ({
         ),
     },
     axisLeft: {
-      tickSize: 0,
-      tickPadding: TICK_PADDING,
-      tickRotation: 0,
+      ...COMMON_AXIS_CONFIG,
       tickValues: categoryTickValues,
       legend: xAxisLabel,
-      legendPosition: 'middle' as const,
       legendOffset: -margins.left + LEFT_AXIS_LEGEND_OFFSET_PADDING,
       format: (value: string | number) =>
         truncateTickLabel(String(value), maxLeftAxisTickLabelLength),
