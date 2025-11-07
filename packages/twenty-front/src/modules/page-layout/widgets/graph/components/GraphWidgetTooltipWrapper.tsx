@@ -1,14 +1,15 @@
 import { useTooltipFloating } from '@/page-layout/widgets/graph/hooks/useTooltipFloating';
 import { useTheme } from '@emotion/react';
-import { FloatingPortal } from '@floating-ui/react';
+import { FloatingPortal, type VirtualElement } from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetTooltipWrapperProps = {
   isVisible: boolean;
-  anchorElement: Element | null;
+  anchorElement: Element | VirtualElement | null;
   content: ReactNode;
+  interactive: boolean;
   onCancelHide: () => void;
   onHide: () => void;
 };
@@ -17,6 +18,7 @@ export const GraphWidgetTooltipWrapper = ({
   isVisible,
   anchorElement,
   content,
+  interactive,
   onCancelHide,
   onHide,
 }: GraphWidgetTooltipWrapperProps) => {
@@ -35,8 +37,8 @@ export const GraphWidgetTooltipWrapper = ({
           style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
           role="tooltip"
           aria-live="polite"
-          onMouseEnter={onCancelHide}
-          onMouseLeave={onHide}
+          onMouseEnter={interactive ? onCancelHide : undefined}
+          onMouseLeave={interactive ? onHide : undefined}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}

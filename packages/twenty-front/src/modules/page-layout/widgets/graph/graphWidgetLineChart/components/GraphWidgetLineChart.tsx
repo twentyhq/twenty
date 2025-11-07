@@ -1,11 +1,17 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { useGraphWidgetTooltip } from '@/page-layout/widgets/graph/contexts/GraphWidgetTooltipContext';
+import {
+  CustomCrosshairLayer,
+  type SliceHoverData,
+} from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
 import { useLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTooltip';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
+import { createVirtualElementFromChartCoordinates } from '@/page-layout/widgets/graph/utils/createVirtualElementFromChartCoordinates';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
 import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -14,7 +20,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
 import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
-import { useId } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetLineChartProps = {
@@ -35,7 +41,7 @@ type GraphWidgetLineChartProps = {
     | 'stepAfter'
     | 'natural';
   lineWidth?: number;
-  enableSlices?: 'x' | 'y' | false;
+  enableSlices?: 'x' | 'y';
   xScale?: ScaleSpec;
   yScale?: ScaleSpec;
 } & GraphValueFormatOptions;
@@ -119,12 +125,60 @@ export const GraphWidgetLineChart = ({
     theme,
   });
 
-  const { createSliceTooltipData, createPointTooltipData } =
-    useLineChartTooltip({
-      dataMap,
-      enrichedSeries,
-      formatOptions,
-    });
+  const { createSliceTooltipData } = useLineChartTooltip({
+    dataMap,
+    enrichedSeries,
+    formatOptions,
+  });
+
+  const tooltip = useGraphWidgetTooltip();
+  const [crosshairX, setCrosshairX] = useState<number | null>(null);
+
+  const handleSliceHover = useCallback(
+    (data: SliceHoverData) => {
+      const CHART_MARGIN_LEFT = 70;
+      const CHART_MARGIN_TOP = 20;
+
+      setCrosshairX(data.sliceX);
+
+      const tooltipData = createSliceTooltipData({
+        slice: {
+          id: String(data.nearestSlice.xValue ?? ''),
+          x: data.nearestSlice.x,
+          y: data.mouseY,
+          x0: data.nearestSlice.x,
+          y0: 0,
+          width: 0,
+          height: 0,
+          points: data.nearestSlice.points,
+        },
+        axis: 'x',
+      });
+
+      if (!isDefined(tooltipData)) {
+        return;
+      }
+
+      const virtualAnchor = createVirtualElementFromChartCoordinates({
+        left: data.svgRect.left + data.nearestSlice.x + CHART_MARGIN_LEFT,
+        top: data.svgRect.top + data.mouseY + CHART_MARGIN_TOP,
+      });
+
+      tooltip.show(
+        virtualAnchor,
+        <GraphWidgetTooltip
+          items={tooltipData.items}
+          showClickHint={tooltipData.showClickHint}
+          indexLabel={tooltipData.indexLabel}
+          highlightedKey={String(data.closestPoint.seriesId)}
+          interactive={false}
+          scrollable={data.nearestSlice.points.length > 6}
+        />,
+        false,
+      );
+    },
+    [createSliceTooltipData, tooltip],
+  );
 
   const axisBottomConfig = getLineChartAxisBottomConfig(xAxisLabel);
   const axisLeftConfig = getLineChartAxisLeftConfig(yAxisLabel, formatOptions);
@@ -135,39 +189,9 @@ export const GraphWidgetLineChart = ({
     handleLineChartPointClick(point, dataMap);
   };
 
-  const renderSliceTooltip = (
-    props: Parameters<typeof createSliceTooltipData>[0],
-  ) => {
-    const tooltipData = createSliceTooltipData(props);
-    return (
-      <GraphWidgetTooltip
-        items={tooltipData.items}
-        showClickHint={tooltipData.showClickHint}
-        indexLabel={tooltipData.indexLabel}
-      />
-    );
-  };
-
-  const renderPointTooltip = (
-    point: Parameters<typeof createPointTooltipData>[0],
-  ) => {
-    const tooltipData = createPointTooltipData(point);
-    if (!isDefined(tooltipData)) return null;
-    return (
-      <GraphWidgetTooltip
-        items={tooltipData.items}
-        showClickHint={tooltipData.showClickHint}
-        indexLabel={tooltipData.indexLabel}
-      />
-    );
-  };
-
   return (
     <StyledContainer id={id}>
-      <GraphWidgetChartContainer
-        $isClickable={hasClickableItems}
-        $cursorSelector="svg g circle"
-      >
+      <GraphWidgetChartContainer $isClickable={hasClickableItems}>
         <ResponsiveLine
           data={nivoData}
           margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
@@ -192,12 +216,27 @@ export const GraphWidgetLineChart = ({
           enableGridX={showGrid}
           enableGridY={showGrid}
           enableSlices={enableSlices}
-          sliceTooltip={enableSlices === 'x' ? renderSliceTooltip : undefined}
-          tooltip={
-            enableSlices === false
-              ? ({ point }) => renderPointTooltip(point)
-              : undefined
-          }
+          sliceTooltip={() => null}
+          tooltip={() => null}
+          layers={[
+            'grid',
+            'markers',
+            'axes',
+            'areas',
+            'lines',
+            (layerProps) => (
+              <CustomCrosshairLayer
+                key="custom-crosshair-layer"
+                points={layerProps.points}
+                crosshairX={crosshairX}
+                innerHeight={layerProps.innerHeight}
+                innerWidth={layerProps.innerWidth}
+                onSliceHover={handleSliceHover}
+              />
+            ),
+            'points',
+            'legends',
+          ]}
           onClick={(datum) => {
             if ('seriesId' in datum) {
               onPointClick(

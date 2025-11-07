@@ -5,6 +5,7 @@ import {
   offset,
   shift,
   useFloating,
+  type VirtualElement,
 } from '@floating-ui/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,12 +13,20 @@ import { isDefined } from 'twenty-shared/utils';
 const TOOLTIP_OFFSET_PX = 2;
 const TOOLTIP_BOUNDARY_PADDING_PX = 8;
 
-export const useTooltipFloating = (element: Element | null) => {
+export const useTooltipFloating = (
+  element: Element | VirtualElement | null,
+) => {
   const virtualElement = useMemo(() => {
     if (!isDefined(element)) {
       return null;
     }
-    return createVirtualElementFromSVGElement(element);
+    if (
+      typeof (element as any).getBoundingClientRect === 'function' &&
+      !(element as Element).nodeType
+    ) {
+      return element as VirtualElement;
+    }
+    return createVirtualElementFromSVGElement(element as Element);
   }, [element]);
 
   return useFloating({

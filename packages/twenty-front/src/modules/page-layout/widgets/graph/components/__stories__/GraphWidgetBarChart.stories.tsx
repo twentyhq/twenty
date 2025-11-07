@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart';
+import { GraphWidgetTooltipProvider } from '@/page-layout/widgets/graph/components/GraphWidgetTooltipProvider';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetBarChart> = {
@@ -72,7 +73,9 @@ export default meta;
 type Story = StoryObj<typeof GraphWidgetBarChart>;
 
 const Container = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ width: '500px', height: '300px' }}>{children}</div>
+  <GraphWidgetTooltipProvider>
+    <div style={{ width: '500px', height: '300px' }}>{children}</div>
+  </GraphWidgetTooltipProvider>
 );
 
 export const Default: Story = {

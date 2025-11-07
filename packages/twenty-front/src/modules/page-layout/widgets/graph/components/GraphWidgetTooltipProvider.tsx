@@ -2,14 +2,16 @@ import {
   GraphWidgetTooltipProvider as GraphWidgetTooltipContextProvider,
   type GraphWidgetTooltipContextType,
 } from '@/page-layout/widgets/graph/contexts/GraphWidgetTooltipContext';
+import { type VirtualElement } from '@floating-ui/react';
 import { type ReactNode, useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { GraphWidgetTooltipWrapper } from './GraphWidgetTooltipWrapper';
 
 type TooltipState = {
-  anchorElement: Element | null;
+  anchorElement: Element | VirtualElement | null;
   content: ReactNode | null;
+  interactive: boolean;
 };
 
 type GraphWidgetTooltipProviderProps = {
@@ -22,23 +24,30 @@ export const GraphWidgetTooltipProvider = ({
   const [tooltipState, setTooltipState] = useState<TooltipState>({
     anchorElement: null,
     content: null,
+    interactive: true,
   });
 
   const hideTooltip = useCallback(() => {
     setTooltipState({
       anchorElement: null,
       content: null,
+      interactive: true,
     });
   }, []);
 
   const scheduleHide = useDebouncedCallback(hideTooltip, 300);
 
   const show = useCallback(
-    (anchorElement: Element, content: ReactNode) => {
+    (
+      anchorElement: Element | VirtualElement,
+      content: ReactNode,
+      interactive: boolean = true,
+    ) => {
       scheduleHide.cancel();
       setTooltipState({
         anchorElement,
         content,
+        interactive,
       });
     },
     [scheduleHide],
@@ -61,6 +70,7 @@ export const GraphWidgetTooltipProvider = ({
     scheduleHide,
     cancelHide,
     hide,
+    isVisible,
   };
 
   return (
@@ -70,6 +80,7 @@ export const GraphWidgetTooltipProvider = ({
         isVisible={isVisible}
         anchorElement={tooltipState.anchorElement}
         content={tooltipState.content}
+        interactive={tooltipState.interactive}
         onCancelHide={cancelHide}
         onHide={hide}
       />

@@ -3,6 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart';
+import { GraphWidgetTooltipProvider } from '@/page-layout/widgets/graph/components/GraphWidgetTooltipProvider';
 
 const meta: Meta<typeof GraphWidgetLineChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLineChart',
@@ -79,28 +80,30 @@ const Container = ({ children }: { children: React.ReactNode }) => (
 );
 
 const renderChart = (args: ChartArgs) => (
-  <Container>
-    <GraphWidgetLineChart
-      id={args.id}
-      data={args.data}
-      showLegend={args.showLegend}
-      showGrid={args.showGrid}
-      enablePoints={args.enablePoints}
-      xAxisLabel={args.xAxisLabel}
-      yAxisLabel={args.yAxisLabel}
-      displayType={args.displayType}
-      prefix={args.prefix}
-      suffix={args.suffix}
-      decimals={args.decimals}
-      enableArea={args.enableArea}
-      stackedArea={args.stackedArea}
-      curve={args.curve}
-      lineWidth={args.lineWidth}
-      enableSlices={args.enableSlices}
-      xScale={args.xScale}
-      yScale={args.yScale}
-    />
-  </Container>
+  <GraphWidgetTooltipProvider>
+    <Container>
+      <GraphWidgetLineChart
+        id={args.id}
+        data={args.data}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        enablePoints={args.enablePoints}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
+        enableArea={args.enableArea}
+        stackedArea={args.stackedArea}
+        curve={args.curve}
+        lineWidth={args.lineWidth}
+        enableSlices={args.enableSlices}
+        xScale={args.xScale}
+        yScale={args.yScale}
+      />
+    </Container>
+  </GraphWidgetTooltipProvider>
 );
 
 const generateLinearData = (points: number = 10) => {
@@ -351,7 +354,7 @@ export const InteractiveWithLinks: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    enableSlices: false,
+    enableSlices: 'x',
     xAxisLabel: 'Step',
     yAxisLabel: 'Progress',
     displayType: 'percentage',
@@ -739,7 +742,7 @@ export const PointTooltipDemo: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    enableSlices: false,
+    enableSlices: 'x',
     xScale: { type: 'point' },
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',
