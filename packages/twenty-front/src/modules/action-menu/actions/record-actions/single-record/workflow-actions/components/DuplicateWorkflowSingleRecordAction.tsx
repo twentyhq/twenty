@@ -15,7 +15,7 @@ export const DuplicateWorkflowSingleRecordAction = () => {
   const workflow = useWorkflowWithCurrentVersion(recordId);
   const { duplicateWorkflow } = useDuplicateWorkflow();
   const navigate = useNavigateApp();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
   const handleClick = async () => {
@@ -28,14 +28,17 @@ export const DuplicateWorkflowSingleRecordAction = () => {
       workflowVersionIdToCopy: workflow.currentVersion.id,
     });
 
-    if (isNonEmptyString(result?.workflowId)) {
+    if (isDefined(result) && isNonEmptyString(result.workflowId)) {
       enqueueSuccessSnackBar({
         message: t`Workflow duplicated successfully`,
       });
-
       navigate(AppPath.RecordShowPage, {
         objectNameSingular: CoreObjectNameSingular.Workflow,
         objectRecordId: result.workflowId,
+      });
+    } else {
+      enqueueErrorSnackBar({
+        message: t`Failed to duplicate workflow`,
       });
     }
   };
