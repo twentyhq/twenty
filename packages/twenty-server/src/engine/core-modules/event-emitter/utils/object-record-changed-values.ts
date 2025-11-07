@@ -14,16 +14,6 @@ const isWorkflowVersionStepsOrTrigger = (
   );
 };
 
-const isWorkflowRunState = (
-  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
-  key: string,
-) => {
-  return (
-    objectMetadataItem.standardId === STANDARD_OBJECT_IDS.workflowRun &&
-    key === 'state'
-  );
-};
-
 const isWorkflowAutomatedTriggerSettings = (
   objectMetadataItem: ObjectMetadataItemWithFieldMaps,
   key: string,
