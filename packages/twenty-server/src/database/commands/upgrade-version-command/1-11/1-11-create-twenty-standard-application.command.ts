@@ -14,11 +14,11 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 @Command({
-  name: 'upgrade:1-11:seed-standard-applications',
+  name: 'upgrade:1-11:create-twenty-standard-application',
   description:
-    'Seed twenty-standard and twenty-workflow applications for workspaces that do not have them',
+    'Create twenty-standard application for workspaces that do not have them',
 })
-export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class CreateTwentyStandardApplicationCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -41,10 +41,7 @@ export class SeedStandardApplicationsCommand extends ActiveOrSuspendedWorkspaces
     const existingApplications = await this.applicationRepository.find({
       where: {
         workspaceId,
-        universalIdentifier: In([
-          TWENTY_STANDARD_APPLICATION,
-          TWENTY_STANDARD_APPLICATION,
-        ]),
+        universalIdentifier: In([TWENTY_STANDARD_APPLICATION]),
       },
     });
 
