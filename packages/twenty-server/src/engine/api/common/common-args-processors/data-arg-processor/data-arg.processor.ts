@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNull, isUndefined } from '@sniptt/guards';
 import {
+  FieldMetadataRelationSettings,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
