@@ -13,7 +13,7 @@ import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
@@ -21,7 +21,7 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 @UseFilters(PageLayoutGraphqlApiExceptionFilter)
 @UseGuards(
   WorkspaceAuthGuard,
-  SettingsPermissionsGuard(PermissionFlagType.LAYOUTS),
+  SettingsPermissionGuard(PermissionFlagType.LAYOUTS),
 )
 @UsePipes(ResolverValidationPipe)
 export class PageLayoutResolver {
