@@ -1,4 +1,5 @@
-import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabHeader } from '@/page-layout/components/PageLayoutTabHeader';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
@@ -6,6 +7,7 @@ import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabL
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { useReorderPageLayoutTabs } from '@/page-layout/hooks/useReorderPageLayoutTabs';
+import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
@@ -18,8 +20,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -124,7 +124,7 @@ export const PageLayoutRendererContent = () => {
             defaultEnableXScroll={false}
           >
             {isDefined(activeTabId) && (
-              <PageLayoutContent tabId={activeTabId} />
+              <PageLayoutMainContent tabId={activeTabId} />
             )}
           </StyledScrollWrapper>
         </StyledTabsAndDashboardContainer>

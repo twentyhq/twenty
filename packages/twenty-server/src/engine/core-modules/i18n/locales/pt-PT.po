@@ -3592,6 +3592,12 @@ msgstr "Email do Utilizador"
 msgid "User Id"
 msgstr "ID do Utilizador"
 
+#. js-lingui-id: pMOjQa
+#: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User is not a member of the workspace."
+msgstr ""
+
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User is not part of the workspace"
@@ -4229,6 +4235,11 @@ msgstr "Não é possível definir permissões em objetos do sistema, pois eles s
 #: src/engine/guards/settings-permissions.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Você não tem permissão para acessar este recurso. Por favor, entre em contato com o administrador da área de trabalho para obter acesso."
+
+#. js-lingui-id: P69VwK
+#: src/engine/core-modules/user/user.resolver.ts
+msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
+msgstr ""
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts

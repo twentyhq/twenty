@@ -1,4 +1,4 @@
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { BadRequestException, UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { msg } from '@lingui/core/macro';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,17 +49,27 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const getHMACKey = (email?: string, key?: string | null) => {
@@ -87,6 +98,7 @@ export class UserResolver {
 
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   private async getUserWorkspacePermissions({
@@ -389,6 +401,70 @@ export class UserResolver {
   @UseGuards(UserAuthGuard)
   async deleteUser(@AuthUser() { id: userId }: UserEntity) {
     return this.userService.deleteUser(userId);
+  }
+
+  @Mutation(() => UserWorkspaceEntity)
+  @UseGuards(UserAuthGuard)
+  async deleteUserFromWorkspace(
+    @Args('workspaceMemberIdToDelete') workspaceMemberIdToDelete: string,
+    @AuthUser() { id: userId }: UserEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthWorkspace()
+    workspace: WorkspaceEntity,
+    @AuthApiKey() apiKey?: string,
+  ) {
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workspaceMemberToDelete = await workspaceMemberRepository.findOne({
+      where: {
+        id: workspaceMemberIdToDelete,
+      },
+    });
+
+    if (!isDefined(workspaceMemberToDelete)) {
+      throw new BadRequestException(
+        'Workspace member to delete not found in workspace',
+      );
+    }
+
+    const workspaceMemberToDeleteIsAuthenticatedUser =
+      workspaceMemberToDelete.userId === userId;
+
+    const canDeleteUserFromWorkspace =
+      workspaceMemberToDeleteIsAuthenticatedUser ||
+      (await this.permissionsService.userHasWorkspaceSettingPermission({
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        setting: PermissionFlagType.WORKSPACE_MEMBERS,
+        apiKeyId: apiKey ?? undefined,
+      }));
+
+    if (!canDeleteUserFromWorkspace) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access.`,
+        },
+      );
+    }
+
+    return this.userService.deleteUserWorkspaceAndPotentiallyDeleteUser({
+      userId: workspaceMemberToDelete.userId,
+      workspaceId: workspace.id,
+    });
   }
 
   @ResolveField(() => OnboardingStatus, {

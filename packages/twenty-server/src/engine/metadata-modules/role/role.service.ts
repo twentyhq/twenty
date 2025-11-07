@@ -155,13 +155,13 @@ export class RoleService {
       workspaceId,
     });
 
-    const defaultRole = await this.workspaceRepository.findOne({
+    const workspace = await this.workspaceRepository.findOne({
       where: {
         id: workspaceId,
       },
     });
 
-    const defaultRoleId = defaultRole?.defaultRoleId;
+    const defaultRoleId = workspace?.defaultRoleId;
 
     if (!isDefined(defaultRoleId)) {
       throw new PermissionsException(

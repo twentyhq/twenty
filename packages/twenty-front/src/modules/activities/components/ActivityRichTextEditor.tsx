@@ -26,6 +26,7 @@ import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -82,6 +83,24 @@ export const ActivityRichTextEditor = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
+
+  const { records: attachments } = useFindManyRecords<Attachment>({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+    filter: {
+      or: [
+        {
+          noteId: {
+            eq: activityId,
+          },
+        },
+        {
+          taskId: {
+            eq: activityId,
+          },
+        },
+      ],
+    },
+  });
 
   const { fetchAllRecords: findSoftDeletedAttachments } =
     useLazyFetchAllRecords({
@@ -208,7 +227,7 @@ export const ActivityRichTextEditor = ({
 
         const attachmentIdsToDelete = getActivityAttachmentIdsToDelete(
           newStringifiedBody,
-          oldActivity?.attachments,
+          attachments,
           oldActivity?.bodyV2.blocknote,
         );
 
@@ -220,7 +239,7 @@ export const ActivityRichTextEditor = ({
 
         const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
           newStringifiedBody,
-          oldActivity?.attachments,
+          attachments,
         );
 
         if (attachmentPathsToRestore.length > 0) {
@@ -238,7 +257,7 @@ export const ActivityRichTextEditor = ({
         }
         const attachmentsToUpdate = getActivityAttachmentIdsAndNameToUpdate(
           newStringifiedBody,
-          oldActivity?.attachments,
+          attachments,
         );
         if (attachmentsToUpdate.length > 0) {
           for (const attachmentToUpdate of attachmentsToUpdate) {
@@ -251,6 +270,7 @@ export const ActivityRichTextEditor = ({
         }
       },
     [
+      attachments,
       activityId,
       cache,
       objectMetadataItemActivity,
