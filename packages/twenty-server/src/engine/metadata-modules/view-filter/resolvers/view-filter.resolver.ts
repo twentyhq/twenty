@@ -13,6 +13,10 @@ import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
+import { CreateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-permission.guard';
+import { DeleteViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-permission.guard';
+import { DestroyViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-filter-permission.guard';
+import { UpdateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewFilterDTO)
@@ -47,6 +51,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
+  @UseGuards(CreateViewFilterPermissionGuard)
   async createCoreViewFilter(
     @Args('input') createViewFilterInput: CreateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -71,6 +76,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
+  @UseGuards(UpdateViewFilterPermissionGuard)
   async updateCoreViewFilter(
     @Args('input') updateViewFilterInput: UpdateViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -96,6 +102,7 @@ export class ViewFilterResolver {
   }
 
   @Mutation(() => ViewFilterDTO)
+  @UseGuards(DeleteViewFilterPermissionGuard)
   async deleteCoreViewFilter(
     @Args('input') deleteViewFilterInput: DeleteViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -113,15 +120,11 @@ export class ViewFilterResolver {
       });
     }
 
-    const deletedViewFilter = await this.viewFilterService.delete(
-      deleteViewFilterInput.id,
-      workspaceId,
-    );
-
-    return deletedViewFilter;
+    return this.viewFilterService.delete(deleteViewFilterInput.id, workspaceId);
   }
 
   @Mutation(() => ViewFilterDTO)
+  @UseGuards(DestroyViewFilterPermissionGuard)
   async destroyCoreViewFilter(
     @Args('input') destroyViewFilterInput: DestroyViewFilterInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -133,19 +136,15 @@ export class ViewFilterResolver {
       );
 
     if (isWorkspaceMigrationV2Enabled) {
-      const destroyedViewFilter = await this.viewFilterV2Service.destroyOne({
+      return await this.viewFilterV2Service.destroyOne({
         destroyViewFilterInput,
         workspaceId,
       });
-
-      return destroyedViewFilter;
     }
 
-    const destroyedViewFilter = await this.viewFilterService.destroy(
+    return this.viewFilterService.destroy(
       destroyViewFilterInput.id,
       workspaceId,
     );
-
-    return destroyedViewFilter;
   }
 }

@@ -112,6 +112,7 @@ export default defineConfig(({ command, mode }) => {
         plugins: [['@lingui/swc-plugin', {}]],
       }),
       tsconfigPaths({
+        root: __dirname,
         projects: ['tsconfig.json'],
       }),
       svgr(),

@@ -1427,11 +1427,6 @@ msgstr "Güncellenecek alan bulunamadı"
 msgid "Field used for full-text search"
 msgstr "Tam Metin Araması için Kullanılan Alan"
 
-#. js-lingui-id: s3HtdT
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "FieldMetadataId is required"
-msgstr "FieldMetadataId gereklidir"
-
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
@@ -1699,16 +1694,6 @@ msgstr "Geçersiz UUID {id}"
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Geçersiz doğrulama kodu. Lütfen tekrar deneyin."
-
-#. js-lingui-id: 8xkULN
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data"
-msgstr "Geçersiz görünüm sıralama verisi"
-
-#. js-lingui-id: I0OzaR
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data for view sort id: {id}"
-msgstr "Görünüm sıralama id'si için geçersiz sıralama verisi: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3254,6 +3239,11 @@ msgstr "Bu çalışma alanı için varsayılan rol bulunamadı. Yardım için de
 msgid "The executor of the workflow"
 msgstr "İş akışını yürüten kişi"
 
+#. js-lingui-id: o6DGfJ
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
+msgstr ""
+
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
 msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
@@ -3540,11 +3530,6 @@ msgstr "Benzersiz alan varsayılan bir değere sahip olamaz"
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "{fieldType} türünde {fieldName} alanı için benzersiz indeks oluşturulamadı"
 
-#. js-lingui-id: rtir7c
-#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
-msgid "unknown"
-msgstr ""
-
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -3591,6 +3576,12 @@ msgstr "Kullanıcı E-postası"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User Id"
 msgstr "Kullanıcı Kimliği"
+
+#. js-lingui-id: pMOjQa
+#: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User is not a member of the workspace."
+msgstr ""
 
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -3828,16 +3819,6 @@ msgstr "Kanban toplu alanı meta verileri bulunamadı."
 msgid "View not found"
 msgstr "Görünüm bulunamadı"
 
-#. js-lingui-id: znNExx
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort (id: {id}) not found"
-msgstr "Görünüm sıralama (id: {id}) bulunamadı"
-
-#. js-lingui-id: 3zMs+f
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort not found"
-msgstr "Görünüm sıralama bulunamadı"
-
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
@@ -3863,11 +3844,6 @@ msgstr "Aynı ID'ye sahip görünüm zaten mevcut"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "ViewId"
 msgstr "GörünümId"
-
-#. js-lingui-id: kpQRY2
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "ViewId is required"
-msgstr "ViewId gereklidir"
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -4146,11 +4122,6 @@ msgstr "Çalışma alanı üyesi pozisyonu"
 msgid "Workspace Members"
 msgstr "Çalışma Alanı Üyeleri"
 
-#. js-lingui-id: bBr+RW
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "WorkspaceId is required"
-msgstr "WorkspaceId gereklidir"
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
@@ -4230,20 +4201,30 @@ msgstr "Sistem nesneleri üzerinde izinler ayarlanamaz, çünkü platform taraf�
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Bu özelliğe erişim izniniz yok. Erişim için çalışma alanı yöneticinizle iletişime geçin."
 
+#. js-lingui-id: P69VwK
+#: src/engine/core-modules/user/user.resolver.ts
+msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Kullanıcıları taklit etmek için izniniz yok. Erişim için çalışma alanı yöneticinizle iletişime geçin."
 
-#. js-lingui-id: k7P8yU
+#. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage security settings. Please contact your workspace administrator."
-msgstr "Güvenlik ayarlarını yönetmek için izniniz yok. Lütfen çalışma alanı yöneticinizle iletişime geçin."
+msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
+msgstr ""
 
-#. js-lingui-id: svchJc
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage workspace settings. Please contact your workspace administrator."
-msgstr "Çalışma alanı ayarlarını yönetmek için izniniz yok. Lütfen çalışma alanı yöneticinizle iletişime geçin."
+#. js-lingui-id: M1he8p
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to create workspace-level views."
+msgstr ""
+
+#. js-lingui-id: QmL9y9
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to modify this view."
+msgstr ""
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
