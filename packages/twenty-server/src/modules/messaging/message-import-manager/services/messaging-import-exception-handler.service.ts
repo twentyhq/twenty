@@ -86,17 +86,15 @@ export class MessageImportExceptionHandlerService {
         case MessageImportDriverExceptionCode.UNKNOWN:
         case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
         default:
-          this.exceptionHandlerService.captureExceptions([exception], {
-            workspace: { id: workspaceId },
-          });
-          await this.handleUnknownException(messageChannel, workspaceId);
+          await this.handleUnknownException(
+            exception,
+            messageChannel,
+            workspaceId,
+          );
           break;
       }
     } else {
-      this.exceptionHandlerService.captureExceptions([exception], {
-        workspace: { id: workspaceId },
-      });
-      await this.handleUnknownException(messageChannel, workspaceId);
+      await this.handleUnknownException(exception, messageChannel, workspaceId);
     }
   }
 
@@ -179,9 +177,13 @@ export class MessageImportExceptionHandlerService {
   }
 
   private async handleUnknownException(
+    exception: Error,
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
+    this.exceptionHandlerService.captureExceptions([exception], {
+      workspace: { id: workspaceId },
+    });
     await this.messageChannelSyncStatusService.markAsFailed(
       [messageChannel.id],
       workspaceId,
