@@ -1,4 +1,5 @@
 import { Logger, Scope } from '@nestjs/common';
+import chunk from 'lodash.chunk';
 import { In } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -47,24 +48,30 @@ export class UpdateWorkspaceMemberEmailJob {
       order: { createdAt: 'DESC' },
     });
 
-    for (const { workspaceId } of dataSources) {
-      try {
-        const workspaceMemberRepository =
-          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
+    const workspaceChunks = chunk(dataSources, 5);
 
-        await workspaceMemberRepository.update(
-          { userId },
-          { userEmail: email },
-        );
-      } catch (error) {
-        this.logger.error(
-          `Failed to update workspace member email for user ${userId} in workspace ${workspaceId}: ${error.message}`,
-        );
-      }
+    for (const chunkItem of workspaceChunks) {
+      await Promise.all(
+        chunkItem.map(async ({ workspaceId }) => {
+          try {
+            const workspaceMemberRepository =
+              await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+                workspaceId,
+                'workspaceMember',
+                { shouldBypassPermissionChecks: true },
+              );
+
+            await workspaceMemberRepository.update(
+              { userId },
+              { userEmail: email },
+            );
+          } catch (error) {
+            this.logger.error(
+              `Failed to update workspace member email for user ${userId} in workspace ${workspaceId}: ${error.message}`,
+            );
+          }
+        }),
+      );
     }
   }
 }
