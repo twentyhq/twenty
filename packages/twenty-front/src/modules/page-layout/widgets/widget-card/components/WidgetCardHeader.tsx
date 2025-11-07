@@ -17,6 +17,7 @@ export type WidgetCardHeaderProps = {
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
   className?: string;
+  isResizing?: boolean;
 };
 
 const StyledWidgetCardHeader = styled.div`
@@ -52,6 +53,7 @@ export const WidgetCardHeader = ({
   isWidgetCardHovered = false,
   isEmpty = false,
   isInEditMode = false,
+  isResizing = false,
   title,
   onRemove,
   forbiddenDisplay,
@@ -75,24 +77,28 @@ export const WidgetCardHeader = ({
       <StyledRightContainer>
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
         <AnimatePresence>
-          {!isEmpty && isInEditMode && onRemove && isWidgetCardHovered && (
-            <StyledIconButtonContainer
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 'auto', opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
-              transition={{
-                duration: theme.animation.duration.fast,
-                ease: 'easeInOut',
-              }}
-            >
-              <IconButton
-                onClick={onRemove}
-                Icon={IconTrash}
-                variant="tertiary"
-                size="small"
-              />
-            </StyledIconButtonContainer>
-          )}
+          {!isResizing &&
+            !isEmpty &&
+            isInEditMode &&
+            onRemove &&
+            isWidgetCardHovered && (
+              <StyledIconButtonContainer
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: 'auto', opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{
+                  duration: theme.animation.duration.fast,
+                  ease: 'easeInOut',
+                }}
+              >
+                <IconButton
+                  onClick={onRemove}
+                  Icon={IconTrash}
+                  variant="tertiary"
+                  size="small"
+                />
+              </StyledIconButtonContainer>
+            )}
         </AnimatePresence>
       </StyledRightContainer>
     </StyledWidgetCardHeader>

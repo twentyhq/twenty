@@ -29,9 +29,18 @@ const StyledLoadingContainer = styled.div`
 
 const StyledContentContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.lighter};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(3)};
   border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  min-width: 0;
+  padding: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledJsonTreeContainer = styled.div`
+  overflow-x: auto;
+
+  ul {
+    min-width: 0;
+  }
 `;
 
 const StyledToggleButton = styled.div<{ isExpandable: boolean }>`
@@ -88,11 +97,6 @@ const StyledTab = styled.div<{ isActive: boolean }>`
   }
 `;
 
-const StyledJsonContainer = styled.div`
-  max-height: 400px;
-  overflow: auto;
-`;
-
 type TabType = 'output' | 'input';
 
 export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
@@ -107,8 +111,6 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
 
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;
-
-  const isTwoFirstDepths = ({ depth }: { depth: number }) => depth < 2;
 
   if (!output && !hasError) {
     return (
@@ -159,10 +161,10 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
       </StyledToggleButton>
 
       {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded}>
+        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
           <StyledContentContainer>
             {hasError ? (
-              <StyledJsonContainer>{errorText}</StyledJsonContainer>
+              errorText
             ) : (
               <>
                 <StyledTabContainer>
@@ -180,12 +182,12 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
                   </StyledTab>
                 </StyledTabContainer>
 
-                <StyledJsonContainer>
+                <StyledJsonTreeContainer>
                   <JsonTree
                     value={
                       (activeTab === 'output' ? result : input) as JsonValue
                     }
-                    shouldExpandNodeInitially={isTwoFirstDepths}
+                    shouldExpandNodeInitially={() => false}
                     emptyArrayLabel={t`Empty Array`}
                     emptyObjectLabel={t`Empty Object`}
                     emptyStringLabel={t`[empty string]`}
@@ -193,7 +195,7 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
                     arrowButtonExpandedLabel={t`Collapse`}
                     onNodeValueClick={copyToClipboard}
                   />
-                </StyledJsonContainer>
+                </StyledJsonTreeContainer>
               </>
             )}
           </StyledContentContainer>

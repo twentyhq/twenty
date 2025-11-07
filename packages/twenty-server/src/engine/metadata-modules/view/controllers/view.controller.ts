@@ -18,10 +18,13 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
+import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
@@ -53,14 +56,16 @@ export class ViewController {
   async findMany(
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<ViewDTO[]> {
     const views = objectMetadataId
       ? await this.viewService.findByObjectMetadataId(
           workspace.id,
           objectMetadataId,
+          userWorkspaceId,
         )
-      : await this.viewService.findByWorkspaceId(workspace.id);
+      : await this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
 
     return this.processViewsWithTemplates(views, workspace.id, locale);
   }
@@ -133,6 +138,7 @@ export class ViewController {
   }
 
   @Patch(':id')
+  @UseGuards(UpdateViewPermissionGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewInput,
@@ -169,6 +175,7 @@ export class ViewController {
   }
 
   @Delete(':id')
+  @UseGuards(DeleteViewPermissionGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

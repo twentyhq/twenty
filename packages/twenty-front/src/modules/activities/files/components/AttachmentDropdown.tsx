@@ -17,6 +17,7 @@ type AttachmentDropdownProps = {
   onDelete: () => void;
   onRename: () => void;
   attachmentId: string;
+  hasDownloadPermission: boolean;
 };
 
 export const AttachmentDropdown = ({
@@ -24,6 +25,7 @@ export const AttachmentDropdown = ({
   onDelete,
   onRename,
   attachmentId,
+  hasDownloadPermission,
 }: AttachmentDropdownProps) => {
   const dropdownId = `${attachmentId}-attachment-dropdown`;
 
@@ -53,11 +55,13 @@ export const AttachmentDropdown = ({
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
-            <MenuItem
-              text="Download"
-              LeftIcon={IconDownload}
-              onClick={handleDownload}
-            />
+            {hasDownloadPermission && (
+              <MenuItem
+                text="Download"
+                LeftIcon={IconDownload}
+                onClick={handleDownload}
+              />
+            )}
             <MenuItem
               text="Rename"
               LeftIcon={IconPencil}

@@ -180,11 +180,7 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     >;
     typeOptions: TypeOptions;
   }) {
-    if (
-      fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY ||
-      //TODO : Enable connect on morph relation - @guillim
-      fieldMetadata.type === FieldMetadataType.MORPH_RELATION
-    ) {
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
     }
 
