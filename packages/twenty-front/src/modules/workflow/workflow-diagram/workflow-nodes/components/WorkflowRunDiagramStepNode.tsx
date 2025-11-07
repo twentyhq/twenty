@@ -136,15 +136,6 @@ export const WorkflowRunDiagramStepNode = ({
     });
   };
 
-  const stepIsInstant = (data: WorkflowRunDiagramStepNodeData) => {
-    if (data.nodeType === 'action') {
-      return !['CODE', 'DELAY', 'FORM', 'AI', 'ITERATOR'].includes(
-        data.actionType,
-      );
-    }
-    return true;
-  };
-
   return (
     <>
       <WorkflowNodeContainer
@@ -188,12 +179,11 @@ export const WorkflowRunDiagramStepNode = ({
               )}
 
               {(data.runStatus === StepStatus.RUNNING ||
-                data.runStatus === StepStatus.PENDING) &&
-                !stepIsInstant(data) && (
-                  <StyledStatusIconsContainer>
-                    <Loader color="yellow" />
-                  </StyledStatusIconsContainer>
-                )}
+                data.runStatus === StepStatus.PENDING) && (
+                <StyledStatusIconsContainer>
+                  <Loader color="yellow" />
+                </StyledStatusIconsContainer>
+              )}
             </StyledRightPartContainer>
           </StyledNodeLabelWithCounterPart>
 
