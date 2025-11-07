@@ -1,6 +1,7 @@
 import { PageLayoutGridLayoutDragSelector } from '@/page-layout/components/PageLayoutGridLayoutDragSelector';
 import { PageLayoutGridOverlay } from '@/page-layout/components/PageLayoutGridOverlay';
 import { PageLayoutGridResizeHandle } from '@/page-layout/components/PageLayoutGridResizeHandle';
+import { ReactGridLayoutCardWrapper } from '@/page-layout/components/ReactGridLayoutCardWrapper';
 import { EMPTY_LAYOUT } from '@/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
@@ -13,6 +14,7 @@ import { pageLayoutCurrentBreakpointComponentState } from '@/page-layout/states/
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
+import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { addPendingPlaceholderToLayouts } from '@/page-layout/utils/addPendingPlaceholderToLayouts';
 import { filterPendingPlaceholderFromLayouts } from '@/page-layout/utils/filterPendingPlaceholderFromLayouts';
 import { prepareGridLayoutItemsWithPlaceholders } from '@/page-layout/utils/prepareGridLayoutItemsWithPlaceholders';
@@ -76,6 +78,10 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
 
   const setDraggingWidgetId = useSetRecoilComponentState(
     pageLayoutDraggingWidgetIdComponentState,
+  );
+
+  const setResizingWidgetId = useSetRecoilComponentState(
+    pageLayoutResizingWidgetIdComponentState,
   );
 
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
@@ -165,12 +171,18 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
           resizeHandle={
             isPageLayoutInEditMode ? <PageLayoutGridResizeHandle /> : undefined
           }
-          resizeHandles={['se']}
+          resizeHandles={['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw']}
           onDragStart={(_layout, _oldItem, newItem) => {
             setDraggingWidgetId(newItem.i);
           }}
           onDragStop={() => {
             setDraggingWidgetId(null);
+          }}
+          onResizeStart={(_layout, _oldItem, newItem) => {
+            setResizingWidgetId(newItem.i);
+          }}
+          onResizeStop={() => {
+            setResizingWidgetId(null);
           }}
           onLayoutChange={handleLayoutChangeWithoutPendingPlaceholder}
           onBreakpointChange={(newBreakpoint) =>
@@ -180,13 +192,13 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
           }
         >
           {gridLayoutItems.map((item) => (
-            <div key={item.id} data-select-disable="true">
+            <ReactGridLayoutCardWrapper key={item.id}>
               {item.type === 'placeholder' ? (
                 <WidgetPlaceholder />
               ) : (
                 <WidgetRenderer widget={item.widget} />
               )}
-            </div>
+            </ReactGridLayoutCardWrapper>
           ))}
         </ResponsiveGridLayout>
       </StyledGridContainer>

@@ -39,10 +39,10 @@ export const DeleteSingleRecordAction = () => {
 
   return (
     <ActionModal
-      title="Delete Record"
+      title={t`Delete Record`}
       subtitle={t`Are you sure you want to delete this record? It can be recovered from the Command menu.`}
       onConfirmClick={handleDeleteClick}
-      confirmButtonText="Delete Record"
+      confirmButtonText={t`Delete Record`}
     />
   );
 };

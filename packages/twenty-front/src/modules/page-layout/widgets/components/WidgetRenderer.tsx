@@ -5,6 +5,7 @@ import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWi
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
@@ -35,6 +36,10 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     pageLayoutDraggingWidgetIdComponentState,
   );
 
+  const resizingWidgetId = useRecoilComponentValue(
+    pageLayoutResizingWidgetIdComponentState,
+  );
+
   const currentlyEditingWidgetId = useRecoilComponentValue(
     pageLayoutEditingWidgetIdComponentState,
   );
@@ -42,6 +47,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const isEditing = currentlyEditingWidgetId === widget.id;
 
   const isDragging = draggingWidgetId === widget.id;
+
+  const isResizing = resizingWidgetId === widget.id;
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
@@ -76,9 +83,10 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   return (
     <WidgetCard
-      isEditing={isEditing}
       isDragging={isDragging}
+      isResizing={isResizing}
       layoutMode={layoutMode}
+      isEditing={isEditing}
       pageLayoutType={currentPageLayout.type}
       isInPinnedTab={isInPinnedTab}
       onClick={isPageLayoutInEditMode ? handleClick : undefined}
@@ -89,6 +97,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         <WidgetCardHeader
           isWidgetCardHovered={isHovered}
           isInEditMode={isPageLayoutInEditMode}
+          isResizing={isResizing}
           title={widget.title}
           onRemove={handleRemove}
           forbiddenDisplay={
