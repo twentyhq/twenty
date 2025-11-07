@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { SeedStandardApplicationsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-seed-standard-applications.command';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -23,8 +25,10 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
       ViewEntity,
       UserWorkspaceEntity,
       RoleTargetsEntity,
+      ApplicationEntity
     ]),
     WorkspaceSchemaManagerModule,
+    ApplicationModule
   ],
   providers: [
     CleanOrphanedUserWorkspacesCommand,
