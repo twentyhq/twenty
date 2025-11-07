@@ -258,14 +258,17 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         mockNewServerlessFunction,
       );
 
-      const result = await service.createStepForDuplicate({
+      const clonedStep = await service.cloneStep({
         step: originalStep,
         workspaceId: mockWorkspaceId,
       });
+      const duplicateStep = service.markStepAsDuplicate({
+        step: clonedStep,
+      });
 
-      expect(result.id).not.toBe('original-id');
-      expect(result.name).toBe('Original Step (Duplicate)');
-      const codeResult = result as unknown as {
+      expect(duplicateStep.id).not.toBe('original-id');
+      expect(duplicateStep.name).toBe('Original Step (Duplicate)');
+      const codeResult = duplicateStep as unknown as {
         settings: {
           input: {
             serverlessFunctionId: string;
@@ -279,7 +282,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       );
       expect(codeResult.settings.input.serverlessFunctionVersion).toBe('draft');
 
-      expect(result.nextStepIds).toEqual([]);
+      expect(duplicateStep.nextStepIds).toEqual([]);
     });
 
     it('should duplicate non-code step', async () => {
@@ -294,15 +297,18 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         nextStepIds: ['next-step'],
       } as unknown as WorkflowAction;
 
-      const result = await service.createStepForDuplicate({
+      const clonedStep = await service.cloneStep({
         step: originalStep,
         workspaceId: mockWorkspaceId,
       });
+      const duplicateStep = service.markStepAsDuplicate({
+        step: clonedStep,
+      });
 
-      expect(result.id).not.toBe('original-id');
-      expect(result.name).toBe('Original Step (Duplicate)');
-      expect(result.settings).toEqual(originalStep.settings);
-      expect(result.nextStepIds).toEqual([]);
+      expect(duplicateStep.id).not.toBe('original-id');
+      expect(duplicateStep.name).toBe('Original Step (Duplicate)');
+      expect(duplicateStep.settings).toEqual(originalStep.settings);
+      expect(duplicateStep.nextStepIds).toEqual([]);
     });
   });
 });

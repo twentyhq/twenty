@@ -14,10 +14,14 @@ import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import {
+  WorkflowStatus,
+  WorkflowWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { assertWorkflowVersionHasSteps } from 'src/modules/workflow/common/utils/assert-workflow-version-has-steps';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
+import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -26,6 +30,7 @@ export class WorkflowVersionWorkspaceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
+    private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
     private readonly recordPositionService: RecordPositionService,
   ) {}
 
@@ -193,7 +198,7 @@ export class WorkflowVersionWorkspaceService {
     });
 
     const newWorkflowId = (
-      insertWorkflowResult.generatedMaps[0] as { id: string }
+      insertWorkflowResult.generatedMaps[0] as WorkflowWorkspaceEntity
     ).id;
 
     const versionPosition =
@@ -217,24 +222,24 @@ export class WorkflowVersionWorkspaceService {
       .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
 
     const newTrigger = sourceVersion.trigger;
-    const sourceToDuplicatedPairs: Array<{
+    const sourceToClonedPairs: Array<{
       source: WorkflowAction;
       duplicated: WorkflowAction;
     }> = [];
     const oldToNewIdMap = new Map<string, string>();
 
     for (const step of sourceVersion.steps ?? []) {
-      const duplicatedStep =
-        await this.workflowVersionStepWorkspaceService.createStepForDuplicate({
+      const clonedStep =
+        await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
           step,
           workspaceId,
         });
 
-      sourceToDuplicatedPairs.push({
+      sourceToClonedPairs.push({
         source: step,
-        duplicated: duplicatedStep,
+        duplicated: clonedStep,
       });
-      oldToNewIdMap.set(step.id, duplicatedStep.id);
+      oldToNewIdMap.set(step.id, clonedStep.id);
     }
 
     const remappedTrigger = isDefined(newTrigger)
@@ -246,7 +251,7 @@ export class WorkflowVersionWorkspaceService {
         }
       : undefined;
 
-    const remappedSteps: WorkflowAction[] = sourceToDuplicatedPairs.map(
+    const remappedSteps: WorkflowAction[] = sourceToClonedPairs.map(
       ({ source, duplicated }) => ({
         ...duplicated,
         nextStepIds: (source.nextStepIds ?? []).map(
