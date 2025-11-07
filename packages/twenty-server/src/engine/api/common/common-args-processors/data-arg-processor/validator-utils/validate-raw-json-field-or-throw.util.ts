@@ -15,7 +15,7 @@ export const validateRawJsonFieldOrThrow = (
 
   if (!isObject(value)) {
     throw new CommonQueryRunnerException(
-      `Invalid value ${inspect(value)} for raw json field "${fieldName}"`,
+      `Invalid object value ${inspect(value)} for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
     );
   }

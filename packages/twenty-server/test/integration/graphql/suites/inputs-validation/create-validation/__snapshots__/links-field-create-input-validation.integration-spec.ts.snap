@@ -2,4 +2,4 @@
 
 exports[`Create input validation - LINKS Gql create input - failure LINKS - should fail with : {"linksField":"not-a-link"} 1`] = `"Expected type "LinksCreateInput" to be an object."`;
 
-exports[`Create input validation - LINKS Rest create input - failure LINKS - should fail with : {"linksField":"not-a-link"} 1`] = `"["Invalid value 'not-a-link' for raw json field \\"linksField\\""]"`;
+exports[`Create input validation - LINKS Rest create input - failure LINKS - should fail with : {"linksField":"not-a-link"} 1`] = `"["Invalid object value 'not-a-link' for field \\"linksField\\""]"`;
