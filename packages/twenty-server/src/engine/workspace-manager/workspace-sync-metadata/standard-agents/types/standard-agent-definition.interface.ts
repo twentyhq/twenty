@@ -6,6 +6,4 @@ export type StandardAgentDefinition = Omit<
 > & {
   standardId: string;
   standardRoleId?: string;
-  // If true, creates a handoff from the default agent to this agent
-  createHandoffFromDefaultAgent?: boolean;
 };
