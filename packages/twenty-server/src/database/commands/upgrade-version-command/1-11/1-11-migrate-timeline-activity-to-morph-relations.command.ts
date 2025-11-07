@@ -61,15 +61,15 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
     const tableName = 'timelineActivity';
 
     const fieldMigrations = [
-      { old: 'companyId', new: 'timelineActivityCompanyId' },
-      { old: 'personId', new: 'timelineActivityPersonId' },
-      { old: 'opportunityId', new: 'timelineActivityOpportunityId' },
-      { old: 'noteId', new: 'timelineActivityNoteId' },
-      { old: 'taskId', new: 'timelineActivityTaskId' },
-      { old: 'workflowId', new: 'timelineActivityWorkflowId' },
-      { old: 'workflowVersionId', new: 'timelineActivityWorkflowVersionId' },
-      { old: 'workflowRunId', new: 'timelineActivityWorkflowRunId' },
-      { old: 'dashboardId', new: 'timelineActivityDashboardId' },
+      { old: 'companyId', new: 'targetCompanyId' },
+      { old: 'personId', new: 'targetPersonId' },
+      { old: 'opportunityId', new: 'targetOpportunityId' },
+      { old: 'noteId', new: 'targetNoteId' },
+      { old: 'taskId', new: 'targetTaskId' },
+      { old: 'workflowId', new: 'txwargetWorkflowId' },
+      { old: 'workflowVersionId', new: 'targetWorkflowVersionId' },
+      { old: 'workflowRunId', new: 'targetWorkflowRunId' },
+      { old: 'dashboardId', new: 'targetDashboardId' },
     ];
 
     for (const { old: oldField, new: newField } of fieldMigrations) {
@@ -93,6 +93,8 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
           `Error migrating ${oldField} → ${newField} for workspace ${workspaceId}`,
           error,
         );
+
+        return;
       }
     }
 
