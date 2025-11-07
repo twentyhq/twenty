@@ -3,7 +3,7 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { CreateServerlessFunctionLayerInput } from 'src/engine/metadata-modules/serverless-function-layer/dtos/create-serverless-function-layer.input';
@@ -18,7 +18,7 @@ export class ServerlessFunctionLayerResolver {
   ) {}
 
   @Mutation(() => ServerlessFunctionLayerDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async createOneServerlessFunctionLayer(
     @Args()
     createServerlessFunctionLayerInput: CreateServerlessFunctionLayerInput,

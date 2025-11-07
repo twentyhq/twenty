@@ -5,7 +5,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
@@ -27,7 +27,7 @@ export class RemoteServerResolver {
   ) {}
 
   @Mutation(() => RemoteServerDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async createOneRemoteServer(
     @Args('input') input: CreateRemoteServerInput<RemoteServerType>,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -43,7 +43,7 @@ export class RemoteServerResolver {
   }
 
   @Mutation(() => RemoteServerDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async updateOneRemoteServer(
     @Args('input') input: UpdateRemoteServerInput<RemoteServerType>,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -59,7 +59,7 @@ export class RemoteServerResolver {
   }
 
   @Mutation(() => RemoteServerDTO)
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async deleteOneRemoteServer(
     @Args('input') { id }: RemoteServerIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

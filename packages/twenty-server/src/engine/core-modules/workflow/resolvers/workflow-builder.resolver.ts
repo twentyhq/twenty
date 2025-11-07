@@ -9,7 +9,7 @@ import { ComputeStepOutputSchemaInput } from 'src/engine/core-modules/workflow/d
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -21,7 +21,7 @@ import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-bu
 @UseGuards(
   WorkspaceAuthGuard,
   UserAuthGuard,
-  SettingsPermissionsGuard(PermissionFlagType.WORKFLOWS),
+  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
