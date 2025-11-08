@@ -1,1 +1,0 @@
-export const LINE_CHART_POINT_BORDER_WIDTH = 0;

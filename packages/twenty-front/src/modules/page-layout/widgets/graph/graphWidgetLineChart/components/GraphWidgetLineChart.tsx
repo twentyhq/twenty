@@ -4,6 +4,11 @@ import {
   CustomCrosshairLayer,
   type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
+import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
+import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
+import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
+import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
+import { LINE_CHART_TOOLTIP_SCROLLABLE_POINT_THRESHOLD } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartTooltipScrollablePointThreshold';
 import { useLineChartTooltipContextOrThrow } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
@@ -16,16 +21,8 @@ import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/crea
 import { createVirtualElementFromChartCoordinates } from '@/page-layout/widgets/graph/utils/createVirtualElementFromChartCoordinates';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
-import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
-import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
-import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
-import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
-import { LINE_CHART_TOOLTIP_SCROLLABLE_POINT_THRESHOLD } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartTooltipScrollablePointThreshold';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
-import { LINE_CHART_POINT_SIZE } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartPointSize';
-import { LINE_CHART_POINT_BORDER_WIDTH } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartPointBorderWidth';
-import { LINE_CHART_DARK_THEME_AREA_OPACITY } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartDarkThemeAreaOpacity';
 import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
 import { useCallback, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -205,11 +202,8 @@ export const GraphWidgetLineChart = ({
           enableArea={enableArea}
           areaBaselineValue={0}
           enablePoints={enablePoints}
-          pointSize={LINE_CHART_POINT_SIZE}
-          pointBorderWidth={LINE_CHART_POINT_BORDER_WIDTH}
-          areaOpacity={
-            theme.name === 'dark' ? LINE_CHART_DARK_THEME_AREA_OPACITY : 1
-          }
+          pointSize={6}
+          pointBorderWidth={0}
           colors={colors}
           areaBlendMode={theme.name === 'dark' ? 'screen' : 'multiply'}
           defs={defs}

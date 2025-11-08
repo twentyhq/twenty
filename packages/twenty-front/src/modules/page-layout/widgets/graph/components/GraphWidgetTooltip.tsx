@@ -1,8 +1,6 @@
-import { GRAPH_TOOLTIP_DOT_SIZE_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipDotSizePx';
 import { GRAPH_TOOLTIP_MAX_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMaxWidthPx';
 import { GRAPH_TOOLTIP_MIN_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMinWidthPx';
 import { GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipScrollMaxHeightPx';
-import { GRAPH_TOOLTIP_SEPARATOR_THICKNESS_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipSeparatorThicknessPx';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -48,8 +46,8 @@ const StyledTooltipRowContainer = styled.div<{ scrollable?: boolean }>`
 const StyledDot = styled.div<{ color: string }>`
   background: ${({ color }) => color};
   border-radius: 50%;
-  height: ${GRAPH_TOOLTIP_DOT_SIZE_PX}px;
-  width: ${GRAPH_TOOLTIP_DOT_SIZE_PX}px;
+  height: 6px;
+  width: 6px;
   flex-shrink: 0;
 `;
 
@@ -67,7 +65,7 @@ const StyledTooltipLink = styled.div`
 
 const StyledTooltipSeparator = styled.div`
   background-color: ${({ theme }) => theme.border.color.light};
-  min-height: ${GRAPH_TOOLTIP_SEPARATOR_THICKNESS_PX}px;
+  min-height: 1px;
   width: 100%;
 `;
 
