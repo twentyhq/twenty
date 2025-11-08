@@ -42,6 +42,6 @@ jobs:
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
 
-      - name: Docs / Lint MDX files
-        run: npx eslint "packages/twenty-docs/**/*.mdx" --max-warnings 0
+      - name: Docs / Lint English MDX files
+        run: npx eslint "packages/twenty-docs/{developers,user-guide,twenty-ui,getting-started,snippets}/**/*.mdx" --max-warnings 0
 

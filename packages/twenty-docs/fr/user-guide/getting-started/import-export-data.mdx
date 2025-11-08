@@ -35,10 +35,10 @@ Voici quelques éléments à vérifier avant de charger votre fichier.
   - Exemple : Vous souhaitez attacher une personne à une entreprise. Ajoutez une colonne dans le fichier contenant tous les enregistrements `Personnes` qui contient l'`id` de l'entreprise — ou son `domaine`. Vous pourrez mapper ce champ lors du téléversement.
 <Warning>
 **Note importante :**
-- Les relations entre les objets dans Twenty sont "Un à Plusieurs". Cela signifie que chaque enregistrement de l'objet A peut être attaché à plusieurs enregistrements de l'objet B. Mais chaque enregistrement de l'objet B peut appartenir à un seul enregistrement de l'objet A.    
+- Les relations entre les objets dans Twenty sont "Un à Plusieurs". Cela signifie que chaque enregistrement de l'objet A peut être attaché à plusieurs enregistrements de l'objet B. Mais chaque enregistrement de l'objet B peut appartenir à un seul enregistrement de l'objet A.
 _Par exemple, une entreprise peut être attachée à plusieurs personnes. Et une personne ne peut appartenir qu'à une seule entreprise._
 
-- Pour téléverser des relations via la fonction d'importation, vous devez fournir l'`id` (ou tout autre champ unique) de l'objet attaché dans le fichier contenant les enregistrements du "côté Multiples" de la relation.  
+- Pour téléverser des relations via la fonction d'importation, vous devez fournir l'`id` (ou tout autre champ unique) de l'objet attaché dans le fichier contenant les enregistrements du "côté Multiples" de la relation.
 _Par exemple, vous fournissez l'`id` ou le `domaine` de l'entreprise lors du téléversement d'enregistrements de personnes. Vous ne fournissez pas l'`id` (ou `email`) des personnes lors du téléversement du fichier des entreprises._
 </Warning>
 
@@ -60,27 +60,31 @@ _Par exemple, vous fournissez l'`id` ou le `domaine` de l'entreprise lors du té
 
 ### FAQ Importation
 
-<details><summary>Je vois des problèmes de doublons lors du téléversement de mon fichier, que dois-je faire?</summary>
+<details>
+<summary>Je vois des problèmes de doublons lors du téléversement de mon fichier, que dois-je faire?</summary>
 
 Veuillez vous référer à la section **Préparer votre csv** ci-dessus dans cet article, elle contient des instructions sur ce qui sera considéré comme un doublon.
 
 </details>
 
-<details><summary>Puis-je importer des relations entre objets?</summary>
+<details>
+<summary>Puis-je importer des relations entre objets?</summary>
 
 Oui, veuillez vous référer à la section **Préparer votre csv** ci-dessus dans cet article, elle contient une section sur l'importation des relations.
 
 </details>
 
-<details><summary>Puis-je mettre à jour des enregistrements existants en utilisant la fonction d'importation?</summary>
+<details>
+<summary>Puis-je mettre à jour des enregistrements existants en utilisant la fonction d'importation?</summary>
 
 Oui, vous pouvez mettre à jour des enregistrements existants en utilisant la fonction d'importation. Assurez-vous de fournir l'id (ou tout autre champ unique) lors du re-téléversement de vos enregistrements.
 
 </details>
 
-<details><summary>Puis-je migrer l'`id` de mon (mes) autre(s) outil(s)?</summary>
+<details>
+<summary>Puis-je migrer l'`id` de mon (mes) autre(s) outil(s)?</summary>
 
-Oui. Vous devez créer un champ que vous définissez comme unique dans votre modèle de données qui contiendra l'`id` de votre (vos) autre(s) outil(s). Veuillez noter que le nom `id` est protégé car il est utilisé pour l'ID Twenty.  
+Oui. Vous devez créer un champ que vous définissez comme unique dans votre modèle de données qui contiendra l'`id` de votre (vos) autre(s) outil(s). Veuillez noter que le nom `id` est protégé car il est utilisé pour l'ID Twenty.
 Si vous souhaitez créer des relations entre objets à l'aide de ce champ, consultez la section **Préparer votre csv** ci-dessus dans cet article. Elle contient une section sur l'importation des relations.
 
 </details>
@@ -97,17 +101,17 @@ Pour exporter des données à partir d'un objet :
 5. Sélectionnez l'emplacement d'enregistrement pour les données CSV. Notez que l'exportation peut prendre du temps avec un grand nombre d'enregistrements.
 
 <div style={{padding:'71.24% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
-  <iframe 
-    src="https://player.vimeo.com/video/926226303?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479" 
-    frameBorder="0" 
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
+  <iframe
+    src="https://player.vimeo.com/video/926226303?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479"
+    frameBorder="0"
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
     style={{
       position:'absolute',
       top:0,
       left:0,
       width:'100%',
       height:'100%',
-      borderRadius: '16px', 
+      borderRadius: '16px',
       border:'2px solid black'
     }}
     title="Export data"

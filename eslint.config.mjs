@@ -194,7 +194,13 @@ export default [
   },
 
   // MDX files
-  mdxPlugin.flat,
+  {
+    ...mdxPlugin.flat,
+    plugins: {
+      ...mdxPlugin.flat.plugins,
+      '@nx': nxPlugin,
+    },
+  },
   mdxPlugin.flatCodeBlocks,
   {
     files: ['**/*.mdx'],
@@ -202,6 +208,8 @@ export default [
       'no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'off',
       'unused-imports/no-unused-vars': 'off',
+      // Enforce JSX tags on separate lines to prevent Crowdin translation issues
+      '@nx/workspace-mdx-component-newlines': 'error',
     },
   },
 ];
