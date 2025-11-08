@@ -23,7 +23,9 @@ export const useBarChartTooltip = ({
   enableGroupTooltip = true,
 }: UseBarChartTooltipProps) => {
   const renderTooltip = (datum: ComputedDatum<BarDatum>) => {
-    const dataItem = data.find((d) => d[indexBy] === datum.indexValue);
+    const dataItem = data.find(
+      (dataRow) => dataRow[indexBy] === datum.indexValue,
+    );
 
     let keysToShow: BarChartEnrichedKey[];
 

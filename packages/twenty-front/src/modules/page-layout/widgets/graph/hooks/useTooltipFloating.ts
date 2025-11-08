@@ -7,11 +7,10 @@ import {
   useFloating,
   type VirtualElement,
 } from '@floating-ui/react';
+import { GRAPH_TOOLTIP_OFFSET_PX } from '@/page-layout/widgets/graph/constants/GraphTooltipOffsetPx';
+import { GRAPH_TOOLTIP_BOUNDARY_PADDING_PX } from '@/page-layout/widgets/graph/constants/GraphTooltipBoundaryPaddingPx';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-
-const TOOLTIP_OFFSET_PX = 2;
-const TOOLTIP_BOUNDARY_PADDING_PX = 8;
 
 export const useTooltipFloating = (
   element: Element | VirtualElement | null,
@@ -36,14 +35,14 @@ export const useTooltipFloating = (
     placement: 'left',
     strategy: 'fixed',
     middleware: [
-      offset(TOOLTIP_OFFSET_PX),
+      offset(GRAPH_TOOLTIP_OFFSET_PX),
       flip({
         fallbackPlacements: ['right', 'top', 'bottom'],
         boundary: document.querySelector('#root') ?? undefined,
       }),
       shift({
         boundary: document.querySelector('#root') ?? undefined,
-        padding: TOOLTIP_BOUNDARY_PADDING_PX,
+        padding: GRAPH_TOOLTIP_BOUNDARY_PADDING_PX,
       }),
     ],
     whileElementsMounted: autoUpdate,

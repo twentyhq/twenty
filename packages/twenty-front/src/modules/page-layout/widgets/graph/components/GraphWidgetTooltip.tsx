@@ -1,5 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { GRAPH_TOOLTIP_GAP_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipGapPx';
+import { GRAPH_TOOLTIP_MAX_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMaxWidthPx';
+import { GRAPH_TOOLTIP_VIEWPORT_MARGIN_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipViewportMarginPx';
+import { GRAPH_TOOLTIP_MIN_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMinWidthPx';
+import { GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipScrollMaxHeightPx';
+import { GRAPH_TOOLTIP_DOT_SIZE_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipDotSizePx';
+import { GRAPH_TOOLTIP_SEPARATOR_THICKNESS_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipSeparatorThicknessPx';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconArrowUpRight } from 'twenty-ui/display';
@@ -11,9 +18,12 @@ const StyledTooltip = styled.div<{ interactive?: boolean }>`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  max-width: min(300px, calc(100vw - 40px));
-  min-width: 160px;
+  gap: ${GRAPH_TOOLTIP_GAP_PX}px;
+  max-width: min(
+    ${GRAPH_TOOLTIP_MAX_WIDTH_PX}px,
+    calc(100vw - ${GRAPH_TOOLTIP_VIEWPORT_MARGIN_PX}px)
+  );
+  min-width: ${GRAPH_TOOLTIP_MIN_WIDTH_PX}px;
   pointer-events: ${({ interactive }) => (interactive ? 'auto' : 'none')};
 `;
 
@@ -35,15 +45,16 @@ const StyledTooltipRowContainer = styled.div<{ scrollable?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  max-height: ${({ scrollable }) => (scrollable ? '120px' : 'none')};
+  max-height: ${({ scrollable }) =>
+    scrollable ? `${GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX}px` : 'none'};
   overflow-y: ${({ scrollable }) => (scrollable ? 'auto' : 'visible')};
 `;
 
-const StyledDot = styled.div<{ dotColor: string }>`
-  background: ${({ dotColor }) => dotColor};
+const StyledDot = styled.div<{ color: string }>`
+  background: ${({ color }) => color};
   border-radius: 50%;
-  height: 6px;
-  width: 6px;
+  height: ${GRAPH_TOOLTIP_DOT_SIZE_PX}px;
+  width: ${GRAPH_TOOLTIP_DOT_SIZE_PX}px;
   flex-shrink: 0;
 `;
 
@@ -61,7 +72,7 @@ const StyledTooltipLink = styled.div`
 
 const StyledTooltipSeparator = styled.div`
   background-color: ${({ theme }) => theme.border.color.light};
-  min-height: 1px;
+  min-height: ${GRAPH_TOOLTIP_SEPARATOR_THICKNESS_PX}px;
   width: 100%;
 `;
 
@@ -159,12 +170,12 @@ export const GraphWidgetTooltip = ({
             <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
           )}
           <StyledTooltipRowContainer scrollable={scrollable}>
-            {filteredItems.map((item, index) => {
+            {filteredItems.map((item) => {
               const isHighlighted =
                 shouldHighlight && highlightedKey === item.key;
               return (
-                <StyledTooltipRow key={index}>
-                  <StyledDot dotColor={item.dotColor} />
+                <StyledTooltipRow key={item.key}>
+                  <StyledDot color={item.dotColor} />
                   <StyledTooltipRowRightContent>
                     <StyledTooltipLabel isHighlighted={isHighlighted}>
                       {item.label}

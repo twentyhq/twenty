@@ -2,6 +2,8 @@ import { useTooltipFloating } from '@/page-layout/widgets/graph/hooks/useTooltip
 import { useTheme } from '@emotion/react';
 import { FloatingPortal, type VirtualElement } from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { GRAPH_TOOLTIP_ANIMATION_SCALE_INITIAL } from '@/page-layout/widgets/graph/components/constants/GraphTooltipAnimationScaleInitial';
+import { GRAPH_TOOLTIP_ANIMATION_SCALE_EXIT } from '@/page-layout/widgets/graph/components/constants/GraphTooltipAnimationScaleExit';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,9 +43,12 @@ export const GraphWidgetTooltipWrapper = ({
           onMouseLeave={interactive ? onHide : undefined}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{
+              opacity: 0,
+              scale: GRAPH_TOOLTIP_ANIMATION_SCALE_INITIAL,
+            }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            exit={{ opacity: 0, scale: GRAPH_TOOLTIP_ANIMATION_SCALE_EXIT }}
             transition={{
               duration: theme.animation.duration.fast,
               ease: 'easeInOut',

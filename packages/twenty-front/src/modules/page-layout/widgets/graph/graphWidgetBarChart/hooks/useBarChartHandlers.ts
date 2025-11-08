@@ -12,7 +12,9 @@ export const useBarChartHandlers = ({
   indexBy,
 }: UseBarChartHandlersProps) => {
   const handleBarClick = (datum: ComputedDatum<BarDatum>) => {
-    const dataItem = data.find((d) => d[indexBy] === datum.indexValue);
+    const dataItem = data.find(
+      (dataRow) => dataRow[indexBy] === datum.indexValue,
+    );
     if (isDefined(dataItem?.to)) {
       window.location.href = dataItem.to;
     }

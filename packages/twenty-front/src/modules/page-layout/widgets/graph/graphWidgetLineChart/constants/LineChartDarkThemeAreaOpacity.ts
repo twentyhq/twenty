@@ -1,0 +1,1 @@
+export const LINE_CHART_DARK_THEME_AREA_OPACITY = 0.8;

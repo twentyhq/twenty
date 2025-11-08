@@ -14,5 +14,9 @@ export type GraphWidgetTooltipContextType = {
   isVisible: boolean;
 };
 
-export const [GraphWidgetTooltipProvider, useGraphWidgetTooltip] =
-  createRequiredContext<GraphWidgetTooltipContextType>('GraphWidgetTooltip');
+export const [
+  GraphWidgetTooltipContextProvider,
+  useGraphWidgetTooltipContextOrThrow,
+] = createRequiredContext<GraphWidgetTooltipContextType>(
+  'GraphWidgetTooltipContext',
+);

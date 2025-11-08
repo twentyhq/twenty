@@ -93,7 +93,10 @@ export const CustomBarItem = <D extends BarDatum>({
   );
 
   const seriesIndex = useMemo(
-    () => (isDefined(keys) ? keys.findIndex((k) => k === barData.id) : -1),
+    () =>
+      isDefined(keys)
+        ? keys.findIndex((currentKey) => currentKey === barData.id)
+        : -1,
     [keys, barData.id],
   );
 
@@ -110,7 +113,7 @@ export const CustomBarItem = <D extends BarDatum>({
     }
 
     const dataPoint = chartData.find(
-      (data) => data[indexBy] === barData.indexValue,
+      (chartDataItem) => chartDataItem[indexBy] === barData.indexValue,
     );
 
     if (!isDefined(dataPoint)) {
@@ -171,21 +174,23 @@ export const CustomBarItem = <D extends BarDatum>({
   const clipPathX = !isHorizontal ? 0 : isNegativeValue ? 0 : -borderRadius;
   const clipPathY = isHorizontal ? 0 : isNegativeValue ? -borderRadius : 0;
 
-  const widthWithOffset = (v: number) =>
-    Math.max(v + (isHorizontal ? borderRadius : 0), 0);
-  const heightWithOffset = (v: number) =>
-    Math.max(v + (isHorizontal ? 0 : borderRadius), 0);
-  const clampRadius = (v: number) => Math.min(borderRadius, v / 2);
+  const widthWithOffset = (value: number) =>
+    Math.max(value + (isHorizontal ? borderRadius : 0), 0);
+  const heightWithOffset = (value: number) =>
+    Math.max(value + (isHorizontal ? 0 : borderRadius), 0);
+  const clampRadius = (value: number) => Math.min(borderRadius, value / 2);
 
-  const clipRectWidth = to(finalBarWidthDimension, (v) => widthWithOffset(v));
-  const clipRectHeight = to(finalBarHeightDimension, (v) =>
-    heightWithOffset(v),
+  const clipRectWidth = to(finalBarWidthDimension, (value) =>
+    widthWithOffset(value),
   );
-  const clipRx = to(finalBarWidthDimension, (v) =>
-    clampRadius(widthWithOffset(v)),
+  const clipRectHeight = to(finalBarHeightDimension, (value) =>
+    heightWithOffset(value),
   );
-  const clipRy = to(finalBarHeightDimension, (v) =>
-    clampRadius(heightWithOffset(v)),
+  const clipRx = to(finalBarWidthDimension, (value) =>
+    clampRadius(widthWithOffset(value)),
+  );
+  const clipRy = to(finalBarHeightDimension, (value) =>
+    clampRadius(heightWithOffset(value)),
   );
 
   return (

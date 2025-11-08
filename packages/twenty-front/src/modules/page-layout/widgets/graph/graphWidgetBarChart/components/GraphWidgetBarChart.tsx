@@ -3,7 +3,7 @@ import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphW
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
-import { useBarChartTooltipContext } from '@/page-layout/widgets/graph/graphWidgetBarChart/contexts/BarChartTooltipContext';
+import { useBarChartTooltipContextOrThrow } from '@/page-layout/widgets/graph/graphWidgetBarChart/contexts/BarChartTooltipContext';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
@@ -32,7 +32,15 @@ import {
 import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const LEGEND_THRESHOLD = 10;
+import { BAR_CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartLegendItemThreshold';
+import { BAR_CHART_GRID_X_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartGridXTickCount';
+import { BAR_CHART_GRID_Y_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartGridYTickCount';
+import { BAR_CHART_LABEL_SKIP_WIDTH_PX } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartLabelSkipWidthPx';
+import { BAR_CHART_LABEL_SKIP_HEIGHT_PX } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartLabelSkipHeightPx';
+import { BAR_CHART_PADDING_RATIO } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartPaddingRatio';
+import { BAR_CHART_ZERO_MARKER_STROKE_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartZeroMarkerStrokeWidth';
+
+const LEGEND_THRESHOLD = BAR_CHART_LEGEND_ITEM_THRESHOLD;
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -125,7 +133,7 @@ export const GraphWidgetBarChart = ({
     enableGroupTooltip: groupMode === 'stacked',
   });
 
-  const { showTooltip, hideTooltip } = useBarChartTooltipContext();
+  const { showTooltip, hideTooltip } = useBarChartTooltipContextOrThrow();
 
   const handleBarEnter = useCallback(
     (
@@ -217,7 +225,7 @@ export const GraphWidgetBarChart = ({
           value: 0,
           lineStyle: {
             stroke: theme.border.color.medium,
-            strokeWidth: 1,
+            strokeWidth: BAR_CHART_ZERO_MARKER_STROKE_WIDTH,
           },
         },
       ]
@@ -245,7 +253,7 @@ export const GraphWidgetBarChart = ({
           keys={keys}
           indexBy={indexBy}
           margin={margins}
-          padding={0.3}
+          padding={BAR_CHART_PADDING_RATIO}
           groupMode={groupMode}
           layout={layout}
           valueScale={{
@@ -264,19 +272,25 @@ export const GraphWidgetBarChart = ({
           axisLeft={axisLeftConfig}
           enableGridX={layout === 'horizontal' && showGrid}
           enableGridY={layout === 'vertical' && showGrid}
-          gridXValues={layout === 'horizontal' ? 5 : undefined}
-          gridYValues={layout === 'vertical' ? 5 : undefined}
+          gridXValues={
+            layout === 'horizontal' ? BAR_CHART_GRID_X_TICK_COUNT : undefined
+          }
+          gridYValues={
+            layout === 'vertical' ? BAR_CHART_GRID_Y_TICK_COUNT : undefined
+          }
           enableLabel={false}
-          labelSkipWidth={12}
+          labelSkipWidth={BAR_CHART_LABEL_SKIP_WIDTH_PX}
           innerPadding={
             groupMode !== 'stacked' ? BAR_CHART_MINIMUM_INNER_PADDING : 0
           }
-          labelSkipHeight={12}
+          labelSkipHeight={BAR_CHART_LABEL_SKIP_HEIGHT_PX}
           valueFormat={(value) =>
             formatGraphValue(Number(value), formatOptions)
           }
           labelTextColor={theme.font.color.primary}
-          label={(d) => formatGraphValue(Number(d.value), formatOptions)}
+          label={(barDatumCandidate) =>
+            formatGraphValue(Number(barDatumCandidate.value), formatOptions)
+          }
           tooltip={() => null}
           onClick={handleBarClick}
           onMouseEnter={handleBarEnter}

@@ -1,5 +1,5 @@
 import {
-  GraphWidgetTooltipProvider as GraphWidgetTooltipContextProvider,
+  GraphWidgetTooltipContextProvider,
   type GraphWidgetTooltipContextType,
 } from '@/page-layout/widgets/graph/contexts/GraphWidgetTooltipContext';
 import { type VirtualElement } from '@floating-ui/react';

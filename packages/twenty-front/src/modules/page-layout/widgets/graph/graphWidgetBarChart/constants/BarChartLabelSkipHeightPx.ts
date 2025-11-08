@@ -1,0 +1,1 @@
+export const BAR_CHART_LABEL_SKIP_HEIGHT_PX = 12;

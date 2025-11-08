@@ -15,5 +15,9 @@ export type LineChartTooltipContextType = {
   crosshairX: number | null;
 };
 
-export const [LineChartTooltipProvider, useLineChartTooltipContext] =
-  createRequiredContext<LineChartTooltipContextType>('LineChartTooltip');
+export const [
+  LineChartTooltipContextProvider,
+  useLineChartTooltipContextOrThrow,
+] = createRequiredContext<LineChartTooltipContextType>(
+  'LineChartTooltipContext',
+);

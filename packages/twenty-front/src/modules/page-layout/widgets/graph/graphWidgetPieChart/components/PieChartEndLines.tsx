@@ -1,6 +1,7 @@
 import { type PieChartEnrichedData } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartEnrichedData';
 import { calculatePieChartEndLineCoordinates } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/calculatePieChartEndLineCoordinates';
 import { useTheme } from '@emotion/react';
+import { PIE_CHART_END_LINE_STROKE_WIDTH } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartEndLineStrokeWidth';
 import { type ComputedDatum } from '@nivo/pie';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -59,7 +60,7 @@ export const PieChartEndLines = ({
             x2={x2}
             y2={y2}
             stroke={lineColor}
-            strokeWidth={1}
+            strokeWidth={PIE_CHART_END_LINE_STROKE_WIDTH}
           />
         );
       })}

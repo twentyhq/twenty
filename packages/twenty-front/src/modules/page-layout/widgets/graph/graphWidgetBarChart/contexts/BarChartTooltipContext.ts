@@ -12,5 +12,7 @@ export type BarChartTooltipContextType = {
   hideTooltip: () => void;
 };
 
-export const [BarChartTooltipProvider, useBarChartTooltipContext] =
-  createRequiredContext<BarChartTooltipContextType>('BarChartTooltip');
+export const [
+  BarChartTooltipContextProvider,
+  useBarChartTooltipContextOrThrow,
+] = createRequiredContext<BarChartTooltipContextType>('BarChartTooltipContext');

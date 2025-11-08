@@ -384,7 +384,10 @@ export const MultiSeriesMixed: Story = {
         id: 'target',
         label: 'Target',
         color: 'orange',
-        data: generateLinearData(12).map((d) => ({ ...d, y: 75 })),
+        data: generateLinearData(12).map((dataPoint) => ({
+          ...dataPoint,
+          y: 75,
+        })),
         enableArea: false,
       },
     ],

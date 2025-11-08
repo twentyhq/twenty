@@ -1,14 +1,14 @@
 import { type VirtualElement } from '@floating-ui/react';
 
-type Coords = {
+type ChartCoordinates = {
   left: number;
   top: number;
 };
 
 export const createVirtualElementFromChartCoordinates = (
-  coords: Coords,
+  chartCoordinates: ChartCoordinates,
 ): VirtualElement => {
-  const { left, top } = coords;
+  const { left, top } = chartCoordinates;
   return {
     getBoundingClientRect: () => {
       return {

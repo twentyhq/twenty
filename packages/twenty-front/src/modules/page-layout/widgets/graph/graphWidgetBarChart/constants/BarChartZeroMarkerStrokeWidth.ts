@@ -1,0 +1,1 @@
+export const BAR_CHART_ZERO_MARKER_STROKE_WIDTH = 1;

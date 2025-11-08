@@ -1,7 +1,14 @@
-import { useLineChartTooltipContext } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
+import { useLineChartTooltipContextOrThrow } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
 import { useTheme } from '@emotion/react';
+import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
+import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
 import { type LineSeries, type Point } from '@nivo/line';
 import { motion } from 'framer-motion';
+import { LINE_CHART_CROSSHAIR_STROKE_WIDTH } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairStrokeWidth';
+import { LINE_CHART_CROSSHAIR_STROKE_OPACITY } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairStrokeOpacity';
+import { LINE_CHART_CROSSHAIR_DASH_ARRAY } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairDashArray';
+import { LINE_CHART_CROSSHAIR_TRANSITION_STIFFNESS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairTransitionStiffness';
+import { LINE_CHART_CROSSHAIR_TRANSITION_DAMPING } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairTransitionDamping';
 import { useCallback, useMemo, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,7 +38,7 @@ export const CustomCrosshairLayer = ({
   onSliceHover,
 }: CustomCrosshairLayerProps) => {
   const theme = useTheme();
-  const { crosshairX } = useLineChartTooltipContext();
+  const { crosshairX } = useLineChartTooltipContextOrThrow();
 
   const slices = useMemo(() => {
     const sliceMap = new Map<string, Point<LineSeries>[]>();
@@ -50,7 +57,7 @@ export const CustomCrosshairLayer = ({
         points: slicePoints,
         x: slicePoints[0]?.x ?? 0,
       }))
-      .sort((a, b) => a.x - b.x);
+      .sort((sliceA, sliceB) => sliceA.x - sliceB.x);
   }, [points]);
 
   const handleMouseMove = useCallback(
@@ -61,10 +68,8 @@ export const CustomCrosshairLayer = ({
         return;
       }
 
-      const CHART_MARGIN_LEFT = 70;
-      const CHART_MARGIN_TOP = 20;
-      const mouseX = event.clientX - svgRect.left - CHART_MARGIN_LEFT;
-      const mouseY = event.clientY - svgRect.top - CHART_MARGIN_TOP;
+      const mouseX = event.clientX - svgRect.left - LINE_CHART_MARGIN_LEFT;
+      const mouseY = event.clientY - svgRect.top - LINE_CHART_MARGIN_TOP;
 
       const nearestSlice = slices.reduce((nearest, slice) => {
         const currentDistance = Math.abs(slice.x - mouseX);
@@ -76,11 +81,15 @@ export const CustomCrosshairLayer = ({
         return;
       }
 
-      const closestPoint = nearestSlice.points.reduce((closest, p) => {
-        const currentDistance = Math.abs(p.y - mouseY);
-        const closestDistance = Math.abs(closest.y - mouseY);
-        return currentDistance < closestDistance ? p : closest;
-      });
+      const closestPoint = nearestSlice.points.reduce(
+        (closestPointCandidate, pointCandidate) => {
+          const currentDistance = Math.abs(pointCandidate.y - mouseY);
+          const closestDistance = Math.abs(closestPointCandidate.y - mouseY);
+          return currentDistance < closestDistance
+            ? pointCandidate
+            : closestPointCandidate;
+        },
+      );
 
       onSliceHover({
         sliceX: nearestSlice.x,
@@ -95,9 +104,9 @@ export const CustomCrosshairLayer = ({
 
   const transition = {
     type: 'spring',
-    stiffness: 400,
-    damping: 30,
-  };
+    stiffness: LINE_CHART_CROSSHAIR_TRANSITION_STIFFNESS,
+    damping: LINE_CHART_CROSSHAIR_TRANSITION_DAMPING,
+  } as const;
 
   return (
     <g>
@@ -108,9 +117,9 @@ export const CustomCrosshairLayer = ({
           y1={0}
           y2={innerHeight}
           stroke={theme.font.color.primary}
-          strokeWidth={1}
-          strokeOpacity={0.5}
-          strokeDasharray="4 4"
+          strokeWidth={LINE_CHART_CROSSHAIR_STROKE_WIDTH}
+          strokeOpacity={LINE_CHART_CROSSHAIR_STROKE_OPACITY}
+          strokeDasharray={LINE_CHART_CROSSHAIR_DASH_ARRAY}
           initial={{ x1: crosshairX, x2: crosshairX, opacity: 0 }}
           animate={{ x1: crosshairX, x2: crosshairX, opacity: 0.5 }}
           exit={{ opacity: 0 }}

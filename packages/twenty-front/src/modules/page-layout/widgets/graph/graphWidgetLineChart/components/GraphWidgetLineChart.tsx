@@ -4,7 +4,7 @@ import {
   CustomCrosshairLayer,
   type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
-import { useLineChartTooltipContext } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
+import { useLineChartTooltipContextOrThrow } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
 import { useLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTooltip';
@@ -16,8 +16,16 @@ import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/crea
 import { createVirtualElementFromChartCoordinates } from '@/page-layout/widgets/graph/utils/createVirtualElementFromChartCoordinates';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
+import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
+import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
+import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
+import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
+import { LINE_CHART_TOOLTIP_SCROLLABLE_POINT_THRESHOLD } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartTooltipScrollablePointThreshold';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
+import { LINE_CHART_POINT_SIZE } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartPointSize';
+import { LINE_CHART_POINT_BORDER_WIDTH } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartPointBorderWidth';
+import { LINE_CHART_DARK_THEME_AREA_OPACITY } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartDarkThemeAreaOpacity';
 import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
 import { useCallback, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -130,13 +138,10 @@ export const GraphWidgetLineChart = ({
     formatOptions,
   });
 
-  const { showTooltip } = useLineChartTooltipContext();
+  const { showTooltip } = useLineChartTooltipContextOrThrow();
 
   const handleSliceHover = useCallback(
     (data: SliceHoverData) => {
-      const CHART_MARGIN_LEFT = 70;
-      const CHART_MARGIN_TOP = 20;
-
       const tooltipData = createSliceTooltipData({
         slice: {
           id: String(data.nearestSlice.xValue ?? ''),
@@ -156,8 +161,8 @@ export const GraphWidgetLineChart = ({
       }
 
       const virtualAnchor = createVirtualElementFromChartCoordinates({
-        left: data.svgRect.left + data.nearestSlice.x + CHART_MARGIN_LEFT,
-        top: data.svgRect.top + data.mouseY + CHART_MARGIN_TOP,
+        left: data.svgRect.left + data.nearestSlice.x + LINE_CHART_MARGIN_LEFT,
+        top: data.svgRect.top + data.mouseY + LINE_CHART_MARGIN_TOP,
       });
 
       showTooltip(
@@ -165,7 +170,8 @@ export const GraphWidgetLineChart = ({
         tooltipData.items,
         tooltipData.indexLabel,
         String(data.closestPoint.seriesId),
-        data.nearestSlice.points.length > 6,
+        data.nearestSlice.points.length >
+          LINE_CHART_TOOLTIP_SCROLLABLE_POINT_THRESHOLD,
         data.sliceX,
       );
     },
@@ -186,7 +192,12 @@ export const GraphWidgetLineChart = ({
       <GraphWidgetChartContainer $isClickable={hasClickableItems}>
         <ResponsiveLine
           data={nivoData}
-          margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
+          margin={{
+            top: LINE_CHART_MARGIN_TOP,
+            right: LINE_CHART_MARGIN_RIGHT,
+            bottom: LINE_CHART_MARGIN_BOTTOM,
+            left: LINE_CHART_MARGIN_LEFT,
+          }}
           xScale={xScale}
           yScale={getYScaleWithStacking(yScale, stackedArea)}
           curve={curve}
@@ -194,9 +205,11 @@ export const GraphWidgetLineChart = ({
           enableArea={enableArea}
           areaBaselineValue={0}
           enablePoints={enablePoints}
-          pointSize={6}
-          pointBorderWidth={0}
-          areaOpacity={theme.name === 'dark' ? 0.8 : 1}
+          pointSize={LINE_CHART_POINT_SIZE}
+          pointBorderWidth={LINE_CHART_POINT_BORDER_WIDTH}
+          areaOpacity={
+            theme.name === 'dark' ? LINE_CHART_DARK_THEME_AREA_OPACITY : 1
+          }
           colors={colors}
           areaBlendMode={theme.name === 'dark' ? 'screen' : 'multiply'}
           defs={defs}

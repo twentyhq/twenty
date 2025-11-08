@@ -638,15 +638,15 @@ export const AllNegative: Story = {
 export const TemperatureData: Story = {
   args: {
     data: [
-      { month: 'Jan', temp: -5, to: '/weather/jan' },
-      { month: 'Feb', temp: -2, to: '/weather/feb' },
-      { month: 'Mar', temp: 5, to: '/weather/mar' },
-      { month: 'Apr', temp: 15, to: '/weather/apr' },
-      { month: 'May', temp: 22, to: '/weather/may' },
-      { month: 'Jun', temp: 28, to: '/weather/jun' },
+      { month: 'Jan', temperature: -5, to: '/weather/jan' },
+      { month: 'Feb', temperature: -2, to: '/weather/feb' },
+      { month: 'Mar', temperature: 5, to: '/weather/mar' },
+      { month: 'Apr', temperature: 15, to: '/weather/apr' },
+      { month: 'May', temperature: 22, to: '/weather/may' },
+      { month: 'Jun', temperature: 28, to: '/weather/jun' },
     ],
     indexBy: 'month',
-    keys: ['temp'],
+    keys: ['temperature'],
     showLegend: false,
     showGrid: true,
     xAxisLabel: 'Month',

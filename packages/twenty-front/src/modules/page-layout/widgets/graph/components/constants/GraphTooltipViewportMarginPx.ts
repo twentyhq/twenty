@@ -1,0 +1,1 @@
+export const GRAPH_TOOLTIP_VIEWPORT_MARGIN_PX = 40;
