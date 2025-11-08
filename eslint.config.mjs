@@ -4,6 +4,7 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import importPlugin from 'eslint-plugin-import';
 import linguiPlugin from 'eslint-plugin-lingui';
+import * as mdxPlugin from 'eslint-plugin-mdx';
 import preferArrowPlugin from 'eslint-plugin-prefer-arrow';
 import prettierPlugin from 'eslint-plugin-prettier';
 import unicornPlugin from 'eslint-plugin-unicorn';
@@ -189,6 +190,18 @@ export default [
     files: ['**/*.json'],
     languageOptions: {
       parser: jsoncParser,
+    },
+  },
+
+  // MDX files
+  mdxPlugin.flat,
+  mdxPlugin.flatCodeBlocks,
+  {
+    files: ['**/*.mdx'],
+    rules: {
+      'no-unused-vars': 'off',
+      'unused-imports/no-unused-imports': 'off',
+      'unused-imports/no-unused-vars': 'off',
     },
   },
 ];
