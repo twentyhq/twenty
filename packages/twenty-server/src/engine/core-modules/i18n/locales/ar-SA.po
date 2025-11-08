@@ -169,7 +169,7 @@ msgstr "العمل المطلوب لإعادة تعيين كلمة المرور"
 #. js-lingui-id: 8Q5bRY
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Set Password"
-msgstr ""
+msgstr "العمل الضروري لتعيين كلمة المرور"
 
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -592,7 +592,7 @@ msgstr "لا يمكن تقمص دور المستخدم عبر مفتاح API"
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
-msgstr ""
+msgstr "لا يمكن تنشيط الإصدارات غير المسودة أو غير المنشورة الأخيرة"
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -628,12 +628,12 @@ msgstr "لا يمكن تمكين التفرد بسبب وجود قيم مكرر�
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
-msgstr ""
+msgstr "لا يمكن أن يكون لديك أكثر من إصدار نشط من سير العمل"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
-msgstr ""
+msgstr "لا يمكن تحديث قناة الرسائل أثناء المزامنة جارية. يرجى انتظار اكتمال المزامنة."
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1837,7 +1837,7 @@ msgstr "اللغة"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Last credentials refreshed at"
-msgstr ""
+msgstr "آخر تحديث للبيانات في"
 
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1916,7 +1916,7 @@ msgstr "مارس"
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr ""
+msgstr "الحد الأقصى لعدد السجلات المراد تحديثها هو {QUERY_MAX_RECORDS}."
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -1968,7 +1968,7 @@ msgstr "ارتباطات رسالة بقناة الرسائل"
 #. js-lingui-id: LOU3x5
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
-msgstr ""
+msgstr "قناة الرسائل غير موجودة"
 
 #. js-lingui-id: k7LXPQ
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2578,7 +2578,7 @@ msgstr "معرف تخطيط الصفحة"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Parent Folder ID"
-msgstr ""
+msgstr "معرف المجلد الرئيسي"
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -2588,22 +2588,22 @@ msgstr "كلمة المرور ضعيفة جدًا"
 #. js-lingui-id: l6qKfi
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Pending action for folder sync"
-msgstr ""
+msgstr "تم إرجاء إجراء لمزامنة المجلد"
 
 #. js-lingui-id: ttZgHv
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Pending action for group emails"
-msgstr ""
+msgstr "تم إرجاء إجراء لرسائل البريد الإلكتروني الجماعي"
 
 #. js-lingui-id: 5aGQev
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Pending group emails action"
-msgstr ""
+msgstr "إجراء رسائل البريد الإلكتروني المعلقة للمجموعة"
 
 #. js-lingui-id: 6jM9pB
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Pending Sync Action"
-msgstr ""
+msgstr "إجراء تزامن معلق"
 
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2999,12 +2999,12 @@ msgstr "الأحد"
 #. js-lingui-id: VuvnTL
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync all folders"
-msgstr ""
+msgstr "تزامن جميع المجلدات"
 
 #. js-lingui-id: 9PsZjo
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync all folders including new ones"
-msgstr ""
+msgstr "تزامن جميع المجلدات بما في ذلك الجديدة"
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -3242,7 +3242,7 @@ msgstr "مُنفذ سير العمل"
 #. js-lingui-id: o6DGfJ
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
-msgstr ""
+msgstr "لا يمكن تحديث الحقل \"{field}\". يُرجى الاتصال بمسؤول مساحة العمل الخاص بك."
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3581,7 +3581,7 @@ msgstr "معرف المستخدم"
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User is not a member of the workspace."
-msgstr ""
+msgstr "المستخدم ليس جزءًا من مساحة العمل."
 
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -4204,7 +4204,7 @@ msgstr "لا تملك صلاحية الوصول إلى هذه الميزة. ير
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
 msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "لا تملك صلاحية حذف هذا المستخدم من مساحة العمل. يُرجى الاتصال بمسؤول مساحة العمل للوصول."
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
@@ -4214,17 +4214,17 @@ msgstr "لا تملك إذن تقمص الشخصيات. يُرجى الاتصا�
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
-msgstr ""
+msgstr "ليس لديك إذن لتحديث هذه الحقول: {fieldsList}. يُرجى الاتصال بمسؤول مساحة العمل الخاص بك."
 
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
-msgstr ""
+msgstr "ليس لديك الإذن بإنشاء عروض على مستوى مساحة العمل."
 
 #. js-lingui-id: QmL9y9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
-msgstr ""
+msgstr "ليس لديك إذن لتعديل هذا العرض."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts

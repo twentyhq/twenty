@@ -131,7 +131,7 @@ msgstr "비밀번호를 재설정하세요 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "비밀번호 설정 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +141,7 @@ msgstr "초기화"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "설정"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
