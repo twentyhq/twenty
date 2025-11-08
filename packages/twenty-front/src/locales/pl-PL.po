@@ -534,7 +534,7 @@ msgstr "Aktywne klucze API utworzone przez Ciebie lub Twój zespół."
 #. js-lingui-id: m16xKo
 #: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 msgid "Add"
-msgstr ""
+msgstr "Dodaj"
 
 #. js-lingui-id: QXX2VR
 #: src/modules/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem.tsx
@@ -635,7 +635,7 @@ msgstr "Dodaj węzeł"
 #. js-lingui-id: NeOuRn
 #: src/modules/activities/notes/components/NotesCard.tsx
 msgid "Add note"
-msgstr ""
+msgstr "Dodaj notatkę"
 
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -676,7 +676,7 @@ msgstr "Dodaj regułę"
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 msgid "Add sort"
-msgstr ""
+msgstr "Dodaj sortowanie"
 
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
@@ -686,7 +686,7 @@ msgstr "Dodaj dostawcę tożsamości dla SSO"
 #. js-lingui-id: hWkQMS
 #: src/modules/activities/tasks/components/AddTaskButton.tsx
 msgid "Add task"
-msgstr ""
+msgstr "Dodaj zadanie"
 
 #. js-lingui-id: FQArA8
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -723,7 +723,7 @@ msgstr "Dodaj widok"
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 msgid "Add widget"
-msgstr ""
+msgstr "Dodaj widżet"
 
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
@@ -786,7 +786,7 @@ msgstr "Zaawansowane"
 #. js-lingui-id: +uqBul
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
 msgid "Advanced feature to improve the performance of queries and to enforce unicity constraints."
-msgstr ""
+msgstr "Zaawansowana funkcja poprawiająca wydajność zapytań i wymuszająca unikalność ograniczeń."
 
 #. js-lingui-id: tMFFwF
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
@@ -953,12 +953,12 @@ msgstr "Wszystkie twoje niestandardowe obiekty"
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow downloading files and attachments"
-msgstr ""
+msgstr "Zezwól na pobieranie plików i załączników"
 
 #. js-lingui-id: 6BV/aG
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow email & password login for SSO bypass users."
-msgstr ""
+msgstr "Zezwól na logowanie za pomocą e-maila i hasła dla użytkowników omijających SSO."
 
 #. js-lingui-id: +XmkDf
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -968,7 +968,7 @@ msgstr "Zezwól na eksport danych do plików CSV"
 #. js-lingui-id: q/pgyN
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Google-based login for users with SSO bypass permissions."
-msgstr ""
+msgstr "Zezwól na logowanie przez Google dla użytkowników z uprawnieniami do omijania SSO."
 
 #. js-lingui-id: gCnKdT
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -988,7 +988,7 @@ msgstr "Zezwalaj na logowanie za pomocą jednokrotnego logowania Microsoft."
 #. js-lingui-id: pf6MGm
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
-msgstr ""
+msgstr "Zezwól na logowanie przez Microsoft dla użytkowników z uprawnieniami do omijania SSO."
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
@@ -1003,7 +1003,7 @@ msgstr "Zezwalaj na zapraszanie nowych użytkowników przez udostępnianie linku
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow uploading files and attachments"
-msgstr ""
+msgstr "Zezwól na przesyłanie plików i załączników"
 
 #. js-lingui-id: vHeVg5
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -1056,12 +1056,12 @@ msgstr "Wystąpił błąd."
 #. js-lingui-id: 2xLtB4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "An internal error occurred while applying your changes. Please contact support and try again later."
-msgstr ""
+msgstr "Wystąpił błąd wewnętrzny podczas stosowania zmian. Skontaktuj się z pomocą techniczną i spróbuj ponownie później."
 
 #. js-lingui-id: oRksj8
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "An internal error occurred while validating your changes. Please contact support."
-msgstr ""
+msgstr "Wystąpił błąd wewnętrzny podczas walidacji zmian. Skontaktuj się z pomocą techniczną."
 
 #. js-lingui-id: lxentK
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -1250,17 +1250,17 @@ msgstr "Czy na pewno chcesz zniszczyć te rekordy? Nie będą już odzyskiwalne.
 #. js-lingui-id: UK5TO6
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 msgid "Are you sure you want to destroy this record? It cannot be recovered anymore."
-msgstr ""
+msgstr "Czy na pewno chcesz zniszczyć ten rekord? Nie będzie można go już odzyskać."
 
 #. js-lingui-id: mcHVC1
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
 msgid "Are you sure you want to restore these records?"
-msgstr ""
+msgstr "Czy na pewno chcesz przywrócić te rekordy?"
 
 #. js-lingui-id: lmgkf0
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 msgid "Are you sure you want to restore this record?"
-msgstr ""
+msgstr "Czy na pewno chcesz przywrócić ten rekord?"
 
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -1481,7 +1481,7 @@ msgstr "Dostępność"
 #. js-lingui-id: csDS2L
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Available"
-msgstr ""
+msgstr "Dostępne"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -1582,7 +1582,7 @@ msgstr "Używając Twenty, zgadzasz się na"
 #. js-lingui-id: Yx41df
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Bypass SSO"
-msgstr ""
+msgstr "Omijanie SSO"
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1824,7 +1824,7 @@ msgstr "Czat"
 #. js-lingui-id: UxeiNP
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Chat with AI agents and use AI features"
-msgstr ""
+msgstr "Czat z agentami AI i używanie funkcji AI"
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -1960,7 +1960,7 @@ msgstr "Edytor kodu"
 #. js-lingui-id: bKJYIa
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
 msgid "Code your function"
-msgstr ""
+msgstr "Koduj swoją funkcję"
 
 #. js-lingui-id: H86f9p
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -2045,7 +2045,7 @@ msgstr "Zmienna konfiguracji"
 #. js-lingui-id: ywFj2D
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Configuration"
-msgstr ""
+msgstr "Konfiguracja"
 
 #. js-lingui-id: +zUMwJ
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2075,7 +2075,7 @@ msgstr "Skonfiguruj datę, godzinę, liczbę, strefę czasową i dzień rozpocz�
 #. js-lingui-id: utsXG8
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure fallback login methods for users with SSO bypass permissions"
-msgstr ""
+msgstr "Konfiguruj metody logowania awaryjnego dla użytkowników z uprawnieniami do obejścia SSO"
 
 #. js-lingui-id: c7wznw
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -2100,7 +2100,7 @@ msgstr "Skonfiguruj ustawienia SMTP, aby wysyłać e-maile z Twojego konta."
 #. js-lingui-id: qA9AGQ
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Configure these DNS records with your domain provider"
-msgstr ""
+msgstr "Skonfiguruj te rekody DNS u swojego dostawcy domeny"
 
 #. js-lingui-id: SpV+F6
 #: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
@@ -2285,7 +2285,7 @@ msgstr "Skopiuj ten klucz, ponieważ nie będzie on widoczny ponownie"
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Copy view link"
-msgstr ""
+msgstr "Skopiuj link do widoku"
 
 #. js-lingui-id: SGsgDO
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -2392,7 +2392,7 @@ msgstr "Stwórz przestrzeń pracy"
 #. js-lingui-id: 8ZjIgO
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Create and configure AI agents"
-msgstr ""
+msgstr "Twórz i konfiguruj agentów AI"
 
 #. js-lingui-id: uXGLuq
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -2413,7 +2413,7 @@ msgstr "Utwórz pole daty"
 #. js-lingui-id: kCNBJG
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Create new dashboard"
-msgstr ""
+msgstr "Stwórz nowy pulplice"
 
 #. js-lingui-id: d0DCww
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2491,7 +2491,7 @@ msgstr "Stwórz swoją przestrzeń pracy"
 #. js-lingui-id: OHF273
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Create, edit, and delete workspace views"
-msgstr ""
+msgstr "Twórz, edytuj i usuwaj widoki przestrzeni roboczej"
 
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -2531,7 +2531,7 @@ msgstr "Cron"
 #. js-lingui-id: t87/Oe
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "cron trigger"
-msgstr ""
+msgstr "wyzwalacz cron"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2557,7 +2557,7 @@ msgstr "Bieżąca wersja"
 #. js-lingui-id: 0b3reS
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Current workspace member not found."
-msgstr ""
+msgstr "Nie znaleziono bieżącego członka przestrzeni roboczej."
 
 #. js-lingui-id: 8Tg/JR
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
@@ -2609,7 +2609,7 @@ msgstr "Dostosuj pola"
 #. js-lingui-id: NSv0tC
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Customize page layouts and UI structure"
-msgstr ""
+msgstr "Dostosuj układy stron i strukturę interfejsu użytkownika"
 
 #. js-lingui-id: bCJa9l
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -2647,7 +2647,7 @@ msgstr "Ciemne"
 #. js-lingui-id: w6iIMm
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Dashboards"
-msgstr ""
+msgstr "Pulpity nawigacyjne"
 
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
@@ -2715,7 +2715,7 @@ msgstr "Zdarzenie bazy danych"
 #. js-lingui-id: 3GUKXi
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "database trigger"
-msgstr ""
+msgstr "wyzwalacz bazy danych"
 
 #. js-lingui-id: mYGY3B
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
@@ -2745,22 +2745,22 @@ msgstr "Format daty"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Date granularity"
-msgstr ""
+msgstr "Granulacja daty"
 
 #. js-lingui-id: dhHZTJ
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity"
-msgstr ""
+msgstr "Granulacja daty"
 
 #. js-lingui-id: agXC4d
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity X"
-msgstr ""
+msgstr "Granulacja daty X"
 
 #. js-lingui-id: YsCGZL
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity Y"
-msgstr ""
+msgstr "Granulacja daty Y"
 
 #. js-lingui-id: /ITcnz
 #: src/utils/date-utils.ts
@@ -2777,7 +2777,7 @@ msgstr "Dzień"
 #. js-lingui-id: ahA8fy
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Day of the week"
-msgstr ""
+msgstr "Dzień tygodnia"
 
 #. js-lingui-id: J/Upwb
 #: src/utils/date-utils.ts
@@ -2948,7 +2948,7 @@ msgstr "Usuń konto i wszystkie powiązane dane"
 #. js-lingui-id: kvHBHg
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data or leave workspace"
-msgstr ""
+msgstr "Usuń konto i wszystkie powiązane dane lub opuść przestrzeń roboczą"
 
 #. js-lingui-id: YMNj8z
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -2986,7 +2986,7 @@ msgstr "Usuń rekord"
 #: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction.tsx
 msgid "Delete Record"
-msgstr ""
+msgstr "Usuń Rekord"
 
 #. js-lingui-id: kf0A63
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3218,7 +3218,7 @@ msgstr "Domena nie znaleziona"
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
 msgid "Domain Setup"
-msgstr ""
+msgstr "Konfiguracja domeny"
 
 #. js-lingui-id: AZ4xlc
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -3244,12 +3244,12 @@ msgstr "Nie twórz automatycznie kontaktów."
 #. js-lingui-id: Emrbzc
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don't create contacts from/to Gmail, Outlook emails"
-msgstr ""
+msgstr "Nie twórz kontaktów z/dla Gmail, Outlook emails."
 
 #. js-lingui-id: yjhBSV
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don't sync emails from team@ support@ noreply@..."
-msgstr ""
+msgstr "Nie synchronizuj wiadomości e-mail od team@ support@ noreply@..."
 
 #. js-lingui-id: bd+DPX
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -3270,7 +3270,7 @@ msgstr "Pobierz plik"
 #. js-lingui-id: IDPv1P
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Download Files"
-msgstr ""
+msgstr "Pobierz pliki"
 
 #. js-lingui-id: wrT4hq
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3290,7 +3290,7 @@ msgstr "Zduplikuj węzeł"
 #. js-lingui-id: cheWPw
 #: src/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection.tsx
 msgid "Duplicates"
-msgstr ""
+msgstr "Duplikaty"
 
 #. js-lingui-id: KIjvtr
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3360,7 +3360,7 @@ msgstr "Edytuj Panel"
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit data structure and fields"
-msgstr ""
+msgstr "Edytuj strukturę danych i pola"
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -3567,7 +3567,7 @@ msgstr "Pusty obiekt"
 #. js-lingui-id: q11Dk2
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Enable bypass options"
-msgstr ""
+msgstr "Włącz opcje obejścia"
 
 #. js-lingui-id: gZo0V9
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
@@ -3880,7 +3880,7 @@ msgstr "co minutę"
 #. js-lingui-id: PsQmAw
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Everyone"
-msgstr ""
+msgstr "Wszyscy"
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -4084,12 +4084,12 @@ msgstr "Niepowodzenie"
 #. js-lingui-id: fsNGMi
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "Failed to create {translatedMetadataName}. Please try again."
-msgstr ""
+msgstr "Nie udało się utworzyć {translatedMetadataName}. Proszę spróbować ponownie."
 
 #. js-lingui-id: sOnoZ4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "Failed to create {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
-msgstr ""
+msgstr "Nie udało się utworzyć {translatedMetadataName}. Powiązana walidacja {relatedEntityNames} nie powiodła się. Proszę sprawdzić konfigurację i spróbować ponownie."
 
 #. js-lingui-id: w/6jdn
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -4180,7 +4180,7 @@ msgstr "Flagi funkcji i imitacja"
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field"
-msgstr ""
+msgstr "pole"
 
 #. js-lingui-id: AXjA78
 #: src/modules/command-menu/pages/page-layout/utils/getFieldLabelWithSubField.ts
@@ -4241,7 +4241,7 @@ msgstr "Piąty"
 #. js-lingui-id: sWmIx3
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" exceeds {maxUploadSize}"
-msgstr ""
+msgstr "Plik \"{fileName}\" przekracza {maxUploadSize}"
 
 #. js-lingui-id: o7J4JM
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -4425,7 +4425,7 @@ msgstr "Idź do Firm"
 #. js-lingui-id: dvMw7T
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Dashboards"
-msgstr ""
+msgstr "Przejdź do Pulpity nawigacyjne"
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -4471,13 +4471,13 @@ msgstr "Przejdź do zadań"
 #. js-lingui-id: 203RqP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Workflows"
-msgstr ""
+msgstr "Przejdź do Workflows"
 
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Google"
-msgstr ""
+msgstr "Google"
 
 #. js-lingui-id: 6eo66Q
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
@@ -4531,7 +4531,7 @@ msgstr "Grupuj według"
 #. js-lingui-id: 6JlTu+
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 msgid "Group sorting"
-msgstr ""
+msgstr "Sortowanie grupy"
 
 #. js-lingui-id: /Oqu/V
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -4696,17 +4696,17 @@ msgstr "Jeśli zgubiłeś ten klucz, możesz go wygenerować ponownie, ale pami�
 #. js-lingui-id: KDMdBi
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
 msgid "iFrame"
-msgstr ""
+msgstr "iFrame"
 
 #. js-lingui-id: hiXeBh
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "iFrame Settings"
-msgstr ""
+msgstr "Ustawienia iFrame"
 
 #. js-lingui-id: mO+Bte
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "iFrame Widget"
-msgstr ""
+msgstr "Widżet iFrame"
 
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
@@ -4821,7 +4821,7 @@ msgstr "Skrzynka odbiorcza"
 #. js-lingui-id: O5wNUa
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "index"
-msgstr ""
+msgstr "indeksy"
 
 #. js-lingui-id: pZ/USH
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -4853,7 +4853,7 @@ msgstr "Wprowadź dane JSON, a następnie naciśnij \"Uruchom\", aby przetestowa
 #. js-lingui-id: 4ZM8/a
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Install and manage applications"
-msgstr ""
+msgstr "Zainstaluj i zarządzaj aplikacjami"
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -4900,7 +4900,7 @@ msgstr "Nieprawidłowy klucz API"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr ""
+msgstr "Nieprawidłowy dostawca obejścia uwierzytelniania"
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5285,7 +5285,7 @@ msgstr "Układ"
 #. js-lingui-id: yU0QVO
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Layouts"
-msgstr ""
+msgstr "Układy"
 
 #. js-lingui-id: 8QyoLb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5307,7 +5307,7 @@ msgstr "Pozostaw puste, jeśli nie potrzebujesz wysyłać e-maili."
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Leave workspace"
-msgstr ""
+msgstr "Opuść przestrzeń roboczą"
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -5437,7 +5437,7 @@ msgstr "Zarządzaj kluczami API i webhookami"
 #. js-lingui-id: IT5nsa
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage billing and subscriptions"
-msgstr ""
+msgstr "Zarządzaj billingiem i subskrypcjami"
 
 #. js-lingui-id: nvgUPq
 #: src/modules/billing/components/SettingsBillingContent.tsx
@@ -5473,7 +5473,7 @@ msgstr "Tutaj zarządzaj członkami swojego miejsca pracy"
 #. js-lingui-id: /berfj
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Manage Views"
-msgstr ""
+msgstr "Zarządzaj widokami"
 
 #. js-lingui-id: fEqDWx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5500,7 +5500,7 @@ msgstr "Maks"
 #. js-lingui-id: Zgn/wP
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
 msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
-msgstr ""
+msgstr "Maksymalnie {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} prętów na wykres. Rozważ dodanie filtra"
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -5634,7 +5634,7 @@ msgstr "Metoda"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Microsoft"
-msgstr ""
+msgstr "Microsoft"
 
 #. js-lingui-id: eTUF28
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -5689,7 +5689,7 @@ msgstr "Miesiąc"
 #. js-lingui-id: ytTyc9
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month of the year"
-msgstr ""
+msgstr "Miesiąc roku"
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -5746,7 +5746,7 @@ msgstr "musi być tablicą prawidłowych adresów e-mail"
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
-msgstr ""
+msgstr "Moje niepubliczne widoki"
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
@@ -5783,7 +5783,7 @@ msgstr "Nazwa"
 #. js-lingui-id: LPBy3P
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionNewForm.tsx
 msgid "Name and describe your function"
-msgstr ""
+msgstr "Nazwij i opisz swoją funkcję"
 
 #. js-lingui-id: XSwyCU
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -5908,7 +5908,7 @@ msgstr "Nowa zatwierdzona domena dostępu"
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AIChatThreadsList.tsx
 msgid "New chat"
-msgstr ""
+msgstr "Nowa rozmowa"
 
 #. js-lingui-id: wqoYqp
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
@@ -5934,7 +5934,7 @@ msgstr "Nowy Klucz"
 #. js-lingui-id: zPPcuu
 #: src/modules/activities/notes/components/NotesCard.tsx
 msgid "New note"
-msgstr ""
+msgstr "Nowa notatka"
 
 #. js-lingui-id: hFxdey
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -5964,7 +5964,7 @@ msgstr "Nowy dostawca SSO"
 #. js-lingui-id: wl18ST
 #: src/modules/activities/tasks/components/TaskGroups.tsx
 msgid "New task"
-msgstr ""
+msgstr "Nowe zadanie"
 
 #. js-lingui-id: hXzOVo
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -6365,7 +6365,7 @@ msgstr "Typ numeru"
 #. js-lingui-id: pNEViR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "object"
-msgstr ""
+msgstr "obiekt"
 
 #. js-lingui-id: W0i24j
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -6382,7 +6382,7 @@ msgstr "Miejsce docelowe obiektu"
 #. js-lingui-id: rDycBw
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
 msgid "Object unique fields"
-msgstr ""
+msgstr "Unikalne pola obiektu"
 
 #. js-lingui-id: YJgmMZ
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
@@ -6523,7 +6523,7 @@ msgstr "Tylko znacznik czasu i uczestnicy zostaną udostępnieni twojemu zespoł
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 #: src/modules/action-menu/components/RecordShowRightDrawerOpenRecordButton.tsx
 msgid "Open"
-msgstr ""
+msgstr "Otwórz"
 
 #. js-lingui-id: 69b7aE
 #: src/modules/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton.tsx
@@ -6643,7 +6643,7 @@ msgstr "Hasło"
 #. js-lingui-id: 2OUR5i
 #: src/pages/auth/PasswordReset.tsx
 msgid "Password has been set"
-msgstr ""
+msgstr "Hasło zostało ustawione"
 
 #. js-lingui-id: BxQ79w
 #: src/pages/auth/PasswordReset.tsx
@@ -6729,7 +6729,7 @@ msgstr "Trwale zniszcz rekord"
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 msgid "Permanently Destroy Record"
-msgstr ""
+msgstr "Trwale zniszcz rekord"
 
 #. js-lingui-id: xjWlSJ
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -6812,7 +6812,7 @@ msgstr "Utwórz agentów w ustawieniach AI, aby użyć ich w workflow."
 #. js-lingui-id: jEw0Mr
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "Please enter a valid URL"
-msgstr ""
+msgstr "Proszę wprowadzić prawidłowy adres URL"
 
 #. js-lingui-id: CjNkdJ
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -6828,7 +6828,7 @@ msgstr "Najpierw proszę wyszukać użytkownika"
 #. js-lingui-id: wCgL30
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Please select at least one destination object for this relation."
-msgstr ""
+msgstr "Proszę wybrać co najmniej jeden obiekt docelowy dla tej relacji."
 
 #. js-lingui-id: 8YnlGz
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
@@ -6849,7 +6849,7 @@ msgstr "Proszę wpisać \"yes\", aby potwierdzić, że chcesz usunąć ten webho
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Please type in your email to confirm."
-msgstr ""
+msgstr "Proszę wpisać swój email, aby potwierdzić."
 
 #. js-lingui-id: BPig2P
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -6998,12 +6998,12 @@ msgstr "Domeny publiczne"
 #. js-lingui-id: 2vudsu
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter"
-msgstr ""
+msgstr "Kwartał"
 
 #. js-lingui-id: GKNfuv
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter of the year"
-msgstr ""
+msgstr "Kwartał roku"
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
@@ -7023,7 +7023,7 @@ msgstr "Kolejka: {queueName}"
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
-msgstr ""
+msgstr "Otrzymaj e-mail z linkiem do ustawienia hasła"
 
 #. js-lingui-id: v3xM25
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -7175,12 +7175,12 @@ msgstr "Usuń Przekazanie"
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Remove member"
-msgstr ""
+msgstr "Usuń członka"
 
 #. js-lingui-id: FzY1pn
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Remove member from workspace"
-msgstr ""
+msgstr "Usuń członka z przestrzeni roboczej"
 
 #. js-lingui-id: 00Lxnh
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -7211,12 +7211,12 @@ msgstr "Zmień kolejność pola"
 #: src/modules/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage.tsx
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply"
-msgstr ""
+msgstr "Odpowiedz"
 
 #. js-lingui-id: QMiOjK
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply to all"
-msgstr ""
+msgstr "Odpowiedz wszystkim"
 
 #. js-lingui-id: G42SNI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7294,7 +7294,7 @@ msgstr "Przywróć rekord"
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 msgid "Restore Record"
-msgstr ""
+msgstr "Przywróć rekord"
 
 #. js-lingui-id: Vw369F
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -7305,7 +7305,7 @@ msgstr "Przywróć wpisy"
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
 msgid "Restore Records"
-msgstr ""
+msgstr "Przywróć rekordy"
 
 #. js-lingui-id: kx0s+n
 #: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
@@ -7362,7 +7362,7 @@ msgstr "Nazwa roli nie może być pusta"
 #. js-lingui-id: khTver
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 msgid "Role Permissions"
-msgstr ""
+msgstr "Uprawnienia roli"
 
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7387,7 +7387,7 @@ msgstr "rumuński"
 #. js-lingui-id: gcbflV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "route trigger"
-msgstr ""
+msgstr "wyzwalacz trasy"
 
 #. js-lingui-id: 4E5bBq
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
@@ -7758,7 +7758,7 @@ msgstr "Zobacz przepływ pracy"
 #. js-lingui-id: MVYiTN
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "See Workflows"
-msgstr ""
+msgstr "Zobacz przepływy pracy"
 
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -7825,7 +7825,7 @@ msgstr "Wybierz wiersz nagłówka"
 #. js-lingui-id: 8eJcRS
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Select one or several standard objects to activate below"
-msgstr ""
+msgstr "Wybierz jeden lub kilka standardowych obiektów do aktywacji poniżej"
 
 #. js-lingui-id: UKCiEd
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -7875,7 +7875,7 @@ msgstr "Wyślij e-mail"
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Send emails via connected accounts"
-msgstr ""
+msgstr "Zezwól na wysyłanie e-maili za pomocą połączonych kont"
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7901,7 +7901,7 @@ msgstr "serbski (cyrylica)"
 #. js-lingui-id: QsydvO
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "serverless function"
-msgstr ""
+msgstr "funkcja bezserwerowa"
 
 #. js-lingui-id: eGHP1w
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -7937,7 +7937,7 @@ msgstr "Ustaw globalne preferencje przestrzeni roboczej"
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Set Password"
-msgstr ""
+msgstr "Ustaw hasło"
 
 #. js-lingui-id: qNbuWB
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
@@ -7957,7 +7957,7 @@ msgstr "Ustaw nazwę swojej subdomeny"
 #. js-lingui-id: 9HNKkV
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Set your application configuration variables"
-msgstr ""
+msgstr "Ustaw zmienne konfiguracyjne aplikacji"
 
 #. js-lingui-id: dQsqpC
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -8013,7 +8013,7 @@ msgstr "Siódmy"
 #. js-lingui-id: Z8lGw6
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Share"
-msgstr ""
+msgstr "Udostępnij"
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -8213,7 +8213,7 @@ msgstr "SSO (SAML / OIDC)"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "SSO Bypass"
-msgstr ""
+msgstr "Obejście SSO"
 
 #. js-lingui-id: uavm+q
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
@@ -8238,7 +8238,7 @@ msgstr "Standardowy"
 #. js-lingui-id: tXkhj/
 #: src/pages/onboarding/PaymentSuccess.tsx
 msgid "Start"
-msgstr ""
+msgstr "Start"
 
 #. js-lingui-id: GbQzZA
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -8424,12 +8424,12 @@ msgstr "Przełącz na roczny"
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Sync Account"
-msgstr ""
+msgstr "Synchronizuj konto"
 
 #. js-lingui-id: MsxItJ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Sync email and calendar accounts"
-msgstr ""
+msgstr "Synchronizuj konta e-mail i kalendarza"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -8439,12 +8439,12 @@ msgstr "Synchronizacja nie powiodła się"
 #. js-lingui-id: L4+l7C
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Sync with Google"
-msgstr ""
+msgstr "Synchronizuj z Google"
 
 #. js-lingui-id: EICVgB
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Sync with Outlook"
-msgstr ""
+msgstr "Synchronizuj z Outlookiem"
 
 #. js-lingui-id: N2FcBE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -8516,12 +8516,12 @@ msgstr "Ustawienia systemowe - Niedziela"
 #. js-lingui-id: HuA3RU
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings.tsx
 msgid "Tab"
-msgstr ""
+msgstr "Zakładka"
 
 #. js-lingui-id: zr20ox
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Tab Settings"
-msgstr ""
+msgstr "Ustawienia Zakładki"
 
 #. js-lingui-id: 4hJhzz
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -8587,7 +8587,7 @@ msgstr "Edytor tekstu"
 #. js-lingui-id: 5Vj6n9
 #: src/pages/settings/ai/components/SettingsAgentRoleTab.tsx
 msgid "The agent can perform all actions defined by the following role."
-msgstr ""
+msgstr "Agent może wykonywać wszystkie działania zdefiniowane przez następującą rolę."
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -8723,10 +8723,9 @@ msgstr "Trzeci"
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
-msgstr ""
+msgstr "Ta czynność nie może zostać cofnięta. Spowoduje to trwałe usunięcie całego Twojego konta."
 
 #. js-lingui-id: bNY3MH
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
@@ -8746,12 +8745,12 @@ msgstr "Tej operacji nie można cofnąć. Spowoduje to trwałe usunięcie konfig
 #. js-lingui-id: fTuKde
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
-msgstr ""
+msgstr "Ta czynność nie może zostać cofnięta. Spowoduje to trwałe usunięcie tego członka z tej przestrzeni roboczej oraz usunięcie ich ze wszystkich przypisanych zadań."
 
 #. js-lingui-id: Ik52hF
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "This action cannot be undone. This will permanently remove your membership from this workspace."
-msgstr ""
+msgstr "Ta czynność nie może zostać cofnięta. Spowoduje to trwałe usunięcie Twojego członkostwa w tej przestrzeni roboczej."
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -9021,7 +9020,7 @@ msgstr "Unikalny"
 #. js-lingui-id: +WHV0k
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
 msgid "Unique fields"
-msgstr ""
+msgstr "Unikalne pola"
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -9046,7 +9045,7 @@ msgstr "Nieograniczona liczba kontaktów"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Unlisted"
-msgstr ""
+msgstr "Niepubliczne"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AIChatThreadGroup.tsx
@@ -9089,7 +9088,7 @@ msgstr "Zaktualizuj informacje o agencie"
 #. js-lingui-id: DUqztb
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Update view"
-msgstr ""
+msgstr "Zaktualizuj widok"
 
 #. js-lingui-id: qbg8VE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -9127,7 +9126,7 @@ msgstr "Prześlij plik"
 #. js-lingui-id: HAKBY9
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Upload Files"
-msgstr ""
+msgstr "Prześlij pliki"
 
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -9142,12 +9141,12 @@ msgstr "Adres URL"
 #. js-lingui-id: pphDjD
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "URL to Embed"
-msgstr ""
+msgstr "URL do osadzenia"
 
 #. js-lingui-id: DsBeuB
 #: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx
 msgid "Use"
-msgstr ""
+msgstr "Użyj"
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -9304,7 +9303,7 @@ msgstr "wietnamski"
 #. js-lingui-id: jUNY/d
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view"
-msgstr ""
+msgstr "widok"
 
 #. js-lingui-id: jpctdh
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -9319,17 +9318,17 @@ msgstr "Zobacz szczegóły płatności"
 #. js-lingui-id: AdeX9A
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view field"
-msgstr ""
+msgstr "pole widoku"
 
 #. js-lingui-id: BA3jId
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view filter"
-msgstr ""
+msgstr "filtr widoku"
 
 #. js-lingui-id: n7a9IR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view group"
-msgstr ""
+msgstr "grupa widoku"
 
 #. js-lingui-id: lh5BED
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerQueueMetricsSection.tsx
@@ -9370,7 +9369,7 @@ msgstr "Widoczne grupy"
 #. js-lingui-id: i1PB0P
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Visible to you"
-msgstr ""
+msgstr "Widoczne dla Ciebie"
 
 #. js-lingui-id: 6n7jtr
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
@@ -9410,7 +9409,7 @@ msgstr "Napotkaliśmy problem z weryfikacją"
 #. js-lingui-id: 6d9mjh
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowCreateRecordBody.tsx
 msgid "We match on these fields. If a {objectLabelSingular} already exists, we update it. Otherwise, we create a new one."
-msgstr ""
+msgstr "Dopasowujemy się do tych pól. Jeśli or1~istnieje już {objectLabelSingular}, aktualizujemy ją. W przeciwnym razie tworzymy nową."
 
 #. js-lingui-id: id6ein
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -9594,7 +9593,7 @@ msgstr "Nazwa miejsca pracy"
 #. js-lingui-id: QZi0YX
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Workspace views require manage views permission"
-msgstr ""
+msgstr "Widoki przestrzeni roboczej wymagają pozwolenia na zarządzanie widokami"
 
 #. js-lingui-id: pmt7u4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -9604,7 +9603,7 @@ msgstr "Miejsca pracy"
 #. js-lingui-id: F7iCiM
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 msgid "Would you like to remove {recordGroupSort} group sorting?"
-msgstr ""
+msgstr "Czy chcesz usunąć sortowanie grupy {recordGroupSort}?"
 
 #. js-lingui-id: 5iSD9O
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
@@ -9628,7 +9627,7 @@ msgstr "Napisz opis dla tego agenta"
 #. js-lingui-id: zeCIJi
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
 msgid "Write your function (in typescript) below"
-msgstr ""
+msgstr "Napisz swoją funkcję (w TypeScript) poniżej"
 
 #. js-lingui-id: SHqkdn
 #: src/modules/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions.ts
@@ -9655,7 +9654,7 @@ msgstr "rok"
 #. js-lingui-id: 3PAU4M
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Year"
-msgstr ""
+msgstr "Rok"
 
 #. js-lingui-id: dfmB8/
 #: src/modules/billing/hooks/useBillingWording.ts
