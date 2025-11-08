@@ -1,26 +1,25 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
-import { useGraphWidgetTooltip } from '@/page-layout/widgets/graph/contexts/GraphWidgetTooltipContext';
 import {
   CustomCrosshairLayer,
   type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
+import { useLineChartTooltipContext } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
 import { useLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTooltip';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
-import { createVirtualElementFromChartCoordinates } from '@/page-layout/widgets/graph/utils/createVirtualElementFromChartCoordinates';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
 import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { createVirtualElementFromChartCoordinates } from '@/page-layout/widgets/graph/utils/createVirtualElementFromChartCoordinates';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
 import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetLineChartProps = {
@@ -131,15 +130,12 @@ export const GraphWidgetLineChart = ({
     formatOptions,
   });
 
-  const tooltip = useGraphWidgetTooltip();
-  const [crosshairX, setCrosshairX] = useState<number | null>(null);
+  const { showTooltip } = useLineChartTooltipContext();
 
   const handleSliceHover = useCallback(
     (data: SliceHoverData) => {
       const CHART_MARGIN_LEFT = 70;
       const CHART_MARGIN_TOP = 20;
-
-      setCrosshairX(data.sliceX);
 
       const tooltipData = createSliceTooltipData({
         slice: {
@@ -164,20 +160,16 @@ export const GraphWidgetLineChart = ({
         top: data.svgRect.top + data.mouseY + CHART_MARGIN_TOP,
       });
 
-      tooltip.show(
+      showTooltip(
         virtualAnchor,
-        <GraphWidgetTooltip
-          items={tooltipData.items}
-          showClickHint={tooltipData.showClickHint}
-          indexLabel={tooltipData.indexLabel}
-          highlightedKey={String(data.closestPoint.seriesId)}
-          interactive={false}
-          scrollable={data.nearestSlice.points.length > 6}
-        />,
-        false,
+        tooltipData.items,
+        tooltipData.indexLabel,
+        String(data.closestPoint.seriesId),
+        data.nearestSlice.points.length > 6,
+        data.sliceX,
       );
     },
-    [createSliceTooltipData, tooltip],
+    [createSliceTooltipData, showTooltip],
   );
 
   const axisBottomConfig = getLineChartAxisBottomConfig(xAxisLabel);
@@ -228,7 +220,6 @@ export const GraphWidgetLineChart = ({
               <CustomCrosshairLayer
                 key="custom-crosshair-layer"
                 points={layerProps.points}
-                crosshairX={crosshairX}
                 innerHeight={layerProps.innerHeight}
                 innerWidth={layerProps.innerWidth}
                 onSliceHover={handleSliceHover}

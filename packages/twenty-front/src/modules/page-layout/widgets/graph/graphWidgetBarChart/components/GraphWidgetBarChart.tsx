@@ -1,9 +1,9 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
+import { useBarChartTooltipContext } from '@/page-layout/widgets/graph/graphWidgetBarChart/contexts/BarChartTooltipContext';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
@@ -15,7 +15,6 @@ import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
-import { useGraphWidgetTooltip } from '@/page-layout/widgets/graph/contexts/GraphWidgetTooltipContext';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -118,8 +117,6 @@ export const GraphWidgetBarChart = ({
     seriesLabels,
   });
 
-  const tooltip = useGraphWidgetTooltip();
-
   const { renderTooltip: getTooltipData } = useBarChartTooltip({
     enrichedKeys,
     data,
@@ -127,6 +124,8 @@ export const GraphWidgetBarChart = ({
     formatOptions,
     enableGroupTooltip: groupMode === 'stacked',
   });
+
+  const { showTooltip, hideTooltip } = useBarChartTooltipContext();
 
   const handleBarEnter = useCallback(
     (
@@ -136,22 +135,20 @@ export const GraphWidgetBarChart = ({
       const tooltipData = getTooltipData(datum);
       if (!isDefined(tooltipData)) return;
 
-      tooltip.show(
+      showTooltip(
         event.currentTarget,
-        <GraphWidgetTooltip
-          items={tooltipData.tooltipItems}
-          showClickHint={tooltipData.showClickHint}
-          indexLabel={tooltipData.indexLabel}
-          highlightedKey={tooltipData.hoveredKey}
-        />,
+        tooltipData.tooltipItems,
+        tooltipData.indexLabel,
+        tooltipData.showClickHint,
+        tooltipData.hoveredKey,
       );
     },
-    [tooltip, getTooltipData],
+    [getTooltipData, showTooltip],
   );
 
   const handleBarLeave = useCallback(() => {
-    tooltip.scheduleHide();
-  }, [tooltip]);
+    hideTooltip();
+  }, [hideTooltip]);
 
   const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
 

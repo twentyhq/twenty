@@ -1,3 +1,4 @@
+import { useLineChartTooltipContext } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
 import { useTheme } from '@emotion/react';
 import { type LineSeries, type Point } from '@nivo/line';
 import { motion } from 'framer-motion';
@@ -18,7 +19,6 @@ export type SliceHoverData = {
 
 type CustomCrosshairLayerProps = {
   points: readonly Point<LineSeries>[];
-  crosshairX: number | null;
   innerHeight: number;
   innerWidth: number;
   onSliceHover: (data: SliceHoverData) => void;
@@ -26,12 +26,12 @@ type CustomCrosshairLayerProps = {
 
 export const CustomCrosshairLayer = ({
   points,
-  crosshairX,
   innerHeight,
   innerWidth,
   onSliceHover,
 }: CustomCrosshairLayerProps) => {
   const theme = useTheme();
+  const { crosshairX } = useLineChartTooltipContext();
 
   const slices = useMemo(() => {
     const sliceMap = new Map<string, Point<LineSeries>[]>();

@@ -3,7 +3,9 @@ import { getDefaultWidgetData } from '@/page-layout/utils/getDefaultWidgetData';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/graphWidgetAggregateChart/components/GraphWidgetAggregateChartRenderer';
+import { BarChartTooltipProvider } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/BarChartTooltipProvider';
 import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartRenderer';
+import { LineChartTooltipProvider } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/LineChartTooltipProvider';
 import { areChartConfigurationFieldsValidForQuery } from '@/page-layout/widgets/graph/utils/areChartConfigurationFieldsValidForQuery';
 import { lazy, Suspense } from 'react';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
@@ -97,30 +99,36 @@ export const GraphWidget = ({
 
     case GraphType.VERTICAL_BAR:
     case GraphType.HORIZONTAL_BAR:
-      return <GraphWidgetBarChartRenderer widget={widget} />;
+      return (
+        <BarChartTooltipProvider>
+          <GraphWidgetBarChartRenderer widget={widget} />
+        </BarChartTooltipProvider>
+      );
 
     case GraphType.LINE:
       return (
-        <Suspense fallback={<ChartSkeletonLoader />}>
-          <GraphWidgetLineChart
-            id={`line-chart-${widget.id}`}
-            data={data.series}
-            enableArea={data.enableArea}
-            showLegend={data.showLegend}
-            showGrid={data.showGrid}
-            enablePoints={data.enablePoints}
-            xAxisLabel={data.xAxisLabel}
-            yAxisLabel={data.yAxisLabel}
-            displayType={data.displayType}
-            prefix={data.prefix}
-            suffix={data.suffix}
-            xScale={data.xScale}
-            yScale={data.yScale}
-            curve={data.curve}
-            stackedArea={data.stackedArea}
-            enableSlices={'x'}
-          />
-        </Suspense>
+        <LineChartTooltipProvider>
+          <Suspense fallback={<ChartSkeletonLoader />}>
+            <GraphWidgetLineChart
+              id={`line-chart-${widget.id}`}
+              data={data.series}
+              enableArea={data.enableArea}
+              showLegend={data.showLegend}
+              showGrid={data.showGrid}
+              enablePoints={data.enablePoints}
+              xAxisLabel={data.xAxisLabel}
+              yAxisLabel={data.yAxisLabel}
+              displayType={data.displayType}
+              prefix={data.prefix}
+              suffix={data.suffix}
+              xScale={data.xScale}
+              yScale={data.yScale}
+              curve={data.curve}
+              stackedArea={data.stackedArea}
+              enableSlices={'x'}
+            />
+          </Suspense>
+        </LineChartTooltipProvider>
       );
 
     default:

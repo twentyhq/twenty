@@ -1,6 +1,5 @@
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { GraphWidget } from '@/page-layout/widgets/graph/components/GraphWidget';
-import { GraphWidgetTooltipProvider } from '@/page-layout/widgets/graph/components/GraphWidgetTooltipProvider';
 import { GraphWidgetComponentInstanceContext } from '@/page-layout/widgets/graph/states/contexts/GraphWidgetComponentInstanceContext';
 import { isDefined } from 'twenty-shared/utils';
 import { GraphType, type PageLayoutWidget } from '~/generated/graphql';
@@ -27,13 +26,11 @@ export const GraphWidgetRenderer = ({ widget }: GraphWidgetRendererProps) => {
     <GraphWidgetComponentInstanceContext.Provider
       value={{ instanceId: widget.id }}
     >
-      <GraphWidgetTooltipProvider>
-        <GraphWidget
-          widget={widget}
-          objectMetadataId={widget.objectMetadataId}
-          graphType={graphType}
-        />
-      </GraphWidgetTooltipProvider>
+      <GraphWidget
+        widget={widget}
+        objectMetadataId={widget.objectMetadataId}
+        graphType={graphType}
+      />
     </GraphWidgetComponentInstanceContext.Provider>
   );
 };
