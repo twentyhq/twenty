@@ -6,7 +6,8 @@
   "license": "AGPL-3.0",
   "scripts": {
     "dev": "mintlify dev",
-    "build": "mintlify build"
+    "build": "mintlify build",
+    "fix-links": "bash scripts/fix-translated-links.sh"
   },
   "dependencies": {
     "mintlify": "latest"
