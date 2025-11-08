@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { UpdateViewAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/types/workspace-migration-view-action-v2.type';
 import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
@@ -38,74 +34,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       };
     }
 
-    const {
-      flatEntityToValidate: flatViewToValidate,
-      mutableDependencyOptimisticFlatEntityMaps,
-    } = args;
-
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatViewToValidate.objectMetadataId,
-      flatEntityMaps:
-        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
-    });
-
-    replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-      flatEntity: {
-        ...flatObjectMetadata,
-        viewIds: [...flatObjectMetadata.viewIds, flatViewToValidate.id],
-      },
-      flatEntityMapsToMutate:
-        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
-    });
-
-    const kanbanFieldMetadata = isDefined(
-      flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
-    )
-      ? findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId:
-            flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
-          flatEntityMaps:
-            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-        })
-      : undefined;
-
-    if (isDefined(kanbanFieldMetadata)) {
-      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: {
-          ...kanbanFieldMetadata,
-          kanbanAggregateOperationViewIds: [
-            ...kanbanFieldMetadata.kanbanAggregateOperationViewIds,
-            flatViewToValidate.id,
-          ],
-        },
-        flatEntityMapsToMutate:
-          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-      });
-    }
-
-    const calendarFieldMetadata = isDefined(
-      flatViewToValidate.calendarFieldMetadataId,
-    )
-      ? findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: flatViewToValidate.calendarFieldMetadataId,
-          flatEntityMaps:
-            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-        })
-      : undefined;
-
-    if (isDefined(calendarFieldMetadata)) {
-      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: {
-          ...calendarFieldMetadata,
-          calendarViewIds: [
-            ...calendarFieldMetadata.calendarViewIds,
-            flatViewToValidate.id,
-          ],
-        },
-        flatEntityMapsToMutate:
-          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-      });
-    }
+    const { flatEntityToValidate: flatViewToValidate } = args;
 
     return {
       status: 'success',
@@ -131,77 +60,7 @@ export class WorkspaceMigrationV2ViewActionsBuilderService extends WorkspaceEnti
       };
     }
 
-    const {
-      flatEntityToValidate: flatViewToValidate,
-      mutableDependencyOptimisticFlatEntityMaps,
-    } = args;
-
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewToValidate.objectMetadataId,
-      flatEntityMaps:
-        mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
-    });
-
-    if (isDefined(flatObjectMetadata)) {
-      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: {
-          ...flatObjectMetadata,
-          viewIds: flatObjectMetadata.viewIds.filter(
-            (id) => id !== flatViewToValidate.id,
-          ),
-        },
-        flatEntityMapsToMutate:
-          mutableDependencyOptimisticFlatEntityMaps.flatObjectMetadataMaps,
-      });
-    }
-
-    const kanbanFieldMetadata = isDefined(
-      flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
-    )
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId:
-            flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
-          flatEntityMaps:
-            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-        })
-      : undefined;
-
-    if (isDefined(kanbanFieldMetadata)) {
-      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: {
-          ...kanbanFieldMetadata,
-          kanbanAggregateOperationViewIds:
-            kanbanFieldMetadata.kanbanAggregateOperationViewIds.filter(
-              (id) => id !== flatViewToValidate.id,
-            ),
-        },
-        flatEntityMapsToMutate:
-          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-      });
-    }
-
-    const calendarFieldMetadata = isDefined(
-      flatViewToValidate.calendarFieldMetadataId,
-    )
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatViewToValidate.calendarFieldMetadataId,
-          flatEntityMaps:
-            mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-        })
-      : undefined;
-
-    if (isDefined(calendarFieldMetadata)) {
-      replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: {
-          ...calendarFieldMetadata,
-          calendarViewIds: calendarFieldMetadata.calendarViewIds.filter(
-            (id) => id !== flatViewToValidate.id,
-          ),
-        },
-        flatEntityMapsToMutate:
-          mutableDependencyOptimisticFlatEntityMaps.flatFieldMetadataMaps,
-      });
-    }
+    const { flatEntityToValidate: flatViewToValidate } = args;
 
     return {
       status: 'success',

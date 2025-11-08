@@ -468,7 +468,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT = 10;
+  SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT = 1000;
 
   // milliseconds
   @ConfigVariablesMetadata({
@@ -477,7 +477,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
+  SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 60_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVERLESS_CONFIG,
@@ -1179,7 +1179,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_LIMIT = 10;
+  WORKFLOW_EXEC_THROTTLE_LIMIT = 100;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -1187,7 +1187,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_THROTTLE_TTL = 1000;
+  WORKFLOW_EXEC_THROTTLE_TTL = 60_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,

@@ -205,6 +205,7 @@ export class ViewFieldService {
         ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
       );
     }
+
     const viewId = existingViewField.viewId;
 
     if (this.updatesPosition(updateData)) {
@@ -257,7 +258,14 @@ export class ViewFieldService {
   }
 
   async destroy(id: string, workspaceId: string): Promise<ViewFieldEntity> {
-    const viewField = await this.findById(id, workspaceId);
+    const viewField = await this.viewFieldRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      relations: ['workspace', 'view'],
+      withDeleted: true,
+    });
 
     if (!isDefined(viewField)) {
       throw new ViewFieldException(

@@ -1,6 +1,5 @@
 import { DATE_OPERANDS_THAT_SHOULD_BE_INITIALIZED_WITH_NOW } from '@/object-record/object-filter-dropdown/constants/DateOperandsThatShouldBeInitializedWithNow';
 import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
-import { useGetNowInUserTimezoneForRelativeFilter } from '@/object-record/object-filter-dropdown/hooks/useGetNowInUserTimezoneForRelativeFilter';
 import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/object-filter-dropdown/hooks/useUpsertObjectFilterDropdownCurrentFilter';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -48,9 +47,6 @@ export const useApplyObjectFilterDropdownOperand = () => {
   const { getInitialFilterValue } = useGetInitialFilterValue();
 
   const { userTimezone } = useUserTimezone();
-
-  const { getNowInUserTimezoneForRelativeFilter } =
-    useGetNowInUserTimezoneForRelativeFilter();
 
   const applyObjectFilterDropdownOperand = (
     newOperand: RecordFilterOperand,
@@ -111,15 +107,11 @@ export const useApplyObjectFilterDropdownOperand = () => {
 
         recordFilterToUpsert.displayValue = displayValue;
       } else if (newOperand === RecordFilterOperand.IS_RELATIVE) {
-        const { dayAsStringInUserTimezone } =
-          getNowInUserTimezoneForRelativeFilter();
-
         const defaultRelativeDate: RelativeDateFilter = {
           direction: 'THIS' as RelativeDateFilterDirection,
           amount: 1,
           unit: 'DAY' as RelativeDateFilterUnit,
           timezone: userTimezone,
-          referenceDayAsString: dayAsStringInUserTimezone,
         };
 
         recordFilterToUpsert.value =

@@ -37,6 +37,7 @@ export const usePieChartTooltip = ({
       tooltipItem: {
         label: item.label || item.id,
         formattedValue,
+        value: item.value,
         dotColor: item.colorScheme.solid,
       },
       showClickHint: isDefined(dataItem?.to),

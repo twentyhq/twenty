@@ -9,4 +9,7 @@ export class ValidatePasswordResetTokenOutput {
 
   @Field(() => String)
   email: string;
+
+  @Field(() => Boolean)
+  hasPassword: boolean;
 }

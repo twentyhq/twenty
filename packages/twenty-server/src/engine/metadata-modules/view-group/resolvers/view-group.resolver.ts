@@ -11,8 +11,16 @@ import { DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dto
 import { DestroyViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/destroy-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import {
+  ViewGroupException,
+  ViewGroupExceptionCode,
+} from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewGroupV2Service } from 'src/engine/metadata-modules/view-group/services/view-group-v2.service';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
+import { CreateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-group-permission.guard';
+import { DeleteViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-group-permission.guard';
+import { DestroyViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-group-permission.guard';
+import { UpdateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-group-permission.guard';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 
 @Resolver(() => ViewGroupDTO)
@@ -47,6 +55,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
+  @UseGuards(CreateViewGroupPermissionGuard)
   async createCoreViewGroup(
     @Args('input') createViewGroupInput: CreateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -70,7 +79,34 @@ export class ViewGroupResolver {
     });
   }
 
+  @Mutation(() => [ViewGroupDTO])
+  @UseGuards(CreateViewGroupPermissionGuard)
+  async createManyCoreViewGroups(
+    @Args('inputs', { type: () => [CreateViewGroupInput] })
+    createViewGroupInputs: CreateViewGroupInput[],
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ViewGroupDTO[]> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (!isWorkspaceMigrationV2Enabled) {
+      throw new ViewGroupException(
+        'Not implemented in v1, please active IS_WORKSPACE_MIGRATION_V2_ENABLED',
+        ViewGroupExceptionCode.INVALID_VIEW_GROUP_DATA,
+      );
+    }
+
+    return await this.viewGroupV2Service.createMany({
+      createViewGroupInputs,
+      workspaceId,
+    });
+  }
+
   @Mutation(() => ViewGroupDTO)
+  @UseGuards(UpdateViewGroupPermissionGuard)
   async updateCoreViewGroup(
     @Args('input') updateViewGroupInput: UpdateViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -96,6 +132,7 @@ export class ViewGroupResolver {
   }
 
   @Mutation(() => ViewGroupDTO)
+  @UseGuards(DeleteViewGroupPermissionGuard)
   async deleteCoreViewGroup(
     @Args('input') deleteViewGroupInput: DeleteViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -113,15 +150,11 @@ export class ViewGroupResolver {
       });
     }
 
-    const deletedViewGroup = await this.viewGroupService.delete(
-      deleteViewGroupInput.id,
-      workspaceId,
-    );
-
-    return deletedViewGroup;
+    return this.viewGroupService.delete(deleteViewGroupInput.id, workspaceId);
   }
 
   @Mutation(() => ViewGroupDTO)
+  @UseGuards(DestroyViewGroupPermissionGuard)
   async destroyCoreViewGroup(
     @Args('input') destroyViewGroupInput: DestroyViewGroupInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -133,19 +166,12 @@ export class ViewGroupResolver {
       );
 
     if (isWorkspaceMigrationV2Enabled) {
-      const destroyedViewGroup = await this.viewGroupV2Service.destroyOne({
+      return await this.viewGroupV2Service.destroyOne({
         destroyViewGroupInput,
         workspaceId,
       });
-
-      return destroyedViewGroup;
     }
 
-    const destroyedViewGroup = await this.viewGroupService.destroy(
-      destroyViewGroupInput.id,
-      workspaceId,
-    );
-
-    return destroyedViewGroup;
+    return this.viewGroupService.destroy(destroyViewGroupInput.id, workspaceId);
   }
 }

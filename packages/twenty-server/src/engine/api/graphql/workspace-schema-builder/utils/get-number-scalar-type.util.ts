@@ -1,7 +1,6 @@
 import { GraphQLInt, GraphQLFloat, type GraphQLScalarType } from 'graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
-
-import { NumberDataType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { NumberDataType } from 'twenty-shared/types';
 
 export const getNumberScalarType = (
   dataType: NumberDataType,

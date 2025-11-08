@@ -3,11 +3,14 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
+import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -40,6 +43,8 @@ export const SettingsSecurity = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const authProviders = useRecoilValue(authProvidersState);
+  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
@@ -82,6 +87,20 @@ export const SettingsSecurity = () => {
     saveWorkspace(value);
   };
 
+  const hasSsoIdentityProviders = SSOIdentitiesProviders.length > 0;
+  const hasDirectAuthEnabled =
+    currentWorkspace?.isGoogleAuthEnabled ||
+    currentWorkspace?.isMicrosoftAuthEnabled ||
+    currentWorkspace?.isPasswordAuthEnabled;
+  const hasBypassProviderAvailable =
+    authProviders?.google ||
+    authProviders?.microsoft ||
+    authProviders?.password;
+  const shouldShowBypassSection =
+    hasSsoIdentityProviders &&
+    !hasDirectAuthEnabled &&
+    hasBypassProviderAvailable;
+
   return (
     <SubMenuTopBarContainer
       title={t`Security`}
@@ -120,6 +139,17 @@ export const SettingsSecurity = () => {
               <SettingsSecurityAuthProvidersOptionsList />
             </StyledContainer>
           </Section>
+          {shouldShowBypassSection && (
+            <Section>
+              <StyledContainer>
+                <H2Title
+                  title={t`SSO Bypass`}
+                  description={t`Configure fallback login methods for users with SSO bypass permissions`}
+                />
+                <SettingsSecurityAuthBypassOptionsList />
+              </StyledContainer>
+            </Section>
+          )}
           {isMultiWorkspaceEnabled && (
             <Section>
               <H2Title

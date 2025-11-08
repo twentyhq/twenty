@@ -85,6 +85,10 @@ import {
   PET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/pet-data-seeds.constant';
 import {
+  ROCKET_DATA_SEED_COLUMNS,
+  ROCKET_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/rocket-data-seeds.constant';
+import {
   SURVEY_RESULT_DATA_SEED_COLUMNS,
   SURVEY_RESULT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/survey-result-data-seeds.constant';
@@ -112,7 +116,7 @@ type RecordSeedConfig = {
 // Organize seeds into dependency batches for parallel insertion
 const getRecordSeedsBatches = (
   workspaceId: string,
-  featureFlags?: Record<FeatureFlagKey, boolean>,
+  _featureFlags?: Record<FeatureFlagKey, boolean>,
 ): RecordSeedConfig[][] => {
   // Batch 1: No dependencies
   const batch1: RecordSeedConfig[] = [
@@ -125,6 +129,11 @@ const getRecordSeedsBatches = (
       tableName: '_surveyResult',
       pgColumns: SURVEY_RESULT_DATA_SEED_COLUMNS,
       recordSeeds: SURVEY_RESULT_DATA_SEEDS,
+    },
+    {
+      tableName: '_rocket',
+      pgColumns: ROCKET_DATA_SEED_COLUMNS,
+      recordSeeds: ROCKET_DATA_SEEDS,
     },
   ];
 
@@ -140,15 +149,11 @@ const getRecordSeedsBatches = (
       pgColumns: CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
       recordSeeds: CONNECTED_ACCOUNT_DATA_SEEDS,
     },
-    ...(featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]
-      ? [
-          {
-            tableName: 'dashboard',
-            pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
-            recordSeeds: getDashboardDataSeeds(workspaceId),
-          },
-        ]
-      : []),
+    {
+      tableName: 'dashboard',
+      pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
+      recordSeeds: getDashboardDataSeeds(workspaceId),
+    },
   ];
 
   // Batch 3: Depends on company and connectedAccount

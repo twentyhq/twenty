@@ -18,8 +18,10 @@ export class FlatCronTriggerValidatorService {
   public validateFlatCronTriggerUpdate({
     flatEntityId,
     flatEntityUpdates,
-    optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
-    mutableDependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatCronTriggerMaps: optimisticFlatCronTriggerMaps,
+      flatServerlessFunctionMaps,
+    },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
@@ -52,7 +54,7 @@ export class FlatCronTriggerValidatorService {
     };
 
     const serverlessFunction =
-      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps.byId[
+      flatServerlessFunctionMaps.byId[
         updatedFlatCronTrigger.serverlessFunctionId
       ];
 
@@ -69,7 +71,9 @@ export class FlatCronTriggerValidatorService {
 
   public validateFlatCronTriggerDeletion({
     flatEntityToValidate: { id: cronTriggerIdToDelete },
-    optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatCronTriggerMaps: optimisticFlatCronTriggerMaps,
+    },
   }: FlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.cronTrigger
   >): FailedFlatEntityValidation<FlatCronTrigger> {
@@ -97,8 +101,10 @@ export class FlatCronTriggerValidatorService {
 
   public async validateFlatCronTriggerCreation({
     flatEntityToValidate: flatCronTriggerToValidate,
-    optimisticFlatEntityMaps: optimisticFlatCronTriggerMaps,
-    mutableDependencyOptimisticFlatEntityMaps,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatCronTriggerMaps: optimisticFlatCronTriggerMaps,
+      flatServerlessFunctionMaps,
+    },
   }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.cronTrigger>): Promise<
     FailedFlatEntityValidation<FlatCronTrigger>
   > {
@@ -123,8 +129,9 @@ export class FlatCronTriggerValidatorService {
     }
 
     const serverlessFunction =
-      mutableDependencyOptimisticFlatEntityMaps.flatServerlessFunctionMaps
-        ?.byId?.[flatCronTriggerToValidate.serverlessFunctionId];
+      flatServerlessFunctionMaps.byId[
+        flatCronTriggerToValidate.serverlessFunctionId
+      ];
 
     if (!isDefined(serverlessFunction)) {
       validationResult.errors.push({

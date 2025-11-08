@@ -15,19 +15,6 @@ export class ThrottlerService {
     private readonly cacheStorage: CacheStorageService,
   ) {}
 
-  async throttle(key: string, limit: number, ttl: number): Promise<void> {
-    const currentCount = (await this.cacheStorage.get<number>(key)) ?? 0;
-
-    if (currentCount >= limit) {
-      throw new ThrottlerException(
-        'Limit reached',
-        ThrottlerExceptionCode.LIMIT_REACHED,
-      );
-    }
-
-    await this.cacheStorage.set(key, currentCount + 1, ttl);
-  }
-
   async tokenBucketThrottleOrThrow(
     key: string,
     tokensToConsume: number,

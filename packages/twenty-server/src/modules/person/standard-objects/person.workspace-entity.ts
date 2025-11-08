@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -88,6 +87,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Emails`,
     description: msg`Contact’s Emails`,
     icon: 'IconMail',
+    settings: {
+      maxNumberOfValues: 1,
+    },
   })
   @WorkspaceIsUnique()
   emails: EmailsMetadata;
@@ -137,6 +139,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Phones`,
     description: msg`Contact’s phone numbers`,
     icon: 'IconPhone',
+    settings: {
+      maxNumberOfValues: 1,
+    },
   })
   phones: PhonesMetadata;
 

@@ -45,4 +45,14 @@ export class CreateServerlessFunctionInput {
   @IsObject()
   @IsOptional()
   code?: Sources;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  handlerName?: string;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  handlerPath?: string;
 }

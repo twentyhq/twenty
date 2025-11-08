@@ -3,11 +3,11 @@ import { useRecoilCallback } from 'recoil';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistViewField } from '@/views/hooks/internal/usePersistViewField';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { type ViewField } from '@/views/types/ViewField';
 import {
-  type CreateCoreViewFieldMutationVariables,
   type CreateViewFieldInput,
   type UpdateCoreViewFieldMutationVariables,
 } from '~/generated/graphql';
@@ -15,6 +15,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewFields = () => {
+  const { canPersistChanges } = useCanPersistViewChanges();
   const { createViewFields, updateViewFields } = usePersistViewField();
 
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
@@ -26,6 +27,10 @@ export const useSaveCurrentViewFields = () => {
   const saveViewFields = useRecoilCallback(
     ({ set, snapshot }) =>
       async (viewFieldsToSave: Omit<ViewField, 'definition'>[]) => {
+        if (!canPersistChanges) {
+          return;
+        }
+
         const currentViewId = snapshot
           .getLoadable(currentViewIdCallbackState)
           .getValue();
@@ -46,7 +51,7 @@ export const useSaveCurrentViewFields = () => {
 
         const { viewFieldsToCreate, viewFieldsToUpdate } =
           viewFieldsToSave.reduce<{
-            viewFieldsToCreate: CreateCoreViewFieldMutationVariables[];
+            viewFieldsToCreate: CreateViewFieldInput[];
             viewFieldsToUpdate: UpdateCoreViewFieldMutationVariables[];
           }>(
             (
@@ -67,7 +72,7 @@ export const useSaveCurrentViewFields = () => {
                 return {
                   viewFieldsToCreate: [
                     ...viewFieldsToCreate,
-                    { input: createViewFieldInput },
+                    createViewFieldInput,
                   ],
                   viewFieldsToUpdate,
                 };
@@ -119,13 +124,14 @@ export const useSaveCurrentViewFields = () => {
           );
 
         await Promise.all([
-          createViewFields(viewFieldsToCreate),
+          createViewFields({ inputs: viewFieldsToCreate }),
           updateViewFields(viewFieldsToUpdate),
         ]);
 
         set(isPersistingViewFieldsState, false);
       },
     [
+      canPersistChanges,
       createViewFields,
       currentViewIdCallbackState,
       getViewFromPrefetchState,

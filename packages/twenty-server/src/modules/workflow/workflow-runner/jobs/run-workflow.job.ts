@@ -172,8 +172,9 @@ export class RunWorkflowJob {
 
   private async throttleExecution(workflowId: string) {
     try {
-      await this.throttlerService.throttle(
+      await this.throttlerService.tokenBucketThrottleOrThrow(
         `${workflowId}-workflow-execution`,
+        1,
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
       );

@@ -86,6 +86,42 @@ ruleTester.run(RULE_NAME, rule, {
         }
       `,
     },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard, SettingsPermissionsGuard(PermissionFlagType.WORKSPACE))
+        class TestResolver {
+          @Mutation(() => String)
+          async createSomething() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestResolver {
+          @Mutation(() => String)
+          @UseGuards(WorkspaceAuthGuard, SettingsPermissionsGuard(PermissionFlagType.WORKSPACE))
+          async createSomething() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestResolver {
+          @Mutation(() => String)
+          @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+          async createSomething() {}
+        }
+      `,
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+        class TestResolver {
+          @Mutation(() => String)
+          async createSomething() {}
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -155,5 +191,33 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    {
+      code: `
+        class TestResolver {
+          @Mutation(() => String)
+          @UseGuards(WorkspaceAuthGuard)
+          async createSomething() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'graphqlResolversShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard)
+        class TestResolver {
+          @Mutation(() => String)
+          async createSomething() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'graphqlResolversShouldBeGuarded',
+        },
+      ],
+    },
   ],
-}); 
+});

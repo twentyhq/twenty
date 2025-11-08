@@ -20,6 +20,7 @@ const tsLibMock = `declare module 'tslib' {
    export const __spreadArray: any;
    export const __assign: any;
  }`;
+
 const twentySdkTypesMock = `
 declare module 'twenty-sdk/application' {
   export type SyncableEntityOptions = { universalIdentifier: string };
@@ -76,6 +77,18 @@ declare module 'twenty-sdk/application' {
   export const ObjectMetadata = (_: ObjectMetadataOptions): ClassDecorator => {
     return () => {};
   };
+
+  export class BaseObjectMetadata {}
+
+  export enum FieldMetadataType {
+    TEXT = 'TEXT',
+    FULL_NAME = 'FULL_NAME',
+    ADDRESS = 'ADDRESS',
+    SELECT = 'SELECT',
+    DATE_TIME = 'DATE_TIME',
+  }
+
+  export const FieldMetadata: (_: any) => PropertyDecorator;
 }
 `;
 
@@ -111,7 +124,19 @@ export const config: ServerlessFunctionConfig = {
   ]
 };`;
 
-const objectMock = `import { ObjectMetadata } from 'twenty-sdk/application';
+const objectMock = `import {
+  ObjectMetadata,
+  BaseObjectMetadata,
+  FieldMetadata,
+  FieldMetadataType
+} from 'twenty-sdk/application';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
 
 @ObjectMetadata({
   universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
@@ -122,7 +147,72 @@ const objectMock = `import { ObjectMetadata } from 'twenty-sdk/application';
   description: ' A post card object',
   icon: 'IconMail',
 })
-export class PostCard {}
+export class PostCard extends BaseObjectMetadata {
+  @FieldMetadata({
+    universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+    type: FieldMetadataType.TEXT,
+    label: 'Content',
+    description: "Postcard's content",
+  })
+  content: string;
+
+  @FieldMetadata({
+    universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+    type: FieldMetadataType.FULL_NAME,
+    label: 'Recipient name',
+  })
+  recipientName: string;
+
+  @FieldMetadata({
+    universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+    type: FieldMetadataType.ADDRESS,
+    label: 'Recipient address',
+  })
+  recipientAddress: string;
+
+  @FieldMetadata({
+    universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+    type: FieldMetadataType.SELECT,
+    label: 'Status',
+    defaultValue: \`'\${PostCardStatus.DRAFT}'\`,
+    options: [
+      {
+        value: PostCardStatus.DRAFT,
+        label: 'Draft',
+        position: 0,
+        color: 'gray',
+      },
+      {
+        value: PostCardStatus.SENT,
+        label: 'Sent',
+        position: 1,
+        color: 'orange',
+      },
+      {
+        value: PostCardStatus.DELIVERED,
+        label: 'Delivered',
+        position: 2,
+        color: 'green',
+      },
+      {
+        value: PostCardStatus.RETURNED,
+        label: 'Returned',
+        position: 3,
+        color: 'orange',
+      },
+    ],
+  })
+  status: 'draft' | 'sent' | 'delivered' | 'returned';
+
+  @FieldMetadata({
+    universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Delivered at',
+    isNullable: true,
+    defaultValue: null,
+  })
+  deliveredAt?: Date;
+}
 `;
 
 describe('loadManifest (integration)', () => {
@@ -178,10 +268,11 @@ describe('loadManifest (integration)', () => {
       description: 'My app description',
     });
 
-    // objects collected from @ObjectMetadata
+    expect(manifest.objects.length).toBe(1);
+
     for (const object of manifest.objects) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { universalIdentifier: _, ...otherInfo } = object;
+      const { universalIdentifier: _, fields, ...otherInfo } = object;
       expect(otherInfo).toEqual({
         description: ' A post card object',
         icon: 'IconMail',
@@ -190,6 +281,61 @@ describe('loadManifest (integration)', () => {
         namePlural: 'postCards',
         nameSingular: 'postCard',
       });
+
+      expect(Array.isArray(fields)).toBe(true);
+
+      expect(fields).toEqual([
+        {
+          universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          type: 'TEXT',
+          label: 'Content',
+          description: "Postcard's content",
+          name: 'content',
+        },
+        {
+          universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+          type: 'FULL_NAME',
+          label: 'Recipient name',
+          name: 'recipientName',
+        },
+        {
+          universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+          type: 'ADDRESS',
+          label: 'Recipient address',
+          name: 'recipientAddress',
+        },
+        {
+          universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+          type: 'SELECT',
+          label: 'Status',
+          defaultValue: "'DRAFT'",
+          options: [
+            { value: 'DRAFT', label: 'Draft', position: 0, color: 'gray' },
+            { value: 'SENT', label: 'Sent', position: 1, color: 'orange' },
+            {
+              value: 'DELIVERED',
+              label: 'Delivered',
+              position: 2,
+              color: 'green',
+            },
+            {
+              value: 'RETURNED',
+              label: 'Returned',
+              position: 3,
+              color: 'orange',
+            },
+          ],
+          name: 'status',
+        },
+        {
+          universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+          type: 'DATE_TIME',
+          label: 'Delivered at',
+          isNullable: true,
+          defaultValue: null,
+          name: 'deliveredAt',
+        },
+      ]);
     }
 
     // serverless functions

@@ -29,6 +29,9 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
           [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: value,
           [PageLayoutSingleRecordActionKeys.ADD_TO_FAVORITES_READ_MODE]: !value,
           [SingleRecordActionKeys.ADD_TO_FAVORITES]: value,
+          [SingleRecordActionKeys.DELETE]: !value,
+          [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: !value,
+          [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: !value,
         }));
       },
     [isPageLayoutInEditModeState],

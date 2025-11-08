@@ -72,11 +72,6 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IS_CALENDAR_VIEW_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -87,9 +82,9 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_DYNAMIC_SEARCH_FIELDS_ENABLED,
+        key: FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
     ])
     .execute();
