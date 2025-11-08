@@ -1,12 +1,10 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { GRAPH_TOOLTIP_GAP_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipGapPx';
+import { GRAPH_TOOLTIP_DOT_SIZE_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipDotSizePx';
 import { GRAPH_TOOLTIP_MAX_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMaxWidthPx';
-import { GRAPH_TOOLTIP_VIEWPORT_MARGIN_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipViewportMarginPx';
 import { GRAPH_TOOLTIP_MIN_WIDTH_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipMinWidthPx';
 import { GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipScrollMaxHeightPx';
-import { GRAPH_TOOLTIP_DOT_SIZE_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipDotSizePx';
 import { GRAPH_TOOLTIP_SEPARATOR_THICKNESS_PX } from '@/page-layout/widgets/graph/components/constants/GraphTooltipSeparatorThicknessPx';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconArrowUpRight } from 'twenty-ui/display';
@@ -18,11 +16,8 @@ const StyledTooltip = styled.div<{ interactive?: boolean }>`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   flex-direction: column;
-  gap: ${GRAPH_TOOLTIP_GAP_PX}px;
-  max-width: min(
-    ${GRAPH_TOOLTIP_MAX_WIDTH_PX}px,
-    calc(100vw - ${GRAPH_TOOLTIP_VIEWPORT_MARGIN_PX}px)
-  );
+  gap: 2px;
+  max-width: min(${GRAPH_TOOLTIP_MAX_WIDTH_PX}px, calc(100vw - 40px));
   min-width: ${GRAPH_TOOLTIP_MIN_WIDTH_PX}px;
   pointer-events: ${({ interactive }) => (interactive ? 'auto' : 'none')};
 `;

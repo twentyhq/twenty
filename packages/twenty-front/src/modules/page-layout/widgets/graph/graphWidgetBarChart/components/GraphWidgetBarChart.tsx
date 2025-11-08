@@ -33,14 +33,6 @@ import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { BAR_CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartLegendItemThreshold';
-import { BAR_CHART_GRID_X_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartGridXTickCount';
-import { BAR_CHART_GRID_Y_TICK_COUNT } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartGridYTickCount';
-import { BAR_CHART_LABEL_SKIP_WIDTH_PX } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartLabelSkipWidthPx';
-import { BAR_CHART_LABEL_SKIP_HEIGHT_PX } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartLabelSkipHeightPx';
-import { BAR_CHART_PADDING_RATIO } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartPaddingRatio';
-import { BAR_CHART_ZERO_MARKER_STROKE_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartZeroMarkerStrokeWidth';
-
-const LEGEND_THRESHOLD = BAR_CHART_LEGEND_ITEM_THRESHOLD;
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -158,7 +150,7 @@ export const GraphWidgetBarChart = ({
     hideTooltip();
   }, [hideTooltip]);
 
-  const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
+  const areThereTooManyKeys = keys.length > BAR_CHART_LEGEND_ITEM_THRESHOLD;
 
   const shouldShowLegend = showLegend && !areThereTooManyKeys;
 
@@ -225,7 +217,7 @@ export const GraphWidgetBarChart = ({
           value: 0,
           lineStyle: {
             stroke: theme.border.color.medium,
-            strokeWidth: BAR_CHART_ZERO_MARKER_STROKE_WIDTH,
+            strokeWidth: 1,
           },
         },
       ]
@@ -253,7 +245,7 @@ export const GraphWidgetBarChart = ({
           keys={keys}
           indexBy={indexBy}
           margin={margins}
-          padding={BAR_CHART_PADDING_RATIO}
+          padding={0.3}
           groupMode={groupMode}
           layout={layout}
           valueScale={{
@@ -272,18 +264,14 @@ export const GraphWidgetBarChart = ({
           axisLeft={axisLeftConfig}
           enableGridX={layout === 'horizontal' && showGrid}
           enableGridY={layout === 'vertical' && showGrid}
-          gridXValues={
-            layout === 'horizontal' ? BAR_CHART_GRID_X_TICK_COUNT : undefined
-          }
-          gridYValues={
-            layout === 'vertical' ? BAR_CHART_GRID_Y_TICK_COUNT : undefined
-          }
+          gridXValues={layout === 'horizontal' ? 5 : undefined}
+          gridYValues={layout === 'vertical' ? 5 : undefined}
           enableLabel={false}
-          labelSkipWidth={BAR_CHART_LABEL_SKIP_WIDTH_PX}
+          labelSkipWidth={12}
           innerPadding={
             groupMode !== 'stacked' ? BAR_CHART_MINIMUM_INNER_PADDING : 0
           }
-          labelSkipHeight={BAR_CHART_LABEL_SKIP_HEIGHT_PX}
+          labelSkipHeight={12}
           valueFormat={(value) =>
             formatGraphValue(Number(value), formatOptions)
           }

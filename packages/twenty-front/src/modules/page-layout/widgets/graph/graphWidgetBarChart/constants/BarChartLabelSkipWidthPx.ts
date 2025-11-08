@@ -1,1 +1,0 @@
-export const BAR_CHART_LABEL_SKIP_WIDTH_PX = 12;

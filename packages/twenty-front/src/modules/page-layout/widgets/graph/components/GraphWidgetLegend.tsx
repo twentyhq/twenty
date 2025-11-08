@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { GRAPH_LEGEND_DOT_SIZE_PX } from '@/page-layout/widgets/graph/components/constants/GraphLegendDotSizePx';
 
 export type GraphWidgetLegendItem = {
   id: string;
@@ -34,8 +33,8 @@ const StyledLegendLabel = styled.span`
 const StyledDot = styled.div<{ color: string }>`
   background: ${({ color }) => color};
   border-radius: 50%;
-  height: ${GRAPH_LEGEND_DOT_SIZE_PX}px;
-  width: ${GRAPH_LEGEND_DOT_SIZE_PX}px;
+  height: 6px;
+  width: 6px;
   flex-shrink: 0;
 `;
 

@@ -1,1 +1,0 @@
-export const PIE_CHART_END_LINE_STROKE_WIDTH = 1;
