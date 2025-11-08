@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ github.token }}
-          ref: main
+          ref: ${{ github.ref }}
 
       - name: Setup i18n branch
         run: |
@@ -78,12 +78,15 @@ jobs:
       - name: Fix file permissions
         run: sudo chown -R runner:docker . || true
 
+      - name: Fix translated documentation links
+        run: bash packages/twenty-docs/scripts/fix-translated-links.sh
+
       - name: Check for changes and commit
         id: check_changes
         run: |
           git add .
           if ! git diff --staged --quiet --exit-code; then
-            git commit -m "chore: update docs translations from Crowdin"
+            git commit -m "chore: update docs translations from Crowdin and fix internal links"
             echo "changes_detected=true" >> $GITHUB_OUTPUT
           else
             echo "changes_detected=false" >> $GITHUB_OUTPUT

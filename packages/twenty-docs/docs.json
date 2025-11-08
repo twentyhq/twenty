@@ -111,9 +111,7 @@
               {
                 "group": "Reporting",
                 "icon": "chart-bar",
-                "pages": [
-                  "user-guide/reporting/reporting-overview"
-                ]
+                "pages": ["user-guide/reporting/reporting-overview"]
               },
               {
                 "group": "Settings",
@@ -133,9 +131,7 @@
               {
                 "group": "Pricing",
                 "icon": "credit-card",
-                "pages": [
-                  "user-guide/pricing/billing-and-pricing-faq"
-                ]
+                "pages": ["user-guide/pricing/billing-and-pricing-faq"]
               },
               {
                 "group": "Resources",
@@ -204,9 +200,7 @@
                           },
                           {
                             "group": "Feedback",
-                            "pages": [
-                              "twenty-ui/progress-bar"
-                            ]
+                            "pages": ["twenty-ui/progress-bar"]
                           },
                           {
                             "group": "Input",
@@ -266,10 +260,10 @@
         "language": "fr",
         "tabs": [
           {
-            "tab": "User Guide",
+            "tab": "Guide utilisateur",
             "groups": [
               {
-                "group": "Getting Started",
+                "group": "Prise en main",
                 "icon": "rocket",
                 "pages": [
                   "fr/user-guide/introduction",
@@ -283,7 +277,7 @@
                 ]
               },
               {
-                "group": "Data Model",
+                "group": "Modèle de données",
                 "icon": "database",
                 "pages": [
                   "fr/user-guide/data-model/customize-your-data-model",
@@ -295,7 +289,7 @@
                 ]
               },
               {
-                "group": "CRM Essentials",
+                "group": "Essentiels du CRM",
                 "icon": "users",
                 "pages": [
                   "fr/user-guide/crm-essentials/contact-and-account-management",
@@ -305,7 +299,7 @@
                 ]
               },
               {
-                "group": "Views",
+                "group": "Vues",
                 "icon": "table",
                 "pages": [
                   "fr/user-guide/views/kanban-views",
@@ -313,7 +307,7 @@
                 ]
               },
               {
-                "group": "Workflows",
+                "group": "Flux de travail",
                 "icon": "bolt",
                 "pages": [
                   "fr/user-guide/workflows/getting-started-workflows",
@@ -335,7 +329,7 @@
                 ]
               },
               {
-                "group": "Integrations & API",
+                "group": "Intégrations et API",
                 "icon": "plug",
                 "pages": [
                   "fr/user-guide/integrations-api/apis-overview",
@@ -344,14 +338,12 @@
                 ]
               },
               {
-                "group": "Reporting",
+                "group": "Rapports",
                 "icon": "chart-bar",
-                "pages": [
-                  "fr/user-guide/reporting/reporting-overview"
-                ]
+                "pages": ["fr/user-guide/reporting/reporting-overview"]
               },
               {
-                "group": "Settings",
+                "group": "Paramètres",
                 "icon": "gear",
                 "pages": [
                   "fr/user-guide/settings/profile-settings",
@@ -366,14 +358,12 @@
                 ]
               },
               {
-                "group": "Pricing",
+                "group": "Tarification",
                 "icon": "credit-card",
-                "pages": [
-                  "fr/user-guide/pricing/billing-and-pricing-faq"
-                ]
+                "pages": ["fr/user-guide/pricing/billing-and-pricing-faq"]
               },
               {
-                "group": "Resources",
+                "group": "Ressources",
                 "icon": "book-open",
                 "pages": [
                   "fr/user-guide/resources/glossary",
@@ -383,20 +373,20 @@
             ]
           },
           {
-            "tab": "Developers",
+            "tab": "Développeurs",
             "groups": [
               {
-                "group": "Developers",
+                "group": "Développeurs",
                 "pages": []
               },
               {
-                "group": "Getting Started",
+                "group": "Prise en main",
                 "icon": "rocket",
                 "pages": [
                   "fr/developers/introduction",
                   "fr/developers/local-setup",
                   {
-                    "group": "Self-Hosting",
+                    "group": "Auto-hébergement",
                     "pages": [
                       "fr/developers/self-hosting/docker-compose",
                       "fr/developers/self-hosting/setup",
@@ -406,7 +396,7 @@
                     ]
                   },
                   {
-                    "group": "API and Webhooks",
+                    "group": "API et webhooks",
                     "pages": [
                       "fr/developers/api-and-webhooks/api",
                       "fr/developers/api-and-webhooks/webhooks"
@@ -415,12 +405,12 @@
                 ]
               },
               {
-                "group": "Contributing",
+                "group": "Contribution",
                 "icon": "code-branch",
                 "pages": [
                   "fr/developers/bug-and-requests",
                   {
-                    "group": "Frontend Development",
+                    "group": "Développement frontend",
                     "pages": [
                       "fr/developers/frontend-development/storybook",
                       {
@@ -428,7 +418,7 @@
                         "pages": [
                           "fr/twenty-ui/introduction",
                           {
-                            "group": "Display",
+                            "group": "Affichage",
                             "pages": [
                               "fr/twenty-ui/display/checkmark",
                               "fr/twenty-ui/display/chip",
@@ -439,13 +429,11 @@
                             ]
                           },
                           {
-                            "group": "Feedback",
-                            "pages": [
-                              "fr/twenty-ui/progress-bar"
-                            ]
+                            "group": "Retours",
+                            "pages": ["fr/twenty-ui/progress-bar"]
                           },
                           {
-                            "group": "Input",
+                            "group": "Saisie",
                             "pages": [
                               "fr/twenty-ui/input/buttons",
                               "fr/twenty-ui/input/color-scheme",
@@ -481,7 +469,7 @@
                     ]
                   },
                   {
-                    "group": "Backend Development",
+                    "group": "Développement backend",
                     "pages": [
                       "fr/developers/backend-development/server-commands",
                       "fr/developers/backend-development/feature-flags",
