@@ -33,16 +33,14 @@ Voici quelques éléments à vérifier avant de charger votre fichier.
 - Nous recommandons d'utiliser la syntaxe `https://domain.com` lors du chargement de vos domaines, car c'est celle utilisée par notre connecteur avec votre boîte aux lettres et votre calendrier.
 - Vous pouvez **importer les relations entre les objets** en fournissant l'un des champs uniques de l'enregistrement associé.
   - Exemple : Vous souhaitez attacher une personne à une entreprise. Ajoutez une colonne dans le fichier contenant tous les enregistrements `Personnes` qui contient l'`id` de l'entreprise — ou son `domaine`. Vous pourrez mapper ce champ lors du téléversement.
-    <Warning>
-
+<Warning>
 **Note importante :**
-
-- Les relations entre les objets dans Twenty sont "Un à Plusieurs". Cela signifie que chaque enregistrement de l'objet A peut être attaché à plusieurs enregistrements de l'objet B. Mais chaque enregistrement de l'objet B peut appartenir à un seul enregistrement de l'objet A.
-  _Par exemple, une entreprise peut être attachée à plusieurs personnes. Et une personne ne peut appartenir qu'à une seule entreprise._
+- Les relations entre les objets dans Twenty sont "Un à Plusieurs". Cela signifie que chaque enregistrement de l'objet A peut être attaché à plusieurs enregistrements de l'objet B. Mais chaque enregistrement de l'objet B peut appartenir à un seul enregistrement de l'objet A.    
+_Par exemple, une entreprise peut être attachée à plusieurs personnes. Et une personne ne peut appartenir qu'à une seule entreprise._
 
 - Pour téléverser des relations via la fonction d'importation, vous devez fournir l'`id` (ou tout autre champ unique) de l'objet attaché dans le fichier contenant les enregistrements du "côté Multiples" de la relation.  
-  _Par exemple, vous fournissez l'`id` ou le `domaine` de l'entreprise lors du téléversement d'enregistrements de personnes. Vous ne fournissez pas l'`id` (ou `email`) des personnes lors du téléversement du fichier des entreprises._
-  </Warning>
+_Par exemple, vous fournissez l'`id` ou le `domaine` de l'entreprise lors du téléversement d'enregistrements de personnes. Vous ne fournissez pas l'`id` (ou `email`) des personnes lors du téléversement du fichier des entreprises._
+</Warning>
 
 ### Téléversez votre fichier
 
