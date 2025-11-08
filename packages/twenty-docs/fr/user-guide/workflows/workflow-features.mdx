@@ -60,9 +60,9 @@ Choisissez comment le flux de travail doit gérer la sélection des enregistreme
 
 - **Unique** : Le(s) enregistrement(s) sélectionné(s) seront transmis à votre flux de travail. Cela est configuré pour un objet donné. Plusieurs enregistrements peuvent être sélectionnés avant de déclencher le flux de travail. Le flux de travail s'exécutera autant de fois qu'il y a d'enregistrements sélectionnés.
 
-<Warning>
-Vous ne pouvez pas exécuter plus de 100 flux de travail en parallèle à un moment donné.
-</Warning>
+  <Warning>
+  Vous ne pouvez pas exécuter plus de 100 flux de travail en parallèle à un moment donné.
+  </Warning>
 
 - **En masse** : Les enregistrements sélectionnés seront passés à votre flux de travail. Cela est configuré pour un objet donné. Plusieurs enregistrements peuvent être sélectionnés avant de déclencher le flux de travail. Le flux de travail s'exécutera une fois, en fournissant la liste entière des enregistrements comme entrée. Cela signifie que le flux de travail doit contenir une action Itérateur. C'est idéal pour les personnes qui souhaitent optimiser/limiter le nombre d'exécutions de flux de travail.
 
