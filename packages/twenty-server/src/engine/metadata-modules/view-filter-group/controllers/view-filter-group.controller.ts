@@ -28,6 +28,9 @@ import {
 } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
+import { CreateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-group-permission.guard';
+import { DeleteViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-group-permission.guard';
+import { UpdateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-group-permission.guard';
 
 @Controller('rest/metadata/viewFilterGroups')
 @UseGuards(WorkspaceAuthGuard)
@@ -79,6 +82,7 @@ export class ViewFilterGroupController {
   }
 
   @Post()
+  @UseGuards(CreateViewFilterGroupPermissionGuard)
   async create(
     @Body() input: CreateViewFilterGroupInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -90,6 +94,7 @@ export class ViewFilterGroupController {
   }
 
   @Patch(':id')
+  @UseGuards(UpdateViewFilterGroupPermissionGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewFilterGroupInput,
@@ -105,6 +110,7 @@ export class ViewFilterGroupController {
   }
 
   @Delete(':id')
+  @UseGuards(DeleteViewFilterGroupPermissionGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

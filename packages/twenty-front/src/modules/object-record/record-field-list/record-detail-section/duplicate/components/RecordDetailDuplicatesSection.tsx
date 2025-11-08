@@ -6,6 +6,7 @@ import { RecordDetailRecordsListContainer } from '@/object-record/record-field-l
 import { RecordDetailRecordsListItemContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListItemContainer';
 import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowMerge } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -44,7 +45,7 @@ export const RecordDetailDuplicatesSection = ({
 
   return (
     <RecordDetailSectionContainer
-      title="Duplicates"
+      title={t`Duplicates`}
       rightAdornment={
         <LightIconButton
           className="displayOnHover"

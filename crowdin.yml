@@ -27,5 +27,30 @@ files: [
     # e.g. "/resources/%two_letters_code%/%original_file_name%"
     #
     "translation": "%original_path%/%locale%.po",
+  },
+  {
+    #
+    # MDX documentation files - user-guide
+    # Using md type to preserve JSX component structure
+    # This prevents Crowdin from reformatting <Warning>, <Accordion>, etc.
+    #
+    "source": "packages/twenty-docs/user-guide/**/*.mdx",
+    "translation": "packages/twenty-docs/%two_letters_code%/user-guide/**/%original_file_name%",
+  },
+  {
+    #
+    # MDX documentation files - developers
+    # Using md type to preserve JSX component structure
+    #
+    "source": "packages/twenty-docs/developers/**/*.mdx",
+    "translation": "packages/twenty-docs/%two_letters_code%/developers/**/%original_file_name%",
+  },
+  {
+    #
+    # MDX documentation files - twenty-ui
+    # Using md type to preserve JSX component structure
+    #
+    "source": "packages/twenty-docs/twenty-ui/**/*.mdx",
+    "translation": "packages/twenty-docs/%two_letters_code%/twenty-ui/**/%original_file_name%",
   }
 ]

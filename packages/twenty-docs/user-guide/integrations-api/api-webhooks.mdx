@@ -4,13 +4,16 @@ info: "Create and manage API keys for authentication and set up webhooks for rea
 image: /images/user-guide/api/api.png
 sectionInfo: Learn how to connect Twenty to your other tools.
 ---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
 <Frame>
   <img src="/images/user-guide/api/api.png" alt="Header" />
 </Frame>
 
 ## API Keys
 
-API keys allow automated access to your CRM data, synchronize data with other systems, and create custom integrations or solutions. 
+API keys allow automated access to your CRM data, synchronize data with other systems, and create custom integrations or solutions.
 
 ### Create an API Key
 
@@ -22,29 +25,12 @@ API keys allow automated access to your CRM data, synchronize data with other sy
 4. Click **Save** to generate your API key
 5. **Important**: Copy and store your API key immediately, it's only shown once
 
-Once created, your API key provides access to your custom API documentation and playground where you can test endpoints with your actual data model. 
+Once created, your API key provides access to your custom API documentation and playground where you can test endpoints with your actual data model.
 
 <Warning>
 Since your API key gives access to sensitive information, you shouldn't share it with services you don't fully trust. If leaked, someone can use it maliciously. If your API key's security is compromised, immediately disable it and generate a new one.
 </Warning>
-<div style={{padding:'70.59% 0 0 0', position:'relative', margin: '32px 0px 0px' }}>
-  <iframe 
-    src="https://player.vimeo.com/video/928786722?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479" 
-    frameBorder="0" 
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
-    style={{
-      position:'absolute',
-      top:0,
-      left:0,
-      width:'100%',
-      height:'100%',
-      borderRadius: '16px', 
-      border:'2px solid black'
-    }}
-    title="Export data"
-  ></iframe>
-</div>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
 
 
 ### Manage API Keys
@@ -77,24 +63,7 @@ Webhooks are ideal for integrating with external systems, while Workflows suppor
 
 Your webhook will immediately start receiving real-time notifications about changes to your CRM data.
 
-<div style={{padding:'70.59% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
-  <iframe 
-    src="https://player.vimeo.com/video/928786708?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479" 
-    frameBorder="0" 
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
-    style={{
-      position:'absolute',
-      top:0,
-      left:0,
-      width:'100%',
-      height:'100%',
-      borderRadius: '16px', 
-      border:'2px solid black'
-    }}
-    title="Export data"
-  ></iframe>
-</div>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
 
 ### Manage Webhooks
 

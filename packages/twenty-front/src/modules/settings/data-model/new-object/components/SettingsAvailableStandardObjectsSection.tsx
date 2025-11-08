@@ -3,12 +3,13 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 
+import { t } from '@lingui/core/macro';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import {
   SettingsAvailableStandardObjectItemTableRow,
   StyledAvailableStandardObjectTableRow,
 } from './SettingsAvailableStandardObjectItemTableRow';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
 
 type SettingsAvailableStandardObjectsSectionProps = {
   objectItems: ObjectMetadataItem[];
@@ -23,8 +24,8 @@ export const SettingsAvailableStandardObjectsSection = ({
 }: SettingsAvailableStandardObjectsSectionProps) => (
   <Section>
     <H2Title
-      title="Available"
-      description="Select one or several standard objects to activate below"
+      title={t`Available`}
+      description={t`Select one or several standard objects to activate below`}
     />
     <Table>
       <StyledAvailableStandardObjectTableRow>

@@ -1,11 +1,12 @@
-import { Section } from 'twenty-ui/layout';
-import { H2Title, IconSearch } from 'twenty-ui/display';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { useMemo, useState } from 'react';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import styled from '@emotion/styled';
+import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
+import { H2Title, IconSearch } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import {
   type EnvironmentVariable,
   SettingsApplicationDetailEnvironmentVariablesTableRow,
@@ -42,8 +43,8 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
   return (
     <Section>
       <H2Title
-        title="Configuration"
-        description="Set your application configuration variables"
+        title={t`Configuration`}
+        description={t`Set your application configuration variables`}
       />
       <StyledSearchInput
         instanceId="env-var-search"

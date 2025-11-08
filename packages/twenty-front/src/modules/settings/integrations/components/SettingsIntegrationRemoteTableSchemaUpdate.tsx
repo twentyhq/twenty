@@ -1,9 +1,10 @@
 import { type FetchResult } from '@apollo/client';
 import styled from '@emotion/styled';
 
-import { type SyncRemoteTableSchemaChangesMutation } from '~/generated-metadata/graphql';
-import { Button } from 'twenty-ui/input';
+import { t } from '@lingui/core/macro';
 import { IconReload } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { type SyncRemoteTableSchemaChangesMutation } from '~/generated-metadata/graphql';
 
 const StyledText = styled.h3`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -27,7 +28,7 @@ export const SettingsIntegrationRemoteTableSchemaUpdate = ({
       {updatesText && (
         <Button
           Icon={IconReload}
-          title="Update"
+          title={t`Update`}
           size="small"
           onClick={onUpdate}
         />
