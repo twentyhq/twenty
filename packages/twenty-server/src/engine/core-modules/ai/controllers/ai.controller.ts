@@ -20,7 +20,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-export interface ChatRequest {
+interface ChatRequest {
   messages: ModelMessage[];
   temperature?: number;
   maxOutputTokens?: number;
