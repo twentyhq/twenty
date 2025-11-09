@@ -45,7 +45,7 @@ export const usePieChartTooltip = ({
         value: item.value,
         dotColor: item.colorScheme.solid,
       },
-      showClickHint: isDefined(dataItem?.to),
+      linkTo: dataItem?.to,
     };
   };
 

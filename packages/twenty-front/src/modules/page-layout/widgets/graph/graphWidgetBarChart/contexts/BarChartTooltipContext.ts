@@ -6,10 +6,12 @@ export type BarChartTooltipContextType = {
     anchorElement: Element,
     items: GraphWidgetTooltipItem[],
     indexLabel: string,
-    showClickHint: boolean,
+    linkTo?: string,
     highlightedKey?: string,
   ) => void;
   hideTooltip: () => void;
+  scheduleHide: () => void;
+  cancelScheduledHide: () => void;
 };
 
 export const [

@@ -26,7 +26,6 @@ export const Default: Story = {
         dotColor: 'blue',
       },
     ],
-    showClickHint: false,
     indexLabel: 'March 09, 2024',
   },
 };
@@ -42,7 +41,7 @@ export const WithClickHint: Story = {
         dotColor: 'green',
       },
     ],
-    showClickHint: true,
+    linkTo: '/sales/details',
   },
 };
 
@@ -64,7 +63,7 @@ export const MultipleItems: Story = {
         dotColor: 'purple',
       },
     ],
-    showClickHint: true,
+    linkTo: '/comparison/details',
     indexLabel: 'February 2',
   },
 };
@@ -88,7 +87,7 @@ export const SuperLongText: Story = {
         dotColor: 'purple',
       },
     ],
-    showClickHint: true,
+    linkTo: '/financials/q4-2024',
     indexLabel:
       'Q4 2024 Financial Year End (October - December) - North America Regional Performance Summary',
   },
@@ -126,7 +125,6 @@ export const WithZeroValues: Story = {
         dotColor: 'orange',
       },
     ],
-    showClickHint: false,
     indexLabel: 'March 09, 2024',
   },
 };
@@ -219,8 +217,7 @@ export const ManyItemsWithScroll: Story = {
         dotColor: 'lime',
       },
     ],
-    scrollable: true,
-    interactive: true,
+    linkTo: '/annual-report/2024',
     indexLabel: 'Annual Report 2024',
   },
 };

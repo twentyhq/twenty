@@ -17,7 +17,6 @@ type LineChartTooltipState = {
   items: Parameters<LineChartTooltipContextType['showTooltip']>[1];
   indexLabel: string | undefined;
   highlightedSeriesId: string;
-  scrollable: boolean;
   crosshairX: number;
   linkTo?: string;
   chartContainerId?: string;
@@ -40,7 +39,6 @@ export const LineChartTooltipProvider = ({
       items: LineChartTooltipState['items'],
       indexLabel: string | undefined,
       highlightedSeriesId: string,
-      scrollable: boolean,
       crosshairX: number,
       linkTo?: string,
       chartContainerId?: string,
@@ -50,7 +48,6 @@ export const LineChartTooltipProvider = ({
         items,
         indexLabel,
         highlightedSeriesId,
-        scrollable,
         crosshairX,
         linkTo,
         chartContainerId,
@@ -139,9 +136,6 @@ export const LineChartTooltipProvider = ({
                   items={tooltipState.items}
                   indexLabel={tooltipState.indexLabel}
                   highlightedKey={tooltipState.highlightedSeriesId}
-                  scrollable={tooltipState.scrollable}
-                  interactive={Boolean(tooltipState.linkTo)}
-                  showClickHint={Boolean(tooltipState.linkTo)}
                   linkTo={tooltipState.linkTo}
                 />
               </motion.div>

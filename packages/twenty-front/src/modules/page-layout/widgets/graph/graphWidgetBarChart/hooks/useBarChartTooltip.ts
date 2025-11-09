@@ -56,7 +56,6 @@ export const useBarChartTooltip = ({
 
     return {
       tooltipItems,
-      showClickHint: isDefined(dataItem?.to),
       indexLabel: String(datum.indexValue),
       hoveredKey: enableGroupTooltip ? String(datum.id) : undefined,
       linkTo: isDefined(dataItem?.to) ? String(dataItem.to) : undefined,

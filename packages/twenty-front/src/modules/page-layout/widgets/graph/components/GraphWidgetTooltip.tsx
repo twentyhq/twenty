@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconArrowUpRight } from 'twenty-ui/display';
 
-const StyledTooltip = styled.div<{ interactive?: boolean }>`
+const StyledTooltip = styled.div`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -17,7 +17,7 @@ const StyledTooltip = styled.div<{ interactive?: boolean }>`
   gap: 2px;
   max-width: min(${GRAPH_TOOLTIP_MAX_WIDTH_PX}px, calc(100vw - 40px));
   min-width: ${GRAPH_TOOLTIP_MIN_WIDTH_PX}px;
-  pointer-events: ${({ interactive }) => (interactive ? 'auto' : 'none')};
+  pointer-events: auto;
 `;
 
 const StyledTooltipContent = styled.div`
@@ -34,13 +34,12 @@ const StyledTooltipRow = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTooltipRowContainer = styled.div<{ scrollable?: boolean }>`
+const StyledTooltipRowContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  max-height: ${({ scrollable }) =>
-    scrollable ? `${GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX}px` : 'none'};
-  overflow-y: ${({ scrollable }) => (scrollable ? 'auto' : 'visible')};
+  max-height: ${GRAPH_TOOLTIP_SCROLL_MAX_HEIGHT_PX}px;
+  overflow-y: auto;
 `;
 
 const StyledDot = styled.div<{ color: string }>`
@@ -51,10 +50,10 @@ const StyledDot = styled.div<{ color: string }>`
   flex-shrink: 0;
 `;
 
-const StyledTooltipLink = styled.div<{ clickable?: boolean }>`
+const StyledTooltipLink = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
-  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
+  cursor: pointer;
   display: flex;
   justify-content: space-between;
   height: ${({ theme }) => theme.spacing(6)};
@@ -132,20 +131,14 @@ export type GraphWidgetTooltipItem = {
 
 type GraphWidgetTooltipProps = {
   items: GraphWidgetTooltipItem[];
-  showClickHint?: boolean;
   indexLabel?: string;
-  interactive?: boolean;
-  scrollable?: boolean;
   highlightedKey?: string;
   linkTo?: string;
 };
 
 export const GraphWidgetTooltip = ({
   items,
-  showClickHint = false,
   indexLabel,
-  interactive = false,
-  scrollable = false,
   highlightedKey,
   linkTo,
 }: GraphWidgetTooltipProps) => {
@@ -159,13 +152,13 @@ export const GraphWidgetTooltip = ({
   const hasLink = isNonEmptyString(linkTo);
 
   return (
-    <StyledTooltip interactive={interactive || hasLink}>
-      <StyledHorizontalSectionPadding addTop addBottom={!showClickHint}>
+    <StyledTooltip>
+      <StyledHorizontalSectionPadding addTop addBottom={!hasLink}>
         <StyledTooltipContent>
           {indexLabel && (
             <StyledTooltipHeader>{indexLabel}</StyledTooltipHeader>
           )}
-          <StyledTooltipRowContainer scrollable={scrollable}>
+          <StyledTooltipRowContainer>
             {filteredItems.map((item) => {
               const isHighlighted =
                 shouldHighlight && highlightedKey === item.key;
@@ -186,16 +179,13 @@ export const GraphWidgetTooltip = ({
           </StyledTooltipRowContainer>
         </StyledTooltipContent>
       </StyledHorizontalSectionPadding>
-      {showClickHint && hasLink && (
+      {hasLink && (
         <>
           <StyledTooltipSeparator />
           <StyledHorizontalSectionPadding addBottom>
             <StyledTooltipLink
-              clickable
               onClick={() => {
-                if (hasLink) {
-                  window.location.href = String(linkTo);
-                }
+                window.location.href = String(linkTo);
               }}
             >
               <span>{t`Click to see data`}</span>

@@ -125,7 +125,8 @@ export const GraphWidgetBarChart = ({
     enableGroupTooltip: groupMode === 'stacked',
   });
 
-  const { showTooltip, hideTooltip } = useBarChartTooltipContextOrThrow();
+  const { showTooltip, scheduleHide, cancelScheduledHide } =
+    useBarChartTooltipContextOrThrow();
 
   const handleBarEnter = useCallback(
     (
@@ -135,20 +136,21 @@ export const GraphWidgetBarChart = ({
       const tooltipData = getTooltipData(datum);
       if (!isDefined(tooltipData)) return;
 
+      cancelScheduledHide();
       showTooltip(
         event.currentTarget,
         tooltipData.tooltipItems,
         tooltipData.indexLabel,
-        tooltipData.showClickHint,
+        tooltipData.linkTo,
         tooltipData.hoveredKey,
       );
     },
-    [getTooltipData, showTooltip],
+    [getTooltipData, showTooltip, cancelScheduledHide],
   );
 
   const handleBarLeave = useCallback(() => {
-    hideTooltip();
-  }, [hideTooltip]);
+    scheduleHide();
+  }, [scheduleHide]);
 
   const areThereTooManyKeys = keys.length > BAR_CHART_LEGEND_ITEM_THRESHOLD;
 

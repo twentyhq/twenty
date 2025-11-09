@@ -8,7 +8,6 @@ import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidge
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
 import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
 import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
-import { LINE_CHART_TOOLTIP_SCROLLABLE_POINT_THRESHOLD } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartTooltipScrollablePointThreshold';
 import { useLineChartTooltipContextOrThrow } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
@@ -170,8 +169,6 @@ export const GraphWidgetLineChart = ({
         tooltipData.items,
         tooltipData.indexLabel,
         String(data.closestPoint.seriesId),
-        data.nearestSlice.points.length >
-          LINE_CHART_TOOLTIP_SCROLLABLE_POINT_THRESHOLD,
         data.sliceX,
         linkTo,
         id,

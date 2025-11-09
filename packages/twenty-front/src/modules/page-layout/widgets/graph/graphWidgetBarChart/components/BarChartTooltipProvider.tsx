@@ -4,7 +4,6 @@ import {
   type BarChartTooltipContextType,
 } from '@/page-layout/widgets/graph/graphWidgetBarChart/contexts/BarChartTooltipContext';
 import { useTooltipFloating } from '@/page-layout/widgets/graph/hooks/useTooltipFloating';
-import { BAR_CHART_TOOLTIP_SCROLLABLE_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartTooltipScrollableItemThreshold';
 import { useTheme } from '@emotion/react';
 import { FloatingPortal } from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -12,13 +11,14 @@ import { GRAPH_TOOLTIP_ANIMATION_SCALE_INITIAL } from '@/page-layout/widgets/gra
 import { GRAPH_TOOLTIP_ANIMATION_SCALE_EXIT } from '@/page-layout/widgets/graph/components/constants/GraphTooltipAnimationScaleExit';
 import { useCallback, useState, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 type BarChartTooltipState = {
   anchorElement: Element;
   items: Parameters<BarChartTooltipContextType['showTooltip']>[1];
   indexLabel: string;
   highlightedKey?: string;
-  showClickHint: boolean;
+  linkTo?: string;
 };
 
 type BarChartTooltipProviderProps = {
@@ -38,14 +38,14 @@ export const BarChartTooltipProvider = ({
       anchorElement: Element,
       items: BarChartTooltipState['items'],
       indexLabel: string,
-      showClickHint: boolean,
+      linkTo?: string,
       highlightedKey?: string,
     ) => {
       setTooltipState({
         anchorElement,
         items,
         indexLabel,
-        showClickHint,
+        linkTo,
         highlightedKey,
       });
     },
@@ -56,6 +56,16 @@ export const BarChartTooltipProvider = ({
     setTooltipState(null);
   }, []);
 
+  const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
+
+  const scheduleHide = useCallback(() => {
+    debouncedHideTooltip();
+  }, [debouncedHideTooltip]);
+
+  const cancelScheduledHide = useCallback(() => {
+    debouncedHideTooltip.cancel();
+  }, [debouncedHideTooltip]);
+
   const isTooltipVisible = isDefined(tooltipState);
 
   const { refs, floatingStyles } = useTooltipFloating(
@@ -65,6 +75,8 @@ export const BarChartTooltipProvider = ({
   const contextValue: BarChartTooltipContextType = {
     showTooltip,
     hideTooltip,
+    scheduleHide,
+    cancelScheduledHide,
   };
 
   return (
@@ -77,6 +89,8 @@ export const BarChartTooltipProvider = ({
             style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
             role="tooltip"
             aria-live="polite"
+            onMouseEnter={cancelScheduledHide}
+            onMouseLeave={hideTooltip}
           >
             <AnimatePresence>
               <motion.div
@@ -95,11 +109,7 @@ export const BarChartTooltipProvider = ({
                   items={tooltipState.items}
                   indexLabel={tooltipState.indexLabel}
                   highlightedKey={tooltipState.highlightedKey}
-                  scrollable={
-                    tooltipState.items.length >
-                    BAR_CHART_TOOLTIP_SCROLLABLE_ITEM_THRESHOLD
-                  }
-                  showClickHint={tooltipState.showClickHint}
+                  linkTo={tooltipState.linkTo}
                 />
               </motion.div>
             </AnimatePresence>

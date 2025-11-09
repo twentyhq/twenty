@@ -8,7 +8,6 @@ export type LineChartTooltipContextType = {
     items: GraphWidgetTooltipItem[],
     indexLabel: string | undefined,
     highlightedSeriesId: string,
-    scrollable: boolean,
     crosshairX: number,
     linkTo?: string,
     chartContainerId?: string,
