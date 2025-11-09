@@ -10,17 +10,6 @@ export const createVirtualElementFromChartCoordinates = (
 ): VirtualElement => {
   const { left, top } = chartCoordinates;
   return {
-    getBoundingClientRect: () => {
-      return {
-        left,
-        right: left + 1,
-        top,
-        bottom: top + 1,
-        width: 1,
-        height: 1,
-        x: left,
-        y: top,
-      } as DOMRect;
-    },
+    getBoundingClientRect: () => new DOMRect(left, top, 1, 1),
   };
 };

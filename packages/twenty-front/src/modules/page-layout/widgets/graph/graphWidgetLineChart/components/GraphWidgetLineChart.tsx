@@ -173,10 +173,8 @@ export const GraphWidgetLineChart = ({
         return;
       }
 
-      // Compute absolute viewport coordinates for the anchor point
-      const left =
-        data.svgRect.left + data.nearestSlice.x + LINE_CHART_MARGIN_LEFT;
-      const top = data.svgRect.top + data.mouseY + LINE_CHART_MARGIN_TOP;
+      const offsetLeft = data.nearestSlice.x + LINE_CHART_MARGIN_LEFT;
+      const offsetTop = data.mouseY + LINE_CHART_MARGIN_TOP;
 
       const seriesForLink = dataMap[String(data.closestPoint.seriesId)];
       const linkTo = seriesForLink?.data?.[data.closestPoint.indexInSeries]?.to;
@@ -188,10 +186,16 @@ export const GraphWidgetLineChart = ({
         indexLabel: tooltipData.indexLabel,
         highlightedKey: String(data.closestPoint.seriesId),
         linkTo,
-        anchor: { type: 'point', left, top },
+        anchor: {
+          type: 'point',
+          mode: 'relative',
+          containerId: id,
+          offsetLeft,
+          offsetTop,
+        },
       });
     },
-    [createSliceTooltipData, dataMap, cancelScheduledHide],
+    [createSliceTooltipData, dataMap, cancelScheduledHide, id],
   );
 
   const axisBottomConfig = getLineChartAxisBottomConfig(xAxisLabel);
