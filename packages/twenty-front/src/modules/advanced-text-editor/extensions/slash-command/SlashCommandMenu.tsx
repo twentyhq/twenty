@@ -1,8 +1,3 @@
-import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
-import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { ThemeProvider } from '@emotion/react';
 import {
   autoUpdate,
@@ -22,9 +17,14 @@ import {
   useRef,
   useState,
 } from 'react';
-import { createPortal } from 'react-dom';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
+
+import { type SlashCommandItem } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 
 export type SlashCommandMenuProps = {
   items: SlashCommandItem[];
@@ -172,54 +172,49 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
     }, [selectedIndex]);
 
     return (
-      <>
-        {createPortal(
-          <ThemeProvider theme={theme}>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.1 }}
-              data-slash-command-menu
-            >
-              <OverlayContainer
-                ref={refs.setFloating}
-                style={{
-                  ...floatingStyles,
-                  zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
-                }}
-              >
-                <DropdownContent ref={commandListContainerRef}>
-                  <DropdownMenuItemsContainer hasMaxHeight>
-                    {items.map((item, index) => {
-                      const isSelected = index === selectedIndex;
+      <ThemeProvider theme={theme}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.1 }}
+          data-slash-command-menu
+        >
+          <OverlayContainer
+            ref={refs.setFloating}
+            style={{
+              ...floatingStyles,
+              zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
+            }}
+          >
+            <DropdownContent ref={commandListContainerRef}>
+              <DropdownMenuItemsContainer hasMaxHeight>
+                {items.map((item, index) => {
+                  const isSelected = index === selectedIndex;
 
-                      return (
-                        <div
-                          key={item.id}
-                          ref={isSelected ? activeCommandRef : null}
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                          }}
-                        >
-                          <MenuItemSuggestion
-                            LeftIcon={item.icon}
-                            text={item.title}
-                            selected={isSelected}
-                            onClick={() => {
-                              onSelect(item);
-                            }}
-                          />
-                        </div>
-                      );
-                    })}
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              </OverlayContainer>
-            </motion.div>
-          </ThemeProvider>,
-          document.body,
-        )}
-      </>
+                  return (
+                    <div
+                      key={item.id}
+                      ref={isSelected ? activeCommandRef : null}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                      }}
+                    >
+                      <MenuItemSuggestion
+                        LeftIcon={item.icon}
+                        text={item.title}
+                        selected={isSelected}
+                        onClick={() => {
+                          onSelect(item);
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </DropdownMenuItemsContainer>
+            </DropdownContent>
+          </OverlayContainer>
+        </motion.div>
+      </ThemeProvider>
     );
   },
 );

@@ -1,13 +1,13 @@
 import { i18n } from '@lingui/core';
 import { Extension, type Editor, type Range } from '@tiptap/core';
 import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
+import { type IconComponent } from 'twenty-ui/display';
 
 import {
   DEFAULT_SLASH_COMMANDS,
   type SlashCommandConfig,
 } from '@/advanced-text-editor/extensions/slash-command/DefaultSlashCommands';
 import { SlashCommandRenderer } from '@/advanced-text-editor/extensions/slash-command/SlashCommandRenderer';
-import { type IconComponent } from 'twenty-ui/display';
 
 export type SlashCommandItem = {
   id: string;

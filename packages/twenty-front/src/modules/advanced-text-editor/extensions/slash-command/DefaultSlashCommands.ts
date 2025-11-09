@@ -30,7 +30,7 @@ export const DEFAULT_SLASH_COMMANDS: SlashCommandConfig[] = [
     icon: IconPilcrow,
     keywords: [msg`paragraph`, msg`text`, msg`p`],
     getIsActive: (editor) => editor.isActive('paragraph'),
-    getIsVisible: (editor) => editor.can().setParagraph?.() ?? true,
+    getIsVisible: (editor) => editor.can().setParagraph?.() ?? false,
     getOnSelect: (editor, range) => () => {
       return editor.chain().focus().deleteRange(range).setParagraph().run();
     },
