@@ -1,0 +1,130 @@
+---
+title: Aperçu des API
+info: Comprenez les quatre différentes API et quand utiliser chacune d'elles.
+image: /images/user-guide/api/api-overview.png
+sectionInfo: Découvrez comment connecter Twenty à vos autres outils.
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api-overview.png" alt="Header" />
+</Frame>
+
+Twenty a été conçu pour être convivial pour les développeurs, offrant des API puissantes qui s'adaptent à votre modèle de données personnalisé. Nous fournissons quatre types d'API distincts pour répondre à différents besoins d'intégration.
+
+## Approche axée sur les développeurs
+
+Twenty génère des API spécifiquement pour votre modèle de données, ce qui signifie :
+
+- **Pas besoin d'ID longs** : Utilisez directement les noms de vos objets et champs dans les points de terminaison
+- **Objets standard et personnalisés traités à égalité** : Vos objets personnalisés bénéficient du même traitement API que ceux intégrés
+- **Points de terminaison dédiés** : Chaque objet et champ a son propre point de terminaison API
+- **Documentation personnalisée** : Générée spécifiquement pour le modèle de données de votre espace de travail
+
+<Warning>
+Votre API personnalisée génère une documentation personnalisée accessible via Paramètres → API & Webhooks après la création d'une clé API. Cette documentation reflète votre modèle de données exact et vos configurations de champs.
+</Warning>
+
+## Les quatre types d'API
+
+Twenty propose des API aux formats **REST** et **GraphQL** :
+
+### API REST
+
+#### 1. API de métadonnées REST
+
+- **Objectif** : Gérer la structure de votre espace de travail et du modèle de données
+- **Cas d'utilisation**:
+  - Créer, modifier ou supprimer des objets et des champs
+  - Configurer les paramètres de l'espace de travail
+  - Gérer les relations du modèle de données
+- **Accès** : Disponible via les points de terminaison REST
+
+#### 2. API Core REST
+
+- **Objectif** : Gérer vos enregistrements de données réels
+- **Cas d'utilisation**:
+  - Créer, lire, mettre à jour, supprimer des enregistrements
+  - Interroger des données spécifiques
+  - Gérer les relations entre les enregistrements
+- **Accès** : Disponible via les points de terminaison REST
+
+### API GraphQL
+
+#### 3. API de métadonnées GraphQL
+
+- **Objectif** : Même chose que l'API de métadonnées REST mais avec les avantages de GraphQL
+- **Cas d'utilisation** : Même gestion de l'espace de travail et du modèle de données
+- **Avantages supplémentaires** :
+  - Interroger plusieurs types de métadonnées en une seule requête
+  - Sélection précise des champs
+  - Meilleure performance pour les requêtes complexes
+
+#### 4. API Core GraphQL
+
+- **Objectif** : Même chose que l'API Core REST mais avec les avantages de GraphQL
+- **Cas d'utilisation** : Même gestion des enregistrements de données
+- **Avantages supplémentaires** :
+  - **Opérations par lot** : Disponibles pour toutes les opérations
+  - **Opérations Upsert** : Créez ou mettez à jour des enregistrements en une seule fois
+  - Interroger les relations en un appel unique
+  - Récupération précise des données
+
+## Opérations par Lot
+
+### Support des opérations par lot REST et GraphQL
+
+Les API REST et GraphQL prennent en charge les opérations par lot pour la plupart des actions :
+
+- **Taille du lot** : Jusqu'à 60 enregistrements par requête
+- **Opérations disponibles** : Créer, mettre à jour, supprimer plusieurs enregistrements
+- **Performance** : Significativement plus rapide que les appels API individuels
+
+### Fonctionnalités spécifiques à GraphQL
+
+- **Upsert par lot** : Disponible uniquement dans les API GraphQL
+- **Utilisation** : Utilisez des noms d'objets au pluriel (par exemple, `CreateCompanies` au lieu de `CreateCompany`)
+- **Exigence** : C'est pourquoi les noms d'objets au singulier et au pluriel doivent être distincts
+
+## Accès à la Documentation API
+
+1. Allez dans **Paramètres → API & Webhooks**
+2. Créez une clé API (nécessaire pour accéder à la documentation)
+3. Accédez à votre documentation personnalisée et au bac à sable
+4. Testez les API avec votre modèle de données réel
+
+Votre documentation est unique à votre espace de travail car elle reflète vos objets, champs et relations personnalisés.
+
+## Quand utiliser chaque API
+
+### Utilisez les API de métadonnées lorsque :
+
+- Vous configurez votre modèle de données
+- Vous créez des objets ou champs personnalisés
+- Vous configurez les paramètres de l'espace de travail
+
+### Utilisez les API Core lorsque :
+
+- Vous gérez les données quotidiennes (Personnes, Entreprises, Opportunités)
+- Vous intégrez des systèmes externes
+- Vous construisez des applications personnalisées
+- Vous automatisez les flux de données
+
+### Choisissez GraphQL lorsque :
+
+- Vous avez besoin d'opérations par lots
+- Vous souhaitez minimiser les appels API
+- Vous avez besoin de fonctionnalités d'upsert
+- Vous construisez des intégrations complexes
+
+### Choisissez REST lorsque :
+
+- Vous préférez une structure API plus simple
+- Vous construisez des intégrations de base
+- Votre équipe est plus familière avec REST
+- Vous avez besoin d'opérations CRUD simples
+
+## Prochaines étapes
+
+- **[Configuration des API & Webhooks](/l/fr/user-guide/integrations-api/api-webhooks)** : Apprenez à créer des clés API et des webhooks
+- **Documentation personnalisée** : Accédez à vos documents API personnalisés via Paramètres → API & Webhooks
+
