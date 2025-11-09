@@ -17,7 +17,6 @@ fi
 
 echo "🔧 Fixing internal links in translated documentation..."
 
-# Process all language directories inside /l/
 for lang_dir in "$DOCS_DIR"/*/ ; do
   lang_code=$(basename "$lang_dir")
 
@@ -27,7 +26,6 @@ for lang_dir in "$DOCS_DIR"/*/ ; do
 
   echo "📝 Processing $lang_code documentation..."
 
-  # Replace links to use /l/{locale}/ prefix
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|href=\"/user-guide/|href=\"/l/$lang_code/user-guide/|g" {} \;
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
