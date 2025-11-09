@@ -131,7 +131,7 @@ msgstr "אפס את הסיסמה שלך 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "\"הגדר את הסיסמה שלך 🗝\""
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +141,7 @@ msgstr "איפוס"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "\"הגדר\""
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

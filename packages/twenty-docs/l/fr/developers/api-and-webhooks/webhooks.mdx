@@ -1,0 +1,87 @@
+---
+title: Webhooks
+image: /images/docs/getting-started/webhooks.png
+info: Découvrez comment utiliser nos Webhooks.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## Vue d'ensemble
+
+Les Webhooks dans Twenty complètent l'API en permettant des **notifications en temps réel** à vos propres applications lors de certains événements dans votre CRM. Au lieu de sonder continuellement l'API pour les changements, vous pouvez configurer des webhooks pour que Twenty **pousse** des données vers votre système chaque fois que des événements spécifiques se produisent (par exemple, lorsqu'un nouvel enregistrement est créé ou qu'un enregistrement existant est mis à jour). Cela aide à synchroniser instantanément et efficacement les systèmes externes avec Twenty.
+
+Avec les webhooks, Twenty enverra une requête HTTP POST à une URL que vous spécifiez, contenant des détails sur l'événement. Vous pouvez ensuite traiter ces données dans votre application (par exemple, pour mettre à jour votre base de données externe, déclencher des flux de travail ou envoyer des alertes).
+
+## Configuration d'un Webhook
+
+Pour créer un webhook dans Twenty, utilisez les paramètres **APIs & Webhooks** dans votre application Twenty :
+
+1. **Naviguer vers les Paramètres :** Dans votre application Twenty, allez dans **Paramètres → APIs & Webhooks**.
+2. **Créer un Webhook :** Dans **Webhooks**, cliquez sur **+ Créer un webhook**.
+3. **Entrez l'URL :** Fournissez l'URL de l'endpoint sur votre serveur où vous souhaitez que Twenty envoie les requêtes webhook. Cela doit être une URL publiquement accessible qui peut gérer les requêtes POST.
+4. **Enregistrer :** Cliquez sur **Enregistrer** pour créer le webhook. Le nouveau webhook sera actif immédiatement.
+
+Vous pouvez créer plusieurs webhooks si vous avez besoin d'envoyer différents événements vers différents endpoints. Chaque webhook est essentiellement un abonnement pour tous les événements pertinents (actuellement, Twenty envoie tous types d'événements à l'URL donnée ; filtrer des types d'événements spécifiques peut être configurable dans l'interface utilisateur). Si vous devez supprimer un webhook, vous pouvez le supprimer de la même page des paramètres (sélectionnez le webhook et choisissez supprimer).
+
+## Événements et Charges utiles
+
+Une fois qu'un webhook est configuré, Twenty enverra une requête HTTP POST à l'URL que vous avez spécifiée chaque fois qu'un événement déclencheur se produit dans vos données CRM. Les événements communs qui déclenchent les webhooks incluent :
+
+- **Enregistrement Créé :** par exemple, une nouvelle personne est ajoutée (`person.created`), une nouvelle entreprise est créée (`company.created`), une note est créée (`note.created`), etc.
+- **Enregistrement Mis à Jour :** par exemple, les informations d'une personne existante sont mises à jour (`person.updated`), un enregistrement d'entreprise est édité (`company.updated`), etc.
+- **Enregistrement Supprimé :** par exemple, une personne ou une entreprise est supprimée (`person.deleted`, `company.deleted`).
+- **Autres Événements :** Si applicable, d'autres événements d'objet ou déclencheurs personnalisés (par exemple, si des tâches ou d'autres objets sont mis à jour, des types d'événements similaires seraient utilisés comme `task.created`, `note.updated`, etc.).
+
+La requête POST du webhook contient une charge utile JSON dans son corps. La charge utile comprendra généralement au moins deux choses : le type d'événement et les données relatives à cet événement (souvent l'enregistrement qui a été créé/mise à jour). Par exemple, un webhook pour une nouvelle personne créée pourrait envoyer une charge utile comme :
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+Dans cet exemple :
+
+- `"event"` spécifie ce qui s'est passé (`person.created`).
+- `"data"` contient les détails du nouvel enregistrement (les mêmes informations que vous obtiendriez si vous demandiez cette personne via l'API).
+- `"timestamp"` est le moment où l'événement s'est produit (en UTC).
+
+Votre endpoint devrait être prêt à recevoir de telles données JSON via POST. En général, vous allez analyser le JSON, regarder le type d'événement `"event"` pour comprendre ce qui s'est passé, et ensuite utiliser les `"data"` en conséquence (par exemple, créer un nouveau contact dans votre système ou mettre à jour un contact existant).
+
+**Remarque :** Il est important de répondre avec un **statut HTTP 2xx** depuis votre endpoint webhook pour accuser réception avec succès. Si l'expéditeur du webhook de Twenty ne reçoit pas une réponse 2xx, il peut considérer que la livraison a échoué. (À l'avenir, une logique de réessai pourrait tenter de renvoyer les webhooks échoués, donc essayez toujours de retourner un 200 OK aussi rapidement que possible après le traitement des données.)
+
+## Validation des Webhooks
+
+Pour garantir la sécurité de vos endpoints webhook, Twenty inclut une signature dans l'en-tête `X-Twenty-Webhook-Signature`.
+
+Cette signature est un hachage HMAC SHA256 de la charge utile de la requête, calculé en utilisant votre clé secrète.
+
+Pour valider la signature, vous devrez :
+
+1. Concaténer le timestamp (de l'en-tête `X-Twenty-Webhook-Timestamp`), un deux-points, et la chaîne JSON de la charge utile
+2. Calculer le hachage HMAC SHA256 en utilisant votre clé secrète comme clé ()
+3. Comparer le résultat de la somme de contrôle hexadécimale avec l'en-tête de signature
+
+Voici un exemple en Node.js :
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```
