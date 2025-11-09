@@ -1,3 +1,4 @@
+import { i18n } from '@lingui/core';
 import { Extension, type Editor, type Range } from '@tiptap/core';
 import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
 
@@ -32,10 +33,10 @@ const createSlashCommandItem = (
   editor: Editor,
 ): SlashCommandItem => ({
   id: config.id,
-  title: config.title,
-  description: config.description,
+  title: i18n._(config.title),
+  description: i18n._(config.description),
   icon: config.icon,
-  keywords: config.keywords,
+  keywords: config.keywords.map((keyword) => i18n._(keyword)),
   isActive: () => config.getIsActive(editor),
   isVisible: () => config.getIsVisible(editor),
   command: ({ editor: ed, range }) => {
@@ -76,13 +77,6 @@ export type SlashCommandOptions = {
   suggestions: Omit<SuggestionOptions, 'editor'>;
 };
 
-const closeMenu = (component: SlashCommandRenderer | null) => {
-  if (component !== null) {
-    component.destroy();
-    component = null;
-  }
-};
-
 export const SlashCommand = Extension.create<SlashCommandOptions>({
   name: 'slash-command',
   addOptions: () => {
@@ -104,6 +98,13 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
         render: () => {
           let component: SlashCommandRenderer | null = null;
 
+          const closeMenu = () => {
+            if (component !== null) {
+              component.destroy();
+              component = null;
+            }
+          };
+
           return {
             onStart: (props: SuggestionRenderProps) => {
               if (!props.clientRect) {
@@ -114,7 +115,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
                 items: props.items,
                 command: (item: SlashCommandItem) => {
                   props.command(item);
-                  closeMenu(component);
+                  closeMenu();
                 },
                 clientRect: props.clientRect,
                 editor: this.editor,
@@ -132,7 +133,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
               }
 
               if (props.items.length === 0) {
-                closeMenu(component);
+                closeMenu();
                 return;
               }
 
@@ -140,7 +141,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
                 items: props.items,
                 command: (item: SlashCommandItem) => {
                   props.command(item);
-                  closeMenu(component);
+                  closeMenu();
                 },
                 clientRect: props.clientRect,
                 editor: this.editor,
@@ -150,14 +151,14 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
             },
             onKeyDown: (props: { event: KeyboardEvent }) => {
               if (props.event.key === 'Escape') {
-                closeMenu(component);
+                closeMenu();
                 return true;
               }
 
               return component?.ref?.onKeyDown?.(props) ?? false;
             },
             onExit: () => {
-              closeMenu(component);
+              closeMenu();
             },
           };
         },

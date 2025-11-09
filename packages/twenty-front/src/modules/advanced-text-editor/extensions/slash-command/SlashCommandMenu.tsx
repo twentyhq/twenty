@@ -197,12 +197,17 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
                         <div
                           key={item.id}
                           ref={isSelected ? activeCommandRef : null}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                          }}
                         >
                           <MenuItemSuggestion
                             LeftIcon={item.icon}
                             text={item.title}
                             selected={isSelected}
-                            onClick={() => onSelect(item)}
+                            onClick={() => {
+                              onSelect(item);
+                            }}
                           />
                         </div>
                       );
@@ -218,5 +223,3 @@ export const SlashCommandMenu = forwardRef<unknown, SlashCommandMenuProps>(
     );
   },
 );
-
-export default SlashCommandMenu;
