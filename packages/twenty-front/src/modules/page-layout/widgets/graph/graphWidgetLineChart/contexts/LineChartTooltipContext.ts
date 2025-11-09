@@ -16,7 +16,7 @@ export type LineChartTooltipContextType = {
   hideTooltip: () => void;
   crosshairX: number | null;
   hideTooltipIfOutside: (relatedTarget: EventTarget | null) => void;
-  isEventInsideTooltip: (target: EventTarget | null) => boolean;
+  isEventInsideTooltip: (target: EventTarget | null) => boolean | null;
 };
 
 export const [

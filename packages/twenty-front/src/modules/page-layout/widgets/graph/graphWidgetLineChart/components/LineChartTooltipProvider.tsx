@@ -1,3 +1,5 @@
+import { GRAPH_TOOLTIP_ANIMATION_SCALE_EXIT } from '@/page-layout/widgets/graph/components/constants/GraphTooltipAnimationScaleExit';
+import { GRAPH_TOOLTIP_ANIMATION_SCALE_INITIAL } from '@/page-layout/widgets/graph/components/constants/GraphTooltipAnimationScaleInitial';
 import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import {
   LineChartTooltipContextProvider,
@@ -7,8 +9,6 @@ import { useTooltipFloating } from '@/page-layout/widgets/graph/hooks/useTooltip
 import { useTheme } from '@emotion/react';
 import { FloatingPortal, type VirtualElement } from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { GRAPH_TOOLTIP_ANIMATION_SCALE_INITIAL } from '@/page-layout/widgets/graph/components/constants/GraphTooltipAnimationScaleInitial';
-import { GRAPH_TOOLTIP_ANIMATION_SCALE_EXIT } from '@/page-layout/widgets/graph/components/constants/GraphTooltipAnimationScaleExit';
 import { useCallback, useState, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -75,6 +75,7 @@ export const LineChartTooltipProvider = ({
       return (
         Boolean(floatingEl) &&
         target instanceof Node &&
+        floatingEl &&
         floatingEl.contains(target as Node)
       );
     },
@@ -111,10 +112,10 @@ export const LineChartTooltipProvider = ({
             onMouseLeave={(event) => {
               const related = event.relatedTarget as Node | null;
               const containerId = tooltipState?.chartContainerId;
-              if (related && containerId) {
+              if (isDefined(related) && isDefined(containerId)) {
                 const el = related instanceof Element ? related : null;
                 const insideChart = el?.closest(`#${containerId}`);
-                if (insideChart) {
+                if (isDefined(insideChart)) {
                   return;
                 }
               }

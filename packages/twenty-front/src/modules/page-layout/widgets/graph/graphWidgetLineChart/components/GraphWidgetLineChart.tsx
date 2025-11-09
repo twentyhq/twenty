@@ -16,7 +16,6 @@ import { useLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLine
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
-import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { createVirtualElementFromChartCoordinates } from '@/page-layout/widgets/graph/utils/createVirtualElementFromChartCoordinates';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
@@ -163,7 +162,6 @@ export const GraphWidgetLineChart = ({
         top: data.svgRect.top + data.mouseY + LINE_CHART_MARGIN_TOP,
       });
 
-      // Resolve a single link for this tooltip from the closest point
       const seriesForLink = dataMap[String(data.closestPoint.seriesId)];
       const linkTo = seriesForLink?.data?.[data.closestPoint.indexInSeries]?.to;
 
@@ -179,17 +177,11 @@ export const GraphWidgetLineChart = ({
         id,
       );
     },
-    [createSliceTooltipData, showTooltip],
+    [createSliceTooltipData, showTooltip, dataMap, id],
   );
 
   const axisBottomConfig = getLineChartAxisBottomConfig(xAxisLabel);
   const axisLeftConfig = getLineChartAxisLeftConfig(yAxisLabel, formatOptions);
-
-  const onPointClick = (
-    point: Parameters<typeof handleLineChartPointClick>[0],
-  ) => {
-    handleLineChartPointClick(point, dataMap);
-  };
 
   return (
     <StyledContainer id={id}>

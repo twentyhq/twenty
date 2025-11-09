@@ -8,12 +8,8 @@ export type BarChartTooltipContextType = {
     indexLabel: string,
     showClickHint: boolean,
     highlightedKey?: string,
-    linkTo?: string,
-    chartContainerId?: string,
   ) => void;
   hideTooltip: () => void;
-  hideTooltipIfOutside: (relatedTarget: EventTarget | null) => void;
-  isEventInsideTooltip: (target: EventTarget | null) => boolean;
 };
 
 export const [

@@ -101,7 +101,7 @@ export const GraphWidgetBarChart = ({
     customFormatter,
   };
 
-  const { hasClickableItems } = useBarChartHandlers({
+  const { handleBarClick, hasClickableItems } = useBarChartHandlers({
     data,
     indexBy,
   });
@@ -125,8 +125,7 @@ export const GraphWidgetBarChart = ({
     enableGroupTooltip: groupMode === 'stacked',
   });
 
-  const { showTooltip, hideTooltipIfOutside } =
-    useBarChartTooltipContextOrThrow();
+  const { showTooltip, hideTooltip } = useBarChartTooltipContextOrThrow();
 
   const handleBarEnter = useCallback(
     (
@@ -142,23 +141,14 @@ export const GraphWidgetBarChart = ({
         tooltipData.indexLabel,
         tooltipData.showClickHint,
         tooltipData.hoveredKey,
-        tooltipData.linkTo,
-        id,
       );
     },
     [getTooltipData, showTooltip],
   );
 
-  const handleBarLeave = useCallback(
-    (
-      _datum: ComputedDatum<BarChartDataItem>,
-      event: MouseEvent<SVGRectElement>,
-    ) => {
-      // Do not hide here to avoid flicker when moving between bars.
-      // Hiding is handled at the container level onMouseLeave.
-    },
-    [],
-  );
+  const handleBarLeave = useCallback(() => {
+    hideTooltip();
+  }, [hideTooltip]);
 
   const areThereTooManyKeys = keys.length > BAR_CHART_LEGEND_ITEM_THRESHOLD;
 
@@ -240,7 +230,7 @@ export const GraphWidgetBarChart = ({
       <GraphWidgetChartContainer
         ref={containerRef}
         $isClickable={hasClickableItems}
-        onMouseLeave={(event) => hideTooltipIfOutside(event.relatedTarget)}
+        $cursorSelector="svg g[transform] rect[fill]"
       >
         <NodeDimensionEffect
           elementRef={containerRef}
@@ -290,7 +280,9 @@ export const GraphWidgetBarChart = ({
             formatGraphValue(Number(barDatumCandidate.value), formatOptions)
           }
           tooltip={() => null}
+          onClick={handleBarClick}
           onMouseEnter={handleBarEnter}
+          onMouseLeave={handleBarLeave}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
