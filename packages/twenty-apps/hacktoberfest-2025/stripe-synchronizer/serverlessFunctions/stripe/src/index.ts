@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import { type stripeCustomer, type stripeEvent, stripeStatus, type twentyObject } from './types';
 
 const TWENTY_API_KEY: string = process.env.TWENTY_API_KEY ?? '';
 const TWENTY_API_URL: string =
@@ -8,53 +9,6 @@ const TWENTY_API_URL: string =
     : 'https://api.twenty.com/rest';
 const STRIPE_API_KEY: string = process.env.STRIPE_API_KEY ?? '';
 const STRIPE_API_URL: string = 'https://api.stripe.com/v1/customers';
-
-enum stripeStatus {
-  Incomplete = 'INCOMPLETE',
-  IncompleteExpired = 'INCOMPLETE_EXPIRED',
-  Trialing = 'TRIALING',
-  Active = 'ACTIVE',
-  PastDue = 'PAST_DUE',
-  Canceled = 'CANCELED',
-  Unpaid = 'UNPAID',
-  Paused = 'PAUSED',
-}
-
-type stripeItem = {
-  quantity: number;
-};
-
-type stripeItemsData = {
-  data: stripeItem[];
-};
-
-type stripeEventObject = {
-  customer: string;
-  items: stripeItemsData;
-  status: stripeStatus;
-  quantity: number | null;
-};
-
-type stripeEventData = {
-  object: stripeEventObject;
-};
-
-type stripeEvent = {
-  data: stripeEventData;
-  type: string;
-};
-
-type stripeCustomer = {
-  businessName?: string;
-  name: string | null;
-  email: string | null;
-};
-
-type twentyObject = {
-  id: string;
-  nameSingular: string;
-  fields: Record<string, any>[];
-};
 
 const getTwentyObjectData = async (
   objectSingularName: string,
@@ -393,9 +347,9 @@ export const main = async (
         ? await createFields(companyObject?.id, 'seats')
         : false;
       if (!seatsFieldCreated) {
-        throw new Error('Seats field creation failed');
+        throw new Error('Seats field creation in Company object failed');
       } else {
-        console.info('Seats field creation succeeded');
+        console.info('Seats field creation in Company object succeeded');
       }
     }
     if (
@@ -406,9 +360,9 @@ export const main = async (
         ? await createFields(companyObject?.id, 'subStatus')
         : false;
       if (!subStatusFieldCreated) {
-        throw new Error('Sub status field creation failed');
+        throw new Error('Sub status field creation in Company object failed');
       } else {
-        console.info('Sub status field creation succeeded');
+        console.info('Sub status field creation in Company object succeeded');
       }
     }
 
@@ -420,9 +374,9 @@ export const main = async (
         ? await createFields(personObject?.id, 'seats')
         : false;
       if (!seatsFieldCreated) {
-        throw new Error('Seats field creation failed');
+        throw new Error('Seats field creation in People object failed');
       } else {
-        console.info('Seats field creation succeeded');
+        console.info('Seats field creation in People object succeeded');
       }
     }
     if (
@@ -433,9 +387,9 @@ export const main = async (
         ? await createFields(personObject?.id, 'subStatus')
         : false;
       if (!subStatusFieldCreated) {
-        throw new Error('Sub status field creation failed');
+        throw new Error('Sub status field creation in People object failed');
       } else {
-        console.info('Sub status field creation succeeded');
+        console.info('Sub status field creation in People object succeeded');
       }
     }
 
