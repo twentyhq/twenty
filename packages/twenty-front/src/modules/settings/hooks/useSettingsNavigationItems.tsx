@@ -190,12 +190,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !isAdminEnabled,
         },
         {
-          label: t`Releases`,
-          path: SettingsPath.Releases,
-          Icon: IconRocket,
-          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
           label: t`Logout`,
           onClick: signOut,
           Icon: IconDoorEnter,
