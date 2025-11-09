@@ -19,7 +19,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
+          "cross-env NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
         ]
       },
       "parallel": false,
@@ -27,7 +27,7 @@
         "with-db-reset": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
+            "cross-env NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx database:reset > reset-logs.log && cross-env NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=8192\" nx jest --config ./jest-integration.config.ts"
           ]
         }
       }
@@ -47,14 +47,14 @@
       "dependsOn": ["typecheck", "build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development && nest start --watch"
+        "command": "cross-env NODE_ENV=development nest start --watch"
       }
     },
     "start:ci": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development && nest start"
+        "command": "cross-env NODE_ENV=development nest start"
       }
     },
     "start:ci-if-needed": {

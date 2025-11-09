@@ -1,0 +1,29 @@
+{
+  "_instructions": {
+    "description": "This file configures how Linkup API queries are built for each field. Add custom prompts below for any field name.",
+    "format": "Each prompt should specify EXACTLY what format to return the data in",
+    "exceptions": "Add field-specific exceptions or special instructions in the prompt text",
+    "examples": "See 'address' and 'xLink' for examples of format-specific prompts"
+  },
+  "company": {
+    "employees": "exact total number of employees (return ONLY the number, e.g., 183000)",
+    "annualRecurringRevenue": "annual recurring revenue ARR in USD (return format: $XXX million or $XXX billion)",
+    "address": "complete headquarters street address in format: STREET, CITY, STATE, ZIP, COUNTRY (e.g., 1600 Amphitheatre Parkway, Mountain View, CA, 94043, USA)",
+    "linkedinLink": "official LinkedIn company page FULL URL starting with https://linkedin.com/company/ or https://www.linkedin.com/company/",
+    "xLink": "official Twitter/X account FULL URL starting with https://twitter.com/ or https://x.com/ (not just the handle)",
+    "domainName": "official company website FULL URL starting with https:// or http://",
+    "industry": "primary industry sector or business category",
+    "idealCustomerProfile": "ideal customer profile target market description",
+    "name": "official legal company name",
+    "tagline": "company tagline or mission statement"
+  },
+  "person": {
+    "name": "full name (First Last format)",
+    "jobTitle": "current job title and role",
+    "email": "work email address",
+    "phone": "phone number in international format +X-XXX-XXX-XXXX",
+    "city": "current city and country of residence",
+    "linkedinLink": "LinkedIn profile FULL URL starting with https://linkedin.com/in/ or https://www.linkedin.com/in/",
+    "xLink": "Twitter/X FULL URL starting with https://twitter.com/ or https://x.com/ (not just the handle)"
+  }
+}

@@ -32,7 +32,7 @@
       },
       {
         "include": "**/dev-seeder/data/sample-files/**",
-        "outDir": "dist/assets"
+        "outDir": "dist/src"
       }
     ],
     "watchAssets": true

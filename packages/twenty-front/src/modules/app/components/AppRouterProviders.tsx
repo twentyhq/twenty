@@ -8,6 +8,7 @@ import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/compo
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
+import { EnrichmentFieldSelector } from '@/enrichment/components/EnrichmentFieldSelector';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvider';
@@ -63,6 +64,7 @@ export const AppRouterProviders = () => {
                                 <Outlet />
                               </StrictMode>
                             </DialogManager>
+                            <EnrichmentFieldSelector />
                           </DialogComponentInstanceContext.Provider>
                         </SnackBarProvider>
                         <MainContextStoreProvider />

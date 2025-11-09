@@ -14,6 +14,7 @@ import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-action
 import { AddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordAction';
 import { DeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DeleteSingleRecordAction';
 import { DestroySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction';
+import { EnrichCompanySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/EnrichCompanySingleRecordAction';
 import { ExportNoteActionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/ExportNoteActionSingleRecordAction';
 import { ExportSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/ExportSingleRecordAction';
 import { NavigateToNextRecordSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/NavigateToNextRecordSingleRecordAction';
@@ -52,6 +53,7 @@ import {
   IconRotate2,
   IconSettings,
   IconSettingsAutomation,
+  IconSparkles,
   IconTargetArrow,
   IconTrash,
   IconTrashX,
@@ -177,6 +179,27 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
     availableOn: [ActionViewType.SHOW_PAGE],
     component: <ExportSingleRecordAction />,
     requiredPermissionFlag: PermissionFlagType.EXPORT_CSV,
+  },
+  [SingleRecordActionKeys.ENRICH_COMPANY]: {
+    type: ActionType.Standard,
+    scope: ActionScope.RecordSelection,
+    key: SingleRecordActionKeys.ENRICH_COMPANY,
+    label: msg`Enrich with Linkup`,
+    shortLabel: msg`Enrich`,
+    position: 4.5,
+    Icon: IconSparkles,
+    accent: 'default',
+    isPinned: false,
+    shouldBeRegistered: ({ selectedRecord, objectMetadataItem }) =>
+      isDefined(selectedRecord) &&
+      !selectedRecord.isRemote &&
+      isDefined(objectMetadataItem) &&
+      objectMetadataItem.nameSingular === CoreObjectNameSingular.Company,
+    availableOn: [
+      ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ActionViewType.SHOW_PAGE,
+    ],
+    component: <EnrichCompanySingleRecordAction />,
   },
   [MultipleRecordsActionKeys.MERGE]: {
     type: ActionType.Standard,

@@ -1194,6 +1194,13 @@ export enum EmailingDomainStatus {
   VERIFIED = 'VERIFIED'
 }
 
+export type EnrichCompanySource = {
+  __typename?: 'EnrichCompanySource';
+  name: Scalars['String'];
+  snippet?: Maybe<Scalars['String']>;
+  url: Scalars['String'];
+};
+
 export type ExecuteServerlessFunctionInput = {
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
