@@ -21,7 +21,6 @@ import {
   IconKey,
   IconLock,
   IconMail,
-  IconRocket,
   IconServer,
   IconSettings,
   IconSparkles,
