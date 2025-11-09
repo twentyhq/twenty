@@ -27,7 +27,8 @@ export const SettingsNavigationDrawer = ({
   );
   const { data, loading } = useGetVersionInfoQuery();
 
-  const version = data?.versionInfo?.currentVersion;
+  const { currentVersion, latestVersion } = data?.versionInfo ?? {};
+  const version = currentVersion || latestVersion;
 
   return (
     <NavigationDrawer className={className} title={t`Exit Settings`}>
