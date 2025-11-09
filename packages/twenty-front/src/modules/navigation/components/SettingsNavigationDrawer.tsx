@@ -27,8 +27,6 @@ export const SettingsNavigationDrawer = ({
   );
   const { data } = useGetVersionInfoQuery();
 
-  const version = data?.versionInfo?.currentVersion;
-
   return (
     <NavigationDrawer className={className} title={t`Exit Settings`}>
       <NavigationDrawerScrollableContent>
@@ -41,7 +39,9 @@ export const SettingsNavigationDrawer = ({
           setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
           label={t`Advanced:`}
         />
-        <StyledVersionText>{version || t`Unknown`}</StyledVersionText>
+        <StyledVersionText>
+          {data?.versionInfo?.currentVersion || t`Unknown`}
+        </StyledVersionText>
       </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
