@@ -135,7 +135,8 @@ export const GraphWidgetLineChart = ({
     formatOptions,
   });
 
-  const { showTooltip } = useLineChartTooltipContextOrThrow();
+  const { showTooltip, hideTooltipIfOutside } =
+    useLineChartTooltipContextOrThrow();
 
   const handleSliceHover = useCallback(
     (data: SliceHoverData) => {
@@ -162,6 +163,10 @@ export const GraphWidgetLineChart = ({
         top: data.svgRect.top + data.mouseY + LINE_CHART_MARGIN_TOP,
       });
 
+      // Resolve a single link for this tooltip from the closest point
+      const seriesForLink = dataMap[String(data.closestPoint.seriesId)];
+      const linkTo = seriesForLink?.data?.[data.closestPoint.indexInSeries]?.to;
+
       showTooltip(
         virtualAnchor,
         tooltipData.items,
@@ -170,6 +175,8 @@ export const GraphWidgetLineChart = ({
         data.nearestSlice.points.length >
           LINE_CHART_TOOLTIP_SCROLLABLE_POINT_THRESHOLD,
         data.sliceX,
+        linkTo,
+        id,
       );
     },
     [createSliceTooltipData, showTooltip],
@@ -186,7 +193,10 @@ export const GraphWidgetLineChart = ({
 
   return (
     <StyledContainer id={id}>
-      <GraphWidgetChartContainer $isClickable={hasClickableItems}>
+      <GraphWidgetChartContainer
+        $isClickable={hasClickableItems}
+        onMouseLeave={(event) => hideTooltipIfOutside(event.relatedTarget)}
+      >
         <ResponsiveLine
           data={nivoData}
           margin={{
@@ -235,13 +245,7 @@ export const GraphWidgetLineChart = ({
             'points',
             'legends',
           ]}
-          onClick={(datum) => {
-            if ('seriesId' in datum) {
-              onPointClick(
-                datum as Parameters<typeof handleLineChartPointClick>[0],
-              );
-            }
-          }}
+          onClick={undefined}
           useMesh={true}
           crosshairType="cross"
           theme={chartTheme}

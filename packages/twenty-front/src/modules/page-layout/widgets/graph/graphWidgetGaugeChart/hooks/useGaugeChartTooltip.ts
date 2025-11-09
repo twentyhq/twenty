@@ -31,7 +31,7 @@ export const useGaugeChartTooltip = ({
 
     return {
       tooltipItem: {
-        // TODO: temprorary use label as key, ideally key should be unique id -- change when we work on gauge
+        // TODO: temporary use label as key, ideally key should be unique id -- change when we work on gauge
         key: label,
         label: label,
         formattedValue,

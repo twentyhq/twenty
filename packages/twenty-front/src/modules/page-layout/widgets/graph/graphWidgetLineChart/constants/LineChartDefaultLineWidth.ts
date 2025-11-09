@@ -1,1 +1,0 @@
-export const LINE_CHART_DEFAULT_LINE_WIDTH = 2;

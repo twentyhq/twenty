@@ -4,11 +4,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import {
-  type LineSeries,
-  type Point,
-  type SliceTooltipProps,
-} from '@nivo/line';
+import { type LineSeries, type SliceTooltipProps } from '@nivo/line';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseLineChartTooltipProps = {
@@ -71,31 +67,7 @@ export const useLineChartTooltip = ({
     };
   };
 
-  const createPointTooltipData = (point: Point<LineSeries>) => {
-    const enrichedSeriesItem = enrichedSeriesMap.get(String(point.seriesId));
-    if (!enrichedSeriesItem) return null;
-
-    const series = dataMap[point.seriesId];
-    const dataPoint = series?.data[point.indexInSeries];
-
-    const value = Number(point.data.y || 0);
-    return {
-      items: [
-        {
-          key: enrichedSeriesItem.id,
-          label: enrichedSeriesItem.label,
-          formattedValue: formatGraphValue(value, formatOptions),
-          value,
-          dotColor: enrichedSeriesItem.colorScheme.solid,
-        },
-      ],
-      showClickHint: isDefined(dataPoint?.to),
-      indexLabel: isDefined(point.data.x) ? String(point.data.x) : undefined,
-    };
-  };
-
   return {
     createSliceTooltipData,
-    createPointTooltipData,
   };
 };

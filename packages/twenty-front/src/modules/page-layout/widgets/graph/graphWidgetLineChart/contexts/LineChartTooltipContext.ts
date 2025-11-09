@@ -10,9 +10,13 @@ export type LineChartTooltipContextType = {
     highlightedSeriesId: string,
     scrollable: boolean,
     crosshairX: number,
+    linkTo?: string,
+    chartContainerId?: string,
   ) => void;
   hideTooltip: () => void;
   crosshairX: number | null;
+  hideTooltipIfOutside: (relatedTarget: EventTarget | null) => void;
+  isEventInsideTooltip: (target: EventTarget | null) => boolean;
 };
 
 export const [

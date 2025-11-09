@@ -59,6 +59,7 @@ export const useBarChartTooltip = ({
       showClickHint: isDefined(dataItem?.to),
       indexLabel: String(datum.indexValue),
       hoveredKey: enableGroupTooltip ? String(datum.id) : undefined,
+      linkTo: isDefined(dataItem?.to) ? String(dataItem.to) : undefined,
     };
   };
 

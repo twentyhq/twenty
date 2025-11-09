@@ -51,10 +51,10 @@ const StyledDot = styled.div<{ color: string }>`
   flex-shrink: 0;
 `;
 
-const StyledTooltipLink = styled.div`
+const StyledTooltipLink = styled.div<{ clickable?: boolean }>`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
-  cursor: default;
+  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
   display: flex;
   justify-content: space-between;
   height: ${({ theme }) => theme.spacing(6)};
@@ -137,6 +137,7 @@ type GraphWidgetTooltipProps = {
   interactive?: boolean;
   scrollable?: boolean;
   highlightedKey?: string;
+  linkTo?: string;
 };
 
 export const GraphWidgetTooltip = ({
@@ -146,6 +147,7 @@ export const GraphWidgetTooltip = ({
   interactive = false,
   scrollable = false,
   highlightedKey,
+  linkTo,
 }: GraphWidgetTooltipProps) => {
   const theme = useTheme();
 
@@ -154,9 +156,10 @@ export const GraphWidgetTooltip = ({
   );
 
   const shouldHighlight = filteredItems.length > 1;
+  const hasLink = isNonEmptyString(linkTo);
 
   return (
-    <StyledTooltip interactive={interactive}>
+    <StyledTooltip interactive={interactive || hasLink}>
       <StyledHorizontalSectionPadding addTop addBottom={!showClickHint}>
         <StyledTooltipContent>
           {indexLabel && (
@@ -183,11 +186,18 @@ export const GraphWidgetTooltip = ({
           </StyledTooltipRowContainer>
         </StyledTooltipContent>
       </StyledHorizontalSectionPadding>
-      {showClickHint && (
+      {showClickHint && hasLink && (
         <>
           <StyledTooltipSeparator />
           <StyledHorizontalSectionPadding addBottom>
-            <StyledTooltipLink>
+            <StyledTooltipLink
+              clickable
+              onClick={() => {
+                if (hasLink) {
+                  window.location.href = String(linkTo);
+                }
+              }}
+            >
               <span>{t`Click to see data`}</span>
               <IconArrowUpRight size={theme.icon.size.sm} />
             </StyledTooltipLink>

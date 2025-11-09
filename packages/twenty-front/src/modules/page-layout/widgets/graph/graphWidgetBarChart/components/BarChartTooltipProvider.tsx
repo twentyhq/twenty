@@ -19,6 +19,8 @@ type BarChartTooltipState = {
   indexLabel: string;
   highlightedKey?: string;
   showClickHint: boolean;
+  linkTo?: string;
+  chartContainerId?: string;
 };
 
 type BarChartTooltipProviderProps = {
@@ -40,6 +42,8 @@ export const BarChartTooltipProvider = ({
       indexLabel: string,
       showClickHint: boolean,
       highlightedKey?: string,
+      linkTo?: string,
+      chartContainerId?: string,
     ) => {
       setTooltipState({
         anchorElement,
@@ -47,6 +51,8 @@ export const BarChartTooltipProvider = ({
         indexLabel,
         showClickHint,
         highlightedKey,
+        linkTo,
+        chartContainerId,
       });
     },
     [],
@@ -62,9 +68,32 @@ export const BarChartTooltipProvider = ({
     tooltipState?.anchorElement ?? null,
   );
 
+  const isEventInsideTooltip = useCallback(
+    (target: EventTarget | null) => {
+      const floatingEl = refs.floating?.current;
+      return (
+        Boolean(floatingEl) &&
+        target instanceof Node &&
+        floatingEl.contains(target as Node)
+      );
+    },
+    [refs.floating],
+  );
+
+  const hideTooltipIfOutside = useCallback(
+    (relatedTarget: EventTarget | null) => {
+      if (!isEventInsideTooltip(relatedTarget)) {
+        setTooltipState(null);
+      }
+    },
+    [isEventInsideTooltip],
+  );
+
   const contextValue: BarChartTooltipContextType = {
     showTooltip,
     hideTooltip,
+    hideTooltipIfOutside,
+    isEventInsideTooltip,
   };
 
   return (
@@ -77,6 +106,19 @@ export const BarChartTooltipProvider = ({
             style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
             role="tooltip"
             aria-live="polite"
+            onMouseLeave={(event) => {
+              const related = event.relatedTarget as Node | null;
+              const containerId = tooltipState?.chartContainerId;
+              if (related && containerId) {
+                const el = related instanceof Element ? related : null;
+                const insideChart = el?.closest(`#${containerId}`);
+                if (insideChart) {
+                  // moving back to chart; do not hide
+                  return;
+                }
+              }
+              setTooltipState(null);
+            }}
           >
             <AnimatePresence>
               <motion.div
@@ -100,6 +142,7 @@ export const BarChartTooltipProvider = ({
                     BAR_CHART_TOOLTIP_SCROLLABLE_ITEM_THRESHOLD
                   }
                   showClickHint={tooltipState.showClickHint}
+                  linkTo={tooltipState.linkTo}
                 />
               </motion.div>
             </AnimatePresence>

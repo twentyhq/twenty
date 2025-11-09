@@ -38,7 +38,8 @@ export const CustomCrosshairLayer = ({
   onSliceHover,
 }: CustomCrosshairLayerProps) => {
   const theme = useTheme();
-  const { crosshairX } = useLineChartTooltipContextOrThrow();
+  const { crosshairX, hideTooltipIfOutside } =
+    useLineChartTooltipContextOrThrow();
 
   const slices = useMemo(() => {
     const sliceMap = new Map<string, Point<LineSeries>[]>();
@@ -137,6 +138,7 @@ export const CustomCrosshairLayer = ({
         style={{ cursor: 'pointer' }}
         onMouseEnter={handleMouseMove}
         onMouseMove={handleMouseMove}
+        onMouseLeave={(event) => hideTooltipIfOutside(event.relatedTarget)}
       />
     </g>
   );

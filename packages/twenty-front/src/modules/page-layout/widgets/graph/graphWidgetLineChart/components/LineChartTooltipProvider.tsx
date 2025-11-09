@@ -19,6 +19,8 @@ type LineChartTooltipState = {
   highlightedSeriesId: string;
   scrollable: boolean;
   crosshairX: number;
+  linkTo?: string;
+  chartContainerId?: string;
 };
 
 type LineChartTooltipProviderProps = {
@@ -40,6 +42,8 @@ export const LineChartTooltipProvider = ({
       highlightedSeriesId: string,
       scrollable: boolean,
       crosshairX: number,
+      linkTo?: string,
+      chartContainerId?: string,
     ) => {
       setTooltipState({
         virtualElement,
@@ -48,6 +52,8 @@ export const LineChartTooltipProvider = ({
         highlightedSeriesId,
         scrollable,
         crosshairX,
+        linkTo,
+        chartContainerId,
       });
     },
     [],
@@ -63,10 +69,33 @@ export const LineChartTooltipProvider = ({
     tooltipState?.virtualElement ?? null,
   );
 
+  const isEventInsideTooltip = useCallback(
+    (target: EventTarget | null) => {
+      const floatingEl = refs.floating?.current;
+      return (
+        Boolean(floatingEl) &&
+        target instanceof Node &&
+        floatingEl.contains(target as Node)
+      );
+    },
+    [refs.floating],
+  );
+
+  const hideTooltipIfOutside = useCallback(
+    (relatedTarget: EventTarget | null) => {
+      if (!isEventInsideTooltip(relatedTarget)) {
+        setTooltipState(null);
+      }
+    },
+    [isEventInsideTooltip],
+  );
+
   const contextValue: LineChartTooltipContextType = {
     showTooltip,
     hideTooltip,
     crosshairX: tooltipState?.crosshairX ?? null,
+    hideTooltipIfOutside,
+    isEventInsideTooltip,
   };
 
   return (
@@ -79,6 +108,18 @@ export const LineChartTooltipProvider = ({
             style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
             role="tooltip"
             aria-live="polite"
+            onMouseLeave={(event) => {
+              const related = event.relatedTarget as Node | null;
+              const containerId = tooltipState?.chartContainerId;
+              if (related && containerId) {
+                const el = related instanceof Element ? related : null;
+                const insideChart = el?.closest(`#${containerId}`);
+                if (insideChart) {
+                  return;
+                }
+              }
+              setTooltipState(null);
+            }}
           >
             <AnimatePresence>
               <motion.div
@@ -98,8 +139,9 @@ export const LineChartTooltipProvider = ({
                   indexLabel={tooltipState.indexLabel}
                   highlightedKey={tooltipState.highlightedSeriesId}
                   scrollable={tooltipState.scrollable}
-                  interactive={false}
-                  showClickHint={false}
+                  interactive={Boolean(tooltipState.linkTo)}
+                  showClickHint={Boolean(tooltipState.linkTo)}
+                  linkTo={tooltipState.linkTo}
                 />
               </motion.div>
             </AnimatePresence>
