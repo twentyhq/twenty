@@ -21,6 +21,7 @@ import {
   IconKey,
   IconLock,
   IconMail,
+  IconRocket,
   IconServer,
   IconSettings,
   IconSparkles,
@@ -187,6 +188,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.AdminPanel,
           Icon: IconServer,
           isHidden: !isAdminEnabled,
+        },
+        {
+          label: t`Releases`,
+          path: SettingsPath.Releases,
+          Icon: IconRocket,
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`Logout`,
