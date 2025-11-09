@@ -22,11 +22,11 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
-import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
-import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
 import { UserService } from './services/user.service';
 
 @Module({
@@ -55,10 +55,6 @@ import { UserService } from './services/user.service';
     WorkspaceDomainsModule,
   ],
   exports: [UserService, WorkspaceMemberTranspiler],
-  providers: [
-    UserService,
-    UserResolver,
-    WorkspaceMemberTranspiler,
-  ],
+  providers: [UserService, UserResolver, WorkspaceMemberTranspiler],
 })
 export class UserModule {}
