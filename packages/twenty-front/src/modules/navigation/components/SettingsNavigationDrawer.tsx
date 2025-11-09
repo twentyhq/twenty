@@ -13,8 +13,9 @@ import { AdvancedSettingsToggle, UndecoratedLink } from 'twenty-ui/navigation';
 import { useGetVersionInfoQuery } from '~/generated-metadata/graphql';
 
 const StyledVersionLink = styled(UndecoratedLink)`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: ${({ theme }) => theme.spacing(1)};
   text-decoration: none;
 `;
