@@ -242,7 +242,7 @@ const checkIfTwentyPersonExistsInMailchimp = async (
       await checkIfTwentyPersonExistsInMailchimp(
         email,
         phoneNumber,
-        doesPersonExist,
+        response.data.next_cursor,
       );
     }
     return undefined;
@@ -379,7 +379,7 @@ export const main = async (params: {
       );
       if (UPDATE_PERSON) {
         if (
-          compareTwoRecords(
+          !compareTwoRecords(
             isTwentyPersonInMailchimp,
             twentyPersonToMailchimpRecord,
           ) &&

@@ -1,13 +1,4 @@
-export enum stripeStatus {
-  Incomplete = 'INCOMPLETE',
-  IncompleteExpired = 'INCOMPLETE_EXPIRED',
-  Trialing = 'TRIALING',
-  Active = 'ACTIVE',
-  PastDue = 'PAST_DUE',
-  Canceled = 'CANCELED',
-  Unpaid = 'UNPAID',
-  Paused = 'PAUSED',
-}
+export type stripeStatus = 'INCOMPLETE' | 'INCOMPLETE_EXPIRED' | 'TRIALING' | 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'UNPAID' | 'PAUSED';
 
 type stripeItem = {
   quantity: number;

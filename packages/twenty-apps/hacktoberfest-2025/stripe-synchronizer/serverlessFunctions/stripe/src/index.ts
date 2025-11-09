@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
-import { type stripeCustomer, type stripeEvent, stripeStatus, type twentyObject } from './types';
+import { type stripeCustomer, type stripeEvent, type stripeStatus, type twentyObject } from './types';
 
 const TWENTY_API_KEY: string = process.env.TWENTY_API_KEY ?? '';
 const TWENTY_API_URL: string =
@@ -55,49 +55,49 @@ const createFields = async (objectId: string, fieldName: string) => {
             {
               color: 'iris',
               label: 'Incomplete',
-              value: stripeStatus.Incomplete,
+              value: 'INCOMPLETE',
               position: 1,
             },
             {
               color: 'sky',
               label: 'Incomplete (expired)',
-              value: stripeStatus.IncompleteExpired,
+              value: 'INCOMPLETE_EXPIRED',
               position: 2,
             },
             {
               color: 'amber',
               label: 'Trialing',
-              value: stripeStatus.Trialing,
+              value: 'TRIALING',
               position: 3,
             },
             {
               color: 'green',
               label: 'Active',
-              value: stripeStatus.Active,
+              value: 'ACTIVE',
               position: 4,
             },
             {
               color: 'orange',
               label: 'Past due',
-              value: stripeStatus.PastDue,
+              value: 'PAST_DUE',
               position: 5,
             },
             {
               color: 'brown',
               label: 'Canceled',
-              value: stripeStatus.Canceled,
+              value: 'CANCELED',
               position: 6,
             },
             {
               color: 'red',
               label: 'Unpaid',
-              value: stripeStatus.Unpaid,
+              value: 'UNPAID',
               position: 7,
             },
             {
               color: 'gray',
               label: 'Paused',
-              value: stripeStatus.Paused,
+              value: 'PAUSED',
               position: 8,
             },
           ],
@@ -238,8 +238,8 @@ const checkIfStripePersonExistsInTwenty = async (email: string | null) => {
   };
   try {
     const response = await axios.request(options);
-    return response.status === 201 &&
-      response.data.data.person[0].id !== undefined
+    return response.status === 200 &&
+      response.data.data.people[0].id !== undefined
       ? (response.data.data.people[0].id as string)
       : '';
   } catch (error) {
@@ -413,7 +413,7 @@ export const main = async (
         throw new Error('Creation of Stripe customer in Twenty failed');
       } else {
         console.log('Creation of Stripe customer in Twenty succeeded');
-        updatedTwentyCompanyId = twentyCompanyId;
+        updatedTwentyCompanyId = twentyCompanyCreated;
       }
     } else {
       const twentyCompanyUpdated: boolean | undefined =
