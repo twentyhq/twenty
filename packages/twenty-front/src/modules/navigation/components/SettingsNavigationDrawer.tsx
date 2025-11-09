@@ -40,7 +40,7 @@ export const SettingsNavigationDrawer = ({
           label={t`Advanced:`}
         />
         <StyledVersionText>
-          {data?.versionInfo?.currentVersion || t`Unknown`}
+          {data?.versionInfo?.currentVersion || 'Twenty'}
         </StyledVersionText>
       </NavigationDrawerFixedContent>
     </NavigationDrawer>
