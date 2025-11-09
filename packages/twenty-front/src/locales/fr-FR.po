@@ -3653,6 +3653,11 @@ msgstr "Entrez un nombre entre 0 et 59"
 msgid "Enter number greater than 1"
 msgstr "Entrez un nombre supérieur à 1"
 
+#. js-lingui-id: yZMXC2
+#: src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
+msgid "Enter text or Type '/' for commands"
+msgstr ""
+
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"

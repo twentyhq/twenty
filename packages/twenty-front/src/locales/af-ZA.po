@@ -3653,6 +3653,11 @@ msgstr "Voer 'n getal tussen 0 en 59 in"
 msgid "Enter number greater than 1"
 msgstr "Voer 'n getal groter as 1 in"
 
+#. js-lingui-id: yZMXC2
+#: src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
+msgid "Enter text or Type '/' for commands"
+msgstr ""
+
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
