@@ -4,6 +4,9 @@ info: "Learn about standard objects and how to create custom ones for your busin
 image: /images/user-guide/objects/objects_orange.png
 sectionInfo: Flexible data model designed to support your unique business processes
 ---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
 <Frame>
   <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
 </Frame>
@@ -40,24 +43,7 @@ To create a new custom object:
 2. Under Workspace, go to Data model. Here you'll be able to see an overview of all your existing Standard and Custom objects (both active and disabled).
 
 
-<div style={{padding:'71.24% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
-  <iframe
-    src="https://player.vimeo.com/video/926288174?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479"
-    frameBorder="0"
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-    style={{
-      position:'absolute',
-      top:0,
-      left:0,
-      width:'100%',
-      height:'100%',
-      borderRadius: '16px',
-      border:'2px solid black'
-    }}
-    title="Export data"
-  ></iframe>
-</div>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
 
 3. Click on `+ New object` at the top. Enter the name (both singular and plural), choose an icon, and add a description for your custom object and hit Save (at the top right). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
 
@@ -65,24 +51,7 @@ To create a new custom object:
 The singular and plural names must be different. This is required for our GraphQL API to work properly.
 </Warning>
 
-<div style={{padding:'71.24% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
-  <iframe
-    src="https://player.vimeo.com/video/926293493?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479"
-    frameBorder="0"
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
-    style={{
-      position:'absolute',
-      top:0,
-      left:0,
-      width:'100%',
-      height:'100%',
-      borderRadius: '16px',
-      border:'2px solid black'
-    }}
-    title="Export data"
-  ></iframe>
-</div>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
 
 4. Once you create your custom object, you'll be able to manage it. You can edit the name, icon and description, view the different fields, and add more fields.
 

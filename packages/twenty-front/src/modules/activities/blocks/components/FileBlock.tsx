@@ -7,6 +7,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { type AttachmentFileCategory } from '@/activities/files/types/AttachmentFileCategory';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { FileIcon } from '@/file/components/FileIcon';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 
@@ -106,7 +107,10 @@ export const FileBlock = createReactBlockSpec(
             onChange={handleFileChange}
             type="file"
           />
-          <Button onClick={handleUploadFileClick} title="Upload File"></Button>
+          <Button
+            onClick={handleUploadFileClick}
+            title={t`Upload File`}
+          ></Button>
         </StyledUploadFileContainer>
       );
     },
