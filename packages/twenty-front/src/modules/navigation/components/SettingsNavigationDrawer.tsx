@@ -1,4 +1,4 @@
-import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
+import styled from '@emotion/styled';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
@@ -7,8 +7,17 @@ import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/st
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { AdvancedSettingsToggle, UndecoratedLink } from 'twenty-ui/navigation';
 import { useGetVersionInfoQuery } from '~/generated-metadata/graphql';
+
+const StyledVersionLink = styled(UndecoratedLink)`
+  color: ${({ theme }) => theme.font.color.extraLight};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding: ${({ theme }) => theme.spacing(1)};
+  text-decoration: none;
+`;
 
 export const SettingsNavigationDrawer = ({
   className,
@@ -20,6 +29,8 @@ export const SettingsNavigationDrawer = ({
     isAdvancedModeEnabledState,
   );
   const { data, loading } = useGetVersionInfoQuery();
+
+  const version = data?.versionInfo?.currentVersion;
 
   return (
     <NavigationDrawer className={className} title={tLingui`Exit Settings`}>
@@ -33,11 +44,9 @@ export const SettingsNavigationDrawer = ({
           setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
           label={tLingui`Advanced:`}
         />
-        <SettingsAdminVersionDisplay
-          version={data?.versionInfo?.currentVersion}
-          loading={loading}
-          noVersionMessage={t`Unknown`}
-        />
+        <StyledVersionLink to={getSettingsPath(SettingsPath.Releases)}>
+          {loading ? t`Loading...` : version || t`Unknown`}
+        </StyledVersionLink>
       </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
