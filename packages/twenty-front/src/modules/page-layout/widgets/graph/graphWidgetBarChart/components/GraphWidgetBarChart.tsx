@@ -1,9 +1,12 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
+import {
+  GraphWidgetFloatingTooltip,
+  type FloatingTooltipDescriptor,
+} from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
 import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
-import { useBarChartTooltipContextOrThrow } from '@/page-layout/widgets/graph/graphWidgetBarChart/contexts/BarChartTooltipContext';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
 import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
@@ -31,6 +34,7 @@ import {
 } from '@nivo/bar';
 import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { BAR_CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartLegendItemThreshold';
 
@@ -93,6 +97,9 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const [tooltipDescriptor, setTooltipDescriptor] =
+    useState<FloatingTooltipDescriptor | null>(null);
+
   const formatOptions: GraphValueFormatOptions = {
     displayType,
     decimals,
@@ -125,8 +132,14 @@ export const GraphWidgetBarChart = ({
     enableGroupTooltip: groupMode === 'stacked',
   });
 
-  const { showTooltip, scheduleHide, cancelScheduledHide } =
-    useBarChartTooltipContextOrThrow();
+  const hideTooltip = useCallback(() => setTooltipDescriptor(null), []);
+  const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
+  const scheduleHide = useCallback(() => {
+    debouncedHideTooltip();
+  }, [debouncedHideTooltip]);
+  const cancelScheduledHide = useCallback(() => {
+    debouncedHideTooltip.cancel();
+  }, [debouncedHideTooltip]);
 
   const handleBarEnter = useCallback(
     (
@@ -137,15 +150,15 @@ export const GraphWidgetBarChart = ({
       if (!isDefined(tooltipData)) return;
 
       cancelScheduledHide();
-      showTooltip(
-        event.currentTarget,
-        tooltipData.tooltipItems,
-        tooltipData.indexLabel,
-        tooltipData.linkTo,
-        tooltipData.hoveredKey,
-      );
+      setTooltipDescriptor({
+        items: tooltipData.tooltipItems,
+        indexLabel: tooltipData.indexLabel,
+        linkTo: tooltipData.linkTo,
+        highlightedKey: tooltipData.hoveredKey,
+        anchor: { type: 'element', element: event.currentTarget },
+      });
     },
-    [getTooltipData, showTooltip, cancelScheduledHide],
+    [getTooltipData, cancelScheduledHide],
   );
 
   const handleBarLeave = useCallback(() => {
@@ -289,6 +302,11 @@ export const GraphWidgetBarChart = ({
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
+      <GraphWidgetFloatingTooltip
+        descriptor={tooltipDescriptor}
+        onRequestHide={hideTooltip}
+        onCancelHide={cancelScheduledHide}
+      />
       <GraphWidgetLegend
         show={shouldShowLegend}
         items={enrichedKeys.map((item) => {

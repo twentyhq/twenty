@@ -1,4 +1,3 @@
-import { useLineChartTooltipContextOrThrow } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
 import { useTheme } from '@emotion/react';
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
 import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
@@ -29,6 +28,8 @@ type CustomCrosshairLayerProps = {
   innerHeight: number;
   innerWidth: number;
   onSliceHover: (data: SliceHoverData) => void;
+  crosshairX: number | null;
+  onRectLeave: (relatedTarget: EventTarget | null) => void;
 };
 
 export const CustomCrosshairLayer = ({
@@ -36,10 +37,10 @@ export const CustomCrosshairLayer = ({
   innerHeight,
   innerWidth,
   onSliceHover,
+  crosshairX,
+  onRectLeave,
 }: CustomCrosshairLayerProps) => {
   const theme = useTheme();
-  const { crosshairX, hideTooltipIfOutside } =
-    useLineChartTooltipContextOrThrow();
 
   const slices = useMemo(() => {
     const sliceMap = new Map<string, Point<LineSeries>[]>();
@@ -138,7 +139,7 @@ export const CustomCrosshairLayer = ({
         style={{ cursor: 'pointer' }}
         onMouseEnter={handleMouseMove}
         onMouseMove={handleMouseMove}
-        onMouseLeave={(event) => hideTooltipIfOutside(event.relatedTarget)}
+        onMouseLeave={(event) => onRectLeave(event.relatedTarget)}
       />
     </g>
   );

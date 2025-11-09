@@ -1,4 +1,8 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
+import {
+  GraphWidgetFloatingTooltip,
+  type FloatingTooltipDescriptor,
+} from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import {
   CustomCrosshairLayer,
@@ -8,7 +12,6 @@ import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidge
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
 import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
 import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
-import { useLineChartTooltipContextOrThrow } from '@/page-layout/widgets/graph/graphWidgetLineChart/contexts/LineChartTooltipContext';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
 import { useLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTooltip';
@@ -16,14 +19,14 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
-import { createVirtualElementFromChartCoordinates } from '@/page-layout/widgets/graph/utils/createVirtualElementFromChartCoordinates';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
 import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
-import { useCallback, useId } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
@@ -133,8 +136,22 @@ export const GraphWidgetLineChart = ({
     formatOptions,
   });
 
-  const { showTooltip, hideTooltipIfOutside } =
-    useLineChartTooltipContextOrThrow();
+  const [tooltipDescriptor, setTooltipDescriptor] =
+    useState<FloatingTooltipDescriptor | null>(null);
+  const [crosshairX, setCrosshairX] = useState<number | null>(null);
+
+  const hideTooltip = useCallback(() => {
+    setTooltipDescriptor(null);
+    setCrosshairX(null);
+  }, []);
+
+  const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
+  const scheduleHide = useCallback(() => {
+    debouncedHideTooltip();
+  }, [debouncedHideTooltip]);
+  const cancelScheduledHide = useCallback(() => {
+    debouncedHideTooltip.cancel();
+  }, [debouncedHideTooltip]);
 
   const handleSliceHover = useCallback(
     (data: SliceHoverData) => {
@@ -156,25 +173,25 @@ export const GraphWidgetLineChart = ({
         return;
       }
 
-      const virtualAnchor = createVirtualElementFromChartCoordinates({
-        left: data.svgRect.left + data.nearestSlice.x + LINE_CHART_MARGIN_LEFT,
-        top: data.svgRect.top + data.mouseY + LINE_CHART_MARGIN_TOP,
-      });
+      // Compute absolute viewport coordinates for the anchor point
+      const left =
+        data.svgRect.left + data.nearestSlice.x + LINE_CHART_MARGIN_LEFT;
+      const top = data.svgRect.top + data.mouseY + LINE_CHART_MARGIN_TOP;
 
       const seriesForLink = dataMap[String(data.closestPoint.seriesId)];
       const linkTo = seriesForLink?.data?.[data.closestPoint.indexInSeries]?.to;
 
-      showTooltip(
-        virtualAnchor,
-        tooltipData.items,
-        tooltipData.indexLabel,
-        String(data.closestPoint.seriesId),
-        data.sliceX,
+      cancelScheduledHide();
+      setCrosshairX(data.sliceX);
+      setTooltipDescriptor({
+        items: tooltipData.items,
+        indexLabel: tooltipData.indexLabel,
+        highlightedKey: String(data.closestPoint.seriesId),
         linkTo,
-        id,
-      );
+        anchor: { type: 'point', left, top },
+      });
     },
-    [createSliceTooltipData, showTooltip, dataMap, id],
+    [createSliceTooltipData, dataMap, cancelScheduledHide],
   );
 
   const axisBottomConfig = getLineChartAxisBottomConfig(xAxisLabel);
@@ -184,7 +201,7 @@ export const GraphWidgetLineChart = ({
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
         $isClickable={hasClickableItems}
-        onMouseLeave={(event) => hideTooltipIfOutside(event.relatedTarget)}
+        onMouseLeave={() => scheduleHide()}
       >
         <ResponsiveLine
           data={nivoData}
@@ -204,7 +221,7 @@ export const GraphWidgetLineChart = ({
           pointSize={6}
           pointBorderWidth={0}
           colors={colors}
-          areaBlendMode={theme.name === 'dark' ? 'screen' : 'multiply'}
+          areaBlendMode={'normal'}
           defs={defs}
           fill={fill}
           axisTop={null}
@@ -229,6 +246,8 @@ export const GraphWidgetLineChart = ({
                 innerHeight={layerProps.innerHeight}
                 innerWidth={layerProps.innerWidth}
                 onSliceHover={handleSliceHover}
+                crosshairX={crosshairX}
+                onRectLeave={scheduleHide}
               />
             ),
             'points',
@@ -240,6 +259,11 @@ export const GraphWidgetLineChart = ({
           theme={chartTheme}
         />
       </GraphWidgetChartContainer>
+      <GraphWidgetFloatingTooltip
+        descriptor={tooltipDescriptor}
+        onRequestHide={hideTooltip}
+        onCancelHide={cancelScheduledHide}
+      />
       <GraphWidgetLegend show={showLegend} items={legendItems} />
     </StyledContainer>
   );
