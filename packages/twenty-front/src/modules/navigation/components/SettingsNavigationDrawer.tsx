@@ -25,7 +25,7 @@ export const SettingsNavigationDrawer = ({
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useRecoilState(
     isAdvancedModeEnabledState,
   );
-  const { data, loading } = useGetVersionInfoQuery();
+  const { data } = useGetVersionInfoQuery();
 
   const version = data?.versionInfo?.currentVersion;
 
@@ -41,9 +41,7 @@ export const SettingsNavigationDrawer = ({
           setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
           label={t`Advanced:`}
         />
-        <StyledVersionText>
-          {loading ? t`Loading...` : version || t`Unknown`}
-        </StyledVersionText>
+        <StyledVersionText>{version || t`Unknown`}</StyledVersionText>
       </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
