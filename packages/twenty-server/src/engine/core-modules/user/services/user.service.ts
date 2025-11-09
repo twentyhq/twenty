@@ -26,10 +26,7 @@ import {
   type UpdateWorkspaceMemberEmailJobData,
 } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import {
-  UserException,
-  UserExceptionCode,
-} from 'src/engine/core-modules/user/user.exception';
+import { UserExceptionCode } from 'src/engine/core-modules/user/user.exception';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -278,10 +275,27 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     const normalizedEmail = newEmail.trim().toLowerCase();
 
     if (normalizedEmail === user.email) {
-      throw new UserInputError('New email must be different from current email', {
-        subCode: UserExceptionCode.EMAIL_UNCHANGED,
-        userFriendlyMessage: msg`New email must be different from current email`,
-      });
+      throw new UserInputError(
+        'New email must be different from current email',
+        {
+          subCode: UserExceptionCode.EMAIL_UNCHANGED,
+          userFriendlyMessage: msg`New email must be different from current email`,
+        },
+      );
+    }
+
+    const userWorkspaceIds =
+      await this.userWorkspaceService.findWorkspaceIdsByUserId(user.id);
+
+    if (userWorkspaceIds.length > 1) {
+      throw new UserInputError(
+        'Email updates are available only for users with a single workspace',
+        {
+          subCode:
+            UserExceptionCode.EMAIL_UPDATE_RESTRICTED_TO_SINGLE_WORKSPACE,
+          userFriendlyMessage: msg`Email can only be updated when you belong to a single workspace.`,
+        },
+      );
     }
 
     const existingUser = await this.userRepository.findOne({
@@ -303,6 +317,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     await this.enqueueWorkspaceMemberEmailUpdate({
       userId: user.id,
       email: normalizedEmail,
+      workspaceIds: userWorkspaceIds,
     });
 
     const workspaceDomainConfig =

@@ -1,5 +1,4 @@
 import { Logger, Scope } from '@nestjs/common';
-import chunk from 'lodash.chunk';
 import { In } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -13,7 +12,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export type UpdateWorkspaceMemberEmailJobData = {
   userId: string;
   email: string;
-  workspaceIds?: string[];
+  workspaceIds: string[];
 };
 
 @Processor({
@@ -33,10 +32,8 @@ export class UpdateWorkspaceMemberEmailJob {
   async handle({
     userId,
     email,
+    workspaceIds,
   }: UpdateWorkspaceMemberEmailJobData): Promise<void> {
-    const workspaceIds =
-      await this.userWorkspaceService.findWorkspaceIdsByUserId(userId);
-
     if (!workspaceIds.length) {
       return;
     }
@@ -48,30 +45,24 @@ export class UpdateWorkspaceMemberEmailJob {
       order: { createdAt: 'DESC' },
     });
 
-    const workspaceChunks = chunk(dataSources, 5);
+    for (const { workspaceId } of dataSources) {
+      try {
+        const workspaceMemberRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    for (const chunkItem of workspaceChunks) {
-      await Promise.all(
-        chunkItem.map(async ({ workspaceId }) => {
-          try {
-            const workspaceMemberRepository =
-              await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-                workspaceId,
-                'workspaceMember',
-                { shouldBypassPermissionChecks: true },
-              );
-
-            await workspaceMemberRepository.update(
-              { userId },
-              { userEmail: email },
-            );
-          } catch (error) {
-            this.logger.error(
-              `Failed to update workspace member email for user ${userId} in workspace ${workspaceId}: ${error.message}`,
-            );
-          }
-        }),
-      );
+        await workspaceMemberRepository.update(
+          { userId },
+          { userEmail: email },
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to update workspace member email for user ${userId} in workspace ${workspaceId}: ${error.message}`,
+        );
+      }
     }
   }
 }
