@@ -4,20 +4,16 @@ import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/N
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { AdvancedSettingsToggle, UndecoratedLink } from 'twenty-ui/navigation';
+import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 import { useGetVersionInfoQuery } from '~/generated-metadata/graphql';
 
-const StyledVersionLink = styled(UndecoratedLink)`
+const StyledVersionText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: ${({ theme }) => theme.spacing(1)};
-  text-decoration: none;
 `;
 
 export const SettingsNavigationDrawer = ({
@@ -25,7 +21,7 @@ export const SettingsNavigationDrawer = ({
 }: {
   className?: string;
 }) => {
-  const { t: tLingui } = useLingui();
+  const { t } = useLingui();
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useRecoilState(
     isAdvancedModeEnabledState,
   );
@@ -34,7 +30,7 @@ export const SettingsNavigationDrawer = ({
   const version = data?.versionInfo?.currentVersion;
 
   return (
-    <NavigationDrawer className={className} title={tLingui`Exit Settings`}>
+    <NavigationDrawer className={className} title={t`Exit Settings`}>
       <NavigationDrawerScrollableContent>
         <SettingsNavigationDrawerItems />
       </NavigationDrawerScrollableContent>
@@ -43,11 +39,11 @@ export const SettingsNavigationDrawer = ({
         <AdvancedSettingsToggle
           isAdvancedModeEnabled={isAdvancedModeEnabled}
           setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
-          label={tLingui`Advanced:`}
+          label={t`Advanced:`}
         />
-        <StyledVersionLink to={getSettingsPath(SettingsPath.Releases)}>
+        <StyledVersionText>
           {loading ? t`Loading...` : version || t`Unknown`}
-        </StyledVersionLink>
+        </StyledVersionText>
       </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
