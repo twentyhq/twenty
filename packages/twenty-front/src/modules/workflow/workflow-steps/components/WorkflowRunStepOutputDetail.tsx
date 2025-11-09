@@ -8,6 +8,7 @@ import { getWorkflowRunStepInfoToDisplayAsOutput } from '@/workflow/workflow-ste
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
+import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
@@ -46,10 +47,7 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
     trigger: workflowRun.state.flow.trigger,
     steps: workflowRun.state.flow.steps,
   });
-  if (
-    !isDefined(stepDefinition?.definition) ||
-    !isDefined(stepDefinition.definition.name)
-  ) {
+  if (!isDefined(stepDefinition?.definition)) {
     throw new Error('The step is expected to be properly shaped.');
   }
 
@@ -87,7 +85,9 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
         disabled
         Icon={getIcon(headerIcon)}
         iconColor={headerIconColor}
-        initialTitle={headerTitle}
+        initialTitle={
+          headerTitle ?? getTriggerDefaultLabel(workflowRun.state.flow.trigger)
+        }
         headerType={headerType}
       />
 

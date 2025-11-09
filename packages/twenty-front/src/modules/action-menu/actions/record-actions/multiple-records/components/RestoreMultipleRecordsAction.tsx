@@ -12,6 +12,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 export const RestoreMultipleRecordsAction = () => {
@@ -86,10 +87,10 @@ export const RestoreMultipleRecordsAction = () => {
 
   return (
     <ActionModal
-      title="Restore Records"
-      subtitle="Are you sure you want to restore these records?"
+      title={t`Restore Records`}
+      subtitle={t`Are you sure you want to restore these records?`}
       onConfirmClick={handleRestoreClick}
-      confirmButtonText="Restore Records"
+      confirmButtonText={t`Restore Records`}
       confirmButtonAccent="default"
     />
   );

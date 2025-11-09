@@ -133,7 +133,8 @@ const computeRecordToConnectCondition = (
     objectMetadata.fieldsById[objectMetadata.fieldIdByName[connectFieldName]];
 
   if (
-    !isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+    (!isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      !isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) ||
     field.settings?.relationType !== RelationType.MANY_TO_ONE
   ) {
     const objectMetadataNameSingular = objectMetadata.nameSingular;
