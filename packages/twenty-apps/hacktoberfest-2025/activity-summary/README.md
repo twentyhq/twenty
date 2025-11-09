@@ -20,29 +20,10 @@ A TypeScript-based reporting bot that summarizes activity from your Twenty CRM w
 - A [Twenty CRM](https://twenty.com) account with API access
 - Optional: Slack webhook, Discord webhook, and/or WhatsApp Business API access
 
-## Installation
+## Installing dependencies
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd <project-directory>
-
 # Install dependencies
-npm install
-```
-
-## Configuration
-
-Create a `.env` file in the root directory with the following variables:
-```bash
-# Required
-TWENTY_API_KEY=your_twenty_api_key_here
-DAYS_AGO=7  # Number of days to look back
-
-# Optional - Include only the platforms you want to use
-SLACK_HOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
-DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR/WEBHOOK/URL
-FB_GRAPH_TOKEN=your_facebook_graph_api_token
-WHATSAPP_RECIPIENT_PHONE_NUMBER=+1234567890
+yarn install
 ```
 
 ### Environment Variables
@@ -55,17 +36,6 @@ WHATSAPP_RECIPIENT_PHONE_NUMBER=+1234567890
 | `DISCORD_WEBHOOK_URL` | ❌ No | Discord webhook URL |
 | `FB_GRAPH_TOKEN` | ❌ No | Facebook Graph API token for WhatsApp |
 | `WHATSAPP_RECIPIENT_PHONE_NUMBER` | ❌ No | WhatsApp recipient phone number (with country code) |
-
-## Usage
-```bash
-# Run the application
-npm start
-# or
-node dist/index.js  # if compiled
-
-# For development
-npm run dev  # if you have ts-node configured
-```
 
 ## Project Structure
 ```
@@ -112,22 +82,9 @@ Bonjour! 🥖 Je m'appelle Kylian Mbaguette. Over the last X days:
 This bot uses the [Twenty CRM REST API](https://api.twenty.com/rest/). The following endpoints are used:
 
 - `GET /people` - Fetch people data
-- `GET /companies` - Fetch company data
 - `GET /opportunities` - Fetch opportunity data
 - `GET /tasks` - Fetch task data
 - `GET /workspaceMembers/{id}` - Fetch workspace member details
-
-## Development
-```bash
-# Install dependencies
-npm install
-
-# Compile TypeScript
-npx tsc
-
-# Run in development mode
-npx ts-node index.ts
-```
 
 ## Notes
 
