@@ -4,7 +4,8 @@ import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/N
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { t, useLingui } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
 import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 import { useGetVersionInfoQuery } from '~/generated-metadata/graphql';
