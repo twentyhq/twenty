@@ -17,7 +17,10 @@ import { type RemoteServerType } from 'src/engine/metadata-modules/remote-server
 import { RemoteServerService } from 'src/engine/metadata-modules/remote-server/remote-server.service';
 import { remoteServerGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/remote-server/utils/remote-server-graphql-api-exception-handler.util';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
+)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @Resolver()

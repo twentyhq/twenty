@@ -23,7 +23,11 @@ import { AgentDTO } from './dtos/agent.dto';
 import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
 
-@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  FeatureFlagGuard,
+  SettingsPermissionGuard(PermissionFlagType.AI),
+)
 @Resolver()
 export class AgentResolver {
   constructor(

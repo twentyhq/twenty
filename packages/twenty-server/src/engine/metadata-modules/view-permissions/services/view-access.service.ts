@@ -71,6 +71,41 @@ export class ViewAccessService {
     return this.checkViewAccess(view, userWorkspaceId, workspaceId);
   }
 
+  async canUserCreateView(
+    visibility: ViewVisibility,
+    userWorkspaceId: string | undefined,
+    workspaceId: string,
+  ): Promise<boolean> {
+    // For WORKSPACE visibility views, user must have VIEWS permission
+    if (visibility === ViewVisibility.WORKSPACE && isDefined(userWorkspaceId)) {
+      const permissions =
+        await this.permissionsService.getUserWorkspacePermissions({
+          userWorkspaceId,
+          workspaceId,
+        });
+
+      const hasViewsPermission =
+        permissions.permissionFlags[PermissionFlagType.VIEWS] ?? false;
+
+      if (!hasViewsPermission) {
+        throw new ViewException(
+          generateViewExceptionMessage(
+            ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
+          ),
+          ViewExceptionCode.VIEW_CREATE_PERMISSION_DENIED,
+          {
+            userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
+              ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
+            ),
+          },
+        );
+      }
+    }
+
+    // For UNLISTED views or users without userWorkspaceId, allow creation
+    return true;
+  }
+
   private async checkViewAccess(
     view: ViewEntity,
     userWorkspaceId: string | undefined,

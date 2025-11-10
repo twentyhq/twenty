@@ -11,12 +11,14 @@ import { SearchApiExceptionFilter } from 'src/engine/core-modules/search/filters
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Resolver()
 @UseFilters(SearchApiExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 @UsePipes(ResolverValidationPipe)
+@UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
 export class SearchResolver {
   constructor(
     private readonly searchService: SearchService,
@@ -24,7 +26,6 @@ export class SearchResolver {
   ) {}
 
   @Query(() => SearchResultConnectionDTO)
-  @UseGuards(WorkspaceAuthGuard)
   async search(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args()
