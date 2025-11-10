@@ -131,7 +131,7 @@ msgstr "Reset uw wachtwoord 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Stel uw wachtwoord in 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +141,7 @@ msgstr "Resetten"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Instellen"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

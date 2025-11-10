@@ -131,7 +131,7 @@ msgstr "Επαναφέρετε τον κωδικό σας 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Ορίστε τον κωδικό πρόσβασής σας 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +141,7 @@ msgstr "Επαναφορά"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Ορίστε"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

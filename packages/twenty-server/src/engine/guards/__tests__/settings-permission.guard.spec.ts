@@ -3,12 +3,12 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
-describe('SettingsPermissionsGuard', () => {
+describe('SettingsPermissionGuard', () => {
   let guard: any;
   let mockPermissionsService: jest.Mocked<PermissionsService>;
   let mockExecutionContext: ExecutionContext;
@@ -36,7 +36,7 @@ describe('SettingsPermissionsGuard', () => {
       .spyOn(GqlExecutionContext, 'create')
       .mockReturnValue({ getContext: () => mockGqlContext } as any);
 
-    const GuardClass = SettingsPermissionsGuard(PermissionFlagType.WORKSPACE);
+    const GuardClass = SettingsPermissionGuard(PermissionFlagType.WORKSPACE);
 
     guard = new GuardClass(mockPermissionsService);
   });

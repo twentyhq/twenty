@@ -1,0 +1,170 @@
+---
+title: Automatisations internes
+info: "Automatisez les tâches répétitives pour réduire le travail manuel et garder vos données précises."
+image: /images/user-guide/workflows/internal-automations.png
+sectionInfo: Automatisez les processus et intégrez avec des outils externes
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/internal-automations.png" alt="Header" />
+</Frame>
+
+Voici des exemples que vous pourriez déployer pour automatiser les tâches répétitives, réduire le travail manuel et maintenir vos données à jour.
+
+## Automatisations de gestion des données
+
+### Marquage Automatique des E-mails Personnels
+
+**Problème** : Votre équipe doit identifier les adresses e-mail personnelles par rapport aux adresses professionnelles pour un meilleur ciblage et conformité.
+
+**Solution** : Créez un flux de travail qui met automatiquement à jour un champ "est un e-mail personnel" chaque fois qu'une adresse e-mail est ajoutée ou mise à jour.
+
+**Déclencheur** : Enregistrement mis à jour (objet Personnes, champ Email)
+
+**Actions** :
+
+- Action de code pour vérifier si le domaine de l'e-mail correspond à des fournisseurs personnels courants (gmail.com, yahoo.com, etc.)
+- Mettre à jour l'enregistrement pour définir le drapeau "est un e-mail personnel"
+
+### Affectation de leads - par Tourniquet
+
+**Problème** : Les nouveaux prospects doivent être distribués équitablement à travers votre équipe de vente pour garantir une charge de travail équilibrée.
+
+**Solution** : Assignez automatiquement de nouveaux prospects aux commerciaux en utilisant un système en tourniquet.
+
+**Déclencheur** : Enregistrement créé (objet Personnes)
+
+**Actions** :
+
+- Rechercher des enregistrements pour trouver le dernier commercial assigné
+- Action de code pour déterminer le prochain commercial dans la rotation
+- Mettre à jour l'enregistrement pour assigner le prospect au commercial sélectionné
+- Envoyer un e-mail pour notifier le commercial assigné
+
+### Affectation de Prospects - Basée sur le Territoire
+
+**Problème** : Les prospects devraient être assignés en fonction des territoires géographiques ou des caractéristiques de l'entreprise.
+
+**Solution** : Diriger les prospects vers le commercial approprié en fonction de l'emplacement, de la taille de l'entreprise ou de l'industrie.
+
+**Déclencheur** : Enregistrement créé (objet Personnes ou Entreprises)
+
+**Actions** :
+
+- Action de code pour déterminer le territoire selon les règles de localisation/industrie
+- Rechercher des enregistrements pour trouver le propriétaire du territoire
+- Mettre à jour l'enregistrement pour assigner le prospect
+- Créer un enregistrement pour une tâche de suivi
+
+## Automatisations de Processus de Vente
+
+### Gestion de l'Étape d'Opportunité - Gagné Clos
+
+**Problème**: Quand les affaires se concluent, plusieurs mises à jour manuelles sont nécessaires à travers différents enregistrements et membres de l'équipe.
+
+**Solution** : Gérer automatiquement toutes les activités post-victoire lorsque qu'une opportunité passe à "Gagné Clos".
+
+**Déclencheur** : Enregistrement mis à jour (objet Opportunités, champ Étape = "Gagné Clos")
+
+**Actions** :
+
+- Mettre à jour l'enregistrement pour changer le type d'entreprise de "Prospect" à "Client"
+- Créer un enregistrement pour les tâches d'intégration assignées au gestionnaire de compte
+- Envoyer une notification par e-mail à l'équipe de réussite client
+- Requête HTTP pour mettre à jour le système de facturation externe
+
+### Gestion de l'Étape d'Opportunité - Perte de Renouvellement
+
+**Problème**: Quand les opportunités de renouvellement sont perdues, le statut du client doit être mis à jour pour une gestion correcte des comptes.
+
+**Solution** : Mettre à jour automatiquement le statut du client lorsque les affaires de renouvellement sont perdues.
+
+**Déclencheur** : Enregistrement mis à jour (objet Opportunités, Étape = "Renouvellement Perdu" ET Type = "Renouvellement")
+
+**Actions** :
+
+- Mettre à jour l'enregistrement pour changer le type d'entreprise de "Client" à "Client Perdu"
+- Créer un enregistrement pour une tâche d'analyse de diminution
+- Envoyer une alerte par e-mail au responsable de réussite client
+- Mettre à jour l'enregistrement pour ajouter la date et la raison de la diminution
+
+### Alertes d'Opportunité Dormantes
+
+**Problème**: Les opportunités restent sans mise à jour, causant le refroidissement des affaires et rendant les prévisions peu fiables.
+
+**Solution** : Envoyer des alertes automatiques lorsque les opportunités n'ont pas été mises à jour récemment.
+
+**Déclencheur** : Sur un calendrier (quotidien)
+
+**Actions** :
+
+- Rechercher des enregistrements pour les opportunités non mises à jour en X jours
+- Action de code pour formater le message d'alerte avec les détails de l'opportunité
+- Envoyer un e-mail au propriétaire de l'opportunité et au gestionnaire
+- Créer un enregistrement pour une tâche de suivi si pas de réponse
+
+## Automatisations de Productivité
+
+### Récapitulatif Hebdomadaire des Tâches
+
+**Problème**: Les membres de l'équipe perdent de vue leurs tâches à venir et leurs échéances.
+
+**Solution** : Envoyer des rappels automatiques hebdomadaires par e-mail avec des résumés de tâches.
+
+**Déclencheur** : Sur un calendrier (chaque lundi à 8h00)
+
+**Actions** :
+
+- Rechercher des enregistrements pour les tâches dues cette semaine par assigné
+- Action de code pour formater la liste des tâches par personne
+- Envoyer un e-mail à chaque membre de l'équipe avec leur récapitulatif de tâches
+- Envoyer un e-mail aux gestionnaires avec une vue d'ensemble de l'équipe
+
+### Automatisation de Suivi de Réunion
+
+**Problème**: Les points d'action importants des réunions sont oubliés ou retardés.
+
+**Solution** : Créer automatiquement des tâches de suivi lorsque des réunions sont programmées ou terminées.
+
+**Déclencheur** : Enregistrement créé (objet Activités, Type = "Réunion")
+
+**Actions** :
+
+- Créer un enregistrement pour une tâche de préparation pré-réunion
+- Créer un enregistrement pour une tâche de suivi post-réunion
+- Envoyer un rappel par e-mail aux participants
+- Mettre à jour l'enregistrement pour lier les tâches à la réunion
+
+### Synchronisation de Champs Entre Objets
+
+**Problème**: Vous avez besoin d'informations facilement accessibles à partir d'enregistrements liés (par ex., e-mail du contact principal sur l'enregistrement d'opportunité).
+
+**Solution** : Synchroniser automatiquement les champs entre les objets liés jusqu'à ce que les champs imbriqués soient disponibles.
+
+**Déclencheur** : Enregistrement mis à jour (objet Opportunités, champ Point de contact)
+
+**Actions** :
+
+- Rechercher des enregistrements pour trouver les détails de la personne liée
+- Mettre à jour l'enregistrement pour copier l'adresse e-mail sur l'opportunité
+- Mettre à jour l'enregistrement pour copier le numéro de téléphone sur l'opportunité
+- Mettre à jour l'enregistrement pour copier les informations de l'entreprise
+
+## Validation et Nettoyage des Données
+
+### Standardisation des Numéros de Téléphone
+
+**Problème**: Les numéros de téléphone sont saisis dans différents formats, ce qui les rend difficiles à utiliser pour appeler ou envoyer des messages.
+
+**Solution** : Formater automatiquement les numéros de téléphone dans un format standard lorsqu'ils sont saisis.
+
+**Déclencheur** : Enregistrement mis à jour (objet Personnes, champ Téléphone)
+
+**Actions** :
+
+- Action de codage pour analyser et formater le numéro de téléphone
+- Mettre à jour l'enregistrement avec un format téléphonique standardisé
+- Mettre à jour l'enregistrement pour ajouter le code du pays s'il manque
+
+Pour des besoins d'automatisation plus complexes, envisagez notre [Services Professionnels](/l/fr/user-guide/workflows/professional-services) ou explorez [Intégration d'Outils Externes](/l/fr/user-guide/workflows/external-tool-integration).
+

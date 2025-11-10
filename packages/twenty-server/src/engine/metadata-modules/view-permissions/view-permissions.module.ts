@@ -11,6 +11,7 @@ import { CreateViewFieldPermissionGuard } from 'src/engine/metadata-modules/view
 import { CreateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-group-permission.guard';
 import { CreateViewFilterPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-filter-permission.guard';
 import { CreateViewGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-group-permission.guard';
+import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { CreateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-sort-permission.guard';
 import { DeleteViewFieldPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-field-permission.guard';
 import { DeleteViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-filter-group-permission.guard';
@@ -55,6 +56,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ViewService,
     ViewEntityLookupService,
     ViewAccessService,
+    CreateViewPermissionGuard,
     UpdateViewPermissionGuard,
     DeleteViewPermissionGuard,
     DestroyViewPermissionGuard,
@@ -83,6 +85,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ViewService,
     ViewEntityLookupService,
     ViewAccessService,
+    CreateViewPermissionGuard,
     UpdateViewPermissionGuard,
     DeleteViewPermissionGuard,
     DestroyViewPermissionGuard,

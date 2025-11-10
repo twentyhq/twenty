@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-sort-permission.guard';
 import { DeleteViewSortPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-sort-permission.guard';
@@ -23,6 +24,7 @@ export class ViewSortResolver {
   constructor(private readonly viewSortService: ViewSortService) {}
 
   @Query(() => [ViewSortDTO])
+  @UseGuards(NoPermissionGuard)
   async getCoreViewSorts(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
@@ -36,6 +38,7 @@ export class ViewSortResolver {
   }
 
   @Query(() => ViewSortDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async getCoreViewSort(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

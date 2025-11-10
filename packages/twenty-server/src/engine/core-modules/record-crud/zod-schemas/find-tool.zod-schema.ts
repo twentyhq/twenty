@@ -1,10 +1,15 @@
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationType,
+  type RestrictedFieldsPermissions,
+} from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
 import { ObjectRecordOrderBySchema } from 'src/engine/core-modules/record-crud/zod-schemas/order-by.zod-schema';
 import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const generateFindToolInputSchema = (
   objectMetadata: ObjectMetadataEntity,
@@ -23,9 +28,16 @@ export const generateFindToolInputSchema = (
 
     const filterSchema = generateFieldFilterZodSchema(field);
 
-    if (filterSchema) {
-      filterShape[field.name] = filterSchema;
+    if (!filterSchema) {
+      return;
     }
+
+    const isManyToOneRelationField =
+      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      field.settings?.relationType === RelationType.MANY_TO_ONE;
+
+    filterShape[isManyToOneRelationField ? `${field.name}Id` : field.name] =
+      filterSchema;
   });
 
   return z.object({
