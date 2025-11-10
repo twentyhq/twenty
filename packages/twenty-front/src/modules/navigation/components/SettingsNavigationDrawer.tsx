@@ -16,6 +16,15 @@ const StyledVersionText = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledVersionLink = styled.a`
+  color: ${({ theme }) => theme.font.color.secondary};
+  text-decoration: none;
+
+  :hover {
+    text-decoration: underline;
+  }
+`;
+
 export const SettingsNavigationDrawer = ({
   className,
 }: {
@@ -26,7 +35,8 @@ export const SettingsNavigationDrawer = ({
     isAdvancedModeEnabledState,
   );
   const { data } = useGetVersionInfoQuery();
-  const { currentVersion = 'Twenty' } = data?.versionInfo ?? {};
+  const { currentVersion = 'Twenty', latestVersion } = data?.versionInfo ?? {};
+  const hasUpdate = currentVersion && latestVersion && currentVersion !== latestVersion;
 
   return (
     <NavigationDrawer className={className} title={t`Exit Settings`}>
@@ -40,7 +50,22 @@ export const SettingsNavigationDrawer = ({
           setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
           label={t`Advanced:`}
         />
-        <StyledVersionText>{currentVersion}</StyledVersionText>
+        <StyledVersionText>
+          {currentVersion}
+          {hasUpdate && (
+            <>
+              {' '}(
+              <StyledVersionLink
+                href={`https://hub.docker.com/r/twentycrm/twenty/tags?name=${latestVersion}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                v{latestVersion} latest
+              </StyledVersionLink>
+              )
+            </>
+          )}
+        </StyledVersionText>
       </NavigationDrawerFixedContent>
     </NavigationDrawer>
   );
