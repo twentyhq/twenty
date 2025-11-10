@@ -10,14 +10,14 @@ import { useMemo } from 'react';
 
 type GraphWidgetFloatingTooltipProps = {
   tooltipData: GraphWidgetTooltipData;
-  onRequestHide?: () => void;
-  onCancelHide?: () => void;
+  onScheduleHide?: () => void;
+  onCancelScheduledHide?: () => void;
 };
 
 export const GraphWidgetFloatingTooltip = ({
   tooltipData,
-  onRequestHide,
-  onCancelHide,
+  onScheduleHide,
+  onCancelScheduledHide,
 }: GraphWidgetFloatingTooltipProps) => {
   const theme = useTheme();
 
@@ -45,17 +45,19 @@ export const GraphWidgetFloatingTooltip = ({
 
   const { refs, floatingStyles } = useTooltipFloating(reference, boundary);
 
-  if (!tooltipData) return null;
+  if (!tooltipData || !boundary || !(boundary instanceof HTMLElement)) {
+    return null;
+  }
 
   return (
-    <FloatingPortal>
+    <FloatingPortal root={boundary}>
       <div
         ref={refs.setFloating}
         style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
         role="tooltip"
         aria-live="polite"
-        onMouseEnter={() => onCancelHide?.()}
-        onMouseLeave={() => onRequestHide?.()}
+        onMouseEnter={() => onCancelScheduledHide?.()}
+        onMouseLeave={() => onScheduleHide?.()}
       >
         <AnimatePresence>
           <motion.div

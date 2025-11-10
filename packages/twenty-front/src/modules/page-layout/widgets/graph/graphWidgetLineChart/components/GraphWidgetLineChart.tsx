@@ -263,8 +263,8 @@ export const GraphWidgetLineChart = ({
       {activeTooltipData && (
         <GraphWidgetFloatingTooltip
           tooltipData={activeTooltipData}
-          onRequestHide={hideTooltip}
-          onCancelHide={cancelScheduledHide}
+          onScheduleHide={scheduleHide}
+          onCancelScheduledHide={cancelScheduledHide}
         />
       )}
       <GraphWidgetLegend show={showLegend} items={legendItems} />
