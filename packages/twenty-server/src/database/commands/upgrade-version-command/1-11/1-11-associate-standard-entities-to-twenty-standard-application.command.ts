@@ -75,6 +75,7 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
 
         const tmp = await metadataEntityRepository.count();
         this.logger.log(`${tmp} count`);
+        // We should only be fetching non custom elements
         const allEntities = await metadataEntityRepository.find({
           select: {
             // standardId: true,
@@ -93,7 +94,7 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
         for (const entity of allEntities) {
           // @ts-expect-error TODO
           await metadataEntityRepository.update(entity.id, {
-            applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+            applicationId: twentyStandardApplication.id,
           });
         }
       }
