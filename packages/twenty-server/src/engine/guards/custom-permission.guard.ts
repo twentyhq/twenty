@@ -9,7 +9,7 @@ import {
 // has custom permission checks implemented within the resolver method itself
 //
 // Use this when you need custom permission validation that cannot be expressed
-// with standard SettingsPermissionsGuard
+// with standard SettingsPermissionGuard
 //
 // Examples of when to use CustomPermissionGuard:
 // - Self-only operations (users can only modify their own data)

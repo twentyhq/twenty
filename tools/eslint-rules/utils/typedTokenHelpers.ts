@@ -75,7 +75,7 @@ export const typedTokenHelpers = {
       ) {
         // Check if any argument ends with PermissionGuard
         return decorator.expression.arguments.some((arg) => {
-          // Factory-style guards: SettingsPermissionsGuard(PermissionFlagType.XXX)
+          // Factory-style guards: SettingsPermissionGuard(PermissionFlagType.XXX)
           if (arg.type === TSESTree.AST_NODE_TYPES.CallExpression) {
             const callee = arg.callee;
             if (callee.type === TSESTree.AST_NODE_TYPES.Identifier) {
