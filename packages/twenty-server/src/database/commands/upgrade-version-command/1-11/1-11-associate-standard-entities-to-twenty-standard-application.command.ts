@@ -1,7 +1,7 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, IsNull, Not, Or, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -14,6 +14,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { ALL_METADATA_NAME, AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 @Command({
   name: 'upgrade:1-11:associate-standard-entities-to-twenty-standard-application',
@@ -62,40 +63,116 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
       getAllMetadataEntityRepository({
         dataSource: this.coreDataSource,
       });
-
-    this.logger.log(`retrieved reposotiries`);
+    ///
 
     try {
       for (const metadataName of Object.keys(
         ALL_METADATA_NAME,
       ) as AllMetadataName[]) {
         this.logger.log(`retrieving ${metadataName} entities`);
-        const metadataEntityRepository =
-          metadataEntityRepositoryByMetadataName[metadataName];
 
-        const tmp = await metadataEntityRepository.count();
-        this.logger.log(`${tmp} count`);
-        // We should only be fetching non custom elements
-        const allEntities = await metadataEntityRepository.find({
-          select: {
-            // standardId: true,
-            id: true,
-          },
-          where: {
-            workspaceId,
-          },
-          withDeleted: true,
-        });
+        switch (metadataName) {
+          case 'objectMetadata': {
+            const metadataEntityRepository =
+              metadataEntityRepositoryByMetadataName[metadataName];
 
-        this.logger.log(
-          `About to iterate over ${allEntities.length} ${metadataName} entities`,
-        );
+            const standardEntities = await metadataEntityRepository.find({
+              select: {
+                standardId: true,
+                universalIdentifier: true,
+                applicationId: true,
+                id: true,
+              },
+              where: {
+                standardId: Not(IsNull()),
+                workspaceId,
+                applicationId: IsNull(),
+              },
+              withDeleted: true,
+            });
 
-        for (const entity of allEntities) {
-          // @ts-expect-error TODO
-          await metadataEntityRepository.update(entity.id, {
-            applicationId: twentyStandardApplication.id,
-          });
+            for (const entity of standardEntities) {
+              this.logger.log(
+                `Processing entity id=${entity.id} standardId=${entity.standardId}`,
+              );
+
+              await metadataEntityRepository.update(entity.id, {
+                universalIdentifier:
+                  entity.universalIdentifier ?? entity.standardId,
+                applicationId: twentyStandardApplication.id,
+              });
+            }
+            break;
+          }
+          case 'view':
+          case 'fieldMetadata':
+          case 'index': {
+            const metadataEntityRepository =
+              metadataEntityRepositoryByMetadataName[metadataName];
+
+            const standardEntities = await metadataEntityRepository.find({
+              select: {
+                id: true,
+                universalIdentifier: true,
+                applicationId: true,
+              },
+              where: {
+                workspaceId,
+                applicationId: IsNull(),
+                isCustom: Or(IsNull(), false as any),
+              },
+              withDeleted: true,
+            });
+
+            for (const entity of standardEntities) {
+              this.logger.log(`Processing entity id=${entity.id}`);
+
+              await metadataEntityRepository.update(entity.id, {
+                universalIdentifier: entity.universalIdentifier ?? v4(),
+                applicationId: twentyStandardApplication.id,
+              });
+            }
+            break;
+          }
+          case 'viewField':
+          case 'viewFilter':
+          case 'viewGroup': {
+            const metadataEntityRepository =
+              metadataEntityRepositoryByMetadataName[metadataName];
+
+            const standardEntities = await metadataEntityRepository.find({
+              select: {
+                id: true,
+                universalIdentifier: true,
+                applicationId: true,
+              },
+              where: {
+                view: {
+                  isCustom: Or(IsNull(), false as any),
+                },
+                workspaceId,
+                applicationId: IsNull(),
+              },
+              withDeleted: true,
+            });
+
+            for (const entity of standardEntities) {
+              this.logger.log(`Processing entity id=${entity.id}`);
+
+              await metadataEntityRepository.update(entity.id, {
+                universalIdentifier: entity.universalIdentifier ?? v4(),
+                applicationId: twentyStandardApplication.id,
+              });
+            }
+            break;
+          }
+          case 'serverlessFunction':
+          case 'cronTrigger':
+          case 'databaseEventTrigger':
+          case 'routeTrigger': {
+            // No twnenty-standards entries only custom
+            break;
+          }
         }
       }
     } catch (error) {
