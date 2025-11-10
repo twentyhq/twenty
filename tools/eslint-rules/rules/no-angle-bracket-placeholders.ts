@@ -78,7 +78,7 @@ export const rule: Rule.RuleModule = {
         const text = sourceCode.getText();
 
         // check for URL patterns with angle brackets (e.g., https://<your-domain>/)
-        const urlPlaceholderRegex = /(https?:\/\/)<([a-z][a-z0-9_-]+)>/gi;
+        const urlPlaceholderRegex = /(https?:\/\/)<([a-z][a-z0-9_-]+)>/g;
         let urlMatch;
         const foundPositions = new Set();
 
@@ -115,7 +115,7 @@ export const rule: Rule.RuleModule = {
           });
         }
 
-        const placeholderRegex = /<([a-z][a-z0-9_-]+)>/gi;
+        const placeholderRegex = /<([a-z][a-z0-9_-]+)>/g;
         let match;
 
         while ((match = placeholderRegex.exec(text)) !== null) {
