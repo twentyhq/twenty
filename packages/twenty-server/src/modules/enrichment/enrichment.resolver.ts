@@ -5,7 +5,9 @@ import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 
 import { EnrichCompanyInput } from './dtos/enrich-company-input.dto';
@@ -32,6 +34,7 @@ export class EnrichmentResolver {
   }
 
   @Mutation(() => EnrichCompanyResult)
+  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.IMPORT_CSV))
   async enrichCompany(
     @Args('input', { type: () => EnrichCompanyInput })
     input: EnrichCompanyInput,
