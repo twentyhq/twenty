@@ -150,6 +150,7 @@ export class ViewController {
     @Body() input: UpdateViewInput,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -166,9 +167,15 @@ export class ViewController {
           id,
         },
         workspaceId: workspace.id,
+        userWorkspaceId,
       });
     } else {
-      updatedView = await this.viewService.update(id, workspace.id, input);
+      updatedView = await this.viewService.update(
+        id,
+        workspace.id,
+        input,
+        userWorkspaceId,
+      );
     }
 
     const processedViews = await this.processViewsWithTemplates(

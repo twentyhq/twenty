@@ -21,6 +21,7 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -36,7 +37,6 @@ import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-perm
 import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
 import { DestroyViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-permission.guard';
 import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
@@ -185,6 +185,7 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -196,10 +197,11 @@ export class ViewResolver {
       return await this.viewV2Service.updateOne({
         updateViewInput: { ...input, id },
         workspaceId: workspace.id,
+        userWorkspaceId,
       });
     }
 
-    return this.viewService.update(id, workspace.id, input);
+    return this.viewService.update(id, workspace.id, input, userWorkspaceId);
   }
 
   @Mutation(() => Boolean)

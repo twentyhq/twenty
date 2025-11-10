@@ -100,9 +100,11 @@ export class ViewV2Service {
   async updateOne({
     updateViewInput,
     workspaceId,
+    userWorkspaceId,
   }: {
     updateViewInput: UpdateViewInput;
     workspaceId: string;
+    userWorkspaceId?: string;
   }): Promise<ViewDTO> {
     const {
       flatViewMaps: existingFlatViewMaps,
@@ -120,6 +122,21 @@ export class ViewV2Service {
         updateViewInput,
         flatViewMaps: existingFlatViewMaps,
       });
+
+    const existingFlatView = existingFlatViewMaps.byId[updateViewInput.id];
+
+    // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
+    // This prevents the view from disappearing for the user making the change
+    if (
+      isDefined(existingFlatView) &&
+      isDefined(updateViewInput.visibility) &&
+      updateViewInput.visibility === 'UNLISTED' &&
+      existingFlatView.visibility === 'WORKSPACE' &&
+      isDefined(userWorkspaceId)
+    ) {
+      // Re-allocate the view to the current user
+      flatViewFromUpdateInput.createdByUserWorkspaceId = userWorkspaceId;
+    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
