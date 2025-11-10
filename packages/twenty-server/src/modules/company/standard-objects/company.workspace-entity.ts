@@ -75,6 +75,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Domain Name`,
     description: msg`The company website URL. We use this url to fetch the company icon`,
     icon: 'IconLink',
+    settings: {
+      maxNumberOfValues: 1,
+    },
   })
   @WorkspaceIsUnique()
   domainName: LinksMetadata;

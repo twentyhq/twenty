@@ -81,7 +81,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
       <SubMenuTopBarContainer
-        title="New Approved Access Domain"
+        title={t`New Approved Access Domain`}
         actionButton={
           <SaveAndCancelButtons
             onCancel={() => navigate(SettingsPath.Domains)}

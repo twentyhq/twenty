@@ -3,6 +3,7 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { t } from '@lingui/core/macro';
 
 export const RestoreSingleRecordAction = () => {
   const { recordIndexId, objectMetadataItem } =
@@ -26,10 +27,10 @@ export const RestoreSingleRecordAction = () => {
 
   return (
     <ActionModal
-      title="Restore Record"
-      subtitle="Are you sure you want to restore this record?"
+      title={t`Restore Record`}
+      subtitle={t`Are you sure you want to restore this record?`}
       onConfirmClick={handleRestoreClick}
-      confirmButtonText="Restore Record"
+      confirmButtonText={t`Restore Record`}
       confirmButtonAccent="default"
     />
   );

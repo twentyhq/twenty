@@ -153,8 +153,8 @@ export const WorkflowFindRecordsSorts = ({
           variant="secondary"
           accent="default"
           onClick={handleAddSort}
-          ariaLabel="Add sort"
-          title="Add sort"
+          ariaLabel={t`Add sort`}
+          title={t`Add sort`}
           disabled={readonly}
         />
       </StyledAddButtonContainer>

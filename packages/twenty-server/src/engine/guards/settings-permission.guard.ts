@@ -18,11 +18,11 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
-export const SettingsPermissionsGuard = (
+export const SettingsPermissionGuard = (
   requiredPermission: PermissionFlagType,
 ): Type<CanActivate> => {
   @Injectable()
-  class SettingsPermissionsMixin implements CanActivate {
+  class SettingsPermissionMixin implements CanActivate {
     constructor(private readonly permissionsService: PermissionsService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -63,5 +63,5 @@ export const SettingsPermissionsGuard = (
     }
   }
 
-  return mixin(SettingsPermissionsMixin);
+  return mixin(SettingsPermissionMixin);
 };
