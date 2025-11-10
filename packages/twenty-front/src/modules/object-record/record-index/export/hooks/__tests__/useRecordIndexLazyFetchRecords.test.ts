@@ -6,7 +6,7 @@ import {
   useRecordIndexLazyFetchRecords,
 } from '../useRecordIndexLazyFetchRecords';
 
-import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { ViewType } from '@/views/types/ViewType';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
@@ -133,7 +133,7 @@ describe('useRecordData', () => {
       const { result } = renderHook(
         () => {
           const { columnDefinitions } =
-            useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+            useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
           const lazyFetchResult = useRecordIndexLazyFetchRecords({
             recordIndexId,

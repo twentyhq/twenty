@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   SubscriptionInterval,
@@ -59,7 +59,7 @@ const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   },
 });
 
-describe('useColumnDefinitionsFromFieldMetadata', () => {
+describe('useColumnDefinitionsFromObjectMetadata', () => {
   it('should return expected definitions', () => {
     const companyObjectMetadata = generatedMockObjectMetadataItems.find(
       (item) => item.nameSingular === 'company',
@@ -67,7 +67,7 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
 
     const { result } = renderHook(
       (objectMetadataItem: ObjectMetadataItem) => {
-        return useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+        return useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
       },
       {
         initialProps: companyObjectMetadata,

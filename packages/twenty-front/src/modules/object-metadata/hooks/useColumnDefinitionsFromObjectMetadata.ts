@@ -8,7 +8,7 @@ import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metad
 import { useRecoilValue } from 'recoil';
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
 
-export const useColumnDefinitionsFromFieldMetadata = (
+export const useColumnDefinitionsFromObjectMetadata = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
   const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
