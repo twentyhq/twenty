@@ -23,24 +23,17 @@ export const useUpdateEmail = () => {
       return;
     }
 
-    const trimmedEmail = email.trim();
-
-    if (!trimmedEmail || trimmedEmail === currentUser.email) {
-      return;
-    }
-
     try {
       await updateUserEmail({
         variables: {
-          newEmail: trimmedEmail,
+          newEmail: email,
         },
       });
 
-      setCurrentUser((prev) =>
-        prev ? { ...prev, email: trimmedEmail } : prev,
-      );
+      setCurrentUser((prev) => (prev ? { ...prev, email } : prev));
+
       setCurrentWorkspaceMember((prev) =>
-        prev ? { ...prev, userEmail: trimmedEmail } : prev,
+        prev ? { ...prev, userEmail: email } : prev,
       );
 
       enqueueInfoSnackBar({

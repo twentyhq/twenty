@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -34,19 +34,11 @@ export const EmailField = () => {
   const { canEdit } = useCanEditProfileField('email');
   const { updateEmail } = useUpdateEmail();
 
-  if (!currentUser) {
-    return null;
-  }
-
-  const [email, setEmail] = useState(currentUser.email);
-
-  useEffect(() => {
-    setEmail(currentUser.email);
-  }, [currentUser.email]);
+  const [email, setEmail] = useState(currentUser?.email || '');
 
   const trimmedEmail = email.trim();
   const isEmailChanged =
-    trimmedEmail.length > 0 && trimmedEmail !== currentUser.email;
+    trimmedEmail.length > 0 && trimmedEmail !== currentUser?.email;
 
   const handleUpdate = async () => {
     if (!canEdit || !isEmailChanged) {
@@ -54,13 +46,16 @@ export const EmailField = () => {
     }
 
     await updateEmail(trimmedEmail);
+    setEmail(trimmedEmail);
   };
+
+  const currentUserId = currentUser?.id;
 
   return (
     <StyledContainer>
       <StyledFieldRow>
         <SettingsTextInput
-          instanceId={`user-email-${currentUser.id}`}
+          instanceId={`user-email-${currentUserId}`}
           value={email}
           onChange={setEmail}
           disabled={!canEdit}

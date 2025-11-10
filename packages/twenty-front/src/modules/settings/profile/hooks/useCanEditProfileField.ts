@@ -11,7 +11,6 @@ export const useCanEditProfileField = (field: EditableProfileField) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
-
   if (!currentWorkspace || !currentUserWorkspace) {
     return { canEdit: false };
   }
@@ -25,12 +24,14 @@ export const useCanEditProfileField = (field: EditableProfileField) => {
   );
 
   const requiresSingleWorkspace = field === 'email';
+
   const isSingleWorkspaceUser =
     countAvailableWorkspaces(availableWorkspaces) <= 1;
-  const meetsWorkspaceLimit =
-    !requiresSingleWorkspace || isSingleWorkspaceUser;
+
+  const meetsWorkspaceLimit = !requiresSingleWorkspace || isSingleWorkspaceUser;
 
   return {
-    canEdit: workspaceAllowsField && hasProfilePermission && meetsWorkspaceLimit,
+    canEdit:
+      workspaceAllowsField && hasProfilePermission && meetsWorkspaceLimit,
   };
 };
