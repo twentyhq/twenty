@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
@@ -25,6 +26,7 @@ export class ViewFilterGroupResolver {
   ) {}
 
   @Query(() => [ViewFilterGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async getCoreViewFilterGroups(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
@@ -38,6 +40,7 @@ export class ViewFilterGroupResolver {
   }
 
   @Query(() => ViewFilterGroupDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async getCoreViewFilterGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

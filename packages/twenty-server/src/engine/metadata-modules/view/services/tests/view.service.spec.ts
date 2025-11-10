@@ -382,6 +382,93 @@ describe('ViewService', () => {
         ),
       );
     });
+
+    it('should re-allocate view to current user when changing from WORKSPACE to UNLISTED visibility', async () => {
+      const id = 'view-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspaceId = 'current-user-workspace-id';
+      const workspaceView = {
+        ...mockView,
+        visibility: ViewVisibility.WORKSPACE,
+        createdByUserWorkspaceId: null,
+      } as ViewEntity;
+      const updateData = { visibility: ViewVisibility.UNLISTED };
+      const expectedSaveData = {
+        id,
+        visibility: ViewVisibility.UNLISTED,
+        createdByUserWorkspaceId: userWorkspaceId,
+      };
+      const updatedView = {
+        ...workspaceView,
+        ...expectedSaveData,
+      };
+
+      jest.spyOn(viewService, 'findById').mockResolvedValue(workspaceView);
+      jest.spyOn(viewRepository, 'save').mockResolvedValue(updatedView);
+
+      const result = await viewService.update(
+        id,
+        workspaceId,
+        updateData,
+        userWorkspaceId,
+      );
+
+      expect(viewService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(viewRepository.save).toHaveBeenCalledWith(expectedSaveData);
+      expect(result.createdByUserWorkspaceId).toBe(userWorkspaceId);
+    });
+
+    it('should not change createdByUserWorkspaceId when visibility is not changing to UNLISTED', async () => {
+      const id = 'view-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspaceId = 'current-user-workspace-id';
+      const updateData = { name: 'Updated Name' };
+      const updatedView = { ...mockView, ...updateData };
+
+      jest.spyOn(viewService, 'findById').mockResolvedValue(mockView);
+      jest.spyOn(viewRepository, 'save').mockResolvedValue(updatedView);
+
+      await viewService.update(id, workspaceId, updateData, userWorkspaceId);
+
+      expect(viewRepository.save).toHaveBeenCalledWith({
+        id,
+        ...updateData,
+      });
+      expect(viewRepository.save).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          createdByUserWorkspaceId: userWorkspaceId,
+        }),
+      );
+    });
+
+    it('should not change createdByUserWorkspaceId when view is already UNLISTED', async () => {
+      const id = 'view-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspaceId = 'current-user-workspace-id';
+      const originalOwner = 'original-owner-workspace-id';
+      const unlistedView = {
+        ...mockView,
+        visibility: ViewVisibility.UNLISTED,
+        createdByUserWorkspaceId: originalOwner,
+      } as ViewEntity;
+      const updateData = { visibility: ViewVisibility.UNLISTED };
+      const updatedView = { ...unlistedView, ...updateData };
+
+      jest.spyOn(viewService, 'findById').mockResolvedValue(unlistedView);
+      jest.spyOn(viewRepository, 'save').mockResolvedValue(updatedView);
+
+      await viewService.update(id, workspaceId, updateData, userWorkspaceId);
+
+      expect(viewRepository.save).toHaveBeenCalledWith({
+        id,
+        ...updateData,
+      });
+      expect(viewRepository.save).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          createdByUserWorkspaceId: userWorkspaceId,
+        }),
+      );
+    });
   });
 
   describe('delete', () => {
