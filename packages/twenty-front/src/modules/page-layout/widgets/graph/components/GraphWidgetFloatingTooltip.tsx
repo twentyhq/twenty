@@ -7,6 +7,7 @@ import { useTheme } from '@emotion/react';
 import { FloatingPortal, type VirtualElement } from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetFloatingTooltipProps = {
   tooltipData: GraphWidgetTooltipData;
@@ -45,7 +46,11 @@ export const GraphWidgetFloatingTooltip = ({
 
   const { refs, floatingStyles } = useTooltipFloating(reference, boundary);
 
-  if (!tooltipData || !boundary || !(boundary instanceof HTMLElement)) {
+  if (
+    !isDefined(tooltipData) ||
+    !isDefined(boundary) ||
+    !(boundary instanceof HTMLElement)
+  ) {
     return null;
   }
 
@@ -68,7 +73,7 @@ export const GraphWidgetFloatingTooltip = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{
-              duration: theme.animation.duration.normal,
+              duration: theme.animation.duration.fast,
               ease: 'easeInOut',
             }}
           >
