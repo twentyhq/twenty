@@ -72,7 +72,7 @@ export class GlobalWorkspaceOrmManager {
       this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
 
     if (
-      !globalDataSource.hasWorkspaceMetadata(
+      !globalDataSource.hasWorkspaceEntityMetadataCacheForVersion(
         workspaceId,
         context.metadataVersion,
       )

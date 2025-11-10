@@ -37,11 +37,15 @@ type CreateQueryBuilderOptions = {
   calledByWorkspaceEntityManager?: boolean;
 };
 
+const ENTITY_METADATA_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+type CachedEntityMetadata = {
+  entityMetadataMap: Map<EntityTarget<ObjectLiteral>, EntityMetadata>;
+  timestamp: number;
+};
+
 export class GlobalWorkspaceDataSource extends DataSource {
-  private entityMetadataCache: Map<
-    string,
-    Map<EntityTarget<ObjectLiteral>, EntityMetadata>
-  >;
+  private entityMetadataCache: Map<string, CachedEntityMetadata>;
   private eventEmitterService: WorkspaceEventEmitter;
   private entitySchemaFactory: EntitySchemaFactory;
   private _isConstructing = true;
@@ -57,6 +61,10 @@ export class GlobalWorkspaceDataSource extends DataSource {
     this.entitySchemaFactory = entitySchemaFactory;
     this.entityMetadataCache = new Map();
     this._isConstructing = false;
+
+    Object.defineProperty(this, 'manager', {
+      get: () => this.createEntityManager(),
+    });
   }
 
   get featureFlagMap(): FeatureFlagMap {
@@ -88,13 +96,13 @@ export class GlobalWorkspaceDataSource extends DataSource {
     const { workspaceId, metadataVersion } = context;
     const cacheKey = `${workspaceId}-${metadataVersion}`;
 
-    const workspaceMetadataMap = this.entityMetadataCache.get(cacheKey);
+    const cachedEntityMetadata = this.getCachedEntityMetadata(cacheKey);
 
-    if (!workspaceMetadataMap) {
+    if (!cachedEntityMetadata) {
       return undefined;
     }
 
-    return workspaceMetadataMap.get(target);
+    return cachedEntityMetadata.entityMetadataMap.get(target);
   }
 
   override getMetadata(target: EntityTarget<ObjectLiteral>): EntityMetadata {
@@ -271,9 +279,11 @@ export class GlobalWorkspaceDataSource extends DataSource {
   ): Promise<void> {
     const cacheKey = `${workspaceId}-${metadataVersion}`;
 
-    if (this.entityMetadataCache.has(cacheKey)) {
+    if (this.getCachedEntityMetadata(cacheKey)) {
       return;
     }
+
+    this.clearWorkspaceEntityMetadataCache(workspaceId);
 
     const entitySchemas = await Promise.all(
       Object.values(objectMetadataMaps.byId)
@@ -295,7 +305,18 @@ export class GlobalWorkspaceDataSource extends DataSource {
       metadataMap.set(metadata.target, metadata);
     }
 
-    this.entityMetadataCache.set(cacheKey, metadataMap);
+    this.entityMetadataCache.set(cacheKey, {
+      entityMetadataMap: metadataMap,
+      timestamp: Date.now(),
+    });
+  }
+
+  private clearWorkspaceEntityMetadataCache(workspaceId: string): void {
+    for (const key of this.entityMetadataCache.keys()) {
+      if (key.startsWith(`${workspaceId}-`)) {
+        this.entityMetadataCache.delete(key);
+      }
+    }
   }
 
   private buildMetadatasFromSchemas(
@@ -314,23 +335,30 @@ export class GlobalWorkspaceDataSource extends DataSource {
     return entityMetadatas;
   }
 
-  hasWorkspaceMetadata(workspaceId: string, metadataVersion: number): boolean {
+  hasWorkspaceEntityMetadataCacheForVersion(
+    workspaceId: string,
+    metadataVersion: number,
+  ): boolean {
     const cacheKey = `${workspaceId}-${metadataVersion}`;
 
-    return this.entityMetadataCache.has(cacheKey);
+    return !!this.getCachedEntityMetadata(cacheKey);
   }
 
-  clearWorkspaceMetadataCache(workspaceId: string): void {
-    const keysToDelete: string[] = [];
+  private getCachedEntityMetadata(
+    cacheKey: string,
+  ): CachedEntityMetadata | undefined {
+    const cached = this.entityMetadataCache.get(cacheKey);
 
-    for (const key of this.entityMetadataCache.keys()) {
-      if (key.startsWith(`${workspaceId}-`)) {
-        keysToDelete.push(key);
-      }
+    if (!cached) {
+      return undefined;
     }
 
-    for (const key of keysToDelete) {
-      this.entityMetadataCache.delete(key);
+    if (Date.now() - cached.timestamp > ENTITY_METADATA_CACHE_TTL_MS) {
+      this.entityMetadataCache.delete(cacheKey);
+
+      return undefined;
     }
+
+    return cached;
   }
 }
