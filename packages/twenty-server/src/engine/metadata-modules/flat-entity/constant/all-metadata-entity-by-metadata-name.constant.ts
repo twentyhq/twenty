@@ -1,3 +1,8 @@
+import {
+  type AllMetadataName,
+  type NotV2YetAllMetadataName,
+} from 'twenty-shared/metadata';
+
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { CronTriggerEntity } from 'src/engine/metadata-modules/cron-trigger/entities/cron-trigger.entity';
 import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
@@ -13,10 +18,6 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import {
-  AllMetadataName,
-  NotV2YetAllMetadataName,
-} from 'twenty-shared/metadata';
 
 export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   cronTrigger: CronTriggerEntity,
