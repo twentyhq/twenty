@@ -8,6 +8,7 @@ import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entit
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Injectable()
 export class EntitySchemaFactory {
@@ -18,16 +19,17 @@ export class EntitySchemaFactory {
 
   async create(
     workspaceId: string,
-    _metadataVersion: number,
     objectMetadata: ObjectMetadataItemWithFieldMaps,
-    objectMetadataMaps: ObjectMetadataMaps,
+    _objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<EntitySchema> {
     const columns = this.entitySchemaColumnFactory.create(objectMetadata);
 
-    const relations = await this.entitySchemaRelationFactory.create(
-      objectMetadata,
-      objectMetadataMaps,
-    );
+    // const relations = await this.entitySchemaRelationFactory.create(
+    //   objectMetadata,
+    //   objectMetadataMaps,
+    // );
+
+    const schemaName = getWorkspaceSchemaName(workspaceId);
 
     const entitySchema = new EntitySchema({
       name: objectMetadata.nameSingular,
@@ -36,7 +38,7 @@ export class EntitySchemaFactory {
         objectMetadata.isCustom,
       ),
       columns,
-      relations,
+      schema: schemaName,
     });
 
     WorkspaceEntitiesStorage.setEntitySchema(

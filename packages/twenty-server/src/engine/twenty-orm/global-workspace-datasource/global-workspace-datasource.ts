@@ -1,8 +1,10 @@
-import { isDefined } from 'class-validator';
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   DataSource,
   type DataSourceOptions,
+  type EntityMetadata,
+  type EntitySchema,
   type EntityTarget,
   type ObjectLiteral,
   type QueryRunner,
@@ -10,6 +12,9 @@ import {
   type SelectQueryBuilder,
 } from 'typeorm';
 import { EntityManagerFactory } from 'typeorm/entity-manager/EntityManagerFactory';
+import { EntitySchemaTransformer } from 'typeorm/entity-schema/EntitySchemaTransformer';
+import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
+import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBuilder';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -19,29 +24,51 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { type WorkspaceQueryRunner } from 'src/engine/twenty-orm/query-runner/workspace-query-runner';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/workspace-context.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 type CreateQueryBuilderOptions = {
   calledByWorkspaceEntityManager?: boolean;
 };
 
 export class GlobalWorkspaceDataSource extends DataSource {
-  readonly internalContext: WorkspaceInternalContext;
-  readonly manager: WorkspaceEntityManager;
-  featureFlagMapVersion: string;
-  featureFlagMap: FeatureFlagMap;
-  rolesPermissionsVersion: string;
-  permissionsPerRoleId: ObjectsPermissionsByRoleId;
+  private entityMetadataCache: Map<
+    string,
+    Map<EntityTarget<ObjectLiteral>, EntityMetadata>
+  >;
+  private eventEmitterService: WorkspaceEventEmitter;
+  private entitySchemaFactory: EntitySchemaFactory;
+  private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;
-  isPoolSharingEnabled: boolean;
 
-  constructor(options: DataSourceOptions) {
+  constructor(
+    options: DataSourceOptions,
+    eventEmitterService: WorkspaceEventEmitter,
+    entitySchemaFactory: EntitySchemaFactory,
+  ) {
     super(options);
-    // Recreate manager after internalContext has been initialized
-    this.manager = this.createEntityManager();
+    this.eventEmitterService = eventEmitterService;
+    this.entitySchemaFactory = entitySchemaFactory;
+    this.entityMetadataCache = new Map();
+    this._isConstructing = false;
+  }
+
+  get featureFlagMap(): FeatureFlagMap {
+    const context = getWorkspaceContext();
+
+    return context.featureFlagsMap;
+  }
+
+  get permissionsPerRoleId(): ObjectsPermissionsByRoleId {
+    const context = getWorkspaceContext();
+
+    return context.permissionsPerRoleId;
   }
 
   override getRepository<Entity extends ObjectLiteral>(
@@ -49,13 +76,47 @@ export class GlobalWorkspaceDataSource extends DataSource {
     permissionOptions?: RolePermissionConfig,
     authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
-    return this.manager.getRepository(target, permissionOptions, authContext);
+    const manager = this.createEntityManager();
+
+    return manager.getRepository(target, permissionOptions, authContext);
+  }
+
+  override getMetadata(target: EntityTarget<ObjectLiteral>): EntityMetadata {
+    const context = getWorkspaceContext();
+    const { workspaceId, metadataVersion } = context;
+    const cacheKey = `${workspaceId}-${metadataVersion}`;
+
+    const workspaceMetadataMap = this.entityMetadataCache.get(cacheKey);
+
+    if (!workspaceMetadataMap) {
+      throw new Error(
+        `Metadata not loaded for workspace ${workspaceId} version ${metadataVersion}. Call buildWorkspaceMetadata() first.`,
+      );
+    }
+
+    const metadata = workspaceMetadataMap.get(target);
+
+    if (!metadata) {
+      throw new EntityMetadataNotFoundError(target);
+    }
+
+    return metadata;
   }
 
   override createEntityManager(
     queryRunner?: QueryRunner,
   ): WorkspaceEntityManager {
-    return new WorkspaceEntityManager(this.internalContext, this, queryRunner);
+    if (this._isConstructing !== false) {
+      return super.createEntityManager(queryRunner) as WorkspaceEntityManager;
+    }
+
+    const context = getWorkspaceContext();
+    const fullContext: WorkspaceInternalContext = {
+      ...context,
+      eventEmitterService: this.eventEmitterService,
+    };
+
+    return new WorkspaceEntityManager(fullContext, this, queryRunner);
   }
 
   override createQueryRunner(
@@ -199,19 +260,73 @@ export class GlobalWorkspaceDataSource extends DataSource {
     return super.query(query, parameters, queryRunner);
   }
 
-  setRolesPermissionsVersion(rolesPermissionsVersion: string) {
-    this.rolesPermissionsVersion = rolesPermissionsVersion;
+  async buildWorkspaceMetadata(
+    workspaceId: string,
+    metadataVersion: number,
+    objectMetadataMaps: ObjectMetadataMaps,
+  ): Promise<void> {
+    const cacheKey = `${workspaceId}-${metadataVersion}`;
+
+    if (this.entityMetadataCache.has(cacheKey)) {
+      return;
+    }
+
+    const entitySchemas = await Promise.all(
+      Object.values(objectMetadataMaps.byId)
+        .filter(isDefined)
+        .map((objectMetadata) =>
+          this.entitySchemaFactory.create(
+            workspaceId,
+            objectMetadata,
+            objectMetadataMaps,
+          ),
+        ),
+    );
+
+    const entityMetadatas = this.buildMetadatasFromSchemas(entitySchemas);
+
+    const metadataMap = new Map<EntityTarget<ObjectLiteral>, EntityMetadata>();
+
+    for (const metadata of entityMetadatas) {
+      metadataMap.set(metadata.target, metadata);
+    }
+
+    this.entityMetadataCache.set(cacheKey, metadataMap);
   }
 
-  setRolesPermissions(permissionsPerRoleId: ObjectsPermissionsByRoleId) {
-    this.permissionsPerRoleId = permissionsPerRoleId;
+  private buildMetadatasFromSchemas(
+    entitySchemas: EntitySchema[],
+  ): EntityMetadata[] {
+    const transformer = new EntitySchemaTransformer();
+    const metadataArgsStorage = transformer.transform(entitySchemas);
+
+    const entityMetadataBuilder = new EntityMetadataBuilder(
+      this,
+      metadataArgsStorage,
+    );
+
+    const entityMetadatas = entityMetadataBuilder.build();
+
+    return entityMetadatas;
   }
 
-  setFeatureFlagMap(featureFlagMap: FeatureFlagMap) {
-    this.featureFlagMap = featureFlagMap;
+  hasWorkspaceMetadata(workspaceId: string, metadataVersion: number): boolean {
+    const cacheKey = `${workspaceId}-${metadataVersion}`;
+
+    return this.entityMetadataCache.has(cacheKey);
   }
 
-  setFeatureFlagMapVersion(featureFlagMapVersion: string) {
-    this.featureFlagMapVersion = featureFlagMapVersion;
+  clearWorkspaceMetadataCache(workspaceId: string): void {
+    const keysToDelete: string[] = [];
+
+    for (const key of this.entityMetadataCache.keys()) {
+      if (key.startsWith(`${workspaceId}-`)) {
+        keysToDelete.push(key);
+      }
+    }
+
+    for (const key of keysToDelete) {
+      this.entityMetadataCache.delete(key);
+    }
   }
 }

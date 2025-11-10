@@ -50,23 +50,27 @@ export class GlobalWorkspaceDataSourceService
   ) {}
 
   async onModuleInit(): Promise<void> {
-    this.globalWorkspaceDataSource = new GlobalWorkspaceDataSource({
-      url: this.twentyConfigService.get('PG_DATABASE_URL'),
-      type: 'postgres',
-      logging: this.twentyConfigService.getLoggingConfig(),
-      entities: [],
-      ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
-        ? {
-            rejectUnauthorized: false,
-          }
-        : undefined,
-      extra: {
-        query_timeout: 10000,
-        idleTimeoutMillis: TWENTY_MINUTES_IN_MS,
-        max: 4,
-        allowExitOnIdle: true,
+    this.globalWorkspaceDataSource = new GlobalWorkspaceDataSource(
+      {
+        url: this.twentyConfigService.get('PG_DATABASE_URL'),
+        type: 'postgres',
+        logging: this.twentyConfigService.getLoggingConfig(),
+        entities: [],
+        ssl: this.twentyConfigService.get('PG_SSL_ALLOW_SELF_SIGNED')
+          ? {
+              rejectUnauthorized: false,
+            }
+          : undefined,
+        extra: {
+          query_timeout: 10000,
+          idleTimeoutMillis: TWENTY_MINUTES_IN_MS,
+          max: 4,
+          allowExitOnIdle: true,
+        },
       },
-    });
+      this.workspaceEventEmitter,
+      this.entitySchemaFactory,
+    );
 
     await this.globalWorkspaceDataSource.initialize();
   }

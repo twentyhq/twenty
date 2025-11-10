@@ -21,6 +21,7 @@ import { ViewFilterGroupModule } from 'src/engine/metadata-modules/view-filter-g
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
+import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     ViewFilterGroupModule,
     ThrottlerModule,
     MetricsModule,
+    GlobalWorkspaceDataSourceModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,

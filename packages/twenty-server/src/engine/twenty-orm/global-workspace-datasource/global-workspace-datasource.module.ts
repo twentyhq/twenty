@@ -8,7 +8,10 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceFeatureFlagsMapCacheModule } from 'src/engine/metadata-modules/workspace-feature-flags-map-cache/workspace-feature-flags-map-cache.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
+import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
+import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -26,7 +29,13 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     TwentyConfigModule,
     WorkspaceEventEmitterModule,
   ],
-  providers: [GlobalWorkspaceDataSourceService, EntitySchemaFactory],
-  exports: [GlobalWorkspaceDataSourceService],
+  providers: [
+    GlobalWorkspaceDataSourceService,
+    GlobalWorkspaceOrmManager,
+    EntitySchemaFactory,
+    EntitySchemaColumnFactory,
+    EntitySchemaRelationFactory,
+  ],
+  exports: [GlobalWorkspaceDataSourceService, GlobalWorkspaceOrmManager],
 })
 export class GlobalWorkspaceDataSourceModule {}

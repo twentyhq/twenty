@@ -46,6 +46,8 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
@@ -61,6 +63,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly queryResultGettersFactory: QueryResultGettersFactory;
   @Inject()
   protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
+  @Inject()
+  protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
   @Inject()
@@ -121,24 +125,29 @@ export abstract class CommonBaseQueryRunnerService<
       commonQueryParser,
     );
 
-    const extendedQueryRunnerContext =
-      await this.prepareExtendedQueryRunnerContext(
-        authContext,
-        queryRunnerContext,
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      authContext.workspace.id,
+      async () => {
+        const extendedQueryRunnerContext =
+          await this.prepareExtendedQueryRunnerContext(
+            authContext,
+            queryRunnerContext,
+          );
 
-    const results = await this.run(processedArgs, {
-      ...extendedQueryRunnerContext,
-      commonQueryParser,
-    });
+        const results = await this.run(processedArgs, {
+          ...extendedQueryRunnerContext,
+          commonQueryParser,
+        });
 
-    return this.enrichResultsWithGettersAndHooks({
-      results,
-      operationName: this.operationName,
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    });
+        return this.enrichResultsWithGettersAndHooks({
+          results,
+          operationName: this.operationName,
+          authContext,
+          objectMetadataItemWithFieldMaps,
+          objectMetadataMaps,
+        });
+      },
+    );
   }
 
   protected abstract run(
@@ -308,28 +317,29 @@ export abstract class CommonBaseQueryRunnerService<
     authContext: WorkspaceAuthContext,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId: authContext.workspace.id,
-      });
+    const workspaceId = authContext.workspace.id;
 
     const { roleId } = await this.getRoleIdAndObjectsPermissions(
       authContext,
-      authContext.workspace.id,
+      workspaceId,
     );
 
     const rolePermissionConfig = { unionOf: [roleId] };
 
-    const repository = workspaceDataSource.getRepository(
+    const repository = await this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
       queryRunnerContext.objectMetadataItemWithFieldMaps.nameSingular,
       rolePermissionConfig,
-      authContext,
     );
+
+    const workspaceDataSource =
+      await this.globalWorkspaceOrmManager.getDataSource(workspaceId);
 
     return {
       ...queryRunnerContext,
       authContext,
-      workspaceDataSource,
+      workspaceDataSource:
+        workspaceDataSource as unknown as WorkspaceDataSource,
       rolePermissionConfig,
       repository,
     };
