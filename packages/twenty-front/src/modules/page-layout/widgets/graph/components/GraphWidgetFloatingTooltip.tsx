@@ -1,46 +1,21 @@
-import { GRAPH_TOOLTIP_ANIMATION_SCALE_EXIT } from '@/page-layout/widgets/graph/components/constants/GraphTooltipAnimationScaleExit';
-import { GRAPH_TOOLTIP_ANIMATION_SCALE_INITIAL } from '@/page-layout/widgets/graph/components/constants/GraphTooltipAnimationScaleInitial';
-import {
-  GraphWidgetTooltip,
-  type GraphWidgetTooltipItem,
-} from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { useTooltipFloating } from '@/page-layout/widgets/graph/hooks/useTooltipFloating';
-import { createVirtualElementFromChartCoordinates } from '@/page-layout/widgets/graph/utils/createVirtualElementFromChartCoordinates';
-import { createVirtualElementFromContainerOffset } from '@/page-layout/widgets/graph/utils/createVirtualElementFromContainerOffset';
+import { type GraphWidgetTooltipData } from '@/page-layout/widgets/graph/types/GraphWidgetTooltipData';
+import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
+import { getTooltipReferenceFromLineChartPointAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromLineChartPointAnchor';
 import { useTheme } from '@emotion/react';
 import { FloatingPortal, type VirtualElement } from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-
-export type ElementAnchor = { type: 'element'; element: Element };
-export type PointAnchor =
-  | { type: 'point'; mode: 'absolute'; left: number; top: number }
-  | {
-      type: 'point';
-      mode: 'relative';
-      containerId: string;
-      offsetLeft: number;
-      offsetTop: number;
-    };
-export type AnchorSource = ElementAnchor | PointAnchor;
-
-export type FloatingTooltipDescriptor = {
-  items: GraphWidgetTooltipItem[];
-  indexLabel?: string;
-  highlightedKey?: string;
-  linkTo?: string;
-  anchor: AnchorSource;
-};
 
 type GraphWidgetFloatingTooltipProps = {
-  descriptor: FloatingTooltipDescriptor | null;
+  tooltipData: GraphWidgetTooltipData | null;
   onRequestHide?: () => void;
   onCancelHide?: () => void;
 };
 
 export const GraphWidgetFloatingTooltip = ({
-  descriptor,
+  tooltipData,
   onRequestHide,
   onCancelHide,
 }: GraphWidgetFloatingTooltipProps) => {
@@ -50,44 +25,24 @@ export const GraphWidgetFloatingTooltip = ({
     reference: Element | VirtualElement | null;
     boundary: Element | null;
   } => {
-    if (!descriptor) return { reference: null, boundary: null };
-    if (descriptor.anchor.type === 'element') {
-      const el = descriptor.anchor.element;
-      const container = el.closest('[id]');
-      return { reference: el, boundary: container };
+    if (!tooltipData) return { reference: null, boundary: null };
+
+    if (tooltipData.anchor.type === 'bar-element-anchor') {
+      return getTooltipReferenceFromBarChartElementAnchor(
+        tooltipData.anchor.element,
+      );
     }
-    if (descriptor.anchor.mode === 'relative') {
-      const container = document.getElementById(descriptor.anchor.containerId);
-      if (isDefined(container)) {
-        return {
-          reference: createVirtualElementFromContainerOffset(
-            container,
-            descriptor.anchor.offsetLeft,
-            descriptor.anchor.offsetTop,
-          ),
-          boundary: container,
-        };
-      }
-      return {
-        reference: createVirtualElementFromChartCoordinates({
-          left: descriptor.anchor.offsetLeft,
-          top: descriptor.anchor.offsetTop,
-        }),
-        boundary: null,
-      };
-    }
-    return {
-      reference: createVirtualElementFromChartCoordinates({
-        left: descriptor.anchor.left,
-        top: descriptor.anchor.top,
-      }),
-      boundary: null,
-    };
-  }, [descriptor]);
+
+    return getTooltipReferenceFromLineChartPointAnchor(
+      tooltipData.anchor.containerId,
+      tooltipData.anchor.offsetLeft,
+      tooltipData.anchor.offsetTop,
+    );
+  }, [tooltipData]);
 
   const { refs, floatingStyles } = useTooltipFloating(reference, boundary);
 
-  if (!descriptor) return null;
+  if (!tooltipData) return null;
 
   return (
     <FloatingPortal>
@@ -103,20 +58,20 @@ export const GraphWidgetFloatingTooltip = ({
           <motion.div
             initial={{
               opacity: 0,
-              scale: GRAPH_TOOLTIP_ANIMATION_SCALE_INITIAL,
+              scale: 0.95,
             }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: GRAPH_TOOLTIP_ANIMATION_SCALE_EXIT }}
+            exit={{ opacity: 0, scale: 0.95 }}
             transition={{
-              duration: theme.animation.duration.fast,
+              duration: theme.animation.duration.normal,
               ease: 'easeInOut',
             }}
           >
             <GraphWidgetTooltip
-              items={descriptor.items}
-              indexLabel={descriptor.indexLabel}
-              highlightedKey={descriptor.highlightedKey}
-              linkTo={descriptor.linkTo}
+              items={tooltipData.items}
+              indexLabel={tooltipData.indexLabel}
+              highlightedKey={tooltipData.highlightedKey}
+              linkTo={tooltipData.linkTo}
             />
           </motion.div>
         </AnimatePresence>

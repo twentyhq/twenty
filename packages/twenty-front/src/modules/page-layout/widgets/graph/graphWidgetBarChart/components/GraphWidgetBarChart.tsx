@@ -1,8 +1,6 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
-import {
-  GraphWidgetFloatingTooltip,
-  type FloatingTooltipDescriptor,
-} from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { type GraphWidgetTooltipData } from '@/page-layout/widgets/graph/types/GraphWidgetTooltipData';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
@@ -29,6 +27,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   ResponsiveBar,
+  type BarItemProps,
   type ComputedBarDatum,
   type ComputedDatum,
 } from '@nivo/bar';
@@ -97,8 +96,8 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [tooltipDescriptor, setTooltipDescriptor] =
-    useState<FloatingTooltipDescriptor | null>(null);
+  const [activeTooltipData, setActiveTooltipData] =
+    useState<GraphWidgetTooltipData | null>(null);
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -132,7 +131,7 @@ export const GraphWidgetBarChart = ({
     enableGroupTooltip: groupMode === 'stacked',
   });
 
-  const hideTooltip = useCallback(() => setTooltipDescriptor(null), []);
+  const hideTooltip = useCallback(() => setActiveTooltipData(null), []);
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
   const scheduleHide = useCallback(() => {
     debouncedHideTooltip();
@@ -150,12 +149,15 @@ export const GraphWidgetBarChart = ({
       if (!isDefined(tooltipData)) return;
 
       cancelScheduledHide();
-      setTooltipDescriptor({
+      setActiveTooltipData({
         items: tooltipData.tooltipItems,
         indexLabel: tooltipData.indexLabel,
         linkTo: tooltipData.linkTo,
         highlightedKey: tooltipData.hoveredKey,
-        anchor: { type: 'element', element: event.currentTarget },
+        anchor: {
+          type: 'bar-element-anchor',
+          element: event.currentTarget,
+        },
       });
     },
     [getTooltipData, cancelScheduledHide],
@@ -183,7 +185,7 @@ export const GraphWidgetBarChart = ({
     });
 
   const BarItemWithContext = useMemo(
-    () => (props: any) => (
+    () => (props: BarItemProps<BarChartDataItem>) => (
       <CustomBarItem
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
@@ -303,7 +305,7 @@ export const GraphWidgetBarChart = ({
         />
       </GraphWidgetChartContainer>
       <GraphWidgetFloatingTooltip
-        descriptor={tooltipDescriptor}
+        tooltipData={activeTooltipData}
         onRequestHide={hideTooltip}
         onCancelHide={cancelScheduledHide}
       />

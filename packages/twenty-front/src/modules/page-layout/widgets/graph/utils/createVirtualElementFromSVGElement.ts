@@ -12,7 +12,12 @@ export const createVirtualElementFromSVGElement = (
   return {
     getBoundingClientRect: () => {
       const elementRect = svgElement.getBoundingClientRect();
-      return new DOMRect(elementRect.left, elementRect.top, elementRect.width, 1);
+      return new DOMRect(
+        elementRect.left,
+        elementRect.top,
+        elementRect.width,
+        1,
+      );
     },
   };
 };

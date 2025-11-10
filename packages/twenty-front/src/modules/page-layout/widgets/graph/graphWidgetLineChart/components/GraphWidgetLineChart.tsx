@@ -1,8 +1,6 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
-import {
-  GraphWidgetFloatingTooltip,
-  type FloatingTooltipDescriptor,
-} from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { type GraphWidgetTooltipData } from '@/page-layout/widgets/graph/types/GraphWidgetTooltipData';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import {
   CustomCrosshairLayer,
@@ -136,12 +134,12 @@ export const GraphWidgetLineChart = ({
     formatOptions,
   });
 
-  const [tooltipDescriptor, setTooltipDescriptor] =
-    useState<FloatingTooltipDescriptor | null>(null);
+  const [activeTooltipData, setActiveTooltipData] =
+    useState<GraphWidgetTooltipData | null>(null);
   const [crosshairX, setCrosshairX] = useState<number | null>(null);
 
   const hideTooltip = useCallback(() => {
-    setTooltipDescriptor(null);
+    setActiveTooltipData(null);
     setCrosshairX(null);
   }, []);
 
@@ -181,14 +179,13 @@ export const GraphWidgetLineChart = ({
 
       cancelScheduledHide();
       setCrosshairX(data.sliceX);
-      setTooltipDescriptor({
+      setActiveTooltipData({
         items: tooltipData.items,
         indexLabel: tooltipData.indexLabel,
         highlightedKey: String(data.closestPoint.seriesId),
         linkTo,
         anchor: {
-          type: 'point',
-          mode: 'relative',
+          type: 'line-point-anchor',
           containerId: id,
           offsetLeft,
           offsetTop,
@@ -264,7 +261,7 @@ export const GraphWidgetLineChart = ({
         />
       </GraphWidgetChartContainer>
       <GraphWidgetFloatingTooltip
-        descriptor={tooltipDescriptor}
+        tooltipData={activeTooltipData}
         onRequestHide={hideTooltip}
         onCancelHide={cancelScheduledHide}
       />

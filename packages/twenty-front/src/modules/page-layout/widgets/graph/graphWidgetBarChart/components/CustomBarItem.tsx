@@ -186,10 +186,10 @@ export const CustomBarItem = <D extends BarDatum>({
   const clipRectHeight = to(finalBarHeightDimension, (value) =>
     heightWithOffset(value),
   );
-  const clipRx = to(finalBarWidthDimension, (value) =>
+  const clipBorderRadiusX = to(finalBarWidthDimension, (value) =>
     clampRadius(widthWithOffset(value)),
   );
-  const clipRy = to(finalBarHeightDimension, (value) =>
+  const clipBorderRadiusY = to(finalBarHeightDimension, (value) =>
     clampRadius(heightWithOffset(value)),
   );
 
@@ -202,8 +202,8 @@ export const CustomBarItem = <D extends BarDatum>({
               <animated.rect
                 x={clipPathX}
                 y={clipPathY}
-                rx={clipRx}
-                ry={clipRy}
+                rx={clipBorderRadiusX}
+                ry={clipBorderRadiusY}
                 width={clipRectWidth}
                 height={clipRectHeight}
               />
