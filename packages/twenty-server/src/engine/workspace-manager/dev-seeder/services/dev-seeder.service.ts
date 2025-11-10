@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -40,6 +41,8 @@ export class DevSeederService {
     private readonly applicationService: ApplicationService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   public async seedDev(workspaceId: SeededWorkspacesIds): Promise<void> {
@@ -80,10 +83,23 @@ export class DevSeederService {
       );
     }
 
+    const workspace = await this.workspaceRepository.findOneOrFail({
+      where: {
+        id: workspaceId,
+      },
+    });
+    const applications =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspace,
+        },
+      );
+
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
+      applications,
     });
 
     await this.devSeederMetadataService.seed({

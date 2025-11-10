@@ -12,6 +12,7 @@ import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-en
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class StandardIndexFactory {
@@ -88,6 +89,8 @@ export class StandardIndexFactory {
           isCustom: false,
           indexWhereClause: workspaceIndexMetadataArgs.whereClause,
           indexType: workspaceIndexMetadataArgs.type ?? IndexType.BTREE,
+          applicationId: context.applications.twentyStandardApplication.id,
+          universalIdentifier: v4(),
         };
 
         return indexMetadata;
@@ -130,6 +133,8 @@ export class StandardIndexFactory {
               isUnique: workspaceIndexMetadataArgs.isUnique,
               indexType: workspaceIndexMetadataArgs.type ?? IndexType.BTREE,
               indexWhereClause: workspaceIndexMetadataArgs.whereClause,
+              applicationId: context.applications.twentyStandardApplication.id,
+              universalIdentifier: v4(),
             };
 
             return indexMetadata;

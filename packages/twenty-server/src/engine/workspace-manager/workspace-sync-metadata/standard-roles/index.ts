@@ -4,7 +4,7 @@ import { DATA_NAVIGATOR_ROLE } from './roles/data-navigator-role';
 import { WORKFLOW_MANAGER_ROLE } from './roles/workflow-manager-role';
 import { type StandardRoleDefinition } from './types/standard-role-definition.interface';
 
-export const standardRoleDefinitions = [
+export const STANDARD_ROLE_DEFINITIONS = [
   ADMIN_ROLE,
   WORKFLOW_MANAGER_ROLE,
   DATA_NAVIGATOR_ROLE,

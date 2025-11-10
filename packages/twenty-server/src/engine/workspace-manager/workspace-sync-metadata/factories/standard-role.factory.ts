@@ -21,23 +21,14 @@ export class StandardRoleFactory {
         (role) => role.standardId === roleDefinition.standardId,
       );
 
-      const flatRole = fromStandardRoleDefinitionToFlatRole(
-        roleDefinition,
-        context.workspaceId,
-      );
+      const flatRole = fromStandardRoleDefinitionToFlatRole({
+        standardRoleDefinition: roleDefinition,
+        workspaceId: context.workspaceId,
+        applicationId: context.applications.twentyStandardApplication.id,
+        id: existingRole?.id,
+      });
 
-      if (existingRole) {
-        computedRoles.push({
-          ...flatRole,
-          id: existingRole.id,
-          universalIdentifier: roleDefinition.standardId || existingRole.id,
-        });
-      } else {
-        computedRoles.push({
-          ...flatRole,
-          universalIdentifier: roleDefinition.standardId,
-        });
-      }
+      computedRoles.push(flatRole);
     }
 
     return computedRoles;

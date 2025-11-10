@@ -3,7 +3,7 @@ import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions
 
 export type StandardRoleDefinition = Omit<
   FlatRole,
-  'id' | 'workspaceId' | 'universalIdentifier' | 'standardId'
+  'id' | 'workspaceId' | 'universalIdentifier' | 'standardId' | 'applicationId'
 > & {
   standardId: string;
   permissionFlags?: PermissionFlagType[];

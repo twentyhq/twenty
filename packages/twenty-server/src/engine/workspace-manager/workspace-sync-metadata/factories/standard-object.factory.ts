@@ -56,6 +56,8 @@ export class StandardObjectFactory {
       isCustom: false,
       isRemote: false,
       isSystem: workspaceEntityMetadataArgs.isSystem ?? false,
+      applicationId: context.applications.twentyStandardApplication.id,
+      universalIdentifier: workspaceEntityMetadataArgs.standardId,
     };
   }
 }

@@ -9,6 +9,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
@@ -19,6 +20,36 @@ export class ApplicationService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
+
+  async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
+    workspace,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'workspaceCustomApplicationId' | 'id'>;
+  }) {
+    const [workspaceCustomApplication, twentyStandardApplication] =
+      await Promise.all([
+        this.findById(workspace.workspaceCustomApplicationId),
+        this.findByUniversalIdentifier({
+          universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+          workspaceId: workspace.id,
+        }),
+      ]);
+
+    if (
+      !isDefined(twentyStandardApplication) ||
+      !isDefined(workspaceCustomApplication)
+    ) {
+      throw new ApplicationException(
+        `Could not find workspace custom and standard applications ${workspace.id}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return {
+      twentyStandardApplication,
+      workspaceCustomApplication,
+    };
+  }
 
   async findManyApplications(
     workspaceId: string,
