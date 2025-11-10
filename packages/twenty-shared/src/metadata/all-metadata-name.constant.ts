@@ -11,3 +11,10 @@ export const ALL_METADATA_NAME = {
   routeTrigger: 'routeTrigger',
   viewFilter: 'viewFilter',
 } as const;
+
+export const NOT_V2_YET_METADATA_NAME = {
+  viewFilterGroup: 'viewFilterGroup',
+  viewSort: 'viewSort',
+  agent: 'agent',
+  role: 'role',
+} as const;
