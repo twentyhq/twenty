@@ -2,6 +2,14 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { DataSource, IsNull, Not, Or, Repository } from 'typeorm';
+import {
+  ALL_METADATA_NAME,
+  AllMetadataName,
+  NOT_V2_YET_METADATA_NAME,
+  NotV2YetAllMetadataName,
+} from 'twenty-shared/metadata';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -12,19 +20,12 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { getAllTransactionalMetadataEntityRepository } from 'src/engine/metadata-modules/flat-entity/utils/get-all-transactional-metadata-entity-repository.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
-import {
-  ALL_METADATA_NAME,
-  AllMetadataName,
-  NOT_V2_YET_METADATA_NAME,
-  NotV2YetAllMetadataName,
-} from 'twenty-shared/metadata';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 const ALL_METADATA_NAME_TO_MIGRATE = [
   ...Object.keys(ALL_METADATA_NAME),
   ...Object.keys(NOT_V2_YET_METADATA_NAME),
 ] as (AllMetadataName | NotV2YetAllMetadataName)[];
+
 @Command({
   name: 'upgrade:1-11:associate-standard-entities-to-twenty-standard-application',
   description:
@@ -147,10 +148,6 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
             case 'viewFilterGroup':
             case 'viewSort':
             case 'viewGroup': {
-              if (metadataName === 'viewFilterGroup') {
-                console.log('salut');
-              }
-
               const metadataEntityRepository =
                 metadataEntityRepositoryByMetadataName[metadataName];
 
