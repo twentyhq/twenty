@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
@@ -18,7 +18,7 @@ export const RecordIndexTableContainerEffect = () => {
   });
 
   const { columnDefinitions } =
-    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+    useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
   const { currentView } = useGetCurrentViewOnly();
 
