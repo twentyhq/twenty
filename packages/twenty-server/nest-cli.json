@@ -33,6 +33,10 @@
       {
         "include": "**/dev-seeder/data/sample-files/**",
         "outDir": "dist/src"
+      },
+      {
+        "include": "**/enrichment/config/*.json",
+        "outDir": "dist/src"
       }
     ],
     "watchAssets": true
