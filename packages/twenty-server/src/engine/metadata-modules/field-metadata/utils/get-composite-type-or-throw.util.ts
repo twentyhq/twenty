@@ -1,8 +1,9 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  type CompositeType,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 
-import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
-
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,

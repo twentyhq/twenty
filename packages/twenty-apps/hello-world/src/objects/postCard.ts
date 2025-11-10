@@ -3,6 +3,8 @@ import {
   FieldMetadata,
   ObjectMetadata,
   FieldMetadataType,
+  type FullNameMetadata,
+  type AddressMetadata,
 } from 'twenty-sdk/application';
 
 enum PostCardStatus {
@@ -37,7 +39,7 @@ export class PostCard extends BaseObjectMetadata {
     label: 'Recipient name',
     icon: 'IconUser',
   })
-  recipientName: string;
+  recipientName: FullNameMetadata;
 
   @FieldMetadata({
     universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
@@ -45,7 +47,7 @@ export class PostCard extends BaseObjectMetadata {
     label: 'Recipient address',
     icon: 'IconHome',
   })
-  recipientAddress: string;
+  recipientAddress: AddressMetadata;
 
   @FieldMetadata({
     universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
