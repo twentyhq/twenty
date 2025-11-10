@@ -17,5 +17,5 @@ twenty app sync
 
 ## Flow
 - Checks if fields are created, if not, creates them on fly
-- Extracts the timedate of message and calculates the last interaction status
+- Extracts the datetime of message and calculates the last interaction status
 - Fetches all users and companies connected to them and updates their Last interaction and Interaction status fields
