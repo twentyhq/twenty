@@ -68,6 +68,23 @@ export class CreatedByFromAuthContextService {
 
     const clonedRecords = structuredClone(records);
 
+    // Check if all records already have createdBy with name populated
+    // If so, skip building from auth context (e.g., workflows provide explicit createdBy)
+    const recordsArray = Array.isArray(clonedRecords)
+      ? clonedRecords
+      : [clonedRecords];
+    const allRecordsHaveCreatedBy = recordsArray.every(
+      (record) => record.createdBy?.name,
+    );
+
+    if (allRecordsHaveCreatedBy) {
+      this.logger.log(
+        `All records already have createdBy populated, skipping injection from auth context`,
+      );
+
+      return clonedRecords;
+    }
+
     const createdBy = await this.buildCreatedBy(authContext);
 
     if (Array.isArray(clonedRecords)) {

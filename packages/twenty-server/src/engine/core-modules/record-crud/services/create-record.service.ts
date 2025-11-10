@@ -33,6 +33,7 @@ export class CreateRecordService {
           rolePermissionConfig,
           userWorkspaceId,
           apiKey,
+          actorContext: createdBy,
         });
 
       // Pass createdBy explicitly if provided (for workflows)

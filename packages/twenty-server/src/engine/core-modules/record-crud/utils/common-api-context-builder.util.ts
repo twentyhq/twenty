@@ -95,7 +95,7 @@ export class CommonApiContextBuilder {
       workspace: { id: workspaceId } as unknown as AuthContext['workspace'],
       workspaceMemberId: actorContext?.workspaceMemberId ?? undefined,
       userWorkspaceId,
-      apiKey: apiKey ?? null,
+      apiKey,
       user: null,
     };
   }
