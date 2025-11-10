@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "mintlify dev",
     "build": "mintlify build",
-    "fix-links": "bash scripts/fix-translated-links.sh"
+    "fix-links": "bash scripts/fix-translated-links.sh",
+    "lint": "eslint **/*.mdx --max-warnings=0"
   },
   "dependencies": {
     "mintlify": "latest"

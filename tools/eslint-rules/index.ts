@@ -31,6 +31,10 @@ import {
     RULE_NAME as mdxComponentNewlinesName,
 } from './rules/mdx-component-newlines';
 import {
+    rule as noAngleBracketPlaceholders,
+    RULE_NAME as noAngleBracketPlaceholdersName,
+} from './rules/no-angle-bracket-placeholders';
+import {
     rule as noHardcodedColors,
     RULE_NAME as noHardcodedColorsName,
 } from './rules/no-hardcoded-colors';
@@ -108,5 +112,6 @@ module.exports = {
     [restApiMethodsShouldBeGuardedName]: restApiMethodsShouldBeGuarded,
     [graphqlResolversShouldBeGuardedName]: graphqlResolversShouldBeGuarded,
     [mdxComponentNewlinesName]: mdxComponentNewlines,
+    [noAngleBracketPlaceholdersName]: noAngleBracketPlaceholders,
   },
 };
