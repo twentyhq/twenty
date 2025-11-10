@@ -1,12 +1,13 @@
 import { isDefined } from 'class-validator';
-import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import {
   ALL_METADATA_NAME,
-  AllMetadataName,
+  type AllMetadataName,
   NOT_V2_YET_METADATA_NAME,
-  NotV2YetAllMetadataName,
+  type NotV2YetAllMetadataName,
 } from 'twenty-shared/metadata';
-import { QueryRunner, Repository } from 'typeorm';
+import { type QueryRunner, type Repository } from 'typeorm';
+
+import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 
 type MetadataEntityRepositoryByMetadataName = {
   [P in AllMetadataName | NotV2YetAllMetadataName]: Repository<
