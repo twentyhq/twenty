@@ -1,8 +1,10 @@
-import { FieldMetadataType, type RelationType } from 'twenty-shared/types';
-
-import { type EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
-import { type LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
-import { type PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
+import {
+  FieldMetadataType,
+  type RelationType,
+  type EmailsMetadata,
+  type LinksMetadata,
+  type PhonesMetadata,
+} from 'twenty-shared/types';
 
 import { mergeArrayFieldValues } from './merge-array-field-values.util';
 import { mergeEmailsFieldValues } from './merge-emails-field-values.util';

@@ -1,4 +1,8 @@
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectRecord,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -15,7 +19,6 @@ import { buildCursorCumulativeWhereCondition } from 'src/engine/api/utils/build-
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 import { validateAndGetOrderByForCompositeField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 type BuildCursorCompositeFieldWhereConditionParams = {
   fieldType: FieldMetadataType;

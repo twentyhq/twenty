@@ -9,11 +9,11 @@ import {
 } from 'graphql';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { getUniqueConstraintsFields } from 'twenty-shared/utils';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
 
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
