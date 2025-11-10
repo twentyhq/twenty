@@ -1,7 +1,7 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { IsNull, Not, Or, Repository } from 'typeorm';
+import { DataSource, IsNull, Not, Or, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -36,13 +36,14 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly applicationService: ApplicationService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
   override async runOnWorkspace({
     workspaceId,
-    dataSource: workspaceDataSource,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     this.logger.log(
@@ -61,7 +62,7 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
       );
     }
 
-    const queryRunner = workspaceDataSource.createQueryRunner();
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -75,115 +76,124 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
       for (const metadataName of ALL_METADATA_NAME_TO_MIGRATE) {
         this.logger.log(`retrieving ${metadataName} entities`);
 
-        switch (metadataName) {
-          case 'agent':
-          case 'role':
-          case 'objectMetadata': {
-            const metadataEntityRepository =
-              metadataEntityRepositoryByMetadataName[metadataName];
+        try {
+          switch (metadataName) {
+            case 'agent':
+            case 'role':
+            case 'objectMetadata': {
+              const metadataEntityRepository =
+                metadataEntityRepositoryByMetadataName[metadataName];
 
-            const standardEntities = await metadataEntityRepository.find({
-              select: {
-                standardId: true,
-                universalIdentifier: true,
-                applicationId: true,
-                id: true,
-              },
-              where: {
-                standardId: Not(IsNull()),
-                workspaceId,
-                applicationId: IsNull(),
-              },
-              withDeleted: true,
-            });
-
-            for (const entity of standardEntities) {
-              this.logger.log(
-                `Processing entity id=${entity.id} standardId=${entity.standardId}`,
-              );
-
-              await metadataEntityRepository.update(entity.id, {
-                universalIdentifier:
-                  entity.universalIdentifier ?? entity.standardId,
-                applicationId: twentyStandardApplication.id,
+              const standardEntities = await metadataEntityRepository.find({
+                select: {
+                  standardId: true,
+                  universalIdentifier: true,
+                  applicationId: true,
+                  id: true,
+                },
+                where: {
+                  standardId: Not(IsNull()),
+                  workspaceId,
+                  applicationId: IsNull(),
+                },
+                withDeleted: true,
               });
+
+              for (const entity of standardEntities) {
+                this.logger.log(
+                  `Processing entity id=${entity.id} standardId=${entity.standardId}`,
+                );
+
+                await metadataEntityRepository.update(entity.id, {
+                  universalIdentifier:
+                    entity.universalIdentifier ?? entity.standardId,
+                  applicationId: twentyStandardApplication.id,
+                });
+              }
+              break;
             }
-            break;
-          }
-          case 'view':
-          case 'fieldMetadata':
-          case 'index': {
-            const metadataEntityRepository =
-              metadataEntityRepositoryByMetadataName[metadataName];
+            case 'view':
+            case 'fieldMetadata':
+            case 'index': {
+              const metadataEntityRepository =
+                metadataEntityRepositoryByMetadataName[metadataName];
 
-            const standardEntities = await metadataEntityRepository.find({
-              select: {
-                id: true,
-                universalIdentifier: true,
-                applicationId: true,
-              },
-              where: {
-                workspaceId,
-                applicationId: IsNull(),
-                isCustom: Or(IsNull(), false as any),
-              },
-              withDeleted: true,
-            });
-
-            for (const entity of standardEntities) {
-              this.logger.log(`Processing entity id=${entity.id}`);
-
-              await metadataEntityRepository.update(entity.id, {
-                universalIdentifier: entity.universalIdentifier ?? v4(),
-                applicationId: twentyStandardApplication.id,
-              });
-            }
-            break;
-          }
-          case 'viewField':
-          case 'viewFilter':
-          case 'viewFilterGroup':
-          case 'viewSort':
-          case 'viewGroup': {
-            const metadataEntityRepository =
-              metadataEntityRepositoryByMetadataName[metadataName];
-
-            const standardEntities = await metadataEntityRepository.find({
-              select: {
-                id: true,
-                universalIdentifier: true,
-                applicationId: true,
-              },
-              where: {
-                view: {
+              const standardEntities = await metadataEntityRepository.find({
+                select: {
+                  id: true,
+                  universalIdentifier: true,
+                  applicationId: true,
+                },
+                where: {
+                  workspaceId,
+                  applicationId: IsNull(),
                   isCustom: Or(IsNull(), false as any),
                 },
-                workspaceId,
-                applicationId: IsNull(),
-              },
-              withDeleted: true,
-            });
-
-            for (const entity of standardEntities) {
-              this.logger.log(`Processing entity id=${entity.id}`);
-
-              await metadataEntityRepository.update(entity.id, {
-                universalIdentifier: entity.universalIdentifier ?? v4(),
-                applicationId: twentyStandardApplication.id,
+                withDeleted: true,
               });
+
+              for (const entity of standardEntities) {
+                this.logger.log(`Processing entity id=${entity.id}`);
+
+                await metadataEntityRepository.update(entity.id, {
+                  universalIdentifier: entity.universalIdentifier ?? v4(),
+                  applicationId: twentyStandardApplication.id,
+                });
+              }
+              break;
             }
-            break;
+            case 'viewField':
+            case 'viewFilter':
+            case 'viewFilterGroup':
+            case 'viewSort':
+            case 'viewGroup': {
+              if (metadataName === 'viewFilterGroup') {
+                console.log('salut');
+              }
+
+              const metadataEntityRepository =
+                metadataEntityRepositoryByMetadataName[metadataName];
+
+              const standardEntities = await metadataEntityRepository.find({
+                select: {
+                  id: true,
+                  universalIdentifier: true,
+                  applicationId: true,
+                },
+                where: {
+                  view: {
+                    isCustom: Or(IsNull(), false as any),
+                  },
+                  workspaceId,
+                  applicationId: IsNull(),
+                },
+                withDeleted: true,
+              });
+
+              for (const entity of standardEntities) {
+                this.logger.log(`Processing entity id=${entity.id}`);
+
+                await metadataEntityRepository.update(entity.id, {
+                  universalIdentifier: entity.universalIdentifier ?? v4(),
+                  applicationId: twentyStandardApplication.id,
+                });
+              }
+              break;
+            }
+            case 'serverlessFunction':
+            case 'cronTrigger':
+            case 'databaseEventTrigger':
+            case 'routeTrigger': {
+              // No twnenty-standards entries only custom
+              break;
+            }
+            default: {
+              assertUnreachable(metadataName);
+            }
           }
-          case 'serverlessFunction':
-          case 'cronTrigger':
-          case 'databaseEventTrigger':
-          case 'routeTrigger': {
-            // No twnenty-standards entries only custom
-            break;
-          }
-          default: {
-            assertUnreachable(metadataName);
-          }
+        } catch (error) {
+          this.logger.error(`Failed to iterate over ${metadataName}`);
+          throw error;
         }
       }
 
