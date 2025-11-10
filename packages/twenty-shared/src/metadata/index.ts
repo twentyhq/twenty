@@ -7,8 +7,14 @@
  *                              |___/
  */
 
-export { ALL_METADATA_NAME } from './all-metadata-name.constant';
-export type { AllMetadataName } from './all-metadata-name.type';
+export {
+  ALL_METADATA_NAME,
+  NOT_V2_YET_METADATA_NAME,
+} from './all-metadata-name.constant';
+export type {
+  AllMetadataName,
+  NotV2YetAllMetadataName,
+} from './all-metadata-name.type';
 export type {
   FailedMetadataValidationError,
   FailedMetadataValidation,
