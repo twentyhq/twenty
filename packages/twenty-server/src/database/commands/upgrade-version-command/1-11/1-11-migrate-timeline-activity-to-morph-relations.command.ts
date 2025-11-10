@@ -1,6 +1,7 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { capitalize } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
 
 import {
@@ -10,6 +11,7 @@ import {
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -24,6 +26,8 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly featureFlagService: FeatureFlagService,
+    @InjectRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -60,6 +64,16 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const tableName = 'timelineActivity';
 
+    const customObjectMetadata = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+        isCustom: true,
+      },
+    });
+    const customObjectMetadataNames = customObjectMetadata.map(
+      (objectMetadata) => objectMetadata.nameSingular,
+    );
+
     const fieldMigrations = [
       { old: 'companyId', new: 'targetCompanyId' },
       { old: 'personId', new: 'targetPersonId' },
@@ -70,7 +84,32 @@ export class MigrateTimelineActivityToMorphRelationsCommand extends ActiveOrSusp
       { old: 'workflowVersionId', new: 'targetWorkflowVersionId' },
       { old: 'workflowRunId', new: 'targetWorkflowRunId' },
       { old: 'dashboardId', new: 'targetDashboardId' },
+      ...customObjectMetadataNames.map((customObjectName) => ({
+        old: `${customObjectName}Id`,
+        new: `target${capitalize(customObjectName)}Id`,
+      })),
     ];
+
+    for (const customObjectName of customObjectMetadataNames) {
+      const newColumn = `target${capitalize(customObjectName)}Id`;
+
+      try {
+        await this.coreDataSource.query(
+          `ALTER TABLE "${schemaName}"."${tableName}"
+           ADD COLUMN IF NOT EXISTS "${newColumn}" uuid NULL`,
+        );
+        this.logger.log(
+          `Created column "${newColumn}" for custom object "${customObjectName}"`,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Error creating column "${newColumn}" for custom object "${customObjectName}" in workspace ${workspaceId}`,
+          error,
+        );
+
+        return;
+      }
+    }
 
     for (const { old: oldField, new: newField } of fieldMigrations) {
       try {
