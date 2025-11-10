@@ -6,7 +6,7 @@ import {
   AllMetadataName,
   NotV2YetAllMetadataName,
 } from 'twenty-shared/metadata';
-import { DataSource, Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 
 type MetadataEntityRepositoryByMetadataName = {
   [P in AllMetadataName | NotV2YetAllMetadataName]: Repository<
@@ -14,10 +14,10 @@ type MetadataEntityRepositoryByMetadataName = {
   >;
 };
 
-export const getAllMetadataEntityRepository = ({
-  dataSource,
+export const getAllTransactionalMetadataEntityRepository = ({
+  queryRunner,
 }: {
-  dataSource: DataSource;
+  queryRunner: QueryRunner;
 }): MetadataEntityRepositoryByMetadataName => {
   const metadataEntityRepositoryByMetadataName =
     {} as MetadataEntityRepositoryByMetadataName;
@@ -28,7 +28,7 @@ export const getAllMetadataEntityRepository = ({
     const currentMetadataEntity =
       ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
 
-    const metadataEntityRepository = dataSource.getRepository<
+    const metadataEntityRepository = queryRunner.manager.getRepository<
       MetadataEntity<typeof metadataName>
     >(currentMetadataEntity);
 
@@ -38,7 +38,7 @@ export const getAllMetadataEntityRepository = ({
       );
     }
 
-    // @ts-expect-error TODO
+    // @ts-expect-error Union type overlaping
     metadataEntityRepositoryByMetadataName[metadataName] =
       metadataEntityRepository;
   }
