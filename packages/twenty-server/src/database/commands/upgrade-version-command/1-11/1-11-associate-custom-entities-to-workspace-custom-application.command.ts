@@ -103,6 +103,7 @@ export class AssociateCustomEntitiesToWorkspaceCustomApplicationCommand extends 
         for (const entity of customEntities) {
           this.logger.log(`Processing entity id=${entity.id}`);
 
+          // @ts-ignore
           await metadataEntityRepository.update(entity.id, {
             universalIdentifier: entity.universalIdentifier ?? v4(),
             applicationId: workspaceCustomApplication.id,
