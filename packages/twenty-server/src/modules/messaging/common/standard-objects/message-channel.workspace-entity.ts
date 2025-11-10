@@ -98,6 +98,7 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannel,
+
   namePlural: 'messageChannels',
   labelSingular: msg`Message Channel`,
   labelPlural: msg`Message Channels`,

@@ -1,7 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { z } from 'zod';
-
-import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { FieldMetadataType } from '../FieldMetadataType';
+import { type CompositeType } from '../composite-types/composite-type.interface';
 
 export const richTextV2CompositeType: CompositeType = {
   type: FieldMetadataType.RICH_TEXT_V2,

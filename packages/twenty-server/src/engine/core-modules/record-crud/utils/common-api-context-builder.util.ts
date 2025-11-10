@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ActorMetadata } from 'twenty-shared/types';
+
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -25,7 +26,6 @@ export class CommonApiContextBuilder {
     queryRunnerContext: CommonBaseQueryRunnerContext;
     selectedFields: Record<string, boolean>;
   }> {
-    // Either userWorkspaceId or apiKey must be provided for authentication
     if (!params.userWorkspaceId && !params.apiKey) {
       throw new Error(
         'Either userWorkspaceId or apiKey is required for Common API operations',

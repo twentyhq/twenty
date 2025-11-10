@@ -10,7 +10,7 @@ import {
   UIMessage,
   UITools,
 } from 'ai';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, type ActorMetadata } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -26,7 +26,6 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { AgentActorContextService } from 'src/engine/metadata-modules/agent/services/agent-actor-context.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';

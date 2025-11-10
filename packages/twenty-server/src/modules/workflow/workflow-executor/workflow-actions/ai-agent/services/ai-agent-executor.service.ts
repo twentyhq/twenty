@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateObject, generateText, stepCountIs, ToolSet } from 'ai';
 import { Repository } from 'typeorm';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
@@ -17,7 +18,6 @@ import {
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';

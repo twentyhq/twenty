@@ -3,6 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -45,15 +46,17 @@ export class WorkspaceManagerService {
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   public async init({
-    workspaceId,
+    workspace,
     userId,
   }: {
-    workspaceId: string;
+    workspace: WorkspaceEntity;
     userId: string;
   }): Promise<void> {
+    const workspaceId = workspace.id;
     const schemaCreationStart = performance.now();
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
@@ -76,6 +79,11 @@ export class WorkspaceManagerService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
+    await this.applicationService.createTwentyStandardApplication({
+      workspaceId,
+    });
+
+    // TODO later replace by twenty-standard installation aka workspaceMigration run
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
