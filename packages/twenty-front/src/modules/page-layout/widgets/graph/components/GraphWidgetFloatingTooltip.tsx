@@ -27,17 +27,22 @@ export const GraphWidgetFloatingTooltip = ({
   } => {
     if (!tooltipData) return { reference: null, boundary: null };
 
-    if (tooltipData.anchor.type === 'bar-element-anchor') {
-      return getTooltipReferenceFromBarChartElementAnchor(
-        tooltipData.anchor.element,
-      );
-    }
+    try {
+      if (tooltipData.anchor.type === 'bar-element-anchor') {
+        return getTooltipReferenceFromBarChartElementAnchor(
+          tooltipData.anchor.element,
+          tooltipData.anchor.containerId,
+        );
+      }
 
-    return getTooltipReferenceFromLineChartPointAnchor(
-      tooltipData.anchor.containerId,
-      tooltipData.anchor.offsetLeft,
-      tooltipData.anchor.offsetTop,
-    );
+      return getTooltipReferenceFromLineChartPointAnchor(
+        tooltipData.anchor.containerId,
+        tooltipData.anchor.offsetLeft,
+        tooltipData.anchor.offsetTop,
+      );
+    } catch {
+      return { reference: null, boundary: null };
+    }
   }, [tooltipData]);
 
   const { refs, floatingStyles } = useTooltipFloating(reference, boundary);

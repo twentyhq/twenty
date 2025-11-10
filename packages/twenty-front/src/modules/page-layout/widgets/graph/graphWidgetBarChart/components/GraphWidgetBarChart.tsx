@@ -157,10 +157,11 @@ export const GraphWidgetBarChart = ({
         anchor: {
           type: 'bar-element-anchor',
           element: event.currentTarget,
+          containerId: id,
         },
       });
     },
-    [getTooltipData, cancelScheduledHide],
+    [getTooltipData, cancelScheduledHide, id],
   );
 
   const handleBarLeave = useCallback(() => {
