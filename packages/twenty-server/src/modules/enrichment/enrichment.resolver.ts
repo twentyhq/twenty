@@ -3,14 +3,14 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import type { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 
-import { EnrichCompanyInput } from './dtos/enrich-company-input.dto';
-import { EnrichCompanyResult } from './dtos/enrich-company-result.dto';
-import { LinkupEnrichmentService } from './services/linkup-enrichment.service';
+import type { EnrichCompanyInput } from './dtos/enrich-company-input.dto';
+import type { EnrichCompanyResult } from './dtos/enrich-company-result.dto';
+import type { LinkupEnrichmentService } from './services/linkup-enrichment.service';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)

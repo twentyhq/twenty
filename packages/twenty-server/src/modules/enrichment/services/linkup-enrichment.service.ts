@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { ConfigService } from '@nestjs/config';
+import type { HttpService } from '@nestjs/axios';
+import type { ConfigService } from '@nestjs/config';
 
 import * as fs from 'fs';
 import * as path from 'path';
