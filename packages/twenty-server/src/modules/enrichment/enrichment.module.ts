@@ -3,6 +3,7 @@ import { HttpModule } from '@nestjs/axios';
 
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 import { EnrichmentResolver } from './enrichment.resolver';
 
@@ -16,6 +17,7 @@ import { LinkupEnrichmentService } from './services/linkup-enrichment.service';
     }),
     TwentyConfigModule,
     TwentyORMModule,
+    PermissionsModule,
   ],
   providers: [LinkupEnrichmentService, EnrichmentResolver],
   exports: [LinkupEnrichmentService],
