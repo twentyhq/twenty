@@ -1,3 +1,4 @@
+// Guard to check workspace settings permissions
 import {
   type CanActivate,
   type ExecutionContext,
