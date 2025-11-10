@@ -31,8 +31,15 @@ export class WorkflowExecutionContextService {
       isDefined(workflowRun.createdBy.workspaceMemberId);
 
     let roleId: string | undefined;
+    let userWorkspaceId: string | undefined;
 
-    if (isActingOnBehalfOfUser) {
+    // Get userWorkspaceId for Common API auth context validation
+    // For manual triggers: use the workflow run's initiator
+    // For automated workflows: use the workflow run's creator (if available)
+    if (
+      isActingOnBehalfOfUser ||
+      isDefined(workflowRun.createdBy.workspaceMemberId)
+    ) {
       const workspaceMember =
         await this.userWorkspaceService.getWorkspaceMemberOrThrow({
           workspaceMemberId: workflowRun.createdBy.workspaceMemberId!,
@@ -45,10 +52,14 @@ export class WorkflowExecutionContextService {
           workspaceId: runInfo.workspaceId,
         });
 
-      roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-        userWorkspaceId: userWorkspace.id,
-        workspaceId: runInfo.workspaceId,
-      });
+      userWorkspaceId = userWorkspace.id;
+
+      if (isActingOnBehalfOfUser) {
+        roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+          userWorkspaceId: userWorkspace.id,
+          workspaceId: runInfo.workspaceId,
+        });
+      }
     }
 
     const rolePermissionConfig = roleId
@@ -59,6 +70,7 @@ export class WorkflowExecutionContextService {
       isActingOnBehalfOfUser,
       initiator: workflowRun.createdBy,
       rolePermissionConfig,
+      userWorkspaceId,
     };
   }
 }

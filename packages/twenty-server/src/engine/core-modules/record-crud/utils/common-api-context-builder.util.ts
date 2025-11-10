@@ -16,6 +16,7 @@ export class CommonApiContextBuilder {
     objectName: string;
     workspaceId: string;
     rolePermissionConfig?: RolePermissionConfig;
+    userWorkspaceId?: string;
   }): Promise<{
     queryRunnerContext: CommonBaseQueryRunnerContext;
     selectedFields: Record<string, boolean>;
@@ -38,17 +39,22 @@ export class CommonApiContextBuilder {
       throw new Error(`Object metadata not found for ${params.objectName}`);
     }
 
-    // Build minimal auth context for Common API
-    // Note: WorkspaceAuthContext requires extending Request, but workflows
-    // don't have a Request object. We provide a minimal valid context.
-    // The apiKey is set to an empty object to satisfy isWorkspaceAuthContext check.
+    // Build auth context for Common API
+    // userWorkspaceId should be the real user's ID (workflow initiator or workflow creator)
+    // If somehow we don't have one, throw an error rather than using a fake ID
+    if (!params.userWorkspaceId) {
+      throw new Error(
+        'userWorkspaceId is required for Common API. Workflows must provide the workflow run creator or initiator userWorkspaceId.',
+      );
+    }
+
     const authContext = {
       workspace: { id: params.workspaceId },
       workspaceId: params.workspaceId,
       user: null,
       workspaceMemberId: null,
-      userWorkspaceId: null,
-      apiKey: {}, // Minimal apiKey object to pass isWorkspaceAuthContext validation
+      userWorkspaceId: params.userWorkspaceId,
+      apiKey: null,
     } as unknown as WorkspaceAuthContext;
 
     // Build selected fields (all non-relation fields)

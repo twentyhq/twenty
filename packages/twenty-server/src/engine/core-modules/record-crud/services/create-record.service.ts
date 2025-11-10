@@ -21,6 +21,7 @@ export class CreateRecordService {
       workspaceId,
       rolePermissionConfig,
       createdBy,
+      userWorkspaceId,
     } = params;
 
     try {
@@ -29,6 +30,7 @@ export class CreateRecordService {
           objectName,
           workspaceId,
           rolePermissionConfig,
+          userWorkspaceId,
         });
 
       // Pass createdBy explicitly if provided (for workflows)

@@ -120,11 +120,6 @@ export type AgentHandoff = {
   toAgent: Agent;
 };
 
-export type AgentIdInput = {
-  /** The id of the agent. */
-  id: Scalars['UUID'];
-};
-
 export type AggregateChartConfiguration = {
   __typename?: 'AggregateChartConfiguration';
   aggregateFieldMetadataId: Scalars['UUID'];
@@ -751,24 +746,6 @@ export type CoreViewSort = {
   updatedAt: Scalars['DateTime'];
   viewId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
-};
-
-export type CreateAgentHandoffInput = {
-  description?: InputMaybe<Scalars['String']>;
-  fromAgentId: Scalars['UUID'];
-  toAgentId: Scalars['UUID'];
-};
-
-export type CreateAgentInput = {
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  label: Scalars['String'];
-  modelConfiguration?: InputMaybe<Scalars['JSON']>;
-  modelId: Scalars['String'];
-  name?: InputMaybe<Scalars['String']>;
-  prompt: Scalars['String'];
-  responseFormat?: InputMaybe<Scalars['JSON']>;
-  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateApiKeyInput = {
@@ -1706,10 +1683,8 @@ export type Mutation = {
   checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
-  createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
-  createChatThread: AgentChatThread;
   createCoreView: CoreView;
   createCoreViewField: CoreViewField;
   createCoreViewFilter: CoreViewFilter;
@@ -1724,7 +1699,6 @@ export type Mutation = {
   createManyCoreViewGroups: Array<CoreViewGroup>;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
-  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneCronTrigger: CronTrigger;
   createOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -1756,7 +1730,6 @@ export type Mutation = {
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
   deleteJobs: DeleteJobsResponse;
-  deleteOneAgent: Agent;
   deleteOneCronTrigger: CronTrigger;
   deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
   deleteOneField: Field;
@@ -1804,7 +1777,6 @@ export type Mutation = {
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
-  removeAgentHandoff: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
@@ -1841,7 +1813,6 @@ export type Mutation = {
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
-  updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
   updateOneCronTrigger: CronTrigger;
   updateOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -1920,11 +1891,6 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
-};
-
-
-export type MutationCreateAgentHandoffArgs = {
-  input: CreateAgentHandoffInput;
 };
 
 
@@ -2010,11 +1976,6 @@ export type MutationCreateObjectEventArgs = {
   objectMetadataId: Scalars['UUID'];
   properties?: InputMaybe<Scalars['JSON']>;
   recordId: Scalars['UUID'];
-};
-
-
-export type MutationCreateOneAgentArgs = {
-  input: CreateAgentInput;
 };
 
 
@@ -2157,11 +2118,6 @@ export type MutationDeleteFileArgs = {
 export type MutationDeleteJobsArgs = {
   jobIds: Array<Scalars['String']>;
   queueName: Scalars['String'];
-};
-
-
-export type MutationDeleteOneAgentArgs = {
-  input: AgentIdInput;
 };
 
 
@@ -2388,11 +2344,6 @@ export type MutationPublishServerlessFunctionArgs = {
 };
 
 
-export type MutationRemoveAgentHandoffArgs = {
-  input: RemoveAgentHandoffInput;
-};
-
-
 export type MutationRemoveRoleFromAgentArgs = {
   agentId: Scalars['UUID'];
 };
@@ -2574,11 +2525,6 @@ export type MutationUpdateDatabaseConfigVariableArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
-};
-
-
-export type MutationUpdateOneAgentArgs = {
-  input: UpdateAgentInput;
 };
 
 
@@ -3083,25 +3029,18 @@ export type Query = {
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   billingPortalSession: BillingSessionOutput;
-  chatMessages: Array<AgentChatMessage>;
-  chatThread: AgentChatThread;
-  chatThreads: Array<AgentChatThread>;
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
-  findAgentHandoffTargets: Array<Agent>;
-  findAgentHandoffs: Array<AgentHandoff>;
-  findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
   findManyCronTriggers: Array<CronTrigger>;
   findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
   findManyPublicDomains: Array<PublicDomain>;
   findManyRouteTriggers: Array<RouteTrigger>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
-  findOneAgent: Agent;
   findOneApplication: Application;
   findOneCronTrigger: CronTrigger;
   findOneDatabaseEventTrigger: DatabaseEventTrigger;
@@ -3174,16 +3113,6 @@ export type QueryBillingPortalSessionArgs = {
 };
 
 
-export type QueryChatMessagesArgs = {
-  threadId: Scalars['UUID'];
-};
-
-
-export type QueryChatThreadArgs = {
-  id: Scalars['UUID'];
-};
-
-
 export type QueryCheckUserExistsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -3192,21 +3121,6 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
-};
-
-
-export type QueryFindAgentHandoffTargetsArgs = {
-  input: AgentIdInput;
-};
-
-
-export type QueryFindAgentHandoffsArgs = {
-  input: AgentIdInput;
-};
-
-
-export type QueryFindOneAgentArgs = {
-  input: AgentIdInput;
 };
 
 
@@ -3553,11 +3467,6 @@ export enum RemoteTableStatus {
   NOT_SYNCED = 'NOT_SYNCED',
   SYNCED = 'SYNCED'
 }
-
-export type RemoveAgentHandoffInput = {
-  fromAgentId: Scalars['UUID'];
-  toAgentId: Scalars['UUID'];
-};
 
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
@@ -3980,19 +3889,6 @@ export type UuidFilterComparison = {
   notILike?: InputMaybe<Scalars['UUID']>;
   notIn?: InputMaybe<Array<Scalars['UUID']>>;
   notLike?: InputMaybe<Scalars['UUID']>;
-};
-
-export type UpdateAgentInput = {
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  label: Scalars['String'];
-  modelConfiguration?: InputMaybe<Scalars['JSON']>;
-  modelId: Scalars['String'];
-  name: Scalars['String'];
-  prompt: Scalars['String'];
-  responseFormat?: InputMaybe<Scalars['JSON']>;
-  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateApiKeyInput = {

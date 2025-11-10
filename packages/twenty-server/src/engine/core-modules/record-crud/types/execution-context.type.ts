@@ -4,6 +4,7 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export type RecordCrudExecutionContext = {
   workspaceId: string;
   rolePermissionConfig?: RolePermissionConfig;
+  userWorkspaceId?: string;
 };
 
 export type CreateRecordExecutionContext = RecordCrudExecutionContext & {
