@@ -17,6 +17,7 @@ import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT } from '@/page-layout/constants/Defaul
 import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowRunPageLayoutId';
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowVersionPageLayout';
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowVersionPageLayoutId';
+import { PAGE_LAYOUT_DRAFT_COMPONENT_STATE_DEFAULT_VALUE } from '@/page-layout/states/constants/PageLayoutDraftComponentStateDefaultValue';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
@@ -110,16 +111,39 @@ export const PageLayoutInitializationQueryEffect = ({
 
         if (!isDeeplyEqual(layout, currentPersisted)) {
           set(pageLayoutPersistedComponentCallbackState, layout);
-          set(pageLayoutDraftComponentCallbackState, {
-            id: layout.id,
-            name: layout.name,
-            type: layout.type,
-            objectMetadataId: layout.objectMetadataId,
-            tabs: layout.tabs,
-          });
 
-          const tabLayouts = convertPageLayoutToTabLayouts(layout);
-          set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
+          const currentDraft = getSnapshotValue(
+            snapshot,
+            pageLayoutDraftComponentCallbackState,
+          );
+
+          const currentLayouts = getSnapshotValue(
+            snapshot,
+            pageLayoutCurrentLayoutsComponentCallbackState,
+          );
+
+          const hasDraftInLocalStorage =
+            !isDefined(currentDraft) ||
+            !isDeeplyEqual(
+              currentDraft,
+              PAGE_LAYOUT_DRAFT_COMPONENT_STATE_DEFAULT_VALUE,
+            );
+
+          const hasLayoutsInLocalStorage =
+            Object.keys(currentLayouts).length > 0;
+
+          if (!hasDraftInLocalStorage && !hasLayoutsInLocalStorage) {
+            set(pageLayoutDraftComponentCallbackState, {
+              id: layout.id,
+              name: layout.name,
+              type: layout.type,
+              objectMetadataId: layout.objectMetadataId,
+              tabs: layout.tabs,
+            });
+
+            const tabLayouts = convertPageLayoutToTabLayouts(layout);
+            set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
+          }
         }
       },
     [

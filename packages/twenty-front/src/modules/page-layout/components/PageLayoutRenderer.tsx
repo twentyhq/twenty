@@ -3,10 +3,12 @@ import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/Pa
 import { PageLayoutRendererContent } from '@/page-layout/components/PageLayoutRendererContent';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -20,7 +22,16 @@ export const PageLayoutRenderer = ({
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+    pageLayoutId,
+  );
+
   const onInitialized = (pageLayout: PageLayout) => {
+    if (isPageLayoutInEditMode) {
+      return;
+    }
+
     if (isPageLayoutEmpty(pageLayout)) {
       setIsPageLayoutInEditMode(true);
     } else {

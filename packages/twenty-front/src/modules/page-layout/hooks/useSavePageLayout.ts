@@ -1,3 +1,4 @@
+import { useClearDraftPageLayoutFromLocalStorage } from '@/page-layout/hooks/useClearDraftPageLayoutFromLocalStorage';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
@@ -33,6 +34,9 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
   const [updatePageLayoutWithTabsAndWidgets] =
     useUpdatePageLayoutWithTabsAndWidgetsMutation();
 
+  const { clearDraftPageLayoutFromLocalStorage } =
+    useClearDraftPageLayoutFromLocalStorage(pageLayoutId);
+
   const savePageLayout = useRecoilCallback(
     ({ set }) =>
       async () => {
@@ -57,9 +61,12 @@ export const useSavePageLayout = (pageLayoutIdFromProps: string) => {
             pageLayoutCurrentLayoutsCallbackState,
             convertPageLayoutToTabLayouts(pageLayoutToPersist),
           );
+
+          clearDraftPageLayoutFromLocalStorage();
         }
       },
     [
+      clearDraftPageLayoutFromLocalStorage,
       pageLayoutCurrentLayoutsCallbackState,
       pageLayoutDraft,
       pageLayoutId,
