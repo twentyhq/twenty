@@ -92,6 +92,11 @@ export const seedFeatureFlags = async ({
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };
