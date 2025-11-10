@@ -332,14 +332,14 @@ export abstract class CommonBaseQueryRunnerService<
       rolePermissionConfig,
     );
 
-    const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getDataSource(workspaceId);
+    const globalWorkspaceDataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
     return {
       ...queryRunnerContext,
       authContext,
       workspaceDataSource:
-        workspaceDataSource as unknown as WorkspaceDataSource,
+        globalWorkspaceDataSource as unknown as WorkspaceDataSource,
       rolePermissionConfig,
       repository,
     };

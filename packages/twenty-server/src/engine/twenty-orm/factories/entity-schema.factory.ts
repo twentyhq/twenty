@@ -20,14 +20,14 @@ export class EntitySchemaFactory {
   async create(
     workspaceId: string,
     objectMetadata: ObjectMetadataItemWithFieldMaps,
-    _objectMetadataMaps: ObjectMetadataMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<EntitySchema> {
     const columns = this.entitySchemaColumnFactory.create(objectMetadata);
 
-    // const relations = await this.entitySchemaRelationFactory.create(
-    //   objectMetadata,
-    //   objectMetadataMaps,
-    // );
+    const relations = await this.entitySchemaRelationFactory.create(
+      objectMetadata,
+      objectMetadataMaps,
+    );
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
@@ -38,6 +38,7 @@ export class EntitySchemaFactory {
         objectMetadata.isCustom,
       ),
       columns,
+      relations,
       schema: schemaName,
     });
 

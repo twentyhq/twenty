@@ -59,7 +59,7 @@ export class GlobalWorkspaceOrmManager {
     );
   }
 
-  async getDataSource(workspaceId: string) {
+  async getGlobalWorkspaceDataSource() {
     return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
   }
 

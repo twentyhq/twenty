@@ -81,7 +81,9 @@ export class GlobalWorkspaceDataSource extends DataSource {
     return manager.getRepository(target, permissionOptions, authContext);
   }
 
-  override getMetadata(target: EntityTarget<ObjectLiteral>): EntityMetadata {
+  override findMetadata(
+    target: EntityTarget<ObjectLiteral>,
+  ): EntityMetadata | undefined {
     const context = getWorkspaceContext();
     const { workspaceId, metadataVersion } = context;
     const cacheKey = `${workspaceId}-${metadataVersion}`;
@@ -89,12 +91,14 @@ export class GlobalWorkspaceDataSource extends DataSource {
     const workspaceMetadataMap = this.entityMetadataCache.get(cacheKey);
 
     if (!workspaceMetadataMap) {
-      throw new Error(
-        `Metadata not loaded for workspace ${workspaceId} version ${metadataVersion}. Call buildWorkspaceMetadata() first.`,
-      );
+      return undefined;
     }
 
-    const metadata = workspaceMetadataMap.get(target);
+    return workspaceMetadataMap.get(target);
+  }
+
+  override getMetadata(target: EntityTarget<ObjectLiteral>): EntityMetadata {
+    const metadata = this.findMetadata(target);
 
     if (!metadata) {
       throw new EntityMetadataNotFoundError(target);
