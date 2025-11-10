@@ -121,6 +121,7 @@ export const Default: Story = {
     xAxisLabel: 'Month',
     yAxisLabel: 'Count',
     id: 'bar-chart-default',
+    groupMode: 'stacked',
   },
   render: (args) => (
     <Container>
@@ -133,6 +134,7 @@ export const Default: Story = {
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
         id={args.id}
+        groupMode={args.groupMode}
       />
     </Container>
   ),
@@ -184,6 +186,7 @@ export const Revenue: Story = {
     xAxisLabel: 'Quarter',
     yAxisLabel: 'Amount ($)',
     id: 'bar-chart-revenue',
+    groupMode: 'stacked',
   },
   render: (args) => (
     <Container>
@@ -196,12 +199,13 @@ export const Revenue: Story = {
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
         id={args.id}
+        groupMode={args.groupMode}
       />
     </Container>
   ),
 };
 
-export const Stacked: Story = {
+export const Grouped: Story = {
   args: {
     data: [
       {
@@ -240,7 +244,7 @@ export const Stacked: Story = {
       mobile: 'Mobile',
       tablet: 'Tablet',
     },
-    groupMode: 'stacked',
+    groupMode: 'grouped',
     showLegend: true,
     showGrid: true,
     xAxisLabel: 'Channel',
@@ -333,6 +337,7 @@ export const WithValues: Story = {
     yAxisLabel: 'Score',
     suffix: '%',
     id: 'bar-chart-with-values',
+    groupMode: 'stacked',
   },
   render: (args) => (
     <Container>
@@ -345,6 +350,7 @@ export const WithValues: Story = {
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
         id={args.id}
+        groupMode={args.groupMode}
       />
     </Container>
   ),
@@ -400,6 +406,7 @@ export const WithCustomColors: Story = {
     showGrid: true,
     xAxisLabel: 'Month',
     yAxisLabel: 'Count',
+    groupMode: 'stacked',
     id: 'bar-chart-custom-colors',
   },
   render: (args) => (
@@ -414,6 +421,7 @@ export const WithCustomColors: Story = {
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
         id={args.id}
+        groupMode={args.groupMode}
       />
     </Container>
   ),
@@ -477,6 +485,7 @@ export const Currency: Story = {
     xAxisLabel: 'Region',
     yAxisLabel: 'Amount',
     id: 'bar-chart-currency',
+    groupMode: 'grouped',
   },
   render: (args) => (
     <Container>
@@ -489,6 +498,7 @@ export const Currency: Story = {
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
         id={args.id}
+        groupMode={args.groupMode}
       />
     </Container>
   ),
@@ -580,6 +590,7 @@ export const MixedPositiveNegative: Story = {
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',
     id: 'bar-chart-mixed-values',
+    groupMode: 'grouped',
   },
   render: (args) => (
     <Container>
@@ -594,6 +605,7 @@ export const MixedPositiveNegative: Story = {
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
+        groupMode={args.groupMode}
         id={args.id}
       />
     </Container>

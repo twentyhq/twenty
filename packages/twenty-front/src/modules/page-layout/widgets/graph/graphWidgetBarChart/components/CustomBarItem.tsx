@@ -1,8 +1,6 @@
 import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
 import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
-import { Text } from '@nivo/text';
-import { useTheme } from '@nivo/theming';
 import { animated, to } from '@react-spring/web';
 import { isNumber } from '@sniptt/guards';
 import { useCallback, useMemo, type MouseEvent } from 'react';
@@ -31,22 +29,9 @@ const StyledBarRect = styled(animated.rect)<{ $isInteractive?: boolean }>`
 // This is a copy of the BarItem component from @nivo/bar with some design modifications
 export const CustomBarItem = <D extends BarDatum>({
   bar: { data: barData, ...bar },
-  style: {
-    borderColor,
-    color,
-    height,
-    labelColor,
-    labelOpacity,
-    labelX,
-    labelY,
-    transform,
-    width,
-    textAnchor,
-  },
+  style: { borderColor, color, height, transform, width },
   borderRadius,
   borderWidth,
-  label,
-  shouldRenderLabel,
   isInteractive,
   onClick,
   onMouseEnter,
@@ -64,8 +49,6 @@ export const CustomBarItem = <D extends BarDatum>({
   layout = 'vertical',
   chartId,
 }: CustomBarItemProps<D>) => {
-  const theme = useTheme();
-
   const handleClick = useCallback(
     (event: MouseEvent<SVGRectElement>) => {
       onClick?.({ color: bar.color, ...barData }, event);
@@ -233,24 +216,6 @@ export const CustomBarItem = <D extends BarDatum>({
           onClick={isInteractive ? handleClick : undefined}
           data-testid={`bar.item.${barData.id}.${barData.index}`}
         />
-
-        {shouldRenderLabel && (
-          <Text
-            x={labelX}
-            y={labelY}
-            textAnchor={textAnchor}
-            dominantBaseline="central"
-            fillOpacity={labelOpacity}
-            style={{
-              ...theme.labels.text,
-              // We don't want the label to intercept mouse events
-              pointerEvents: 'none',
-              fill: labelColor,
-            }}
-          >
-            {label}
-          </Text>
-        )}
       </animated.g>
     </animated.g>
   );
