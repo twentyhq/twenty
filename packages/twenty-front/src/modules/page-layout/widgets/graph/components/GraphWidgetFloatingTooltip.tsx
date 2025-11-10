@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo } from 'react';
 
 type GraphWidgetFloatingTooltipProps = {
-  tooltipData: GraphWidgetTooltipData | null;
+  tooltipData: GraphWidgetTooltipData;
   onRequestHide?: () => void;
   onCancelHide?: () => void;
 };
@@ -25,8 +25,6 @@ export const GraphWidgetFloatingTooltip = ({
     reference: Element | VirtualElement | null;
     boundary: Element | null;
   } => {
-    if (!tooltipData) return { reference: null, boundary: null };
-
     try {
       if (tooltipData.anchor.type === 'bar-element-anchor') {
         return getTooltipReferenceFromBarChartElementAnchor(

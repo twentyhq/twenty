@@ -1,6 +1,5 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
-import { type GraphWidgetTooltipData } from '@/page-layout/widgets/graph/types/GraphWidgetTooltipData';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import {
   CustomCrosshairLayer,
@@ -16,6 +15,7 @@ import { useLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLine
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
+import { type GraphWidgetTooltipData } from '@/page-layout/widgets/graph/types/GraphWidgetTooltipData';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
@@ -260,11 +260,13 @@ export const GraphWidgetLineChart = ({
           theme={chartTheme}
         />
       </GraphWidgetChartContainer>
-      <GraphWidgetFloatingTooltip
-        tooltipData={activeTooltipData}
-        onRequestHide={hideTooltip}
-        onCancelHide={cancelScheduledHide}
-      />
+      {activeTooltipData && (
+        <GraphWidgetFloatingTooltip
+          tooltipData={activeTooltipData}
+          onRequestHide={hideTooltip}
+          onCancelHide={cancelScheduledHide}
+        />
+      )}
       <GraphWidgetLegend show={showLegend} items={legendItems} />
     </StyledContainer>
   );
