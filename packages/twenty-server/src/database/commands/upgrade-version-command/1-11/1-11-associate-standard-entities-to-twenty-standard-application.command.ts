@@ -1,7 +1,6 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { DataSource, IsNull, Not, Or, Repository } from 'typeorm';
 import {
   ALL_METADATA_NAME,
   AllMetadataName,
@@ -9,6 +8,7 @@ import {
   NotV2YetAllMetadataName,
 } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { DataSource, IsNull, Not, Or, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -17,7 +17,7 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { getAllTransactionalMetadataEntityRepository } from 'src/engine/metadata-modules/flat-entity/utils/get-all-transactional-metadata-entity-repository.util';
+import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
@@ -68,11 +68,6 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const metadataEntityRepositoryByMetadataName =
-      getAllTransactionalMetadataEntityRepository({
-        queryRunner,
-      });
-
     try {
       for (const metadataName of ALL_METADATA_NAME_TO_MIGRATE) {
         this.logger.log(`retrieving ${metadataName} entities`);
@@ -82,8 +77,11 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
             case 'agent':
             case 'role':
             case 'objectMetadata': {
+              const currentMetadataEntity =
+                ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
+
               const metadataEntityRepository =
-                metadataEntityRepositoryByMetadataName[metadataName];
+                queryRunner.manager.getRepository(currentMetadataEntity);
 
               const standardEntities = await metadataEntityRepository.find({
                 select: {
@@ -116,8 +114,11 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
             case 'view':
             case 'fieldMetadata':
             case 'index': {
+              const currentMetadataEntity =
+                ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
+
               const metadataEntityRepository =
-                metadataEntityRepositoryByMetadataName[metadataName];
+                queryRunner.manager.getRepository(currentMetadataEntity);
 
               const standardEntities = await metadataEntityRepository.find({
                 select: {
@@ -148,8 +149,11 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
             case 'viewFilterGroup':
             case 'viewSort':
             case 'viewGroup': {
+              const currentMetadataEntity =
+                ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
+
               const metadataEntityRepository =
-                metadataEntityRepositoryByMetadataName[metadataName];
+                queryRunner.manager.getRepository(currentMetadataEntity);
 
               const standardEntities = await metadataEntityRepository.find({
                 select: {
