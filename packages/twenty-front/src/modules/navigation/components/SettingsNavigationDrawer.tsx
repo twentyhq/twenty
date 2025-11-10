@@ -36,7 +36,8 @@ export const SettingsNavigationDrawer = ({
   );
   const { data } = useGetVersionInfoQuery();
   const { currentVersion = 'Twenty', latestVersion } = data?.versionInfo ?? {};
-  const hasUpdate = currentVersion && latestVersion && currentVersion !== latestVersion;
+  const hasUpdate =
+    currentVersion && latestVersion && currentVersion !== latestVersion;
 
   return (
     <NavigationDrawer className={className} title={t`Exit Settings`}>
@@ -54,7 +55,8 @@ export const SettingsNavigationDrawer = ({
           {currentVersion}
           {hasUpdate && (
             <>
-              {' '}(
+              {' '}
+              (
               <StyledVersionLink
                 href={`https://hub.docker.com/r/twentycrm/twenty/tags?name=${latestVersion}`}
                 target="_blank"
