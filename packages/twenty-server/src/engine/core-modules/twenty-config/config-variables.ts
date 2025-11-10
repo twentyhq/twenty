@@ -1334,6 +1334,32 @@ export class ConfigVariables {
   })
   @IsOptional()
   AWS_SES_ACCOUNT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ENRICHMENT_CONFIG,
+    description: 'Enable or disable Linkup AI enrichment',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  LINKUP_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ENRICHMENT_CONFIG,
+    isSensitive: true,
+    description: 'API key for Linkup enrichment service',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  LINKUP_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ENRICHMENT_CONFIG,
+    description: 'API URL for Linkup enrichment service',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsUrl({ require_tld: false })
+  LINKUP_API_URL = 'https://api.linkup.so/v1';
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

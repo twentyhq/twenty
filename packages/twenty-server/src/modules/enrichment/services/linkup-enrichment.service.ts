@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import type { HttpService } from '@nestjs/axios';
-import type { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
 
 import * as fs from 'fs';
 import * as path from 'path';
 
 import { firstValueFrom } from 'rxjs';
+
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 interface LinkupSource {
   name: string;
@@ -49,14 +50,11 @@ export class LinkupEnrichmentService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
-    this.apiUrl = this.configService.get<string>(
-      'LINKUP_API_URL',
-      'https://api.linkup.so/v1',
-    );
-    this.apiKey = this.configService.get<string>('LINKUP_API_KEY', '');
-    this.enabled = this.configService.get<boolean>('LINKUP_ENABLED', false);
+    this.apiUrl = this.twentyConfigService.get('LINKUP_API_URL');
+    this.apiKey = this.twentyConfigService.get('LINKUP_API_KEY') || '';
+    this.enabled = this.twentyConfigService.get('LINKUP_ENABLED');
 
     const configPath = path.join(
       __dirname,

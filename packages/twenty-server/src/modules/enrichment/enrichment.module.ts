@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { ConfigModule } from '@nestjs/config';
 
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 
 import { EnrichmentResolver } from './enrichment.resolver';
 
@@ -14,7 +14,7 @@ import { LinkupEnrichmentService } from './services/linkup-enrichment.service';
       timeout: 30000,
       maxRedirects: 5,
     }),
-    ConfigModule,
+    TwentyConfigModule,
     TwentyORMModule,
   ],
   providers: [LinkupEnrichmentService, EnrichmentResolver],

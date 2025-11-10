@@ -130,4 +130,9 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
     description: 'Configure AWS SES settings for emailing domains',
     isHiddenOnLoad: true,
   },
+  [ConfigVariablesGroup.ENRICHMENT_CONFIG]: {
+    position: 2200,
+    description: 'Configure AI-powered enrichment services like Linkup',
+    isHiddenOnLoad: false,
+  },
 };
