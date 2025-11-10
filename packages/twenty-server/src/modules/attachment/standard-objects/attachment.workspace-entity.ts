@@ -29,6 +29,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.attachment,
+
   namePlural: 'attachments',
   labelSingular: msg`Attachment`,
   labelPlural: msg`Attachments`,

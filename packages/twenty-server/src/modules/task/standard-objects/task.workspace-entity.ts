@@ -42,6 +42,7 @@ export const SEARCH_FIELDS_FOR_TASKS: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.task,
+
   namePlural: 'tasks',
   labelSingular: msg`Task`,
   labelPlural: msg`Tasks`,

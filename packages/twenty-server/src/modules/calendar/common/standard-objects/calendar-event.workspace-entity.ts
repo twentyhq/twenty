@@ -21,6 +21,7 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarEvent,
+
   namePlural: 'calendarEvents',
   labelSingular: msg`Calendar event`,
   labelPlural: msg`Calendar events`,

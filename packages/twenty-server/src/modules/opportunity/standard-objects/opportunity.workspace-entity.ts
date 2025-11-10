@@ -42,6 +42,7 @@ export const SEARCH_FIELDS_FOR_OPPORTUNITY: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.opportunity,
+
   namePlural: 'opportunities',
   labelSingular: msg`Opportunity`,
   labelPlural: msg`Opportunities`,

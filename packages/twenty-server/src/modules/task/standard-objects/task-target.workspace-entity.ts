@@ -22,6 +22,7 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.taskTarget,
+
   namePlural: 'taskTargets',
   labelSingular: msg`Task Target`,
   labelPlural: msg`Task Targets`,
