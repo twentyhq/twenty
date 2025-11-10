@@ -75,28 +75,18 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       createdBy: executionContext.initiator,
     });
 
-    if (!toolOutput.success) {
+    if (!toolOutput.success || !toolOutput.result) {
       throw new RecordCrudException(
         toolOutput.error || toolOutput.message,
         RecordCrudExceptionCode.QUERY_FAILED,
       );
     }
 
-    const resultData = toolOutput.result as
-      | { records: unknown[]; totalCount: number }
-      | unknown[];
-    const records = Array.isArray(resultData)
-      ? resultData
-      : resultData.records || [];
-    const totalCount = Array.isArray(resultData)
-      ? resultData.length
-      : resultData.totalCount || 0;
-
     return {
       result: {
-        first: records[0],
-        all: records,
-        totalCount,
+        first: toolOutput.result.records[0],
+        all: toolOutput.result.records,
+        totalCount: toolOutput.result.totalCount,
       },
     };
   }

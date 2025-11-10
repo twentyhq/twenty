@@ -21,6 +21,7 @@ export class UpsertRecordService {
       workspaceId,
       rolePermissionConfig,
       userWorkspaceId,
+      apiKey,
       createdBy,
     } = params;
 
@@ -31,6 +32,7 @@ export class UpsertRecordService {
           workspaceId,
           rolePermissionConfig,
           userWorkspaceId,
+          apiKey,
           actorContext: createdBy,
         });
 

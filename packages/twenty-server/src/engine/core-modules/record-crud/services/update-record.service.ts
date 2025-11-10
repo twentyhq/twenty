@@ -22,6 +22,7 @@ export class UpdateRecordService {
       workspaceId,
       rolePermissionConfig,
       userWorkspaceId,
+      apiKey,
       createdBy,
     } = params;
 
@@ -32,6 +33,7 @@ export class UpdateRecordService {
           workspaceId,
           rolePermissionConfig,
           userWorkspaceId,
+          apiKey,
           actorContext: createdBy,
         });
 

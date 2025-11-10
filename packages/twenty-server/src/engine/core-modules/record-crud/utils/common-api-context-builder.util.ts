@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @Injectable()
 export class CommonApiContextBuilder {
@@ -16,53 +17,39 @@ export class CommonApiContextBuilder {
   async build(params: {
     objectName: string;
     workspaceId: string;
-    rolePermissionConfig?: RolePermissionConfig;
     userWorkspaceId?: string;
+    apiKey?: ApiKeyEntity;
+    rolePermissionConfig?: RolePermissionConfig;
     actorContext?: ActorMetadata;
   }): Promise<{
     queryRunnerContext: CommonBaseQueryRunnerContext;
     selectedFields: Record<string, boolean>;
   }> {
+    // Either userWorkspaceId or apiKey must be provided for authentication
+    if (!params.userWorkspaceId && !params.apiKey) {
+      throw new Error(
+        'Either userWorkspaceId or apiKey is required for Common API operations',
+      );
+    }
+
     const { objectMetadataMaps } =
       await this.workspaceMetadataCache.getExistingOrRecomputeMetadataMaps({
         workspaceId: params.workspaceId,
       });
 
-    const objectMetadataId =
-      objectMetadataMaps.idByNameSingular[params.objectName];
+    const objectMetadata = this.getObjectMetadataOrThrow(
+      params.objectName,
+      objectMetadataMaps,
+    );
 
-    if (!objectMetadataId) {
-      throw new Error(`Object ${params.objectName} not found in workspace`);
-    }
+    const authContext = this.buildAuthContext(
+      params.workspaceId,
+      params.userWorkspaceId,
+      params.apiKey,
+      params.actorContext,
+    );
 
-    const objectMetadata = objectMetadataMaps.byId[objectMetadataId];
-
-    if (!objectMetadata) {
-      throw new Error(`Object metadata not found for ${params.objectName}`);
-    }
-
-    if (!params.userWorkspaceId) {
-      throw new Error(
-        'userWorkspaceId is required for Common API. Workflows must provide the workflow run creator or initiator userWorkspaceId.',
-      );
-    }
-
-    const workspaceMemberId = params.actorContext?.workspaceMemberId ?? null;
-
-    const authContext = {
-      workspace: { id: params.workspaceId },
-      workspaceId: params.workspaceId,
-      user: null,
-      workspaceMemberId,
-      userWorkspaceId: params.userWorkspaceId,
-      apiKey: null,
-    } as unknown as WorkspaceAuthContext;
-
-    const selectedFields: Record<string, boolean> = { id: true };
-
-    Object.entries(objectMetadata.fieldIdByName).forEach(([fieldName]) => {
-      selectedFields[fieldName] = true;
-    });
+    const selectedFields = this.buildSelectedFields(objectMetadata);
 
     return {
       queryRunnerContext: {
@@ -72,5 +59,56 @@ export class CommonApiContextBuilder {
       },
       selectedFields,
     };
+  }
+
+  private getObjectMetadataOrThrow(
+    objectName: string,
+    objectMetadataMaps: {
+      byId: Partial<Record<string, ObjectMetadataItemWithFieldMaps>>;
+      idByNameSingular: Partial<Record<string, string>>;
+    },
+  ): ObjectMetadataItemWithFieldMaps {
+    const objectMetadataId = objectMetadataMaps.idByNameSingular[objectName];
+
+    if (!objectMetadataId) {
+      throw new Error(`Object ${objectName} not found in workspace`);
+    }
+
+    const objectMetadata = objectMetadataMaps.byId[objectMetadataId];
+
+    if (!objectMetadata) {
+      throw new Error(`Object metadata not found for ${objectName}`);
+    }
+
+    return objectMetadata;
+  }
+
+  private buildAuthContext(
+    workspaceId: string,
+    userWorkspaceId?: string,
+    apiKey?: ApiKeyEntity,
+    actorContext?: ActorMetadata,
+  ): AuthContext {
+    // Workspace object is intentionally minimal - the Common API validates
+    // and enriches the auth context internally
+    return {
+      workspace: { id: workspaceId } as unknown as AuthContext['workspace'],
+      workspaceMemberId: actorContext?.workspaceMemberId ?? undefined,
+      userWorkspaceId,
+      apiKey: apiKey ?? null,
+      user: null,
+    };
+  }
+
+  private buildSelectedFields(
+    objectMetadata: ObjectMetadataItemWithFieldMaps,
+  ): Record<string, boolean> {
+    const selectedFields: Record<string, boolean> = { id: true };
+
+    for (const fieldName of Object.keys(objectMetadata.fieldIdByName)) {
+      selectedFields[fieldName] = true;
+    }
+
+    return selectedFields;
   }
 }

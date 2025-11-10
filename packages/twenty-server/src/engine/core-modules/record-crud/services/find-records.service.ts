@@ -14,7 +14,9 @@ export class FindRecordsService {
     private readonly commonApiContextBuilder: CommonApiContextBuilder,
   ) {}
 
-  async execute(params: FindRecordsParams): Promise<ToolOutput> {
+  async execute(
+    params: FindRecordsParams,
+  ): Promise<ToolOutput<{ records: unknown[]; totalCount: number }>> {
     const {
       objectName,
       filter,
@@ -24,6 +26,7 @@ export class FindRecordsService {
       workspaceId,
       rolePermissionConfig,
       userWorkspaceId,
+      apiKey,
       createdBy,
     } = params;
 
@@ -34,6 +37,7 @@ export class FindRecordsService {
           workspaceId,
           rolePermissionConfig,
           userWorkspaceId,
+          apiKey,
           actorContext: createdBy,
         });
 
@@ -46,10 +50,6 @@ export class FindRecordsService {
           selectedFields,
         },
         queryRunnerContext,
-      );
-
-      this.logger.log(
-        `Found ${result.records.length} records in ${objectName}`,
       );
 
       return {
