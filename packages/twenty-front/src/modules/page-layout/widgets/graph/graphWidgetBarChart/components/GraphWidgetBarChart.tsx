@@ -288,7 +288,7 @@ export const GraphWidgetBarChart = ({
           enableLabel={false}
           labelSkipWidth={12}
           innerPadding={
-            groupMode !== 'stacked' ? BAR_CHART_MINIMUM_INNER_PADDING : 0
+            groupMode === 'grouped' ? BAR_CHART_MINIMUM_INNER_PADDING : 0
           }
           labelSkipHeight={12}
           valueFormat={(value) =>
