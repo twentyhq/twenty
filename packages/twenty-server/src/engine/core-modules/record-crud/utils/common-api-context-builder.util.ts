@@ -40,14 +40,15 @@ export class CommonApiContextBuilder {
 
     // Build minimal auth context for Common API
     // Note: WorkspaceAuthContext requires extending Request, but workflows
-    // don't have a Request object. This cast is necessary and safe here.
+    // don't have a Request object. We provide a minimal valid context.
+    // The apiKey is set to an empty object to satisfy isWorkspaceAuthContext check.
     const authContext = {
       workspace: { id: params.workspaceId },
       workspaceId: params.workspaceId,
       user: null,
       workspaceMemberId: null,
       userWorkspaceId: null,
-      apiKey: null,
+      apiKey: {}, // Minimal apiKey object to pass isWorkspaceAuthContext validation
     } as unknown as WorkspaceAuthContext;
 
     // Build selected fields (all non-relation fields)
