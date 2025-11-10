@@ -122,12 +122,10 @@ export const PageLayoutInitializationQueryEffect = ({
             pageLayoutCurrentLayoutsComponentCallbackState,
           );
 
-          const hasDraftInLocalStorage =
-            !isDefined(currentDraft) ||
-            !isDeeplyEqual(
-              currentDraft,
-              PAGE_LAYOUT_DRAFT_COMPONENT_STATE_DEFAULT_VALUE,
-            );
+          const hasDraftInLocalStorage = !isDeeplyEqual(
+            currentDraft,
+            PAGE_LAYOUT_DRAFT_COMPONENT_STATE_DEFAULT_VALUE,
+          );
 
           const hasLayoutsInLocalStorage =
             Object.keys(currentLayouts).length > 0;
