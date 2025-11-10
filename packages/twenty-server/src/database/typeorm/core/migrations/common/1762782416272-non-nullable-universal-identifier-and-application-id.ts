@@ -1,5 +1,6 @@
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
+
 import { runNonNullableUniversalIdentifierAndApplicationIdOnSyncableEntitiesMigration } from 'src/database/typeorm/core/migrations/utils/run-non-nullable-universal-identifier-and-application-id-on-syncable-entities-migration.util';
-import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class NonNullableUniversalIdentifierAndApplicationId1762782416272
   implements MigrationInterface

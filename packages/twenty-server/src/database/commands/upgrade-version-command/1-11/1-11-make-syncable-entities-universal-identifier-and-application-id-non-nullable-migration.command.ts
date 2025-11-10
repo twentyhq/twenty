@@ -40,6 +40,7 @@ export class MakeSyncableEntitiesUniversalIdentifierAndApplicationIdNonNullableM
 
     if (options.dryRun) {
       this.hasRunOnce = true;
+
       return;
     }
 

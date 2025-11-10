@@ -2,6 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -11,8 +13,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeWorkspaceCustomCreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-workspace-custom-create-application-input';
-import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 @Command({
   name: 'upgrade:1-11:create-workspace-custom-application',
@@ -39,6 +39,7 @@ export class CreateWorkspaceCustomApplicationCommand extends ActiveOrSuspendedWo
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
+
     if (!isDefined(workspace)) {
       throw new Error(`${workspaceId} workspace not found`);
     }
@@ -47,6 +48,7 @@ export class CreateWorkspaceCustomApplicationCommand extends ActiveOrSuspendedWo
       this.logger.log(
         `${workspaceId} skipping custom workspace application creation as already exists`,
       );
+
       return;
     }
 
