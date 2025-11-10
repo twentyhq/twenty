@@ -1,4 +1,4 @@
-import { QueryRunner } from "typeorm";
+import { QueryRunner } from 'typeorm';
 
 export const runNonNullableUniversalIdentifierAndApplicationIdOnSyncableEntitiesMigration =
   async ({ queryRunner }: { queryRunner: QueryRunner }) => {

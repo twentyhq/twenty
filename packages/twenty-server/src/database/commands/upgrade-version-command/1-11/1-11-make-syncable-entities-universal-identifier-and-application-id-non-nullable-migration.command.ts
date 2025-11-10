@@ -45,19 +45,28 @@ export class MakeSyncableEntitiesUniversalIdentifierAndApplicationIdNonNullableM
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
 
-    await runNonNullableUniversalIdentifierAndApplicationIdOnSyncableEntitiesMigration(
-      {
-        queryRunner,
-      },
-    );
+      await runNonNullableUniversalIdentifierAndApplicationIdOnSyncableEntitiesMigration(
+        {
+          queryRunner,
+        },
+      );
 
-    this.logger.log(
-      'Successfully run make-syncable-entities-universal-identifier-and-application-id-non-nullable-migration once',
-    );
+      await queryRunner.commitTransaction();
 
-    this.hasRunOnce = true;
+      this.logger.log(
+        'Successfully run make-syncable-entities-universal-identifier-and-application-id-non-nullable-migration once',
+      );
+
+      this.hasRunOnce = true;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
