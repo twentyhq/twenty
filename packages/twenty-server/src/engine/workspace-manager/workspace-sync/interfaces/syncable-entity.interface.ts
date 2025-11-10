@@ -6,15 +6,15 @@ import type { ApplicationEntity } from 'src/engine/core-modules/application/appl
   unique: true,
 })
 export abstract class SyncableEntity {
-  @Column({ nullable: true, type: 'uuid' })
-  universalIdentifier: string | null;
+  @Column({ nullable: false, type: 'uuid' })
+  universalIdentifier: string
 
   @Column({ nullable: true, type: 'uuid' })
-  applicationId: string | null;
+  applicationId: string;
 
   @ManyToOne('ApplicationEntity', {
     onDelete: 'CASCADE',
-    nullable: true,
+    nullable: false,
   })
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity>;
