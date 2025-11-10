@@ -2,7 +2,6 @@ import type { Rule } from 'eslint';
 
 export const RULE_NAME = 'no-angle-bracket-placeholders';
 
-// List of allowed HTML/JSX tags
 const ALLOWED_TAGS = [
   'img',
   'div',
