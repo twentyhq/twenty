@@ -1,9 +1,9 @@
 import { isDefined } from 'class-validator';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
-import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import {
   ALL_METADATA_NAME,
   AllMetadataName,
+  NOT_V2_YET_METADATA_NAME,
   NotV2YetAllMetadataName,
 } from 'twenty-shared/metadata';
 import { QueryRunner, Repository } from 'typeorm';
@@ -14,6 +14,13 @@ type MetadataEntityRepositoryByMetadataName = {
   >;
 };
 
+// TODO Centralize
+const ALL_METADATA_NAME_TO_MIGRATE = [
+  ...Object.keys(ALL_METADATA_NAME),
+  ...Object.keys(NOT_V2_YET_METADATA_NAME),
+] as (AllMetadataName | NotV2YetAllMetadataName)[];
+///
+
 export const getAllTransactionalMetadataEntityRepository = ({
   queryRunner,
 }: {
@@ -22,15 +29,13 @@ export const getAllTransactionalMetadataEntityRepository = ({
   const metadataEntityRepositoryByMetadataName =
     {} as MetadataEntityRepositoryByMetadataName;
 
-  for (const metadataName of Object.keys(
-    ALL_METADATA_NAME,
-  ) as AllMetadataName[]) {
+  for (const metadataName of ALL_METADATA_NAME_TO_MIGRATE) {
     const currentMetadataEntity =
       ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
 
-    const metadataEntityRepository = queryRunner.manager.getRepository<
-      MetadataEntity<typeof metadataName>
-    >(currentMetadataEntity);
+    const metadataEntityRepository = queryRunner.manager.getRepository(
+      currentMetadataEntity,
+    );
 
     if (!isDefined(metadataEntityRepository)) {
       throw new Error(
