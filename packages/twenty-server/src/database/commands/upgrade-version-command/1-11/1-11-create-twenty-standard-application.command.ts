@@ -64,14 +64,10 @@ export class CreateTwentyStandardApplicationCommand extends ActiveOrSuspendedWor
       return;
     }
 
-    try {
-      await this.applicationService.createTwentyStandardApplication({
-        workspaceId,
-      });
+    await this.applicationService.createTwentyStandardApplication({
+      workspaceId,
+    });
 
-      this.logger.log(`Successfully seeded twenty standard`);
-    } catch (e) {
-      this.logger.error(`Failed to seed twenty standard`, e);
-    }
+    this.logger.log(`Successfully seeded twenty standard`);
   }
 }

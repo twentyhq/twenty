@@ -5,6 +5,7 @@ import { AssociateStandardEntitiesToTwentyStandardApplicationCommand } from 'src
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
+import { CreateWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-workspace-custom-application.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -36,14 +37,16 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
     CleanOrphanedRoleTargetsCommand,
     CreateTwentyStandardApplicationCommand,
     AssociateStandardEntitiesToTwentyStandardApplicationCommand,
-    AssociateCustomEntitiesToWorkspaceCustomApplicationCommand
+    AssociateCustomEntitiesToWorkspaceCustomApplicationCommand,
+    CreateWorkspaceCustomApplicationCommand,
   ],
   exports: [
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
     CreateTwentyStandardApplicationCommand,
     AssociateStandardEntitiesToTwentyStandardApplicationCommand,
-    AssociateCustomEntitiesToWorkspaceCustomApplicationCommand
+    AssociateCustomEntitiesToWorkspaceCustomApplicationCommand,
+    CreateWorkspaceCustomApplicationCommand,
   ],
 })
 export class V1_11_UpgradeVersionCommandModule {}
