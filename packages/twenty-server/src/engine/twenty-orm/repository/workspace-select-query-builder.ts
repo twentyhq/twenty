@@ -7,9 +7,8 @@ import {
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { type QueryBuilderCteOptions } from 'typeorm/query-builder/QueryBuilderCte';
-import { DriverUtils } from 'typeorm/driver/DriverUtils';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { type SelectQuery } from 'typeorm/query-builder/SelectQuery';
+import { DriverUtils } from 'typeorm/driver/DriverUtils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -33,6 +32,7 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { EXTERNAL_STORAGE_ALIAS } from 'src/engine/twenty-orm/utils/external-storage-alias.constant';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
@@ -42,7 +42,10 @@ export class WorkspaceSelectQueryBuilder<
   internalContext: WorkspaceInternalContext;
   authContext?: AuthContext;
   featureFlagMap?: FeatureFlagMap;
-  private externalStorageInitPromise: Promise<void> | null = null;
+  private externalStorageState: {
+    promise: Promise<void> | null;
+    isFullfilled: boolean;
+  } = { promise: null, isFullfilled: false };
 
   constructor(
     queryBuilder: SelectQueryBuilder<T>,
@@ -61,15 +64,16 @@ export class WorkspaceSelectQueryBuilder<
   }
 
   prepareExternalStorage(alias: string): void {
-    if (!this.externalStorageInitPromise) {
-      this.externalStorageInitPromise = this.appendExternalFields(alias);
+    if (!isDefined(this.externalStorageState.promise)) {
+      this.externalStorageState.isFullfilled = false;
+      this.externalStorageState.promise = this.appendExternalFields(alias);
     }
   }
 
   private async ensureExternalStorageReady(): Promise<void> {
-    if (this.externalStorageInitPromise) {
-      await this.externalStorageInitPromise;
-      this.externalStorageInitPromise = null;
+    if (isDefined(this.externalStorageState.promise)) {
+      await this.externalStorageState.promise;
+      this.externalStorageState.isFullfilled = true;
     }
   }
 
@@ -106,18 +110,10 @@ export class WorkspaceSelectQueryBuilder<
               this.alias,
             );
 
-          if (isDefined(parts)) {
-            this.addCommonTableExpression(parts.cteSql, parts.cteName, {
-              columnNames: parts.cteColumns,
-            });
-
-            this.leftJoin(parts.cteName, `${field.name}Records`, parts.joinOn);
-
-            this.addSelect(
-              parts.selectExpr,
-              `${EXTERNAL_STORAGE_ALIAS}_${this.alias}_${field.name}`,
-            );
-          }
+          this.addCommonTableExpression(parts.cteSql, parts.cteName, {
+            columnNames: parts.cteColumns,
+          });
+          this.leftJoin(parts.cteName, `${field.name}Records`, parts.joinOn);
         }
       }),
     );
@@ -202,7 +198,7 @@ export class WorkspaceSelectQueryBuilder<
   override clone(): this {
     const clonedQueryBuilder = super.clone();
 
-    const cloned = new WorkspaceSelectQueryBuilder(
+    const qb = new WorkspaceSelectQueryBuilder(
       clonedQueryBuilder,
       this.objectRecordsPermissions,
       this.internalContext,
@@ -211,9 +207,16 @@ export class WorkspaceSelectQueryBuilder<
       this.featureFlagMap,
     ) as this;
 
-    cloned.externalStorageInitPromise = this.externalStorageInitPromise;
+    if (
+      isDefined(this.externalStorageState.promise) === true &&
+      this.externalStorageState.isFullfilled === false
+    ) {
+      qb.prepareExternalStorage(this.alias);
+    } else {
+      qb.externalStorageState = this.externalStorageState;
+    }
 
-    return cloned;
+    return qb;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -471,31 +474,63 @@ export class WorkspaceSelectQueryBuilder<
     );
   }
 
+  private splitFieldsInExternalAndInternal(select: Record<string, boolean>) {
+    const objectMetadataMapItem = getObjectMetadataMapItemByNameSingular(
+      this.internalContext.objectMetadataMaps,
+      this.alias,
+    );
+
+    assertIsDefinedOrThrow(objectMetadataMapItem);
+
+    const columnNameToFieldId = getColumnNameToFieldMetadataIdMap(
+      objectMetadataMapItem,
+    );
+
+    return Object.entries(columnNameToFieldId).reduce(
+      (acc, [columnName, columnId]) => {
+        if (isDefined(select) && !isDefined(select[columnName])) return acc;
+
+        const field = objectMetadataMapItem.fieldsById[columnId];
+
+        if (field.storage && field.storage !== 'postgres') {
+          if (isDefined(this.externalStorageState.promise)) {
+            acc.external[columnName] = true;
+          }
+        } else {
+          acc.internal[columnName] = true;
+        }
+
+        return acc;
+      },
+      {
+        external: {},
+        internal: {},
+      } as {
+        external: Record<string, boolean>;
+        internal: Record<string, boolean>;
+      },
+    );
+  }
+
   override setFindOptions(findOptions: FindManyOptions<T>) {
-    const previousSelects = this.expressionMap.selects.map((s) => ({ ...s }));
+    const { external } = this.splitFieldsInExternalAndInternal(
+      findOptions.select as Record<string, boolean>,
+    );
 
-    const previousParams = { ...this.getParameters() };
-
-    if (!findOptions.select) {
-      return super.setFindOptions(findOptions);
-    }
+    Object.keys(findOptions.select).forEach((field) => {
+      if (external[field]) delete findOptions.select[field];
+    });
 
     super.setFindOptions(findOptions);
 
-    const dedupeFn = (s: SelectQuery) => `${s.selection}||${s.aliasName ?? ''}`;
-
-    const existingKeys = new Set(this.expressionMap.selects.map(dedupeFn));
-
-    for (const sel of previousSelects) {
-      const key = dedupeFn(sel);
-
-      if (!existingKeys.has(dedupeFn(sel))) {
-        this.addSelect(sel.selection, sel.aliasName);
-        existingKeys.add(key);
-      }
+    if (Object.keys(external).length > 0) {
+      Object.keys(external).forEach((field) => {
+        this.addSelect(
+          `"${field}Records"."${field}"`,
+          `${EXTERNAL_STORAGE_ALIAS}_${this.alias}_${field}`,
+        );
+      });
     }
-
-    this.setParameters({ ...previousParams, ...this.getParameters() });
 
     return this;
   }

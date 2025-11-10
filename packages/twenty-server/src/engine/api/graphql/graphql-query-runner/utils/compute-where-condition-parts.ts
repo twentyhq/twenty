@@ -16,7 +16,6 @@ export const computeWhereConditionParts = ({
   objectNameSingular,
   key,
   value,
-  selector,
 }: {
   operator: string;
   objectNameSingular: string;
@@ -27,7 +26,7 @@ export const computeWhereConditionParts = ({
 }): WhereConditionParts => {
   const uuid = Math.random().toString(36).slice(2, 7);
 
-  const base = selector ? `"${selector}"` : `"${objectNameSingular}"."${key}"`;
+  const base = `"${objectNameSingular}"."${key}"`;
 
   switch (operator) {
     case 'isEmptyArray':

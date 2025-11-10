@@ -38,8 +38,6 @@ export class RedisStorageDriver {
   ) {
     const entries = await this.getEntries(keyParams);
 
-    if (entries.length === 0) return;
-
     return this.redisFieldSqlFactory.buildZSetDateTimeParts(
       entries.slice(0, 100),
       tableAlias,

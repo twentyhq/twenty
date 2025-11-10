@@ -61,17 +61,14 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
-    const selector =
-      isDefined(fieldMetadata.storage) && fieldMetadata.storage !== 'postgres'
-        ? `${fieldMetadata.name}`
-        : undefined;
-
     const { sql, params } = computeWhereConditionParts({
       operator,
-      objectNameSingular,
+      objectNameSingular:
+        isDefined(fieldMetadata.storage) && fieldMetadata.storage !== 'postgres'
+          ? `${fieldMetadata.name}Records`
+          : objectNameSingular,
       key,
       value,
-      selector,
     });
 
     if (isFirst) {

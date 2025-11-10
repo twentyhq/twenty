@@ -224,6 +224,46 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     applicationId: applicationId ?? null,
   };
 
+  const lastViewedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
+    type: FieldMetadataType.DATE_TIME,
+    id: v4(),
+    viewFieldIds: [],
+    viewGroupIds: [],
+    kanbanAggregateOperationViewIds: [],
+    calendarViewIds: [],
+    isLabelSyncedWithName: false,
+    isUnique: false,
+    objectMetadataId,
+    universalIdentifier: createDeterministicUuid([
+      objectMetadataId,
+      BASE_OBJECT_STANDARD_FIELD_IDS.lastViewedAt,
+    ]),
+    workspaceId,
+    standardId: BASE_OBJECT_STANDARD_FIELD_IDS.lastViewedAt,
+    name: 'lastViewedAt',
+    label: 'Last view at',
+    icon: 'IconCalendarClock',
+    description: 'Last view of the record scoped by user',
+    isNullable: true,
+    isActive: true,
+    isCustom: false,
+    isSystem: false,
+    isUIReadOnly: true,
+    defaultValue: null,
+    viewFilterIds: [],
+
+    storage: 'redis',
+    createdAt,
+    updatedAt: createdAt,
+    options: null,
+    standardOverrides: null,
+    relationTargetFieldMetadataId: null,
+    relationTargetObjectMetadataId: null,
+    settings: null,
+    morphId: null,
+    applicationId: applicationId ?? null,
+  };
+
   const createdByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
     type: FieldMetadataType.ACTOR,
     id: v4(),
@@ -356,6 +396,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
       createdByField,
       positionField,
       searchVectorField,
+      lastViewedAtField,
     },
   } as const satisfies {
     fields: Record<string, FlatFieldMetadata>;

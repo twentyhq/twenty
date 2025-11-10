@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
@@ -30,6 +31,9 @@ import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-o
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
+import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
+import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/services/view-filter-v2.service';
 
 @Injectable()
 export class ObjectMetadataServiceV2 {
@@ -38,6 +42,8 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly viewFilterGroupService: ViewFilterGroupService,
+    private readonly viewFilterV2Service: ViewFilterV2Service,
   ) {}
 
   async updateOne({
@@ -290,19 +296,36 @@ export class ObjectMetadataServiceV2 {
       workspaceId,
     });
 
+    const lastViewedField = flatFieldMetadataToCreateOnObject.find(
+      (f) => f.name === 'lastViewedAt',
+    );
+
+    const flatRecentViewToCreate = lastViewedField
+      ? await this.createRecentFlatView({
+          objectMetadata: flatObjectMetadataToCreate,
+          workspaceId,
+        })
+      : null;
+
+    const objectFlatFields = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMapsFromTo.to,
+      flatEntityIds: flatFieldMetadataToCreateOnObject.map(({ id }) => id),
+    });
+
     const flatDefaultViewFieldsToCreate =
       await this.createDefaultFlatViewFields({
-        objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMapsOrThrow(
-          {
-            flatEntityMaps: flatFieldMetadataMapsFromTo.to,
-            flatEntityIds: flatFieldMetadataToCreateOnObject.map(
-              ({ id }) => id,
-            ),
-          },
-        ),
+        objectFlatFieldMetadatas: objectFlatFields,
         viewId: flatDefaultViewToCreate.id,
         workspaceId,
       });
+
+    const flatRecentViewFieldsToCreate = flatRecentViewToCreate
+      ? await this.createDefaultFlatViewFields({
+          objectFlatFieldMetadatas: objectFlatFields,
+          viewId: flatRecentViewToCreate.id,
+          workspaceId,
+        })
+      : [];
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -316,13 +339,19 @@ export class ObjectMetadataServiceV2 {
             }),
             flatViewMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewMaps,
-              flatEntityToCreate: [flatDefaultViewToCreate],
+              flatEntityToCreate: [
+                flatDefaultViewToCreate,
+                ...(flatRecentViewToCreate ? [flatRecentViewToCreate] : []),
+              ],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             }),
             flatViewFieldMaps: computeFlatEntityMapsFromTo({
               flatEntityMaps: existingFlatViewFieldMaps,
-              flatEntityToCreate: flatDefaultViewFieldsToCreate,
+              flatEntityToCreate: [
+                ...flatDefaultViewFieldsToCreate,
+                ...flatRecentViewFieldsToCreate,
+              ],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             }),
@@ -366,6 +395,27 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
+    if (flatRecentViewToCreate && lastViewedField) {
+      const rootGroup = await this.viewFilterGroupService.create({
+        workspaceId,
+        viewId: flatRecentViewToCreate.id,
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        positionInViewFilterGroup: 0,
+      });
+
+      await this.viewFilterV2Service.createOne({
+        workspaceId,
+        createViewFilterInput: {
+          viewId: flatRecentViewToCreate.id,
+          fieldMetadataId: lastViewedField.id,
+          viewFilterGroupId: rootGroup.id,
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'PAST_1_WEEK',
+          positionInViewFilterGroup: 0,
+        },
+      });
+    }
+
     await this.createWorkspaceFavoriteForNewObjectDefaultView({
       view: flatDefaultViewToCreate,
       workspaceId,
@@ -392,6 +442,29 @@ export class ObjectMetadataServiceV2 {
 
     const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
       createViewInput: defaultViewInput,
+      workspaceId,
+    });
+
+    return flatViewFromCreateInput;
+  }
+
+  private async createRecentFlatView({
+    objectMetadata,
+    workspaceId,
+  }: {
+    objectMetadata: FlatObjectMetadata;
+    workspaceId: string;
+  }) {
+    const recentViewInput = {
+      objectMetadataId: objectMetadata.id,
+      name: 'Recently View',
+      icon: 'IconClock',
+      type: ViewType.TABLE,
+      workspaceId: workspaceId,
+    } as const;
+
+    const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
+      createViewInput: recentViewInput,
       workspaceId,
     });
 

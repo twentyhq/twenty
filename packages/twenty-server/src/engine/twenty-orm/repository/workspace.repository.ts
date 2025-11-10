@@ -79,8 +79,6 @@ export class WorkspaceRepository<
       throw new Error('Object records permissions are required');
     }
 
-    queryBuilder.select(`${alias}.id`, `${alias}_id`);
-
     const workspaceSelectQueryBuilder = new WorkspaceSelectQueryBuilder(
       queryBuilder,
       this.objectRecordsPermissions,
@@ -90,7 +88,6 @@ export class WorkspaceRepository<
       this.featureFlagMap,
     );
 
-    // Trigger external storage preparation lazily without awaiting, to keep sync signature
     workspaceSelectQueryBuilder.prepareExternalStorage(alias);
 
     return workspaceSelectQueryBuilder;

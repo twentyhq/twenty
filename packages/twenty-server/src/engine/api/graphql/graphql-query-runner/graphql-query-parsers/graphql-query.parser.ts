@@ -111,12 +111,8 @@ export class GraphqlQueryParser {
     );
 
     Object.entries(parsedOrderBys).forEach(([expression, direction]) => {
-      queryBuilder.addOrderBy(
-        // TODO: dirty. Avoid using replace on regex
-        expression,
-        direction.order,
-        direction.nulls,
-      );
+      queryBuilder.addOrderBy(expression, direction.order, direction.nulls);
+      queryBuilder.addSelect(expression);
     });
 
     return queryBuilder;

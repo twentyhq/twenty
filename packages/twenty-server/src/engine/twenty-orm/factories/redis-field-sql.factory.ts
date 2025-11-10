@@ -15,12 +15,15 @@ export class RedisFieldSqlFactory {
   ) {
     const joinOn = `"${options.cteName}"."${options.idColumnName}"::uuid = "${tableAlias}".id::uuid`;
     const selectExpr = `"${options.cteName}"."${options.valueColumnName}"`;
-    const values = entries
-      .map(
-        ({ id, score }) =>
-          `('${id}', to_timestamp(${Number(score) || 0} / 1000)::timestamptz)`,
-      )
-      .join(', ');
+    const values =
+      entries.length === 0
+        ? '(NULL::uuid, NULL::timestamptz)'
+        : entries
+            .map(
+              ({ id, score }) =>
+                `('${id}', to_timestamp(${Number(score) || 0} / 1000)::timestamptz)`,
+            )
+            .join(', ');
 
     return {
       joinOn,
