@@ -1,13 +1,13 @@
-import { useTheme } from '@emotion/react';
+import { LINE_CHART_CROSSHAIR_DASH_ARRAY } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairDashArray';
+import { LINE_CHART_CROSSHAIR_STROKE_OPACITY } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairStrokeOpacity';
+import { LINE_CHART_CROSSHAIR_STROKE_WIDTH } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairStrokeWidth';
+import { LINE_CHART_CROSSHAIR_TRANSITION_DAMPING } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairTransitionDamping';
+import { LINE_CHART_CROSSHAIR_TRANSITION_STIFFNESS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairTransitionStiffness';
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
 import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
+import { useTheme } from '@emotion/react';
 import { type LineSeries, type Point } from '@nivo/line';
 import { motion } from 'framer-motion';
-import { LINE_CHART_CROSSHAIR_STROKE_WIDTH } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairStrokeWidth';
-import { LINE_CHART_CROSSHAIR_STROKE_OPACITY } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairStrokeOpacity';
-import { LINE_CHART_CROSSHAIR_DASH_ARRAY } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairDashArray';
-import { LINE_CHART_CROSSHAIR_TRANSITION_STIFFNESS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairTransitionStiffness';
-import { LINE_CHART_CROSSHAIR_TRANSITION_DAMPING } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairTransitionDamping';
 import { useCallback, useMemo, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
