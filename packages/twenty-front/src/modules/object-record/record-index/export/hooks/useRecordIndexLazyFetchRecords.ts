@@ -96,21 +96,31 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreAnyFieldFilterValue,
   });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const availableBoardFields = useMemo(
+    () =>
+      visibleBoardFields.filter((column) =>
+        objectMetadataItem.fields.some(
+          (field) => field.id === column.fieldMetadataId,
+        ),
+      ),
+    [visibleBoardFields, objectMetadataItem.fields],
+  );
+
   const finalColumns = [
-    ...visibleBoardFields,
+    ...availableBoardFields,
     ...(hiddenKanbanFieldColumn && viewType === ViewType.Kanban
       ? [hiddenKanbanFieldColumn]
       : []),
   ];
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-
   const recordGqlFields = useMemo(() => {
-    if (visibleBoardFields.length === 0) {
-      return undefined;
+    if (availableBoardFields.length === 0) {
+      return { id: true, createdAt: true, updatedAt: true, deletedAt: true };
     }
 
-    const visibleFieldMetadataItems = visibleBoardFields
+    const visibleFieldMetadataItems = availableBoardFields
       .map((column) =>
         objectMetadataItem.fields.find(
           (field) => field.id === column.fieldMetadataId,
@@ -147,7 +157,7 @@ export const useRecordIndexLazyFetchRecords = ({
       deletedAt: true,
     };
   }, [
-    visibleBoardFields,
+    availableBoardFields,
     objectMetadataItem,
     objectMetadataItems,
     recordGroupFieldMetadata,
