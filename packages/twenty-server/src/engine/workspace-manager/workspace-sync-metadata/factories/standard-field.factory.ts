@@ -15,6 +15,7 @@ import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspac
 import { type BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class StandardFieldFactory {
@@ -162,6 +163,8 @@ export class StandardFieldFactory {
         relationTargetObjectMetadata: null,
         relationTargetObjectMetadataId: null,
         morphId: null,
+        applicationId: context.applications.twentyStandardApplication.id,
+        universalIdentifier: v4(),
       },
     ];
   }
@@ -212,6 +215,8 @@ export class StandardFieldFactory {
       settings: null, // accurate ? looks weird for this to be undefined even for standard fields ?
       standardOverrides: null,
       morphId: null,
+      applicationId: context.applications.twentyStandardApplication.id,
+      universalIdentifier: v4(),
     });
 
     return fieldMetadataCollection;

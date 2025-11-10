@@ -25,6 +25,8 @@ export type PartialWorkspaceEntity = Pick<
   | 'duplicateCriteria'
   | 'labelIdentifierFieldMetadataId'
   | 'imageIdentifierFieldMetadataId'
+  | 'applicationId'
+  | 'universalIdentifier'
 > & {
   standardId: string;
   dataSourceId: string;

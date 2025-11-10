@@ -12,7 +12,7 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRoleComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-role.comparator';
 import { StandardRoleFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
-import { standardRoleDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles';
+import { STANDARD_ROLE_DEFINITIONS } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles';
 
 @Injectable()
 export class WorkspaceSyncRoleService {
@@ -42,7 +42,7 @@ export class WorkspaceSyncRoleService {
     });
 
     const targetStandardRoles = this.standardRoleFactory.create(
-      standardRoleDefinitions,
+      STANDARD_ROLE_DEFINITIONS,
       context,
       existingStandardRoleEntities,
     );
@@ -67,7 +67,7 @@ export class WorkspaceSyncRoleService {
             workspaceId: context.workspaceId,
           });
 
-          const roleDefinition = standardRoleDefinitions.find(
+          const roleDefinition = STANDARD_ROLE_DEFINITIONS.find(
             (def) => def.standardId === roleToCreate.standardId,
           );
 
@@ -93,7 +93,7 @@ export class WorkspaceSyncRoleService {
 
           await roleRepository.update({ id: roleToUpdate.id }, flatRoleData);
 
-          const roleDefinition = standardRoleDefinitions.find(
+          const roleDefinition = STANDARD_ROLE_DEFINITIONS.find(
             (def) => def.standardId === roleToUpdate.standardId,
           );
 

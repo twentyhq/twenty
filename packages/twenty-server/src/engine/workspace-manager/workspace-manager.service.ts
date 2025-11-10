@@ -79,15 +79,19 @@ export class WorkspaceManagerService {
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    await this.applicationService.createTwentyStandardApplication({
-      workspaceId,
-    });
+    const twentyStandardApplication =
+      await this.applicationService.createTwentyStandardApplication({
+        workspaceId,
+      });
 
     // TODO later replace by twenty-standard installation aka workspaceMigration run
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
+      applications: {
+        twentyStandardApplication,
+      },
     });
 
     const dataSourceMetadataCreationEnd = performance.now();
