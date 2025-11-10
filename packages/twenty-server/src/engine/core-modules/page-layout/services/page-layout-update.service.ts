@@ -173,10 +173,12 @@ export class PageLayoutUpdateService {
         transactionManager,
       );
 
+      const { widgets: _widgets, ...updateData } = tabToRestoreAndUpdate;
+
       await this.pageLayoutTabService.update(
         tabToRestoreAndUpdate.id,
         workspaceId,
-        tabToRestoreAndUpdate,
+        updateData,
         transactionManager,
       );
     }
