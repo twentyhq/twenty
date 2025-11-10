@@ -31,7 +31,9 @@ export const useLineChartTooltip = ({
       };
     }
 
-    const tooltipItems = slice.points
+    const sortedPoints = [...slice.points].sort((a, b) => a.y - b.y);
+
+    const tooltipItems = sortedPoints
       .map((point) => {
         const enrichedSeriesItem = enrichedSeriesMap.get(
           String(point.seriesId),

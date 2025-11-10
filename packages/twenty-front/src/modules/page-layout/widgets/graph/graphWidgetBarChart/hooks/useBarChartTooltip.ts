@@ -13,6 +13,7 @@ type UseBarChartTooltipProps = {
   indexBy: string;
   formatOptions: GraphValueFormatOptions;
   enableGroupTooltip?: boolean;
+  layout?: 'vertical' | 'horizontal';
 };
 
 export const useBarChartTooltip = ({
@@ -21,6 +22,7 @@ export const useBarChartTooltip = ({
   indexBy,
   formatOptions,
   enableGroupTooltip = true,
+  layout = 'vertical',
 }: UseBarChartTooltipProps) => {
   const renderTooltip = (datum: ComputedDatum<BarDatum>) => {
     const dataItem = data.find(
@@ -43,7 +45,10 @@ export const useBarChartTooltip = ({
       keysToShow = [enrichedKey];
     }
 
-    const tooltipItems = keysToShow.map((enrichedKey) => {
+    const keysToProcess =
+      layout === 'vertical' ? [...keysToShow].reverse() : keysToShow;
+
+    const tooltipItems = keysToProcess.map((enrichedKey) => {
       const seriesValue = Number(datum.data[enrichedKey.key] ?? 0);
       return {
         key: enrichedKey.key,

@@ -129,6 +129,7 @@ export const GraphWidgetBarChart = ({
     indexBy,
     formatOptions,
     enableGroupTooltip: groupMode === 'stacked',
+    layout,
   });
 
   const hideTooltip = useCallback(() => setActiveTooltipData(null), []);
