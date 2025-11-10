@@ -15,8 +15,14 @@ export class UpsertRecordService {
   ) {}
 
   async execute(params: UpsertRecordParams): Promise<ToolOutput> {
-    const { objectName, objectRecord, workspaceId, rolePermissionConfig } =
-      params;
+    const {
+      objectName,
+      objectRecord,
+      workspaceId,
+      rolePermissionConfig,
+      userWorkspaceId,
+      createdBy,
+    } = params;
 
     try {
       const { queryRunnerContext, selectedFields } =
@@ -24,6 +30,8 @@ export class UpsertRecordService {
           objectName,
           workspaceId,
           rolePermissionConfig,
+          userWorkspaceId,
+          actorContext: createdBy,
         });
 
       // Use Common API's built-in upsert functionality

@@ -15,8 +15,14 @@ export class DeleteRecordService {
   ) {}
 
   async execute(params: DeleteRecordParams): Promise<ToolOutput> {
-    const { objectName, objectRecordId, workspaceId, rolePermissionConfig } =
-      params;
+    const {
+      objectName,
+      objectRecordId,
+      workspaceId,
+      rolePermissionConfig,
+      userWorkspaceId,
+      createdBy,
+    } = params;
 
     try {
       const { queryRunnerContext, selectedFields } =
@@ -24,6 +30,8 @@ export class DeleteRecordService {
           objectName,
           workspaceId,
           rolePermissionConfig,
+          userWorkspaceId,
+          actorContext: createdBy,
         });
 
       const result = await this.commonDeleteOneRunner.execute(

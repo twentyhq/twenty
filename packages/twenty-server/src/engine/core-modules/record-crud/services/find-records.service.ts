@@ -23,6 +23,8 @@ export class FindRecordsService {
       offset,
       workspaceId,
       rolePermissionConfig,
+      userWorkspaceId,
+      createdBy,
     } = params;
 
     try {
@@ -31,6 +33,8 @@ export class FindRecordsService {
           objectName,
           workspaceId,
           rolePermissionConfig,
+          userWorkspaceId,
+          actorContext: createdBy,
         });
 
       const result = await this.commonFindManyRunner.execute(

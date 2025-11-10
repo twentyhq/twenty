@@ -71,6 +71,8 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       limit: workflowActionInput.limit,
       workspaceId,
       rolePermissionConfig: executionContext.rolePermissionConfig,
+      userWorkspaceId: executionContext.userWorkspaceId,
+      createdBy: executionContext.initiator,
     });
 
     if (!toolOutput.success) {

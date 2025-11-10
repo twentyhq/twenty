@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -17,6 +18,7 @@ export class CommonApiContextBuilder {
     workspaceId: string;
     rolePermissionConfig?: RolePermissionConfig;
     userWorkspaceId?: string;
+    actorContext?: ActorMetadata;
   }): Promise<{
     queryRunnerContext: CommonBaseQueryRunnerContext;
     selectedFields: Record<string, boolean>;
@@ -39,25 +41,23 @@ export class CommonApiContextBuilder {
       throw new Error(`Object metadata not found for ${params.objectName}`);
     }
 
-    // Build auth context for Common API
-    // userWorkspaceId should be the real user's ID (workflow initiator or workflow creator)
-    // If somehow we don't have one, throw an error rather than using a fake ID
     if (!params.userWorkspaceId) {
       throw new Error(
         'userWorkspaceId is required for Common API. Workflows must provide the workflow run creator or initiator userWorkspaceId.',
       );
     }
 
+    const workspaceMemberId = params.actorContext?.workspaceMemberId ?? null;
+
     const authContext = {
       workspace: { id: params.workspaceId },
       workspaceId: params.workspaceId,
       user: null,
-      workspaceMemberId: null,
+      workspaceMemberId,
       userWorkspaceId: params.userWorkspaceId,
       apiKey: null,
     } as unknown as WorkspaceAuthContext;
 
-    // Build selected fields (all non-relation fields)
     const selectedFields: Record<string, boolean> = { id: true };
 
     Object.entries(objectMetadata.fieldIdByName).forEach(([fieldName]) => {

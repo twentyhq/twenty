@@ -21,6 +21,8 @@ export class UpdateRecordService {
       objectRecord,
       workspaceId,
       rolePermissionConfig,
+      userWorkspaceId,
+      createdBy,
     } = params;
 
     try {
@@ -29,6 +31,8 @@ export class UpdateRecordService {
           objectName,
           workspaceId,
           rolePermissionConfig,
+          userWorkspaceId,
+          actorContext: createdBy,
         });
 
       const result = await this.commonUpdateOneRunner.execute(

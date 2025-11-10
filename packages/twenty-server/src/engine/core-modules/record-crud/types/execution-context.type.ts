@@ -5,6 +5,7 @@ export type RecordCrudExecutionContext = {
   workspaceId: string;
   rolePermissionConfig?: RolePermissionConfig;
   userWorkspaceId?: string;
+  createdBy?: ActorMetadata;
 };
 
 export type CreateRecordExecutionContext = RecordCrudExecutionContext & {
