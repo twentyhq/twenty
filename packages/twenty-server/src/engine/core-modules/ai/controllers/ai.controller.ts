@@ -18,6 +18,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 interface ChatRequest {
@@ -27,7 +28,7 @@ interface ChatRequest {
 }
 
 @Controller('chat')
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
 export class AiController {
   constructor(
     private readonly aiService: AiService,

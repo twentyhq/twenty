@@ -17,11 +17,12 @@ import { Response } from 'express';
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller('rest')
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard, CustomPermissionGuard)
 @UseFilters(RestApiExceptionFilter)
 export class RestApiCoreController {
   private readonly logger = new Logger(RestApiCoreController.name);

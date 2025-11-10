@@ -246,7 +246,7 @@ export class BillingResolver {
   }
 
   @Query(() => [BillingPlanOutput])
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
   async listPlans(): Promise<BillingPlanOutput[]> {
     const plans = await this.billingPlanService.listPlans();
 
