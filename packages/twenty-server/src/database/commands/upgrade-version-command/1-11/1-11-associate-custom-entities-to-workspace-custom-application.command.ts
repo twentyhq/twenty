@@ -9,7 +9,7 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { getAllTransactionalMetadataEntityRepository } from 'src/engine/metadata-modules/flat-entity/utils/get-all-transactional-metadata-entity-repository.util';
+import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   ALL_METADATA_NAME,
@@ -75,17 +75,15 @@ export class AssociateCustomEntitiesToWorkspaceCustomApplicationCommand extends 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const metadataEntityRepositoryByMetadataName =
-      getAllTransactionalMetadataEntityRepository({
-        queryRunner,
-      });
-
     try {
       for (const metadataName of ALL_METADATA_NAME_TO_MIGRATE) {
-        this.logger.log(`retrieving ${metadataName} entities`);
+        const currentMetadataEntity =
+          ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName];
 
-        const metadataEntityRepository =
-          metadataEntityRepositoryByMetadataName[metadataName];
+        const metadataEntityRepository = queryRunner.manager.getRepository(
+          currentMetadataEntity,
+        );
+        this.logger.log(`retrieving ${metadataName} entities`);
 
         const customEntities = await metadataEntityRepository.find({
           select: {
@@ -103,7 +101,6 @@ export class AssociateCustomEntitiesToWorkspaceCustomApplicationCommand extends 
         for (const entity of customEntities) {
           this.logger.log(`Processing entity id=${entity.id}`);
 
-          // @ts-ignore
           await metadataEntityRepository.update(entity.id, {
             universalIdentifier: entity.universalIdentifier ?? v4(),
             applicationId: workspaceCustomApplication.id,
