@@ -3,19 +3,20 @@ import { type ComponentStateKey } from '@/ui/utilities/state/component-state/typ
 import { type AtomEffect } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const componentLocalStorageEffect =
-  <T>(): AtomEffect<T> =>
-  ({ setSelf, onSet, node }) => {
-    const param = (node as any).param as ComponentStateKey;
-
+export const componentLocalStorageEffect = <T>(
+  param: ComponentStateKey,
+): AtomEffect<T> => {
+  return ({ setSelf, onSet, node }) => {
     const instanceId = typeof param === 'string' ? param : param?.instanceId;
 
     if (!instanceId) {
       return;
     }
 
+    const baseKey = node.key.split('__')[0];
+
     const storageKey = getComponentStateStorageKey({
-      componentStateKey: node.key,
+      componentStateKey: baseKey,
       instanceId,
     });
 
@@ -38,3 +39,4 @@ export const componentLocalStorageEffect =
       }
     });
   };
+};

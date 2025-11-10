@@ -9,5 +9,5 @@ export const isPageLayoutInEditModeComponentState =
     key: IS_PAGE_LAYOUT_IN_EDIT_MODE_COMPONENT_STATE_KEY,
     defaultValue: false,
     componentInstanceContext: PageLayoutComponentInstanceContext,
-    effects: [componentLocalStorageEffect()],
+    effects: [componentLocalStorageEffect],
   });

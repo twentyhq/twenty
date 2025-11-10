@@ -10,5 +10,5 @@ export const pageLayoutCurrentLayoutsComponentState =
     key: PAGE_LAYOUT_CURRENT_LAYOUTS_COMPONENT_STATE_KEY,
     defaultValue: {},
     componentInstanceContext: PageLayoutComponentInstanceContext,
-    effects: [componentLocalStorageEffect()],
+    effects: [componentLocalStorageEffect],
   });

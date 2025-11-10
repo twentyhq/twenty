@@ -11,5 +11,5 @@ export const pageLayoutDraftComponentState =
     key: PAGE_LAYOUT_DRAFT_COMPONENT_STATE_KEY,
     defaultValue: PAGE_LAYOUT_DRAFT_COMPONENT_STATE_DEFAULT_VALUE,
     componentInstanceContext: PageLayoutComponentInstanceContext,
-    effects: [componentLocalStorageEffect()],
+    effects: [componentLocalStorageEffect],
   });

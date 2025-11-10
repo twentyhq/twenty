@@ -9,7 +9,7 @@ type CreateComponentInstanceStateArgs<ValueType> = {
   key: string;
   defaultValue: ValueType;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-  effects?: AtomEffect<ValueType>[];
+  effects?: ((param: ComponentStateKey) => AtomEffect<ValueType>)[];
 };
 
 export const createComponentState = <ValueType>({
@@ -28,7 +28,9 @@ export const createComponentState = <ValueType>({
     atomFamily: atomFamily<ValueType, ComponentStateKey>({
       key,
       default: defaultValue,
-      effects: effects,
+      effects: isDefined(effects)
+        ? (param) => effects.map((effect) => effect(param))
+        : undefined,
     }),
   } satisfies ComponentState<ValueType>;
 };
