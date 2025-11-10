@@ -1574,6 +1574,16 @@ msgstr "كلاهما"
 msgid "Brief explanation of this output field"
 msgstr "تفسير موجز لهذا الحقل"
 
+#. js-lingui-id: VkwIHa
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "bullet"
+msgstr ""
+
+#. js-lingui-id: s1c0ja
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Bullet List"
+msgstr ""
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using Twenty, you agree to the"
@@ -3653,6 +3663,11 @@ msgstr "أدخل رقمًا بين 0 و 59"
 msgid "Enter number greater than 1"
 msgstr "أدخل رقمًا أكبر من 1"
 
+#. js-lingui-id: yZMXC2
+#: src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
+msgid "Enter text or Type '/' for commands"
+msgstr ""
+
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
@@ -4533,6 +4548,21 @@ msgstr "المجموعة حسب"
 msgid "Group sorting"
 msgstr "ترتيب المجموعة"
 
+#. js-lingui-id: eKiSkN
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "h1"
+msgstr ""
+
+#. js-lingui-id: DM6L2V
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "h2"
+msgstr ""
+
+#. js-lingui-id: aNHeda
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "h3"
+msgstr ""
+
 #. js-lingui-id: /Oqu/V
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Handoff created successfully"
@@ -4542,6 +4572,28 @@ msgstr "تم إنشاء الإحالة بنجاح"
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Handoff removed successfully"
 msgstr "تمت إزالة الإحالة بنجاح"
+
+#. js-lingui-id: vISdlD
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "heading"
+msgstr ""
+
+#. js-lingui-id: lXKZGw
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Heading 1"
+msgstr ""
+
+#. js-lingui-id: El7NbA
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Heading 2"
+msgstr ""
+
+#. js-lingui-id: SFN6dN
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Heading 3"
+msgstr ""
 
 #. js-lingui-id: I1IOmb
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -5194,6 +5246,11 @@ msgstr "مختبر"
 msgid "Language"
 msgstr "اللغة"
 
+#. js-lingui-id: 59o/ag
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Large section heading"
+msgstr ""
+
 #. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 1 hour"
@@ -5338,6 +5395,12 @@ msgstr "خط"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 msgid "Link copied to clipboard"
 msgstr "تم نسخ الرابط إلى الحافظة"
+
+#. js-lingui-id: 82kQhK
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "list"
+msgstr ""
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -5551,6 +5614,11 @@ msgstr "خادم MCP"
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 msgid "Me"
 msgstr "أنا"
+
+#. js-lingui-id: IAcjOi
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Medium section heading"
+msgstr ""
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -6336,6 +6404,11 @@ msgstr "الملاحظات"
 msgid "now"
 msgstr "الآن"
 
+#. js-lingui-id: VVexZo
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "number"
+msgstr ""
+
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -6361,6 +6434,16 @@ msgstr "عدد الاعتمادات الجديدة المخصصة كل {recurrin
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number type"
 msgstr "نوع الرقم"
+
+#. js-lingui-id: OC5fb9
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "numbered"
+msgstr ""
+
+#. js-lingui-id: M3G9ZD
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Numbered list"
+msgstr ""
 
 #. js-lingui-id: pNEViR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6420,6 +6503,11 @@ msgstr "من"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "خارج المألوف"
+
+#. js-lingui-id: ec0+nM
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "ol"
+msgstr ""
 
 #. js-lingui-id: +rvV4v
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -6582,6 +6670,16 @@ msgstr "أو"
 msgid "Or"
 msgstr "أو"
 
+#. js-lingui-id: VWupWc
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "ordered"
+msgstr ""
+
+#. js-lingui-id: Uci+Ph
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Ordered List"
+msgstr ""
+
 #. js-lingui-id: ucgZ0o
 #: src/modules/billing/hooks/useBillingWording.ts
 #: src/modules/billing/components/internal/PlansTags.tsx
@@ -6624,6 +6722,11 @@ msgstr "حقل المخرجات {fieldNumber}"
 msgid "Override Draft"
 msgstr "تجاوز المسودة"
 
+#. js-lingui-id: y3tCDg
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "p"
+msgstr ""
+
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
@@ -6633,6 +6736,11 @@ msgstr "الصفحة"
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
 msgstr "الصفحة غير موجودة"
+
+#. js-lingui-id: ijBN4V
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "paragraph"
+msgstr ""
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -6783,6 +6891,11 @@ msgstr "صورة"
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie"
 msgstr "فطيرة"
+
+#. js-lingui-id: fQtTho
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Plain text paragraph"
+msgstr ""
 
 #. js-lingui-id: GdgCoi
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8107,6 +8220,11 @@ msgstr "سادس"
 msgid "Skip"
 msgstr "تخطى"
 
+#. js-lingui-id: Ik7fz5
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Small section heading"
+msgstr ""
+
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "SMTP Configuration"
@@ -8306,6 +8424,11 @@ msgstr "النطاق الفرعي مأخوذ بالفعل"
 msgid "Subdomain updated"
 msgstr "تم تحديث النطاق الفرعي"
 
+#. js-lingui-id: Rcm+OU
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "subheading"
+msgstr ""
+
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
@@ -8368,6 +8491,11 @@ msgstr "تم تغيير الاشتراك إلى سنوي."
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
 msgstr "سيتم تبديل الاشتراك إلى شهري في {beautifiedRenewDate}."
+
+#. js-lingui-id: pEToQK
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "subtitle"
+msgstr ""
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -8569,8 +8697,14 @@ msgstr "تجربة سير العمل"
 msgid "Test your function"
 msgstr "اختبر وظيفتك"
 
+#. js-lingui-id: F0lHkW
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "text"
+msgstr ""
+
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Text"
 msgstr "نص"
 
@@ -8846,6 +8980,11 @@ msgstr "الطابع الزمني"
 msgid "Timestamp and participants will be shared with your team."
 msgstr "سيتم مشاركة الطابع الزمني والمشاركين مع فريقك."
 
+#. js-lingui-id: q7F5am
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "title"
+msgstr ""
+
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
@@ -9006,6 +9145,11 @@ msgstr "اكتب أي شيء"
 msgid "Ukrainian"
 msgstr "الأوكرانية"
 
+#. js-lingui-id: GNgAlk
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "ul"
+msgstr ""
+
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
@@ -9047,6 +9191,16 @@ msgstr "جهات اتصال غير محدودة"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Unlisted"
 msgstr "غير مدرج"
+
+#. js-lingui-id: eQMhFX
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "unordered"
+msgstr ""
+
+#. js-lingui-id: 9dX/SD
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Unordered list with bullets"
+msgstr ""
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AIChatThreadGroup.tsx
