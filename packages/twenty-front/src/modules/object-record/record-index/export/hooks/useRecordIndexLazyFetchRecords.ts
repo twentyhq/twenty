@@ -102,8 +102,6 @@ export const useRecordIndexLazyFetchRecords = ({
     visibleRecordFieldsComponentSelector,
   );
 
-  console.log('visibleRecordFields', visibleRecordFields);
-
   const finalColumns: Pick<
     ColumnDefinition<FieldMetadata>,
     'label' | 'type' | 'metadata'
