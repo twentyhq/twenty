@@ -131,7 +131,7 @@ msgstr "Réinitialisez votre mot de passe 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Définir votre mot de passe 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +141,7 @@ msgstr "Réinitialiser"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Définir"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

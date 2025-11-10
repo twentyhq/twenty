@@ -169,7 +169,7 @@ msgstr "Azioni necessarie per reimpostare la password"
 #. js-lingui-id: 8Q5bRY
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Set Password"
-msgstr ""
+msgstr "Azioni necessarie per impostare la password"
 
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -592,7 +592,7 @@ msgstr "Non è possibile impersonare l'utente tramite chiave API."
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
-msgstr ""
+msgstr "Impossibile attivare una versione che non sia bozza o l'ultima pubblicata"
 
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -628,12 +628,12 @@ msgstr "Impossibile abilitare l'unicità a causa di valori duplicati esistenti. 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
-msgstr ""
+msgstr "Non si può avere più di una versione attiva del workflow"
 
 #. js-lingui-id: PjZIyI
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
 msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
-msgstr ""
+msgstr "Impossibile aggiornare il canale di messaggi mentre la sincronizzazione è in corso. Attendere il completamento della sincronizzazione."
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -1427,11 +1427,6 @@ msgstr "Campo da aggiornare non trovato"
 msgid "Field used for full-text search"
 msgstr "Campo utilizzato per la ricerca full-text"
 
-#. js-lingui-id: s3HtdT
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "FieldMetadataId is required"
-msgstr "FieldMetadataId è richiesto"
-
 #. js-lingui-id: Sof2+k
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
@@ -1700,16 +1695,6 @@ msgstr "UUID non valido {id}"
 msgid "Invalid verification code. Please try again."
 msgstr "Codice di verifica non valido. Per favore riprova."
 
-#. js-lingui-id: 8xkULN
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data"
-msgstr "Dati di ordinamento vista non validi"
-
-#. js-lingui-id: I0OzaR
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data for view sort id: {id}"
-msgstr "Dati di ordinamento vista non validi per ID ordinamento vista: {id}"
-
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1852,7 +1837,7 @@ msgstr "Lingua"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Last credentials refreshed at"
-msgstr ""
+msgstr "Ultime credenziali aggiornate a"
 
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1931,7 +1916,7 @@ msgstr "Marzo"
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr ""
+msgstr "Il numero massimo di record da inserire o aggiornare è {QUERY_MAX_RECORDS}."
 
 #. js-lingui-id: 3JzsDb
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -1983,7 +1968,7 @@ msgstr "Associazioni messaggi del canale di messaggi"
 #. js-lingui-id: LOU3x5
 #: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
 msgid "Message channel not found"
-msgstr ""
+msgstr "Canale di messaggi non trovato"
 
 #. js-lingui-id: k7LXPQ
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -2593,7 +2578,7 @@ msgstr "ID Layout Pagina"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Parent Folder ID"
-msgstr ""
+msgstr "ID Cartella Principale"
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -2603,22 +2588,22 @@ msgstr "Password troppo debole"
 #. js-lingui-id: l6qKfi
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Pending action for folder sync"
-msgstr ""
+msgstr "Azione in sospeso per la sincronizzazione della cartella"
 
 #. js-lingui-id: ttZgHv
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Pending action for group emails"
-msgstr ""
+msgstr "Azione in sospeso per le email di gruppo"
 
 #. js-lingui-id: 5aGQev
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Pending group emails action"
-msgstr ""
+msgstr "Azione email di gruppo in attesa"
 
 #. js-lingui-id: 6jM9pB
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Pending Sync Action"
-msgstr ""
+msgstr "Azione di sincronizzazione in attesa"
 
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -3014,12 +2999,12 @@ msgstr "Domenica"
 #. js-lingui-id: VuvnTL
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync all folders"
-msgstr ""
+msgstr "Sincronizza tutte le cartelle"
 
 #. js-lingui-id: 9PsZjo
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Sync all folders including new ones"
-msgstr ""
+msgstr "Sincronizza tutte le cartelle, comprese le nuove"
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -3253,6 +3238,11 @@ msgstr "Il ruolo di default per questo workspace non è stato trovato. Contattar
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
 msgstr "L'esecutore del workflow"
+
+#. js-lingui-id: o6DGfJ
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
+msgstr "Il campo \"{field}\" non può essere aggiornato. Si prega di contattare l'amministratore del tuo workspace."
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -3540,11 +3530,6 @@ msgstr "Il campo univoco non può avere un valore predefinito"
 msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
 msgstr "L'indice univoco non può essere creato per il campo {fieldName} di tipo {fieldType}"
 
-#. js-lingui-id: rtir7c
-#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
-msgid "unknown"
-msgstr ""
-
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -3596,7 +3581,7 @@ msgstr "ID utente"
 #: src/engine/core-modules/auth/token/services/access-token.service.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User is not a member of the workspace."
-msgstr ""
+msgstr "L'utente non fa parte dello spazio di lavoro."
 
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -3834,16 +3819,6 @@ msgstr "Metadati del campo aggregato di visualizzazione kanban non trovati"
 msgid "View not found"
 msgstr "Vista non trovata"
 
-#. js-lingui-id: znNExx
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort (id: {id}) not found"
-msgstr "Ordinamento vista (ID: {id}) non trovato"
-
-#. js-lingui-id: 3zMs+f
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "View sort not found"
-msgstr "Ordinamento vista non trovato"
-
 #. js-lingui-id: toB/08
 #: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
@@ -3869,11 +3844,6 @@ msgstr "La visualizzazione con lo stesso id esiste già"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "ViewId"
 msgstr "VisualizzazioneID"
-
-#. js-lingui-id: kpQRY2
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "ViewId is required"
-msgstr "ViewId è richiesto"
 
 #. js-lingui-id: l88nXn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -4152,11 +4122,6 @@ msgstr "Posizione del membro dello spazio di lavoro"
 msgid "Workspace Members"
 msgstr "Membri dello spazio di lavoro"
 
-#. js-lingui-id: bBr+RW
-#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
-msgid "WorkspaceId is required"
-msgstr "WorkspaceId è richiesto"
-
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
@@ -4232,29 +4197,34 @@ msgid "You cannot set permissions on system objects as they are managed by the p
 msgstr "Non puoi impostare permessi su oggetti di sistema poiché sono gestiti dalla piattaforma."
 
 #. js-lingui-id: EFQeXU
-#: src/engine/guards/settings-permissions.guard.ts
+#: src/engine/guards/settings-permission.guard.ts
 msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
 msgstr "Non hai il permesso di accedere a questa funzionalità. Si prega di contattare l'amministratore del tuo workspace per l'accesso."
 
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
 msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "Non hai il permesso di eliminare questo utente dallo spazio di lavoro. Si prega di contattare l'amministratore del tuo workspace per l'accesso."
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Non hai il permesso di impersonare utenti. Si prega di contattare l'amministratore del tuo workspace per l'accesso."
 
-#. js-lingui-id: k7P8yU
+#. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage security settings. Please contact your workspace administrator."
-msgstr "Non hai il permesso di gestire le impostazioni di sicurezza. Si prega di contattare l'amministratore del tuo workspace."
+msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
+msgstr "Non hai il permesso di aggiornare questi campi: {fieldsList}. Si prega di contattare l'amministratore del tuo workspace."
 
-#. js-lingui-id: svchJc
-#: src/engine/core-modules/workspace/services/workspace.service.ts
-msgid "You do not have permission to manage workspace settings. Please contact your workspace administrator."
-msgstr "Non hai il permesso di gestire le impostazioni del workspace. Si prega di contattare l'amministratore del tuo workspace."
+#. js-lingui-id: M1he8p
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to create workspace-level views."
+msgstr "Non hai il permesso di creare viste a livello di workspace."
+
+#. js-lingui-id: QmL9y9
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to modify this view."
+msgstr "Non hai il permesso di modificare questa vista."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts

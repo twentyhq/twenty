@@ -131,7 +131,7 @@ msgstr "Şifreni sıfırla 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "Şifrenizi belirleyin 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +141,7 @@ msgstr "Sıfırla"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Belirle"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

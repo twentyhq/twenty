@@ -85,6 +85,10 @@ import {
   PET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/pet-data-seeds.constant';
 import {
+  ROCKET_DATA_SEED_COLUMNS,
+  ROCKET_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/rocket-data-seeds.constant';
+import {
   SURVEY_RESULT_DATA_SEED_COLUMNS,
   SURVEY_RESULT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/survey-result-data-seeds.constant';
@@ -125,6 +129,11 @@ const getRecordSeedsBatches = (
       tableName: '_surveyResult',
       pgColumns: SURVEY_RESULT_DATA_SEED_COLUMNS,
       recordSeeds: SURVEY_RESULT_DATA_SEEDS,
+    },
+    {
+      tableName: '_rocket',
+      pgColumns: ROCKET_DATA_SEED_COLUMNS,
+      recordSeeds: ROCKET_DATA_SEEDS,
     },
   ];
 

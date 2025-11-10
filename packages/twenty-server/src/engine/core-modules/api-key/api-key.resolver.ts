@@ -22,7 +22,7 @@ import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-a
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -34,7 +34,7 @@ import { ApiKeyService } from './api-key.service';
 @Resolver(() => ApiKeyEntity)
 @UseGuards(
   WorkspaceAuthGuard,
-  SettingsPermissionsGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+  SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
 export class ApiKeyResolver {
   constructor(
