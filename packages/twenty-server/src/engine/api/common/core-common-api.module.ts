@@ -11,6 +11,7 @@ import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-que
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
@@ -39,6 +40,7 @@ import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-wo
     ThrottlerModule,
     MetricsModule,
     GlobalWorkspaceDataSourceModule,
+    FeatureFlagModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,
