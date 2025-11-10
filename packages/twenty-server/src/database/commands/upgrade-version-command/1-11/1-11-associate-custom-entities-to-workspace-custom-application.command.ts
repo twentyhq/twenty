@@ -2,6 +2,14 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { DataSource, IsNull, Repository } from 'typeorm';
+import {
+  ALL_METADATA_NAME,
+  AllMetadataName,
+  NOT_V2_YET_METADATA_NAME,
+  NotV2YetAllMetadataName,
+} from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -11,14 +19,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import {
-  ALL_METADATA_NAME,
-  AllMetadataName,
-  NOT_V2_YET_METADATA_NAME,
-  NotV2YetAllMetadataName,
-} from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 const ALL_METADATA_NAME_TO_MIGRATE = [
   ...Object.keys(ALL_METADATA_NAME),
@@ -83,6 +83,7 @@ export class AssociateCustomEntitiesToWorkspaceCustomApplicationCommand extends 
         const metadataEntityRepository = queryRunner.manager.getRepository(
           currentMetadataEntity,
         );
+
         this.logger.log(`retrieving ${metadataName} entities`);
 
         const customEntities = await metadataEntityRepository.find({
