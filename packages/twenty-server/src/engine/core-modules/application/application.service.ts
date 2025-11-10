@@ -9,7 +9,6 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
@@ -124,15 +123,7 @@ export class ApplicationService {
 
   async update(
     id: string,
-    data: {
-      name?: string;
-      description?: string;
-      version?: string;
-      sourcePath?: string;
-      packageJson?: PackageJson;
-      yarnLock?: string;
-      packageChecksum?: string;
-    },
+    data: Parameters<typeof this.applicationRepository.update>[1],
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
 
