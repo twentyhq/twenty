@@ -1,0 +1,22 @@
+{
+  "local_setup": "Configuration Locale",
+  "self_hosting": "Auto-hébergement",
+  "api_and_webhooks": "API et Webhooks",
+  "bugs_and_requests": "Bugs et Demandes",
+  "frontend_development": "Développement Frontend",
+  "backend_development": "Développement Backend",
+  "getting_started": "Commencer",
+  "data_model": "Modèle de Données",
+  "crm_essentials": "Essentiel CRM",
+  "workflows": "Flux de Travail",
+  "collaboration": "Collaboration",
+  "integrations_api": "API et Intégrations",
+  "reporting": "Rapports",
+  "settings": "Paramètres",
+  "pricing": "Tarification",
+  "resources": "Ressources",
+  "display": "Affichage",
+  "feedback": "Retour",
+  "input": "Saisie",
+  "navigation": "Navigation"
+}
