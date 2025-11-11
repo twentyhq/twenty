@@ -1454,12 +1454,6 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetLoginTokenFromEmailVerificationTokenOutput = {
-  __typename?: 'GetLoginTokenFromEmailVerificationTokenOutput';
-  loginToken: AuthToken;
-  workspaceUrls: WorkspaceUrls;
-};
-
 export type GetServerlessFunctionSourceCodeInput = {
   /** The id of the function. */
   id: Scalars['ID'];
@@ -1845,8 +1839,6 @@ export type Mutation = {
   getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginTokenOutput;
-  getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
-  getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
@@ -1923,6 +1915,8 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginTokenOutput;
+  verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokensOutput;
   verifyEmailingDomain: EmailingDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
@@ -2428,21 +2422,6 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
 };
 
 
-export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerificationToken: Scalars['String'];
-  origin: Scalars['String'];
-};
-
-
-export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerificationToken: Scalars['String'];
-};
-
-
 export type MutationImpersonateArgs = {
   userId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
@@ -2834,6 +2813,21 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationVerifyEmailAndGetLoginTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
+  origin: Scalars['String'];
+};
+
+
+export type MutationVerifyEmailAndGetWorkspaceAgnosticTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
 };
 
 
@@ -4581,6 +4575,12 @@ export type VerificationRecord = {
   value: Scalars['String'];
 };
 
+export type VerifyEmailAndGetLoginTokenOutput = {
+  __typename?: 'VerifyEmailAndGetLoginTokenOutput';
+  loginToken: AuthToken;
+  workspaceUrls: WorkspaceUrls;
+};
+
 export type VerifyTwoFactorAuthenticationMethodOutput = {
   __typename?: 'VerifyTwoFactorAuthenticationMethodOutput';
   success: Scalars['Boolean'];
@@ -5137,25 +5137,6 @@ export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
 
 export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', getLoginTokenFromCredentials: { __typename?: 'LoginTokenOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
-export type GetLoginTokenFromEmailVerificationTokenMutationVariables = Exact<{
-  emailVerificationToken: Scalars['String'];
-  email: Scalars['String'];
-  captchaToken?: InputMaybe<Scalars['String']>;
-  origin: Scalars['String'];
-}>;
-
-
-export type GetLoginTokenFromEmailVerificationTokenMutation = { __typename?: 'Mutation', getLoginTokenFromEmailVerificationToken: { __typename?: 'GetLoginTokenFromEmailVerificationTokenOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } };
-
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables = Exact<{
-  emailVerificationToken: Scalars['String'];
-  email: Scalars['String'];
-  captchaToken?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation = { __typename?: 'Mutation', getWorkspaceAgnosticTokenFromEmailVerificationToken: { __typename?: 'AvailableWorkspacesAndAccessTokensOutput', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
-
 export type ImpersonateMutationVariables = Exact<{
   userId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
@@ -5245,6 +5226,25 @@ export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
 
 
 export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePasswordOutput', success: boolean } };
+
+export type VerifyEmailAndGetLoginTokenMutationVariables = Exact<{
+  emailVerificationToken: Scalars['String'];
+  email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
+}>;
+
+
+export type VerifyEmailAndGetLoginTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetLoginToken: { __typename?: 'VerifyEmailAndGetLoginTokenOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } };
+
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables = Exact<{
+  emailVerificationToken: Scalars['String'];
+  email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetWorkspaceAgnosticToken: { __typename?: 'AvailableWorkspacesAndAccessTokensOutput', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -8136,98 +8136,6 @@ export function useGetLoginTokenFromCredentialsMutation(baseOptions?: Apollo.Mut
 export type GetLoginTokenFromCredentialsMutationHookResult = ReturnType<typeof useGetLoginTokenFromCredentialsMutation>;
 export type GetLoginTokenFromCredentialsMutationResult = Apollo.MutationResult<GetLoginTokenFromCredentialsMutation>;
 export type GetLoginTokenFromCredentialsMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromCredentialsMutation, GetLoginTokenFromCredentialsMutationVariables>;
-export const GetLoginTokenFromEmailVerificationTokenDocument = gql`
-    mutation GetLoginTokenFromEmailVerificationToken($emailVerificationToken: String!, $email: String!, $captchaToken: String, $origin: String!) {
-  getLoginTokenFromEmailVerificationToken(
-    emailVerificationToken: $emailVerificationToken
-    email: $email
-    captchaToken: $captchaToken
-    origin: $origin
-  ) {
-    loginToken {
-      ...AuthTokenFragment
-    }
-    workspaceUrls {
-      ...WorkspaceUrlsFragment
-    }
-  }
-}
-    ${AuthTokenFragmentFragmentDoc}
-${WorkspaceUrlsFragmentFragmentDoc}`;
-export type GetLoginTokenFromEmailVerificationTokenMutationFn = Apollo.MutationFunction<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>;
-
-/**
- * __useGetLoginTokenFromEmailVerificationTokenMutation__
- *
- * To run a mutation, you first call `useGetLoginTokenFromEmailVerificationTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetLoginTokenFromEmailVerificationTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getLoginTokenFromEmailVerificationTokenMutation, { data, loading, error }] = useGetLoginTokenFromEmailVerificationTokenMutation({
- *   variables: {
- *      emailVerificationToken: // value for 'emailVerificationToken'
- *      email: // value for 'email'
- *      captchaToken: // value for 'captchaToken'
- *      origin: // value for 'origin'
- *   },
- * });
- */
-export function useGetLoginTokenFromEmailVerificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>(GetLoginTokenFromEmailVerificationTokenDocument, options);
-      }
-export type GetLoginTokenFromEmailVerificationTokenMutationHookResult = ReturnType<typeof useGetLoginTokenFromEmailVerificationTokenMutation>;
-export type GetLoginTokenFromEmailVerificationTokenMutationResult = Apollo.MutationResult<GetLoginTokenFromEmailVerificationTokenMutation>;
-export type GetLoginTokenFromEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<GetLoginTokenFromEmailVerificationTokenMutation, GetLoginTokenFromEmailVerificationTokenMutationVariables>;
-export const GetWorkspaceAgnosticTokenFromEmailVerificationTokenDocument = gql`
-    mutation GetWorkspaceAgnosticTokenFromEmailVerificationToken($emailVerificationToken: String!, $email: String!, $captchaToken: String) {
-  getWorkspaceAgnosticTokenFromEmailVerificationToken(
-    emailVerificationToken: $emailVerificationToken
-    email: $email
-    captchaToken: $captchaToken
-  ) {
-    availableWorkspaces {
-      ...AvailableWorkspacesFragment
-    }
-    tokens {
-      ...AuthTokenPairFragment
-    }
-  }
-}
-    ${AvailableWorkspacesFragmentFragmentDoc}
-${AuthTokenPairFragmentFragmentDoc}`;
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationFn = Apollo.MutationFunction<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables>;
-
-/**
- * __useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation__
- *
- * To run a mutation, you first call `useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [getWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, { data, loading, error }] = useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation({
- *   variables: {
- *      emailVerificationToken: // value for 'emailVerificationToken'
- *      email: // value for 'email'
- *      captchaToken: // value for 'captchaToken'
- *   },
- * });
- */
-export function useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation(baseOptions?: Apollo.MutationHookOptions<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables>(GetWorkspaceAgnosticTokenFromEmailVerificationTokenDocument, options);
-      }
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationHookResult = ReturnType<typeof useGetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation>;
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationResult = Apollo.MutationResult<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation>;
-export type GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationOptions = Apollo.BaseMutationOptions<GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutation, GetWorkspaceAgnosticTokenFromEmailVerificationTokenMutationVariables>;
 export const ImpersonateDocument = gql`
     mutation Impersonate($userId: UUID!, $workspaceId: UUID!) {
   impersonate(userId: $userId, workspaceId: $workspaceId) {
@@ -8667,6 +8575,98 @@ export function useUpdatePasswordViaResetTokenMutation(baseOptions?: Apollo.Muta
 export type UpdatePasswordViaResetTokenMutationHookResult = ReturnType<typeof useUpdatePasswordViaResetTokenMutation>;
 export type UpdatePasswordViaResetTokenMutationResult = Apollo.MutationResult<UpdatePasswordViaResetTokenMutation>;
 export type UpdatePasswordViaResetTokenMutationOptions = Apollo.BaseMutationOptions<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>;
+export const VerifyEmailAndGetLoginTokenDocument = gql`
+    mutation VerifyEmailAndGetLoginToken($emailVerificationToken: String!, $email: String!, $captchaToken: String, $origin: String!) {
+  verifyEmailAndGetLoginToken(
+    emailVerificationToken: $emailVerificationToken
+    email: $email
+    captchaToken: $captchaToken
+    origin: $origin
+  ) {
+    loginToken {
+      ...AuthTokenFragment
+    }
+    workspaceUrls {
+      ...WorkspaceUrlsFragment
+    }
+  }
+}
+    ${AuthTokenFragmentFragmentDoc}
+${WorkspaceUrlsFragmentFragmentDoc}`;
+export type VerifyEmailAndGetLoginTokenMutationFn = Apollo.MutationFunction<VerifyEmailAndGetLoginTokenMutation, VerifyEmailAndGetLoginTokenMutationVariables>;
+
+/**
+ * __useVerifyEmailAndGetLoginTokenMutation__
+ *
+ * To run a mutation, you first call `useVerifyEmailAndGetLoginTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyEmailAndGetLoginTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyEmailAndGetLoginTokenMutation, { data, loading, error }] = useVerifyEmailAndGetLoginTokenMutation({
+ *   variables: {
+ *      emailVerificationToken: // value for 'emailVerificationToken'
+ *      email: // value for 'email'
+ *      captchaToken: // value for 'captchaToken'
+ *      origin: // value for 'origin'
+ *   },
+ * });
+ */
+export function useVerifyEmailAndGetLoginTokenMutation(baseOptions?: Apollo.MutationHookOptions<VerifyEmailAndGetLoginTokenMutation, VerifyEmailAndGetLoginTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyEmailAndGetLoginTokenMutation, VerifyEmailAndGetLoginTokenMutationVariables>(VerifyEmailAndGetLoginTokenDocument, options);
+      }
+export type VerifyEmailAndGetLoginTokenMutationHookResult = ReturnType<typeof useVerifyEmailAndGetLoginTokenMutation>;
+export type VerifyEmailAndGetLoginTokenMutationResult = Apollo.MutationResult<VerifyEmailAndGetLoginTokenMutation>;
+export type VerifyEmailAndGetLoginTokenMutationOptions = Apollo.BaseMutationOptions<VerifyEmailAndGetLoginTokenMutation, VerifyEmailAndGetLoginTokenMutationVariables>;
+export const VerifyEmailAndGetWorkspaceAgnosticTokenDocument = gql`
+    mutation VerifyEmailAndGetWorkspaceAgnosticToken($emailVerificationToken: String!, $email: String!, $captchaToken: String) {
+  verifyEmailAndGetWorkspaceAgnosticToken(
+    emailVerificationToken: $emailVerificationToken
+    email: $email
+    captchaToken: $captchaToken
+  ) {
+    availableWorkspaces {
+      ...AvailableWorkspacesFragment
+    }
+    tokens {
+      ...AuthTokenPairFragment
+    }
+  }
+}
+    ${AvailableWorkspacesFragmentFragmentDoc}
+${AuthTokenPairFragmentFragmentDoc}`;
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationFn = Apollo.MutationFunction<VerifyEmailAndGetWorkspaceAgnosticTokenMutation, VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables>;
+
+/**
+ * __useVerifyEmailAndGetWorkspaceAgnosticTokenMutation__
+ *
+ * To run a mutation, you first call `useVerifyEmailAndGetWorkspaceAgnosticTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyEmailAndGetWorkspaceAgnosticTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyEmailAndGetWorkspaceAgnosticTokenMutation, { data, loading, error }] = useVerifyEmailAndGetWorkspaceAgnosticTokenMutation({
+ *   variables: {
+ *      emailVerificationToken: // value for 'emailVerificationToken'
+ *      email: // value for 'email'
+ *      captchaToken: // value for 'captchaToken'
+ *   },
+ * });
+ */
+export function useVerifyEmailAndGetWorkspaceAgnosticTokenMutation(baseOptions?: Apollo.MutationHookOptions<VerifyEmailAndGetWorkspaceAgnosticTokenMutation, VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyEmailAndGetWorkspaceAgnosticTokenMutation, VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables>(VerifyEmailAndGetWorkspaceAgnosticTokenDocument, options);
+      }
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationHookResult = ReturnType<typeof useVerifyEmailAndGetWorkspaceAgnosticTokenMutation>;
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationResult = Apollo.MutationResult<VerifyEmailAndGetWorkspaceAgnosticTokenMutation>;
+export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationOptions = Apollo.BaseMutationOptions<VerifyEmailAndGetWorkspaceAgnosticTokenMutation, VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables>;
 export const CheckUserExistsDocument = gql`
     query CheckUserExists($email: String!, $captchaToken: String) {
   checkUserExists(email: $email, captchaToken: $captchaToken) {

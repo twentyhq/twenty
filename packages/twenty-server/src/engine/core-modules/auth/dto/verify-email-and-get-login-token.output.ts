@@ -4,8 +4,8 @@ import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspa
 
 import { AuthToken } from './auth-token.dto';
 
-@ObjectType('GetLoginTokenFromEmailVerificationTokenOutput')
-export class GetLoginTokenFromEmailVerificationTokenOutput {
+@ObjectType('VerifyEmailAndGetLoginTokenOutput')
+export class VerifyEmailAndGetLoginTokenOutput {
   @Field(() => AuthToken)
   loginToken: AuthToken;
 

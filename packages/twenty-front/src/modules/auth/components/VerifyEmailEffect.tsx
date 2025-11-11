@@ -20,8 +20,8 @@ import { EmailVerificationSent } from '../sign-in-up/components/EmailVerificatio
 
 export const VerifyEmailEffect = () => {
   const {
-    getLoginTokenFromEmailVerificationToken,
-    getWorkspaceAgnosticTokenFromEmailVerificationToken,
+    verifyEmailAndGetLoginToken,
+    verifyEmailAndGetWorkspaceAgnosticToken,
   } = useAuth();
 
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
@@ -65,7 +65,7 @@ export const VerifyEmailEffect = () => {
 
       try {
         if (!isOnAWorkspace) {
-          await getWorkspaceAgnosticTokenFromEmailVerificationToken(
+          await verifyEmailAndGetWorkspaceAgnosticToken(
             emailVerificationToken,
             email,
           );
@@ -74,7 +74,7 @@ export const VerifyEmailEffect = () => {
         }
 
         const { loginToken, workspaceUrls } =
-          await getLoginTokenFromEmailVerificationToken(
+          await verifyEmailAndGetLoginToken(
             emailVerificationToken,
             email,
           );
