@@ -126,6 +126,7 @@ const StyledContainer = withTheme(styled.div<
       : 'var(--chip-horizontal-padding)'};
 `);
 
+// TODO: refactor this
 const renderRightComponent = (
   rightComponent: (() => ReactNode) | ReactNode | null,
 ) => {

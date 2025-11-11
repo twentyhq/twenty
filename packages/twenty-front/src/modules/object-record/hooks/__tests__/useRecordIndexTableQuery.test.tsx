@@ -59,61 +59,12 @@ const mocks: MockedResponse[] = [
                   edges {
                     node {
                       __typename
-                      company {
-                        __typename
-                        domainName {
-                          primaryLinkUrl
-                          primaryLinkLabel
-                          secondaryLinks
-                        }
-                        id
-                        name
-                      }
-                      companyId
-                      createdAt
-                      deletedAt
                       id
                       note {
                         __typename
                         id
                         title
                       }
-                      noteId
-                      opportunity {
-                        __typename
-                        id
-                        name
-                      }
-                      opportunityId
-                      person {
-                        __typename
-                        avatarUrl
-                        id
-                        name {
-                          firstName
-                          lastName
-                        }
-                      }
-                      personId
-                      pet {
-                        __typename
-                        id
-                        name
-                      }
-                      petId
-                      rocket {
-                        __typename
-                        id
-                        name
-                      }
-                      rocketId
-                      surveyResult {
-                        __typename
-                        id
-                        name
-                      }
-                      surveyResultId
-                      updatedAt
                     }
                   }
                 }
@@ -122,61 +73,12 @@ const mocks: MockedResponse[] = [
                   edges {
                     node {
                       __typename
-                      company {
-                        __typename
-                        domainName {
-                          primaryLinkUrl
-                          primaryLinkLabel
-                          secondaryLinks
-                        }
-                        id
-                        name
-                      }
-                      companyId
-                      createdAt
-                      deletedAt
                       id
-                      opportunity {
-                        __typename
-                        id
-                        name
-                      }
-                      opportunityId
-                      person {
-                        __typename
-                        avatarUrl
-                        id
-                        name {
-                          firstName
-                          lastName
-                        }
-                      }
-                      personId
-                      pet {
-                        __typename
-                        id
-                        name
-                      }
-                      petId
-                      rocket {
-                        __typename
-                        id
-                        name
-                      }
-                      rocketId
-                      surveyResult {
-                        __typename
-                        id
-                        name
-                      }
-                      surveyResultId
                       task {
                         __typename
                         id
                         title
                       }
-                      taskId
-                      updatedAt
                     }
                   }
                 }
