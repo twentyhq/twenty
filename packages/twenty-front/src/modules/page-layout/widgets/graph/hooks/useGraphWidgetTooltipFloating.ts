@@ -12,7 +12,7 @@ import {
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useTooltipFloating = (
+export const useGraphWidgetTooltipFloating = (
   element: Element | VirtualElement | null,
   boundaryElement?: Element | null,
 ) => {

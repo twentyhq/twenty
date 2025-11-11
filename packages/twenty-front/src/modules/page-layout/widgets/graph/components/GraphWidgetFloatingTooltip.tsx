@@ -1,56 +1,42 @@
-import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
-import { useTooltipFloating } from '@/page-layout/widgets/graph/hooks/useTooltipFloating';
-import { type GraphWidgetTooltipData } from '@/page-layout/widgets/graph/types/GraphWidgetTooltipData';
-import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
-import { getTooltipReferenceFromLineChartPointAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromLineChartPointAnchor';
+import {
+  GraphWidgetTooltip,
+  type GraphWidgetTooltipItem,
+} from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import { useGraphWidgetTooltipFloating } from '@/page-layout/widgets/graph/hooks/useGraphWidgetTooltipFloating';
 import { useTheme } from '@emotion/react';
 import { FloatingPortal, type VirtualElement } from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphWidgetFloatingTooltipProps = {
-  tooltipData: GraphWidgetTooltipData;
-  onScheduleHide?: () => void;
-  onCancelScheduledHide?: () => void;
+  reference: Element | VirtualElement;
+  boundary: Element;
+  items: GraphWidgetTooltipItem[];
+  indexLabel?: string;
+  highlightedKey?: string;
+  linkTo?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 export const GraphWidgetFloatingTooltip = ({
-  tooltipData,
-  onScheduleHide,
-  onCancelScheduledHide,
+  reference,
+  boundary,
+  items,
+  indexLabel,
+  highlightedKey,
+  linkTo,
+  onMouseEnter,
+  onMouseLeave,
 }: GraphWidgetFloatingTooltipProps) => {
   const theme = useTheme();
 
-  const { reference, boundary } = useMemo((): {
-    reference: Element | VirtualElement | null;
-    boundary: Element | null;
-  } => {
-    try {
-      if (tooltipData.anchor.type === 'bar-element-anchor') {
-        return getTooltipReferenceFromBarChartElementAnchor(
-          tooltipData.anchor.element,
-          tooltipData.anchor.containerId,
-        );
-      }
+  const { refs, floatingStyles } = useGraphWidgetTooltipFloating(
+    reference,
+    boundary,
+  );
 
-      return getTooltipReferenceFromLineChartPointAnchor(
-        tooltipData.anchor.containerId,
-        tooltipData.anchor.offsetLeft,
-        tooltipData.anchor.offsetTop,
-      );
-    } catch {
-      return { reference: null, boundary: null };
-    }
-  }, [tooltipData]);
-
-  const { refs, floatingStyles } = useTooltipFloating(reference, boundary);
-
-  if (
-    !isDefined(tooltipData) ||
-    !isDefined(boundary) ||
-    !(boundary instanceof HTMLElement)
-  ) {
+  if (!isDefined(boundary) || !(boundary instanceof HTMLElement)) {
     return null;
   }
 
@@ -61,8 +47,8 @@ export const GraphWidgetFloatingTooltip = ({
         style={{ ...floatingStyles, zIndex: theme.lastLayerZIndex }}
         role="tooltip"
         aria-live="polite"
-        onMouseEnter={() => onCancelScheduledHide?.()}
-        onMouseLeave={() => onScheduleHide?.()}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         <AnimatePresence>
           <motion.div
@@ -78,10 +64,10 @@ export const GraphWidgetFloatingTooltip = ({
             }}
           >
             <GraphWidgetTooltip
-              items={tooltipData.items}
-              indexLabel={tooltipData.indexLabel}
-              highlightedKey={tooltipData.highlightedKey}
-              linkTo={tooltipData.linkTo}
+              items={items}
+              indexLabel={indexLabel}
+              highlightedKey={highlightedKey}
+              linkTo={linkTo}
             />
           </motion.div>
         </AnimatePresence>
