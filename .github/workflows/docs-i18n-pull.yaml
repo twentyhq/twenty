@@ -52,7 +52,7 @@ jobs:
           git add .
           git stash || true
 
-      - name: Pull translated docs (MDX) from Crowdin
+      - name: Pull translated docs from Crowdin
         if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         uses: crowdin/github-action@v2
         with:
@@ -75,44 +75,18 @@ jobs:
           CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
-      - name: Pull Card title translations (JSON) from Crowdin
-        if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        uses: crowdin/github-action@v2
-        with:
-          upload_sources: false
-          upload_translations: false
-          download_translations: true
-          download_language: fr
-          source: 'packages/twenty-docs/locales/en/card-titles.json'
-          translation: 'packages/twenty-docs/locales/%two_letters_code%/card-titles.json'
-          export_only_approved: false
-          localization_branch_name: i18n
-          base_url: 'https://twenty.api.crowdin.com'
-          skip_untranslated_files: true
-          push_translations: false
-          create_pull_request: false
-          skip_ref_checkout: true
-          dryrun_action: false
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          CROWDIN_PROJECT_ID: '1'
-          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-
       - name: Fix file permissions
         run: sudo chown -R runner:docker . || true
 
       - name: Fix translated documentation links
         run: bash packages/twenty-docs/scripts/fix-translated-links.sh
 
-      - name: Translate Card component titles
-        run: bash packages/twenty-docs/scripts/translate-card-titles.sh
-
       - name: Check for changes and commit
         id: check_changes
         run: |
           git add .
           if ! git diff --staged --quiet --exit-code; then
-            git commit -m "chore: update docs translations from Crowdin, fix links and translate Card titles"
+            git commit -m "chore: update docs translations from Crowdin and fix links"
             echo "changes_detected=true" >> $GITHUB_OUTPUT
           else
             echo "changes_detected=false" >> $GITHUB_OUTPUT

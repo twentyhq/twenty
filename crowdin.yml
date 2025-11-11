@@ -30,14 +30,6 @@ files: [
   },
   {
     #
-    # Card titles JSON - for translating MDX Card component titles
-    # Crowdin translates these JSON files, then the post-processing script applies them
-    #
-    "source": "packages/twenty-docs/locales/en/card-titles.json",
-    "translation": "packages/twenty-docs/locales/%two_letters_code%/card-titles.json",
-  },
-  {
-    #
     # MDX documentation files - user-guide
     # Using md type to preserve JSX component structure
     # This prevents Crowdin from reformatting <Warning>, <Accordion>, etc.
