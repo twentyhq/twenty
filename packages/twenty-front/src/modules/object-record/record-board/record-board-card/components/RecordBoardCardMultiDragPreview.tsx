@@ -1,40 +1,21 @@
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
+import { RecordBoardCardMultiDragCounterChip } from '@/object-record/record-board/record-board-card/components/RecordBoardCardMultiDragCounterChip';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import styled from '@emotion/styled';
+import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useContext } from 'react';
-import { NotificationCounter } from 'twenty-ui/navigation';
 
-const StyledNotificationCounter = styled(NotificationCounter)`
-  position: absolute;
-  top: -7px;
-  right: -7px;
-  z-index: 1000;
-`;
-
-type RecordBoardCardMultiDragPreviewProps = {
-  isDragging: boolean;
-};
-
-export const RecordBoardCardMultiDragPreview = ({
-  isDragging,
-}: RecordBoardCardMultiDragPreviewProps) => {
+// TODO: use the same concept as PortalHovered components in the app
+export const RecordBoardCardMultiDragPreview = () => {
   const { recordId } = useContext(RecordBoardCardContext);
-  const recordBoardId = useAvailableComponentInstanceIdOrThrow(
-    RecordBoardComponentInstanceContext,
+
+  const isRecordIdPrimaryDragMultiple = useRecoilComponentFamilyValue(
+    isRecordIdPrimaryDragMultipleComponentFamilyState,
+    { recordId },
   );
-  const multiDragState = useRecordDragState('board', recordBoardId);
 
-  const isCurrentCardSelected =
-    multiDragState?.originalSelection.includes(recordId) || false;
-  const selectedCount = multiDragState?.originalSelection.length || 0;
-
-  const shouldShow = isDragging && isCurrentCardSelected && selectedCount > 1;
-
-  if (!shouldShow) {
+  if (!isRecordIdPrimaryDragMultiple) {
     return null;
   }
 
-  return <StyledNotificationCounter count={selectedCount} />;
+  return <RecordBoardCardMultiDragCounterChip />;
 };

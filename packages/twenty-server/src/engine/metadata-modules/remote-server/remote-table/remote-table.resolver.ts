@@ -14,7 +14,10 @@ import { RemoteTableDTO } from 'src/engine/metadata-modules/remote-server/remote
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { remoteTableGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/remote-server/remote-table/utils/remote-table-graphql-api-exception-handler.util';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
+)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @Resolver()

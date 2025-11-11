@@ -21,6 +21,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageParticipant,
+
   namePlural: 'messageParticipants',
   labelSingular: msg`Message Participant`,
   labelPlural: msg`Message Participants`,

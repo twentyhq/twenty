@@ -125,7 +125,7 @@ export class AuthResolver {
     private readonly permissionsService: PermissionsService,
   ) {}
 
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   @Query(() => CheckUserExistOutput)
   async checkUserExists(
     @Args() checkUserExistsInput: EmailAndCaptchaInput,
@@ -147,7 +147,7 @@ export class AuthResolver {
   }
 
   @Query(() => WorkspaceInviteHashValidOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async checkWorkspaceInviteHashIsValid(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ): Promise<WorkspaceInviteHashValidOutput> {
@@ -157,7 +157,7 @@ export class AuthResolver {
   }
 
   @Query(() => WorkspaceEntity)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ): Promise<WorkspaceEntity> {
@@ -833,7 +833,7 @@ export class AuthResolver {
   }
 
   @Query(() => ValidatePasswordResetTokenOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
   ): Promise<ValidatePasswordResetTokenOutput> {

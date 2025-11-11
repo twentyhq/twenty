@@ -25,6 +25,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.connectedAccount,
+
   namePlural: 'connectedAccounts',
   labelSingular: msg`Connected Account`,
   labelPlural: msg`Connected Accounts`,

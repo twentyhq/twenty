@@ -1569,6 +1569,16 @@ msgstr ""
 msgid "Brief explanation of this output field"
 msgstr ""
 
+#. js-lingui-id: VkwIHa
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "bullet"
+msgstr ""
+
+#. js-lingui-id: s1c0ja
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Bullet List"
+msgstr ""
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using Twenty, you agree to the"
@@ -3648,6 +3658,11 @@ msgstr ""
 msgid "Enter number greater than 1"
 msgstr ""
 
+#. js-lingui-id: yZMXC2
+#: src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
+msgid "Enter text or Type '/' for commands"
+msgstr ""
+
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
@@ -4528,6 +4543,21 @@ msgstr ""
 msgid "Group sorting"
 msgstr ""
 
+#. js-lingui-id: eKiSkN
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "h1"
+msgstr ""
+
+#. js-lingui-id: DM6L2V
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "h2"
+msgstr ""
+
+#. js-lingui-id: aNHeda
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "h3"
+msgstr ""
+
 #. js-lingui-id: /Oqu/V
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Handoff created successfully"
@@ -4536,6 +4566,28 @@ msgstr ""
 #. js-lingui-id: cZP3a/
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Handoff removed successfully"
+msgstr ""
+
+#. js-lingui-id: vISdlD
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "heading"
+msgstr ""
+
+#. js-lingui-id: lXKZGw
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Heading 1"
+msgstr ""
+
+#. js-lingui-id: El7NbA
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Heading 2"
+msgstr ""
+
+#. js-lingui-id: SFN6dN
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Heading 3"
 msgstr ""
 
 #. js-lingui-id: I1IOmb
@@ -5189,6 +5241,11 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
+#. js-lingui-id: 59o/ag
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Large section heading"
+msgstr ""
+
 #. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 1 hour"
@@ -5332,6 +5389,12 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 msgid "Link copied to clipboard"
+msgstr ""
+
+#. js-lingui-id: 82kQhK
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "list"
 msgstr ""
 
 #. js-lingui-id: HhVDr2
@@ -5545,6 +5608,11 @@ msgstr ""
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 msgid "Me"
+msgstr ""
+
+#. js-lingui-id: IAcjOi
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Medium section heading"
 msgstr ""
 
 #. js-lingui-id: Sma10A
@@ -6331,6 +6399,11 @@ msgstr ""
 msgid "now"
 msgstr ""
 
+#. js-lingui-id: VVexZo
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "number"
+msgstr ""
+
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -6355,6 +6428,16 @@ msgstr ""
 #. js-lingui-id: qg5nhQ
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number type"
+msgstr ""
+
+#. js-lingui-id: OC5fb9
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "numbered"
+msgstr ""
+
+#. js-lingui-id: M3G9ZD
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Numbered list"
 msgstr ""
 
 #. js-lingui-id: pNEViR
@@ -6414,6 +6497,11 @@ msgstr ""
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
+msgstr ""
+
+#. js-lingui-id: ec0+nM
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "ol"
 msgstr ""
 
 #. js-lingui-id: +rvV4v
@@ -6577,6 +6665,16 @@ msgstr ""
 msgid "Or"
 msgstr ""
 
+#. js-lingui-id: VWupWc
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "ordered"
+msgstr ""
+
+#. js-lingui-id: Uci+Ph
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Ordered List"
+msgstr ""
+
 #. js-lingui-id: ucgZ0o
 #: src/modules/billing/hooks/useBillingWording.ts
 #: src/modules/billing/components/internal/PlansTags.tsx
@@ -6619,6 +6717,11 @@ msgstr ""
 msgid "Override Draft"
 msgstr ""
 
+#. js-lingui-id: y3tCDg
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "p"
+msgstr ""
+
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
@@ -6627,6 +6730,11 @@ msgstr ""
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
+msgstr ""
+
+#. js-lingui-id: ijBN4V
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "paragraph"
 msgstr ""
 
 #. js-lingui-id: 8ZsakT
@@ -6777,6 +6885,11 @@ msgstr ""
 #. js-lingui-id: ZjVniv
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie"
+msgstr ""
+
+#. js-lingui-id: fQtTho
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Plain text paragraph"
 msgstr ""
 
 #. js-lingui-id: GdgCoi
@@ -8102,6 +8215,11 @@ msgstr ""
 msgid "Skip"
 msgstr ""
 
+#. js-lingui-id: Ik7fz5
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Small section heading"
+msgstr ""
+
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "SMTP Configuration"
@@ -8301,6 +8419,11 @@ msgstr ""
 msgid "Subdomain updated"
 msgstr ""
 
+#. js-lingui-id: Rcm+OU
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "subheading"
+msgstr ""
+
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
@@ -8362,6 +8485,11 @@ msgstr ""
 #. js-lingui-id: nQcG+x
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
+msgstr ""
+
+#. js-lingui-id: pEToQK
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "subtitle"
 msgstr ""
 
 #. js-lingui-id: OjK1bU
@@ -8564,8 +8692,14 @@ msgstr ""
 msgid "Test your function"
 msgstr ""
 
+#. js-lingui-id: F0lHkW
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "text"
+msgstr ""
+
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Text"
 msgstr ""
 
@@ -8841,6 +8975,11 @@ msgstr ""
 msgid "Timestamp and participants will be shared with your team."
 msgstr ""
 
+#. js-lingui-id: q7F5am
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "title"
+msgstr ""
+
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
@@ -9001,6 +9140,11 @@ msgstr ""
 msgid "Ukrainian"
 msgstr ""
 
+#. js-lingui-id: GNgAlk
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "ul"
+msgstr ""
+
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
@@ -9041,6 +9185,16 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Unlisted"
+msgstr ""
+
+#. js-lingui-id: eQMhFX
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "unordered"
+msgstr ""
+
+#. js-lingui-id: 9dX/SD
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Unordered list with bullets"
 msgstr ""
 
 #. js-lingui-id: wja8aL

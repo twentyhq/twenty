@@ -20,7 +20,7 @@ Twenty’s API uses API keys for authentication. Every request to protected endp
 * **Auth Header:** Once you have an API key, include it in the `Authorization` header of your HTTP requests. Use the Bearer token scheme. For example:
   ```
   Authorization: Bearer YOUR_API_KEY
-  ```   
+  ```
 
   Replace `YOUR_API_KEY` with the key you obtained. This header must be present on **all API requests**. If the token is missing or invalid, the API will respond with an authentication error (HTTP 401 Unauthorized).
 
@@ -28,13 +28,13 @@ Twenty’s API uses API keys for authentication. Every request to protected endp
 All resources can be accessed and via REST or GraphQL.
 
 * **Cloud:** `https://api.twenty.com/` or your custom domain / sub-domain
-* **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://<your-domain>/rest/`).
+* **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://{your-domain}/rest/`).
 
 Endpoints are grouped into two categories: **Core API** and **Metadata API**. The **Core API** deals with primary CRM data (e.g. people, companies, notes, tasks), while the **Metadata API** covers configuration data (like custom fields or object definitions). Most integrations will primarily use the Core API.
 
 ### Core API
 Accessed on `/rest/` or `/graphql/`.
-The **Core API** serves as a unified interface for managing core CRM entities (people, companies, notes, tasks) and their relationships, offering **both REST and GraphQL** interaction models. 
+The **Core API** serves as a unified interface for managing core CRM entities (people, companies, notes, tasks) and their relationships, offering **both REST and GraphQL** interaction models.
 
 ### Metadata API
 Accessed on `/rest/metadata/` or `/metadata/`.

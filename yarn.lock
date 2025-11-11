@@ -23146,6 +23146,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/suggestion@npm:^3.4.2":
+  version: 3.9.0
+  resolution: "@tiptap/suggestion@npm:3.9.0"
+  peerDependencies:
+    "@tiptap/core": ^3.9.0
+    "@tiptap/pm": ^3.9.0
+  checksum: 10c0/40e54124cc65c8f0f752c9cee393070fb4f427aaf83b1f5a5c2f55dce32ed9bd5d39b94bf9825c0ed8f22f87116e6a9b788c83ddf6bafb2895cd46d061554c11
+  languageName: node
+  linkType: hard
+
 "@toeverything/y-indexeddb@npm:^0.10.0-canary.9":
   version: 0.10.0-canary.9
   resolution: "@toeverything/y-indexeddb@npm:0.10.0-canary.9"
@@ -55754,6 +55764,7 @@ __metadata:
     "@tiptap/extension-underline": "npm:^3.4.2"
     "@tiptap/extensions": "npm:^3.4.2"
     "@tiptap/react": "npm:^3.4.2"
+    "@tiptap/suggestion": "npm:^3.4.2"
     "@types/apollo-upload-client": "npm:^17.0.2"
     "@types/file-saver": "npm:^2.0.7"
     "@types/js-cookie": "npm:^3.0.3"

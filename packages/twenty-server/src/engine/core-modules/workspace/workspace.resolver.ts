@@ -104,7 +104,7 @@ export class WorkspaceResolver {
   ) {}
 
   @Query(() => WorkspaceEntity)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
   async currentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
     const workspace = await this.workspaceService.findById(id);
 
@@ -292,6 +292,11 @@ export class WorkspaceResolver {
     );
   }
 
+  @ResolveField(() => String)
+  workspaceCustomApplicationId(@Parent() workspace: WorkspaceEntity) {
+    return workspace.workspaceCustomApplicationId;
+  }
+
   @ResolveField(() => Boolean)
   isMicrosoftAuthEnabled(@Parent() workspace: WorkspaceEntity) {
     return (
@@ -317,7 +322,7 @@ export class WorkspaceResolver {
   }
 
   @Query(() => PublicWorkspaceDataOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getPublicWorkspaceDataByDomain(
     @OriginHeader() originHeader: string,
     @Args('origin', { nullable: true }) origin?: string,

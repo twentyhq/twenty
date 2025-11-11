@@ -82,6 +82,8 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       fieldsToUpdate: workflowActionInput.fieldsToUpdate,
       workspaceId,
       rolePermissionConfig: executionContext.rolePermissionConfig,
+      userWorkspaceId: executionContext.userWorkspaceId,
+      createdBy: executionContext.initiator,
     });
 
     if (!toolOutput.success) {

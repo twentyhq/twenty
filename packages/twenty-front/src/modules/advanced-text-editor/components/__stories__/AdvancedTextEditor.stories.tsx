@@ -19,6 +19,7 @@ const EditorWrapper = ({
   onUpdate = fn(),
   minHeight = 200,
   maxWidth = 800,
+  enableSlashCommand = true,
 }: {
   readonly?: boolean;
   placeholder?: string;
@@ -26,6 +27,7 @@ const EditorWrapper = ({
   onUpdate?: (content: string) => void;
   minHeight?: number;
   maxWidth?: number;
+  enableSlashCommand?: boolean;
 }) => {
   const editor = useAdvancedTextEditor({
     placeholder,
@@ -42,6 +44,7 @@ const EditorWrapper = ({
     onImageUploadError: (_error: Error, _file: File) => {
       // Handle image upload error
     },
+    enableSlashCommand,
   });
 
   if (!editor) {

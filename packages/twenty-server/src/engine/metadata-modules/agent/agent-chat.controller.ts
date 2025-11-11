@@ -15,8 +15,10 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 import { AgentChatService } from './agent-chat.service';
 import { AgentStreamingService } from './agent-streaming.service';
@@ -31,6 +33,7 @@ export class AgentChatController {
   ) {}
 
   @Post('stream')
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI))
   async streamAgentChat(
     @Body()
     body: {

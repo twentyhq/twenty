@@ -1,11 +1,11 @@
 import { type CountryCode } from 'libphonenumber-js';
 import uniqBy from 'lodash.uniqby';
-
-import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import {
   type AdditionalPhoneMetadata,
   type PhonesMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
+} from 'twenty-shared/types';
+
+import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 
 export const mergePhonesFieldValues = (
   recordsWithValues: { value: PhonesMetadata; recordId: string }[],

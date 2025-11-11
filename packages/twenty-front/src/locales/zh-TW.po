@@ -1574,6 +1574,16 @@ msgstr "兩者"
 msgid "Brief explanation of this output field"
 msgstr "這個輸出欄位的簡要說明"
 
+#. js-lingui-id: VkwIHa
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "bullet"
+msgstr ""
+
+#. js-lingui-id: s1c0ja
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Bullet List"
+msgstr ""
+
 #. js-lingui-id: 8Pfllj
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "By using Twenty, you agree to the"
@@ -3653,6 +3663,11 @@ msgstr "輸入位於 0 和 59 之間的數字"
 msgid "Enter number greater than 1"
 msgstr "輸入大於 1 的數字"
 
+#. js-lingui-id: yZMXC2
+#: src/modules/advanced-text-editor/hooks/useAdvancedTextEditor.ts
+msgid "Enter text or Type '/' for commands"
+msgstr ""
+
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
@@ -4533,6 +4548,21 @@ msgstr "分組依據"
 msgid "Group sorting"
 msgstr "分組排序"
 
+#. js-lingui-id: eKiSkN
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "h1"
+msgstr ""
+
+#. js-lingui-id: DM6L2V
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "h2"
+msgstr ""
+
+#. js-lingui-id: aNHeda
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "h3"
+msgstr ""
+
 #. js-lingui-id: /Oqu/V
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Handoff created successfully"
@@ -4542,6 +4572,28 @@ msgstr "交接創建成功"
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Handoff removed successfully"
 msgstr "交接刪除成功"
+
+#. js-lingui-id: vISdlD
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "heading"
+msgstr ""
+
+#. js-lingui-id: lXKZGw
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Heading 1"
+msgstr ""
+
+#. js-lingui-id: El7NbA
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Heading 2"
+msgstr ""
+
+#. js-lingui-id: SFN6dN
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Heading 3"
+msgstr ""
 
 #. js-lingui-id: I1IOmb
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
@@ -5194,6 +5246,11 @@ msgstr "實驗室"
 msgid "Language"
 msgstr "語言"
 
+#. js-lingui-id: 59o/ag
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Large section heading"
+msgstr ""
+
 #. js-lingui-id: DU27lO
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 msgid "Last 1 hour"
@@ -5338,6 +5395,12 @@ msgstr "線"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 msgid "Link copied to clipboard"
 msgstr "鏈接已複製到剪貼板"
+
+#. js-lingui-id: 82kQhK
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "list"
+msgstr ""
 
 #. js-lingui-id: HhVDr2
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -5551,6 +5614,11 @@ msgstr "MCP伺服器"
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 msgid "Me"
 msgstr "我"
+
+#. js-lingui-id: IAcjOi
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Medium section heading"
+msgstr ""
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -6336,6 +6404,11 @@ msgstr "備註"
 msgid "now"
 msgstr "現在"
 
+#. js-lingui-id: VVexZo
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "number"
+msgstr ""
+
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -6361,6 +6434,16 @@ msgstr "每 {recurringInterval} 分配的新積分數量"
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number type"
 msgstr "數字類型"
+
+#. js-lingui-id: OC5fb9
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "numbered"
+msgstr ""
+
+#. js-lingui-id: M3G9ZD
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Numbered list"
+msgstr ""
 
 #. js-lingui-id: pNEViR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6420,6 +6503,11 @@ msgstr "的"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "偏離常規路線"
+
+#. js-lingui-id: ec0+nM
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "ol"
+msgstr ""
 
 #. js-lingui-id: +rvV4v
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -6582,6 +6670,16 @@ msgstr "或"
 msgid "Or"
 msgstr "或"
 
+#. js-lingui-id: VWupWc
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "ordered"
+msgstr ""
+
+#. js-lingui-id: Uci+Ph
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Ordered List"
+msgstr ""
+
 #. js-lingui-id: ucgZ0o
 #: src/modules/billing/hooks/useBillingWording.ts
 #: src/modules/billing/components/internal/PlansTags.tsx
@@ -6624,6 +6722,11 @@ msgstr "輸出欄位 {fieldNumber}"
 msgid "Override Draft"
 msgstr "覆寫草稿"
 
+#. js-lingui-id: y3tCDg
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "p"
+msgstr ""
+
 #. js-lingui-id: 6WdDG7
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Page"
@@ -6633,6 +6736,11 @@ msgstr "頁"
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found"
 msgstr "頁面未找到"
+
+#. js-lingui-id: ijBN4V
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "paragraph"
+msgstr ""
 
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -6783,6 +6891,11 @@ msgstr "圖片"
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
 msgid "Pie"
 msgstr "圓餅圖"
+
+#. js-lingui-id: fQtTho
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Plain text paragraph"
+msgstr ""
 
 #. js-lingui-id: GdgCoi
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8107,6 +8220,11 @@ msgstr "第六"
 msgid "Skip"
 msgstr "跳過"
 
+#. js-lingui-id: Ik7fz5
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Small section heading"
+msgstr ""
+
 #. js-lingui-id: w+rJId
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "SMTP Configuration"
@@ -8306,6 +8424,11 @@ msgstr "子域名已被佔用"
 msgid "Subdomain updated"
 msgstr "子域已更新"
 
+#. js-lingui-id: Rcm+OU
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "subheading"
+msgstr ""
+
 #. js-lingui-id: 97eDN2
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
 #: src/modules/onboarding/constants/OnboardingSyncEmailsOptions.ts
@@ -8368,6 +8491,11 @@ msgstr "訂閱已切換至年度。"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription will be switch to Monthly the {beautifiedRenewDate}."
 msgstr "訂閱將在 {beautifiedRenewDate} 切換至每月計劃。"
+
+#. js-lingui-id: pEToQK
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "subtitle"
+msgstr ""
 
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
@@ -8569,8 +8697,14 @@ msgstr "測試工作流程"
 msgid "Test your function"
 msgstr "測試您的功能"
 
+#. js-lingui-id: F0lHkW
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "text"
+msgstr ""
+
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Text"
 msgstr "文本"
 
@@ -8846,6 +8980,11 @@ msgstr "時間戳"
 msgid "Timestamp and participants will be shared with your team."
 msgstr "時間戳和參與者將與您的團隊共享。"
 
+#. js-lingui-id: q7F5am
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "title"
+msgstr ""
+
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
@@ -9006,6 +9145,11 @@ msgstr "輸入任何內容"
 msgid "Ukrainian"
 msgstr "烏克蘭語"
 
+#. js-lingui-id: GNgAlk
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "ul"
+msgstr ""
+
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
@@ -9047,6 +9191,16 @@ msgstr "無限聯繫人"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Unlisted"
 msgstr "未列出"
+
+#. js-lingui-id: eQMhFX
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "unordered"
+msgstr ""
+
+#. js-lingui-id: 9dX/SD
+#: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
+msgid "Unordered list with bullets"
+msgstr ""
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AIChatThreadGroup.tsx

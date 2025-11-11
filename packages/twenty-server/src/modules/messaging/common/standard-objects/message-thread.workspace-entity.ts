@@ -17,6 +17,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThread,
+
   namePlural: 'messageThreads',
   labelSingular: msg`Message Thread`,
   labelPlural: msg`Message Threads`,

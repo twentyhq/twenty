@@ -1,6 +1,5 @@
 import { type EntityManager } from 'typeorm';
-
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { FieldActorSource } from 'twenty-shared/types';
 
 export const AIRBNB_ID = 'c776ee49-f608-4a77-8cc8-6fe96ae1e43f';
 export const ANTHROPIC_ID = 'f45ee421-8a3e-4aa5-a1cf-7207cc6754e1';
