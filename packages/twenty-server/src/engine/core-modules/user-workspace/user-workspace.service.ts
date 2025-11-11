@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { EntityManager, IsNull, Not, Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -191,22 +191,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         user: true,
       },
     });
-  }
-
-  async findWorkspaceIdsByUserId(
-    userId: string,
-    entityManager?: EntityManager,
-  ): Promise<string[]> {
-    const repository = entityManager
-      ? entityManager.getRepository(UserWorkspaceEntity)
-      : this.userWorkspaceRepository;
-
-    const workspaceLinks = await repository.find({
-      select: ['workspaceId'],
-      where: { userId },
-    });
-
-    return workspaceLinks.map(({ workspaceId }) => workspaceId);
   }
 
   async findFirstWorkspaceByUserId(userId: string) {

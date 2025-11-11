@@ -35,18 +35,15 @@ export const EmailField = () => {
   const { updateEmail } = useUpdateEmail();
 
   const [email, setEmail] = useState(currentUser?.email || '');
-
-  const trimmedEmail = email.trim();
-  const isEmailChanged =
-    trimmedEmail.length > 0 && trimmedEmail !== currentUser?.email;
+  const isEmailChanged = email.length > 0 && email !== currentUser?.email;
 
   const handleUpdate = async () => {
     if (!canEdit || !isEmailChanged) {
       return;
     }
 
-    await updateEmail(trimmedEmail);
-    setEmail(trimmedEmail);
+    await updateEmail(email);
+    setEmail(currentUser?.email || '');
   };
 
   const currentUserId = currentUser?.id;

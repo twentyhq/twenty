@@ -24,7 +24,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
   UpdateWorkspaceMemberEmailJob,
-  type UpdateWorkspaceMemberEmailJobData,
+  UpdateWorkspaceMemberEmailJobData,
 } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserExceptionCode } from 'src/engine/core-modules/user/user.exception';
@@ -300,6 +300,20 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     return await this.userRepository.save(user);
   }
 
+  async updateEmailFromVerificationToken(userId: string, email: string) {
+    const user = await this.findUserByIdOrThrow(userId);
+    user.email = email;
+
+    const updatedUser = await this.userRepository.save(user);
+
+    await this.enqueueWorkspaceMemberEmailUpdate({
+      userId: user.id,
+      email,
+    });
+
+    return updatedUser;
+  }
+
   async updateUserEmail({
     user,
     workspace,
@@ -348,17 +362,6 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       });
     }
 
-    user.email = normalizedEmail;
-    user.isEmailVerified = false;
-
-    await this.userRepository.save(user);
-
-    await this.enqueueWorkspaceMemberEmailUpdate({
-      userId: user.id,
-      email: normalizedEmail,
-      workspaceIds: userWorkspaceIds,
-    });
-
     const workspaceDomainConfig =
       this.workspaceDomainsService.getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(
         workspace,
@@ -374,7 +377,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     });
   }
 
-  private async enqueueWorkspaceMemberEmailUpdate(
+  async enqueueWorkspaceMemberEmailUpdate(
     data: UpdateWorkspaceMemberEmailJobData,
   ) {
     await this.workspaceQueueService.add<UpdateWorkspaceMemberEmailJobData>(

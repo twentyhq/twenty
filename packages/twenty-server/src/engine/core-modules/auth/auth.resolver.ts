@@ -253,19 +253,24 @@ export class AuthResolver {
         getAuthTokenFromEmailVerificationTokenInput,
       );
 
+    if (appToken.context && appToken.context.email !== appToken.user.email) {
+      await this.userService.updateEmailFromVerificationToken(
+        appToken.user.id,
+        appToken.context.email,
+      );
+    }
+
+    const user = await this.userService.markEmailAsVerified(appToken.user.id);
+    await this.appTokenRepository.remove(appToken);
+
     const workspace =
       (await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       )) ??
-      (await this.userWorkspaceService.findFirstWorkspaceByUserId(
-        appToken.user.id,
-      ));
-
-    await this.userService.markEmailAsVerified(appToken.user.id);
-    await this.appTokenRepository.remove(appToken);
+      (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
 
     const loginToken = await this.loginTokenService.generateLoginToken(
-      appToken.user.email,
+      user.email,
       workspace.id,
       authProvider,
     );
@@ -288,31 +293,38 @@ export class AuthResolver {
         getAuthTokenFromEmailVerificationTokenInput,
       );
 
-    await this.userService.markEmailAsVerified(appToken.user.id);
+    if (appToken.context && appToken.context.email !== appToken.user.email) {
+      await this.userService.updateEmailFromVerificationToken(
+        appToken.user.id,
+        appToken.context.email,
+      );
+    }
+
+    const user = await this.userService.markEmailAsVerified(appToken.user.id);
     await this.appTokenRepository.remove(appToken);
 
     const availableWorkspaces =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
-        appToken.user.email,
+        user.email,
       );
 
     return {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
-          appToken.user,
+          user,
           authProvider,
         ),
       tokens: {
         accessOrWorkspaceAgnosticToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
             {
-              userId: appToken.user.id,
+              userId: user.id,
               authProvider: AuthProviderEnum.Password,
             },
           ),
         refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: appToken.user.id,
+          userId: user.id,
           authProvider: AuthProviderEnum.Password,
           targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
         }),
