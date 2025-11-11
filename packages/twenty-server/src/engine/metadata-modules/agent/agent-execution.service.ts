@@ -26,6 +26,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { AgentActorContextService } from 'src/engine/metadata-modules/agent/services/agent-actor-context.service';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
+import { type ToolHints } from 'src/engine/metadata-modules/ai-router/types/tool-hints.interface';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -41,6 +42,16 @@ import { repairToolCall } from './utils/repair-tool-call.util';
 export interface AgentExecutionResult {
   result: object;
   usage: LanguageModelUsage;
+}
+
+export interface StreamChatResponseResult {
+  stream: ReturnType<typeof streamText>;
+  timings: {
+    contextBuildTimeMs: number;
+    toolGenerationTimeMs: number;
+    aiRequestPrepTimeMs: number;
+    toolCount: number;
+  };
 }
 
 @Injectable()
@@ -68,6 +79,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     roleIds,
     excludeHandoffTools = false,
     userWorkspaceId,
+    toolHints,
   }: {
     system: string;
     agent: AgentEntity | null;
@@ -76,6 +88,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     roleIds?: string[];
     excludeHandoffTools?: boolean;
     userWorkspaceId?: string;
+    toolHints?: ToolHints;
   }) {
     try {
       if (agent) {
@@ -98,6 +111,7 @@ export class AgentExecutionService implements AgentExecutionContext {
             actorContext,
             roleIds,
             userWorkspaceId,
+            toolHints,
           );
 
         let handoffTools = {};
@@ -169,6 +183,9 @@ export class AgentExecutionService implements AgentExecutionContext {
     }
   }
 
+  // Fetches and formats record data to provide context for AI agents
+  // Respects permissions and field restrictions based on user role
+  // Returns a JSON string with record data and workspace URLs
   async getContextForSystemPrompt(
     workspace: WorkspaceEntity,
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
@@ -272,12 +289,14 @@ export class AgentExecutionService implements AgentExecutionContext {
     agentId,
     messages,
     recordIdsByObjectMetadataNameSingular,
+    toolHints,
   }: {
     workspace: WorkspaceEntity;
     userWorkspaceId: string;
     agentId: string;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
+    toolHints?: ToolHints;
   }): Promise<{
     stream: ReturnType<typeof streamText>;
     timings: {
@@ -335,6 +354,7 @@ export class AgentExecutionService implements AgentExecutionContext {
         actorContext,
         roleIds: [roleId, ...(agent?.roleId ? [agent?.roleId] : [])],
         userWorkspaceId,
+        toolHints,
       });
 
       const aiRequestPrepTime = Date.now() - aiRequestPrepStart;
