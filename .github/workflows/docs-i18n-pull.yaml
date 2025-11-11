@@ -86,7 +86,7 @@ jobs:
         run: |
           git add .
           if ! git diff --staged --quiet --exit-code; then
-            git commit -m "chore: update docs translations from Crowdin and fix links"
+            git commit -m "chore: update docs translations from Crowdin and fix internal links"
             echo "changes_detected=true" >> $GITHUB_OUTPUT
           else
             echo "changes_detected=false" >> $GITHUB_OUTPUT
