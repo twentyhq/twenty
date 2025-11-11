@@ -7,8 +7,8 @@ import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/use
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
-import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
+import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -59,9 +59,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const hideEmptyRecordGroup = useRecoilComponentFamilyValue(
-    recordIndexRecordGroupHideComponentFamilyState,
-    viewType,
+  const hideEmptyRecordGroup = useRecoilComponentValue(
+    recordIndexShouldHideEmptyRecordGroupsComponentState,
   );
 
   const recordGroupSort = useRecoilComponentValue(
@@ -71,9 +70,8 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const {
     handleVisibilityChange: handleRecordGroupVisibilityChange,
     handleHideEmptyRecordGroupChange,
-  } = useRecordGroupVisibility({
-    viewType,
-  });
+  } = useRecordGroupVisibility();
+
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
