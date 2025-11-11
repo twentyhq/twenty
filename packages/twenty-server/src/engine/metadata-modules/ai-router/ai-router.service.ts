@@ -14,6 +14,9 @@ import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.con
 import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { DATA_MANIPULATOR_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/data-manipulator-agent';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
 
 export interface AiRouterContext {
@@ -41,6 +44,7 @@ export class AiRouterService {
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   async routeMessage(
@@ -88,7 +92,12 @@ export class AiRouterService {
         )?.text || '';
 
       const model = this.getRouterModel(routerModel);
-      const agentDescriptions = this.buildAgentDescriptions(availableAgents);
+      const workspaceObjectsList =
+        await this.buildWorkspaceObjectsList(workspaceId);
+      const agentDescriptions = this.buildAgentDescriptions(
+        availableAgents,
+        workspaceObjectsList,
+      );
 
       const systemPrompt = this.buildRouterSystemPrompt(agentDescriptions);
       const userPrompt = this.buildRouterUserPrompt(
@@ -193,9 +202,53 @@ export class AiRouterService {
     return registeredModel.model;
   }
 
-  private buildAgentDescriptions(agents: AgentEntity[]): string {
+  private async buildWorkspaceObjectsList(
+    workspaceId: string,
+  ): Promise<string> {
+    try {
+      const objects =
+        await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
+          where: { isActive: true, isSystem: false },
+        });
+
+      const filteredObjects = objects.filter(
+        (obj) => !isWorkflowRunObject(obj),
+      );
+
+      if (filteredObjects.length === 0) {
+        return '';
+      }
+
+      return filteredObjects
+        .map((obj) => `- ${obj.labelSingular} (${obj.nameSingular})`)
+        .join('\n');
+    } catch (error) {
+      this.logger.warn('Failed to build workspace objects list:', error);
+
+      return '';
+    }
+  }
+
+  private buildAgentDescriptions(
+    agents: AgentEntity[],
+    workspaceObjectsList: string,
+  ): string {
     return agents
-      .map((agent) => `- ${agent.label} (${agent.id}): ${agent.description}`)
+      .map((agent) => {
+        const baseDescription = `- ${agent.label} (${agent.id}): ${agent.description}`;
+
+        if (
+          agent.standardId === DATA_MANIPULATOR_AGENT.standardId &&
+          workspaceObjectsList
+        ) {
+          return `${baseDescription}
+
+Available workspace objects:
+${workspaceObjectsList}`;
+        }
+
+        return baseDescription;
+      })
       .join('\n');
   }
 
