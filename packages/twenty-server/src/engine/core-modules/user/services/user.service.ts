@@ -302,6 +302,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
   async updateEmailFromVerificationToken(userId: string, email: string) {
     const user = await this.findUserByIdOrThrow(userId);
+
     user.email = email;
 
     const updatedUser = await this.userRepository.save(user);

@@ -261,6 +261,7 @@ export class AuthResolver {
     }
 
     const user = await this.userService.markEmailAsVerified(appToken.user.id);
+
     await this.appTokenRepository.remove(appToken);
 
     const workspace =
@@ -301,6 +302,7 @@ export class AuthResolver {
     }
 
     const user = await this.userService.markEmailAsVerified(appToken.user.id);
+
     await this.appTokenRepository.remove(appToken);
 
     const availableWorkspaces =
