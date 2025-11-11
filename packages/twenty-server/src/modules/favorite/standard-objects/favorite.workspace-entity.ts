@@ -30,6 +30,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.favorite,
+
   namePlural: 'favorites',
   labelSingular: msg`Favorite`,
   labelPlural: msg`Favorites`,

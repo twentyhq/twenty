@@ -8,9 +8,27 @@
  */
 
 export type { ApplicationConfig } from './application-config';
-export { BaseObjectMetadata } from './base-object-metadata';
-export { FieldMetadataType } from './field-metadata-type';
-export { FieldMetadata } from './field-metadata.decorator';
-export { ObjectMetadata } from './object-metadata.decorator';
+export {
+  actorCompositeType,
+  ActorMetadata,
+  addressCompositeType,
+  AddressMetadata,
+  currencyCompositeType,
+  CurrencyMetadata,
+  emailsCompositeType,
+  EmailsMetadata,
+  fullNameCompositeType,
+  FullNameMetadata,
+  linksCompositeType,
+  LinksMetadata,
+  phonesCompositeType,
+  PhonesMetadata,
+  richTextV2CompositeType,
+  RichTextV2Metadata,
+} from './field-metadata/composite-fields';
+export { FieldMetadataType } from './field-metadata/field-metadata-type';
+export { FieldMetadata } from './field-metadata/field-metadata.decorator';
+export { BaseObjectMetadata } from './object-metadata/base-object-metadata';
+export { ObjectMetadata } from './object-metadata/object-metadata.decorator';
 export type { ServerlessFunctionConfig } from './serverless-function-config';
 export type { SyncableEntityOptions } from './syncable-entity-options.type';

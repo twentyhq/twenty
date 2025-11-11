@@ -193,6 +193,7 @@ export class ViewService {
     id: string,
     workspaceId: string,
     updateData: Partial<ViewEntity>,
+    userWorkspaceId?: string,
   ): Promise<ViewEntity> {
     const existingView = await this.findById(id, workspaceId);
 
@@ -206,9 +207,23 @@ export class ViewService {
       );
     }
 
+    // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
+    // This prevents the view from disappearing for the user making the change
+    const dataToUpdate = { ...updateData };
+
+    if (
+      isDefined(updateData.visibility) &&
+      updateData.visibility === ViewVisibility.UNLISTED &&
+      existingView.visibility === ViewVisibility.WORKSPACE &&
+      isDefined(userWorkspaceId)
+    ) {
+      // Re-allocate the view to the current user if it has no owner or a different owner
+      dataToUpdate.createdByUserWorkspaceId = userWorkspaceId;
+    }
+
     const updatedView = await this.viewRepository.save({
       id,
-      ...updateData,
+      ...dataToUpdate,
     });
 
     await this.flushGraphQLCache(workspaceId);

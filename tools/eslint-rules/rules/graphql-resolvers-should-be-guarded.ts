@@ -14,10 +14,6 @@ export const graphqlResolversShouldBeGuarded = (
     ['Query', 'Mutation', 'Subscription'],
   );
 
-  const isMutation = typedTokenHelpers.nodeHasDecoratorsNamed(node, [
-    'Mutation',
-  ]);
-
   const hasAuthGuards = typedTokenHelpers.nodeHasAuthGuards(node);
   const hasPermissionsGuard = typedTokenHelpers.nodeHasPermissionsGuard(node);
 
@@ -43,13 +39,12 @@ export const graphqlResolversShouldBeGuarded = (
     ? typedTokenHelpers.nodeHasPermissionsGuard(classNode)
     : false;
 
-  // Basic requirement: all resolvers need auth guards
+  // All resolvers need both auth guards and permission guards
   const missingAuthGuard =
     hasGraphQLResolverDecorator && !hasAuthGuards && !hasAuthGuardsOnResolver;
 
-  // Additional requirement: mutations need permission guards
   const missingPermissionGuard =
-    isMutation && !hasPermissionsGuard && !hasPermissionsGuardOnResolver;
+    hasGraphQLResolverDecorator && !hasPermissionsGuard && !hasPermissionsGuardOnResolver;
 
   return missingAuthGuard || missingPermissionGuard;
 };
@@ -59,11 +54,11 @@ export const rule = createRule<[], 'graphqlResolversShouldBeGuarded'>({
   meta: {
     docs: {
       description:
-        'GraphQL root resolvers (Query, Mutation, Subscription) should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpointGuard) to maintain our security model. Mutations also require permission guards (SettingsPermissionsGuard or CustomPermissionGuard).',
+        'GraphQL root resolvers (Query, Mutation, Subscription) should have authentication guards (UserAuthGuard or WorkspaceAuthGuard) or be explicitly marked as public (PublicEndpointGuard) and permission guards (SettingsPermissionsGuard or CustomPermissionGuard) to maintain our security model.',
     },
     messages: {
       graphqlResolversShouldBeGuarded:
-        'All GraphQL resolvers must have authentication guards (@UseGuards(UserAuthGuard/WorkspaceAuthGuard)). Mutations also require permission guards (@UseGuards(..., SettingsPermissionsGuard(PermissionFlagType.XXX)), CustomPermissionGuard for custom logic, or NoPermissionGuard for special cases like onboarding).',
+        'All GraphQL resolvers must have authentication guards (@UseGuards(UserAuthGuard/WorkspaceAuthGuard)) and permission guards (@UseGuards(..., SettingsPermissionsGuard(PermissionFlagType.XXX)), CustomPermissionGuard for custom logic, or NoPermissionGuard for special cases like onboarding).',
     },
     schema: [],
     hasSuggestions: false,

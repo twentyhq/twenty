@@ -1,6 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { FieldMetadataType } from '../FieldMetadataType';
+import { type CompositeType } from '../composite-types/composite-type.interface';
 
 export const fullNameCompositeType: CompositeType = {
   type: FieldMetadataType.FULL_NAME,

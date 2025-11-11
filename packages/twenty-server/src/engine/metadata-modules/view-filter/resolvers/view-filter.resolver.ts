@@ -5,6 +5,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
@@ -30,6 +31,7 @@ export class ViewFilterResolver {
   ) {}
 
   @Query(() => [ViewFilterDTO])
+  @UseGuards(NoPermissionGuard)
   async getCoreViewFilters(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('viewId', { type: () => String, nullable: true })
@@ -43,6 +45,7 @@ export class ViewFilterResolver {
   }
 
   @Query(() => ViewFilterDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async getCoreViewFilter(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -5,9 +5,9 @@ import {
   lowercaseUrlOriginAndRemoveTrailingSlash,
   parseJson,
 } from 'twenty-shared/utils';
+import { type LinkMetadataNullable } from 'twenty-shared/types';
 
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
-import { type LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export type LinksFieldGraphQLInput =
   | {

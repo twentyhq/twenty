@@ -87,7 +87,7 @@ export const useLazyFetchAllRecords = <T>({
         await sleep(delayMs);
       }
 
-      const rawResult = await fetchMoreRecordsLazy();
+      const rawResult = await fetchMoreRecordsLazy(limit);
 
       const fetchMoreResult = rawResult?.data;
 

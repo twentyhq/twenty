@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
@@ -20,7 +20,7 @@ export const useHandleToggleColumnSort = ({
   });
 
   const { columnDefinitions } =
-    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+    useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
   const { upsertRecordSort } = useUpsertRecordSort();
 
