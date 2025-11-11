@@ -78,10 +78,6 @@ export class CreatedByFromAuthContextService {
     );
 
     if (allRecordsHaveCreatedBy) {
-      this.logger.log(
-        `All records already have createdBy populated, skipping injection from auth context`,
-      );
-
       return clonedRecords;
     }
 

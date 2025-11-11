@@ -32,9 +32,6 @@ export class WorkflowExecutionContextService {
     });
 
     if (!workflowRun.createdBy) {
-      this.logger.error(
-        `WorkflowRun ${runInfo.workflowRunId} has no createdBy field - this indicates a data issue`,
-      );
       throw new Error(
         'WorkflowRun createdBy field is missing - cannot determine execution context',
       );
