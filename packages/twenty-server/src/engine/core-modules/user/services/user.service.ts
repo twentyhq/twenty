@@ -340,10 +340,10 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       );
     }
 
-    const userWorkspaceIds =
-      await this.userWorkspaceService.findWorkspaceIdsByUserId(user.id);
+    const userWorkspaceCount =
+      await this.userWorkspaceService.countUserWorkspaces(user.id);
 
-    if (userWorkspaceIds.length > 1) {
+    if (userWorkspaceCount > 1) {
       throw new UserInputError(
         'Email updates are available only for users with a single workspace',
         {
