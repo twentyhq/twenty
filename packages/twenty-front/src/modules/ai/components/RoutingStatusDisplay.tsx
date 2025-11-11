@@ -1,5 +1,8 @@
+import { RoutingDebugDisplay } from '@/ai/components/RoutingDebugDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { IconCpu, IconSparkles } from 'twenty-ui/display';
 
@@ -38,27 +41,37 @@ const StyledText = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
+const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const RoutingStatusDisplay = ({
   data,
 }: {
   data: DataMessagePart['routing-status'];
 }) => {
   const isLoading = data.state === 'loading';
+  const isDebugMode = useRecoilValue(isDebugModeState);
+  const showDebugInfo = isDebugMode && data.state === 'routed' && data.debug;
 
   if (data.state === 'error') {
     return null;
   }
 
   return (
-    <StyledRoutingContainer>
-      <StyledIconContainer isLoading={isLoading}>
-        {isLoading ? <IconSparkles size={16} /> : <IconCpu size={16} />}
-      </StyledIconContainer>
-      {isLoading ? (
-        <ShimmeringText>{data.text}</ShimmeringText>
-      ) : (
-        <StyledText>{data.text}</StyledText>
-      )}
-    </StyledRoutingContainer>
+    <StyledWrapper>
+      <StyledRoutingContainer>
+        <StyledIconContainer isLoading={isLoading}>
+          {isLoading ? <IconSparkles size={16} /> : <IconCpu size={16} />}
+        </StyledIconContainer>
+        {isLoading ? (
+          <ShimmeringText>{data.text}</ShimmeringText>
+        ) : (
+          <StyledText>{data.text}</StyledText>
+        )}
+      </StyledRoutingContainer>
+      {showDebugInfo && <RoutingDebugDisplay debug={data.debug} />}
+    </StyledWrapper>
   );
 };

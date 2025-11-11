@@ -10,6 +10,7 @@ import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionId
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
+import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isEmailingDomainsEnabledState } from '@/client-config/states/isEmailingDomainsEnabledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -52,6 +53,7 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setIsEmailVerificationRequired = useSetRecoilState(
     isEmailVerificationRequiredState,
   );
+  const setIsDebugMode = useSetRecoilState(isDebugModeState);
 
   const setBilling = useSetRecoilState(billingState);
   const setSupportChat = useSetRecoilState(supportChatState);
@@ -146,6 +148,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
       setIsEmailVerificationRequired(clientConfig.isEmailVerificationRequired);
+      setIsDebugMode(clientConfig.debugMode);
       setBilling(clientConfig.billing);
       setSupportChat(clientConfig.support);
 

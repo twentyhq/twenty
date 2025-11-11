@@ -7,10 +7,10 @@ import {
   type UIMessage,
   type UITools,
 } from 'ai';
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 import { z } from 'zod';
 
-import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
@@ -20,6 +20,17 @@ export interface AiRouterContext {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   workspaceId: string;
   routerModel: ModelId;
+}
+
+export interface AiRouterResult {
+  agent: AgentEntity | null;
+  debugInfo?: {
+    availableAgents: Array<{ id: string; label: string }>;
+    routerModel: string;
+    promptTokens?: number;
+    completionTokens?: number;
+    totalTokens?: number;
+  };
 }
 
 @Injectable()
@@ -32,7 +43,10 @@ export class AiRouterService {
     private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
-  async routeMessage(context: AiRouterContext) {
+  async routeMessage(
+    context: AiRouterContext,
+    includeDebugInfo = false,
+  ): Promise<AiRouterResult> {
     try {
       const { messages, workspaceId, routerModel } = context;
 
@@ -41,11 +55,21 @@ export class AiRouterService {
       if (availableAgents.length === 0) {
         this.logger.warn('No agents available for routing');
 
-        return null;
+        return { agent: null };
       }
 
+      const debugInfo: AiRouterResult['debugInfo'] = includeDebugInfo
+        ? {
+            availableAgents: availableAgents.map((agent) => ({
+              id: agent.id,
+              label: agent.label,
+            })),
+            routerModel: String(routerModel),
+          }
+        : undefined;
+
       if (availableAgents.length === 1) {
-        return availableAgents[0];
+        return { agent: availableAgents[0], debugInfo };
       }
 
       const conversationHistory = messages
@@ -87,16 +111,44 @@ export class AiRouterService {
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
-      return availableAgents.find(
+      const selectedAgent = availableAgents.find(
         (agent) => agent.id === result.object.agentId,
       );
+
+      if (includeDebugInfo && debugInfo) {
+        try {
+          const usage = await result.usage;
+
+          const usageWithTokens = usage as {
+            inputTokens?: number;
+            outputTokens?: number;
+            promptTokens?: number;
+            completionTokens?: number;
+            totalTokens?: number;
+          };
+
+          debugInfo.promptTokens =
+            usageWithTokens.inputTokens ?? usageWithTokens.promptTokens ?? 0;
+          debugInfo.completionTokens =
+            usageWithTokens.outputTokens ??
+            usageWithTokens.completionTokens ??
+            0;
+          debugInfo.totalTokens = usageWithTokens.totalTokens ?? 0;
+        } catch (error) {
+          this.logger.warn('Failed to get routing token usage:', error);
+        }
+      }
+
+      return { agent: selectedAgent ?? null, debugInfo };
     } catch (error) {
       this.logger.error(
         'Routing to agent failed, falling back to Helper agent:',
         error,
       );
 
-      return this.getHelperAgent(context.workspaceId);
+      const helperAgent = await this.getHelperAgent(context.workspaceId);
+
+      return { agent: helperAgent };
     }
   }
 

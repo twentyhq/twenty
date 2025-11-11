@@ -169,7 +169,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     }
   }
 
-  private async getContextForSystemPrompt(
+  async getContextForSystemPrompt(
     workspace: WorkspaceEntity,
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
     userWorkspaceId: string,
@@ -278,10 +278,19 @@ export class AgentExecutionService implements AgentExecutionContext {
     agentId: string;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
-  }) {
+  }): Promise<{
+    stream: ReturnType<typeof streamText>;
+    timings: {
+      contextBuildTimeMs: number;
+      toolGenerationTimeMs: number;
+      aiRequestPrepTimeMs: number;
+      toolCount: number;
+    };
+  }> {
     try {
       const agent = await this.agentService.findOneAgent(agentId, workspace.id);
 
+      const contextBuildStart = Date.now();
       let contextString = '';
 
       if (recordIdsByObjectMetadataNameSingular.length > 0) {
@@ -294,11 +303,15 @@ export class AgentExecutionService implements AgentExecutionContext {
         contextString = `\n\nCONTEXT:\n${contextPart}`;
       }
 
+      const contextBuildTime = Date.now() - contextBuildStart;
+
       const { actorContext, roleId } =
         await this.agentActorContextService.buildUserAndAgentActorContext(
           userWorkspaceId,
           workspace.id,
         );
+
+      const aiRequestPrepStart = Date.now();
 
       const aiRequestConfig = await this.prepareAIRequestConfig({
         system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}${contextString}`,
@@ -309,8 +322,12 @@ export class AgentExecutionService implements AgentExecutionContext {
         userWorkspaceId,
       });
 
+      const aiRequestPrepTime = Date.now() - aiRequestPrepStart;
+      const toolCount = Object.keys(aiRequestConfig.tools || {}).length;
+      const toolGenerationTime = aiRequestPrepTime;
+
       this.logger.log(
-        `Sending request to AI model with ${messages.length} messages`,
+        `Sending request to AI model with ${messages.length} messages and ${toolCount} tools`,
       );
 
       const model =
@@ -330,7 +347,15 @@ export class AgentExecutionService implements AgentExecutionContext {
           this.logger.error('Failed to get usage information:', usageError);
         });
 
-      return stream;
+      return {
+        stream,
+        timings: {
+          contextBuildTimeMs: contextBuildTime,
+          toolGenerationTimeMs: toolGenerationTime,
+          aiRequestPrepTimeMs: aiRequestPrepTime,
+          toolCount,
+        },
+      };
     } catch (error) {
       this.logger.error('Error in streamChatResponse:', error);
       throw new AgentException(
