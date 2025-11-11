@@ -118,7 +118,7 @@ export const GraphWidget = ({
             yScale={data.yScale}
             curve={data.curve}
             stackedArea={data.stackedArea}
-            enableSlices={data.enableSlices}
+            enableSlices={'x'}
           />
         </Suspense>
       );
