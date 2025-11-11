@@ -98,119 +98,200 @@ const StyledTimingValue = styled.span`
 
 type TabType = 'timing' | 'details' | 'context';
 
-export const RoutingDebugDisplay = ({
+const TimingRow = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number | undefined;
+}) => {
+  if (value === undefined) return null;
+
+  return (
+    <StyledTimingRow>
+      <StyledTimingLabel>{label}</StyledTimingLabel>
+      <StyledTimingValue>{value}</StyledTimingValue>
+    </StyledTimingRow>
+  );
+};
+
+const formatBytes = (bytes: number) => {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
+};
+
+const formatNumber = (num: number) => num.toLocaleString();
+
+const formatTokenBreakdown = (
+  total: number,
+  prompt?: number,
+  completion?: number,
+) => {
+  const formattedTotal = formatNumber(total);
+  if (
+    prompt !== undefined &&
+    completion !== undefined &&
+    prompt > 0 &&
+    completion > 0
+  ) {
+    return `${formattedTotal} (${formatNumber(prompt)} → ${formatNumber(completion)})`;
+  }
+  return formattedTotal;
+};
+
+const TimingTab = ({
   debug,
 }: {
   debug: NonNullable<DataMessagePart['routing-status']['debug']>;
 }) => {
-  const { t } = useLingui();
-  const theme = useTheme();
-  const { copyToClipboard } = useCopyToClipboard();
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabType>('timing');
+  const totalTime =
+    debug.agentExecutionStartTimeMs !== undefined
+      ? `${debug.agentExecutionStartTimeMs + (debug.agentExecutionTimeMs || 0)}ms`
+      : undefined;
 
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
-  };
-
-  const formatNumber = (num: number) => num.toLocaleString();
-
-  const renderTimingRow = (
-    label: string,
-    value: string | number | undefined,
-  ) => {
-    if (value === undefined) return null;
-
-    return (
-      <StyledTimingRow key={label}>
-        <StyledTimingLabel>{label}</StyledTimingLabel>
-        <StyledTimingValue>{value}</StyledTimingValue>
-      </StyledTimingRow>
-    );
-  };
-
-  const formatTokenBreakdown = (
-    total: number,
-    prompt?: number,
-    completion?: number,
-  ) => {
-    const formattedTotal = formatNumber(total);
-    if (
-      prompt !== undefined &&
-      completion !== undefined &&
-      prompt > 0 &&
-      completion > 0
-    ) {
-      return `${formattedTotal} (${formatNumber(prompt)} → ${formatNumber(completion)})`;
-    }
-    return formattedTotal;
-  };
-
-  const renderTimingTab = () => {
-    const totalTime =
-      debug.agentExecutionStartTimeMs !== undefined
-        ? `${debug.agentExecutionStartTimeMs + (debug.agentExecutionTimeMs || 0)}ms`
-        : undefined;
-
-    return (
-      <StyledTimingSection>
-        {renderTimingRow('Routing decision', debug.routingTimeMs && `${debug.routingTimeMs}ms`)}
-        {renderTimingRow('Context building (routing)', debug.contextBuildTimeMs && `${debug.contextBuildTimeMs}ms`)}
-        {renderTimingRow('Context building (agent)', debug.agentContextBuildTimeMs && `${debug.agentContextBuildTimeMs}ms`)}
-        {renderTimingRow('Tool generation', debug.toolGenerationTimeMs && `${debug.toolGenerationTimeMs}ms`)}
-        {renderTimingRow('AI request prep', debug.aiRequestPrepTimeMs && `${debug.aiRequestPrepTimeMs}ms`)}
-        {renderTimingRow('Time to first token', debug.timeToFirstTokenMs && `${debug.timeToFirstTokenMs}ms`)}
-        {renderTimingRow('Agent execution', debug.agentExecutionTimeMs && `${debug.agentExecutionTimeMs}ms`)}
-        {renderTimingRow('Total time', totalTime)}
-        {renderTimingRow('Available tools', debug.toolCount)}
-        {renderTimingRow('Tool calls made', debug.toolCallCount)}
-        {renderTimingRow('Context records', debug.contextRecordCount)}
-        {renderTimingRow('Context size', debug.contextSizeBytes !== undefined ? formatBytes(debug.contextSizeBytes) : undefined)}
-        {renderTimingRow(
-          'Routing tokens',
+  return (
+    <StyledTimingSection>
+      <TimingRow
+        label="Routing decision"
+        value={debug.routingTimeMs && `${debug.routingTimeMs}ms`}
+      />
+      <TimingRow
+        label="Context building (routing)"
+        value={debug.contextBuildTimeMs && `${debug.contextBuildTimeMs}ms`}
+      />
+      <TimingRow
+        label="Context building (agent)"
+        value={
+          debug.agentContextBuildTimeMs && `${debug.agentContextBuildTimeMs}ms`
+        }
+      />
+      <TimingRow
+        label="Tool generation"
+        value={debug.toolGenerationTimeMs && `${debug.toolGenerationTimeMs}ms`}
+      />
+      <TimingRow
+        label="AI request prep"
+        value={debug.aiRequestPrepTimeMs && `${debug.aiRequestPrepTimeMs}ms`}
+      />
+      <TimingRow
+        label="Time to first token"
+        value={debug.timeToFirstTokenMs && `${debug.timeToFirstTokenMs}ms`}
+      />
+      <TimingRow
+        label="Agent execution"
+        value={debug.agentExecutionTimeMs && `${debug.agentExecutionTimeMs}ms`}
+      />
+      <TimingRow label="Total time" value={totalTime} />
+      <TimingRow label="Available tools" value={debug.toolCount} />
+      <TimingRow label="Tool calls made" value={debug.toolCallCount} />
+      <TimingRow label="Context records" value={debug.contextRecordCount} />
+      <TimingRow
+        label="Context size"
+        value={
+          debug.contextSizeBytes !== undefined
+            ? formatBytes(debug.contextSizeBytes)
+            : undefined
+        }
+      />
+      <TimingRow
+        label="Routing tokens"
+        value={
           debug.routingTotalTokens !== undefined
             ? formatTokenBreakdown(
                 debug.routingTotalTokens,
                 debug.routingPromptTokens,
                 debug.routingCompletionTokens,
               )
-            : undefined,
-        )}
-        {renderTimingRow(
-          'Agent tokens',
+            : undefined
+        }
+      />
+      <TimingRow
+        label="Agent tokens"
+        value={
           debug.agentTotalTokens !== undefined
             ? formatTokenBreakdown(
                 debug.agentTotalTokens,
                 debug.agentPromptTokens,
                 debug.agentCompletionTokens,
               )
-            : undefined,
-        )}
-        {renderTimingRow('Total cost', debug.totalCostInCredits !== undefined ? `${formatNumber(debug.totalCostInCredits)} credits` : undefined)}
-      </StyledTimingSection>
-    );
+            : undefined
+        }
+      />
+      <TimingRow
+        label="Total cost"
+        value={
+          debug.totalCostInCredits !== undefined
+            ? `${formatNumber(debug.totalCostInCredits)} credits`
+            : undefined
+        }
+      />
+    </StyledTimingSection>
+  );
+};
+
+const DetailsTab = ({
+  debug,
+  copyToClipboard,
+}: {
+  debug: NonNullable<DataMessagePart['routing-status']['debug']>;
+  copyToClipboard: (value: string) => void;
+}) => {
+  const { t } = useLingui();
+
+  const detailsData = {
+    selectedAgent: {
+      id: debug.selectedAgentId,
+      label: debug.selectedAgentLabel,
+    },
+    routerModel: debug.routerModel,
+    agentModel: debug.agentModel,
+    availableAgents: debug.availableAgents,
   };
 
-  const renderDetailsTab = () => {
-    const detailsData = {
-      selectedAgent: {
-        id: debug.selectedAgentId,
-        label: debug.selectedAgentLabel,
-      },
-      routerModel: debug.routerModel,
-      agentModel: debug.agentModel,
-      availableAgents: debug.availableAgents,
-    };
+  return (
+    <StyledJsonTreeContainer>
+      <JsonTree
+        value={detailsData as JsonValue}
+        shouldExpandNodeInitially={() => true}
+        emptyArrayLabel={t`Empty Array`}
+        emptyObjectLabel={t`Empty Object`}
+        emptyStringLabel={t`[empty string]`}
+        arrowButtonCollapsedLabel={t`Expand`}
+        arrowButtonExpandedLabel={t`Collapse`}
+        onNodeValueClick={copyToClipboard}
+      />
+    </StyledJsonTreeContainer>
+  );
+};
+
+const ContextTab = ({
+  debug,
+  copyToClipboard,
+}: {
+  debug: NonNullable<DataMessagePart['routing-status']['debug']>;
+  copyToClipboard: (value: string) => void;
+}) => {
+  const { t } = useLingui();
+
+  if (!debug.context) {
+    return (
+      <StyledTimingLabel>
+        No context was provided for this request
+      </StyledTimingLabel>
+    );
+  }
+
+  try {
+    const contextData = JSON.parse(debug.context);
 
     return (
       <StyledJsonTreeContainer>
         <JsonTree
-          value={detailsData as JsonValue}
-          shouldExpandNodeInitially={() => true}
+          value={contextData as JsonValue}
+          shouldExpandNodeInitially={() => false}
           emptyArrayLabel={t`Empty Array`}
           emptyObjectLabel={t`Empty Object`}
           emptyStringLabel={t`[empty string]`}
@@ -220,38 +301,20 @@ export const RoutingDebugDisplay = ({
         />
       </StyledJsonTreeContainer>
     );
-  };
+  } catch {
+    return <StyledTimingLabel>{debug.context}</StyledTimingLabel>;
+  }
+};
 
-  const renderContextTab = () => {
-    if (!debug.context) {
-      return (
-        <StyledTimingLabel>
-          No context was provided for this request
-        </StyledTimingLabel>
-      );
-    }
-
-    try {
-      const contextData = JSON.parse(debug.context);
-
-      return (
-        <StyledJsonTreeContainer>
-          <JsonTree
-            value={contextData as JsonValue}
-            shouldExpandNodeInitially={() => false}
-            emptyArrayLabel={t`Empty Array`}
-            emptyObjectLabel={t`Empty Object`}
-            emptyStringLabel={t`[empty string]`}
-            arrowButtonCollapsedLabel={t`Expand`}
-            arrowButtonExpandedLabel={t`Collapse`}
-            onNodeValueClick={copyToClipboard}
-          />
-        </StyledJsonTreeContainer>
-      );
-    } catch {
-      return <StyledTimingLabel>{debug.context}</StyledTimingLabel>;
-    }
-  };
+export const RoutingDebugDisplay = ({
+  debug,
+}: {
+  debug: NonNullable<DataMessagePart['routing-status']['debug']>;
+}) => {
+  const theme = useTheme();
+  const { copyToClipboard } = useCopyToClipboard();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('timing');
 
   return (
     <StyledContainer>
@@ -289,9 +352,13 @@ export const RoutingDebugDisplay = ({
             )}
           </StyledTabContainer>
 
-          {activeTab === 'timing' && renderTimingTab()}
-          {activeTab === 'details' && renderDetailsTab()}
-          {activeTab === 'context' && renderContextTab()}
+          {activeTab === 'timing' && <TimingTab debug={debug} />}
+          {activeTab === 'details' && (
+            <DetailsTab debug={debug} copyToClipboard={copyToClipboard} />
+          )}
+          {activeTab === 'context' && (
+            <ContextTab debug={debug} copyToClipboard={copyToClipboard} />
+          )}
         </StyledContentContainer>
       </AnimatedExpandableContainer>
     </StyledContainer>

@@ -209,6 +209,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setCaptcha,
     setChromeExtensionId,
     setClientConfigApiStatus,
+    setIsDebugMode,
     setDomainConfiguration,
     setGoogleCalendarEnabled,
     setGoogleMessagingEnabled,

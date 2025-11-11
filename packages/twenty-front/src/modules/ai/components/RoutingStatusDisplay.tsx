@@ -53,7 +53,6 @@ export const RoutingStatusDisplay = ({
 }) => {
   const isLoading = data.state === 'loading';
   const isDebugMode = useRecoilValue(isDebugModeState);
-  const showDebugInfo = isDebugMode && data.state === 'routed' && data.debug;
 
   if (data.state === 'error') {
     return null;
@@ -71,7 +70,9 @@ export const RoutingStatusDisplay = ({
           <StyledText>{data.text}</StyledText>
         )}
       </StyledRoutingContainer>
-      {showDebugInfo && <RoutingDebugDisplay debug={data.debug} />}
+      {isDebugMode && data.state === 'routed' && data.debug && (
+        <RoutingDebugDisplay debug={data.debug} />
+      )}
     </StyledWrapper>
   );
 };
