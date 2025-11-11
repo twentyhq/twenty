@@ -17,6 +17,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.blocklist,
+
   namePlural: 'blocklists',
   labelSingular: msg`Blocklist`,
   labelPlural: msg`Blocklists`,

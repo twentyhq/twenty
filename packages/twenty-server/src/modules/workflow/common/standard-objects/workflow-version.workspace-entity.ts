@@ -72,6 +72,7 @@ export const SEARCH_FIELDS_FOR_WORKFLOW_VERSIONS: FieldTypeAndNameMetadata[] = [
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowVersion,
+
   namePlural: 'workflowVersions',
   labelSingular: msg`Workflow Version`,
   labelPlural: msg`Workflow Versions`,

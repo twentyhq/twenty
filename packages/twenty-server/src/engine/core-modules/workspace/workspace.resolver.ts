@@ -292,6 +292,11 @@ export class WorkspaceResolver {
     );
   }
 
+  @ResolveField(() => String)
+  workspaceCustomApplicationId(@Parent() workspace: WorkspaceEntity) {
+    return workspace.workspaceCustomApplicationId;
+  }
+
   @ResolveField(() => Boolean)
   isMicrosoftAuthEnabled(@Parent() workspace: WorkspaceEntity) {
     return (
