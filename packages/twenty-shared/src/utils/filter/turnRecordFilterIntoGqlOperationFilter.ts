@@ -45,9 +45,9 @@ import { z } from 'zod';
 
 import { type DateTimeFilter } from '@/types/RecordGqlOperationFilter';
 import {
+  CustomError,
   checkIfShouldComputeEmptinessFilter,
   checkIfShouldSkipFiltering,
-  CustomError,
   getFilterTypeFromFieldType,
   getPlainDateFromDate,
   isDefined,
@@ -1304,16 +1304,27 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     }
     case 'UUID': {
       const recordIds = recordIdsForUuid;
-
-      if (!isDefined(recordIds) || recordIds.length === 0) return;
+      const uuidValue =
+        typeof recordFilter.value === 'string' ? recordFilter.value : undefined;
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              in: recordIds,
-            } as UUIDFilter,
-          };
+          if (isDefined(recordIds) && recordIds.length > 0) {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                in: recordIds,
+              } as UUIDFilter,
+            };
+          }
+
+          if (isDefined(uuidValue) && uuidValue.trim() !== '') {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                eq: uuidValue,
+              } as UUIDFilter,
+            };
+          }
+          return;
         default:
           throw new Error(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
