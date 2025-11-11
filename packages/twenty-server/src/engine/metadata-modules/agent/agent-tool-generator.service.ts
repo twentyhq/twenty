@@ -36,6 +36,7 @@ export class AgentToolGeneratorService {
     workspaceId: string,
     actorContext?: ActorMetadata,
     roleIds?: string[],
+    userWorkspaceId?: string,
   ): Promise<ToolSet> {
     let tools: ToolSet = {};
 
@@ -76,6 +77,7 @@ export class AgentToolGeneratorService {
         { intersectionOf: roleIds },
         workspaceId,
         actorContext,
+        userWorkspaceId,
       );
 
       tools = { ...tools, ...databaseTools };

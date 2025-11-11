@@ -36,6 +36,7 @@ export class ToolService {
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     actorContext?: ActorMetadata,
+    userWorkspaceId?: string,
   ): Promise<ToolSet> {
     const tools: ToolSet = {};
 
@@ -104,6 +105,7 @@ export class ToolService {
               workspaceId,
               rolePermissionConfig,
               createdBy: actorContext,
+              userWorkspaceId,
             });
           },
         };
@@ -129,6 +131,7 @@ export class ToolService {
               objectRecord,
               workspaceId,
               rolePermissionConfig,
+              userWorkspaceId,
             });
           },
         };
@@ -152,6 +155,7 @@ export class ToolService {
               offset,
               workspaceId,
               rolePermissionConfig,
+              userWorkspaceId,
             });
           },
         };
@@ -166,6 +170,7 @@ export class ToolService {
               limit: 1,
               workspaceId,
               rolePermissionConfig,
+              userWorkspaceId,
             });
           },
         };
@@ -182,6 +187,7 @@ export class ToolService {
               workspaceId,
               rolePermissionConfig,
               soft: true,
+              userWorkspaceId,
             });
           },
         };

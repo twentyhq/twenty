@@ -67,6 +67,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     actorContext,
     roleIds,
     excludeHandoffTools = false,
+    userWorkspaceId,
   }: {
     system: string;
     agent: AgentEntity | null;
@@ -74,6 +75,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     actorContext?: ActorMetadata;
     roleIds?: string[];
     excludeHandoffTools?: boolean;
+    userWorkspaceId?: string;
   }) {
     try {
       if (agent) {
@@ -95,6 +97,7 @@ export class AgentExecutionService implements AgentExecutionContext {
             agent.workspaceId,
             actorContext,
             roleIds,
+            userWorkspaceId,
           );
 
         let handoffTools = {};
@@ -303,6 +306,7 @@ export class AgentExecutionService implements AgentExecutionContext {
         messages,
         actorContext,
         roleIds: [roleId, ...(agent?.roleId ? [agent?.roleId] : [])],
+        userWorkspaceId,
       });
 
       this.logger.log(

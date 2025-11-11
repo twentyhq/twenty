@@ -6,4 +6,5 @@ export type WorkflowExecutionContext = {
   isActingOnBehalfOfUser: boolean;
   initiator: ActorMetadata;
   rolePermissionConfig: RolePermissionConfig;
+  userWorkspaceId?: string;
 };
