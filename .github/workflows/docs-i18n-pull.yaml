@@ -81,12 +81,15 @@ jobs:
       - name: Fix translated documentation links
         run: bash packages/twenty-docs/scripts/fix-translated-links.sh
 
+      - name: Translate Card component titles
+        run: bash packages/twenty-docs/scripts/translate-card-titles.sh
+
       - name: Check for changes and commit
         id: check_changes
         run: |
           git add .
           if ! git diff --staged --quiet --exit-code; then
-            git commit -m "chore: update docs translations from Crowdin and fix internal links"
+            git commit -m "chore: update docs translations from Crowdin, fix links and translate Card titles"
             echo "changes_detected=true" >> $GITHUB_OUTPUT
           else
             echo "changes_detected=false" >> $GITHUB_OUTPUT
