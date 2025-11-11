@@ -14,7 +14,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { EmailVerificationContext } from 'src/engine/core-modules/email-verification/email-verification.constants';
+import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -376,7 +376,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       workspace: workspaceDomainConfig,
       locale: user.locale || SOURCE_LOCALE,
       verifyEmailRedirectPath,
-      context: EmailVerificationContext.EMAIL_UPDATE,
+      verificationTrigger: EmailVerificationTrigger.EMAIL_UPDATE,
     });
   }
 

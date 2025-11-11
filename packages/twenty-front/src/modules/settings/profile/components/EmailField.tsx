@@ -67,11 +67,6 @@ export const EmailField = () => {
           disabled={!canEdit || !isEmailChanged}
         />
       </StyledFieldRow>
-      {canEdit && (
-        <StyledHelperText>
-          {t`We will send you a verification email to confirm this change.`}
-        </StyledHelperText>
-      )}
     </StyledContainer>
   );
 };

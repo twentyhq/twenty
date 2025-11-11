@@ -1,4 +1,4 @@
-export enum EmailVerificationContext {
-  SIGN_UP = 'sign_up',
-  EMAIL_UPDATE = 'email_update',
+export enum EmailVerificationTrigger {
+  SIGN_UP = 'SIGN_UP',
+  EMAIL_UPDATE = 'EMAIL_UPDATE',
 }

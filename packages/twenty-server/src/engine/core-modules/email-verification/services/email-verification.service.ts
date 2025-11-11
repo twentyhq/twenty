@@ -19,11 +19,11 @@ import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/toke
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
+import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
-import { EmailVerificationContext } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -50,14 +50,14 @@ export class EmailVerificationService {
     workspace,
     locale,
     verifyEmailRedirectPath,
-    context = EmailVerificationContext.SIGN_UP,
+    verificationTrigger = EmailVerificationTrigger.SIGN_UP,
   }: {
     userId: string;
     email: string;
     workspace: WorkspaceDomainConfig | undefined;
     locale: keyof typeof APP_LOCALES;
     verifyEmailRedirectPath?: string;
-    context?: EmailVerificationContext;
+    verificationTrigger?: EmailVerificationTrigger;
   }) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       return { success: false };
@@ -88,7 +88,8 @@ export class EmailVerificationService {
     const emailData = {
       link: verificationLink.toString(),
       locale,
-      isEmailUpdate: context === EmailVerificationContext.EMAIL_UPDATE,
+      isEmailUpdate:
+        verificationTrigger === EmailVerificationTrigger.EMAIL_UPDATE,
     };
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
@@ -99,7 +100,7 @@ export class EmailVerificationService {
     });
 
     const emailVerificationMsg =
-      context === EmailVerificationContext.EMAIL_UPDATE
+      verificationTrigger === EmailVerificationTrigger.EMAIL_UPDATE
         ? msg`Please confirm your updated email`
         : msg`Welcome to Twenty: Please Confirm Your Email`;
     const i18n = this.i18nService.getI18nInstance(locale);
@@ -175,7 +176,7 @@ export class EmailVerificationService {
       email,
       workspace,
       locale,
-      context: EmailVerificationContext.SIGN_UP,
+      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 
     return { success: true };

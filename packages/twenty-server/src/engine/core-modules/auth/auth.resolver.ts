@@ -51,7 +51,7 @@ import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
-import { EmailVerificationContext } from 'src/engine/core-modules/email-verification/email-verification.constants';
+import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -398,7 +398,7 @@ export class AuthResolver {
       workspace: undefined,
       locale: signUpInput.locale ?? SOURCE_LOCALE,
       verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
-      context: EmailVerificationContext.SIGN_UP,
+      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 
     return {
@@ -481,7 +481,7 @@ export class AuthResolver {
       workspace,
       locale: signUpInput.locale ?? SOURCE_LOCALE,
       verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
-      context: EmailVerificationContext.SIGN_UP,
+      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 
     const loginToken = await this.loginTokenService.generateLoginToken(

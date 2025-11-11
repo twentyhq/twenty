@@ -32,19 +32,13 @@ export class UpdateWorkspaceMemberEmailJob {
     const workspace =
       await this.userWorkspaceService.findFirstWorkspaceByUserId(userId);
 
-    try {
-      const workspaceMemberRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-          workspace.id,
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      await workspaceMemberRepository.update({ userId }, { userEmail: email });
-    } catch (error) {
-      this.logger.error(
-        `Failed to update workspace member email for user ${userId} in workspace ${workspace.id}: ${error.message}`,
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
-    }
+
+    await workspaceMemberRepository.update({ userId }, { userEmail: email });
   }
 }
