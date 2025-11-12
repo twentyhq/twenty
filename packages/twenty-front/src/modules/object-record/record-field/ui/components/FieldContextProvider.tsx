@@ -72,6 +72,7 @@ export const FieldContextProvider = ({
       key={objectRecordId + fieldMetadataItem.id}
       value={{
         recordId: objectRecordId,
+        objectMetadataNameSingular: objectNameSingular,
         isLabelIdentifier,
         fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
           field: fieldMetadataItem,

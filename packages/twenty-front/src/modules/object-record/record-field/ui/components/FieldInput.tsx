@@ -4,11 +4,15 @@ import { AddressFieldInput } from '@/object-record/record-field/ui/meta-types/in
 import { DateFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/DateFieldInput';
 import { EmailsFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput';
 import { FullNameFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/FullNameFieldInput';
+import { ImageFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/ImageFieldInput';
 import { LinksFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldInput';
 import { MultiSelectFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiSelectFieldInput';
+import { PdfFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/PdfFieldInput';
 import { PhonesFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput';
 import { RawJsonFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/SelectFieldInput';
+import { isFieldImage } from '@/object-record/record-field/ui/types/guards/isFieldImage';
+import { isFieldPdf } from '@/object-record/record-field/ui/types/guards/isFieldPdf';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
 
 import { ArrayFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput';
@@ -92,6 +96,10 @@ export const FieldInput = () => {
         <ArrayFieldInput />
       ) : isFieldRichTextV2(fieldDefinition) ? (
         <RichTextFieldInput />
+      ) : isFieldPdf(fieldDefinition) ? (
+        <PdfFieldInput />
+      ) : isFieldImage(fieldDefinition) ? (
+        <ImageFieldInput />
       ) : (
         <></>
       )}

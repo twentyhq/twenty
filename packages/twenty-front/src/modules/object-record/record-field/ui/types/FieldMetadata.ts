@@ -188,6 +188,14 @@ export type FieldTsVectorMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+export type FieldPdfMetadata = BaseFieldMetadata & {
+  settings?: null;
+};
+
+export type FieldImageMetadata = BaseFieldMetadata & {
+  settings?: null;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -213,7 +221,9 @@ export type FieldMetadata =
   | FieldArrayMetadata
   | FieldTsVectorMetadata
   | FieldRichTextV2Metadata
-  | FieldRichTextMetadata;
+  | FieldRichTextMetadata
+  | FieldPdfMetadata
+  | FieldImageMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string; // TODO: can we replace with a template literal type, or maybe overkill ?
@@ -304,6 +314,20 @@ export type FieldActorForInputValue = Pick<
 >;
 
 export type FieldArrayValue = string[];
+
+export type FieldPdfValue = {
+  attachmentIds: string[];
+  fullPaths?: string[];
+  names?: string[];
+  types?: string[];
+};
+
+export type FieldImageValue = {
+  attachmentIds: string[];
+  fullPaths?: string[];
+  names?: string[];
+  types?: string[];
+};
 
 export type PhoneRecord = {
   number: string;

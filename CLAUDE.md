@@ -1,3 +1,22 @@
+<!-- OPENSPEC:START -->
+# OpenSpec Instructions
+
+These instructions are for AI assistants working in this project.
+
+Always open `@/openspec/AGENTS.md` when the request:
+- Mentions planning or proposals (words like proposal, spec, change, plan)
+- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
+- Sounds ambiguous and you need the authoritative spec before coding
+
+Use `@/openspec/AGENTS.md` to learn:
+- How to create and apply change proposals
+- Spec format and conventions
+- Project structure and guidelines
+
+Keep this managed block so 'openspec update' can refresh the instructions.
+
+<!-- OPENSPEC:END -->
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -68,7 +87,25 @@ npx nx run twenty-server:database:migrate:prod # Run migrations
 npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/common/[name] -d src/database/typeorm/core/core.datasource.ts
 
 # Sync metadata
-npx nx run twenty-server:command workspace:sync-metadata
+npx nx run twenty-server:command workspace:sync-metadata -f
+
+# Fix missing composite field columns (IMAGE/PDF fields)
+npx nx run twenty-server:command workspace:fix-composite-field-columns
+```
+
+### Common Issues & Fixes
+
+**Composite Field Errors**: If you encounter errors with IMAGE or PDF fields like:
+- `column "fieldNameFullPaths" does not exist`
+- `400 Bad Request` when saving IMAGE/PDF fields
+- Data loss in composite fields after page reload
+
+**Solution**: Run the composite field migration command:
+```bash
+npx nx run twenty-server:command workspace:fix-composite-field-columns
+```
+
+For detailed information, see [COMPOSITE_FIELD_MIGRATION_GUIDE.md](./COMPOSITE_FIELD_MIGRATION_GUIDE.md).
 ```
 
 ### GraphQL

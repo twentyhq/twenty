@@ -18,7 +18,7 @@ export const useUploadAttachmentFile = () => {
   const { createOneRecord: createOneAttachment } =
     useCreateOneRecord<Attachment>({
       objectNameSingular: CoreObjectNameSingular.Attachment,
-      shouldMatchRootQueryFilter: true,
+      shouldMatchRootQueryFilter: false,
     });
 
   const uploadAttachmentFile = async (
@@ -53,7 +53,11 @@ export const useUploadAttachmentFile = () => {
 
     const createdAttachment = await createOneAttachment(attachmentToCreate);
 
-    return { attachmentAbsoluteURL: createdAttachment.fullPath };
+    return {
+      attachmentId: createdAttachment.id,
+      attachmentAbsoluteURL: createdAttachment.fullPath,
+      attachment: createdAttachment,
+    };
   };
 
   return { uploadAttachmentFile };

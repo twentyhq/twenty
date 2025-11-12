@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -9,8 +10,8 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { SyncWorkspaceLoggerModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/services/sync-workspace-logger.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 
+import { FixCompositeFieldColumnsCommand } from './fix-composite-field-columns.command';
 import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command';
 
 @Module({
@@ -25,7 +26,7 @@ import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command'
     SyncWorkspaceLoggerModule,
     ApplicationModule,
   ],
-  providers: [SyncWorkspaceMetadataCommand],
-  exports: [SyncWorkspaceMetadataCommand],
+  providers: [SyncWorkspaceMetadataCommand, FixCompositeFieldColumnsCommand],
+  exports: [SyncWorkspaceMetadataCommand, FixCompositeFieldColumnsCommand],
 })
 export class WorkspaceSyncMetadataCommandsModule {}

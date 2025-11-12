@@ -158,6 +158,37 @@ export const MultiItemFieldInput = <T,>({
 
   const handleEditButtonClick = (index: number) => {
     setInputValue(getItemValueAsString(index));
+    let item;
+    switch (fieldMetadataType) {
+      case FieldMetadataType.LINKS:
+        item = items[index] as { label: string; url: string };
+        setInputValue(item.url || '');
+        break;
+      case FieldMetadataType.PHONES:
+        item = items[index] as PhoneRecord;
+        setInputValue(item.callingCode + item.number);
+        break;
+      case FieldMetadataType.EMAILS:
+        item = items[index] as string;
+        setInputValue(item);
+        break;
+      case FieldMetadataType.ARRAY:
+        item = items[index] as string;
+        setInputValue(item);
+        break;
+      case FieldMetadataType.PDF:
+      case FieldMetadataType.IMAGE:
+        throw new CustomError(
+          `Field type ${fieldMetadataType} not yet implemented for MultiItemFieldInput`,
+          'NOT_YET_IMPLEMENTED',
+        );
+      default:
+        throw new CustomError(
+          `Unsupported field type: ${fieldMetadataType}`,
+          'UNSUPPORTED_FIELD_TYPE',
+        );
+    }
+
     setItemToEditIndex(index);
     setIsInputDisplayed(true);
   };

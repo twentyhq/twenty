@@ -146,6 +146,13 @@ export const generateRandomFieldValue = ({
       );
     }
 
+    case FieldMetadataType.PDF:
+    case FieldMetadataType.IMAGE: {
+      return {
+        attachmentIds: [],
+      };
+    }
+
     default: {
       assertUnreachable(field.type, `Unsupported field type '${field.type}'`);
     }

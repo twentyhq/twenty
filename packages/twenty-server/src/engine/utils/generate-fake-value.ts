@@ -72,6 +72,10 @@ const generateFieldMetadataTypeValue = (
       return 'My rich text';
     case FieldMetadataType.UUID:
       return '123e4567-e89b-12d3-a456-426614174000';
+    case FieldMetadataType.PDF:
+      return { attachmentIds: [] };
+    case FieldMetadataType.IMAGE:
+      return { attachmentIds: [] };
     default:
       return null;
   }

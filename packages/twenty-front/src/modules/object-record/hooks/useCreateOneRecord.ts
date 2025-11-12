@@ -184,6 +184,10 @@ export const useCreateOneRecord = <
         throw error;
       });
 
+    if (shouldMatchRootQueryFilter !== false) {
+      await refetchAggregateQueries();
+    }
+    // return createdObject.data?.[mutationResponseField] ?? null;
     await refetchAggregateQueries();
 
     registerObjectOperation(objectNameSingular, { type: 'create-one' });

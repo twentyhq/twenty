@@ -9,6 +9,8 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
+import { isFieldImage } from '@/object-record/record-field/ui/types/guards/isFieldImage';
+import { isFieldPdf } from '@/object-record/record-field/ui/types/guards/isFieldPdf';
 import { IconPencil, type IconComponent } from 'twenty-ui/display';
 
 export const getFieldButtonIcon = (
@@ -28,7 +30,9 @@ export const getFieldButtonIcon = (
     isFieldLinks(fieldDefinition) ||
     isFieldEmails(fieldDefinition) ||
     isFieldArray(fieldDefinition) ||
-    isFieldPhones(fieldDefinition)
+    isFieldPhones(fieldDefinition) ||
+    isFieldPdf(fieldDefinition) ||
+    isFieldImage(fieldDefinition)
   ) {
     return IconPencil;
   }

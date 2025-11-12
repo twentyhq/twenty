@@ -11,8 +11,12 @@ import { RatingFieldDisplay } from '@/object-record/record-field/ui/meta-types/d
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RelationFromManyFieldDisplay';
 import { RichTextFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RichTextFieldDisplay';
 import { RichTextV2FieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/RichTextV2FieldDisplay';
+import { PdfFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/PdfFieldDisplay';
+import { ImageFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ImageFieldDisplay';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-types/display/utils/isFieldIdentifierDisplay';
 import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFieldActor';
+import { isFieldPdf } from '@/object-record/record-field/ui/types/guards/isFieldPdf';
+import { isFieldImage } from '@/object-record/record-field/ui/types/guards/isFieldImage';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldBoolean } from '@/object-record/record-field/ui/types/guards/isFieldBoolean';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
@@ -122,5 +126,9 @@ export const FieldDisplay = () => {
     <EmailsFieldDisplay />
   ) : isFieldPhones(fieldDefinition) ? (
     <PhonesFieldDisplay />
+  ) : isFieldPdf(fieldDefinition) ? (
+    <PdfFieldDisplay />
+  ) : isFieldImage(fieldDefinition) ? (
+    <ImageFieldDisplay />
   ) : null;
 };

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  FieldMetadataType,
   compositeTypeDefinitions,
+  FieldMetadataType,
   type RichTextV2Metadata,
   richTextV2ValueSchema,
 } from 'twenty-shared/types';
@@ -159,6 +159,10 @@ export class RecordInputTransformerService {
       return value;
     }
 
+    if (!isDefined(value) || typeof value !== 'object') {
+      return value;
+    }
+
     return Object.entries(value).reduce(
       (acc, [subFieldName, subFieldValue]) => {
         const subFieldType = compositeType.properties.find(
@@ -185,6 +189,10 @@ export class RecordInputTransformerService {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
     if (!compositeType) {
+      return value;
+    }
+
+    if (!isDefined(value) || typeof value !== 'object') {
       return value;
     }
 

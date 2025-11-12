@@ -57,7 +57,9 @@ const getSchemaComponentsExample = (
       case FieldMetadataType.FULL_NAME:
       case FieldMetadataType.SELECT:
       case FieldMetadataType.MULTI_SELECT:
-      case FieldMetadataType.PHONES: {
+      case FieldMetadataType.PHONES:
+      case FieldMetadataType.PDF:
+      case FieldMetadataType.IMAGE: {
         return {
           ...node,
           [field.name]: generateRandomFieldValue({ field }),

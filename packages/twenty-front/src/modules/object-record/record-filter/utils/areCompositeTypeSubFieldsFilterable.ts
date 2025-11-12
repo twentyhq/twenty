@@ -8,6 +8,7 @@ const COMPOSITE_TYPES_FILTERABLE = [
   'PHONES',
   'LINKS',
   'EMAILS',
+  // PDF and IMAGE are not filterable by subfields
 ] satisfies FieldType[];
 
 type FilterableCompositeFieldType = (typeof COMPOSITE_TYPES_FILTERABLE)[number];

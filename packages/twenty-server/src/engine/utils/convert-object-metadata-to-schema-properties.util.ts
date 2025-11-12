@@ -1,6 +1,6 @@
 import {
-  FieldMetadataType,
   type FieldMetadataSettings,
+  FieldMetadataType,
   NumberDataType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -326,6 +326,32 @@ export const convertObjectMetadataToSchemaProperties = ({
             },
             markdown: {
               type: 'string',
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.PDF:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            attachmentIds: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.IMAGE:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            attachmentIds: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
             },
           },
         };
