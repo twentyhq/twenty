@@ -64,22 +64,23 @@ export class Twenty {
     });
 
     const text = await res.text();
-    let json: any = undefined;
+    let result: any = undefined;
     try {
-      json = text ? JSON.parse(text) : undefined;
-    } catch (_) {
+      const json = text ? JSON.parse(text) : undefined;
+      result = Object.values(json)?.[0];
+    } catch {
       // not json
     }
 
     if (!res.ok) {
       throw new TwentyApiError(
-        json?.message || res.statusText,
+        result?.message || res.statusText,
         res.status,
-        json,
+        result,
       );
     }
 
-    return (json as T) ?? (undefined as unknown as T);
+    return (result as T) ?? (undefined as unknown as T);
   }
 
   // GET /rest/:object

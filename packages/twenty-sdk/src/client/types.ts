@@ -36,29 +36,29 @@ export type PageInfo = {
 };
 
 export type FindManyResponse<T> = {
-  data: Record<string, T[]>; // { [collectionPlural]: T[] }
+  data: T[];
   totalCount?: number;
   pageInfo?: PageInfo;
 };
 
 export type FindOneResponse<T> = {
-  data: Record<string, T>; // { [collectionSingular]: T }
+  data: T;
 };
 
 export type CreateManyResponse<T> = {
-  data: Record<string, T[]>;
+  data: T[];
 };
 
 export type CreateOneResponse<T> = {
-  data: Record<string, T>;
+  data: T;
 };
 
 export type UpdateManyResponse<T> = {
-  data: Record<string, T[]>;
+  data: T[];
 };
 
 export type UpdateOneResponse<T> = {
-  data: Record<string, T>;
+  data: T;
 };
 
 export type DeleteResponse = {
@@ -66,7 +66,7 @@ export type DeleteResponse = {
 };
 
 export type RestoreResponse<T> = {
-  data: Record<string, T | T[]>;
+  data: T | T[];
 };
 
 export class TwentyApiError extends Error {

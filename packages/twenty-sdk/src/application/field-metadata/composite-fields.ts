@@ -1,4 +1,4 @@
-export {
+export type {
   ActorMetadata as ActorField,
   AddressMetadata as AddressField,
   CurrencyMetadata as CurrencyField,
