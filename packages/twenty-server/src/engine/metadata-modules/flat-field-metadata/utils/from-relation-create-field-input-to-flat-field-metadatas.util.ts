@@ -28,7 +28,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
   sourceFlatObjectMetadata,
   createFieldInput,
   workspaceId,
-  workspaceCustomFlatApplication,
+  workspaceCustomApplicationId,
 }: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<
   FieldInputTranspilationResult<SourceTargetMorphOrRelationFlatFieldAndFlatIndex>
 > => {
@@ -69,7 +69,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
     sourceFlatObjectMetadata,
     targetFlatObjectMetadata,
     workspaceId,
-    workspaceCustomFlatApplication,
+    workspaceCustomApplicationId,
   });
 
   return {
