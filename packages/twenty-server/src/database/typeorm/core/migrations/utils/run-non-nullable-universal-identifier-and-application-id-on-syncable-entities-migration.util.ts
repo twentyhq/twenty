@@ -1,5 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
+// TODO PRASTOIN VERY IMPORTANT THIS DOES NOT SEEM TO INVOLVES APPLICATION ID WE SHOULD RE RUN TYPEORM CODEGEN HERE
 export const runNonNullableUniversalIdentifierAndApplicationIdOnSyncableEntitiesMigration =
   async ({ queryRunner }: { queryRunner: QueryRunner }) => {
     await queryRunner.query(

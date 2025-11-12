@@ -4,8 +4,8 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import {
-    ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-    type RunOnWorkspaceArgs,
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -52,7 +52,7 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const applications =
+    const {twentyStandardFlatApplication} =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -65,7 +65,7 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
           workspaceId,
           dataSourceId: dataSourceMetadata.id,
           featureFlags,
-          twentyStandardFlatApplication: applications,
+          twentyStandardFlatApplication,
         },
         { applyChanges: !options.dryRun },
       );
