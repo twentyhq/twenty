@@ -16,7 +16,7 @@
   "dependencies": {
     "axios": "^1.13.1",
     "dotenv": "^16.3.1",
-    "twenty-sdk": "^0.0.3"
+    "twenty-sdk": "0.0.3"
   },
   "devDependencies": {
     "@types/jest": "^29.5.5",

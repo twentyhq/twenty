@@ -36,6 +36,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
     WorkspaceMigrationV2Module,
     PermissionsModule,
   ],
+  exports: [ApplicationService],
   providers: [ApplicationResolver, ApplicationService, ApplicationSyncService],
 })
 export class ApplicationModule {}

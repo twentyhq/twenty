@@ -1,4 +1,3 @@
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { HorizontalScrollBoxShadowCSS } from '@/object-record/record-table/components/RecordTableStyleWrapper';
 import { RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnAddColumnButtonWidth';
@@ -23,6 +22,7 @@ import { RecordTableFieldsCells } from '@/object-record/record-table/record-tabl
 
 import { RecordTableRowMultiDragPreview } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragPreview';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
+import { useIsTableRowSecondaryDragged } from '@/object-record/record-table/record-table-row/hooks/useIsRecordSecondaryDragged';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
@@ -98,16 +98,16 @@ const StyledRowDraggableCloneCSSBridge = styled.div<{
     }
 
     for (let i = 0; i < visibleRecordFields.length; i++) {
-      returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} { 
-        width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
-        min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
-        max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)}); 
+      returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} {
+        width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
+        min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
+        max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
       } \n`;
 
       const isLabelIdentifierColumn = i === 0;
 
       if (isLabelIdentifierColumn) {
-        returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} { 
+        returnedCSS += `div.${getRecordTableColumnFieldWidthClassName(i)} {
           @media (max-width: ${MOBILE_VIEWPORT}px) {
             width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
             max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
@@ -145,10 +145,6 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
 }) => {
   const realIndex = rubric.source.index;
 
-  const { recordTableId } = useRecordTableContextOrThrow();
-
-  const multiDragState = useRecordDragState('table', recordTableId);
-
   const theme = useTheme();
 
   const recordId = useRecoilComponentFamilyValue(
@@ -160,14 +156,11 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
 
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
+  const { isSecondaryDragged } = useIsTableRowSecondaryDragged(recordId);
+
   if (!isDefined(recordId)) {
     return null;
   }
-
-  const isSecondaryDragged =
-    multiDragState?.isDragging &&
-    multiDragState.originalSelection.includes(recordId) &&
-    recordId !== multiDragState.primaryDraggedRecordId;
 
   return (
     <StyledRowDraggableCloneCSSBridge
@@ -208,9 +201,7 @@ export const RecordTableBodyVirtualizedDraggableClone = ({
           <RecordTableFieldsCells />
           <RecordTablePlusButtonCellPlaceholder />
           <RecordTableLastEmptyCell />
-          <RecordTableRowMultiDragPreview
-            isDragging={draggableSnapshot.isDragging}
-          />
+          <RecordTableRowMultiDragPreview />
         </RecordTableRowDraggableContextProvider>
       </RecordTableTr>
     </StyledRowDraggableCloneCSSBridge>

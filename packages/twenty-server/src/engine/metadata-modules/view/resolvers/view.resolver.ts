@@ -21,10 +21,9 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
@@ -34,6 +33,7 @@ import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
+import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
 import { DestroyViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-permission.guard';
 import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
@@ -44,13 +44,6 @@ import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/up
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
-import {
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
-} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewV2Service } from 'src/engine/metadata-modules/view/services/view-v2.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -70,7 +63,6 @@ export class ViewResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly viewV2Service: ViewV2Service,
     private readonly userRoleService: UserRoleService,
-    private readonly permissionsService: PermissionsService,
   ) {}
 
   @ResolveField(() => String)
@@ -119,6 +111,7 @@ export class ViewResolver {
   }
 
   @Query(() => [ViewDTO])
+  @UseGuards(CustomPermissionGuard)
   async getCoreViews(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
@@ -137,6 +130,7 @@ export class ViewResolver {
   }
 
   @Query(() => ViewDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async getCoreView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -152,35 +146,13 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(CustomPermissionGuard)
+  @UseGuards(CreateViewPermissionGuard)
   async createCoreView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     const visibility = input.visibility ?? ViewVisibility.WORKSPACE;
-
-    if (visibility === ViewVisibility.WORKSPACE && isDefined(userWorkspaceId)) {
-      const permissions =
-        await this.permissionsService.getUserWorkspacePermissions({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-        });
-
-      if (!permissions.permissionFlags[PermissionFlagType.VIEWS]) {
-        throw new ViewException(
-          generateViewExceptionMessage(
-            ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
-          ),
-          ViewExceptionCode.VIEW_CREATE_PERMISSION_DENIED,
-          {
-            userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-              ViewExceptionMessageKey.VIEW_CREATE_PERMISSION_DENIED,
-            ),
-          },
-        );
-      }
-    }
 
     input.visibility = visibility;
 
@@ -213,6 +185,7 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     const isWorkspaceMigrationV2Enabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -224,10 +197,11 @@ export class ViewResolver {
       return await this.viewV2Service.updateOne({
         updateViewInput: { ...input, id },
         workspaceId: workspace.id,
+        userWorkspaceId,
       });
     }
 
-    return this.viewService.update(id, workspace.id, input);
+    return this.viewService.update(id, workspace.id, input, userWorkspaceId);
   }
 
   @Mutation(() => Boolean)

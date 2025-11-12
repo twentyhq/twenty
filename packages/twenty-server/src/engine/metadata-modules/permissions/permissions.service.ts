@@ -187,7 +187,11 @@ export class PermissionsService {
     role: RoleEntity,
     setting: PermissionFlagType,
   ): boolean {
-    if (role.canUpdateAllSettings === true) {
+    const hasBasePermission = this.isToolPermission(setting)
+      ? role.canAccessAllTools
+      : role.canUpdateAllSettings;
+
+    if (hasBasePermission === true) {
       return true;
     }
 

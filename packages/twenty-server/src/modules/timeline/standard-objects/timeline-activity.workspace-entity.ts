@@ -30,6 +30,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.timelineActivity,
+
   namePlural: 'timelineActivities',
   labelSingular: msg`Timeline Activity`,
   labelPlural: msg`Timeline Activities`,

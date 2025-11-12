@@ -1,4 +1,8 @@
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import {
+  compositeTypeDefinitions,
+  FieldMetadataType,
+  type ObjectRecord,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -12,7 +16,6 @@ import {
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';

@@ -23,10 +23,14 @@ export const usePieChartTooltip = ({
   const createTooltipData = (
     datum: ComputedDatum<{ id: string; value: number; label?: string }>,
   ) => {
-    const item = enrichedData.find((d) => d.id === datum.id);
+    const item = enrichedData.find(
+      (enrichedDataItem) => enrichedDataItem.id === datum.id,
+    );
     if (!isDefined(item)) return null;
 
-    const dataItem = data.find((d) => d.id === datum.id);
+    const dataItem = data.find(
+      (dataItemCandidate) => dataItemCandidate.id === datum.id,
+    );
 
     const formattedValue =
       displayType === 'percentage'
@@ -35,12 +39,13 @@ export const usePieChartTooltip = ({
 
     return {
       tooltipItem: {
+        key: item.id,
         label: item.label || item.id,
         formattedValue,
         value: item.value,
         dotColor: item.colorScheme.solid,
       },
-      showClickHint: isDefined(dataItem?.to),
+      linkTo: dataItem?.to,
     };
   };
 

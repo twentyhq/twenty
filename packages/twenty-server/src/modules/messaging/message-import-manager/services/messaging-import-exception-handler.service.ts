@@ -17,6 +17,7 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
+import { MessagingClearCursorsService } from 'src/modules/messaging/message-import-manager/services/messaging-clear-cursors.service';
 
 export enum MessageImportSyncStep {
   MESSAGE_LIST_FETCH = 'MESSAGE_LIST_FETCH',
@@ -29,6 +30,7 @@ export class MessageImportExceptionHandlerService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly messagingClearCursorsService: MessagingClearCursorsService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -81,7 +83,10 @@ export class MessageImportExceptionHandlerService {
           );
           break;
         case MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR:
-          await this.handlePermanentException(messageChannel, workspaceId);
+          await this.handleSyncCursorErrorException(
+            messageChannel,
+            workspaceId,
+          );
           break;
         case MessageImportDriverExceptionCode.UNKNOWN:
         case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
@@ -96,6 +101,21 @@ export class MessageImportExceptionHandlerService {
     } else {
       await this.handleUnknownException(exception, messageChannel, workspaceId);
     }
+  }
+
+  private async handleSyncCursorErrorException(
+    messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messageChannelSyncStatusService.markAsFailed(
+      [messageChannel.id],
+      workspaceId,
+      MessageChannelSyncStatus.FAILED_UNKNOWN,
+    );
+
+    await this.messagingClearCursorsService.clearAllMessageChannelCursors(
+      messageChannel.id,
+    );
   }
 
   private async handleTemporaryException(

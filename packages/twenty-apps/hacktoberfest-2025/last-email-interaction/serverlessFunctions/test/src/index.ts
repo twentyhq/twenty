@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { setTimeout } from 'timers/promises';
 import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 
 const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '';
@@ -7,7 +6,6 @@ const TWENTY_URL =
   process.env.TWENTY_API_URL !== '' && process.env.TWENTY_API_URL !== undefined
     ? `${process.env.TWENTY_API_URL}/rest`
     : 'https://api.twenty.com/rest';
-const DELAY = 500;
 
 const create_last_interaction = (id: string) => {
   return {
@@ -100,6 +98,53 @@ const interactionData = (date: string, status: string) => {
   };
 };
 
+const updateInteractionStatus = async (objectName: string, id: string, messageDate: string, status: string) => {
+  const options = {
+    method: 'PATCH',
+    url: `${TWENTY_URL}/${objectName}/${id}`,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${TWENTY_API_KEY}`,
+    },
+    data: {
+      lastInteraction: messageDate,
+      interactionStatus: status
+    }
+  };
+  try {
+    const response = await axios.request(options);
+    if (response.status === 200) {
+      console.log('Successfully updated company last interaction field');
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
+    throw error;
+  }
+}
+
+const fetchRelatedCompanyId = async (id: string) => {
+  const options = {
+    method: 'GET',
+    url: `${TWENTY_URL}/people/${id}`,
+    headers: {
+      Authorization: `Bearer ${TWENTY_API_KEY}`,
+    },
+  };
+  try {
+    const req = await axios.request(options);
+    if (req.status === 200 && req.data.person.companyId !== null && req.data.person.companyId !== undefined) {
+      return req.data.person.companyId;
+    }
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
+    throw error;
+  }
+}
+
 export const main = async (params: {
   properties: Record<string, any>;
   recordId: string;
@@ -147,7 +192,6 @@ export const main = async (params: {
       if (response2.status === 201) {
         console.log('Successfully created company last interaction field');
       }
-      await setTimeout(DELAY);
     }
     if (company_interaction_status === undefined) {
       const response2 = await axios.request(
@@ -156,7 +200,6 @@ export const main = async (params: {
       if (response2.status === 201) {
         console.log('Successfully created company interaction status field');
       }
-      await setTimeout(DELAY);
     }
     if (person_last_interaction === undefined) {
       const response2 = await axios.request(
@@ -165,7 +208,6 @@ export const main = async (params: {
       if (response2.status === 201) {
         console.log('Successfully created person last interaction field');
       }
-      await setTimeout(DELAY);
     }
     if (person_interaction_status === undefined) {
       const response2 = await axios.request(
@@ -174,11 +216,10 @@ export const main = async (params: {
       if (response2.status === 201) {
         console.log('Successfully created person interaction status field');
       }
-      await setTimeout(DELAY);
     }
 
     // Extract the timestamp of message
-    const messageDate = properties.receivedAt;
+    const messageDate = properties.after.receivedAt;
     const interactionStatus = calculateStatus(messageDate);
 
     // Get the details of person and related company
@@ -190,8 +231,7 @@ export const main = async (params: {
       },
     };
     const messageDetails = await axios.request(messageOptions);
-    await setTimeout(DELAY);
-    const peopleIds = [];
+    const peopleIds: string[] = [];
     for (const participant of messageDetails.data.messages
       .messageParticipants) {
       peopleIds.push(participant.personId);
@@ -199,78 +239,22 @@ export const main = async (params: {
 
     const companiesIds = [];
     for (const id of peopleIds) {
-      const options = {
-        method: 'GET',
-        url: `${TWENTY_URL}/people/${id}`,
-        headers: {
-          Authorization: `Bearer ${TWENTY_API_KEY}`,
-        },
-      };
-      try {
-        const req = await axios.request(options);
-        companiesIds.push(req.data.person.companyId);
-        await setTimeout(DELAY);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          throw error;
-        }
-        throw error;
-      }
+      companiesIds.push(await fetchRelatedCompanyId(id));
     }
     // Update the field value depending on the timestamp
     for (const id of peopleIds) {
-      const peopleOptions = {
-        method: 'PATCH',
-        url: `${TWENTY_URL}/people/${id}`,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${TWENTY_API_KEY}`,
-        },
-        data: interactionData(messageDate, interactionStatus),
-      };
-      try {
-        const response = await axios.request(options);
-        if (response.status === 200) {
-          console.log('Successfully updated company last interaction field');
-          await setTimeout(DELAY);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          throw error;
-        }
-        throw error;
-      }
+     await updateInteractionStatus("people", id, messageDate, interactionStatus);
     }
 
     for (const id of companiesIds) {
-      const companiesOptions = {
-        method: 'PATCH',
-        url: `${TWENTY_URL}/companies/${id}`,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${TWENTY_API_KEY}`,
-        },
-        data: interactionData(messageDate, interactionStatus),
-      };
-      try {
-        const req = await axios.request(companiesOptions);
-        if (req.status === 200) {
-          console.log(`Successfully updated company with ID ${id}`);
-          await setTimeout(DELAY);
-        }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          throw error;
-        }
-        throw error;
-      }
+      await updateInteractionStatus("companies", id, messageDate, interactionStatus);
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error(error);
+      console.error(error.message);
       return {};
     }
-    console.log(error);
+    console.error(error);
     return {};
   }
 };

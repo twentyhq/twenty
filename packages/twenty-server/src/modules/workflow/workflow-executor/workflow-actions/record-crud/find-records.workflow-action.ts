@@ -71,23 +71,22 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       limit: workflowActionInput.limit,
       workspaceId,
       rolePermissionConfig: executionContext.rolePermissionConfig,
+      userWorkspaceId: executionContext.userWorkspaceId,
+      createdBy: executionContext.initiator,
     });
 
-    if (!toolOutput.success) {
+    if (!toolOutput.success || !toolOutput.result) {
       throw new RecordCrudException(
         toolOutput.error || toolOutput.message,
         RecordCrudExceptionCode.QUERY_FAILED,
       );
     }
 
-    const records = toolOutput.result?.records ?? [];
-    const totalCount = toolOutput.result?.count ?? 0;
-
     return {
       result: {
-        first: records[0],
-        all: records,
-        totalCount,
+        first: toolOutput.result.records[0],
+        all: toolOutput.result.records,
+        totalCount: toolOutput.result.totalCount,
       },
     };
   }
