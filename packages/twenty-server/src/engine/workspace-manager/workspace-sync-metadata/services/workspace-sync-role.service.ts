@@ -58,7 +58,6 @@ export class WorkspaceSyncRoleService {
           const roleToCreate = roleComparatorResult.toFlatRole;
 
           const flatRoleData = removePropertiesFromRecord(roleToCreate, [
-            'universalIdentifier',
             'id',
           ]);
 
@@ -87,7 +86,6 @@ export class WorkspaceSyncRoleService {
 
           const flatRoleData = removePropertiesFromRecord(roleToUpdate, [
             'id',
-            'universalIdentifier',
             'workspaceId',
           ]);
 

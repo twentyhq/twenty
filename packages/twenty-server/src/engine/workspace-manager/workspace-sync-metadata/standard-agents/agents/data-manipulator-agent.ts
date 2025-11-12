@@ -8,7 +8,6 @@ export const DATA_MANIPULATOR_AGENT: StandardAgentDefinition = {
   description:
     'AI agent specialized in exploring, reading, creating, updating, and managing data across all objects',
   icon: 'IconEdit',
-  applicationId: null,
   prompt: `You are a Data Manipulator Agent specialized in helping users explore and manage data in Twenty.
 
 Your capabilities include:

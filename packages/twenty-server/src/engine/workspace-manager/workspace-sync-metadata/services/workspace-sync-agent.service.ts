@@ -57,7 +57,6 @@ export class WorkspaceSyncAgentService {
           const agentToCreate = agentComparatorResult.object;
 
           const flatAgentData = removePropertiesFromRecord(agentToCreate, [
-            'universalIdentifier',
             'id',
           ]);
 
@@ -110,9 +109,7 @@ export class WorkspaceSyncAgentService {
 
           const flatAgentData = removePropertiesFromRecord(agentToUpdate, [
             'id',
-            'universalIdentifier',
             'workspaceId',
-            'standardRoleId' as keyof typeof agentToUpdate,
           ]);
 
           await agentRepository.update({ id: agentToUpdate.id }, flatAgentData);
