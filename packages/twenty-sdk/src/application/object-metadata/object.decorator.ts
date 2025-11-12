@@ -9,6 +9,6 @@ type ObjectMetadataOptions = SyncableEntityOptions & {
   icon?: string;
 };
 
-export const ObjectMetadata = (_: ObjectMetadataOptions): ClassDecorator => {
+export const Object = (_: ObjectMetadataOptions): ClassDecorator => {
   return () => {};
 };
