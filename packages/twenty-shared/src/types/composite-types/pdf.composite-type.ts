@@ -1,6 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from '../../types';
 
-import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { type CompositeType } from './composite-type.interface';
 
 export const pdfCompositeType: CompositeType = {
   type: FieldMetadataType.PDF,
