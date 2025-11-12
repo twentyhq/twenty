@@ -9,7 +9,7 @@ export abstract class SyncableEntity {
   @Column({ nullable: false, type: 'uuid' })
   universalIdentifier: string;
 
-  @Column({ nullable: true, type: 'uuid' })
+  @Column({ nullable: false, type: 'uuid' })
   applicationId: string;
 
   @ManyToOne('ApplicationEntity', {
