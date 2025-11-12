@@ -1,16 +1,24 @@
 import { msg } from '@lingui/core/macro';
+import { v4 } from 'uuid';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   NOTE_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { type TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
-export const notesAllView = (
-  objectMetadataItems: ObjectMetadataEntity[],
+export const notesAllView = ({
+  objectMetadataItems,
   useCoreNaming = false,
-) => {
+  applications,
+}: {
+  objectMetadataItems: ObjectMetadataEntity[];
+  useCoreNaming?: boolean;
+  applications: TwentyStandardApplication;
+}): ViewDefinition => {
   const noteObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.note,
   );
@@ -19,7 +27,12 @@ export const notesAllView = (
     throw new Error('Note object metadata not found');
   }
 
+  const id = v4();
+
   return {
+    id,
+    universalIdentifier: id,
+    applicationId: applications.twentyStandardApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Notes',
     objectMetadataId: noteObjectMetadata.id,
     type: 'table',

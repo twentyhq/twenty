@@ -1,14 +1,22 @@
 import { msg } from '@lingui/core/macro';
+import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { type TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
-export const opportunitiesByStageView = (
-  objectMetadataItems: ObjectMetadataEntity[],
+export const opportunitiesByStageView = ({
+  objectMetadataItems,
   useCoreNaming = false,
-) => {
+  applications,
+}: {
+  objectMetadataItems: ObjectMetadataEntity[];
+  useCoreNaming?: boolean;
+  applications: TwentyStandardApplication;
+}): ViewDefinition => {
   const opportunityObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.opportunity,
   );
@@ -17,7 +25,12 @@ export const opportunitiesByStageView = (
     throw new Error('Opportunity object metadata not found');
   }
 
+  const id = v4();
+
   return {
+    id,
+    universalIdentifier: id,
+    applicationId: applications.twentyStandardApplication.id,
     name: useCoreNaming ? msg`By Stage` : 'By Stage',
     objectMetadataId: opportunityObjectMetadata.id,
     type: 'kanban',
