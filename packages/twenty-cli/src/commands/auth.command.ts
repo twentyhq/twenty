@@ -31,8 +31,8 @@ export class AuthCommand {
     authCommand
       .command('status')
       .description('Check authentication status')
-      .action(async () => {
-        await this.status();
+      .action(async (options) => {
+        await this.status(options);
       });
 
     return authCommand;
@@ -92,7 +92,12 @@ export class AuthCommand {
       const isValid = await this.apiService.validateAuth();
 
       if (isValid) {
-        console.log(chalk.green('✓ Successfully authenticated with Twenty'));
+        const activeProfile = ConfigService.getActiveProfile();
+        console.log(
+          chalk.green(
+            `✓ Successfully authenticated with Twenty (profile: ${activeProfile})`,
+          ),
+        );
       } else {
         console.log(
           chalk.red('✗ Authentication failed. Please check your credentials.'),
@@ -111,7 +116,10 @@ export class AuthCommand {
   private async logout(): Promise<void> {
     try {
       await this.configService.clearConfig();
-      console.log(chalk.green('✓ Successfully logged out'));
+      const activeProfile = ConfigService.getActiveProfile();
+      console.log(
+        chalk.green(`✓ Successfully logged out (profile: ${activeProfile})`),
+      );
     } catch (error) {
       console.error(
         chalk.red('Logout failed:'),
@@ -121,11 +129,13 @@ export class AuthCommand {
     }
   }
 
-  private async status(): Promise<void> {
+  private async status(_options?: { profile?: string }): Promise<void> {
     try {
+      const activeProfile = ConfigService.getActiveProfile();
       const config = await this.configService.getConfig();
 
       console.log(chalk.blue('Authentication Status:'));
+      console.log(`Profile: ${activeProfile}`);
       console.log(`API URL: ${config.apiUrl}`);
       console.log(
         `API Key: ${config.apiKey ? '***' + config.apiKey.slice(-4) : 'Not set'}`,

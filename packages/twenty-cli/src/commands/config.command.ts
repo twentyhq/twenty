@@ -81,9 +81,8 @@ export class ConfigCommand {
 
   private async unset(key: string): Promise<void> {
     try {
-      const config = await this.configService.getConfig();
-      delete (config as any)[key];
-      await this.configService.setConfig(config);
+      // Use profile-aware unset to ensure deletion instead of overwrite
+      await this.configService.unsetKey(key as keyof TwentyConfig);
       console.log(chalk.green(`✓ Removed ${key} from configuration`));
     } catch (error) {
       console.error(
@@ -130,11 +129,5 @@ export class ConfigCommand {
 
       console.log(`  ${key}: ${displayValue}${suffix}`);
     });
-
-    // Show available environment variables
-    console.log(chalk.gray('\nEnvironment variables:'));
-    console.log(chalk.gray('  TWENTY_API_URL - Override API URL'));
-    console.log(chalk.gray('  TWENTY_API_KEY - Override API key'));
-    console.log(chalk.gray('  TWENTY_DEFAULT_APP - Override default app'));
   }
 }

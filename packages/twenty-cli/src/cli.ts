@@ -7,6 +7,7 @@ import { join } from 'path';
 import { AppCommand } from './commands/app.command';
 import { AuthCommand } from './commands/auth.command';
 import { ConfigCommand } from './commands/config.command';
+import { ConfigService } from './services/config.service';
 
 const packageJson = JSON.parse(
   readFileSync(join(__dirname, '../package.json'), 'utf-8'),
@@ -20,10 +21,19 @@ program
   .version(packageJson.version);
 
 program.option(
-  '--api-url <url>',
-  'Twenty API URL',
-  process.env.TWENTY_API_URL || 'http://localhost:3000',
+  '--profile <name>',
+  'Use a named configuration profile',
+  'default',
 );
+
+program.hook('preAction', (thisCommand) => {
+  const opts = (thisCommand as any).optsWithGlobals
+    ? (thisCommand as any).optsWithGlobals()
+    : thisCommand.opts();
+  const profile = opts.profile;
+  ConfigService.setActiveProfile(profile);
+  console.log(chalk.gray(`👩‍💻 Profile - ${ConfigService.getActiveProfile()}`));
+});
 
 program.addCommand(new AuthCommand().getCommand());
 program.addCommand(new AppCommand().getCommand());
