@@ -18,29 +18,23 @@ export const calculateStackedBarChartValueRange = (
 
     for (const key of keys) {
       const value = Number(item[key] ?? 0);
-      if (!Number.isNaN(value)) {
-        if (value >= 0) {
-          positiveSummation += value;
-        } else {
-          negativeSummation += value;
-        }
+      if (Number.isNaN(value)) {
+        continue;
+      }
+
+      if (value >= 0) {
+        positiveSummation += value;
+      } else {
+        negativeSummation += value;
       }
     }
 
-    if (positiveSummation > maximumValue) {
-      maximumValue = positiveSummation;
-    }
-    if (negativeSummation < minimumValue) {
-      minimumValue = negativeSummation;
-    }
+    maximumValue = Math.max(maximumValue, positiveSummation);
+    minimumValue = Math.min(minimumValue, negativeSummation);
   }
 
-  if (minimumValue > 0) {
-    minimumValue = 0;
-  }
-  if (maximumValue < 0) {
-    maximumValue = 0;
-  }
+  minimumValue = Math.min(minimumValue, 0);
+  maximumValue = Math.max(maximumValue, 0);
 
   return { min: minimumValue, max: maximumValue };
 };

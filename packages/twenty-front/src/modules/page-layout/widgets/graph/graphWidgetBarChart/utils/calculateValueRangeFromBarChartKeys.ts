@@ -15,23 +15,17 @@ export const calculateValueRangeFromBarChartKeys = (
   for (const item of data) {
     for (const key of keys) {
       const value = Number(item[key] ?? 0);
-      if (!isNaN(value)) {
-        if (value < minimumValue) {
-          minimumValue = value;
-        }
-        if (value > maximumValue) {
-          maximumValue = value;
-        }
+      if (isNaN(value)) {
+        continue;
       }
+
+      minimumValue = Math.min(minimumValue, value);
+      maximumValue = Math.max(maximumValue, value);
     }
   }
 
-  if (minimumValue > 0) {
-    minimumValue = 0;
-  }
-  if (maximumValue < 0) {
-    maximumValue = 0;
-  }
+  minimumValue = Math.min(minimumValue, 0);
+  maximumValue = Math.max(maximumValue, 0);
 
   return { min: minimumValue, max: maximumValue };
 };
