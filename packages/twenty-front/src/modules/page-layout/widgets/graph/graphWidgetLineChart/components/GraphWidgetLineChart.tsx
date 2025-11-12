@@ -15,6 +15,7 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
+import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -179,6 +180,9 @@ export const GraphWidgetLineChart = ({
 
   const shouldShowLineChartTooltip = isDefined(activeLineTooltip);
 
+  const areThereTooManySeries = data.length > CHART_LEGEND_ITEM_THRESHOLD;
+  const shouldShowLegend = showLegend && !areThereTooManySeries;
+
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
@@ -271,7 +275,7 @@ export const GraphWidgetLineChart = ({
           onMouseLeave={handleTooltipMouseLeave}
         />
       )}
-      <GraphWidgetLegend show={showLegend} items={legendItems} />
+      <GraphWidgetLegend show={shouldShowLegend} items={legendItems} />
     </StyledContainer>
   );
 };

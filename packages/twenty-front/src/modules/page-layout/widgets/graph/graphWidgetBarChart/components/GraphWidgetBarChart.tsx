@@ -33,7 +33,7 @@ import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { BAR_CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartLegendItemThreshold';
+import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -147,7 +147,7 @@ export const GraphWidgetBarChart = ({
     debouncedHideTooltip();
   }, [debouncedHideTooltip]);
 
-  const areThereTooManyKeys = keys.length > BAR_CHART_LEGEND_ITEM_THRESHOLD;
+  const areThereTooManyKeys = keys.length > CHART_LEGEND_ITEM_THRESHOLD;
 
   const shouldShowLegend = showLegend && !areThereTooManyKeys;
 
