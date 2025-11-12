@@ -1,9 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { getGroupByQueryName } from '@/page-layout/utils/getGroupByQueryName';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { filterGroupByResults } from '@/page-layout/widgets/graph/utils/filterGroupByResults';
@@ -32,7 +33,7 @@ type TransformGroupByDataToBarChartDataResult = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   showDataLabels: boolean;
-  layout?: 'vertical' | 'horizontal';
+  layout?: BarChartLayout;
   hasTooManyGroups: boolean;
 };
 
@@ -44,7 +45,7 @@ const EMPTY_BAR_CHART_RESULT: TransformGroupByDataToBarChartDataResult = {
   xAxisLabel: undefined,
   yAxisLabel: undefined,
   showDataLabels: false,
-  layout: 'vertical',
+  layout: BarChartLayout.VERTICAL,
   hasTooManyGroups: false,
 };
 
@@ -82,8 +83,8 @@ export const transformGroupByDataToBarChartData = ({
       ...EMPTY_BAR_CHART_RESULT,
       layout:
         configuration.graphType === GraphType.HORIZONTAL_BAR
-          ? 'horizontal'
-          : 'vertical',
+          ? BarChartLayout.HORIZONTAL
+          : BarChartLayout.VERTICAL,
     };
   }
 
@@ -104,8 +105,8 @@ export const transformGroupByDataToBarChartData = ({
       indexBy: indexByKey,
       layout:
         configuration.graphType === GraphType.HORIZONTAL_BAR
-          ? 'horizontal'
-          : 'vertical',
+          ? BarChartLayout.HORIZONTAL
+          : BarChartLayout.VERTICAL,
     };
   }
 
@@ -162,8 +163,8 @@ export const transformGroupByDataToBarChartData = ({
 
   const layout =
     configuration.graphType === GraphType.HORIZONTAL_BAR
-      ? 'horizontal'
-      : 'vertical';
+      ? BarChartLayout.HORIZONTAL
+      : BarChartLayout.VERTICAL;
 
   return {
     ...baseResult,

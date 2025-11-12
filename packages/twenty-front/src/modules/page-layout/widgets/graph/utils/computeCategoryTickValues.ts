@@ -1,30 +1,16 @@
-const MINIMUM_WIDTH_PER_TICK = 100;
-
-export const computeCategoryTickValues = ({
-  width,
-  values,
-  leftMargin,
-  rightMargin,
-}: {
-  width: number;
-  values: (string | number | Date)[];
-  leftMargin: number;
-  rightMargin: number;
-}): (string | number | Date)[] => {
-  if (width === 0 || values.length === 0) return [];
-
-  const horizontalMargins = leftMargin + rightMargin;
-  const availableWidth = width - horizontalMargins;
-  const numberOfTicks = Math.floor(availableWidth / MINIMUM_WIDTH_PER_TICK);
-
+export const computeCategoryTickValues = (
+  numberOfTicks: number,
+  totalValues: number,
+): number[] => {
   if (numberOfTicks <= 0) return [];
-  if (numberOfTicks === 1) return [values[0]];
-  if (numberOfTicks >= values.length) return values;
+  if (numberOfTicks === 1) return [0];
+  if (numberOfTicks >= totalValues)
+    return Array.from({ length: totalValues }, (_, i) => i);
 
-  const step = (values.length - 1) / (numberOfTicks - 1);
+  const step = (totalValues - 1) / (numberOfTicks - 1);
 
   return Array.from({ length: numberOfTicks }, (_, i) => {
-    const index = Math.min(Math.round(i * step), values.length - 1);
-    return values[index];
+    const index = Math.min(Math.round(i * step), totalValues - 1);
+    return index;
   });
 };

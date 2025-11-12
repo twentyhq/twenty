@@ -10,7 +10,7 @@
   "packageManager": "yarn@4.9.2",
   "dependencies": {
     "axios": "^1.12.2",
-    "twenty-sdk": "^0.0.5"
+    "twenty-sdk": "0.0.5"
   },
   "devDependencies": {
     "@types/node": "^24.7.2"
