@@ -18,12 +18,11 @@ import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/Se
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
+import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
@@ -82,25 +81,7 @@ export const AIChatTab = () => {
   const { createChatThread } = useCreateNewAIChatThread();
   const { navigateCommandMenu } = useCommandMenu();
 
-  const { scrollWrapperHTMLElement } =
-    useScrollWrapperHTMLElement(scrollWrapperId);
-
-  const handleScrollToBottom = (element: HTMLDivElement | null) => {
-    if (!isDefined(element) || !isDefined(scrollWrapperHTMLElement)) {
-      return;
-    }
-
-    const isAtTop = scrollWrapperHTMLElement.scrollTop < 10;
-    const isNearBottom =
-      scrollWrapperHTMLElement.scrollHeight -
-        scrollWrapperHTMLElement.scrollTop -
-        scrollWrapperHTMLElement.clientHeight <
-      100;
-
-    if (isAtTop || isNearBottom || isStreaming) {
-      element.scrollIntoView();
-    }
-  };
+  useAgentChatScrollToBottom({ messages, scrollWrapperId });
 
   return (
     <StyledContainer
@@ -131,7 +112,6 @@ export const AIChatTab = () => {
                   />
                 );
               })}
-              <div ref={handleScrollToBottom} />
             </StyledScrollWrapper>
           )}
           {messages.length === 0 && <AIChatEmptyState />}
