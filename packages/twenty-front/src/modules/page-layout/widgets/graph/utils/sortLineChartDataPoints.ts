@@ -24,10 +24,6 @@ export const sortLineChartDataPoints = ({
       return [...dataPoints].sort((a, b) =>
         normalizeXValue(b.x).localeCompare(normalizeXValue(a.x)),
       );
-    case GraphOrderBy.VALUE_ASC:
-      return [...dataPoints].sort((a, b) => (a.y ?? 0) - (b.y ?? 0));
-    case GraphOrderBy.VALUE_DESC:
-      return [...dataPoints].sort((a, b) => (b.y ?? 0) - (a.y ?? 0));
     default:
       return dataPoints;
   }
