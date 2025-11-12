@@ -2,7 +2,7 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
-import { lazy, Suspense, useMemo } from 'react';
+import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BarChartConfiguration,
@@ -48,15 +48,7 @@ export const GraphWidgetBarChartRenderer = ({
     hasGroupByOnSecondaryAxis,
   );
 
-  const filterStateKey = useMemo(
-    () =>
-      `${configuration.rangeMin ?? ''}-${configuration.rangeMax ?? ''}-${configuration.omitNullValues ?? ''}`,
-    [
-      configuration.rangeMin,
-      configuration.rangeMax,
-      configuration.omitNullValues,
-    ],
-  );
+  const filterStateKey = `${configuration.rangeMin ?? ''}-${configuration.rangeMax ?? ''}-${configuration.omitNullValues ?? ''}`;
 
   if (loading) {
     return <ChartSkeletonLoader />;
