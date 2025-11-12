@@ -11,13 +11,11 @@ const DEFAULT_PROFILE_NAME = 'default';
 
 export class ConfigService {
   private readonly configPath: string;
+  private static activeProfile = DEFAULT_PROFILE_NAME;
 
   constructor() {
     this.configPath = path.join(os.homedir(), '.twenty', 'config.json');
   }
-
-  // Active profile is stored in memory and set by CLI entrypoint; default is 'default'
-  private static activeProfile: string;
 
   static setActiveProfile(name?: string) {
     this.activeProfile = name ?? DEFAULT_PROFILE_NAME;
