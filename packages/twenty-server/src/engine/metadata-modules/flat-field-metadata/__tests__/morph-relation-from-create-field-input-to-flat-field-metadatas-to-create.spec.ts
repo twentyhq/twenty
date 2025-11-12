@@ -28,7 +28,7 @@ const flatObjectMetadataMaps = [
 }, createEmptyFlatEntityMaps());
 
 type TestCase = EachTestingContext<{
-  input: FromCreateFieldInputToFlatObjectMetadataArgs;
+  input: Omit<FromCreateFieldInputToFlatObjectMetadataArgs, 'workspaceCustomFlatApplication'> & {workspaceCustomFlatApplication: {id: string}};
   expected: 'success' | 'fail';
 }>;
 
@@ -42,6 +42,9 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
           'should create morph relation field metadata with valid input on rocket object to pet object',
         context: {
           input: {
+            workspaceCustomFlatApplication: {
+              id: 'f13e449c-a809-4c2d-81ec-fb33ac4b7894'
+            },
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
@@ -100,6 +103,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         title: 'should fail when morphRelationsCreationPayload is missing',
         context: {
           input: {
+            workspaceCustomFlatApplication
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',
@@ -225,6 +229,9 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
         title: 'should fail when target object metadata is not found',
         context: {
           input: {
+            workspaceCustomFlatApplication: {
+              id: '',
+            },
             createFieldInput: {
               name: 'newField',
               label: 'newFieldLabel',

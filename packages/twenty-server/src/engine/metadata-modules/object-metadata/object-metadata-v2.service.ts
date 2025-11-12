@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -294,13 +295,15 @@ export class ObjectMetadataServiceV2 {
       flatEntityToUpdate: [],
     });
 
-    const flatDefaultViewToCreate = await this.createDefaultFlatView({
+    const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
+      workspaceCustomFlatApplication,
     });
 
     const flatDefaultViewFieldsToCreate =
-      await this.createDefaultFlatViewFields({
+      await this.computeFlatViewFieldsToCreate({
+        workspaceCustomFlatApplication,
         objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMapsOrThrow(
           {
             flatEntityMaps: flatFieldMetadataMapsFromTo.to,
@@ -383,10 +386,12 @@ export class ObjectMetadataServiceV2 {
     return createdFlatObjectMetadata;
   }
 
-  private async createDefaultFlatView({
+  private async computeFlatViewToCreate({
     objectMetadata,
     workspaceId,
+    workspaceCustomFlatApplication,
   }: {
+    workspaceCustomFlatApplication: FlatApplication;
     objectMetadata: FlatObjectMetadata;
     workspaceId: string;
   }) {
@@ -402,16 +407,19 @@ export class ObjectMetadataServiceV2 {
     const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
       createViewInput: defaultViewInput,
       workspaceId,
+      workspaceCustomFlatApplication,
     });
 
     return flatViewFromCreateInput;
   }
 
-  private async createDefaultFlatViewFields({
+  private async computeFlatViewFieldsToCreate({
     objectFlatFieldMetadatas,
     viewId,
     workspaceId,
+    workspaceCustomFlatApplication,
   }: {
+    workspaceCustomFlatApplication: FlatApplication;
     objectFlatFieldMetadatas: FlatFieldMetadata[];
     viewId: string;
     workspaceId: string;
@@ -427,6 +435,7 @@ export class ObjectMetadataServiceV2 {
             size: DEFAULT_VIEW_FIELD_SIZE,
             viewId: viewId,
           },
+          workspaceCustomFlatApplication,
           workspaceId: workspaceId,
         }),
       );

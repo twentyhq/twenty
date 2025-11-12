@@ -87,6 +87,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
         existingFlatObjectMetadataMaps,
         sourceFlatObjectMetadata: parentFlatObjectMetadata,
         workspaceId,
+        workspaceCustomFlatApplication,
       });
     }
     case FieldMetadataType.RELATION: {
@@ -98,6 +99,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
           type: createFieldInput.type,
         },
         workspaceId,
+        workspaceCustomFlatApplication,
       });
     }
     case FieldMetadataType.RATING: {
