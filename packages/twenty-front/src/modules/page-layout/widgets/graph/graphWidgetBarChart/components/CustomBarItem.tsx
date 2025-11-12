@@ -1,5 +1,6 @@
 import { BAR_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartHoverBrightness';
 import { BAR_CHART_MAXIMUM_WIDTH } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/MaximumBarWidth';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarDatum, type BarItemProps } from '@nivo/bar';
 import { Text } from '@nivo/text';
 import { useTheme } from '@nivo/theming';
@@ -15,7 +16,7 @@ type CustomBarItemProps<D extends BarDatum> = BarItemProps<D> & {
   groupMode?: 'grouped' | 'stacked';
   data?: readonly D[];
   indexBy?: string;
-  layout?: 'vertical' | 'horizontal';
+  layout?: BarChartLayout;
   chartId?: string;
 };
 
@@ -63,7 +64,7 @@ export const CustomBarItem = <D extends BarDatum>({
   groupMode = 'grouped',
   data: chartData,
   indexBy,
-  layout = 'vertical',
+  layout = BarChartLayout.VERTICAL,
   chartId,
 }: CustomBarItemProps<D>) => {
   const theme = useTheme();
@@ -158,7 +159,7 @@ export const CustomBarItem = <D extends BarDatum>({
     barData.indexValue,
   ]);
 
-  const isHorizontal = layout === 'horizontal';
+  const isHorizontal = layout === BarChartLayout.HORIZONTAL;
   const clipPathId = `round-corner-${chartId ?? 'chart'}-${barData.index}-${
     seriesIndex >= 0 ? seriesIndex : 'x'
   }`;

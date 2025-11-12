@@ -1,4 +1,5 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
 import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
 import { truncateTickLabel } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/truncateTickLabel';
@@ -22,7 +23,7 @@ type GetBarChartAxisConfigsProps = {
   width: number;
   height: number;
   data: BarChartDataItem[];
-  layout: 'vertical' | 'horizontal';
+  layout: BarChartLayout;
   indexBy: string;
   xAxisLabel?: string;
   yAxisLabel?: string;
@@ -59,7 +60,7 @@ export const getBarChartAxisConfigs = ({
 
   const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
-  if (layout === 'vertical') {
+  if (layout === BarChartLayout.VERTICAL) {
     return {
       axisBottom: {
         ...COMMON_AXIS_CONFIG,

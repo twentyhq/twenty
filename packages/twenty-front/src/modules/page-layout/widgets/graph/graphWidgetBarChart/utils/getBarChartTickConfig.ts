@@ -1,4 +1,5 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { calculateMaxTickLabelLength } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateMaxTickLabelLength';
 import { calculateWidthPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateWidthPerTick';
 import { computeBarChartCategoryTickValues } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartCategoryTickValues';
@@ -31,10 +32,10 @@ export const getBarChartTickConfig = ({
   xAxisLabel?: string;
   yAxisLabel?: string;
   axisFontSize: number;
-  layout: 'vertical' | 'horizontal';
+  layout: BarChartLayout;
 }): BarChartTickConfig => {
   const categoryTickValues = computeBarChartCategoryTickValues({
-    axisSize: layout === 'vertical' ? width : height,
+    axisSize: layout === BarChartLayout.VERTICAL ? width : height,
     axisFontSize,
     data,
     indexBy,
@@ -49,7 +50,8 @@ export const getBarChartTickConfig = ({
   const availableHeight = height - (margins.top + margins.bottom);
 
   const numberOfValueTicks = computeBarChartValueTickCount({
-    axisSize: layout === 'vertical' ? availableHeight : availableWidth,
+    axisSize:
+      layout === BarChartLayout.VERTICAL ? availableHeight : availableWidth,
     axisFontSize,
     layout,
   });

@@ -9,6 +9,7 @@ import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarC
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { calculateBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartValueRange';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
@@ -40,7 +41,7 @@ type GraphWidgetBarChartProps = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   id: string;
-  layout?: 'vertical' | 'horizontal';
+  layout?: BarChartLayout;
   groupMode?: 'grouped' | 'stacked';
   seriesLabels?: Record<string, string>;
   rangeMin?: number;
@@ -69,7 +70,7 @@ export const GraphWidgetBarChart = ({
   xAxisLabel,
   yAxisLabel,
   id,
-  layout = 'vertical',
+  layout = BarChartLayout.VERTICAL,
   groupMode,
   seriesLabels,
   rangeMin,
@@ -201,7 +202,7 @@ export const GraphWidgetBarChart = ({
   const zeroMarker = hasNegativeValues
     ? [
         {
-          axis: (layout === 'vertical' ? 'y' : 'x') as 'y' | 'x',
+          axis: (layout === BarChartLayout.VERTICAL ? 'y' : 'x') as 'y' | 'x',
           value: 0,
           lineStyle: {
             stroke: theme.border.color.medium,
@@ -250,10 +251,10 @@ export const GraphWidgetBarChart = ({
           axisRight={null}
           axisBottom={axisBottomConfig}
           axisLeft={axisLeftConfig}
-          enableGridX={layout === 'horizontal' && showGrid}
-          enableGridY={layout === 'vertical' && showGrid}
-          gridXValues={layout === 'horizontal' ? 5 : undefined}
-          gridYValues={layout === 'vertical' ? 5 : undefined}
+          enableGridX={layout === BarChartLayout.HORIZONTAL && showGrid}
+          enableGridY={layout === BarChartLayout.VERTICAL && showGrid}
+          gridXValues={layout === BarChartLayout.HORIZONTAL ? 5 : undefined}
+          gridYValues={layout === BarChartLayout.VERTICAL ? 5 : undefined}
           enableLabel={false}
           labelSkipWidth={12}
           innerPadding={

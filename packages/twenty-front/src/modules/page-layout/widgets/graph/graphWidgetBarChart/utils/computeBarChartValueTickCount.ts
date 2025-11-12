@@ -1,10 +1,11 @@
 import { BAR_CHART_MINIMUM_WIDTH_PER_TICK } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumWidthPerTick';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
 
 type ComputeBarChartValueTickCountProps = {
   axisSize: number;
   axisFontSize: number;
-  layout: 'vertical' | 'horizontal';
+  layout: BarChartLayout;
 };
 
 export const computeBarChartValueTickCount = ({
@@ -13,7 +14,7 @@ export const computeBarChartValueTickCount = ({
   layout,
 }: ComputeBarChartValueTickCountProps): number => {
   const minTickSize =
-    layout === 'vertical'
+    layout === BarChartLayout.VERTICAL
       ? computeMinHeightPerTick({ axisFontSize })
       : BAR_CHART_MINIMUM_WIDTH_PER_TICK;
 

@@ -1,15 +1,17 @@
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
+
 export const calculateWidthPerTick = ({
   layout,
   availableWidth,
   categoryTickCount,
   valueTickCount,
 }: {
-  layout: 'vertical' | 'horizontal';
+  layout: BarChartLayout;
   availableWidth: number;
   categoryTickCount: number;
   valueTickCount: number;
 }): number => {
-  if (layout === 'vertical') {
+  if (layout === BarChartLayout.VERTICAL) {
     return categoryTickCount > 0 ? availableWidth / categoryTickCount : 0;
   }
 
