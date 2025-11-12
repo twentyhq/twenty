@@ -12,6 +12,7 @@ import {
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -264,18 +265,20 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
       }
     } else {
-      if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+      const oldColumnName = isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ? flatFieldMetadata.settings.joinColumnName : update.from;
+      if(!isDefined(oldColumnName)) {
         throw new WorkspaceMigrationRunnerException(
-          'Relation field metadata name update is not supported yet',
+          'Old column name is not defined for relation field',
           WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
         );
       }
+      const newColumnName = isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ? computeMorphOrRelationFieldJoinColumnName({ name: update.to }) : update.to;
       await this.workspaceSchemaManagerService.columnManager.renameColumn({
         queryRunner,
         schemaName,
         tableName,
-        oldColumnName: update.from,
-        newColumnName: update.to,
+        oldColumnName,
+        newColumnName,
       });
     }
 
