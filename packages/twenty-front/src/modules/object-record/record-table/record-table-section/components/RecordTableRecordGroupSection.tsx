@@ -8,8 +8,6 @@ import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useC
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnDragAndDropWidth';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
@@ -23,7 +21,6 @@ import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-r
 import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import {
@@ -171,28 +168,12 @@ export const RecordTableRecordGroupSection = () => {
     sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField +
     sumOfBorderWidthForFields;
 
-  const allRecordIds = useRecoilComponentValue(
-    recordIndexAllRecordIdsComponentSelector,
-  );
-
-  const recordIdsOfThisGroup = useRecoilComponentFamilyValue(
-    recordIndexRecordIdsByGroupComponentFamilyState,
-    recordGroup?.id ?? '',
-  );
-
-  const indexOfFirstRowOfThisGroup = allRecordIds.findIndex(
-    (value) => value === recordIdsOfThisGroup[0],
-  );
-
-
   if (!isDefined(recordGroup)) {
     return null;
   }
 
   return (
-    <StyledTrContainer
-      onClick={handleDropdownToggle}
-    >
+    <StyledTrContainer onClick={handleDropdownToggle}>
       <StyledRecordTableDragAndDropPlaceholderCell />
       <StyledChevronContainer>
         <StyledAnimatedLightIconButton
