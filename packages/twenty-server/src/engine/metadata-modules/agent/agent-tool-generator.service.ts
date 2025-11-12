@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ToolSet } from 'ai';
 import { Repository } from 'typeorm';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -36,6 +36,7 @@ export class AgentToolGeneratorService {
     workspaceId: string,
     actorContext?: ActorMetadata,
     roleIds?: string[],
+    userWorkspaceId?: string,
   ): Promise<ToolSet> {
     let tools: ToolSet = {};
 
@@ -76,6 +77,7 @@ export class AgentToolGeneratorService {
         { intersectionOf: roleIds },
         workspaceId,
         actorContext,
+        userWorkspaceId,
       );
 
       tools = { ...tools, ...databaseTools };

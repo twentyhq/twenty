@@ -1,10 +1,7 @@
 import uniqBy from 'lodash.uniqby';
+import { type LinkMetadata, type LinksMetadata } from 'twenty-shared/types';
 
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
-import {
-  type LinkMetadata,
-  type LinksMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 import { parseArrayOrJsonStringToArray } from './parse-additional-items.util';
 

@@ -131,7 +131,7 @@ msgstr "إعادة تعيين كلمة مرورك 🗝"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "قم بتعيين كلمة مرورك 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +141,7 @@ msgstr "إعادة تعيين"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "تعيين"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

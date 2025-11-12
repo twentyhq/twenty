@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { Application } from 'cloudflare/resources/zero-trust/access/applications/applications';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   Check,
@@ -9,6 +10,8 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -19,6 +22,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -272,4 +276,22 @@ export class WorkspaceEntity {
   @Field(() => String, { nullable: false })
   @Column({ type: 'varchar', nullable: false, default: 'auto' })
   routerModel: ModelId;
+
+  // TODO prastoin
+  // Temporarily setting as nullable for retro compatibility, not udpating TypeScript types
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'uuid' })
+  workspaceCustomApplicationId: string;
+
+  @ManyToOne(() => ApplicationEntity, {
+    onDelete: 'RESTRICT',
+    nullable: false,
+  })
+  @JoinColumn({ name: 'workspaceCustomApplicationId' })
+  workspaceCustomApplication: Relation<ApplicationEntity>;
+
+  @OneToMany(() => ApplicationEntity, (application) => application.workspace, {
+    onDelete: 'CASCADE',
+  })
+  applications: Relation<Application[]>;
 }

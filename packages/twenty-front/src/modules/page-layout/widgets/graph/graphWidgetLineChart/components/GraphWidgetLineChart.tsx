@@ -1,21 +1,32 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
+import {
+  CustomCrosshairLayer,
+  type SliceHoverData,
+} from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
+import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
+import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
+import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
+import { LINE_CHART_MARGIN_RIGHT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginRight';
+import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
-import { useLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTooltip';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
-import { handleLineChartPointClick } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/handleLineChartPointClick';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ResponsiveLine } from '@nivo/line';
+import {
+  ResponsiveLine,
+  type LineSeries,
+  type SliceTooltipProps,
+} from '@nivo/line';
 import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
-import { useId } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
 type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
@@ -35,7 +46,7 @@ type GraphWidgetLineChartProps = {
     | 'stepAfter'
     | 'natural';
   lineWidth?: number;
-  enableSlices?: 'x' | 'y' | false;
+  enableSlices?: 'x' | 'y';
   xScale?: ScaleSpec;
   yScale?: ScaleSpec;
 } & GraphValueFormatOptions;
@@ -119,58 +130,80 @@ export const GraphWidgetLineChart = ({
     theme,
   });
 
-  const { createSliceTooltipData, createPointTooltipData } =
-    useLineChartTooltip({
-      dataMap,
-      enrichedSeries,
-      formatOptions,
-    });
+  const [activeLineTooltip, setActiveLineTooltip] = useState<{
+    slice: SliceTooltipProps<LineSeries>['slice'];
+    offsetLeft: number;
+    offsetTop: number;
+    highlightedSeriesId: string;
+    linkTo: string | undefined;
+  } | null>(null);
+  const [crosshairX, setCrosshairX] = useState<number | null>(null);
+
+  const hideTooltip = useCallback(() => {
+    setActiveLineTooltip(null);
+    setCrosshairX(null);
+  }, []);
+
+  const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
+
+  const handleTooltipMouseEnter = () => {
+    debouncedHideTooltip.cancel();
+  };
+
+  const handleTooltipMouseLeave = debouncedHideTooltip;
+
+  const handleSliceHover = useCallback(
+    (sliceData: SliceHoverData) => {
+      const slice: SliceTooltipProps<LineSeries>['slice'] = {
+        id: String(sliceData.nearestSlice.xValue ?? ''),
+        x: sliceData.nearestSlice.x,
+        y: sliceData.mouseY,
+        x0: sliceData.nearestSlice.x,
+        y0: 0,
+        width: 0,
+        height: 0,
+        points: sliceData.nearestSlice.points,
+      };
+
+      const offsetLeft = sliceData.nearestSlice.x + LINE_CHART_MARGIN_LEFT;
+      const offsetTop = sliceData.mouseY + LINE_CHART_MARGIN_TOP;
+
+      const seriesForLink = dataMap[String(sliceData.closestPoint.seriesId)];
+      const linkTo =
+        seriesForLink?.data?.[sliceData.closestPoint.indexInSeries]?.to;
+
+      debouncedHideTooltip.cancel();
+      setCrosshairX(sliceData.sliceX);
+      setActiveLineTooltip({
+        slice,
+        offsetLeft,
+        offsetTop,
+        highlightedSeriesId: String(sliceData.closestPoint.seriesId),
+        linkTo,
+      });
+    },
+    [dataMap, debouncedHideTooltip],
+  );
 
   const axisBottomConfig = getLineChartAxisBottomConfig(xAxisLabel);
   const axisLeftConfig = getLineChartAxisLeftConfig(yAxisLabel, formatOptions);
 
-  const onPointClick = (
-    point: Parameters<typeof handleLineChartPointClick>[0],
-  ) => {
-    handleLineChartPointClick(point, dataMap);
-  };
-
-  const renderSliceTooltip = (
-    props: Parameters<typeof createSliceTooltipData>[0],
-  ) => {
-    const tooltipData = createSliceTooltipData(props);
-    return (
-      <GraphWidgetTooltip
-        items={tooltipData.items}
-        showClickHint={tooltipData.showClickHint}
-        indexLabel={tooltipData.indexLabel}
-      />
-    );
-  };
-
-  const renderPointTooltip = (
-    point: Parameters<typeof createPointTooltipData>[0],
-  ) => {
-    const tooltipData = createPointTooltipData(point);
-    if (!isDefined(tooltipData)) return null;
-    return (
-      <GraphWidgetTooltip
-        items={tooltipData.items}
-        showClickHint={tooltipData.showClickHint}
-        indexLabel={tooltipData.indexLabel}
-      />
-    );
-  };
+  const shouldShowLineChartTooltip = isDefined(activeLineTooltip);
 
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
         $isClickable={hasClickableItems}
-        $cursorSelector="svg g circle"
+        onMouseLeave={() => debouncedHideTooltip()}
       >
         <ResponsiveLine
           data={nivoData}
-          margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
+          margin={{
+            top: LINE_CHART_MARGIN_TOP,
+            right: LINE_CHART_MARGIN_RIGHT,
+            bottom: LINE_CHART_MARGIN_BOTTOM,
+            left: LINE_CHART_MARGIN_LEFT,
+          }}
           xScale={xScale}
           yScale={getYScaleWithStacking(yScale, stackedArea)}
           curve={curve}
@@ -180,9 +213,8 @@ export const GraphWidgetLineChart = ({
           enablePoints={enablePoints}
           pointSize={6}
           pointBorderWidth={0}
-          areaOpacity={theme.name === 'dark' ? 0.8 : 1}
           colors={colors}
-          areaBlendMode={theme.name === 'dark' ? 'screen' : 'multiply'}
+          areaBlendMode={'normal'}
           defs={defs}
           fill={fill}
           axisTop={null}
@@ -192,24 +224,47 @@ export const GraphWidgetLineChart = ({
           enableGridX={showGrid}
           enableGridY={showGrid}
           enableSlices={enableSlices}
-          sliceTooltip={enableSlices === 'x' ? renderSliceTooltip : undefined}
-          tooltip={
-            enableSlices === false
-              ? ({ point }) => renderPointTooltip(point)
-              : undefined
-          }
-          onClick={(datum) => {
-            if ('seriesId' in datum) {
-              onPointClick(
-                datum as Parameters<typeof handleLineChartPointClick>[0],
-              );
-            }
-          }}
+          sliceTooltip={() => null}
+          tooltip={() => null}
+          layers={[
+            'grid',
+            'markers',
+            'axes',
+            'areas',
+            'lines',
+            (layerProps) => (
+              <CustomCrosshairLayer
+                key="custom-crosshair-layer"
+                points={layerProps.points}
+                innerHeight={layerProps.innerHeight}
+                innerWidth={layerProps.innerWidth}
+                onSliceHover={handleSliceHover}
+                crosshairX={crosshairX}
+                onRectLeave={() => debouncedHideTooltip()}
+              />
+            ),
+            'points',
+            'legends',
+          ]}
           useMesh={true}
           crosshairType="cross"
           theme={chartTheme}
         />
       </GraphWidgetChartContainer>
+      {shouldShowLineChartTooltip && (
+        <GraphLineChartTooltip
+          slice={activeLineTooltip.slice}
+          offsetLeft={activeLineTooltip.offsetLeft}
+          offsetTop={activeLineTooltip.offsetTop}
+          containerId={id}
+          enrichedSeries={enrichedSeries}
+          formatOptions={formatOptions}
+          highlightedSeriesId={activeLineTooltip.highlightedSeriesId}
+          linkTo={activeLineTooltip.linkTo}
+          onMouseEnter={handleTooltipMouseEnter}
+          onMouseLeave={handleTooltipMouseLeave}
+        />
+      )}
       <GraphWidgetLegend show={showLegend} items={legendItems} />
     </StyledContainer>
   );

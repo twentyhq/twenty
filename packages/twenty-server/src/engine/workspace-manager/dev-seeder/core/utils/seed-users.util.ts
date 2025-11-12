@@ -1,4 +1,4 @@
-import { type DataSource } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
 import { generateRandomUsers } from './generate-random-users.util';
 
@@ -15,7 +15,12 @@ const { users: randomUsers, userIds: randomUserIds } = generateRandomUsers();
 
 export const RANDOM_USER_IDS = randomUserIds;
 
-export const seedUsers = async (dataSource: DataSource, schemaName: string) => {
+type SeedUsersArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+};
+
+export const seedUsers = async ({ queryRunner, schemaName }: SeedUsersArgs) => {
   const originalUsers = [
     {
       id: USER_DATA_SEED_IDS.TIM,
@@ -65,7 +70,7 @@ export const seedUsers = async (dataSource: DataSource, schemaName: string) => {
 
   const allUsers = [...originalUsers, ...randomUsers];
 
-  await dataSource
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [

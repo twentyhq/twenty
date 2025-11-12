@@ -59,6 +59,14 @@ export const parseMicrosoftMessagesImportError = (
     );
   }
 
+  if (error.statusCode === 410) {
+    return new MessageImportDriverException(
+      `Sync cursor error: ${error.message}`,
+      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      { cause: options?.cause },
+    );
+  }
+
   return new MessageImportDriverException(
     `Microsoft Graph API unknown error: ${error} with status code ${error.statusCode}`,
     MessageImportDriverExceptionCode.UNKNOWN,

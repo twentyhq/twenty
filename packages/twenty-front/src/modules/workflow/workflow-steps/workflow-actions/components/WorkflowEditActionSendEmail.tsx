@@ -333,7 +333,6 @@ export const WorkflowEditActionSendEmail = ({
           />
           <FormAdvancedTextFieldInput
             label="Body"
-            placeholder="Enter email body"
             readonly={actionOptions.readonly}
             defaultValue={formData.body}
             onChange={(body: string) => {

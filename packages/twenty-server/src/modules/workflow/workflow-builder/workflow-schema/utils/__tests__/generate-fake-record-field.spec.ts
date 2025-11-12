@@ -6,30 +6,6 @@ import * as camelToTitleCaseModule from 'src/utils/camel-to-title-case';
 
 jest.mock('src/engine/utils/generate-fake-value');
 jest.mock('src/utils/camel-to-title-case');
-jest.mock('src/engine/metadata-modules/field-metadata/composite-types', () => {
-  const actualTypes = jest.requireActual('twenty-shared/types');
-  const { FieldMetadataType } = actualTypes;
-
-  const compositeTypeDefinitions = new Map();
-
-  compositeTypeDefinitions.set(FieldMetadataType.LINKS, {
-    properties: [
-      { name: 'label', type: FieldMetadataType.TEXT },
-      { name: 'url', type: FieldMetadataType.TEXT },
-    ],
-  });
-
-  compositeTypeDefinitions.set(FieldMetadataType.CURRENCY, {
-    properties: [
-      { name: 'amount', type: FieldMetadataType.NUMBER },
-      { name: 'currencyCode', type: FieldMetadataType.TEXT },
-    ],
-  });
-
-  return {
-    compositeTypeDefinitions,
-  };
-});
 
 describe('generateFakeField', () => {
   const generateFakeValueSpy = jest.spyOn(
@@ -157,7 +133,7 @@ describe('generateFakeField', () => {
         label: 'Links Field',
         type: FieldMetadataType.LINKS,
         value: {
-          label: {
+          primaryLinkLabel: {
             fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
             isCompositeSubField: true,
             isLeaf: true,
@@ -165,7 +141,7 @@ describe('generateFakeField', () => {
             label: 'Label',
             value: 'Fake Label',
           },
-          url: {
+          primaryLinkUrl: {
             fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
             isCompositeSubField: true,
             isLeaf: true,
@@ -173,13 +149,22 @@ describe('generateFakeField', () => {
             label: 'Url',
             value: 'https://example.com',
           },
+          secondaryLinks: {
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+            isCompositeSubField: true,
+            isLeaf: true,
+            label: 'Title secondaryLinks',
+            type: 'RAW_JSON',
+            value: 'fake-RAW_JSON',
+          },
         },
         fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
       });
 
-      expect(generateFakeValueSpy).toHaveBeenCalledTimes(2);
-      expect(camelToTitleCaseSpy).toHaveBeenCalledWith('label');
-      expect(camelToTitleCaseSpy).toHaveBeenCalledWith('url');
+      expect(generateFakeValueSpy).toHaveBeenCalledTimes(3);
+      expect(camelToTitleCaseSpy).toHaveBeenCalledWith('primaryLinkLabel');
+      expect(camelToTitleCaseSpy).toHaveBeenCalledWith('primaryLinkUrl');
+      expect(camelToTitleCaseSpy).toHaveBeenCalledWith('secondaryLinks');
     });
 
     it('should generate a node with properties for CURRENCY type', () => {
@@ -202,11 +187,11 @@ describe('generateFakeField', () => {
         label: 'Currency Field',
         type: FieldMetadataType.CURRENCY,
         value: {
-          amount: {
+          amountMicros: {
             fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
             isCompositeSubField: true,
             isLeaf: true,
-            type: FieldMetadataType.NUMBER,
+            type: FieldMetadataType.NUMERIC,
             label: 'Amount',
             value: 100,
           },
