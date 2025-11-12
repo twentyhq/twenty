@@ -1,18 +1,26 @@
 import { msg } from '@lingui/core/macro';
+import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   COMPANY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { type TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
-export const companiesAllView = (
-  objectMetadataItems: ObjectMetadataEntity[],
+export const companiesAllView = ({
+  objectMetadataItems,
   useCoreNaming = false,
-) => {
+  applications,
+}: {
+  objectMetadataItems: ObjectMetadataEntity[];
+  useCoreNaming?: boolean;
+  applications: TwentyStandardApplication;
+}): ViewDefinition => {
   const companyObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.company,
   );
@@ -21,7 +29,12 @@ export const companiesAllView = (
     throw new Error('Company object metadata not found');
   }
 
+  const id = v4();
+
   return {
+    id,
+    universalIdentifier: id,
+    applicationId: applications.twentyStandardApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Companies',
     objectMetadataId: companyObjectMetadata.id ?? '',
     type: 'table',

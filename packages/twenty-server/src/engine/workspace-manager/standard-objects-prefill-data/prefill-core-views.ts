@@ -1,6 +1,5 @@
 import { isString } from '@sniptt/guards';
 import { type DataSource, type QueryRunner } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -33,6 +32,7 @@ import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-o
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 import { workspaceMembersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view';
 import { TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
+import { v4 } from 'uuid';
 
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
@@ -51,18 +51,54 @@ export const prefillCoreViews = async ({
   applications,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
   const views: ViewDefinition[] = [
-    companiesAllView(objectMetadataItems, true),
-    peopleAllView(objectMetadataItems, true),
-    opportunitiesAllView(objectMetadataItems, true),
-    opportunitiesByStageView(objectMetadataItems, true),
-    notesAllView(objectMetadataItems, true),
-    tasksAllView(objectMetadataItems, true),
-    tasksAssignedToMeView(objectMetadataItems, true),
-    tasksByStatusView(objectMetadataItems, true),
-    workflowsAllView(objectMetadataItems, true),
-    workflowVersionsAllView(objectMetadataItems, true),
-    workflowRunsAllView(objectMetadataItems, true),
-    dashboardsAllView(objectMetadataItems, true),
+    companiesAllView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      applications,
+    }),
+    peopleAllView({ objectMetadataItems, useCoreNaming: true, applications }),
+    opportunitiesAllView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      applications,
+    }),
+    opportunitiesByStageView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      applications,
+    }),
+    notesAllView({ objectMetadataItems, useCoreNaming: true, applications }),
+    tasksAllView({ objectMetadataItems, useCoreNaming: true, applications }),
+    tasksAssignedToMeView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      applications,
+    }),
+    tasksByStatusView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      applications,
+    }),
+    workflowsAllView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      applications,
+    }),
+    workflowVersionsAllView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      applications,
+    }),
+    workflowRunsAllView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      applications,
+    }),
+    dashboardsAllView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      applications,
+    }),
     workspaceMembersAllView(objectMetadataItems, true),
     messagesAllView(objectMetadataItems, true),
     messageThreadsAllView(objectMetadataItems, true),
@@ -79,15 +115,8 @@ export const prefillCoreViews = async ({
     const createdViews = await createCoreViews(
       queryRunner,
       workspaceId,
-      views.map((viewDefinition) => {
-        const id = v4();
-        return {
-          ...viewDefinition,
-          id,
-          universalIdentifier: id,
-          applicationId: applications.twentyStandardApplication.id,
-        };
-      }),
+      views,
+      applications,
     );
 
     await prefillWorkspaceFavorites(
@@ -127,6 +156,7 @@ export const createCoreViews = async (
   queryRunner: QueryRunner,
   workspaceId: string,
   viewDefinitions: ViewDefinition[],
+  applications: TwentyStandardApplication,
 ): Promise<ViewEntity[]> => {
   const coreViews: Partial<ViewEntity>[] = viewDefinitions.map(
     ({
@@ -141,6 +171,8 @@ export const createCoreViews = async (
       openRecordIn,
       kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId,
+      applicationId,
+      universalIdentifier,
     }) => ({
       id,
       name: isString(name) ? name : name.message || '',
@@ -160,6 +192,8 @@ export const createCoreViews = async (
       workspaceId,
       anyFieldFilterValue: null,
       visibility: ViewVisibility.WORKSPACE,
+      applicationId,
+      universalIdentifier,
     }),
   );
 
@@ -176,6 +210,8 @@ export const createCoreViews = async (
           size: field.size,
           viewId: viewDefinition.id,
           workspaceId,
+          applicationId: applications.twentyStandardApplication.id,
+          universalIdentifier: v4(),
         }));
 
       const viewFieldRepository =
@@ -192,6 +228,8 @@ export const createCoreViews = async (
           operand: filter.operand,
           value: filter.value,
           workspaceId,
+          applicationId: applications.twentyStandardApplication.id,
+          universalIdentifier: v4(),
         }));
 
       const viewFilterRepository =
@@ -213,6 +251,8 @@ export const createCoreViews = async (
           position: group.position,
           viewId: viewDefinition.id,
           workspaceId,
+          applicationId: applications.twentyStandardApplication.id,
+          universalIdentifier: v4(),
         }));
 
       const viewGroupRepository =
