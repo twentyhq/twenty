@@ -11,6 +11,8 @@ export interface ViewDefinition {
   type: string;
   key: string | null;
   position: number;
+  applicationId: string;
+  universalIdentifier: string;
   icon?: string;
   isCustom?: boolean;
   openRecordIn?: ViewOpenRecordInType;

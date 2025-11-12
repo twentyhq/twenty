@@ -32,6 +32,7 @@ import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objec
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 import { workspaceMembersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view';
+import { TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
@@ -39,6 +40,7 @@ type PrefillCoreViewsArgs = {
   objectMetadataItems: ObjectMetadataEntity[];
   featureFlags?: Record<string, boolean>;
   workspaceSchemaName: string;
+  applications: TwentyStandardApplication;
 };
 
 export const prefillCoreViews = async ({
@@ -46,8 +48,9 @@ export const prefillCoreViews = async ({
   workspaceId,
   objectMetadataItems,
   workspaceSchemaName,
+  applications,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
-  const views = [
+  const views: ViewDefinition[] = [
     companiesAllView(objectMetadataItems, true),
     peopleAllView(objectMetadataItems, true),
     opportunitiesAllView(objectMetadataItems, true),
@@ -73,7 +76,19 @@ export const prefillCoreViews = async ({
   try {
     await queryRunner.startTransaction();
 
-    const createdViews = await createCoreViews(queryRunner, workspaceId, views);
+    const createdViews = await createCoreViews(
+      queryRunner,
+      workspaceId,
+      views.map((viewDefinition) => {
+        const id = v4();
+        return {
+          ...viewDefinition,
+          id,
+          universalIdentifier: id,
+          applicationId: applications.twentyStandardApplication.id,
+        };
+      }),
+    );
 
     await prefillWorkspaceFavorites(
       createdViews
@@ -113,12 +128,7 @@ export const createCoreViews = async (
   workspaceId: string,
   viewDefinitions: ViewDefinition[],
 ): Promise<ViewEntity[]> => {
-  const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
-    ...viewDefinition,
-    id: v4(),
-  }));
-
-  const coreViews: Partial<ViewEntity>[] = viewDefinitionsWithId.map(
+  const coreViews: Partial<ViewEntity>[] = viewDefinitions.map(
     ({
       id,
       name,
@@ -156,7 +166,7 @@ export const createCoreViews = async (
   const viewRepository = queryRunner.manager.getRepository(ViewEntity);
   const createdViews = await viewRepository.save(coreViews);
 
-  for (const viewDefinition of viewDefinitionsWithId) {
+  for (const viewDefinition of viewDefinitions) {
     if (viewDefinition.fields && viewDefinition.fields.length > 0) {
       const coreViewFields: Partial<ViewFieldEntity>[] =
         viewDefinition.fields.map((field) => ({

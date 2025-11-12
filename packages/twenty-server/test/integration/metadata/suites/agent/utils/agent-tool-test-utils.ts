@@ -235,7 +235,7 @@ export const createAgentToolTestModule =
       label: 'Test Agent',
       icon: 'IconTest',
       isCustom: false,
-      applicationId: null,
+      applicationId: '',
       application: {} as ApplicationEntity,
       standardId: null,
       deletedAt: null,

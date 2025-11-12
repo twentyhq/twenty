@@ -106,6 +106,9 @@ export class DevSeederService {
       dataSourceMetadata,
       workspaceId,
       featureFlags,
+      applications: {
+        twentyStandardApplication,
+      },
     });
 
     await this.devSeederMetadataService.seedRelations({

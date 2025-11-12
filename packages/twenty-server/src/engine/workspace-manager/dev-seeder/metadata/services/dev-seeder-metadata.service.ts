@@ -25,6 +25,7 @@ import { SURVEY_RESULT_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/d
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 import { type ObjectMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/object-metadata-seed.type';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
+import { TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 @Injectable()
 export class DevSeederMetadataService {
@@ -85,9 +86,11 @@ export class DevSeederMetadataService {
     dataSourceMetadata,
     workspaceId,
     featureFlags,
+    applications,
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
+    applications: TwentyStandardApplication;
     featureFlags?: Record<string, boolean>;
   }) {
     const config = this.workspaceConfigs[workspaceId];
@@ -98,6 +101,7 @@ export class DevSeederMetadataService {
       );
     }
 
+    // TODO get
     for (const obj of config.objects) {
       await this.seedCustomObject({
         dataSourceId: dataSourceMetadata.id,
@@ -126,6 +130,7 @@ export class DevSeederMetadataService {
       workspaceId,
       dataSourceMetadata,
       featureFlags,
+      applications,
     });
   }
 
@@ -181,10 +186,12 @@ export class DevSeederMetadataService {
     workspaceId,
     dataSourceMetadata,
     featureFlags,
+    applications,
   }: {
     workspaceId: string;
     dataSourceMetadata: DataSourceEntity;
     featureFlags?: Record<string, boolean>;
+    applications: TwentyStandardApplication;
   }): Promise<void> {
     const createdObjectMetadata =
       await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);
@@ -195,6 +202,7 @@ export class DevSeederMetadataService {
       objectMetadataItems: createdObjectMetadata,
       workspaceSchemaName: dataSourceMetadata.schema,
       featureFlags,
+      applications,
     });
   }
 
