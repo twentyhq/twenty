@@ -1,4 +1,4 @@
-export abstract class BaseObjectMetadata {
+export abstract class BaseObject {
   id: string;
 
   name: string;
