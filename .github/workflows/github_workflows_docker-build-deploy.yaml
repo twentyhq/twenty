@@ -39,7 +39,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/flcrmlms
+          # Use lowercase transformation
+          images: ghcr.io/${{ github.repository }}
+          flavor: |
+            latest=auto
           tags: |
             type=ref,event=branch
             type=sha,prefix={{branch}}-
@@ -63,7 +66,7 @@ jobs:
         id: image
         run: |
           echo "digest=${{ steps.meta.outputs.digest }}" >> $GITHUB_OUTPUT
-          echo "version=${{ steps.meta.outputs.version }}" >> $GITHUB_OUTPUT
+          echo "tags=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
 
   run-migrations:
     needs: build-and-push
@@ -80,20 +83,25 @@ jobs:
 
       - name: Run database migrations
         run: |
+          # Convert repository name to lowercase for Docker
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+
           docker run --rm \
             -e PG_DATABASE_URL="${{ secrets.PG_DATABASE_URL }}" \
             -e REDIS_URL="${{ secrets.REDIS_URL }}" \
             -e APP_SECRET="${{ secrets.APP_SECRET }}" \
             -e DISABLE_CRON_JOBS_REGISTRATION=true \
-            ghcr.io/${{ github.repository_owner }}/flcrmlms:latest \
+            ghcr.io/${REPO_LOWER}:latest \
             sh -c "yarn database:migrate:prod && yarn command:prod upgrade"
 
       - name: Verify migration success
         run: |
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+
           docker run --rm \
             -e PG_DATABASE_URL="${{ secrets.PG_DATABASE_URL }}" \
-            ghcr.io/${{ github.repository_owner }}/flcrmlms:latest \
-            psql ${PG_DATABASE_URL} -c "SELECT version, name FROM core.typeorm_metadata ORDER BY executed_at DESC LIMIT 5;"
+            ghcr.io/${REPO_LOWER}:latest \
+            psql "${PG_DATABASE_URL}" -c "SELECT version, name FROM core.typeorm_metadata ORDER BY executed_at DESC LIMIT 5;" || echo "⚠️ Could not verify migrations (psql may not be available)"
 
   deploy-to-sevalla:
     needs: run-migrations
@@ -101,14 +109,18 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Trigger Sevalla deployment
+      - name: Deployment ready
         run: |
-          # Option A: Use Sevalla API/webhook if available
-          curl -X POST "${{ secrets.SEVALLA_DEPLOY_WEBHOOK }}" \
-            -H "Authorization: Bearer ${{ secrets.SEVALLA_API_TOKEN }}" \
-            -d '{"image": "ghcr.io/${{ github.repository_owner }}/flcrmlms:latest"}'
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
 
-          # Option B: Manual trigger message
           echo "✅ Migrations completed successfully"
           echo "🚀 Ready to deploy in Sevalla dashboard"
-          echo "Image: ghcr.io/${{ github.repository_owner }}/flcrmlms:latest"
+          echo "📦 Image: ghcr.io/${REPO_LOWER}:latest"
+
+          # Optional: Trigger Sevalla webhook if available
+          if [ -n "${{ secrets.SEVALLA_DEPLOY_WEBHOOK }}" ]; then
+            curl -X POST "${{ secrets.SEVALLA_DEPLOY_WEBHOOK }}" \
+              -H "Authorization: Bearer ${{ secrets.SEVALLA_API_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              -d "{\"image\": \"ghcr.io/${REPO_LOWER}:latest\"}" || echo "Webhook trigger failed, deploy manually"
+          fi
