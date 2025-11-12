@@ -62,7 +62,7 @@ export class DevSeederService {
       );
 
     await this.workspaceFlatApplicationMapCacheService.invalidateCache({
-      workspaceId
+      workspaceId,
     });
 
     const dataSourceMetadata =

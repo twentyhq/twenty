@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { AllMetadataName } from 'twenty-shared/metadata';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
@@ -12,10 +13,11 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
-import { AllMetadataName } from 'twenty-shared/metadata';
 
 @Injectable()
-@WorkspaceFlatMapCache('flatApplicationMaps' as MetadataToFlatEntityMapsKey<AllMetadataName>) // TODO prastoin introduce SyncableMetadata notion
+@WorkspaceFlatMapCache(
+  'flatApplicationMaps' as MetadataToFlatEntityMapsKey<AllMetadataName>,
+) // TODO prastoin introduce SyncableMetadata notion
 export class WorkspaceFlatApplicationMapCacheService extends WorkspaceFlatMapCacheService<FlatApplicationCacheMaps> {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
