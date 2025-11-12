@@ -34,7 +34,7 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
     showGrid: {
       control: 'boolean',
     },
-    enablePoints: {
+    enablePointLabel: {
       control: 'boolean',
     },
     xAxisLabel: {
@@ -70,8 +70,7 @@ const renderChart = (args: ChartArgs) => (
       data={args.data}
       showLegend={args.showLegend}
       showGrid={args.showGrid}
-      enablePoints={args.enablePoints}
-      showValues={args.showValues}
+      enablePointLabel={args.enablePointLabel}
       xAxisLabel={args.xAxisLabel}
       yAxisLabel={args.yAxisLabel}
       rangeMin={args.rangeMin}
@@ -111,7 +110,6 @@ export const Default: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
     xAxisLabel: 'Month',
     yAxisLabel: 'Value',
     displayType: 'shortNumber',
@@ -140,7 +138,6 @@ export const WithArea: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
     xAxisLabel: 'Period',
     yAxisLabel: 'Amount',
     displayType: 'currency',
@@ -173,32 +170,10 @@ export const StackedArea: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
     xAxisLabel: 'Quarter',
     yAxisLabel: 'Revenue',
     displayType: 'shortNumber',
     prefix: '$',
-  },
-};
-
-export const WithPoints: Story = {
-  render: renderChart,
-  args: {
-    id: 'line-chart-points',
-    data: [
-      {
-        id: 'performance',
-        label: 'Performance',
-        color: 'pink',
-        data: generateLinearData(8),
-      },
-    ],
-    showLegend: true,
-    showGrid: true,
-    enablePoints: true,
-    xAxisLabel: 'Week',
-    yAxisLabel: 'Score',
-    displayType: 'percentage',
   },
 };
 
@@ -216,7 +191,6 @@ export const StepChart: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
     xAxisLabel: 'Day',
     yAxisLabel: 'Units',
     displayType: 'number',
@@ -257,7 +231,6 @@ export const LogScaleDemo: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
     xAxisLabel: 'Time',
     yAxisLabel: 'Value (log scale)',
     displayType: 'shortNumber',
@@ -286,38 +259,9 @@ export const WithNullValues: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
     xAxisLabel: 'Time',
     yAxisLabel: 'Measurement',
     displayType: 'number',
-  },
-};
-
-export const InteractiveWithLinks: Story = {
-  render: renderChart,
-  args: {
-    id: 'line-chart-interactive',
-    data: [
-      {
-        id: 'clickable',
-        label: 'Click Points',
-        color: 'turquoise',
-        data: [
-          { x: 0, y: 30, to: '#point-0' },
-          { x: 1, y: 45, to: '#point-1' },
-          { x: 2, y: 38, to: '#point-2' },
-          { x: 3, y: 52, to: '#point-3' },
-          { x: 4, y: 48, to: '#point-4' },
-          { x: 5, y: 60, to: '#point-5' },
-        ],
-      },
-    ],
-    showLegend: true,
-    showGrid: true,
-    enablePoints: true,
-    xAxisLabel: 'Step',
-    yAxisLabel: 'Progress',
-    displayType: 'percentage',
   },
 };
 
@@ -350,7 +294,6 @@ export const MultiSeriesMixed: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
     xAxisLabel: 'Month',
     yAxisLabel: 'Value',
     displayType: 'shortNumber',
@@ -410,7 +353,6 @@ export const OverlappingGradientBlend: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
     xAxisLabel: 'Time',
     yAxisLabel: 'Value',
     displayType: 'number',
@@ -453,7 +395,6 @@ export const HighContrastOverlap: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
     xAxisLabel: 'Day',
     yAxisLabel: 'Score',
     displayType: 'number',
@@ -482,7 +423,6 @@ export const CurveComparison: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
     xAxisLabel: 'X Axis',
     yAxisLabel: 'Y Axis',
     displayType: 'number',
@@ -536,7 +476,6 @@ export const StepInterpolations: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
     xAxisLabel: 'Time',
     yAxisLabel: 'Value',
     displayType: 'number',
@@ -579,7 +518,6 @@ export const NaturalVsMonotone: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
     xAxisLabel: 'Sample',
     yAxisLabel: 'Measurement',
     displayType: 'number',
@@ -633,7 +571,6 @@ export const SliceTooltipDemo: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',
     displayType: 'shortNumber',
@@ -688,65 +625,10 @@ export const PointTooltipDemo: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',
     displayType: 'shortNumber',
     prefix: '$',
-  },
-};
-
-export const IntenseOverlapRGB: Story = {
-  render: renderChart,
-  args: {
-    id: 'line-chart-rgb',
-    data: [
-      {
-        id: 'red',
-        label: 'Red Channel',
-        color: 'red',
-        data: [
-          { x: 0, y: 70 },
-          { x: 1, y: 85 },
-          { x: 2, y: 75 },
-          { x: 3, y: 90 },
-          { x: 4, y: 80 },
-          { x: 5, y: 85 },
-        ],
-      },
-      {
-        id: 'green',
-        label: 'Green Channel',
-        color: 'turquoise',
-        data: [
-          { x: 0, y: 65 },
-          { x: 1, y: 75 },
-          { x: 2, y: 85 },
-          { x: 3, y: 80 },
-          { x: 4, y: 75 },
-          { x: 5, y: 70 },
-        ],
-      },
-      {
-        id: 'blue',
-        label: 'Blue Channel',
-        color: 'blue',
-        data: [
-          { x: 0, y: 60 },
-          { x: 1, y: 70 },
-          { x: 2, y: 80 },
-          { x: 3, y: 75 },
-          { x: 4, y: 85 },
-          { x: 5, y: 80 },
-        ],
-      },
-    ],
-    showLegend: true,
-    showGrid: true,
-    enablePoints: false,
-    xAxisLabel: 'Position',
-    yAxisLabel: 'Intensity',
-    displayType: 'percentage',
   },
 };
 
@@ -770,7 +652,6 @@ export const Catalog: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
   },
   decorators: [CatalogDecorator],
   parameters: {
