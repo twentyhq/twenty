@@ -13,6 +13,7 @@ import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class ApplicationService {
@@ -162,8 +163,41 @@ export class ApplicationService {
     return twentyStandardApplication;
   }
 
+  async createWorkspaceCustomApplication(
+    {
+      workspaceId,
+    }: {
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    const workspace = await this.workspaceRepository.findOneOrFail({
+      where: {
+        id: workspaceId,
+      },
+    });
+
+    const applicationId = v4();
+    const workspaceCustomApplication = await this.create(
+      {
+        description: 'Workspace custom application',
+        name: `${isDefined(workspace.displayName) ? workspace.displayName : 'Workspace'}'s custom application`,
+        sourcePath: 'workspace-custom',
+        version: '1.0.0',
+        universalIdentifier: applicationId,
+        workspaceId: workspace.id,
+        id: applicationId,
+        serverlessFunctionLayerId: null,
+      },
+      queryRunner,
+    );
+
+    return workspaceCustomApplication;
+  }
+
   async create(
     data: {
+      id?: string;
       universalIdentifier?: string;
       name: string;
       description?: string;
