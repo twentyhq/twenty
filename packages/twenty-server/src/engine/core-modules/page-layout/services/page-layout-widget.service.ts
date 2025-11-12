@@ -54,10 +54,9 @@ export class PageLayoutWidgetService {
       where: {
         pageLayoutTabId,
         workspaceId,
-        ...(withDeleted ? {} : { deletedAt: IsNull() }),
       },
       order: { createdAt: 'ASC' },
-      ...(withDeleted ? { withDeleted: true } : {}),
+      withDeleted,
     });
   }
 

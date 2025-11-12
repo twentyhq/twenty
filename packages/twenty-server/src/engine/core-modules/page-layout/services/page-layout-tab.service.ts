@@ -47,11 +47,10 @@ export class PageLayoutTabService {
       where: {
         pageLayoutId,
         pageLayout: { workspaceId },
-        ...(withDeleted ? {} : { deletedAt: IsNull() }),
       },
       order: { position: 'ASC' },
       relations: ['widgets'],
-      ...(withDeleted ? { withDeleted: true } : {}),
+      withDeleted,
     });
   }
 
