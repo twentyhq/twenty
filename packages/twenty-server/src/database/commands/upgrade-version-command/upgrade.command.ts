@@ -18,7 +18,6 @@ import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
-import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-seed-dashboard-view.command';
 import { AssociateCustomEntitiesToWorkspaceCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-associate-custom-entities-to-workspace-custom-application.command';
 import { AssociateStandardEntitiesToTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-associate-standard-entities-to-twenty-standard-application.command';
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
@@ -73,7 +72,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand: CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     protected readonly migrateChannelPartialFullSyncStagesCommand: MigrateChannelPartialFullSyncStagesCommand,
     protected readonly makeSureDashboardNamingAvailableCommand: MakeSureDashboardNamingAvailableCommand,
-    protected readonly seedDashboardViewCommand: SeedDashboardViewCommand,
     protected readonly createViewKanbanFieldMetadataIdForeignKeyMigrationCommand: CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
     protected readonly flushWorkspaceCacheCommand: FlushCacheCommand,
 
@@ -128,7 +126,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [
         this.migrateAttachmentAuthorToCreatedByCommand,
         this.migrateAttachmentTypeToFileCategoryCommand,
-        this.seedDashboardViewCommand,
         this.flushWorkspaceCacheCommand,
       ],
     };
