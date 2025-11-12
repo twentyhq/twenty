@@ -73,7 +73,7 @@ export class RoleService {
     input: CreateRoleInput;
     workspaceId: string;
   }): Promise<RoleEntity> {
-    const { workspaceCustomApplication } =
+    const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -98,7 +98,7 @@ export class RoleService {
       canBeAssignedToApiKeys: input.canBeAssignedToApiKeys,
       isEditable: true,
       workspaceId,
-      applicationId: workspaceCustomApplication.id,
+      applicationId: workspaceCustomFlatApplication.id,
       universalIdentifier: id,
     });
 

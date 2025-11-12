@@ -24,7 +24,7 @@ export class StandardAgentFactory {
       const flatAgent = transformStandardAgentDefinitionToFlatAgent({
         standardAgentDefinition: agentDefinition,
         workspaceId: context.workspaceId,
-        applicationId: context.applications.twentyStandardApplication.id,
+        applicationId: context.twentyStandardFlatApplication.id,
         agentId: existingAgent?.id,
       });
 

@@ -9,6 +9,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/services/workspace-flat-application-map-cache.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
@@ -18,7 +19,8 @@ export class ApplicationService {
   constructor(
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceFlatApplicationMapCacheService: WorkspaceFlatApplicationMapCacheService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -33,7 +35,6 @@ export class ApplicationService {
         id: workspaceId,
       },
     });
-
     if (!isDefined(workspace)) {
       throw new ApplicationException(
         `Could not find workspace ${workspaceId}`,
@@ -41,18 +42,30 @@ export class ApplicationService {
       );
     }
 
-    const [workspaceCustomApplication, twentyStandardApplication] =
-      await Promise.all([
-        this.findById(workspace.workspaceCustomApplicationId),
-        this.findByUniversalIdentifier({
-          universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-          workspaceId: workspace.id,
-        }),
-      ]);
+    const flatApplicationMaps =
+      await this.workspaceFlatApplicationMapCacheService.getExistingOrRecomputeFlatMaps(
+        {
+          workspaceId,
+        },
+      );
+    const twentyStandardApplicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        TWENTY_STANDARD_APPLICATION.universalIdentifier
+      ];
+    if (!isDefined(twentyStandardApplicationId)) {
+      throw new ApplicationException(
+        `Could not find workspace twenty standard applicationId in cache ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
+    const twentyStandardFlatApplication =
+      flatApplicationMaps.byId[twentyStandardApplicationId];
+    const workspaceCustomFlatApplication =
+      flatApplicationMaps.byId[workspace.workspaceCustomApplicationId];
     if (
-      !isDefined(twentyStandardApplication) ||
-      !isDefined(workspaceCustomApplication)
+      !isDefined(twentyStandardFlatApplication) ||
+      !isDefined(workspaceCustomFlatApplication)
     ) {
       throw new ApplicationException(
         `Could not find workspace custom and standard applications ${workspace.id}`,
@@ -61,8 +74,8 @@ export class ApplicationService {
     }
 
     return {
-      twentyStandardApplication,
-      workspaceCustomApplication,
+      twentyStandardFlatApplication,
+      workspaceCustomFlatApplication,
     };
   }
 
@@ -133,7 +146,7 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
-    return await this.create(
+    const twentyStandardApplication = await this.create(
       {
         ...TWENTY_STANDARD_APPLICATION,
         serverlessFunctionLayerId: null,
@@ -141,6 +154,12 @@ export class ApplicationService {
       },
       queryRunner,
     );
+
+    await this.workspaceFlatApplicationMapCacheService.invalidateCache({
+      workspaceId,
+    });
+
+    return twentyStandardApplication;
   }
 
   async create(
@@ -164,7 +183,13 @@ export class ApplicationService {
       return queryRunner.manager.save(ApplicationEntity, application);
     }
 
-    return this.applicationRepository.save(application);
+    const savedApplication = this.applicationRepository.save(application);
+
+    await this.workspaceFlatApplicationMapCacheService.invalidateCache({
+      workspaceId: data.workspaceId,
+    });
+
+    return savedApplication;
   }
 
   async update(
@@ -172,6 +197,10 @@ export class ApplicationService {
     data: Parameters<typeof this.applicationRepository.update>[1],
   ): Promise<ApplicationEntity> {
     await this.applicationRepository.update({ id }, data);
+
+    await this.workspaceFlatApplicationMapCacheService.invalidateCache({
+      workspaceId: data.workspaceId as string,
+    });
 
     const updatedApplication = await this.findById(id);
 
@@ -197,8 +226,14 @@ export class ApplicationService {
       workspaceId,
     });
 
-    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+    await this.workspaceFlatApplicationMapCacheService.invalidateCache({
       workspaceId,
     });
+
+    await this.workspaceManyOrAllFlatEntityMapsCacheService.invalidateFlatEntityMaps(
+      {
+        workspaceId,
+      },
+    );
   }
 }

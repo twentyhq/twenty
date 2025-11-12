@@ -24,7 +24,7 @@ export class StandardRoleFactory {
       const flatRole = fromStandardRoleDefinitionToFlatRole({
         standardRoleDefinition: roleDefinition,
         workspaceId: context.workspaceId,
-        applicationId: context.applications.twentyStandardApplication.id,
+        applicationId: context.twentyStandardFlatApplication.id,
         id: existingRole?.id,
       });
 
