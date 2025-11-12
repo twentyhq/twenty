@@ -23,6 +23,7 @@ export const AvailableWorkspaceItem = ({
     getAvailableWorkspacePathAndSearchParams(availableWorkspace);
 
   const handleChange = async () => {
+    console.debug('Changing workspace');
     await redirectToWorkspaceDomain(
       getWorkspaceUrl(availableWorkspace.workspaceUrls),
       pathname,

@@ -74,6 +74,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   };
 
   const createWorkspace = () => {
+    // console.debug('Creating workspace');
     signUpInNewWorkspaceMutation({
       onCompleted: async (data) => {
         return await redirectToWorkspaceDomain(

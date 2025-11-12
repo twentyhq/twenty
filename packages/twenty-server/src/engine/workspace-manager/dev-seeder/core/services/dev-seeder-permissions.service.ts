@@ -151,6 +151,56 @@ export class DevSeederPermissionsService {
         });
       }
     }
+
+    // SAFETY NET: Ensure all UserWorkspaces have a role assignment
+    // This catches any UserWorkspaces that weren't explicitly assigned above
+    const allUserWorkspaces = await this.coreDataSource
+      .createQueryBuilder()
+      .select('uw.id', 'id')
+      .from('core.userWorkspace', 'uw')
+      .where('uw.workspaceId = :workspaceId', { workspaceId })
+      .getRawMany();
+
+    const userWorkspacesWithRoles = await this.coreDataSource
+      .createQueryBuilder()
+      .select('rt.userWorkspaceId', 'userWorkspaceId')
+      .from('core.roleTargets', 'rt')
+      .where('rt.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('rt.userWorkspaceId IS NOT NULL')
+      .getRawMany();
+
+    const userWorkspaceIdsWithRoles = new Set(
+      userWorkspacesWithRoles.map((r) => r.userWorkspaceId),
+    );
+
+    const userWorkspacesWithoutRoles = allUserWorkspaces.filter(
+      (uw) => !userWorkspaceIdsWithRoles.has(uw.id),
+    );
+
+    if (userWorkspacesWithoutRoles.length > 0) {
+      this.logger.log(
+        `Assigning default member role to ${userWorkspacesWithoutRoles.length} UserWorkspace(s) without roles`,
+      );
+
+      for (const userWorkspace of userWorkspacesWithoutRoles) {
+        await this.userRoleService.assignRoleToUserWorkspace({
+          workspaceId,
+          userWorkspaceId: userWorkspace.id,
+          roleId: memberRole.id,
+        });
+      }
+
+      // Recompute cache after assigning roles to ensure fresh data
+      await this.workspacePermissionsCacheService.recomputeUserWorkspaceRoleMapCache(
+        {
+          workspaceId,
+        },
+      );
+
+      this.logger.log(
+        `Recomputed UserWorkspace role cache after safety net assignments`,
+      );
+    }
   }
 
   private async createLimitedRoleForSeedWorkspace(workspaceId: string) {
