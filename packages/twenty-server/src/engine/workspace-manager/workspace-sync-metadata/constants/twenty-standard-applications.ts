@@ -1,5 +1,6 @@
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
+// RELOCATE EVERYTHING DECLARED HERE IN DEDICATED FILE OUT OF SYNC METADATA
 export const TWENTY_STANDARD_APPLICATION = {
   universalIdentifier: '20202020-64aa-4b6f-b003-9c74b97cee20',
   name: 'Twenty Standard',
@@ -9,6 +10,10 @@ export const TWENTY_STANDARD_APPLICATION = {
   sourcePath: 'cli-sync',
   sourceType: 'local',
 } as const satisfies CreateApplicationInput;
+
+export type TwentyStandardApplication = {
+  twentyStandardApplication: ApplicationEntity;
+};
 
 export type CreateApplicationInput = Omit<
   ApplicationEntity,

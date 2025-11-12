@@ -19,6 +19,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
+import { TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -108,6 +109,9 @@ export class WorkspaceManagerService {
       dataSourceMetadata,
       workspaceId,
       featureFlags,
+      {
+        twentyStandardApplication,
+      },
     );
 
     const prefillStandardObjectsEnd = performance.now();
@@ -121,6 +125,7 @@ export class WorkspaceManagerService {
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
     featureFlags: Record<string, boolean>,
+    applications: TwentyStandardApplication,
   ) {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
@@ -137,6 +142,7 @@ export class WorkspaceManagerService {
       objectMetadataItems: createdObjectMetadata,
       workspaceSchemaName: dataSourceMetadata.schema,
       featureFlags,
+      applications,
     });
   }
 
