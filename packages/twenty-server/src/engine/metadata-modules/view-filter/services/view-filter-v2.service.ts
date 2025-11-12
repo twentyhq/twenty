@@ -61,7 +61,7 @@ export class ViewFilterV2Service {
       fromCreateViewFilterInputToFlatViewFilterToCreate({
         createViewFilterInput,
         workspaceId,
-        workspaceCustomFlatApplication,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
 
     const validateAndBuildResult =

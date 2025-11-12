@@ -52,7 +52,7 @@ export class RouteTriggerV2Service {
       fromCreateRouteTriggerInputToFlatRouteTrigger({
         createRouteTriggerInput: routeTriggerInput,
         workspaceId,
-        workspaceCustomFlatApplication,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
 
     const validateAndBuildResult =

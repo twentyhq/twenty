@@ -58,7 +58,7 @@ export class ServerlessFunctionV2Service {
       fromCreateServerlessFunctionInputToFlatServerlessFunction({
         createServerlessFunctionInput,
         workspaceId,
-        workspaceCustomFlatApplication,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
 
     const validateAndBuildResult =

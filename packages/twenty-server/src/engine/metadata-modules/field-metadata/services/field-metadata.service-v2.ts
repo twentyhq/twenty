@@ -325,7 +325,7 @@ export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEnt
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           createFieldInput,
           workspaceId,
-          workspaceCustomFlatApplication,
+          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         }),
       );
     }

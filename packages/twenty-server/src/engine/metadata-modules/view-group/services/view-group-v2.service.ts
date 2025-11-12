@@ -91,7 +91,7 @@ export class ViewGroupV2Service {
         fromCreateViewGroupInputToFlatViewGroupToCreate({
           createViewGroupInput,
           workspaceId,
-          workspaceCustomFlatApplication,
+          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         }),
     );
 

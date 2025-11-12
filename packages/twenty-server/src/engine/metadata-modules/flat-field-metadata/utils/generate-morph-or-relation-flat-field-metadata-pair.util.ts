@@ -5,7 +5,6 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -47,7 +46,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
     > & { type: MorphOrRelationFieldMetadataType };
   workspaceId: string;
   morphId?: string | null;
-  workspaceCustomFlatApplication: FlatApplication;
+  workspaceCustomApplicationId: string;
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
@@ -60,7 +59,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   workspaceId,
-  workspaceCustomFlatApplication,
+  workspaceCustomApplicationId,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
@@ -81,7 +80,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       createFieldInput,
       workspaceId,
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
-      workspaceCustomFlatApplication,
+      workspaceCustomApplicationId,
     }),
     morphId,
     objectMetadataId: sourceFlatObjectMetadata.id,
@@ -120,7 +119,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         createFieldInput: targetCreateFieldInput,
         workspaceId,
         fieldMetadataId: targetRelationTargetFieldMetadataId,
-        workspaceCustomFlatApplication,
+        workspaceCustomApplicationId,
       }),
       type: FieldMetadataType.RELATION,
       defaultValue: null,

@@ -52,7 +52,7 @@ export class CronTriggerV2Service {
       {
         createCronTriggerInput: cronTriggerInput,
         workspaceId,
-        workspaceCustomFlatApplication,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       },
     );
 

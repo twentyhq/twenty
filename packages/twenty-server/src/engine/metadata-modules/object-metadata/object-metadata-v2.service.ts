@@ -363,7 +363,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
       createObjectInput,
       workspaceId,
-      workspaceCustomFlatApplication,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
@@ -380,12 +380,12 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
-      workspaceCustomFlatApplication,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     const flatDefaultViewFieldsToCreate =
       await this.computeFlatViewFieldsToCreate({
-        workspaceCustomFlatApplication,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMapsOrThrow(
           {
             flatEntityMaps: flatFieldMetadataMapsFromTo.to,
@@ -471,9 +471,9 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
   private async computeFlatViewToCreate({
     objectMetadata,
     workspaceId,
-    workspaceCustomFlatApplication,
+    workspaceCustomApplicationId,
   }: {
-    workspaceCustomFlatApplication: FlatApplication;
+    workspaceCustomApplicationId: string;
     objectMetadata: FlatObjectMetadata;
     workspaceId: string;
   }) {
@@ -489,7 +489,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     const flatViewFromCreateInput = fromCreateViewInputToFlatViewToCreate({
       createViewInput: defaultViewInput,
       workspaceId,
-      workspaceCustomFlatApplication,
+      workspaceCustomApplicationId,
     });
 
     return flatViewFromCreateInput;
@@ -499,9 +499,9 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
     objectFlatFieldMetadatas,
     viewId,
     workspaceId,
-    workspaceCustomFlatApplication,
+    workspaceCustomApplicationId,
   }: {
-    workspaceCustomFlatApplication: FlatApplication;
+    workspaceCustomApplicationId: string;
     objectFlatFieldMetadatas: FlatFieldMetadata[];
     viewId: string;
     workspaceId: string;
@@ -517,7 +517,7 @@ export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataE
             size: DEFAULT_VIEW_FIELD_SIZE,
             viewId: viewId,
           },
-          workspaceCustomFlatApplication,
+          workspaceCustomApplicationId,
           workspaceId: workspaceId,
         }),
       );

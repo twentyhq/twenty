@@ -4,7 +4,6 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -18,13 +17,13 @@ type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs 
   {
     createObjectInput: CreateObjectInput;
     workspaceId: string;
-    workspaceCustomFlatApplication: FlatApplication;
+    workspaceCustomApplicationId: string;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
     createObjectInput: rawCreateObjectInput,
     workspaceId,
-    workspaceCustomFlatApplication,
+    workspaceCustomApplicationId,
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
     flatObjectMetadataToCreate: FlatObjectMetadata;
@@ -51,7 +50,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           id: objectMetadataId,
-          applicationId: workspaceCustomFlatApplication.id,
+          applicationId: workspaceCustomApplicationId,
         },
         workspaceId,
       });
@@ -84,7 +83,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       shortcut: createObjectInput.shortcut ?? null,
       standardId: createObjectInput.standardId ?? null,
       standardOverrides: null,
-      applicationId: workspaceCustomFlatApplication.id,
+      applicationId: workspaceCustomApplicationId,
       universalIdentifier: objectMetadataId,
       targetTableName: 'DEPRECATED',
       workspaceId,

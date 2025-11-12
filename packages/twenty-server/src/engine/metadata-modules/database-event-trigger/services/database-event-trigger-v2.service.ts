@@ -56,7 +56,7 @@ export class DatabaseEventTriggerV2Service {
       fromCreateDatabaseEventTriggerInputToFlatDatabaseEventTrigger({
         createDatabaseEventTriggerInput: databaseEventTriggerInput,
         workspaceId,
-        workspaceCustomFlatApplication,
+        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       });
 
     const validateAndBuildResult =

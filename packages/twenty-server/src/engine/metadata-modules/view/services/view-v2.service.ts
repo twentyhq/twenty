@@ -61,7 +61,7 @@ export class ViewV2Service {
       createViewInput,
       workspaceId,
       createdByUserWorkspaceId,
-      workspaceCustomFlatApplication,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
 
     const validateAndBuildResult =
