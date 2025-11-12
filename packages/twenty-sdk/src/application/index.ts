@@ -21,6 +21,6 @@ export {
 export { FieldType } from './field-metadata/field-type';
 export { Field } from './field-metadata/field.decorator';
 export { BaseObject } from './object-metadata/base-object';
-export { ObjectMetadata } from './object-metadata/object-metadata.decorator';
+export { Object } from './object-metadata/object.decorator';
 export type { ServerlessFunctionConfig } from './serverless-function-config';
 export type { SyncableEntityOptions } from './syncable-entity-options.type';

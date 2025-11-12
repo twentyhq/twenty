@@ -1,7 +1,7 @@
 import {
   BaseObject,
   Field,
-  ObjectMetadata as Object,
+  Object,
   FieldType,
   type FullNameField,
   type AddressField,
