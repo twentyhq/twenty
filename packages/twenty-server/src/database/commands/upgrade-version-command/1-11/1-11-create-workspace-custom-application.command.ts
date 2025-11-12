@@ -1,9 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
+import { Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -12,7 +11,6 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { computeWorkspaceCustomCreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-workspace-custom-create-application-input';
 
 @Command({
   name: 'upgrade:1-11:create-workspace-custom-application',
@@ -52,15 +50,10 @@ export class CreateWorkspaceCustomApplicationCommand extends ActiveOrSuspendedWo
       return;
     }
 
-    const customWorkspaceApplicationInput =
-      computeWorkspaceCustomCreateApplicationInput({
-        workspace,
-        applicationId: v4(),
+    const customWorkspaceApplication =
+      await this.applicationService.createWorkspaceCustomApplication({
+        workspaceId,
       });
-    const customWorkspaceApplication = await this.applicationService.create({
-      ...customWorkspaceApplicationInput,
-      serverlessFunctionLayerId: null,
-    });
 
     await this.workspaceRepository.update(workspace.id, {
       workspaceCustomApplicationId: customWorkspaceApplication.id,
