@@ -17,6 +17,10 @@ export const TranslatableCard = ({ children, ...props }) => {
     }
   });
 
-  return <Card title={title} {...props}>{content}</Card>;
+  return (
+    <Card title={title} {...props}>
+      {content}
+    </Card>
+  );
 };
 
