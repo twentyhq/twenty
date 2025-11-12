@@ -18,6 +18,9 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    outputs:
+      image-name: ${{ steps.image-info.outputs.image-name }}
+      image-tag: ${{ steps.image-info.outputs.image-tag }}
 
     steps:
       - name: Checkout code
@@ -35,14 +38,16 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
 
+      - name: Convert repository name to lowercase
+        id: repo-name
+        run: |
+          echo "lowercase=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # Use lowercase transformation
-          images: ghcr.io/${{ github.repository }}
-          flavor: |
-            latest=auto
+          images: ghcr.io/${{ steps.repo-name.outputs.lowercase }}
           tags: |
             type=ref,event=branch
             type=sha,prefix={{branch}}-
@@ -57,21 +62,31 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            REACT_APP_SERVER_BASE_URL=${{ secrets.SERVER_URL || 'https://your-app.sevalla.com' }}
+            REACT_APP_SERVER_BASE_URL=${{ secrets.SERVER_URL }}
             APP_VERSION=${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Output image details
-        id: image
+      - name: Set image outputs for next jobs
+        id: image-info
         run: |
-          echo "digest=${{ steps.meta.outputs.digest }}" >> $GITHUB_OUTPUT
-          echo "tags=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
+          echo "image-name=ghcr.io/${{ steps.repo-name.outputs.lowercase }}" >> $GITHUB_OUTPUT
+          echo "image-tag=latest" >> $GITHUB_OUTPUT
+
+      - name: Build complete
+        run: |
+          echo "✅ Image built and pushed successfully"
+          echo "📦 Image: ${{ steps.image-info.outputs.image-name }}:${{ steps.image-info.outputs.image-tag }}"
+          echo "🏷️  Tags:"
+          echo "${{ steps.meta.outputs.tags }}"
 
   run-migrations:
     needs: build-and-push
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # Guard for LSPs that dislike secrets in if:
+      HAS_SEVALLA_WEBHOOK: ${{ secrets.SEVALLA_DEPLOY_WEBHOOK != '' }}
 
     steps:
       - name: Log in to GitHub Container Registry
@@ -81,46 +96,100 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
 
+      - name: Wait for image to be available
+        run: |
+          echo "⏳ Waiting for image to be fully available in registry..."
+          sleep 10
+
+      - name: Pull latest image
+        run: |
+          echo "📥 Pulling image: ${{ needs.build-and-push.outputs.image-name }}:${{ needs.build-and-push.outputs.image-tag }}"
+          docker pull ${{ needs.build-and-push.outputs.image-name }}:${{ needs.build-and-push.outputs.image-tag }}
+
+      - name: Validate secrets are configured
+        run: |
+          MISSING=""
+          [ -z "${{ secrets.PG_DATABASE_URL }}" ] && echo "❌ Missing: PG_DATABASE_URL" && MISSING="1"
+          [ -z "${{ secrets.REDIS_URL }}" ] && echo "❌ Missing: REDIS_URL" && MISSING="1"
+          [ -z "${{ secrets.APP_SECRET }}" ] && echo "❌ Missing: APP_SECRET" && MISSING="1"
+          if [ -n "$MISSING" ]; then
+            echo ""
+            echo "⚠️  Migration job requires these secrets in: Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+          echo "✅ All required secrets are configured"
+
       - name: Run database migrations
         run: |
-          # Convert repository name to lowercase for Docker
-          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-
+          echo "🔄 Running database migrations..."
           docker run --rm \
             -e PG_DATABASE_URL="${{ secrets.PG_DATABASE_URL }}" \
             -e REDIS_URL="${{ secrets.REDIS_URL }}" \
             -e APP_SECRET="${{ secrets.APP_SECRET }}" \
             -e DISABLE_CRON_JOBS_REGISTRATION=true \
-            ghcr.io/${REPO_LOWER}:latest \
+            ${{ needs.build-and-push.outputs.image-name }}:${{ needs.build-and-push.outputs.image-tag }} \
             sh -c "yarn database:migrate:prod && yarn command:prod upgrade"
 
-      - name: Verify migration success
+      - name: Verify migration success (best-effort)
         run: |
-          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-
           docker run --rm \
             -e PG_DATABASE_URL="${{ secrets.PG_DATABASE_URL }}" \
-            ghcr.io/${REPO_LOWER}:latest \
-            psql "${PG_DATABASE_URL}" -c "SELECT version, name FROM core.typeorm_metadata ORDER BY executed_at DESC LIMIT 5;" || echo "⚠️ Could not verify migrations (psql may not be available)"
+            ${{ needs.build-and-push.outputs.image-name }}:${{ needs.build-and-push.outputs.image-tag }} \
+            sh -c 'psql "$PG_DATABASE_URL" -c "SELECT COUNT(*) as migration_count FROM core.typeorm_metadata;"' || echo "ℹ️ Skipping verification (psql may be unavailable)"
 
   deploy-to-sevalla:
-    needs: run-migrations
+    needs: [build-and-push, run-migrations]
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      HAS_SEVALLA_WEBHOOK: ${{ secrets.SEVALLA_DEPLOY_WEBHOOK != '' }}
 
     steps:
       - name: Deployment ready
         run: |
-          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "════════════════════════════════════════════════════════"
+          echo "✅ BUILD COMPLETE"
+          echo "✅ MIGRATIONS COMPLETE"
+          echo "════════════════════════════════════════════════════════"
+          echo ""
+          echo "🚀 Ready to deploy in Sevalla"
+          echo ""
+          echo "📦 Image: ${{ needs.build-and-push.outputs.image-name }}:${{ needs.build-and-push.outputs.image-tag }}"
+          echo "🔗 Commit: ${{ github.sha }}   Branch: ${{ github.ref_name }}"
+          echo ""
 
-          echo "✅ Migrations completed successfully"
-          echo "🚀 Ready to deploy in Sevalla dashboard"
-          echo "📦 Image: ghcr.io/${REPO_LOWER}:latest"
-
-          # Optional: Trigger Sevalla webhook if available
-          if [ -n "${{ secrets.SEVALLA_DEPLOY_WEBHOOK }}" ]; then
-            curl -X POST "${{ secrets.SEVALLA_DEPLOY_WEBHOOK }}" \
-              -H "Authorization: Bearer ${{ secrets.SEVALLA_API_TOKEN }}" \
-              -H "Content-Type: application/json" \
-              -d "{\"image\": \"ghcr.io/${REPO_LOWER}:latest\"}" || echo "Webhook trigger failed, deploy manually"
+      - name: Trigger Sevalla deployment (webhook)
+        if: env.HAS_SEVALLA_WEBHOOK == 'true'
+        run: |
+          echo "🔔 Triggering Sevalla deployment webhook..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.SEVALLA_DEPLOY_WEBHOOK }}" \
+            -H "Authorization: Bearer ${{ secrets.SEVALLA_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "image": "${{ needs.build-and-push.outputs.image-name }}:${{ needs.build-and-push.outputs.image-tag }}",
+              "commit": "${{ github.sha }}",
+              "branch": "${{ github.ref_name }}",
+              "actor": "${{ github.actor }}",
+              "run_id": "${{ github.run_id }}"
+            }')
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n-1)
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Webhook OK (HTTP $HTTP_CODE)"
+            echo "Response: $BODY"
+          else
+            echo "⚠️ Webhook failed (HTTP $HTTP_CODE)"
+            echo "Response: $BODY"
+            echo "Proceed to deploy manually in Sevalla."
           fi
+
+      - name: Manual deployment instructions
+        if: env.HAS_SEVALLA_WEBHOOK != 'true'
+        run: |
+          echo "ℹ️ No deployment webhook configured."
+          echo "Deploy manually in Sevalla with image:"
+          echo "  ${{ needs.build-and-push.outputs.image-name }}:${{ needs.build-and-push.outputs.image-tag }}"
+          echo ""
+          echo "To enable automatic deployment, add repository secrets:"
+          echo "  - SEVALLA_DEPLOY_WEBHOOK"
+          echo "  - SEVALLA_API_TOKEN"
