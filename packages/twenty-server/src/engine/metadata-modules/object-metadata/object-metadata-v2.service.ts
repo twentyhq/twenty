@@ -247,7 +247,7 @@ export class ObjectMetadataServiceV2 {
     createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
     workspaceId: string;
   }): Promise<FlatObjectMetadata> {
-    const {workspaceCustomFlatApplication} =
+    const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,

@@ -57,9 +57,7 @@ export class WorkspaceSyncRoleService {
         case ComparatorAction.CREATE: {
           const roleToCreate = roleComparatorResult.toFlatRole;
 
-          const flatRoleData = removePropertiesFromRecord(roleToCreate, [
-            'id',
-          ]);
+          const flatRoleData = removePropertiesFromRecord(roleToCreate, ['id']);
 
           const createdRole = await roleRepository.save({
             ...flatRoleData,

@@ -8,7 +8,7 @@ import {
   NotV2YetAllMetadataName,
 } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { DataSource, IsNull, Not, Or, Repository } from 'typeorm';
+import { DataSource, FindOperator, IsNull, Not, Or, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -129,7 +129,10 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
                 where: {
                   workspaceId,
                   applicationId: IsNull(),
-                  isCustom: Or(IsNull(), false as any),
+                  isCustom: Or(
+                    IsNull(),
+                    false as unknown as FindOperator<boolean>,
+                  ),
                 },
                 withDeleted: true,
               });
@@ -163,7 +166,10 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
                 },
                 where: {
                   view: {
-                    isCustom: Or(IsNull(), false as any),
+                    isCustom: Or(
+                      IsNull(),
+                      false as unknown as FindOperator<boolean>,
+                    ),
                   },
                   workspaceId,
                   applicationId: IsNull(),

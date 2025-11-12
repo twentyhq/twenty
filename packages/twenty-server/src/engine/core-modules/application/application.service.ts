@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -13,7 +14,6 @@ import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
-import { v4 } from 'uuid';
 
 @Injectable()
 export class ApplicationService {
@@ -36,6 +36,7 @@ export class ApplicationService {
         id: workspaceId,
       },
     });
+
     if (!isDefined(workspace)) {
       throw new ApplicationException(
         `Could not find workspace ${workspaceId}`,
@@ -53,6 +54,7 @@ export class ApplicationService {
       flatApplicationMaps.idByUniversalIdentifier[
         TWENTY_STANDARD_APPLICATION.universalIdentifier
       ];
+
     if (!isDefined(twentyStandardApplicationId)) {
       throw new ApplicationException(
         `Could not find workspace twenty standard applicationId in cache ${workspaceId}`,
@@ -64,6 +66,7 @@ export class ApplicationService {
       flatApplicationMaps.byId[twentyStandardApplicationId];
     const workspaceCustomFlatApplication =
       flatApplicationMaps.byId[workspace.workspaceCustomApplicationId];
+
     if (
       !isDefined(twentyStandardFlatApplication) ||
       !isDefined(workspaceCustomFlatApplication)
