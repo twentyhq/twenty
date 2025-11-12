@@ -1,0 +1,18 @@
+export {
+  actorCompositeType,
+  ActorMetadata,
+  addressCompositeType,
+  AddressMetadata,
+  currencyCompositeType,
+  CurrencyMetadata,
+  emailsCompositeType,
+  EmailsMetadata,
+  fullNameCompositeType,
+  FullNameMetadata,
+  linksCompositeType,
+  LinksMetadata,
+  phonesCompositeType,
+  PhonesMetadata,
+  richTextV2CompositeType,
+  RichTextV2Metadata,
+} from 'twenty-shared/types';

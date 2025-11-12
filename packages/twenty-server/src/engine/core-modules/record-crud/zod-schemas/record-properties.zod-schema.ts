@@ -1,14 +1,12 @@
 import {
   FieldMetadataType,
   type RestrictedFieldsPermissions,
+  type FieldMetadataSettings,
+  NumberDataType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import {
-  type FieldMetadataSettings,
-  NumberDataType,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';

@@ -224,7 +224,7 @@ __metadata:
   dependencies:
     "@types/node": "npm:^24.7.2"
     axios: "npm:^1.12.2"
-    twenty-sdk: "npm:0.0.3-alpha"
+    twenty-sdk: "npm:^0.0.4"
   languageName: unknown
   linkType: soft
 
@@ -258,10 +258,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:0.0.3-alpha":
-  version: 0.0.3-alpha
-  resolution: "twenty-sdk@npm:0.0.3-alpha"
-  checksum: 10c0/e8028f47767e3fa6318100f26542e0477b68e36d363df5f3a6c20d8442951fecba60089d07e97224b0b3533a729bbd3526cca08728079577cfa204dbffaecb03
+"twenty-sdk@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "twenty-sdk@npm:0.0.4"
+  checksum: 10c0/550f1d85bf0701396c9dd2d4c6bc55ba1b067fce13636f8540eec60ab6a4257c6d7cd86cb3f62e0974bf99467bc31270d92b17b9681a1b7a6281b7ef97224080
   languageName: node
   linkType: hard
 

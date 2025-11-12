@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  compositeTypeDefinitions,
+  type RichTextV2Metadata,
+  richTextV2ValueSchema,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import {
-  type RichTextV2Metadata,
-  richTextV2ValueSchema,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 @Injectable()

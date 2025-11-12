@@ -16,6 +16,16 @@ import {
 
 import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 
+const normalizeErrorMessage = (error: any) => {
+  const UUID_REGEX =
+    /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+
+  return {
+    ...error,
+    message: error.message?.replace(UUID_REGEX, '{{UUID}}') || error.message,
+  };
+};
+
 describe('View Field Resolver - Failing Create Operation - v2', () => {
   let testSetup: ViewFieldTestSetup;
   let createdFlatViewFieldIds: string[] = [];
@@ -86,8 +96,11 @@ describe('View Field Resolver - Failing Create Operation - v2', () => {
       const [firstError] = response.errors;
 
       expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-      expect(firstError).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(firstError),
+
+      const normalizedError = normalizeErrorMessage(firstError);
+
+      expect(normalizedError).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(normalizedError),
       );
     },
   );
@@ -142,8 +155,11 @@ describe('View Field Resolver - Failing Create Operation - v2', () => {
     const [firstError] = response.errors;
 
     expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
-    expect(firstError).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny(firstError),
+
+    const normalizedError = normalizeErrorMessage(firstError);
+
+    expect(normalizedError).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(normalizedError),
     );
   });
 });

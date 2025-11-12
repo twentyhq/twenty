@@ -3,14 +3,16 @@ import { Injectable } from '@nestjs/common';
 import axios, { type AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
-import { type ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  type ConnectedAccountProvider,
+  type FieldActorSource,
+} from 'twenty-shared/types';
 import {
   isDefined,
   lowercaseUrlOriginAndRemoveTrailingSlash,
 } from 'twenty-shared/utils';
 import { type DeepPartial, ILike } from 'typeorm';
 
-import { type FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';

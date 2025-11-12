@@ -194,6 +194,7 @@ export const mockedUserData: MockedUser = {
   currentWorkspace: mockCurrentWorkspace,
   currentUserWorkspace: {
     permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+    twoFactorAuthenticationMethodSummary: [],
     objectsPermissions: generatedMockObjectMetadataItems.map((item) => ({
       objectMetadataId: item.id,
       canReadObjectRecords: true,
@@ -265,7 +266,7 @@ export const mockedOnboardingUserData = (
     },
     locale: 'en',
     workspaces: [{ workspace: mockCurrentWorkspace }],
-    onboardingStatdeus: onboardingStatus || null,
+    onboardingStatus: onboardingStatus || null,
     userVars: {},
     availableWorkspaces: {
       availableWorkspacesForSignIn: [],

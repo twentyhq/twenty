@@ -44,7 +44,7 @@ export const WorkflowStepFooter = ({
       dropdownId={dropdownId}
       data-select-disable
       clickableComponent={
-        <Button title="Options" hotkeys={[getOsControlSymbol(), 'O']} />
+        <Button title={t`Options`} hotkeys={[getOsControlSymbol(), 'O']} />
       }
       dropdownPlacement="top-end"
       dropdownOffset={{ y: parseInt(theme.spacing(2), 10) }}
@@ -99,7 +99,7 @@ export const WorkflowStepFooter = ({
 
   const deleteButton = (
     <Button
-      title="Delete"
+      title={t`Delete`}
       onClick={() => {
         deleteStep(stepId);
       }}

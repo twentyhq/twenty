@@ -1,10 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 import { Relation } from 'typeorm';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -32,6 +31,7 @@ registerEnumType(MessageFolderPendingSyncAction, {
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageFolder,
+
   namePlural: 'messageFolders',
   labelSingular: msg`Message Folder`,
   labelPlural: msg`Message Folders`,

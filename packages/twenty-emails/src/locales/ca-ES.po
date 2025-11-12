@@ -141,7 +141,7 @@ msgstr "Restableix"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "Estableix"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

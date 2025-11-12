@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
@@ -8,6 +7,7 @@ import {
   type RecordInlineCellContextProps,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
+import { css } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
@@ -60,6 +60,8 @@ const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
   height: 20px;
+
+  background-color: ${({ theme }) => theme.background.secondary};
 `;
 
 export const RecordInlineCellDisplayMode = ({
@@ -89,6 +91,9 @@ export const RecordInlineCellDisplayMode = ({
 
   const emptyPlaceHolder = showLabel ? t`Empty` : label;
 
+  const shouldShowEmptyPlaceholder =
+    (isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) || !children;
+
   return (
     <>
       <StyledRecordInlineCellNormalModeOuterContainer
@@ -97,8 +102,7 @@ export const RecordInlineCellDisplayMode = ({
         onClick={onClick}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
-          {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
-          !children ? (
+          {shouldShowEmptyPlaceholder ? (
             <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
           ) : (
             children

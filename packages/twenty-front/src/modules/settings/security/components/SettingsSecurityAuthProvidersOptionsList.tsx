@@ -133,7 +133,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             {authProviders.google === true && (
               <SettingsOptionCardContentToggle
                 Icon={IconGoogle}
-                title="Google"
+                title={t`Google`}
                 description={t`Allow logins through Google's single sign-on functionality.`}
                 checked={currentWorkspace.isGoogleAuthEnabled}
                 advancedMode
@@ -146,7 +146,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             {authProviders.microsoft === true && (
               <SettingsOptionCardContentToggle
                 Icon={IconMicrosoft}
-                title="Microsoft"
+                title={t`Microsoft`}
                 description={t`Allow logins through Microsoft's single sign-on functionality.`}
                 checked={currentWorkspace.isMicrosoftAuthEnabled}
                 advancedMode

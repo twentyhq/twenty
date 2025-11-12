@@ -130,13 +130,23 @@ msgstr "crwdns29:0crwdne29:0"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
-msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
-msgstr "crwdns37:0{duration}crwdne37:0"
+msgid "Set your password 🗝"
+msgstr "crwdns54104:0crwdne54104:0"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Reset"
 msgstr "crwdns27:0crwdne27:0"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "Set"
+msgstr "crwdns54106:0crwdne54106:0"
+
+#. js-lingui-explicit-id
+#: src/emails/password-reset-link.email.tsx
+msgid "This link is only valid for the next {duration}. If the link does not work, you can use the login verification link directly:"
+msgstr "crwdns37:0{duration}crwdne37:0"
 
 #. js-lingui-explicit-id
 #: src/emails/clean-suspended-workspace.email.tsx

@@ -3,12 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -67,6 +67,19 @@ export class CreatedByFromAuthContextService {
     }
 
     const clonedRecords = structuredClone(records);
+
+    // Check if all records already have createdBy with name populated
+    // If so, skip building from auth context (e.g., workflows provide explicit createdBy)
+    const recordsArray = Array.isArray(clonedRecords)
+      ? clonedRecords
+      : [clonedRecords];
+    const allRecordsHaveCreatedBy = recordsArray.every(
+      (record) => record.createdBy?.name,
+    );
+
+    if (allRecordsHaveCreatedBy) {
+      return clonedRecords;
+    }
 
     const createdBy = await this.buildCreatedBy(authContext);
 
