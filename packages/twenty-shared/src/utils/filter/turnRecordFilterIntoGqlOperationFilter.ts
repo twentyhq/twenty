@@ -1303,7 +1303,10 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       };
     }
     case 'UUID': {
-      const recordIds = recordIdsForUuid;
+      const recordIds =
+        recordIdsForUuid && recordIdsForUuid.length > 0
+          ? recordIdsForUuid
+          : arrayOfUuidOrVariableSchema.parse(recordFilter.value);
 
       if (!isDefined(recordIds) || recordIds.length === 0) return;
 
