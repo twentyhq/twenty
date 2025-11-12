@@ -34,6 +34,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
+import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/states/graphWidgetBarTooltipComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -94,10 +96,9 @@ export const GraphWidgetBarChart = ({
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [activeBarTooltip, setActiveBarTooltip] = useState<{
-    datum: ComputedDatum<BarChartDataItem>;
-    anchorElement: Element;
-  } | null>(null);
+  const setActiveBarTooltip = useSetRecoilComponentState(
+    graphWidgetBarTooltipComponentState,
+  );
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -120,7 +121,10 @@ export const GraphWidgetBarChart = ({
 
   const hasClickableItems = data.some((item) => isDefined(item.to));
 
-  const hideTooltip = useCallback(() => setActiveBarTooltip(null), []);
+  const hideTooltip = useCallback(
+    () => setActiveBarTooltip(null),
+    [setActiveBarTooltip],
+  );
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
 
   const handleTooltipMouseEnter = () => {
@@ -140,7 +144,7 @@ export const GraphWidgetBarChart = ({
         anchorElement: event.currentTarget,
       });
     },
-    [debouncedHideTooltip],
+    [debouncedHideTooltip, setActiveBarTooltip],
   );
 
   const handleBarLeave = useCallback(() => {
@@ -222,8 +226,6 @@ export const GraphWidgetBarChart = ({
 
   const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
-  const shouldShowBarChartTooltip = isDefined(activeBarTooltip);
-
   return (
     <StyledContainer id={id}>
       <GraphWidgetChartContainer
@@ -286,21 +288,17 @@ export const GraphWidgetBarChart = ({
         />
       </GraphWidgetChartContainer>
 
-      {shouldShowBarChartTooltip && (
-        <GraphBarChartTooltip
-          datum={activeBarTooltip.datum}
-          anchorElement={activeBarTooltip.anchorElement}
-          containerId={id}
-          enrichedKeys={enrichedKeys}
-          data={data}
-          indexBy={indexBy}
-          formatOptions={formatOptions}
-          enableGroupTooltip={groupMode === 'stacked'}
-          layout={layout}
-          onMouseEnter={handleTooltipMouseEnter}
-          onMouseLeave={handleTooltipMouseLeave}
-        />
-      )}
+      <GraphBarChartTooltip
+        containerId={id}
+        enrichedKeys={enrichedKeys}
+        data={data}
+        indexBy={indexBy}
+        formatOptions={formatOptions}
+        enableGroupTooltip={groupMode === 'stacked'}
+        layout={layout}
+        onMouseEnter={handleTooltipMouseEnter}
+        onMouseLeave={handleTooltipMouseLeave}
+      />
       <GraphWidgetLegend
         show={shouldShowLegend}
         items={enrichedKeys.map((item) => {
