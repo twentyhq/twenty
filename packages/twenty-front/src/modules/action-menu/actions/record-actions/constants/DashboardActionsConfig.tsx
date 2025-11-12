@@ -46,7 +46,7 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
         isDefined(selectedRecord?.pageLayoutId),
-      availableOn: [ActionViewType.SHOW_PAGE],
+      availableOn: [ActionViewType.FULL_TAB_WIDGET_EDIT_MODE],
       component: <SaveDashboardSingleRecordAction />,
     },
     [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: {
@@ -63,7 +63,7 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         !selectedRecord?.isRemote &&
         !isDefined(selectedRecord?.deletedAt) &&
         isDefined(selectedRecord?.pageLayoutId),
-      availableOn: [ActionViewType.SHOW_PAGE],
+      availableOn: [ActionViewType.FULL_TAB_WIDGET_EDIT_MODE],
       component: <CancelDashboardSingleRecordAction />,
     },
   },

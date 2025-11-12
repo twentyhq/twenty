@@ -8,6 +8,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreIsFullTabWidgetInEditModeComponentState } from '@/context-store/states/contextStoreIsFullTabWidgetInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
@@ -135,6 +136,19 @@ export const useOpenRecordInCommandMenu = () => {
           snapshot
             .getLoadable(
               contextStoreCurrentViewIdComponentState.atomFamily({
+                instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+              }),
+            )
+            .getValue(),
+        );
+
+        set(
+          contextStoreIsFullTabWidgetInEditModeComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          snapshot
+            .getLoadable(
+              contextStoreIsFullTabWidgetInEditModeComponentState.atomFamily({
                 instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
               }),
             )
