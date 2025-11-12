@@ -59,7 +59,13 @@ export class SeedDashboardViewCommand extends ActiveOrSuspendedWorkspacesMigrati
       );
     }
 
-    const views = [dashboardsAllView([dashboardObjectMetadata], true)];
+    const views = [
+      dashboardsAllView({
+        objectMetadataItems: [dashboardObjectMetadata],
+        useCoreNaming: true,
+        applications: {},
+      }),
+    ];
 
     const schema = await this.dataSourceRepository.findOne({
       where: {
@@ -99,7 +105,12 @@ export class SeedDashboardViewCommand extends ActiveOrSuspendedWorkspacesMigrati
 
     await queryRunner.connect();
 
-    const createdViews = await createCoreViews(queryRunner, workspaceId, views);
+    const createdViews = await createCoreViews(
+      queryRunner,
+      workspaceId,
+      views,
+      {},
+    );
 
     await prefillWorkspaceFavorites(
       createdViews.map((view) => view.id),
