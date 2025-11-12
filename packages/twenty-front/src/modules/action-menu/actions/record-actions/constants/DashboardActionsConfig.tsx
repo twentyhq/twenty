@@ -75,6 +75,7 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       label: msg`Save Dashboard`,
       shortLabel: msg`Save`,
       isPinned: true,
+      isPrimaryCTA: true,
       position: 1,
       Icon: IconDeviceFloppy,
       type: ActionType.Standard,

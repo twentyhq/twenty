@@ -17,6 +17,7 @@ export type ActionConfig = {
   position: number;
   Icon: IconComponent;
   isPinned?: boolean;
+  isPrimaryCTA?: boolean;
   accent?: MenuItemAccent;
   availableOn?: ActionViewType[];
   shouldBeRegistered: (params: ShouldBeRegisteredFunctionParams) => boolean;
