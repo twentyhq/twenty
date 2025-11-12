@@ -13,7 +13,8 @@ export const useIsInPinnedTab = () => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const { pinnedLeftTab } = getTabsByDisplayMode({
-    pageLayout: currentPageLayout,
+    tabs: currentPageLayout.tabs,
+    pageLayoutType: currentPageLayout.type,
     isMobile,
     isInRightDrawer,
   });

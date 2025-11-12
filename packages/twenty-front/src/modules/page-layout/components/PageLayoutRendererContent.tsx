@@ -84,7 +84,8 @@ export const PageLayoutRendererContent = () => {
   }
 
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
-    pageLayout: currentPageLayout,
+    tabs: currentPageLayout.tabs,
+    pageLayoutType: currentPageLayout.type,
     isMobile,
     isInRightDrawer,
   });
