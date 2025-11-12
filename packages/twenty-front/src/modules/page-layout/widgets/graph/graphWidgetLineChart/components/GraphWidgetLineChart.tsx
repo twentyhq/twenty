@@ -1,5 +1,6 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
 import {
   CustomCrosshairLayer,
   type SliceHoverData,
@@ -15,7 +16,6 @@ import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLin
 import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
-import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -26,12 +26,15 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   ResponsiveLine,
+  type LineCustomSvgLayerProps,
   type LineSeries,
   type SliceTooltipProps,
 } from '@nivo/line';
 import { useCallback, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
+
+type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
 
 type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
@@ -171,6 +174,17 @@ export const GraphWidgetLineChart = ({
     [dataMap, debouncedHideTooltip],
   );
 
+  const CrosshairLayer = (layerProps: CrosshairLayerProps) => (
+    <CustomCrosshairLayer
+      key="custom-crosshair-layer"
+      points={layerProps.points}
+      innerHeight={layerProps.innerHeight}
+      innerWidth={layerProps.innerWidth}
+      onSliceHover={handleSliceHover}
+      crosshairX={crosshairX}
+      onRectLeave={() => debouncedHideTooltip()}
+    />
+  );
   const axisBottomConfig = getLineChartAxisBottomConfig(
     xAxisLabel,
     chartWidth,
@@ -242,17 +256,7 @@ export const GraphWidgetLineChart = ({
             'axes',
             'areas',
             'lines',
-            (layerProps) => (
-              <CustomCrosshairLayer
-                key="custom-crosshair-layer"
-                points={layerProps.points}
-                innerHeight={layerProps.innerHeight}
-                innerWidth={layerProps.innerWidth}
-                onSliceHover={handleSliceHover}
-                crosshairX={crosshairX}
-                onRectLeave={() => debouncedHideTooltip()}
-              />
-            ),
+            CrosshairLayer,
             'points',
             'legends',
           ]}
