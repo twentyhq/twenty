@@ -53,6 +53,7 @@ export class CreateWorkspaceCustomApplicationCommand extends ActiveOrSuspendedWo
     const customWorkspaceApplication =
       await this.applicationService.createWorkspaceCustomApplication({
         workspaceId,
+        workspaceDisplayName: workspace.displayName,
       });
 
     await this.workspaceRepository.update(workspace.id, {

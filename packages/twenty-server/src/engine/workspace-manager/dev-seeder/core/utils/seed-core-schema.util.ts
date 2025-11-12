@@ -46,6 +46,7 @@ export const seedCoreSchema = async ({
       await applicationService.createWorkspaceCustomApplication(
         {
           workspaceId,
+          workspaceDisplayName: createWorkspaceStaticInput.displayName,
         },
         queryRunner,
       );
@@ -67,6 +68,7 @@ export const seedCoreSchema = async ({
     await applicationService.createTwentyStandardApplication(
       {
         workspaceId,
+        skipCacheInvalidation: true,
       },
       queryRunner,
     );

@@ -12,8 +12,9 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
   imports: [
     TypeOrmModule.forFeature([ApplicationEntity, AgentEntity, WorkspaceEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+
   ],
-  exports: [ApplicationService],
+  exports: [ApplicationService, WorkspaceFlatApplicationMapCacheService],
   providers: [ApplicationService, WorkspaceFlatApplicationMapCacheService],
 })
 export class ApplicationModule {}

@@ -145,8 +145,10 @@ export class ApplicationService {
   async createTwentyStandardApplication(
     {
       workspaceId,
+      skipCacheInvalidation = false,
     }: {
       workspaceId: string;
+      skipCacheInvalidation?: boolean;
     },
     queryRunner?: QueryRunner,
   ) {
@@ -159,9 +161,11 @@ export class ApplicationService {
       queryRunner,
     );
 
-    await this.workspaceFlatApplicationMapCacheService.invalidateCache({
-      workspaceId,
-    });
+    if (!skipCacheInvalidation) {
+      await this.workspaceFlatApplicationMapCacheService.invalidateCache({
+        workspaceId,
+      });
+    }
 
     return twentyStandardApplication;
   }
@@ -169,26 +173,22 @@ export class ApplicationService {
   async createWorkspaceCustomApplication(
     {
       workspaceId,
+      workspaceDisplayName,
     }: {
       workspaceId: string;
+      workspaceDisplayName?: string;
     },
     queryRunner?: QueryRunner,
   ) {
-    const workspace = await this.workspaceRepository.findOneOrFail({
-      where: {
-        id: workspaceId,
-      },
-    });
-
     const applicationId = v4();
     const workspaceCustomApplication = await this.create(
       {
         description: 'Workspace custom application',
-        name: `${isDefined(workspace.displayName) ? workspace.displayName : 'Workspace'}'s custom application`,
+        name: `${isDefined(workspaceDisplayName) ? workspaceDisplayName : 'Workspace'}'s custom application`,
         sourcePath: 'workspace-custom',
         version: '1.0.0',
         universalIdentifier: applicationId,
-        workspaceId: workspace.id,
+        workspaceId: workspaceId,
         id: applicationId,
         serverlessFunctionLayerId: null,
       },
