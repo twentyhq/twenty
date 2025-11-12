@@ -63,9 +63,7 @@ export const GraphWidgetLineChartRenderer = ({
         rangeMin={configuration.rangeMin ?? undefined}
         rangeMax={configuration.rangeMax ?? undefined}
         omitNullValues={configuration.omitNullValues ?? false}
-        groupMode={
-          configuration.groupMode === 'STACKED' ? 'stacked' : undefined
-        }
+        groupMode={configuration.isStacked ? 'stacked' : undefined}
         displayType="shortNumber"
       />
     </Suspense>

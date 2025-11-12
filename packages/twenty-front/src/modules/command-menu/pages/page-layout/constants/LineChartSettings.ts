@@ -13,7 +13,7 @@ import { RANGE_MAX_SETTING } from '@/command-menu/pages/page-layout/constants/se
 import { RANGE_MIN_SETTING } from '@/command-menu/pages/page-layout/constants/settings/RangeMinSetting';
 import { SORT_BY_GROUP_BY_FIELD_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByGroupByFieldSetting';
 import { SORT_BY_X_SETTING } from '@/command-menu/pages/page-layout/constants/settings/SortByXSetting';
-import { STACKED_BARS_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedBarsSetting';
+import { STACKED_LINES_SETTING } from '@/command-menu/pages/page-layout/constants/settings/StackedLineSettings';
 import { type ChartSettingsGroup } from '@/command-menu/pages/page-layout/types/ChartSettingsGroup';
 
 export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
@@ -46,7 +46,7 @@ export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
     items: [
       COLORS_SETTING,
       AXIS_NAME_SETTING,
-      STACKED_BARS_SETTING,
+      STACKED_LINES_SETTING,
       DATA_LABELS_SETTING,
     ],
   },

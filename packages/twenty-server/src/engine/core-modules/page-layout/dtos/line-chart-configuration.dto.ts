@@ -138,9 +138,9 @@ export class LineChartConfigurationDTO {
   @Field(() => BarChartGroupMode, {
     nullable: true,
   })
-  @IsEnum(BarChartGroupMode)
+  @IsBoolean()
   @IsOptional()
-  groupMode?: BarChartGroupMode;
+  isStacked?: boolean;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()
