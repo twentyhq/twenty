@@ -8,8 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { WORKSPACE_FLAT_MAP_CACHE_KEY } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import {
   WorkspaceFlatMapCacheException,
@@ -18,7 +16,8 @@ import {
 
 @Injectable()
 export abstract class WorkspaceFlatMapCacheService<
-  T extends FlatEntityMaps<FlatEntity>,
+  // TODO challenge
+  T,
 > {
   protected readonly logger = new Logger(this.constructor.name);
 
