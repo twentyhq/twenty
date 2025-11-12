@@ -65,7 +65,6 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | MultipleRecordsActionKeys,
   ActionConfig
 > = {
-  // Navigation actions (always first)
   [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
     type: ActionType.Standard,
     scope: ActionScope.RecordSelection,
