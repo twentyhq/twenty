@@ -1,5 +1,5 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
-import { GraphWidgetLineChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChartHasTooManyGroupsEffect';
+import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
 import { lazy, Suspense, useMemo } from 'react';
 import {
@@ -31,7 +31,7 @@ export const GraphWidgetLineChartRenderer = ({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration as LineChartConfiguration,
   });
-  console.log('Line chart data:', JSON.stringify(series, null, 2));
+
   const configuration = widget.configuration as LineChartConfiguration;
 
   const filterStateKey = useMemo(
@@ -50,7 +50,7 @@ export const GraphWidgetLineChartRenderer = ({
 
   return (
     <Suspense fallback={<ChartSkeletonLoader />}>
-      <GraphWidgetLineChartHasTooManyGroupsEffect
+      <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />
       <GraphWidgetLineChart
@@ -59,23 +59,14 @@ export const GraphWidgetLineChartRenderer = ({
         data={series}
         xAxisLabel={xAxisLabel}
         yAxisLabel={yAxisLabel}
-        showLegend={true}
-        showGrid={true}
-        enablePoints={false}
-        showValues={showDataLabels}
+        enablePointLabel={showDataLabels}
+        rangeMin={configuration.rangeMin ?? undefined}
+        rangeMax={configuration.rangeMax ?? undefined}
+        omitNullValues={configuration.omitNullValues ?? false}
+        groupMode={
+          configuration.groupMode === 'STACKED' ? 'stacked' : undefined
+        }
         displayType="shortNumber"
-        enableArea={true}
-        stackedArea={true}
-        curve="monotoneX"
-        xScale={{ type: 'point' }}
-        yScale={{
-          type: 'linear',
-          min: configuration.rangeMin ?? 'auto',
-          max: configuration.rangeMax ?? 'auto',
-          stacked: true,
-          clamp: true,
-        }}
-        enableSlices="x"
       />
     </Suspense>
   );

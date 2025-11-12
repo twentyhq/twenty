@@ -43,29 +43,14 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
     yAxisLabel: {
       control: 'text',
     },
-    enableArea: {
-      control: 'boolean',
-    },
-    stackedArea: {
-      control: 'boolean',
-    },
-    curve: {
-      control: 'select',
-      options: [
-        'linear',
-        'monotoneX',
-        'step',
-        'stepBefore',
-        'stepAfter',
-        'natural',
-      ],
-    },
-    lineWidth: {
+    rangeMin: {
       control: 'number',
     },
-    enableSlices: {
-      control: 'select',
-      options: ['x', 'y', false],
+    rangeMax: {
+      control: 'number',
+    },
+    omitNullValues: {
+      control: 'boolean',
     },
   },
 };
@@ -86,19 +71,16 @@ const renderChart = (args: ChartArgs) => (
       showLegend={args.showLegend}
       showGrid={args.showGrid}
       enablePoints={args.enablePoints}
+      showValues={args.showValues}
       xAxisLabel={args.xAxisLabel}
       yAxisLabel={args.yAxisLabel}
+      rangeMin={args.rangeMin}
+      rangeMax={args.rangeMax}
+      omitNullValues={args.omitNullValues}
       displayType={args.displayType}
       prefix={args.prefix}
       suffix={args.suffix}
       decimals={args.decimals}
-      enableArea={args.enableArea}
-      stackedArea={args.stackedArea}
-      curve={args.curve}
-      lineWidth={args.lineWidth}
-      enableSlices={args.enableSlices}
-      xScale={args.xScale}
-      yScale={args.yScale}
     />
   </Container>
 );
@@ -156,7 +138,6 @@ export const WithArea: Story = {
         data: generateLinearData(12),
       },
     ],
-    enableArea: true,
     showLegend: true,
     showGrid: true,
     enablePoints: false,
@@ -190,19 +171,11 @@ export const StackedArea: Story = {
         data: generateLinearData(8),
       },
     ],
-    enableArea: true,
-    stackedArea: true,
     showLegend: true,
     showGrid: true,
     enablePoints: false,
-    curve: 'monotoneX',
     xAxisLabel: 'Quarter',
     yAxisLabel: 'Revenue',
-    yScale: {
-      type: 'linear',
-      min: 0,
-      max: 'auto',
-    },
     displayType: 'shortNumber',
     prefix: '$',
   },
@@ -223,7 +196,6 @@ export const WithPoints: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    lineWidth: 3,
     xAxisLabel: 'Week',
     yAxisLabel: 'Score',
     displayType: 'percentage',
@@ -242,11 +214,9 @@ export const StepChart: Story = {
         data: generateLinearData(10),
       },
     ],
-    curve: 'step',
     showLegend: true,
     showGrid: true,
     enablePoints: false,
-    lineWidth: 2,
     xAxisLabel: 'Day',
     yAxisLabel: 'Units',
     displayType: 'number',
@@ -290,12 +260,6 @@ export const LogScaleDemo: Story = {
     enablePoints: true,
     xAxisLabel: 'Time',
     yAxisLabel: 'Value (log scale)',
-    yScale: {
-      type: 'log',
-      base: 10,
-      min: 'auto',
-      max: 'auto',
-    },
     displayType: 'shortNumber',
   },
 };
@@ -351,7 +315,6 @@ export const InteractiveWithLinks: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    enableSlices: 'x',
     xAxisLabel: 'Step',
     yAxisLabel: 'Progress',
     displayType: 'percentage',
@@ -368,14 +331,12 @@ export const MultiSeriesMixed: Story = {
         label: 'Actual',
         color: 'blue',
         data: generateLinearData(12),
-        enableArea: true,
       },
       {
         id: 'forecast',
         label: 'Forecast',
         color: 'purple',
         data: generateLinearData(12),
-        enableArea: false,
       },
       {
         id: 'target',
@@ -385,18 +346,14 @@ export const MultiSeriesMixed: Story = {
           ...dataPoint,
           y: 75,
         })),
-        enableArea: false,
       },
     ],
-    enableArea: false,
     showLegend: true,
     showGrid: true,
     enablePoints: false,
-    curve: 'monotoneX',
     xAxisLabel: 'Month',
     yAxisLabel: 'Value',
     displayType: 'shortNumber',
-    enableSlices: 'x',
   },
 };
 
@@ -451,11 +408,9 @@ export const OverlappingGradientBlend: Story = {
         ],
       },
     ],
-    enableArea: true,
     showLegend: true,
     showGrid: true,
     enablePoints: false,
-    curve: 'monotoneX',
     xAxisLabel: 'Time',
     yAxisLabel: 'Value',
     displayType: 'number',
@@ -496,11 +451,9 @@ export const HighContrastOverlap: Story = {
         ],
       },
     ],
-    enableArea: true,
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    curve: 'natural',
     xAxisLabel: 'Day',
     yAxisLabel: 'Score',
     displayType: 'number',
@@ -530,7 +483,6 @@ export const CurveComparison: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    curve: 'linear',
     xAxisLabel: 'X Axis',
     yAxisLabel: 'Y Axis',
     displayType: 'number',
@@ -585,7 +537,6 @@ export const StepInterpolations: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    curve: 'step',
     xAxisLabel: 'Time',
     yAxisLabel: 'Value',
     displayType: 'number',
@@ -626,11 +577,9 @@ export const NaturalVsMonotone: Story = {
         ],
       },
     ],
-    enableArea: true,
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    curve: 'natural',
     xAxisLabel: 'Sample',
     yAxisLabel: 'Measurement',
     displayType: 'number',
@@ -685,8 +634,6 @@ export const SliceTooltipDemo: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: false,
-    enableSlices: 'x',
-    xScale: { type: 'point' },
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',
     displayType: 'shortNumber',
@@ -742,8 +689,6 @@ export const PointTooltipDemo: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    enableSlices: 'x',
-    xScale: { type: 'point' },
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',
     displayType: 'shortNumber',
@@ -796,11 +741,9 @@ export const IntenseOverlapRGB: Story = {
         ],
       },
     ],
-    enableArea: true,
     showLegend: true,
     showGrid: true,
     enablePoints: false,
-    curve: 'monotoneX',
     xAxisLabel: 'Position',
     yAxisLabel: 'Intensity',
     displayType: 'percentage',
@@ -828,7 +771,6 @@ export const Catalog: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: false,
-    enableArea: true,
   },
   decorators: [CatalogDecorator],
   parameters: {

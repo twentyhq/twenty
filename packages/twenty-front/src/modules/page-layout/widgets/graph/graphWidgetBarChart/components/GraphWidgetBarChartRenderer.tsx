@@ -1,5 +1,5 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
-import { GraphWidgetBarChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChartHasTooManyGroupsEffect';
+import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
 import { lazy, Suspense, useMemo } from 'react';
@@ -64,7 +64,7 @@ export const GraphWidgetBarChartRenderer = ({
 
   return (
     <>
-      <GraphWidgetBarChartHasTooManyGroupsEffect
+      <GraphWidgetChartHasTooManyGroupsEffect
         hasTooManyGroups={hasTooManyGroups}
       />
       <Suspense fallback={<ChartSkeletonLoader />}>

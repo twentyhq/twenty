@@ -21,6 +21,7 @@ import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-build
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
+import { BarChartGroupMode } from 'src/engine/core-modules/page-layout/enums/bar-chart-group-mode.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/core-modules/page-layout/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
@@ -133,6 +134,13 @@ export class LineChartConfigurationDTO {
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => BarChartGroupMode, {
+    nullable: true,
+  })
+  @IsEnum(BarChartGroupMode)
+  @IsOptional()
+  groupMode?: BarChartGroupMode;
 
   @Field(() => String, { nullable: true, defaultValue: 'UTC' })
   @IsTimeZone()

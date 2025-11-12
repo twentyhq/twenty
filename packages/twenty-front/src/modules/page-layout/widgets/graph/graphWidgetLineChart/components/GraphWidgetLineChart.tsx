@@ -12,6 +12,7 @@ import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLi
 import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
 import { useLineChartTheme } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartTheme';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { calculateValueRangeFromLineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/calculateValueRangeFromLineChartSeries';
 import { getLineChartAxisBottomConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisBottomConfig';
 import { getLineChartAxisLeftConfig } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartAxisLeftConfig';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
@@ -27,7 +28,6 @@ import {
   type LineSeries,
   type SliceTooltipProps,
 } from '@nivo/line';
-import { type ScaleLinearSpec, type ScaleSpec } from '@nivo/scales';
 import { useCallback, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
@@ -36,43 +36,16 @@ type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
   showLegend?: boolean;
   showGrid?: boolean;
-  enablePoints?: boolean;
-  showValues?: boolean;
+  enablePointLabel?: boolean;
   xAxisLabel?: string;
+  enableArea?: boolean;
   yAxisLabel?: string;
   id: string;
-  enableArea?: boolean;
-  stackedArea?: boolean;
-  curve?:
-    | 'linear'
-    | 'monotoneX'
-    | 'step'
-    | 'stepBefore'
-    | 'stepAfter'
-    | 'natural';
-  lineWidth?: number;
-  enableSlices?: 'x' | 'y';
-  xScale?: ScaleSpec;
-  yScale?: ScaleSpec;
+  rangeMin?: number;
+  rangeMax?: number;
+  omitNullValues?: boolean;
+  groupMode?: 'stacked';
 } & GraphValueFormatOptions;
-
-const getYScaleWithStacking = (
-  yScale: ScaleSpec | undefined,
-  stackedArea: boolean | undefined,
-): ScaleSpec => {
-  if (!yScale || yScale.type === 'linear') {
-    const linearScale: ScaleLinearSpec = {
-      min: 0,
-      max: 'auto',
-      type: 'linear',
-      stacked: stackedArea,
-      ...yScale,
-    };
-    return linearScale;
-  }
-
-  return yScale;
-};
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -87,19 +60,16 @@ export const GraphWidgetLineChart = ({
   data,
   showLegend = true,
   showGrid = true,
-  enablePoints = false,
-  showValues = false,
+  enableArea = true,
+  enablePointLabel = false,
   xAxisLabel,
   yAxisLabel,
   id,
-  enableArea = false,
-  stackedArea = false,
-  curve = 'monotoneX',
-  lineWidth = 2,
-  enableSlices = 'x',
-  xScale = { type: 'linear' },
-  yScale = { type: 'linear', min: 0, max: 'auto' },
+  rangeMin,
+  rangeMax,
+  omitNullValues: _omitNullValues = false,
   displayType,
+  groupMode,
   decimals,
   prefix,
   suffix,
@@ -119,6 +89,13 @@ export const GraphWidgetLineChart = ({
     suffix,
     customFormatter,
   };
+
+  const calculatedValueRange = calculateValueRangeFromLineChartSeries(data);
+  const effectiveMinimumValue = rangeMin ?? calculatedValueRange.min;
+  const effectiveMaximumValue = rangeMax ?? calculatedValueRange.max;
+
+  const lineWidth = 2;
+  const enableSlices = 'x' as const;
 
   const {
     dataMap,
@@ -223,16 +200,22 @@ export const GraphWidgetLineChart = ({
             bottom: LINE_CHART_MARGIN_BOTTOM,
             left: LINE_CHART_MARGIN_LEFT,
           }}
-          xScale={xScale}
-          yScale={getYScaleWithStacking(yScale, stackedArea)}
-          curve={curve}
+          xScale={{ type: 'point' }}
+          yScale={{
+            type: 'linear',
+            min: effectiveMinimumValue,
+            max: effectiveMaximumValue,
+            stacked: groupMode === 'stacked',
+            clamp: true,
+          }}
+          curve={'monotoneX'}
           lineWidth={lineWidth}
           enableArea={enableArea}
           areaBaselineValue={0}
-          enablePoints={enablePoints}
-          pointSize={6}
+          enablePoints={true}
+          pointSize={0}
+          enablePointLabel={enablePointLabel}
           pointBorderWidth={0}
-          enablePointLabel={showValues}
           pointLabel={(point) =>
             formatGraphValue(Number(point.data.y), formatOptions)
           }

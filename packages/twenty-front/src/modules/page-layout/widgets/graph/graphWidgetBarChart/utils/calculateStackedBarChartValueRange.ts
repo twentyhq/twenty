@@ -9,38 +9,38 @@ export const calculateStackedBarChartValueRange = (
   data: BarChartDataItem[],
   keys: string[],
 ): ValueRange => {
-  let min = 0;
-  let max = 0;
+  let minimumValue = 0;
+  let maximumValue = 0;
 
   for (const item of data) {
-    let positiveSum = 0;
-    let negativeSum = 0;
+    let positiveSummation = 0;
+    let negativeSummation = 0;
 
     for (const key of keys) {
       const value = Number(item[key] ?? 0);
       if (!Number.isNaN(value)) {
         if (value >= 0) {
-          positiveSum += value;
+          positiveSummation += value;
         } else {
-          negativeSum += value;
+          negativeSummation += value;
         }
       }
     }
 
-    if (positiveSum > max) {
-      max = positiveSum;
+    if (positiveSummation > maximumValue) {
+      maximumValue = positiveSummation;
     }
-    if (negativeSum < min) {
-      min = negativeSum;
+    if (negativeSummation < minimumValue) {
+      minimumValue = negativeSummation;
     }
   }
 
-  if (min > 0) {
-    min = 0;
+  if (minimumValue > 0) {
+    minimumValue = 0;
   }
-  if (max < 0) {
-    max = 0;
+  if (maximumValue < 0) {
+    maximumValue = 0;
   }
 
-  return { min, max };
+  return { min: minimumValue, max: maximumValue };
 };

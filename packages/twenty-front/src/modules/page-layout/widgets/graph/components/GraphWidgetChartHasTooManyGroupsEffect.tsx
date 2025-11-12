@@ -2,13 +2,13 @@ import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/grap
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useEffect } from 'react';
 
-type GraphWidgetLineChartHasTooManyGroupsEffectProps = {
+type GraphWidgetChartHasTooManyGroupsEffectProps = {
   hasTooManyGroups: boolean;
 };
 
-export const GraphWidgetLineChartHasTooManyGroupsEffect = ({
+export const GraphWidgetChartHasTooManyGroupsEffect = ({
   hasTooManyGroups,
-}: GraphWidgetLineChartHasTooManyGroupsEffectProps) => {
+}: GraphWidgetChartHasTooManyGroupsEffectProps) => {
   const setHasWidgetTooManyGroups = useSetRecoilComponentState(
     hasWidgetTooManyGroupsComponentState,
   );

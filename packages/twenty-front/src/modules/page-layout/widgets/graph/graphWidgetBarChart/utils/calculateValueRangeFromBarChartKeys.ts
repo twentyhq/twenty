@@ -5,33 +5,33 @@ type ValueRange = {
   max: number;
 };
 
-export const calculateBarChartValueRange = (
+export const calculateValueRangeFromBarChartKeys = (
   data: BarChartDataItem[],
   keys: string[],
 ): ValueRange => {
-  let min = 0;
-  let max = 0;
+  let minimumValue = 0;
+  let maximumValue = 0;
 
   for (const item of data) {
     for (const key of keys) {
       const value = Number(item[key] ?? 0);
       if (!isNaN(value)) {
-        if (value < min) {
-          min = value;
+        if (value < minimumValue) {
+          minimumValue = value;
         }
-        if (value > max) {
-          max = value;
+        if (value > maximumValue) {
+          maximumValue = value;
         }
       }
     }
   }
 
-  if (min > 0) {
-    min = 0;
+  if (minimumValue > 0) {
+    minimumValue = 0;
   }
-  if (max < 0) {
-    max = 0;
+  if (maximumValue < 0) {
+    maximumValue = 0;
   }
 
-  return { min, max };
+  return { min: minimumValue, max: maximumValue };
 };

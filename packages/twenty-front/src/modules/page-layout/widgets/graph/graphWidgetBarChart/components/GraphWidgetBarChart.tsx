@@ -8,7 +8,7 @@ import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
-import { calculateBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartValueRange';
+import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
@@ -198,14 +198,14 @@ export const GraphWidgetBarChart = ({
     </>
   );
 
-  const calculatedRange =
+  const calculatedValueRange =
     groupMode === 'stacked'
       ? calculateStackedBarChartValueRange(data, keys)
-      : calculateBarChartValueRange(data, keys);
-  const effectiveMin = rangeMin ?? calculatedRange.min;
-  const effectiveMax = rangeMax ?? calculatedRange.max;
+      : calculateValueRangeFromBarChartKeys(data, keys);
+  const effectiveMinimumValue = rangeMin ?? calculatedValueRange.min;
+  const effectiveMaximumValue = rangeMax ?? calculatedValueRange.max;
 
-  const hasNegativeValues = calculatedRange.min < 0;
+  const hasNegativeValues = calculatedValueRange.min < 0;
   const zeroMarker = hasNegativeValues
     ? [
         {
@@ -248,8 +248,8 @@ export const GraphWidgetBarChart = ({
           layout={layout}
           valueScale={{
             type: 'linear',
-            min: effectiveMin,
-            max: effectiveMax,
+            min: effectiveMinimumValue,
+            max: effectiveMaximumValue,
             clamp: true,
           }}
           indexScale={{ type: 'band', round: true }}
