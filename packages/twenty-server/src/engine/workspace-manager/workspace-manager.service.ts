@@ -4,6 +4,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -90,9 +91,9 @@ export class WorkspaceManagerService {
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
-      applications: {
+      twentyStandardFlatApplication: fromApplicationEntityToFlatApplication(
         twentyStandardApplication,
-      },
+      ),
     });
 
     const dataSourceMetadataCreationEnd = performance.now();
@@ -199,6 +200,7 @@ export class WorkspaceManagerService {
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
+      applicationId
     });
 
     await this.workspaceRepository.update(workspaceId, {

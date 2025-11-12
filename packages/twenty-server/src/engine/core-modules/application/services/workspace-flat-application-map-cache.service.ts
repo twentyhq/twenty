@@ -12,7 +12,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
 
 @Injectable()
-export class WorkspaceFlatApplicationMapCache extends WorkspaceFlatMapCacheService<FlatApplicationCacheMaps> {
+export class WorkspaceFlatApplicationMapCacheService extends WorkspaceFlatMapCacheService<FlatApplicationCacheMaps> {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
     cacheStorageService: CacheStorageService,

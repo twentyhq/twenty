@@ -7,8 +7,8 @@ import { type WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfac
 import { type WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
 import { type WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 import {
-  type PartialComputedFieldMetadata,
-  type PartialFieldMetadata,
+    type PartialComputedFieldMetadata,
+    type PartialFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
@@ -163,7 +163,7 @@ export class StandardFieldFactory {
         relationTargetObjectMetadata: null,
         relationTargetObjectMetadataId: null,
         morphId: null,
-        applicationId: context.applications.twentyStandardApplication.id,
+        applicationId: context.twentyStandardFlatApplication.id,
         universalIdentifier: v4(),
       },
     ];
@@ -215,7 +215,7 @@ export class StandardFieldFactory {
       settings: null, // accurate ? looks weird for this to be undefined even for standard fields ?
       standardOverrides: null,
       morphId: null,
-      applicationId: context.applications.twentyStandardApplication.id,
+      applicationId: context.twentyStandardFlatApplication.id,
       universalIdentifier: v4(),
     });
 

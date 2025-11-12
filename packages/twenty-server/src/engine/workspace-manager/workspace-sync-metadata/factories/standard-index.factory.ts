@@ -89,7 +89,7 @@ export class StandardIndexFactory {
           isCustom: false,
           indexWhereClause: workspaceIndexMetadataArgs.whereClause,
           indexType: workspaceIndexMetadataArgs.type ?? IndexType.BTREE,
-          applicationId: context.applications.twentyStandardApplication.id,
+          applicationId: context.twentyStandardFlatApplication.id,
           universalIdentifier: v4(),
         };
 
@@ -133,7 +133,7 @@ export class StandardIndexFactory {
               isUnique: workspaceIndexMetadataArgs.isUnique,
               indexType: workspaceIndexMetadataArgs.type ?? IndexType.BTREE,
               indexWhereClause: workspaceIndexMetadataArgs.whereClause,
-              applicationId: context.applications.twentyStandardApplication.id,
+              applicationId: context.twentyStandardFlatApplication.id,
               universalIdentifier: v4(),
             };
 

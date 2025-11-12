@@ -1,4 +1,5 @@
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 // RELOCATE EVERYTHING DECLARED HERE IN DEDICATED FILE OUT OF SYNC METADATA
 export const TWENTY_STANDARD_APPLICATION = {
@@ -12,7 +13,7 @@ export const TWENTY_STANDARD_APPLICATION = {
 } as const satisfies CreateApplicationInput;
 
 export type TwentyStandardApplication = {
-  twentyStandardApplication: ApplicationEntity;
+  twentyStandardApplication: FlatApplication;
 };
 
 export type CreateApplicationInput = Omit<

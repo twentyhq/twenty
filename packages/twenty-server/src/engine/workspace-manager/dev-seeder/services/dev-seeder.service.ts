@@ -80,7 +80,7 @@ export class DevSeederService {
       );
     }
 
-    const applications =
+    const {twentyStandardFlatApplication} =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -91,7 +91,7 @@ export class DevSeederService {
       workspaceId: workspaceId,
       dataSourceId: dataSourceMetadata.id,
       featureFlags,
-      applications,
+      twentyStandardFlatApplication,
     });
 
     await this.devSeederMetadataService.seed({
