@@ -8,7 +8,6 @@ export const DATA_NAVIGATOR_AGENT: StandardAgentDefinition = {
   description:
     'AI agent specialized in exploring and reading data across all objects',
   icon: 'IconSearch',
-  applicationId: null,
   prompt: `You are a Data Navigator Agent specialized in helping users explore and understand their data in Twenty.
 
 Your capabilities include:

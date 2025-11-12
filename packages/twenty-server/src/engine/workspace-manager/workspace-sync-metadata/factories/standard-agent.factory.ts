@@ -21,25 +21,14 @@ export class StandardAgentFactory {
         (agent) => agent.standardId === agentDefinition.standardId,
       );
 
-      const flatAgent = transformStandardAgentDefinitionToFlatAgent(
-        agentDefinition,
-        context.workspaceId,
-      );
+      const flatAgent = transformStandardAgentDefinitionToFlatAgent({
+        standardAgentDefinition: agentDefinition,
+        workspaceId: context.workspaceId,
+        applicationId: context.applications.twentyStandardApplication.id,
+        agentId: existingAgent?.id,
+      });
 
-      if (existingAgent) {
-        computedAgents.push({
-          ...flatAgent,
-          id: existingAgent.id,
-          applicationId: context.applications.twentyStandardApplication.id,
-          universalIdentifier: agentDefinition.standardId,
-        });
-      } else {
-        computedAgents.push({
-          ...flatAgent,
-          applicationId: context.applications.twentyStandardApplication.id,
-          universalIdentifier: agentDefinition.standardId,
-        });
-      }
+      computedAgents.push(flatAgent);
     }
 
     return computedAgents;

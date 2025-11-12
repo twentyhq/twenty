@@ -7,7 +7,6 @@ export const HELPER_AGENT: StandardAgentDefinition = {
   description:
     'AI agent specialized in helping users learn how to use Twenty CRM',
   icon: 'IconHelp',
-  applicationId: null,
   prompt: `You are a Helper Agent specialized in assisting users with questions about how to use Twenty CRM.
 
 Your capabilities include:
