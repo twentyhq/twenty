@@ -171,7 +171,6 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.ARRAY:
     case FieldMetadataType.PDF:
     case FieldMetadataType.IMAGE: {
-    case FieldMetadataType.ARRAY: {
       const indexMetadatas: FlatIndexMetadata[] = [];
 
       if (commonFlatFieldMetadata.isUnique) {
