@@ -9,20 +9,36 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/twenty-emails',
+  logLevel: 'error',
+
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+  },
 
   plugins: [
     react({
       plugins: [['@lingui/swc-plugin', {}]],
+      tsDecorators: true,
     }),
     lingui({
       configPath: path.resolve(__dirname, './lingui.config.ts'),
     }),
     tsconfigPaths({
-      root: __dirname
+      root: __dirname,
     }),
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
+      compilerOptions: {
+        skipLibCheck: true,
+      },
+      logDiagnostics: false,
+      afterDiagnostic: (diagnostics) => {
+        // Filter out the lingui type conflict error
+        return diagnostics.filter(
+          (d) => !d.messageText?.toString().includes('@lingui/core'),
+        );
+      },
     }),
   ],
 
@@ -31,6 +47,7 @@ export default defineConfig({
   build: {
     outDir: './dist',
     reportCompressedSize: true,
+    emptyOutDir: true,
     commonjsOptions: {
       transformMixedEsModules: true,
     },

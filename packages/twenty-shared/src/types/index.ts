@@ -30,12 +30,16 @@ export type { EmailsMetadata } from './composite-types/emails.composite-type';
 export { emailsCompositeType } from './composite-types/emails.composite-type';
 export type { FullNameMetadata } from './composite-types/full-name.composite-type';
 export { fullNameCompositeType } from './composite-types/full-name.composite-type';
+export type { ImageMetadata } from './composite-types/image.composite-type';
+export { imageCompositeType } from './composite-types/image.composite-type';
 export type {
   LinkMetadata,
   LinksMetadata,
   LinkMetadataNullable,
 } from './composite-types/links.composite-type';
 export { linksCompositeType } from './composite-types/links.composite-type';
+export type { PdfMetadata } from './composite-types/pdf.composite-type';
+export { pdfCompositeType } from './composite-types/pdf.composite-type';
 export type {
   AdditionalPhoneMetadata,
   PhonesMetadata,

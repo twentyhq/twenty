@@ -9780,7 +9780,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/core@npm:^5.1.2":
+"@lingui/core@npm:5.1.2":
   version: 5.1.2
   resolution: "@lingui/core@npm:5.1.2"
   dependencies:
@@ -9796,24 +9796,6 @@ __metadata:
     babel-plugin-macros:
       optional: true
   checksum: 10c0/94092bc8630395af5093c0661c1d8f8d6525f09d55be5e68f948e5b9c79e47ef627b12c6102dbe764113695e477a6bb46caae335869b4ef818e452ef202520ac
-  languageName: node
-  linkType: hard
-
-"@lingui/core@npm:^5.5.1":
-  version: 5.5.1
-  resolution: "@lingui/core@npm:5.5.1"
-  dependencies:
-    "@babel/runtime": "npm:^7.20.13"
-    "@lingui/message-utils": "npm:5.5.1"
-  peerDependencies:
-    "@lingui/babel-plugin-lingui-macro": 5.5.1
-    babel-plugin-macros: 2 || 3
-  peerDependenciesMeta:
-    "@lingui/babel-plugin-lingui-macro":
-      optional: true
-    babel-plugin-macros:
-      optional: true
-  checksum: 10c0/8d416fbefb63beec51e6e293f7143089db3a9910095482502099afd82ce873d20cefd69ecc489617da6f85e94ac1583c53825a906be8146db041c6b430b37b37
   languageName: node
   linkType: hard
 
@@ -9836,16 +9818,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/message-utils@npm:5.5.1":
-  version: 5.5.1
-  resolution: "@lingui/message-utils@npm:5.5.1"
-  dependencies:
-    "@messageformat/parser": "npm:^5.0.0"
-    js-sha256: "npm:^0.10.1"
-  checksum: 10c0/4049edf098d163a2f5eba2e3c00c6a7d3fd313fb3c9c382d34688bcf9391c0f123103d327d66aa694e78abd41b11fdb35034a5289a59222e1ae027bbc05cfb8a
-  languageName: node
-  linkType: hard
-
 "@lingui/message-utils@npm:^5.1.2":
   version: 5.1.2
   resolution: "@lingui/message-utils@npm:5.1.2"
@@ -9856,7 +9828,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lingui/react@npm:5.1.2, @lingui/react@npm:^5.1.2":
+"@lingui/react@npm:5.1.2":
   version: 5.1.2
   resolution: "@lingui/react@npm:5.1.2"
   dependencies:
