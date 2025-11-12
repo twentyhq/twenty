@@ -91,7 +91,6 @@ export const SettingsApplicationDetailEnvironmentVariablesTableRow = ({
         <LightIconButton
           accent="tertiary"
           Icon={IconCheck}
-          disabled={editedEnvVariable.value === ''}
           onClick={() => {
             onChange(editedEnvVariable);
             setEditMode(false);
