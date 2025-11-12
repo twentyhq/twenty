@@ -9,6 +9,7 @@ import { type GraphColor } from '@/page-layout/widgets/graph/types/GraphColor';
 import { type GroupByRawResult } from '@/page-layout/widgets/graph/types/GroupByRawResult';
 import { computeAggregateValueFromGroupByResult } from '@/page-layout/widgets/graph/utils/computeAggregateValueFromGroupByResult';
 import { formatDimensionValue } from '@/page-layout/widgets/graph/utils/formatDimensionValue';
+import { sortLineChartDataPoints } from '@/page-layout/widgets/graph/utils/sortLineChartDataPoints';
 import { isDefined } from 'twenty-shared/utils';
 import { type LineChartConfiguration } from '~/generated/graphql';
 
@@ -42,7 +43,7 @@ export const transformOneDimensionalGroupByToLineChartData = ({
     LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS,
   );
 
-  const data: LineChartDataPoint[] = limitedResults
+  const unsortedData: LineChartDataPoint[] = limitedResults
     .map((result) => {
       const dimensionValues = result.groupByDimensionValues;
 
@@ -76,6 +77,11 @@ export const transformOneDimensionalGroupByToLineChartData = ({
       };
     })
     .filter((point) => isDefined(point));
+
+  const data = sortLineChartDataPoints({
+    dataPoints: unsortedData,
+    orderBy: configuration.primaryAxisOrderBy,
+  });
 
   const series: LineChartSeries[] = [
     {
