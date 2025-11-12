@@ -317,7 +317,7 @@ export class FieldMetadataServiceV2 {
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
           createFieldInput,
           workspaceId,
-          workspaceCustomFlatApplication,
+          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
         }),
       );
     }

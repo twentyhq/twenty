@@ -3,7 +3,6 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -22,14 +21,14 @@ type FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs = {
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   sourceFlatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
-  workspaceCustomFlatApplication: FlatApplication;
+  workspaceCustomApplicationId: string;
 };
 export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   createFieldInput,
   existingFlatObjectMetadataMaps,
   sourceFlatObjectMetadata,
   workspaceId,
-  workspaceCustomFlatApplication,
+  workspaceCustomApplicationId,
 }: FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs): Promise<
   FieldInputTranspilationResult<{
     flatFieldMetadatas: FlatFieldMetadata[];
@@ -93,7 +92,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           targetFlatObjectMetadata,
           workspaceId,
           morphId,
-          workspaceCustomFlatApplication,
+          workspaceCustomApplicationId,
         });
 
       return {

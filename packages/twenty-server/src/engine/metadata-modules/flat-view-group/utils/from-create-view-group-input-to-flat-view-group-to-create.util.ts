@@ -1,18 +1,17 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
 
 export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
   createViewGroupInput: rawCreateViewGroupInput,
   workspaceId,
-  workspaceCustomFlatApplication,
+  workspaceCustomApplicationId,
 }: {
   createViewGroupInput: CreateViewGroupInput;
   workspaceId: string;
-  workspaceCustomFlatApplication: FlatApplication;
+  workspaceCustomApplicationId: string;
 }): FlatViewGroup => {
   const { fieldMetadataId, viewId, ...createViewGroupInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -36,6 +35,6 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
     isVisible: createViewGroupInput.isVisible ?? true,
     fieldValue: createViewGroupInput.fieldValue,
     position: createViewGroupInput.position ?? 0,
-    applicationId: workspaceCustomFlatApplication.id,
+    applicationId: workspaceCustomApplicationId,
   };
 };

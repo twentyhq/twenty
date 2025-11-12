@@ -2,18 +2,17 @@ import { ViewFilterOperand } from 'twenty-shared/types';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 
 export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
   createViewFilterInput: rawCreateViewFilterInput,
   workspaceId,
-  workspaceCustomFlatApplication,
+  workspaceCustomApplicationId,
 }: {
   createViewFilterInput: CreateViewFilterInput;
   workspaceId: string;
-  workspaceCustomFlatApplication: FlatApplication;
+  workspaceCustomApplicationId: string;
 }): FlatViewFilter => {
   const { fieldMetadataId, viewId, value, ...createViewFilterInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -47,6 +46,6 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
     positionInViewFilterGroup:
       createViewFilterInput.positionInViewFilterGroup ?? null,
     subFieldName: createViewFilterInput.subFieldName ?? null,
-    applicationId: workspaceCustomFlatApplication.id,
+    applicationId: workspaceCustomApplicationId,
   };
 };
