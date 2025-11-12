@@ -1,10 +1,11 @@
-import { getOsShortcutSeparator } from '@ui/utilities';
+import styled from '@emotion/styled';
 import {
   type ButtonAccent,
   type ButtonSize,
   type ButtonVariant,
 } from '@ui/input';
-import styled from '@emotion/styled';
+import { GRAY_SCALE_LIGHT } from '@ui/theme';
+import { getOsShortcutSeparator } from '@ui/utilities';
 
 const StyledSeparator = styled.div<{
   buttonSize: ButtonSize;
@@ -33,7 +34,7 @@ const StyledShortcutLabel = styled.div<{
   color: ${({ theme, variant, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return GRAY_SCALE_LIGHT.gray7;
       case 'danger':
         return variant === 'primary'
           ? theme.border.color.danger
