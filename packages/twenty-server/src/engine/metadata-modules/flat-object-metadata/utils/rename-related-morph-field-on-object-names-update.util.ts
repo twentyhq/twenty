@@ -1,16 +1,14 @@
 import {
+  FieldMetadataType,
   RelationType,
-  type FieldMetadataType,
   type FromTo,
 } from 'twenty-shared/types';
-import { computeMorphRelationFieldName } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, CustomError, isDefined } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-object-metadata-many-to-one-target-morph-relation-flat-field-metadatas-or-throw.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 
 type RenameRelatedMorphFieldOnObjectNamesUpdateArgs = FromTo<
@@ -24,19 +22,18 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
   toFlatObjectMetadata,
   flatFieldMetadataMaps,
 }: RenameRelatedMorphFieldOnObjectNamesUpdateArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
-  const objectFlatFieldMetadatas =
-    findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: fromFlatObjectMetadata.fieldMetadataIds,
-    });
-  const manyToOneMorphRelationFlatFieldMetadatas =
-    getFlatObjectMetadataTargetMorphRelationFlatFieldMetadatasOrThrow({
-      flatFieldMetadataMaps,
-      objectFlatFieldMetadatas,
-    });
+
+  const allMorphRelationFieldMetadatasWithRenamedObjectAsTarget = Object.values(
+    flatFieldMetadataMaps.byId,
+  ).filter(
+    (field): field is FlatFieldMetadata<FieldMetadataType.MORPH_RELATION> =>
+      isDefined(field) &&
+      field.type === FieldMetadataType.MORPH_RELATION &&
+      field.relationTargetObjectMetadataId === toFlatObjectMetadata.id,
+  );
 
   const updatedFlatFieldMetadatas =
-    manyToOneMorphRelationFlatFieldMetadatas.map(
+  allMorphRelationFieldMetadatasWithRenamedObjectAsTarget.map(
       (morphRelationFlatFieldMetadata) => {
         const isManyToOneRelationType =
           morphRelationFlatFieldMetadata.settings.relationType ===
@@ -47,6 +44,10 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
             nameSingular: fromFlatObjectMetadata.nameSingular,
             namePlural: fromFlatObjectMetadata.namePlural,
           });
+
+        if(!isDefined(toFlatObjectMetadata.nameSingular) || !isDefined(toFlatObjectMetadata.namePlural)) {
+          throw new CustomError('toFlatObjectMetadata.nameSingular and toFlatObjectMetadata.namePlural are required', 'TO_OBJECT_METADATA_NAME_SINGULAR_AND_PLURAL_REQUIRED_TO_COMPUTE_MORPH_RELATION_FIELD_NAME');
+        }
 
         const newMorphFieldName = computeMorphRelationFieldName({
           fieldName: initialMorphRelationFieldName,
