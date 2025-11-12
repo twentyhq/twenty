@@ -207,10 +207,10 @@ export const GraphWidgetBarChart = ({
     groupMode === 'stacked'
       ? calculateStackedBarChartValueRange(data, keys)
       : calculateValueRangeFromBarChartKeys(data, keys);
-  const effectiveMinimumValue = rangeMin ?? calculatedValueRange.min;
-  const effectiveMaximumValue = rangeMax ?? calculatedValueRange.max;
+  const effectiveMinimumValue = rangeMin ?? calculatedValueRange.minimum;
+  const effectiveMaximumValue = rangeMax ?? calculatedValueRange.maximum;
 
-  const hasNegativeValues = calculatedValueRange.min < 0;
+  const hasNegativeValues = calculatedValueRange.minimum < 0;
   const zeroMarker = hasNegativeValues
     ? [
         {

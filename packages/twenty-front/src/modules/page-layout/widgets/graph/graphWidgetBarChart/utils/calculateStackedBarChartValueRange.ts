@@ -1,16 +1,12 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
-
-type ValueRange = {
-  min: number;
-  max: number;
-};
+import { calculateValueRangeFromValues } from '@/page-layout/widgets/graph/utils/calculateValueRangeFromValues';
+import { type ChartValueRange } from '@/page-layout/widgets/graph/types/ChartValueRange';
 
 export const calculateStackedBarChartValueRange = (
   data: BarChartDataItem[],
   keys: string[],
-): ValueRange => {
-  let minimumValue = 0;
-  let maximumValue = 0;
+): ChartValueRange => {
+  const stackedValues: number[] = [];
 
   for (const item of data) {
     let positiveSummation = 0;
@@ -29,12 +25,8 @@ export const calculateStackedBarChartValueRange = (
       }
     }
 
-    maximumValue = Math.max(maximumValue, positiveSummation);
-    minimumValue = Math.min(minimumValue, negativeSummation);
+    stackedValues.push(positiveSummation, negativeSummation);
   }
 
-  minimumValue = Math.min(minimumValue, 0);
-  maximumValue = Math.max(maximumValue, 0);
-
-  return { min: minimumValue, max: maximumValue };
+  return calculateValueRangeFromValues(stackedValues);
 };

@@ -1,36 +1,18 @@
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
-
-type ValueRange = {
-  min: number;
-  max: number;
-};
+import { calculateValueRangeFromValues } from '@/page-layout/widgets/graph/utils/calculateValueRangeFromValues';
+import { type ChartValueRange } from '@/page-layout/widgets/graph/types/ChartValueRange';
 
 export const calculateValueRangeFromLineChartSeries = (
   data: LineChartSeries[],
-): ValueRange => {
-  let minimumValue = 0;
-  let maximumValue = 0;
+): ChartValueRange => {
+  const values: number[] = [];
 
   for (const series of data) {
     for (const point of series.data) {
       const value = Number(point.y ?? 0);
-      if (!isNaN(value)) {
-        if (value < minimumValue) {
-          minimumValue = value;
-        }
-        if (value > maximumValue) {
-          maximumValue = value;
-        }
-      }
+      values.push(value);
     }
   }
 
-  if (minimumValue > 0) {
-    minimumValue = 0;
-  }
-  if (maximumValue < 0) {
-    maximumValue = 0;
-  }
-
-  return { min: minimumValue, max: maximumValue };
+  return calculateValueRangeFromValues(values);
 };

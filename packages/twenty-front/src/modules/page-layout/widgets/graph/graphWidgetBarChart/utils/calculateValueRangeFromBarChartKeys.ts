@@ -1,31 +1,19 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
-
-type ValueRange = {
-  min: number;
-  max: number;
-};
+import { calculateValueRangeFromValues } from '@/page-layout/widgets/graph/utils/calculateValueRangeFromValues';
+import { type ChartValueRange } from '@/page-layout/widgets/graph/types/ChartValueRange';
 
 export const calculateValueRangeFromBarChartKeys = (
   data: BarChartDataItem[],
   keys: string[],
-): ValueRange => {
-  let minimumValue = 0;
-  let maximumValue = 0;
+): ChartValueRange => {
+  const values: number[] = [];
 
   for (const item of data) {
     for (const key of keys) {
       const value = Number(item[key] ?? 0);
-      if (isNaN(value)) {
-        continue;
-      }
-
-      minimumValue = Math.min(minimumValue, value);
-      maximumValue = Math.max(maximumValue, value);
+      values.push(value);
     }
   }
 
-  minimumValue = Math.min(minimumValue, 0);
-  maximumValue = Math.max(maximumValue, 0);
-
-  return { min: minimumValue, max: maximumValue };
+  return calculateValueRangeFromValues(values);
 };

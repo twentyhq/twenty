@@ -2,7 +2,7 @@ import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBa
 import { calculateValueRangeFromBarChartKeys } from '../calculateValueRangeFromBarChartKeys';
 
 describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
-  it('returns min=0 and max=highest value for all positive values', () => {
+  it('returns minimum=0 and maximum=highest value for all positive values', () => {
     const data: BarChartDataItem[] = [
       { category: 'A', v1: 10, v2: 20 },
       { category: 'B', v1: 30, v2: 15 },
@@ -11,12 +11,12 @@ describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
     const keys = ['v1', 'v2'];
 
     expect(calculateValueRangeFromBarChartKeys(data, keys)).toEqual({
-      min: 0,
-      max: 40,
+      minimum: 0,
+      maximum: 40,
     });
   });
 
-  it('returns min=lowest and max=0 for all negative values', () => {
+  it('returns minimum=lowest and maximum=0 for all negative values', () => {
     const data: BarChartDataItem[] = [
       { category: 'A', v1: -10, v2: -20 },
       { category: 'B', v1: -30, v2: -15 },
@@ -25,12 +25,12 @@ describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
     const keys = ['v1', 'v2'];
 
     expect(calculateValueRangeFromBarChartKeys(data, keys)).toEqual({
-      min: -40,
-      max: 0,
+      minimum: -40,
+      maximum: 0,
     });
   });
 
-  it('includes zero and spans min/max when values cross zero', () => {
+  it('includes zero and spans minimum/maximum when values cross zero', () => {
     const data: BarChartDataItem[] = [
       { category: 'A', v1: -20, v2: 30 },
       { category: 'B', v1: 15, v2: -10 },
@@ -39,21 +39,21 @@ describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
     const keys = ['v1', 'v2'];
 
     expect(calculateValueRangeFromBarChartKeys(data, keys)).toEqual({
-      min: -20,
-      max: 30,
+      minimum: -20,
+      maximum: 30,
     });
   });
 
   it('handles empty data and empty keys', () => {
     expect(calculateValueRangeFromBarChartKeys([], ['v'])).toEqual({
-      min: 0,
-      max: 0,
+      minimum: 0,
+      maximum: 0,
     });
     expect(
       calculateValueRangeFromBarChartKeys([{ cat: 'A', v: 10 }], []),
     ).toEqual({
-      min: 0,
-      max: 0,
+      minimum: 0,
+      maximum: 0,
     });
   });
 
@@ -66,8 +66,8 @@ describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
     const keys = ['v1', 'v2'];
 
     expect(calculateValueRangeFromBarChartKeys(data, keys)).toEqual({
-      min: 0,
-      max: 30,
+      minimum: 0,
+      maximum: 30,
     });
   });
 });

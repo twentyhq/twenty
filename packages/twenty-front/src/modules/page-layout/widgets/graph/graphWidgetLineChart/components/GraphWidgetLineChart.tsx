@@ -97,8 +97,8 @@ export const GraphWidgetLineChart = ({
   };
 
   const calculatedValueRange = calculateValueRangeFromLineChartSeries(data);
-  const effectiveMinimumValue = rangeMin ?? calculatedValueRange.min;
-  const effectiveMaximumValue = rangeMax ?? calculatedValueRange.max;
+  const effectiveMinimumValue = rangeMin ?? calculatedValueRange.minimum;
+  const effectiveMaximumValue = rangeMax ?? calculatedValueRange.maximum;
 
   const {
     dataMap,
