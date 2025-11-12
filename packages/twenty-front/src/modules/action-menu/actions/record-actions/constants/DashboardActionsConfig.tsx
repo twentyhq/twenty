@@ -1,5 +1,4 @@
 import { NoSelectionRecordActionKeys } from '@/action-menu/actions/record-actions/no-selection/types/NoSelectionRecordActionsKeys';
-import { AddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/components/AddToFavoritesSingleRecordAction';
 import { CancelDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/CancelDashboardSingleRecordAction';
 import { EditDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/EditDashboardSingleRecordAction';
 import { SaveDashboardSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/dashboard-actions/components/SaveDashboardSingleRecordAction';
@@ -11,37 +10,16 @@ import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { PageLayoutSingleRecordActionKeys } from '@/page-layout/actions/PageLayoutSingleRecordActionKeys';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconDeviceFloppy,
-  IconHeart,
-  IconPencil,
-  IconX,
-} from 'twenty-ui/display';
+import { IconDeviceFloppy, IconPencil, IconX } from 'twenty-ui/display';
 
 export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
   config: {
-    [PageLayoutSingleRecordActionKeys.ADD_TO_FAVORITES_READ_MODE]: {
-      key: PageLayoutSingleRecordActionKeys.ADD_TO_FAVORITES_READ_MODE,
-      label: msg`Add to favorites`,
-      shortLabel: msg`Add to favorites`,
-      isPinned: true,
-      position: 0,
-      Icon: IconHeart,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
-        isDefined(selectedRecord) &&
-        !selectedRecord?.isRemote &&
-        !isDefined(selectedRecord?.deletedAt),
-      availableOn: [ActionViewType.SHOW_PAGE],
-      component: <AddToFavoritesSingleRecordAction />,
-    },
     [PageLayoutSingleRecordActionKeys.EDIT_LAYOUT]: {
       key: PageLayoutSingleRecordActionKeys.EDIT_LAYOUT,
       label: msg`Edit Dashboard`,
       shortLabel: msg`Edit`,
       isPinned: true,
-      position: 1,
+      position: 2,
       Icon: IconPencil,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
@@ -53,30 +31,13 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <EditDashboardSingleRecordAction />,
     },
-    [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: {
-      key: PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION,
-      label: msg`Cancel Edition`,
-      shortLabel: msg`Cancel`,
-      isPinned: true,
-      position: 0,
-      Icon: IconX,
-      type: ActionType.Standard,
-      scope: ActionScope.RecordSelection,
-      shouldBeRegistered: ({ selectedRecord }) =>
-        isDefined(selectedRecord) &&
-        !selectedRecord?.isRemote &&
-        !isDefined(selectedRecord?.deletedAt) &&
-        isDefined(selectedRecord?.pageLayoutId),
-      availableOn: [ActionViewType.SHOW_PAGE],
-      component: <CancelDashboardSingleRecordAction />,
-    },
     [PageLayoutSingleRecordActionKeys.SAVE_LAYOUT]: {
       key: PageLayoutSingleRecordActionKeys.SAVE_LAYOUT,
       label: msg`Save Dashboard`,
       shortLabel: msg`Save`,
       isPinned: true,
       isPrimaryCTA: true,
-      position: 1,
+      position: 0,
       Icon: IconDeviceFloppy,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
@@ -87,6 +48,23 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
         isDefined(selectedRecord?.pageLayoutId),
       availableOn: [ActionViewType.SHOW_PAGE],
       component: <SaveDashboardSingleRecordAction />,
+    },
+    [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: {
+      key: PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION,
+      label: msg`Cancel Edition`,
+      shortLabel: msg`Cancel`,
+      isPinned: true,
+      position: 1,
+      Icon: IconX,
+      type: ActionType.Standard,
+      scope: ActionScope.RecordSelection,
+      shouldBeRegistered: ({ selectedRecord }) =>
+        isDefined(selectedRecord) &&
+        !selectedRecord?.isRemote &&
+        !isDefined(selectedRecord?.deletedAt) &&
+        isDefined(selectedRecord?.pageLayoutId),
+      availableOn: [ActionViewType.SHOW_PAGE],
+      component: <CancelDashboardSingleRecordAction />,
     },
   },
   actionKeys: [
@@ -108,61 +86,62 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
     NoSelectionRecordActionKeys.GO_TO_NOTES,
   ],
   propertiesToOverwrite: {
+    [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
+      position: 0,
+      label: msg`Navigate to previous dashboard`,
+    },
+    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
+      position: 1,
+      label: msg`Navigate to next dashboard`,
+    },
     [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
       position: 0,
       label: msg`Create new dashboard`,
     },
-    [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
-      position: 3,
-      isPinned: false,
-    },
-    [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
-      position: 4,
-    },
     [SingleRecordActionKeys.DELETE]: {
-      position: 2,
+      position: 3,
       label: msg`Delete dashboard`,
     },
-    [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
+    [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
+      position: 4,
+      isPinned: true,
+    },
+    [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       position: 5,
+      isPinned: true,
+    },
+    [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
+      position: 6,
       label: msg`Export dashboard`,
     },
     [SingleRecordActionKeys.DESTROY]: {
-      position: 6,
+      position: 7,
       label: msg`Permanently destroy dashboard`,
     },
     [SingleRecordActionKeys.RESTORE]: {
-      position: 7,
+      position: 8,
       label: msg`Restore dashboard`,
     },
-    [SingleRecordActionKeys.NAVIGATE_TO_PREVIOUS_RECORD]: {
-      position: 8,
-      label: msg`Navigate to previous dashboard`,
-    },
-    [SingleRecordActionKeys.NAVIGATE_TO_NEXT_RECORD]: {
-      position: 9,
-      label: msg`Navigate to next dashboard`,
-    },
     [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
-      position: 10,
+      position: 9,
     },
     [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
-      position: 11,
+      position: 10,
     },
     [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
-      position: 12,
+      position: 11,
     },
     [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
-      position: 13,
+      position: 12,
     },
     [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
-      position: 14,
+      position: 13,
     },
     [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
-      position: 15,
+      position: 14,
     },
     [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
-      position: 16,
+      position: 15,
     },
   },
 });
