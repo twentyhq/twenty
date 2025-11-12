@@ -24,7 +24,7 @@ type FieldOptions<
   isNullable?: boolean;
 };
 
-export const FieldMetadata = <T extends FieldMetadataType>(
+export const Field = <T extends FieldMetadataType>(
   _: FieldOptions<T>,
 ): PropertyDecorator => {
   return () => {};

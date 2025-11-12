@@ -1180,6 +1180,13 @@ export type DomainValidRecords = {
   records: Array<DomainRecord>;
 };
 
+export type DuplicateWorkflowInput = {
+  /** Workflow ID to duplicate */
+  workflowIdToDuplicate: Scalars['UUID'];
+  /** Workflow version ID to copy */
+  workflowVersionIdToCopy: Scalars['UUID'];
+};
+
 export type DuplicateWorkflowVersionStepInput = {
   stepId: Scalars['String'];
   workflowVersionId: Scalars['String'];
@@ -1833,6 +1840,7 @@ export type Mutation = {
   destroyPageLayoutTab: Scalars['Boolean'];
   destroyPageLayoutWidget: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
+  duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLinkOutput;
@@ -2368,6 +2376,11 @@ export type MutationDestroyPageLayoutTabArgs = {
 
 export type MutationDestroyPageLayoutWidgetArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationDuplicateWorkflowArgs = {
+  input: DuplicateWorkflowInput;
 };
 
 
@@ -6305,6 +6318,13 @@ export type DeleteWorkflowVersionStepMutationVariables = Exact<{
 
 
 export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
+
+export type DuplicateWorkflowMutationVariables = Exact<{
+  input: DuplicateWorkflowInput;
+}>;
+
+
+export type DuplicateWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'WorkflowVersionDTO', id: string, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string, workflowId: string } };
 
 export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
   input: DuplicateWorkflowVersionStepInput;
@@ -14093,6 +14113,46 @@ export function useDeleteWorkflowVersionStepMutation(baseOptions?: Apollo.Mutati
 export type DeleteWorkflowVersionStepMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionStepMutation>;
 export type DeleteWorkflowVersionStepMutationResult = Apollo.MutationResult<DeleteWorkflowVersionStepMutation>;
 export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
+export const DuplicateWorkflowDocument = gql`
+    mutation DuplicateWorkflow($input: DuplicateWorkflowInput!) {
+  duplicateWorkflow(input: $input) {
+    id
+    name
+    status
+    trigger
+    steps
+    createdAt
+    updatedAt
+    workflowId
+  }
+}
+    `;
+export type DuplicateWorkflowMutationFn = Apollo.MutationFunction<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
+
+/**
+ * __useDuplicateWorkflowMutation__
+ *
+ * To run a mutation, you first call `useDuplicateWorkflowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDuplicateWorkflowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [duplicateWorkflowMutation, { data, loading, error }] = useDuplicateWorkflowMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDuplicateWorkflowMutation(baseOptions?: Apollo.MutationHookOptions<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>(DuplicateWorkflowDocument, options);
+      }
+export type DuplicateWorkflowMutationHookResult = ReturnType<typeof useDuplicateWorkflowMutation>;
+export type DuplicateWorkflowMutationResult = Apollo.MutationResult<DuplicateWorkflowMutation>;
+export type DuplicateWorkflowMutationOptions = Apollo.BaseMutationOptions<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
 export const DuplicateWorkflowVersionStepDocument = gql`
     mutation DuplicateWorkflowVersionStep($input: DuplicateWorkflowVersionStepInput!) {
   duplicateWorkflowVersionStep(input: $input) {
