@@ -10,7 +10,6 @@ import { MigrateAttachmentAuthorToCreatedByCommand } from 'src/database/commands
 import { MigrateAttachmentTypeToFileCategoryCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-attachment-type-to-file-category.command';
 import { MigrateChannelPartialFullSyncStagesCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-migrate-channel-partial-full-sync-stages.command';
 import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-regenerate-search-vectors.command';
-import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-seed-dashboard-view.command';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -43,7 +42,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     AddWorkflowRunStopStatusesCommand,
     CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     MakeSureDashboardNamingAvailableCommand,
-    SeedDashboardViewCommand,
     CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
     FlushCacheCommand,
   ],
@@ -55,7 +53,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     CleanOrphanedKanbanAggregateOperationFieldMetadataIdCommand,
     MigrateChannelPartialFullSyncStagesCommand,
     MakeSureDashboardNamingAvailableCommand,
-    SeedDashboardViewCommand,
     CreateViewKanbanFieldMetadataIdForeignKeyMigrationCommand,
     FlushCacheCommand,
   ],
