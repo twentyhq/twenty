@@ -10,6 +10,7 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
@@ -25,12 +26,14 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 export type FromCreateFieldInputToFlatObjectMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   workspaceId: string;
+  workspaceCustomFlatApplication: FlatApplication;
 } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 
 export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   createFieldInput: rawCreateFieldInput,
   workspaceId,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+  workspaceCustomFlatApplication,
 }: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<
   FieldInputTranspilationResult<{
     flatFieldMetadatas: FlatFieldMetadata[];
@@ -71,6 +74,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     createFieldInput,
     workspaceId,
     fieldMetadataId,
+    workspaceCustomFlatApplication,
   });
 
   switch (createFieldInput.type) {

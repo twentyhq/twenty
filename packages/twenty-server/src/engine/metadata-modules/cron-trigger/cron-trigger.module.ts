@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CronTriggerCronCommand } from 'src/engine/metadata-modules/cron-trigger/crons/commands/cron-trigger.cron.command';
 import { CronTriggerCronJob } from 'src/engine/metadata-modules/cron-trigger/crons/jobs/cron-trigger.cron.job';
@@ -15,6 +16,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity, CronTriggerEntity]),
+    ApplicationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     PermissionsModule,
     WorkspaceMigrationV2Module,

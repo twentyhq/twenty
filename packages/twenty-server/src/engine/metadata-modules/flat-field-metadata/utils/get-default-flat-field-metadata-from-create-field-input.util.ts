@@ -1,5 +1,6 @@
 import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
@@ -9,11 +10,13 @@ type GetDefaultFlatFieldMetadataArgs = {
   fieldMetadataId: string;
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   workspaceId: string;
+  workspaceCustomFlatApplication: FlatApplication;
 };
 export const getDefaultFlatFieldMetadata = ({
   createFieldInput,
   fieldMetadataId,
   workspaceId,
+  workspaceCustomFlatApplication,
 }: GetDefaultFlatFieldMetadataArgs) => {
   const { defaultValue, settings } = extractAndSanitizeObjectStringFields(
     createFieldInput,
@@ -56,7 +59,7 @@ export const getDefaultFlatFieldMetadata = ({
     updatedAt: createdAt,
     isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
     morphId: null,
-    applicationId: createFieldInput.applicationId ?? null,
+    applicationId: workspaceCustomFlatApplication.id,
     viewFilterIds: [],
     viewGroupIds: [],
     kanbanAggregateOperationViewIds: [],
