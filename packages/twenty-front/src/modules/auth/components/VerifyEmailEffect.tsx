@@ -73,11 +73,10 @@ export const VerifyEmailEffect = () => {
           return enqueueSuccessSnackBar(successSnackbarParams);
         }
 
-        const { loginToken, workspaceUrls } =
-          await verifyEmailAndGetLoginToken(
-            emailVerificationToken,
-            email,
-          );
+        const { loginToken, workspaceUrls } = await verifyEmailAndGetLoginToken(
+          emailVerificationToken,
+          email,
+        );
 
         enqueueSuccessSnackBar(successSnackbarParams);
 

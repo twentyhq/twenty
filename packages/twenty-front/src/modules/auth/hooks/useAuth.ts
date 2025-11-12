@@ -23,7 +23,7 @@ import {
   useSignUpMutation,
   useVerifyEmailAndGetLoginTokenMutation,
   useVerifyEmailAndGetWorkspaceAgnosticTokenMutation,
-  type AuthTokenPair
+  type AuthTokenPair,
 } from '~/generated-metadata/graphql';
 
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
@@ -272,14 +272,13 @@ export const useAuth = () => {
       email: string,
       captchaToken?: string,
     ) => {
-      const { data, errors } =
-        await verifyEmailAndGetWorkspaceAgnosticToken({
-          variables: {
-            email,
-            emailVerificationToken,
-            captchaToken,
-          },
-        });
+      const { data, errors } = await verifyEmailAndGetWorkspaceAgnosticToken({
+        variables: {
+          email,
+          emailVerificationToken,
+          captchaToken,
+        },
+      });
 
       if (isDefined(errors)) {
         throw errors;
@@ -289,9 +288,7 @@ export const useAuth = () => {
         throw new Error('No workspace agnostic token in result');
       }
 
-      handleSetAuthTokens(
-        data.verifyEmailAndGetWorkspaceAgnosticToken.tokens,
-      );
+      handleSetAuthTokens(data.verifyEmailAndGetWorkspaceAgnosticToken.tokens);
 
       const { user } = await loadCurrentUser();
 
@@ -683,8 +680,7 @@ export const useAuth = () => {
     getLoginTokenFromCredentials: handleGetLoginTokenFromCredentials,
     verifyEmailAndGetWorkspaceAgnosticToken:
       handleverifyEmailAndGetWorkspaceAgnosticToken,
-    verifyEmailAndGetLoginToken:
-      handleverifyEmailAndGetLoginToken,
+    verifyEmailAndGetLoginToken: handleverifyEmailAndGetLoginToken,
     getAuthTokensFromLoginToken: handleGetAuthTokensFromLoginToken,
     checkUserExists: { checkUserExistsData, checkUserExistsQuery },
     clearSession,

@@ -22,12 +22,6 @@ const StyledFieldRow = styled.div`
   gap: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledHelperText = styled.p`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin: 0;
-`;
-
 export const EmailField = () => {
   const { t } = useLingui();
   const currentUser = useRecoilValue(currentUserState);
