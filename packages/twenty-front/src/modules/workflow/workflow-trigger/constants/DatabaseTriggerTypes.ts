@@ -1,5 +1,9 @@
 import { type WorkflowTriggerType } from '@/workflow/types/Workflow';
-import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
+import { type DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
+import { RECORD_IS_CREATED_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/RecordIsCreatedTrigger';
+import { RECORD_IS_DELETED_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/RecordIsDeletedTrigger';
+import { RECORD_IS_UPDATED_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/RecordIsUpdatedTrigger';
+import { RECORD_UPSERTED_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/RecordUpsertedTrigger';
 
 export const DATABASE_TRIGGER_TYPES: Array<{
   defaultLabel: DatabaseTriggerDefaultLabel;
@@ -7,28 +11,8 @@ export const DATABASE_TRIGGER_TYPES: Array<{
   icon: string;
   event: string;
 }> = [
-  {
-    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
-    type: 'DATABASE_EVENT',
-    icon: 'IconPlaylistAdd',
-    event: 'created',
-  },
-  {
-    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
-    type: 'DATABASE_EVENT',
-    icon: 'IconRefreshDot',
-    event: 'updated',
-  },
-  {
-    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
-    type: 'DATABASE_EVENT',
-    icon: 'IconTrash',
-    event: 'deleted',
-  },
-  {
-    defaultLabel: DatabaseTriggerDefaultLabel.RECORD_UPSERTED,
-    type: 'DATABASE_EVENT',
-    icon: 'IconPencilPlus',
-    event: 'upserted',
-  },
+  RECORD_IS_CREATED_TRIGGER,
+  RECORD_IS_UPDATED_TRIGGER,
+  RECORD_IS_DELETED_TRIGGER,
+  RECORD_UPSERTED_TRIGGER,
 ];

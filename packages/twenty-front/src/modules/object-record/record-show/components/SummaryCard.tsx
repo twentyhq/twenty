@@ -50,7 +50,6 @@ export const SummaryCard = ({
 
   const recordIdentifier = useRecoilValue(
     recordStoreIdentifierFamilySelector({
-      objectNameSingular,
       recordId: objectRecordId,
     }),
   );

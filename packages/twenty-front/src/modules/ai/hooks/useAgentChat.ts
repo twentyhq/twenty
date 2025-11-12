@@ -1,31 +1,30 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import {
-  type AIChatObjectMetadataAndRecordContext,
-  agentChatContextState,
-} from '@/ai/states/agentChatContextState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
 import { isAgentChatCurrentContextActiveState } from '@/ai/states/isAgentChatCurrentContextActiveState';
-import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
+
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import { renewToken } from '@/auth/services/AuthService';
+import { tokenPairState } from '@/auth/states/tokenPairState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { cookieStorage } from '~/utils/cookie-storage';
 import { REST_API_BASE_URL } from '../../apollo/constant/rest-api-base-url';
 import { agentChatInputState } from '../states/agentChatInputState';
 
-export const useAgentChat = (
-  agentId: string,
-  uiMessages: UIMessageWithMetadata[],
-) => {
+export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
+  const setTokenPair = useSetRecoilState(tokenPairState);
+
   const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
@@ -38,10 +37,6 @@ export const useAgentChat = (
 
   const agentChatSelectedFiles = useRecoilValue(agentChatSelectedFilesState);
 
-  const [agentChatContext, setAgentChatContext] = useRecoilState(
-    agentChatContextState,
-  );
-
   const currentAIChatThread = useRecoilValue(currentAIChatThreadState);
 
   const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useRecoilState(
@@ -51,25 +46,76 @@ export const useAgentChat = (
   const [agentChatInput, setAgentChatInput] =
     useRecoilState(agentChatInputState);
 
-  const scrollWrapperId = `scroll-wrapper-ai-chat-${agentId}`;
+  const scrollWrapperId = `scroll-wrapper-ai-chat-${currentAIChatThread}`;
 
   const { scrollWrapperHTMLElement } =
     useScrollWrapperHTMLElement(scrollWrapperId);
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const retryFetchWithRenewedToken = async (
+    input: RequestInfo | URL,
+    init?: RequestInit,
+  ) => {
+    const tokenPair = getTokenPair();
 
-  const { sendMessage, messages, status, error } = useChat({
+    if (!isDefined(tokenPair)) {
+      return null;
+    }
+
+    try {
+      const renewedTokens = await renewToken(
+        `${REACT_APP_SERVER_BASE_URL}/graphql`,
+        tokenPair,
+      );
+
+      if (!isDefined(renewedTokens)) {
+        setTokenPair(null);
+        return null;
+      }
+
+      const renewedAccessToken =
+        renewedTokens.accessOrWorkspaceAgnosticToken?.token;
+
+      if (!isDefined(renewedAccessToken)) {
+        setTokenPair(null);
+        return null;
+      }
+
+      cookieStorage.setItem('tokenPair', JSON.stringify(renewedTokens));
+      setTokenPair(renewedTokens);
+
+      const updatedHeaders = new Headers(init?.headers ?? {});
+      updatedHeaders.set('Authorization', `Bearer ${renewedAccessToken}`);
+
+      return fetch(input, {
+        ...init,
+        headers: updatedHeaders,
+      });
+    } catch {
+      setTokenPair(null);
+      return null;
+    }
+  };
+
+  const { sendMessage, messages, status, error, regenerate } = useChat({
     transport: new DefaultChatTransport({
       api: `${REST_API_BASE_URL}/agent-chat/stream`,
       headers: () => ({
         Authorization: `Bearer ${getTokenPair()?.accessOrWorkspaceAgnosticToken.token}`,
       }),
+      fetch: async (input, init) => {
+        const response = await fetch(input, init);
+
+        if (response.status !== 401) {
+          return response;
+        }
+
+        const retriedResponse = await retryFetchWithRenewedToken(input, init);
+
+        return retriedResponse ?? response;
+      },
     }),
     messages: uiMessages,
     id: `${currentAIChatThread}-${uiMessages.length}`,
-    onError: (error) => {
-      enqueueErrorSnackBar({ message: error.message });
-    },
   });
 
   const isStreaming = status === 'streaming';
@@ -124,22 +170,15 @@ export const useAgentChat = (
     setTimeout(scrollToBottom, 100);
   };
 
-  const handleSetContext = async (
-    items: Array<AIChatObjectMetadataAndRecordContext>,
-  ) => {
-    setAgentChatContext(items);
-  };
-
   return {
     handleInputChange: (value: string) => setAgentChatInput(value),
     messages,
     input: agentChatInput,
-    context: agentChatContext,
-    handleSetContext,
     handleSendMessage,
     isLoading,
     scrollWrapperId,
     isStreaming,
     error,
+    handleRetry: regenerate,
   };
 };

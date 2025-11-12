@@ -123,7 +123,7 @@ export const GraphWidgetGaugeChart = ({
     return (
       <GraphWidgetTooltip
         items={[tooltipData.tooltipItem]}
-        showClickHint={tooltipData.showClickHint}
+        linkTo={tooltipData.linkTo}
       />
     );
   };
@@ -169,7 +169,6 @@ export const GraphWidgetGaugeChart = ({
           {
             id: 'gauge',
             label: data.label || t`Value`,
-            formattedValue: formattedValue,
             color: colorScheme.solid,
           },
         ]}

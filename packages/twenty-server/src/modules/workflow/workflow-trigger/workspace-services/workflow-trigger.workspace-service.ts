@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
+import { type ActorMetadata } from 'twenty-shared/types';
 
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -142,6 +142,13 @@ export class WorkflowTriggerWorkspaceService {
     return true;
   }
 
+  async stopWorkflowRun(workflowRunId: string) {
+    return this.workflowRunnerWorkspaceService.stopWorkflowRun(
+      this.getWorkspaceId(),
+      workflowRunId,
+    );
+  }
+
   private async performActivationSteps(
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
@@ -214,7 +221,7 @@ export class WorkflowTriggerWorkspaceService {
         'Cannot have more than one active workflow version',
         WorkflowTriggerExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: t`Cannot have more than one active workflow version`,
+          userFriendlyMessage: msg`Cannot have more than one active workflow version`,
         },
       );
     }
@@ -240,7 +247,7 @@ export class WorkflowTriggerWorkspaceService {
         'Cannot disable non-active workflow version',
         WorkflowTriggerExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: t`Cannot disable non-active workflow version`,
+          userFriendlyMessage: msg`Cannot disable non-active workflow version`,
         },
       );
     }

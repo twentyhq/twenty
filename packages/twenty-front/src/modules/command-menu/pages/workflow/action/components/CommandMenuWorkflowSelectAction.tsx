@@ -17,9 +17,6 @@ export const CommandMenuWorkflowSelectAction = ({
   onActionSelected: (actionType: WorkflowActionType) => void;
 }) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const isIteratorEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
-  );
 
   const { t } = useLingui();
 
@@ -49,9 +46,7 @@ export const CommandMenuWorkflowSelectAction = ({
         {t`Flow`}
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={FLOW_ACTIONS.filter(
-          (action) => action.type !== 'ITERATOR' || isIteratorEnabled,
-        )}
+        actions={FLOW_ACTIONS}
         onClick={onActionSelected}
       />
 

@@ -1,6 +1,6 @@
-import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
-import { t } from '@lingui/core/macro';
+import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
+import { plural, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip } from 'twenty-ui/display';
 
@@ -27,9 +27,10 @@ export const PageLayoutWidgetForbiddenDisplay = ({
       restriction.fieldNames.length > 0
     ) {
       const fieldsList = restriction.fieldNames.join(', ');
-      const fieldWord =
-        restriction.fieldNames.length === 1 ? 'field' : 'fields';
-      return t`You do not have permission to access the ${fieldsList} ${fieldWord}`;
+      return plural(restriction.fieldNames.length, {
+        one: `You do not have permission to access the ${fieldsList} field`,
+        other: `You do not have permission to access the ${fieldsList} fields`,
+      });
     }
 
     return t`You do not have permission to view this widget`;

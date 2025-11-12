@@ -2,24 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMPTY_FLAT_ENTITY_MAPS } from 'src/engine/core-modules/common/constant/empty-flat-entity-maps.constant';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/get-sub-flat-entity-maps-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/core-modules/common/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
-import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
-import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
-import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
-import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
-import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/core-modules/view/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findObjectFieldsInFlatFieldMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-object-fields-in-flat-field-metadata-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
-import { fromUpdateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata.util';
+import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
+import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/metadata-modules/flat-view-field/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
+import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -28,6 +22,8 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { ViewKey } from 'src/engine/metadata-modules/view/enums/view-key.enum';
+import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
@@ -55,6 +51,8 @@ export class ObjectMetadataServiceV2 {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatViewMaps: existingFlatViewMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -62,70 +60,61 @@ export class ObjectMetadataServiceV2 {
           'flatObjectMetadataMaps',
           'flatIndexMaps',
           'flatFieldMetadataMaps',
+          'flatViewFieldMaps',
+          'flatViewMaps',
         ],
       },
     );
 
     const {
-      flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
-      otherObjectFlatFieldMetadataToUpdate: otherObjectFlatFieldMetadatas,
-      flatIndexMetadataToUpdate,
-    } = fromUpdateObjectInputToFlatObjectMetadata({
+      otherObjectFlatFieldMetadatasToUpdate,
+      flatObjectMetadataToUpdate,
+      flatIndexMetadatasToUpdate,
+      flatViewFieldsToCreate,
+      flatViewFieldsToUpdate,
+    } = fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities({
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       updateObjectInput,
       flatIndexMaps: existingFlatIndexMaps,
+      flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatViewMaps: existingFlatViewMaps,
     });
-
-    const toFlatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: optimisticallyUpdatedFlatObjectMetadata,
-      flatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
-    });
-
-    const toFlatFieldMetadataMaps = otherObjectFlatFieldMetadatas.reduce(
-      (flatFieldMaps, flatFieldMetadata) =>
-        replaceFlatEntityInFlatEntityMapsOrThrow({
-          flatEntity: flatFieldMetadata,
-          flatEntityMaps: flatFieldMaps,
-        }),
-      getSubFlatEntityMapsOrThrow({
-        flatEntityIds: otherObjectFlatFieldMetadatas.map(({ id }) => id),
-        flatEntityMaps: existingFlatFieldMetadataMaps,
-      }),
-    );
-
-    const toFlatIndexMaps = flatIndexMetadataToUpdate.reduce(
-      (flatIndexMaps, flatIndexMetadata) =>
-        replaceFlatEntityInFlatEntityMapsOrThrow({
-          flatEntity: flatIndexMetadata,
-          flatEntityMaps: flatIndexMaps,
-        }),
-      getSubFlatEntityMapsOrThrow({
-        flatEntityIds: flatIndexMetadataToUpdate.map(({ id }) => id),
-        flatEntityMaps: existingFlatIndexMaps,
-      }),
-    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatObjectMetadataMaps: {
-              from: existingFlatObjectMetadataMaps,
-              to: toFlatObjectMetadataMaps,
-            },
-            flatIndexMaps: {
-              from: existingFlatIndexMaps,
-              to: toFlatIndexMaps,
-            },
-            flatFieldMetadataMaps: {
-              from: existingFlatFieldMetadataMaps,
-              to: toFlatFieldMetadataMaps,
-            },
+            flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatObjectMetadataMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [flatObjectMetadataToUpdate],
+            }),
+            flatIndexMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatIndexMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: flatIndexMetadatasToUpdate,
+            }),
+            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatFieldMetadataMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: otherObjectFlatFieldMetadatasToUpdate,
+            }),
+            flatViewFieldMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFieldMaps,
+              flatEntityToCreate: flatViewFieldsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: flatViewFieldsToUpdate,
+            }),
+          },
+          dependencyAllFlatEntityMaps: {
+            flatViewMaps: existingFlatViewMaps,
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },
@@ -147,9 +136,7 @@ export class ObjectMetadataServiceV2 {
       );
 
     const updatedFlatObjectMetadata =
-      recomputedFlatObjectMetadataMaps.byId[
-        optimisticallyUpdatedFlatObjectMetadata.id
-      ];
+      recomputedFlatObjectMetadataMaps.byId[flatObjectMetadataToUpdate.id];
 
     if (!isDefined(updatedFlatObjectMetadata)) {
       throw new ObjectMetadataException(
@@ -204,73 +191,35 @@ export class ObjectMetadataServiceV2 {
       deleteObjectInput,
     });
 
-    const impactedObjectMetadataIds = Array.from(
-      new Set(
-        flatFieldMetadatasToDelete.map(
-          (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
-        ),
-      ),
-    );
-
-    const fromFlatObjectMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityMaps: existingFlatObjectMetadataMaps,
-      flatEntityIds: impactedObjectMetadataIds,
-    });
-
-    const toFlatObjectMetadataMaps = deleteFlatEntityFromFlatEntityMapsOrThrow({
-      entityToDeleteId: flatObjectMetadataToDelete.id,
-      flatEntityMaps: fromFlatObjectMetadataMaps,
-    });
-
-    const fromFlatFieldMetadataMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityMaps: existingFlatFieldMetadataMaps,
-      flatEntityIds: flatFieldMetadatasToDelete.map(
-        (flatField) => flatField.id,
-      ),
-    });
-
-    const toFlatFieldMetadataMaps = flatFieldMetadatasToDelete.reduce(
-      (flatFieldMaps, flatField) =>
-        deleteFlatEntityFromFlatEntityMapsOrThrow({
-          entityToDeleteId: flatField.id,
-          flatEntityMaps: flatFieldMaps,
-        }),
-      fromFlatFieldMetadataMaps,
-    );
-
-    const fromFlatIndexMaps = getSubFlatEntityMapsOrThrow({
-      flatEntityIds: flatIndexToDelete.map((flatIndex) => flatIndex.id),
-      flatEntityMaps: existingFlatIndexMaps,
-    });
-
-    const toFlatIndexMaps = flatIndexToDelete.reduce(
-      (flatIndexMaps, flatIndex) =>
-        deleteFlatEntityFromFlatEntityMapsOrThrow({
-          entityToDeleteId: flatIndex.id,
-          flatEntityMaps: flatIndexMaps,
-        }),
-      fromFlatIndexMaps,
-    );
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatObjectMetadataMaps: {
-              from: fromFlatObjectMetadataMaps,
-              to: toFlatObjectMetadataMaps,
-            },
-            flatIndexMaps: {
-              from: fromFlatIndexMaps,
-              to: toFlatIndexMaps,
-            },
-            flatFieldMetadataMaps: {
-              from: fromFlatFieldMetadataMaps,
-              to: toFlatFieldMetadataMaps,
-            },
+            flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatObjectMetadataMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: [flatObjectMetadataToDelete],
+              flatEntityToUpdate: [],
+            }),
+            flatIndexMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatIndexMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: flatIndexToDelete,
+              flatEntityToUpdate: [],
+            }),
+            flatFieldMetadataMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatFieldMetadataMaps,
+              flatEntityToCreate: [],
+              flatEntityToDelete: flatFieldMetadatasToDelete,
+              flatEntityToUpdate: [],
+            }),
           },
           buildOptions: {
-            inferDeletionFromMissingEntities: true,
+            inferDeletionFromMissingEntities: {
+              objectMetadata: true,
+              fieldMetadata: true,
+              index: true,
+            },
             isSystemBuild,
           },
           workspaceId,
@@ -326,21 +275,14 @@ export class ObjectMetadataServiceV2 {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
-    const toFlatFieldMetadataMaps = [
-      ...flatFieldMetadataToCreateOnObject,
-      ...relationTargetFlatFieldMetadataToCreate,
-    ].reduce(
-      (flatFieldMaps, flatField) =>
-        addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: flatField,
-          flatEntityMaps: flatFieldMaps,
-        }),
-      EMPTY_FLAT_ENTITY_MAPS,
-    );
-
-    const toFlatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: flatObjectMetadataToCreate,
-      flatEntityMaps: EMPTY_FLAT_ENTITY_MAPS,
+    const flatFieldMetadataMapsFromTo = computeFlatEntityMapsFromTo({
+      flatEntityMaps: existingFlatFieldMetadataMaps,
+      flatEntityToCreate: [
+        ...flatFieldMetadataToCreateOnObject,
+        ...relationTargetFlatFieldMetadataToCreate,
+      ],
+      flatEntityToDelete: [],
+      flatEntityToUpdate: [],
     });
 
     const flatDefaultViewToCreate = await this.createDefaultFlatView({
@@ -348,69 +290,52 @@ export class ObjectMetadataServiceV2 {
       workspaceId,
     });
 
-    const toFlatViewMaps = addFlatEntityToFlatEntityMapsOrThrow({
-      flatEntity: flatDefaultViewToCreate,
-      flatEntityMaps: existingFlatViewMaps,
-    });
-
-    const { objectFlatFieldMetadatas } =
-      findObjectFieldsInFlatFieldMetadataMapsOrThrow({
-        flatFieldMetadataMaps: toFlatFieldMetadataMaps,
-        flatObjectMetadata: flatObjectMetadataToCreate,
-      });
     const flatDefaultViewFieldsToCreate =
       await this.createDefaultFlatViewFields({
-        objectFlatFieldMetadatas,
+        objectFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMapsOrThrow(
+          {
+            flatEntityMaps: flatFieldMetadataMapsFromTo.to,
+            flatEntityIds: flatFieldMetadataToCreateOnObject.map(
+              ({ id }) => id,
+            ),
+          },
+        ),
         viewId: flatDefaultViewToCreate.id,
         workspaceId,
       });
-
-    const toFlatViewFieldMaps = flatDefaultViewFieldsToCreate.reduce(
-      (acc, flatViewField) =>
-        addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: flatViewField,
-          flatEntityMaps: acc,
-        }),
-      existingFlatViewFieldMaps,
-    );
-
-    const toFlatIndexMaps = flatIndexMetadataToCreate.reduce(
-      (flatIndexMaps, flatIndexMetadata) =>
-        addFlatEntityToFlatEntityMapsOrThrow({
-          flatEntity: flatIndexMetadata,
-          flatEntityMaps: flatIndexMaps,
-        }),
-      existingFlatIndexMaps,
-    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           fromToAllFlatEntityMaps: {
-            flatObjectMetadataMaps: {
-              from: existingFlatObjectMetadataMaps,
-              to: toFlatObjectMetadataMaps,
-            },
-            flatViewMaps: {
-              from: existingFlatViewMaps,
-              to: toFlatViewMaps,
-            },
-            flatViewFieldMaps: {
-              from: existingFlatViewFieldMaps,
-              to: toFlatViewFieldMaps,
-            },
-            flatFieldMetadataMaps: {
-              from: existingFlatFieldMetadataMaps,
-              to: toFlatFieldMetadataMaps,
-            },
-            flatIndexMaps: {
-              from: existingFlatIndexMaps,
-              to: toFlatIndexMaps,
-            },
+            flatObjectMetadataMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatObjectMetadataMaps,
+              flatEntityToCreate: [flatObjectMetadataToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
+            flatViewMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewMaps,
+              flatEntityToCreate: [flatDefaultViewToCreate],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
+            flatViewFieldMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatViewFieldMaps,
+              flatEntityToCreate: flatDefaultViewFieldsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
+            flatFieldMetadataMaps: flatFieldMetadataMapsFromTo,
+            flatIndexMaps: computeFlatEntityMapsFromTo({
+              flatEntityMaps: existingFlatIndexMaps,
+              flatEntityToCreate: flatIndexMetadataToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            }),
           },
           buildOptions: {
             isSystemBuild: false,
-            inferDeletionFromMissingEntities: false,
           },
           workspaceId,
         },

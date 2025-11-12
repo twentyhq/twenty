@@ -10,19 +10,19 @@ import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
-import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
+import { AuthorizeAppOutput } from 'src/engine/core-modules/auth/dto/authorize-app.dto';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
+import { EmailPasswordResetLinkOutput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
-import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
-import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token.entity';
+import { InvalidatePasswordOutput } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
+import { TransientTokenOutput } from 'src/engine/core-modules/auth/dto/transient-token.dto';
 import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
-import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
+import { ValidatePasswordResetTokenOutput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 // import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/api-key.service';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
 import {
@@ -49,7 +49,7 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -59,31 +59,33 @@ import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-verification.input';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
+import { ApiKeyToken } from './dto/api-key-token.dto';
+import { AuthTokens } from './dto/auth-tokens.dto';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
-import { LoginToken } from './dto/login-token.entity';
+import { LoginTokenOutput } from './dto/login-token.dto';
 import { SignUpInput } from './dto/sign-up.input';
-import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { UserCredentialsInput } from './dto/user-credentials.input';
-import { CheckUserExistOutput } from './dto/user-exists.entity';
+import { CheckUserExistOutput } from './dto/user-exists.dto';
 import { EmailAndCaptchaInput } from './dto/user-exists.input';
-import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
+import { WorkspaceInviteHashValidOutput } from './dto/workspace-invite-hash-valid.dto';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
 
@@ -99,12 +101,10 @@ import { AuthService } from './services/auth.service';
 )
 export class AuthResolver {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(UserWorkspace)
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
-    @InjectRepository(AppToken)
-    private readonly appTokenRepository: Repository<AppToken>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private authService: AuthService,
     private renewTokenService: RenewTokenService,
@@ -117,8 +117,7 @@ export class AuthResolver {
     private signInUpService: SignInUpService,
     private transientTokenService: TransientTokenService,
     private emailVerificationService: EmailVerificationService,
-    // private oauthService: OAuthService,
-    private domainManagerService: DomainManagerService,
+    private workspaceDomainsService: WorkspaceDomainsService,
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
     private sSOService: SSOService,
@@ -126,7 +125,7 @@ export class AuthResolver {
     private readonly permissionsService: PermissionsService,
   ) {}
 
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   @Query(() => CheckUserExistOutput)
   async checkUserExists(
     @Args() checkUserExistsInput: EmailAndCaptchaInput,
@@ -137,7 +136,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => GetAuthorizationUrlForSSOOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthorizationUrlForSSO(
     @Args('input') params: GetAuthorizationUrlForSSOInput,
   ) {
@@ -147,35 +146,35 @@ export class AuthResolver {
     );
   }
 
-  @Query(() => WorkspaceInviteHashValid)
-  @UseGuards(PublicEndpointGuard)
+  @Query(() => WorkspaceInviteHashValidOutput)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async checkWorkspaceInviteHashIsValid(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<WorkspaceInviteHashValid> {
+  ): Promise<WorkspaceInviteHashValidOutput> {
     return await this.authService.checkWorkspaceInviteHashIsValid(
       workspaceInviteHashValidInput.inviteHash,
     );
   }
 
-  @Query(() => Workspace)
-  @UseGuards(PublicEndpointGuard)
+  @Query(() => WorkspaceEntity)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<Workspace> {
+  ): Promise<WorkspaceEntity> {
     return await this.authService.findWorkspaceFromInviteHashOrFail(
       workspaceInviteHashValidInput.inviteHash,
     );
   }
 
-  @Mutation(() => LoginToken)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @Mutation(() => LoginTokenOutput)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async getLoginTokenFromCredentials(
     @Args()
     getLoginTokenFromCredentialsInput: UserCredentialsInput,
     @Args('origin') origin: string,
-  ): Promise<LoginToken> {
+  ): Promise<LoginTokenOutput> {
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
@@ -203,7 +202,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signIn(
     @Args()
     userCredentials: UserCredentialsInput,
@@ -241,7 +240,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => GetLoginTokenFromEmailVerificationTokenOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getLoginTokenFromEmailVerificationToken(
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
@@ -254,7 +253,7 @@ export class AuthResolver {
       );
 
     const workspace =
-      (await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      (await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       )) ??
       (await this.userWorkspaceService.findFirstWorkspaceByUserId(
@@ -270,13 +269,14 @@ export class AuthResolver {
       authProvider,
     );
 
-    const workspaceUrls = this.domainManagerService.getWorkspaceUrls(workspace);
+    const workspaceUrls =
+      this.workspaceDomainsService.getWorkspaceUrls(workspace);
 
     return { loginToken, workspaceUrls };
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getWorkspaceAgnosticTokenFromEmailVerificationToken(
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
@@ -320,7 +320,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async getAuthTokensFromOTP(
     @Args()
     twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
@@ -332,7 +332,7 @@ export class AuthResolver {
       );
 
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
@@ -345,7 +345,7 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     await this.twoFactorAuthenticationService.validateStrategy(
       user.id,
@@ -358,7 +358,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
   ): Promise<AvailableWorkspacesAndAccessTokensOutput> {
@@ -410,7 +410,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => SignUpOutput)
-  @UseGuards(CaptchaGuard, PublicEndpointGuard)
+  @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   async signUpInWorkspace(
     @Args() signUpInput: SignUpInput,
     @AuthProvider() authProvider: AuthProviderEnum,
@@ -430,11 +430,9 @@ export class AuthResolver {
           })
         : undefined;
 
-    const existingUser = await this.userRepository.findOne({
-      where: {
-        email: signUpInput.email,
-      },
-    });
+    const existingUser = await this.userService.findUserByEmail(
+      signUpInput.email,
+    );
 
     const { userData } = this.authService.formatUserDataPayload(
       {
@@ -479,17 +477,21 @@ export class AuthResolver {
       loginToken,
       workspace: {
         id: workspace.id,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       },
     };
   }
 
   @Mutation(() => SignUpOutput)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
   async signUpInNewWorkspace(
-    @AuthUser() currentUser: User,
+    @AuthUser() currentUser: UserEntity,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpOutput> {
+    await this.signInUpService.checkWorkspaceCreationIsAllowedOrThrow(
+      currentUser,
+    );
+
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
       { type: 'existingUser', existingUser: currentUser },
     );
@@ -504,26 +506,17 @@ export class AuthResolver {
       loginToken,
       workspace: {
         id: workspace.id,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls(workspace),
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
       },
     };
   }
 
-  // @Mutation(() => ExchangeAuthCode)
-  // async exchangeAuthorizationCode(
-  //   @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
-  // ) {
-  //   return await this.oauthService.verifyAuthorizationCode(
-  //     exchangeAuthCodeInput,
-  //   );
-  // }
-
-  @Mutation(() => TransientToken)
-  @UseGuards(UserAuthGuard)
+  @Mutation(() => TransientTokenOutput)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
   async generateTransientToken(
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<TransientToken | void> {
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<TransientTokenOutput | void> {
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
       workspace,
@@ -543,7 +536,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthTokensFromLoginToken(
     @Args() getAuthTokensFromLoginTokenInput: GetAuthTokensFromLoginTokenInput,
     @Args('origin') origin: string,
@@ -604,9 +597,9 @@ export class AuthResolver {
   private async validateWorkspaceAccess(
     origin: string,
     tokenWorkspaceId: string,
-  ): Promise<Workspace> {
+  ): Promise<WorkspaceEntity> {
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
@@ -631,8 +624,8 @@ export class AuthResolver {
   private async validateUserAccess(
     email: string,
     workspaceId: string,
-  ): Promise<{ user: User; userWorkspace: UserWorkspace }> {
-    const user = await this.userService.getUserByEmail(email);
+  ): Promise<{ user: UserEntity; userWorkspace: UserWorkspaceEntity }> {
+    const user = await this.userService.findUserByEmailOrThrow(email);
 
     await this.authService.checkIsEmailVerified(user.isEmailVerified);
 
@@ -646,8 +639,8 @@ export class AuthResolver {
   }
 
   private async validateRegularAuthentication(
-    workspace: Workspace,
-    userWorkspace: UserWorkspace,
+    workspace: WorkspaceEntity,
+    userWorkspace: UserWorkspaceEntity,
   ): Promise<void> {
     await this.twoFactorAuthenticationService.validateTwoFactorAuthenticationRequirement(
       workspace,
@@ -657,7 +650,7 @@ export class AuthResolver {
 
   private async validateAndLogImpersonation(
     tokenPayload: LoginTokenJwtPayload,
-    workspace: Workspace,
+    workspace: WorkspaceEntity,
     targetUserEmail: string,
   ) {
     const { impersonatorUserWorkspaceId } = tokenPayload;
@@ -703,7 +696,7 @@ export class AuthResolver {
 
     const hasServerLevelImpersonatePermission =
       impersonatorUserWorkspace.user.canImpersonate === true &&
-      impersonatorUserWorkspace.workspace.allowImpersonation === true;
+      toImpersonateUserWorkspace.workspace.allowImpersonation === true;
 
     if (isServerLevelImpersonation) {
       if (!hasServerLevelImpersonatePermission) {
@@ -764,13 +757,13 @@ export class AuthResolver {
     };
   }
 
-  @Mutation(() => AuthorizeApp)
-  @UseGuards(UserAuthGuard)
+  @Mutation(() => AuthorizeAppOutput)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<AuthorizeApp> {
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<AuthorizeAppOutput> {
     return await this.authService.generateAuthorizationCode(
       authorizeAppInput,
       user,
@@ -779,7 +772,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
     const tokens = await this.renewTokenService.generateTokensFromRefreshToken(
       args.appToken,
@@ -790,12 +783,12 @@ export class AuthResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
-    SettingsPermissionsGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
     @Args() args: ApiKeyTokenInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApiKeyToken | undefined> {
     return await this.apiKeyService.generateApiKeyToken(
       workspaceId,
@@ -804,12 +797,12 @@ export class AuthResolver {
     );
   }
 
-  @Mutation(() => EmailPasswordResetLink)
-  @UseGuards(PublicEndpointGuard)
+  @Mutation(() => EmailPasswordResetLinkOutput)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
     @Context() context: I18nContext,
-  ): Promise<EmailPasswordResetLink> {
+  ): Promise<EmailPasswordResetLinkOutput> {
     const resetToken =
       await this.resetPasswordService.generatePasswordResetToken(
         emailPasswordResetInput.email,
@@ -823,12 +816,12 @@ export class AuthResolver {
     );
   }
 
-  @Mutation(() => InvalidatePassword)
-  @UseGuards(PublicEndpointGuard)
+  @Mutation(() => InvalidatePasswordOutput)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
-  ): Promise<InvalidatePassword> {
+  ): Promise<InvalidatePasswordOutput> {
     const { id } =
       await this.resetPasswordService.validatePasswordResetToken(
         passwordResetToken,
@@ -839,11 +832,11 @@ export class AuthResolver {
     return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }
 
-  @Query(() => ValidatePasswordResetToken)
-  @UseGuards(PublicEndpointGuard)
+  @Query(() => ValidatePasswordResetTokenOutput)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
-  ): Promise<ValidatePasswordResetToken> {
+  ): Promise<ValidatePasswordResetTokenOutput> {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );

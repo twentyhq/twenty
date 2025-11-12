@@ -9,6 +9,7 @@ export enum CoreObjectNamePlural {
   Comment = 'comments',
   Company = 'companies',
   ConnectedAccount = 'connectedAccounts',
+  Dashboard = 'dashboards',
   TimelineActivity = 'timelineActivities',
   Favorite = 'favorites',
   Message = 'messages',

@@ -6,8 +6,8 @@ import {
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { FieldActorSource } from 'twenty-shared/types';
 
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 describe('Core REST API Create Many endpoint', () => {
@@ -220,7 +220,9 @@ describe('Core REST API Create Many endpoint', () => {
     })
       .expect(400)
       .expect((res) => {
-        expect(res.body.messages[0]).toContain(`Record already exists`);
+        expect(res.body.messages[0]).toContain(
+          `A duplicate entry was detected`,
+        );
         expect(res.body.error).toBe('BadRequestException');
       });
   });

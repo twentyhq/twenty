@@ -4,12 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
@@ -190,12 +190,18 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowRunId: string;
     workspaceId: string;
-    status: WorkflowRunStatus;
+    status: Extract<WorkflowRunStatus, 'COMPLETED' | 'FAILED' | 'STOPPED'>;
     error?: string;
   }) {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
       workspaceId,
+    });
+
+    let updatedStepInfos = {};
+
+    updatedStepInfos = this.markRunningStepsAsFailed({
+      stepInfosToUpdate: workflowRunToUpdate.state?.stepInfos ?? {},
     });
 
     const partialUpdate = {
@@ -204,6 +210,7 @@ export class WorkflowRunWorkspaceService {
       state: {
         ...workflowRunToUpdate.state,
         workflowRunError: error,
+        stepInfos: updatedStepInfos,
       },
     };
 
@@ -213,7 +220,9 @@ export class WorkflowRunWorkspaceService {
       key:
         status === WorkflowRunStatus.COMPLETED
           ? MetricsKeys.WorkflowRunCompleted
-          : MetricsKeys.WorkflowRunFailed,
+          : status === WorkflowRunStatus.STOPPED
+            ? MetricsKeys.WorkflowRunStopped
+            : MetricsKeys.WorkflowRunFailed,
       eventId: workflowRunId,
     });
   }
@@ -368,35 +377,7 @@ export class WorkflowRunWorkspaceService {
     return workflowRun;
   }
 
-  private getInitState(
-    workflowVersion: WorkflowVersionWorkspaceEntity,
-    triggerPayload: object,
-  ): WorkflowRunState | undefined {
-    if (
-      !isDefined(workflowVersion.trigger) ||
-      !isDefined(workflowVersion.steps)
-    ) {
-      return undefined;
-    }
-
-    return {
-      flow: {
-        trigger: workflowVersion.trigger,
-        steps: workflowVersion.steps,
-      },
-      stepInfos: {
-        trigger: { status: StepStatus.NOT_STARTED, result: triggerPayload },
-        ...Object.fromEntries(
-          workflowVersion.steps.map((step) => [
-            step.id,
-            { status: StepStatus.NOT_STARTED },
-          ]),
-        ),
-      },
-    };
-  }
-
-  private async updateWorkflowRun({
+  async updateWorkflowRun({
     workflowRunId,
     workspaceId,
     partialUpdate,
@@ -429,5 +410,65 @@ export class WorkflowRunWorkspaceService {
       undefined,
       ['id'],
     );
+  }
+
+  private getInitState(
+    workflowVersion: WorkflowVersionWorkspaceEntity,
+    triggerPayload: object,
+  ): WorkflowRunState | undefined {
+    if (
+      !isDefined(workflowVersion.trigger) ||
+      !isDefined(workflowVersion.steps)
+    ) {
+      return undefined;
+    }
+
+    return {
+      flow: {
+        trigger: workflowVersion.trigger,
+        steps: workflowVersion.steps,
+      },
+      stepInfos: {
+        trigger: { status: StepStatus.NOT_STARTED, result: triggerPayload },
+        ...Object.fromEntries(
+          workflowVersion.steps.map((step) => [
+            step.id,
+            { status: StepStatus.NOT_STARTED },
+          ]),
+        ),
+      },
+    };
+  }
+
+  private markRunningStepsAsFailed({
+    stepInfosToUpdate,
+  }: {
+    stepInfosToUpdate: Record<string, WorkflowRunStepInfo>;
+  }) {
+    return Object.entries(stepInfosToUpdate ?? {})
+      .map(([stepId, step]) => {
+        if (
+          step.status === StepStatus.RUNNING ||
+          step.status === StepStatus.PENDING
+        ) {
+          return {
+            [stepId]: {
+              ...step,
+              status: StepStatus.FAILED,
+              error: 'Workflow has been ended before this step was completed',
+            },
+          };
+        }
+
+        return {
+          [stepId]: step,
+        };
+      })
+      .reduce((acc, current) => {
+        return {
+          ...acc,
+          ...current,
+        };
+      }, {});
   }
 }

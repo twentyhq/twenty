@@ -16,7 +16,6 @@
     "babel-plugin-inline-import": "^3.0.0",
     "babel-plugin-inline-react-svg": "^2.0.2",
     "babel-plugin-module-resolver": "^5.0.2",
-    "cpx": "^1.5.0",
     "tsx": "^4.19.3",
     "vite-plugin-svgr": "^4.3.0"
   },

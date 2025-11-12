@@ -3,9 +3,10 @@ import { RecordTableCellCheckbox } from '@/object-record/record-table/record-tab
 import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDragAndDrop';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
-import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
+
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { RecordTableDraggableTrFirstRowOfGroup } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTrFirstRowOfGroup';
+import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
 import { RecordTableRowArrowKeysEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowArrowKeysEffect';
 import { RecordTableRowHotkeyEffect } from '@/object-record/record-table/record-table-row/components/RecordTableRowHotkeyEffect';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
@@ -54,7 +55,7 @@ export const RecordTableRow = ({
       )}
       <RecordTableCellDragAndDrop />
       <RecordTableCellCheckbox />
-      <RecordTableCells />
+      <RecordTableFieldsCells />
       <RecordTablePlusButtonCellPlaceholder />
       <RecordTableLastEmptyCell />
       <ListenRecordUpdatesEffect
@@ -77,7 +78,7 @@ export const RecordTableRow = ({
       )}
       <RecordTableCellDragAndDrop />
       <RecordTableCellCheckbox />
-      <RecordTableCells />
+      <RecordTableFieldsCells />
       <RecordTablePlusButtonCellPlaceholder />
       <RecordTableLastEmptyCell />
       <ListenRecordUpdatesEffect

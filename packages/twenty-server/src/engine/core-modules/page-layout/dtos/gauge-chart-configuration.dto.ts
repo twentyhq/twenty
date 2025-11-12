@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -7,13 +7,17 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsTimeZone,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { ExtendedAggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/extended-aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -29,14 +33,15 @@ export class GaugeChartConfigurationDTO {
   @IsNotEmpty()
   aggregateFieldMetadataId: string;
 
-  @Field(() => ExtendedAggregateOperations)
-  @IsEnum(ExtendedAggregateOperations)
+  @Field(() => AggregateOperations)
+  @IsEnum(AggregateOperations)
   @IsNotEmpty()
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
-  displayDataLabel: boolean;
+  @IsOptional()
+  displayDataLabel?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()
@@ -52,4 +57,15 @@ export class GaugeChartConfigurationDTO {
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => String, { nullable: true, defaultValue: 'UTC' })
+  @IsTimeZone()
+  @IsOptional()
+  timezone?: string;
+
+  @Field(() => Int, { nullable: true, defaultValue: CalendarStartDay.MONDAY })
+  @IsOptional()
+  @Min(0)
+  @Max(7)
+  firstDayOfTheWeek?: number;
 }

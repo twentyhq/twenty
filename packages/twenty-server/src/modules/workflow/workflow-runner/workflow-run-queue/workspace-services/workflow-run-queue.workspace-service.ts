@@ -10,8 +10,9 @@ import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/workflow-run-queue-throttle-limit';
+import { DEFAULT_WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/default-workflow-run-queue-throttle-limit';
 import { getWorkflowRunQueuedCountCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-cache-workflow-run-count-key.util';
+import { getWorkflowRunQueueThrottleLimitKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-cache-workflow-run-queue-throttle-limit-key.util';
 
 @Injectable()
 export class WorkflowRunQueueWorkspaceService {
@@ -74,8 +75,10 @@ export class WorkflowRunQueueWorkspaceService {
   ): Promise<number> {
     const currentCount =
       await this.getCurrentWorkflowRunQueuedCount(workspaceId);
+    const throttleLimit =
+      await this.getWorkflowRunQueueThrottleLimit(workspaceId);
 
-    return WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT - currentCount;
+    return throttleLimit - currentCount;
   }
 
   async getRemainingRunsToEnqueueCountFromDatabase(
@@ -94,7 +97,10 @@ export class WorkflowRunQueueWorkspaceService {
       },
     });
 
-    return WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT - currentCount;
+    const throttleLimit =
+      await this.getWorkflowRunQueueThrottleLimit(workspaceId);
+
+    return throttleLimit - currentCount;
   }
 
   private async setWorkflowRunQueuedCount(
@@ -115,5 +121,15 @@ export class WorkflowRunQueueWorkspaceService {
     const currentCount = (await this.cacheStorage.get<number>(key)) ?? 0;
 
     return Math.max(0, currentCount);
+  }
+
+  private async getWorkflowRunQueueThrottleLimit(
+    workspaceId: string,
+  ): Promise<number> {
+    const key = getWorkflowRunQueueThrottleLimitKey(workspaceId);
+
+    const throttleLimit = (await this.cacheStorage.get<number>(key)) ?? 0;
+
+    return Math.max(DEFAULT_WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT, throttleLimit);
   }
 }

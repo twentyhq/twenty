@@ -1,5 +1,17 @@
-import { WidgetContainer } from '@/page-layout/widgets/components/WidgetContainer';
-import { WidgetHeader } from '@/page-layout/widgets/components/WidgetHeader';
+import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
+import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
+import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
+import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
+import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
+import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -9,14 +21,49 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
 
-type WidgetPlaceholderProps = {
-  onClick: () => void;
-};
+export const WidgetPlaceholder = () => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+  );
 
-export const WidgetPlaceholder = ({ onClick }: WidgetPlaceholderProps) => {
+  const isPageLayoutInEditMode = useRecoilComponentValue(
+    isPageLayoutInEditModeComponentState,
+  );
+
+  const { setIsPageLayoutInEditMode } =
+    useSetIsPageLayoutInEditMode(pageLayoutId);
+
+  const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+
+  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const { layoutMode } = usePageLayoutContentContext();
+  const { isInPinnedTab } = useIsInPinnedTab();
+
+  const handleClick = () => {
+    if (!isPageLayoutInEditMode) {
+      setIsPageLayoutInEditMode(true);
+    }
+    navigatePageLayoutCommandMenu({
+      commandMenuPage: CommandMenuPages.PageLayoutWidgetTypeSelect,
+    });
+  };
+
   return (
-    <WidgetContainer onClick={onClick}>
-      <WidgetHeader isInEditMode={true} title="Add Widget" isEmpty />
+    <WidgetCard
+      layoutMode={layoutMode}
+      pageLayoutType={currentPageLayout.type}
+      isInPinnedTab={isInPinnedTab}
+      isEditing={false}
+      isDragging={false}
+      onClick={handleClick}
+    >
+      <WidgetCardHeader
+        isWidgetCardHovered={false}
+        isInEditMode={isPageLayoutInEditMode}
+        isResizing={false}
+        title={t`Add Widget`}
+        isEmpty
+      />
       <AnimatedPlaceholderEmptyContainer
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
@@ -24,13 +71,13 @@ export const WidgetPlaceholder = ({ onClick }: WidgetPlaceholderProps) => {
         <AnimatedPlaceholder type="noWidgets" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No widgets yet
+            <Trans>Add widget</Trans>
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            Click to add your first widget
+            <Trans>Click to add your first widget</Trans>
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
-    </WidgetContainer>
+    </WidgetCard>
   );
 };

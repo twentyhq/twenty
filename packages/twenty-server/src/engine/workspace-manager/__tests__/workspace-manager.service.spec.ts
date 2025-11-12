@@ -3,9 +3,10 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DataSource, type Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -49,11 +50,11 @@ describe('WorkspaceManagerService', () => {
           useValue: mockDataSource,
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(WorkspaceEntity),
           useValue: {},
         },
         {
-          provide: getRepositoryToken(UserWorkspace),
+          provide: getRepositoryToken(UserWorkspaceEntity),
           useValue: {},
         },
         {
@@ -102,6 +103,10 @@ describe('WorkspaceManagerService', () => {
         },
         {
           provide: RoleService,
+          useValue: {},
+        },
+        {
+          provide: ApplicationService,
           useValue: {},
         },
         {

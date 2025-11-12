@@ -10,58 +10,55 @@ import ms from 'ms';
 import { PasswordResetLinkEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, getAppPath } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  getAppPath,
+  isDefined,
+} from 'twenty-shared/utils';
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
-  AppToken,
+  AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
-import { type InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
-import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import { type ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { type EmailPasswordResetLinkOutput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.dto';
+import { type InvalidatePasswordOutput } from 'src/engine/core-modules/auth/dto/invalidate-password.dto';
+import { type PasswordResetToken } from 'src/engine/core-modules/auth/dto/password-reset-token.dto';
+import { type ValidatePasswordResetTokenOutput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.dto';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
 export class ResetPasswordService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(AppToken)
-    private readonly appTokenRepository: Repository<AppToken>,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
+    private readonly userService: UserService,
   ) {}
 
   async generatePasswordResetToken(
     email: string,
     workspaceId: string,
   ): Promise<PasswordResetToken> {
-    const user = await this.userRepository.findOneBy({
+    const user = await this.userService.findUserByEmailOrThrow(
       email,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
     const expiresIn = this.twentyConfigService.get(
       'PASSWORD_RESET_TOKEN_EXPIRES_IN',
@@ -122,17 +119,12 @@ export class ResetPasswordService {
     resetToken: PasswordResetToken,
     email: string,
     locale: keyof typeof APP_LOCALES,
-  ): Promise<EmailPasswordResetLink> {
-    const user = await this.userRepository.findOneBy({
+  ): Promise<EmailPasswordResetLinkOutput> {
+    const user = await this.userService.findUserByEmailOrThrow(
       email,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
+    const hasPassword = isDefined(user.passwordHash);
 
     const workspace = await this.workspaceRepository.findOneBy({
       id: resetToken.workspaceId,
@@ -140,7 +132,7 @@ export class ResetPasswordService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    const link = this.domainManagerService.buildWorkspaceURL({
+    const link = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
       pathname: getAppPath(AppPath.ResetPassword, {
         passwordResetToken: resetToken.passwordResetToken,
@@ -158,6 +150,7 @@ export class ResetPasswordService {
           long: true,
         },
       ),
+      hasPassword,
       locale,
     };
 
@@ -166,15 +159,17 @@ export class ResetPasswordService {
     const html = await render(emailTemplate, { pretty: true });
     const text = await render(emailTemplate, { plainText: true });
 
-    const resetPasswordMsg = msg`Action Needed to Reset Password`;
     const i18n = this.i18nService.getI18nInstance(locale);
-    const subject = i18n._(resetPasswordMsg);
+    const subjectTemplate = hasPassword
+      ? msg`Action Needed to Reset Password`
+      : msg`Action Needed to Set Password`;
+    const subject = i18n._(subjectTemplate);
 
-    this.emailService.send({
+    await this.emailService.send({
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
       )} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
-      to: email,
+      to: user.email,
       subject,
       text,
       html,
@@ -185,7 +180,7 @@ export class ResetPasswordService {
 
   async validatePasswordResetToken(
     resetToken: string,
-  ): Promise<ValidatePasswordResetToken> {
+  ): Promise<ValidatePasswordResetTokenOutput> {
     const hashedResetToken = crypto
       .createHash('sha256')
       .update(resetToken)
@@ -207,40 +202,29 @@ export class ResetPasswordService {
       );
     }
 
-    const user = await this.userRepository.findOneBy({
-      id: token.userId,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+    const user = await this.userService.findUserByIdOrThrow(
+      token.userId,
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
     return {
       id: user.id,
       email: user.email,
+      hasPassword: isDefined(user.passwordHash),
     };
   }
 
   async invalidatePasswordResetToken(
     userId: string,
-  ): Promise<InvalidatePassword> {
-    const user = await this.userRepository.findOneBy({
-      id: userId,
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+  ): Promise<InvalidatePasswordOutput> {
+    const user = await this.userService.findUserByIdOrThrow(
+      userId,
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
     await this.appTokenRepository.update(
       {
-        userId,
+        userId: user.id,
         type: AppTokenType.PasswordResetToken,
       },
       {

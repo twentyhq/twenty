@@ -15,23 +15,30 @@ export const extractFieldMetadataIdsFromWidget = (
 
   switch (config.__typename) {
     case 'BarChartConfiguration':
+      return [
+        config.aggregateFieldMetadataId,
+        config.primaryAxisGroupByFieldMetadataId,
+        config.secondaryAxisGroupByFieldMetadataId,
+      ].filter(isDefined);
+
     case 'LineChartConfiguration':
       return [
         config.aggregateFieldMetadataId,
-        config.groupByFieldMetadataIdX,
-        ...(isDefined(config.groupByFieldMetadataIdY)
-          ? [config.groupByFieldMetadataIdY]
-          : []),
-      ];
+        config.primaryAxisGroupByFieldMetadataId,
+        config.secondaryAxisGroupByFieldMetadataId,
+      ].filter(isDefined);
 
     case 'PieChartConfiguration':
-      return [config.aggregateFieldMetadataId, config.groupByFieldMetadataId];
+      return [
+        config.aggregateFieldMetadataId,
+        config.groupByFieldMetadataId,
+      ].filter(isDefined);
 
-    case 'NumberChartConfiguration':
-      return [config.aggregateFieldMetadataId];
+    case 'AggregateChartConfiguration':
+      return [config.aggregateFieldMetadataId].filter(isDefined);
 
     case 'GaugeChartConfiguration':
-      return [config.aggregateFieldMetadataId];
+      return [config.aggregateFieldMetadataId].filter(isDefined);
 
     case 'IframeConfiguration':
       return [];

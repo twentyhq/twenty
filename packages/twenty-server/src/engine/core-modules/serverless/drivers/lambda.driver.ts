@@ -20,7 +20,6 @@ import {
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { isDefined } from 'twenty-shared/utils';
-import ts, { transpileModule } from 'typescript';
 
 import {
   type ServerlessDriver,
@@ -28,12 +27,12 @@ import {
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
-import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
-import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
+import { buildEnvVar } from 'src/engine/core-modules/serverless/drivers/utils/build-env-var';
+import { buildServerlessFunctionInMemory } from 'src/engine/core-modules/serverless/drivers/utils/build-serverless-function-in-memory';
 import { copyAndBuildDependencies } from 'src/engine/core-modules/serverless/drivers/utils/copy-and-build-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/serverless/drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/serverless/drivers/utils/create-zip-file';
+import { formatBuildError } from 'src/engine/core-modules/serverless/drivers/utils/format-build-error';
 import {
   LambdaBuildDirectoryManager,
   NODE_LAYER_SUBFOLDER,
@@ -51,6 +50,13 @@ import {
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
+
+type LambdaDriverExecutorPayload = {
+  code: string;
+  params: object;
+  env: Record<string, string>;
+  handlerName: string;
+};
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -135,11 +141,7 @@ export class LambdaDriver implements ServerlessDriver {
   }
 
   private getLayerName(serverlessFunction: ServerlessFunctionEntity) {
-    if (isDefined(serverlessFunction?.serverlessFunctionLayer)) {
-      return serverlessFunction?.serverlessFunctionLayer.checksum;
-    }
-
-    return COMMON_LAYER_NAME;
+    return serverlessFunction.serverlessFunctionLayer.checksum;
   }
 
   private async createLayerIfNotExists(
@@ -278,7 +280,7 @@ export class LambdaDriver implements ServerlessDriver {
       Handler: 'index.handler',
       Role: this.options.lambdaRole,
       Runtime: serverlessFunction.runtime,
-      Timeout: serverlessFunction.timeoutSeconds,
+      Timeout: 900, // timeout is handled by the serverless function service
     };
 
     const command = new CreateFunctionCommand(params);
@@ -318,68 +320,84 @@ export class LambdaDriver implements ServerlessDriver {
       version,
     });
 
-    const tsCodeStream = await this.fileStorageService.read({
-      folderPath: join(folderPath, 'src'),
-      filename: INDEX_FILE_NAME,
-    });
-
-    const tsCode = await readFileContent(tsCodeStream);
-
-    const compiledCode = transpileModule(tsCode, {
-      compilerOptions: {
-        module: ts.ModuleKind.ESNext,
-        target: ts.ScriptTarget.ES2017,
-      },
-    }).outputText;
-
-    const executorPayload = {
-      params: payload,
-      code: compiledCode,
-    };
-
-    const params: InvokeCommandInput = {
-      FunctionName: serverlessFunction.id,
-      Payload: JSON.stringify(executorPayload),
-      LogType: LogType.Tail,
-    };
-
-    const command = new InvokeCommand(params);
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
     try {
-      const result = await (await this.getLambdaClient()).send(command);
+      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
-      const parsedResult = result.Payload
-        ? JSON.parse(result.Payload.transformToString())
-        : {};
+      await this.fileStorageService.download({
+        from: { folderPath },
+        to: { folderPath: sourceTemporaryDir },
+      });
 
-      const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
+      let builtBundleFilePath = '';
 
-      const duration = Date.now() - startTime;
-
-      if (result.FunctionError) {
-        return {
-          data: null,
-          duration,
-          status: ServerlessFunctionExecutionStatus.ERROR,
-          error: parsedResult,
-          logs,
-        };
+      try {
+        builtBundleFilePath = await buildServerlessFunctionInMemory({
+          sourceTemporaryDir,
+          handlerPath: serverlessFunction.handlerPath,
+        });
+      } catch (error) {
+        return formatBuildError(error, startTime);
       }
 
-      return {
-        data: parsedResult,
-        logs,
-        duration,
-        status: ServerlessFunctionExecutionStatus.SUCCESS,
+      const compiledCode = (await fs.readFile(builtBundleFilePath)).toString(
+        'utf-8',
+      );
+
+      const executorPayload: LambdaDriverExecutorPayload = {
+        params: payload,
+        code: compiledCode,
+        env: buildEnvVar(serverlessFunction),
+        handlerName: serverlessFunction.handlerName,
       };
-    } catch (error) {
-      if (error instanceof ResourceNotFoundException) {
-        throw new ServerlessFunctionException(
-          `Function Version '${version}' does not exist`,
-          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-        );
+
+      const params: InvokeCommandInput = {
+        FunctionName: serverlessFunction.id,
+        Payload: JSON.stringify(executorPayload),
+        LogType: LogType.Tail,
+      };
+
+      const command = new InvokeCommand(params);
+
+      try {
+        const result = await (await this.getLambdaClient()).send(command);
+
+        const parsedResult = result.Payload
+          ? JSON.parse(result.Payload.transformToString())
+          : {};
+
+        const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
+
+        const duration = Date.now() - startTime;
+
+        if (result.FunctionError) {
+          return {
+            data: null,
+            duration,
+            status: ServerlessFunctionExecutionStatus.ERROR,
+            error: parsedResult,
+            logs,
+          };
+        }
+
+        return {
+          data: parsedResult,
+          logs,
+          duration,
+          status: ServerlessFunctionExecutionStatus.SUCCESS,
+        };
+      } catch (error) {
+        if (error instanceof ResourceNotFoundException) {
+          throw new ServerlessFunctionException(
+            `Function Version '${version}' does not exist`,
+            ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+          );
+        }
+        throw error;
       }
-      throw error;
+    } finally {
+      await lambdaBuildDirectoryManager.clean();
     }
   }
 }

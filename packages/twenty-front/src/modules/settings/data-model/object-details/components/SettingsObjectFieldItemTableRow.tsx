@@ -15,7 +15,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
-import { SettingsPath } from 'twenty-shared/types';
+import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
   isDefined,
@@ -30,6 +30,7 @@ import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/
 
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
+import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
 
 type SettingsObjectFieldItemTableRowProps = {
   settingsObjectDetailTableItem: SettingsObjectDetailTableItem;
@@ -64,6 +65,10 @@ export const SettingsObjectFieldItemTableRow = ({
 }: SettingsObjectFieldItemTableRowProps) => {
   const { fieldMetadataItem, identifierType, objectMetadataItem } =
     settingsObjectDetailTableItem;
+
+  const readonly = isObjectMetadataSettingsReadOnly({
+    objectMetadataItem,
+  });
 
   const isRemoteObjectField = objectMetadataItem.isRemote;
 
@@ -118,10 +123,18 @@ export const SettingsObjectFieldItemTableRow = ({
   const handleDisableField = async (
     activeFieldMetadatItem: FieldMetadataItem,
   ) => {
-    await deactivateMetadataField(
+    if (readonly) {
+      return;
+    }
+
+    const deactivationResult = await deactivateMetadataField(
       activeFieldMetadatItem.id,
       objectMetadataItem.id,
     );
+
+    if (deactivationResult.status === 'failed') {
+      return;
+    }
 
     // TODO: Add optimistic rendering for core views
     const deletedViewIds: string[] = [];
@@ -146,13 +159,18 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const handleSetLabelIdentifierField = (
     activeFieldMetadatItem: FieldMetadataItem,
-  ) =>
+  ) => {
+    if (readonly) {
+      return;
+    }
+
     updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
       updatePayload: {
         labelIdentifierFieldMetadataId: activeFieldMetadatItem.id,
       },
     });
+  };
 
   const [, setActiveSettingsObjectFields] = useRecoilState(
     settingsObjectFieldsFamilyState({
@@ -195,6 +213,17 @@ export const SettingsObjectFieldItemTableRow = ({
     isDefined(relationObjectMetadataItem?.namePlural) &&
     !relationObjectMetadataItem.isSystem;
 
+  const morphRelationLabel =
+    fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
+      ? `${fieldMetadataItem.morphRelations?.length} Objects`
+      : undefined;
+
+  const label = morphRelationLabel
+    ? morphRelationLabel
+    : relationType === RelationType.MANY_TO_ONE
+      ? relationObjectMetadataItem?.labelSingular
+      : relationObjectMetadataItem?.labelPlural;
+
   return (
     <StyledObjectFieldTableRow
       onClick={
@@ -226,11 +255,7 @@ export const SettingsObjectFieldItemTableRow = ({
       <TableCell>
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
-          label={
-            relationType === RelationType.MANY_TO_ONE
-              ? relationObjectMetadataItem?.labelSingular
-              : relationObjectMetadataItem?.labelPlural
-          }
+          label={label}
           labelDetail={
             fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
           }
@@ -254,6 +279,7 @@ export const SettingsObjectFieldItemTableRow = ({
           mode === 'view' ? (
             <SettingsObjectFieldActiveActionDropdown
               isCustomField={fieldMetadataItem.isCustom === true}
+              readonly={readonly}
               fieldMetadataItemId={fieldMetadataItem.id}
               onEdit={() =>
                 navigate(SettingsPath.ObjectFieldEdit, {
@@ -284,6 +310,7 @@ export const SettingsObjectFieldItemTableRow = ({
         ) : mode === 'view' ? (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
+            readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={() =>
               navigate(SettingsPath.ObjectFieldEdit, {

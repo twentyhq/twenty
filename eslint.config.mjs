@@ -4,6 +4,7 @@ import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import importPlugin from 'eslint-plugin-import';
 import linguiPlugin from 'eslint-plugin-lingui';
+import * as mdxPlugin from 'eslint-plugin-mdx';
 import preferArrowPlugin from 'eslint-plugin-prefer-arrow';
 import prettierPlugin from 'eslint-plugin-prettier';
 import unicornPlugin from 'eslint-plugin-unicorn';
@@ -19,27 +20,28 @@ export default [
 
   // Global ignores
   {
-    ignores: [
-      '**/node_modules/**',
-    ],
+    ignores: ['**/node_modules/**'],
   },
 
   // Base configuration for all files
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     plugins: {
-      'prettier': prettierPlugin,
-      'lingui': linguiPlugin,
+      prettier: prettierPlugin,
+      lingui: linguiPlugin,
       '@nx': nxPlugin,
       'prefer-arrow': preferArrowPlugin,
-      'import': importPlugin,
+      import: importPlugin,
       'unused-imports': unusedImportsPlugin,
-      'unicorn': unicornPlugin,
+      unicorn: unicornPlugin,
     },
     rules: {
       // General rules
       'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
-      'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
+      'no-console': [
+        'warn',
+        { allow: ['group', 'groupCollapsed', 'groupEnd'] },
+      ],
       'no-control-regex': 0,
       'no-debugger': 'error',
       'no-duplicate-imports': 'error',
@@ -53,6 +55,14 @@ export default [
           enforceBuildableLibDependency: true,
           allow: [],
           depConstraints: [
+            {
+              sourceTag: 'scope:apps',
+              onlyDependOnLibsWithTags: ['scope:apps', 'scope:sdk'],
+            },
+            {
+              sourceTag: 'scope:sdk',
+              onlyDependOnLibsWithTags: ['scope:sdk', 'scope:shared'],
+            },
             {
               sourceTag: 'scope:shared',
               onlyDependOnLibsWithTags: ['scope:shared'],
@@ -123,9 +133,9 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { 
+        {
           prefer: 'type-imports',
-          fixStyle: 'inline-type-imports'
+          fixStyle: 'inline-type-imports',
         },
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',
@@ -180,6 +190,28 @@ export default [
     files: ['**/*.json'],
     languageOptions: {
       parser: jsoncParser,
+    },
+  },
+
+  // MDX files
+  {
+    ...mdxPlugin.flat,
+    plugins: {
+      ...mdxPlugin.flat.plugins,
+      '@nx': nxPlugin,
+    },
+  },
+  mdxPlugin.flatCodeBlocks,
+  {
+    files: ['**/*.mdx'],
+    rules: {
+      'no-unused-vars': 'off',
+      'unused-imports/no-unused-imports': 'off',
+      'unused-imports/no-unused-vars': 'off',
+      // Enforce JSX tags on separate lines to prevent Crowdin translation issues
+      '@nx/workspace-mdx-component-newlines': 'error',
+      // Disallow angle bracket placeholders to prevent Crowdin translation errors
+      '@nx/workspace-no-angle-bracket-placeholders': 'error',
     },
   },
 ];

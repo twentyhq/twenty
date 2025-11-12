@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -48,12 +48,14 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           id: objectMetadataId,
+          applicationId: createObjectInput.applicationId ?? null,
         },
         workspaceId,
       });
     const createdAt = new Date();
     const flatObjectMetadataToCreate: FlatObjectMetadata = {
       fieldMetadataIds: [],
+      viewIds: [],
       indexMetadataIds: [],
       createdAt,
       updatedAt: createdAt,

@@ -1,7 +1,8 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
+import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilter';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewFiltersToCreate } from '@/views/utils/getViewFiltersToCreate';
 import { getViewFiltersToDelete } from '@/views/utils/getViewFiltersToDelete';
@@ -11,11 +12,9 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordFiltersToViewFilters = () => {
-  const {
-    createViewFilterRecords,
-    updateViewFilterRecords,
-    deleteViewFilterRecords,
-  } = usePersistViewFilterRecords();
+  const { canPersistChanges } = useCanPersistViewChanges();
+  const { createViewFilters, updateViewFilters, deleteViewFilters } =
+    usePersistViewFilterRecords();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -26,7 +25,7 @@ export const useSaveRecordFiltersToViewFilters = () => {
   const saveRecordFiltersToViewFilters = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        if (!isDefined(currentView)) {
+        if (!canPersistChanges || !isDefined(currentView)) {
           return;
         }
 
@@ -56,20 +55,66 @@ export const useSaveRecordFiltersToViewFilters = () => {
           newViewFilters,
         );
 
-        const viewFilterIdsToDelete = viewFiltersToDelete.map(
-          (viewFilter) => viewFilter.id,
+        const createViewFilterInputs = viewFiltersToCreate.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+              fieldMetadataId: viewFilter.fieldMetadataId,
+              viewId: currentView.id,
+              value: viewFilter.value,
+              operand: viewFilter.operand,
+              viewFilterGroupId: viewFilter.viewFilterGroupId,
+              positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+              subFieldName: viewFilter.subFieldName ?? null,
+            },
+          }),
         );
 
-        await createViewFilterRecords(viewFiltersToCreate, currentView);
-        await updateViewFilterRecords(viewFiltersToUpdate);
-        await deleteViewFilterRecords(viewFilterIdsToDelete);
+        const updateViewFilterInputs = viewFiltersToUpdate.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+              update: {
+                value: viewFilter.value,
+                operand: viewFilter.operand,
+                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+                viewFilterGroupId: viewFilter.viewFilterGroupId,
+                subFieldName: viewFilter.subFieldName ?? null,
+              },
+            },
+          }),
+        );
+
+        const deleteViewFilterInputs = viewFiltersToDelete.map(
+          (viewFilter) => ({
+            input: {
+              id: viewFilter.id,
+            },
+          }),
+        );
+
+        const createResult = await createViewFilters(createViewFilterInputs);
+        if (createResult.status === 'failed') {
+          return;
+        }
+
+        const updateResult = await updateViewFilters(updateViewFilterInputs);
+        if (updateResult.status === 'failed') {
+          return;
+        }
+
+        const deleteResult = await deleteViewFilters(deleteViewFilterInputs);
+        if (deleteResult.status === 'failed') {
+          return;
+        }
       },
     [
+      canPersistChanges,
       currentView,
       currentRecordFiltersCallbackState,
-      createViewFilterRecords,
-      updateViewFilterRecords,
-      deleteViewFilterRecords,
+      createViewFilters,
+      updateViewFilters,
+      deleteViewFilters,
     ],
   );
 

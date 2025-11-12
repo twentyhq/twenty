@@ -1,8 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
+import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart';
 import { type ComponentProps } from 'react';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart';
 
 const meta: Meta<typeof GraphWidgetLineChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLineChart',
@@ -351,7 +351,7 @@ export const InteractiveWithLinks: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    enableSlices: false,
+    enableSlices: 'x',
     xAxisLabel: 'Step',
     yAxisLabel: 'Progress',
     displayType: 'percentage',
@@ -381,7 +381,10 @@ export const MultiSeriesMixed: Story = {
         id: 'target',
         label: 'Target',
         color: 'orange',
-        data: generateLinearData(12).map((d) => ({ ...d, y: 75 })),
+        data: generateLinearData(12).map((dataPoint) => ({
+          ...dataPoint,
+          y: 75,
+        })),
         enableArea: false,
       },
     ],
@@ -739,7 +742,7 @@ export const PointTooltipDemo: Story = {
     showLegend: true,
     showGrid: true,
     enablePoints: true,
-    enableSlices: false,
+    enableSlices: 'x',
     xScale: { type: 'point' },
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',

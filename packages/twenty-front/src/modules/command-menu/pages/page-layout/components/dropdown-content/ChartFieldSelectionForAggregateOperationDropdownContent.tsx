@@ -2,7 +2,7 @@ import { ChartAggregateOperationSelectionDropdownContent } from '@/command-menu/
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -13,9 +13,7 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
@@ -28,22 +26,24 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
+  const configuration = widgetInEditMode?.configuration;
+
   if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+    configuration?.__typename !== 'BarChartConfiguration' &&
+    configuration?.__typename !== 'LineChartConfiguration' &&
+    configuration?.__typename !== 'AggregateChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }
 
-  const currentFieldMetadataId =
-    widgetInEditMode.configuration.groupByFieldMetadataIdY;
+  const currentFieldMetadataId = configuration.aggregateFieldMetadataId;
 
   const [selectedFieldMetadataId, setSelectedFieldMetadataId] = useState(
     currentFieldMetadataId,
   );
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
-    (item) => item.id === widgetInEditMode.objectMetadataId,
+    (item) => item.id === widgetInEditMode?.objectMetadataId,
   );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
@@ -59,13 +59,10 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
     items: sourceObjectMetadataItem?.fields || [],
     searchQuery,
     getSearchableValues: (item) => [item.label, item.name],
-  });
+    // TODO: remove the relation filter once group by is supported for relation fields
+  }).filter((field) => !isFieldRelation(field) && !field.isSystem);
 
   const { getIcon } = useIcons();
-
-  if (!isDefined(sourceObjectMetadataItem)) {
-    return null;
-  }
 
   if (isSubMenuOpen) {
     return (
@@ -78,9 +75,6 @@ export const ChartFieldSelectionForAggregateOperationDropdownContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader>
-        <Trans>Y-Axis Field</Trans>
-      </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
         type="text"

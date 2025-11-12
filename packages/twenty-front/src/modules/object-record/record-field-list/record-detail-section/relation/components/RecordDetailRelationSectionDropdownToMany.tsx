@@ -2,9 +2,11 @@ import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
-import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
+import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
@@ -20,16 +22,31 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { CustomError } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
 export const RecordDetailRelationSectionDropdownToMany = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
+  const { fieldMetadataId } = fieldDefinition;
   const {
     fieldName,
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const { fieldMetadataItem, objectMetadataItem } = getFieldMetadataItemById({
+    fieldMetadataId,
+    objectMetadataItems,
+  });
+
+  if (!fieldMetadataItem || !objectMetadataItem) {
+    throw new CustomError(
+      'Field metadata item or object metadata item not found',
+      'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
+    );
+  }
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
@@ -39,6 +56,12 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
   const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
     ({ id }) => id === relationFieldMetadataId,
   );
+  if (!relationFieldMetadataItem) {
+    throw new CustomError(
+      'Relation field metadata item not found',
+      'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
+    );
+  }
 
   const fieldValue = useRecoilValue<
     ({ id: string } & Record<string, any>) | ObjectRecord[] | null
@@ -83,10 +106,12 @@ export const RecordDetailRelationSectionDropdownToMany = () => {
     setMultipleRecordPickerSearchFilter('');
   }, [setMultipleRecordPickerSearchFilter]);
 
-  const { updateRelation } = useUpdateRelationFromManyFieldInput();
+  const { updateRelation } = useUpdateRelationOneToManyFieldInput();
 
   const { createNewRecordAndOpenRightDrawer } =
     useAddNewRecordAndOpenRightDrawer({
+      fieldMetadataItem,
+      objectMetadataItem,
       relationObjectMetadataNameSingular,
       relationObjectMetadataItem,
       relationFieldMetadataItem,

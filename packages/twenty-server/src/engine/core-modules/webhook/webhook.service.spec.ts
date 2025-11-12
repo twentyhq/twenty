@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ArrayContains, IsNull } from 'typeorm';
 
-import { Webhook } from './webhook.entity';
+import { WebhookEntity } from './webhook.entity';
 import { WebhookException, WebhookExceptionCode } from './webhook.exception';
 import { WebhookService } from './webhook.service';
 
@@ -14,7 +14,7 @@ describe('WebhookService', () => {
   const mockWorkspaceId = 'workspace-123';
   const mockWebhookId = 'webhook-456';
 
-  const mockWebhook: Webhook = {
+  const mockWebhook: WebhookEntity = {
     id: mockWebhookId,
     targetUrl: 'https://example.com/webhook',
     secret: 'webhook-secret',
@@ -40,7 +40,7 @@ describe('WebhookService', () => {
       providers: [
         WebhookService,
         {
-          provide: getRepositoryToken(Webhook),
+          provide: getRepositoryToken(WebhookEntity),
           useValue: mockWebhookRepository,
         },
       ],

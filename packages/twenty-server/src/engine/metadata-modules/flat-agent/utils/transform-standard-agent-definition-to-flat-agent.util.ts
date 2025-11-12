@@ -7,12 +7,11 @@ export const transformStandardAgentDefinitionToFlatAgent = (
   standardAgentDefinition: StandardAgentDefinition,
   workspaceId: string,
 ): FlatAgent => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { createHandoffFromDefaultAgent, standardRoleId, ...agentProps } =
+  const { standardRoleId: _standardRoleId, ...agentData } =
     standardAgentDefinition;
 
   return {
-    ...agentProps,
+    ...agentData,
     id: v4(),
     workspaceId,
     universalIdentifier: standardAgentDefinition.standardId || v4(),

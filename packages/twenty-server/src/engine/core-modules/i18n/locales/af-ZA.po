@@ -18,45 +18,26 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
 "X-Crowdin-File-ID: 31\n"
 
-#. js-lingui-id: Qyrd7v
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "(System) View Fields"
-msgstr "(Sisteem) Besigtig Velde"
-
-#. js-lingui-id: 9Y3fTB
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "(System) View Filter Groups"
-msgstr "(Sisteem) Besigtig Filtergroepe"
-
-#. js-lingui-id: TB2jLV
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "(System) View Filters"
-msgstr "(Sisteem) Besigtig Filters"
-
-#. js-lingui-id: Y7M7Ro
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "(System) View Groups"
-msgstr "(Sisteem) Besigtig Groepe"
-
-#. js-lingui-id: 9vliLw
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "(System) View Sorts"
-msgstr "(Sisteem) Besigtig Sorteers"
-
-#. js-lingui-id: 5B59WE
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "(System) Views"
-msgstr "(Sisteem) Besigtigings"
-
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "{fieldName} en {fieldName}Id kan nie albei voorsien word nie."
 
 #. js-lingui-id: ZkHTHm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
 msgstr "{fieldType} velde kan nie uniek wees nie."
+
+#. js-lingui-id: LeIJhm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "{fieldType} fields cannot have a default value."
+msgstr "{fieldType} velde kan nie 'n standaardwaarde hê nie."
+
+#. js-lingui-id: iEZavm
+#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+msgid "{hostnameCount} hostnames found for domain '{domainName}'. Expect 1"
+msgstr "{hostnameCount} gasheername(s) gevind vir domein '{domainName}'. Verwagt 1"
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
@@ -185,6 +166,11 @@ msgstr "Aksie nodig om die verwydering van werkruimte te voorkom"
 msgid "Action Needed to Reset Password"
 msgstr "Aksie Nodig om Wagwoord te Herstel"
 
+#. js-lingui-id: 8Q5bRY
+#: src/engine/core-modules/auth/services/reset-password.service.ts
+msgid "Action Needed to Set Password"
+msgstr "Aksie Nodig om Wagwoord in te Stel"
+
 #. js-lingui-id: 52fA3U
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
@@ -216,12 +202,6 @@ msgstr "Adres van die maatskappy"
 msgid "Address of the company - deprecated in favor of new address field"
 msgstr "Adres van die maatskappy - verouderd ten gunste van nuwe adresveld"
 
-#. js-lingui-id: ZfVqbP
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Aggregate operation"
-msgstr "Samevattingsoperasie"
-
 #. js-lingui-id: W58PBh
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
@@ -251,8 +231,12 @@ msgstr "Bedrag"
 msgid "An attachment"
 msgstr "'n Aanhangsel"
 
+#. js-lingui-id: eW83iC
+#: src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception.ts
+msgid "An error occurred during messages import"
+msgstr "\t1n fout het voorgekom tydens die invoer van boodskappe"
+
 #. js-lingui-id: XyOToQ
-#: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "An error occurred."
@@ -261,7 +245,7 @@ msgstr "'n Fout het voorgekom."
 #. js-lingui-id: +MvnxO
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "An index must contain at least one field"
-msgstr ""
+msgstr " 80Nag \\b0aan vergelykings \\b8met ten minste een veld"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -273,16 +257,10 @@ msgstr "'n Geleentheid"
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Jaarlikse Herhalende Inkomste: Die werklike of beraamde jaarlikse inkomste van die maatskappy"
 
-#. js-lingui-id: 6wr+2Z
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Any field filter value"
-msgstr "Enige veld filterwaarde"
-
 #. js-lingui-id: mU5fvk
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain already registered."
-msgstr ""
+msgstr "Goedgekeurde toegangsdomein reeds geregistreer."
 
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -294,6 +272,11 @@ msgstr "Goedgekeurde toegangsdomein stem nie ooreen met e-posdomein nie"
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approved access domain has already been validated"
 msgstr "Goedgekeurde toegangsdomien is reeds geverifieer"
+
+#. js-lingui-id: naCW6Z
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "April"
+msgstr "April"
 
 #. js-lingui-id: 3EiOLz
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -330,10 +313,10 @@ msgstr "Ten minste een verhouding is vereis"
 msgid "Attachment"
 msgstr "Aanhangsel"
 
-#. js-lingui-id: JAefBH
+#. js-lingui-id: dda+ze
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment author"
-msgstr "Aanhangsel outeur"
+msgid "Attachment author (deprecated - use createdBy)"
+msgstr "Aanhangsel outeur (verouderd - gebruik createdBy)"
 
 #. js-lingui-id: bIaesZ
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -343,7 +326,12 @@ msgstr "Aanhangsel maatskappy"
 #. js-lingui-id: wtcL/T
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment dashboard"
-msgstr ""
+msgstr "Aanhangsel paneelbord"
+
+#. js-lingui-id: u3pBxa
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Attachment file category"
+msgstr "Aanhangsel lêerkategorie"
 
 #. js-lingui-id: gfGYcl
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -375,15 +363,15 @@ msgstr "Aanhangsel persoon"
 msgid "Attachment task"
 msgstr "Aanhangsel taak"
 
-#. js-lingui-id: 4qqxMt
+#. js-lingui-id: ZXjjRz
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-msgid "Attachment type"
-msgstr "Aanhangsel tipe"
+msgid "Attachment type (deprecated - use fileCategory)"
+msgstr "Aanhangsel tipe (verouderd - gebruik fileCategory)"
 
 #. js-lingui-id: tH6L3e
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Attachment workflow"
-msgstr ""
+msgstr "Aanhangsel werkvloeie"
 
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -416,7 +404,7 @@ msgstr "Aanhangsels gekoppel aan die kontak."
 #. js-lingui-id: 2AEUIb
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Attachments linked to the dashboard"
-msgstr ""
+msgstr "Aanhangsels gekoppel aan die paneelbord"
 
 #. js-lingui-id: kw0mLu
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -426,12 +414,17 @@ msgstr "Aanhangsels gekoppel aan die geleentheid"
 #. js-lingui-id: 83l3Yd
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Attachments linked to the workflow"
-msgstr ""
+msgstr "Aanhangsels gekoppel aan die werkvloei"
 
 #. js-lingui-id: fCbqr7
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Attachments tied to the {label}"
 msgstr "Aanhangsels verbind tot die {label}"
+
+#. js-lingui-id: DBHTm/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "August"
+msgstr "Augustus"
 
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -443,6 +436,11 @@ msgstr "Geloofsbriewe het misluk op"
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "Authentication is not enabled with this provider."
 msgstr "Outentikasie is nie met hierdie verskaffer geaktiveer nie."
+
+#. js-lingui-id: Tsx+z2
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "Authentication is required to access this feature. Please sign in and try again."
+msgstr "Verifikasie word benodig om toegang tot hierdie funksie te verkry. Meld aan en probeer asseblief weer."
 
 #. js-lingui-id: VbeIOx
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -586,6 +584,11 @@ msgstr "Kalendergebeure"
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
 msgstr "Kan nie aan {connectFieldName} koppel nie. Geen unieke rekord met die voorwaarde gevind nie: {formattedConnectCondition}"
 
+#. js-lingui-id: 2oVE+z
+#: src/engine/guards/impersonate-permission.guard.ts
+msgid "Can't impersonate user via api key"
+msgstr "Kan nie gebruiker via API-sleutel naboots nie."
+
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
@@ -600,6 +603,11 @@ msgstr "Kan nie meervoudige konsepweergawe vir dieselfde werkvloeiontwikke se we
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Kan nie werkvloeiontwikke se weergawe skep met status, anders as konsep, nie"
+
+#. js-lingui-id: VPXcr5
+#: src/engine/core-modules/user/services/user.service.ts
+msgid "Cannot delete account: you are the only admin. Assign another admin or delete the workspace(s) first."
+msgstr "Kan nie rekening verwyder nie: jy is die enigste admin. Ken 'n ander admin toe of verwyder eers die werkruimtes."
 
 #. js-lingui-id: AQyr9X
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -620,12 +628,12 @@ msgstr "Kan nie uniekheid inskakel nie as gevolg van bestaande duplikaatwaardes.
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
-msgstr "Kan nie meer as een aktiewe werkvloeiontwikke se weergawe hê nie"
+msgstr "Kan nie meer as een aktiewe werkvloei-weergawe hê nie"
 
-#. js-lingui-id: UcdPY5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr "Kan nie standaardveld eienskappe opdateer nie: {invalidProperties}"
+#. js-lingui-id: PjZIyI
+#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+msgid "Cannot update message channel while sync is ongoing. Please wait for the sync to complete."
+msgstr "Kan nie die boodskapkanaal opdateer terwyl sinkronisasie aan die gang is nie. Wag asseblief totdat die sinkronisasie voltooi is."
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -657,11 +665,6 @@ msgstr "Sluitingsdatum"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Color Scheme"
 msgstr "Kleurskema"
-
-#. js-lingui-id: 07OSD1
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Compact View"
-msgstr "Kompakte Aansig"
 
 #. js-lingui-id: s2QZS6
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -772,20 +775,25 @@ msgstr "Kontak se telefoonnommers"
 msgid "Contact’s X/Twitter account"
 msgstr "Kontak se X/Twitter-rekening"
 
+#. js-lingui-id: gdbojg
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
+msgstr "Teenstrydige veldtoestemmings is opgespoor op 'n verhoudingveld ({fieldName})."
+
 #. js-lingui-id: LZf/L8
-#: src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+#: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 msgid "Could not find flat entity in maps"
-msgstr ""
+msgstr "Kon nie plat entiteit in kaarte vind nie"
 
 #. js-lingui-id: jBrX/g
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Could not find index field related field metadata"
-msgstr ""
+msgstr "Kon nie metagegewens vir indeksvelde vind nie"
 
 #. js-lingui-id: HVajHk
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Could not find index related object metadata"
-msgstr ""
+msgstr "Kon nie verwante metagegewens vir indekse vind nie"
 
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -795,6 +803,7 @@ msgstr ""
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Created by"
 msgstr "Geskep deur"
@@ -826,7 +835,7 @@ msgstr "Cron patroon '{pattern}' is ongeldig"
 #. js-lingui-id: GuyjcQ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Cron trigger already exists"
-msgstr ""
+msgstr "Cron sneller bestaan reeds"
 
 #. js-lingui-id: Ej90Yp
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
@@ -834,12 +843,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Cron trigger not found"
-msgstr ""
+msgstr "Cron sneller nie gevind nie"
 
 #. js-lingui-id: vz7B0E
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Cron trigger with same id already exists"
-msgstr ""
+msgstr "Cron sneller met dieselfde id bestaan reeds"
 
 #. js-lingui-id: Mikszu
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -862,7 +871,7 @@ msgstr "Paneel bladsy uitleg"
 #. js-lingui-id: FrOkwR
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard record Position"
-msgstr ""
+msgstr "Paneelbord rekord posisie"
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
@@ -877,7 +886,7 @@ msgstr "Paneelborde"
 #. js-lingui-id: K2CQHf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger already exists"
-msgstr ""
+msgstr "Databasis gebeurtenis sneller bestaan reeds"
 
 #. js-lingui-id: iS6kjG
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
@@ -885,12 +894,12 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger not found"
-msgstr ""
+msgstr "Databasis gebeurtenis sneller nie gevind nie"
 
 #. js-lingui-id: 0vtv+s
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service.ts
 msgid "Database event trigger with same id already exists"
-msgstr ""
+msgstr "Databasis gebeurtenis sneller met dieselfde id bestaan reeds"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -902,8 +911,14 @@ msgstr "Datumformaat"
 msgid "Date when the record was deleted"
 msgstr "Datum toe die rekord verwyder is"
 
+#. js-lingui-id: r6zgGo
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "December"
+msgstr "Desember"
+
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "Standaardwaarde \"{defaultValue}\" moet een van die opsiewaardes wees"
 
@@ -914,11 +929,13 @@ msgstr "Standaardwaarde moet 'n string wees"
 
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default value should be as quoted string"
 msgstr "Standaardwaarde moet as 'n aangehaalde string wees"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Default values must be unique"
 msgstr "Standaardwaardes moet uniek wees"
 
@@ -927,11 +944,6 @@ msgstr "Standaardwaardes moet uniek wees"
 msgid "Deleted at"
 msgstr "Verwyder op"
 
-#. js-lingui-id: U1bSSI
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Describes if the view is in compact mode"
-msgstr "Beskryf of die aansig in 'n kompakte modus is"
-
 #. js-lingui-id: Nu4oKW
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -939,7 +951,6 @@ msgid "Description"
 msgstr "Beskrywing"
 
 #. js-lingui-id: MRB7nI
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
 msgid "Direction"
 msgstr "Rigting"
@@ -952,25 +963,20 @@ msgstr "Rigting"
 msgid "Display Name"
 msgstr "Wys Naam"
 
-#. js-lingui-id: y7HJTU
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Display the records in a side panel or in a record page"
-msgstr "Vertoon die rekords in  27n sy-paneel of op  27n rekordbladsy"
-
-#. js-lingui-id: 0H/D9K
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Display Value"
-msgstr "Vertoon Waarde"
-
 #. js-lingui-id: IymH4t
 #: src/engine/core-modules/public-domain/public-domain.service.ts
 msgid "Domain already used for workspace custom domain"
-msgstr ""
+msgstr "Domein reeds gebruik vir werksruimte pasgemaakte domein."
+
+#. js-lingui-id: 2sIVDj
+#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+msgid "Domain is already registered"
+msgstr "Domein is reeds geregistreer."
 
 #. js-lingui-id: PfJswy
-#: src/engine/core-modules/workspace/services/workspace.service.ts
+#: src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service.ts
 msgid "Domain is already registered as public domain"
-msgstr ""
+msgstr "Domein is reeds as 'n openbare domein geregistreer."
 
 #. js-lingui-id: wMncXq
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -984,6 +990,7 @@ msgstr "Sperdatum"
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Duplicated option {field}"
 msgstr "Gedupliseerde opsie {field}"
 
@@ -1028,7 +1035,7 @@ msgstr "Einddatum"
 #. js-lingui-id: EzGlkq
 #: src/engine/core-modules/dns-manager/validator/dns-manager.validate.ts
 msgid "Environment variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr ""
+msgstr "Omgewingveranderlike CLOUDFLARE_API_KEY moet gedefinieer wees om hierdie funksie te gebruik."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1038,7 +1045,7 @@ msgstr "Gebeurtenis maatskappy"
 #. js-lingui-id: CPhvC+
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event dashboard"
-msgstr ""
+msgstr "Gebeurtenis paneelbord"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1155,6 +1162,21 @@ msgstr "Verwag dat dieselfde beperkingsvelde konsekwent gebruik sal word oor al 
 msgid "External ID"
 msgstr "Eksterne ID"
 
+#. js-lingui-id: pUligB
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to delete jobs. Please try again later."
+msgstr "Kon nie werke uitvee nie. Probeer asseblief weer later."
+
+#. js-lingui-id: HfhmrS
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to load queue jobs. Please try again later."
+msgstr "Kon nie wagrywerke laai nie. Probeer asseblief weer later."
+
+#. js-lingui-id: SJEIIJ
+#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
+msgid "Failed to retry jobs. Please try again later."
+msgstr "Kon nie werke weer probeer nie. Probeer asseblief weer later."
+
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
@@ -1168,7 +1190,7 @@ msgstr "Gunsteling maatskappy"
 #. js-lingui-id: Aj026i
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite dashboard"
-msgstr ""
+msgstr "Gunsteling paneelbord"
 
 #. js-lingui-id: TDlZ/o
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1266,7 +1288,7 @@ msgstr "Gunstelinge gekoppel aan die kontak"
 #. js-lingui-id: 5zuBdE
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Favorites linked to the dashboard"
-msgstr ""
+msgstr "Gunstelinge gekoppel aan die paneelbord"
 
 #. js-lingui-id: GOfcBt
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -1308,6 +1330,11 @@ msgstr "Gunstelinge gekoppel aan die werkspasie lid"
 msgid "Favorites tied to the {label}"
 msgstr "Gunstelinge verbind aan die {label}"
 
+#. js-lingui-id: 4lgLew
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "February"
+msgstr "Februarie"
+
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
@@ -1316,7 +1343,7 @@ msgstr "Veld bestaan reeds"
 #. js-lingui-id: ugu505
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Field cannot be indexed as it belongs to a different object"
-msgstr ""
+msgstr "Veld kan nie geindekseer word nie omdat dit aan 'n ander objek behoort"
 
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
@@ -1336,52 +1363,54 @@ msgstr "Veld wat as etiketidentifiseerder verklaar is, nie gevind nie"
 #. js-lingui-id: qelyBB
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Field does not belong to the indexed object"
-msgstr ""
+msgstr "Veld behoort nie aan die geïndekseerde voorwerp nie"
 
 #. js-lingui-id: DXxcTd
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Field ID is already used in another index"
-msgstr ""
+msgstr "Veld-ID word reeds in 'n ander indeks gebruik"
 
-#. js-lingui-id: nSFFML
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Field Metadata Id"
-msgstr "Veld Metadata Id"
+#. js-lingui-id: AgbRjM
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+msgid "Field label identifier is required"
+msgstr "Veldetiket-identifiseerder is vereis"
 
 #. js-lingui-id: MPt365
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "Field metadata not found"
-msgstr ""
+msgstr "Veld metadata nie gevind nie"
 
 #. js-lingui-id: uTPwH1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field metadata to delete not found"
-msgstr ""
+msgstr "Veldmetadata om te skrap nie gevind nie"
 
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update not found"
 msgstr "Veldmetadata om by te werk nie gevind nie"
 
-#. js-lingui-id: g+t8w9
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Field metadata used for aggregate operation"
-msgstr "Veld-metadata gebruik vir saamgestelde operasie"
-
 #. js-lingui-id: prTOhK
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field name is not synced with field label"
 msgstr "Veldnaam is nie gesinchroniseer met veldetiket nie"
 
+#. js-lingui-id: QXuG8C
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "Field permissions can only be used to restrict access, not to grant additional permissions."
+msgstr "Veldtoestemmings kan slegs gebruik word om toegang te beperk, nie om bykomende toestemmings toe te staan nie."
+
 #. js-lingui-id: S+y2Wg
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Field referenced in index does not exist"
-msgstr ""
+msgstr "Veld wat in indeks verwys word, bestaan nie"
 
 #. js-lingui-id: cK8ILP
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -1398,40 +1427,35 @@ msgstr "Veld om by te werk nie gevind nie"
 msgid "Field used for full-text search"
 msgstr "Veld gebruik vir volledige-teks soek"
 
-#. js-lingui-id: zuDgzc
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "Field Value"
-msgstr "Veld Waarde"
-
-#. js-lingui-id: s3HtdT
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "FieldMetadataId is required"
-msgstr "FieldMetadataId is vereis"
-
 #. js-lingui-id: Sof2+k
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
 msgstr "FieldMetadataId is benodig om 'n aansigveld te skep."
 
 #. js-lingui-id: NTyTR5
-#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
 msgstr "FieldMetadataId is benodig om 'n aansigfiltergroep te skep."
 
 #. js-lingui-id: Ya6oU7
-#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
 msgstr "FieldMetadataId is benodig om 'n aansigfilter te skep."
 
 #. js-lingui-id: DU4jcg
-#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
 msgstr "FieldMetadataId is benodig om 'n aansiggroep te skep."
 
 #. js-lingui-id: snEXuU
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "FieldMetadataId is benodig om 'n aansigsorteer te skep."
+
+#. js-lingui-id: i+AQUz
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "File category"
+msgstr "Lêer kategorie"
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1463,15 +1487,15 @@ msgstr "Vormaksie velde moet unieke name hê"
 msgid "Form action must have at least one field"
 msgstr "Vormaksie moet ten minste een veld hê"
 
+#. js-lingui-id: 39y5bn
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Friday"
+msgstr "Vrydag"
+
 #. js-lingui-id: oQA+cA
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Full path"
 msgstr "Volledige pad"
-
-#. js-lingui-id: UzpVUy
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "Group by this field value"
-msgstr "Groepeer volgens hierdie veldwaarde"
 
 #. js-lingui-id: TkE8dW
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -1509,11 +1533,6 @@ msgstr "Hoofdeboodskap Id"
 msgid "iCal UID"
 msgstr "iCal UID"
 
-#. js-lingui-id: wwu18a
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Icon"
-msgstr "Ikoon"
-
 #. js-lingui-id: CiyiKN
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "ICP"
@@ -1532,54 +1551,56 @@ msgstr "Ideale Klanteprofiel: Dit dui aan of die maatskappy die mees toepaslike 
 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "If defined default value must contain at least one value"
 msgstr "Indien gedefinieer, moet die standaardwaarde ten minste een waarde bevat"
 
 #. js-lingui-id: Kfy/ML
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index already exists"
-msgstr ""
+msgstr "Indeks bestaan reeds"
 
 #. js-lingui-id: EwXumf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index field has an invalid reference"
-msgstr ""
+msgstr "Indeksveld het 'n ongeldige verwysing"
 
 #. js-lingui-id: +hk7cY
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index field ID already exists in another index"
-msgstr ""
+msgstr "Indeksveld-ID bestaan reeds in 'n ander indeks"
 
 #. js-lingui-id: ITue4V
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index field references incorrect index metadata"
-msgstr ""
+msgstr "Indeksveld verwys na verkeerde indeksmetadata"
 
 #. js-lingui-id: K1hWwv
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index must have at least one field"
-msgstr ""
+msgstr "Indeks moet ten minste een veld hê"
 
 #. js-lingui-id: Hl6cv2
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index related object not found"
-msgstr ""
+msgstr "Indeks verwante voorwerp nie gevind nie"
 
 #. js-lingui-id: fY2zUQ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder.service.ts
 msgid "Index to delete not found"
-msgstr ""
+msgstr "Indeks om te verwyder nie gevind nie"
 
 #. js-lingui-id: qgBN4Y
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same id already exists"
-msgstr ""
+msgstr "Indeks met dieselfde id bestaan reeds"
 
 #. js-lingui-id: a+k+8J
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same name already exists"
-msgstr ""
+msgstr "Indeks met dieselfde naam bestaan reeds"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -1600,6 +1621,11 @@ msgstr "Ongeldige Captcha, probeer asseblief 'n ander toestel"
 #: src/engine/core-modules/record-transformer/utils/transform-phones-value.util.ts
 msgid "Invalid country code {countryCode}"
 msgstr "Ongeldige land kode {countryCode}"
+
+#. js-lingui-id: AMeEDO
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Invalid credentials. Please check your username and password."
+msgstr "Ongeldige geloofsbriewe. Maak seker jou gebruikersnaam en wagwoord is korrek."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1639,6 +1665,11 @@ msgstr "Ongeldige minuut waarde. Moet 'n heelgetal wees groter as 1"
 msgid "Invalid morph relation input"
 msgstr "Ongeldige morfverhoudingsinvoer"
 
+#. js-lingui-id: VvhAS2
+#: src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util.ts
+msgid "Invalid object metadata input"
+msgstr "Ongeldige objekmetadata-invoer"
+
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
@@ -1663,16 +1694,6 @@ msgstr "Ongeldige uuid {id}"
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Ongeldige verifikasiekode. Probeer asseblief weer."
-
-#. js-lingui-id: 8xkULN
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data"
-msgstr "Ongeldige aansig sorteergegewens"
-
-#. js-lingui-id: I0OzaR
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "Invalid view sort data for view sort id: {id}"
-msgstr "Ongeldige aansig sorteergegewens vir die aansigsorteer-ID: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1720,6 +1741,11 @@ msgstr "Is Sinkronisasie Geaktiveer"
 msgid "Is Synced"
 msgstr "Is Gesinkroniseer"
 
+#. js-lingui-id: rjyWPb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "January"
+msgstr "Januarie"
+
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Job Title"
@@ -1750,15 +1776,40 @@ msgstr "Json voorwerp om sneller te verskaf"
 msgid "Json value for event details"
 msgstr "Json waarde vir gebeurtenis besonderhede"
 
-#. js-lingui-id: qmarO2
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "kanbanfieldMetadataId"
-msgstr "kanbanveldMetadataId"
+#. js-lingui-id: u4ex5r
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "July"
+msgstr "Julie"
 
-#. js-lingui-id: 7sMeHQ
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Key"
-msgstr "Sleutel"
+#. js-lingui-id: zeEQd/
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "June"
+msgstr "Junie"
+
+#. js-lingui-id: ljUvzm
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
+msgid "Label identifier field cannot be deactivated"
+msgstr "Etiket identifiseerveld kan nie gedeaktiveer word nie"
+
+#. js-lingui-id: ACUSmL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "Label identifier view field cannot be deleted"
+msgstr "Etiket identifiseerder aansig veld kan nie uitgevee word nie"
+
+#. js-lingui-id: rI+dAx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+msgid "Label identifier view field has to be in the lowest position"
+msgstr "Etiket identifiseerder aansig veld moet in die laagste posisie wees"
+
+#. js-lingui-id: PqTWJf
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util.ts
+msgid "Label identifier view field has to be visible"
+msgstr "Etiket identifiseerder aansig veld moet sigbaar wees"
 
 #. js-lingui-id: w8Rv8T
 #: src/engine/metadata-modules/utils/compute-metadata-name-from-label.util.ts
@@ -1781,6 +1832,12 @@ msgstr "Etiket moet nie 'n komma bevat nie"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Language"
 msgstr "Taal"
+
+#. js-lingui-id: hHtzNQ
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+#: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
+msgid "Last credentials refreshed at"
+msgstr "Laaste geloofsbriewe ververs op"
 
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1851,20 +1908,20 @@ msgstr "Lys van geleenthede waarvoor daardie persoon die kontakpunt is"
 msgid "Location"
 msgstr "Ligging"
 
-#. js-lingui-id: y+q8Lv
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Logical Operator"
-msgstr "Logiese Operateur"
-
-#. js-lingui-id: 6kQXsS
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Logical operator for the filter group"
-msgstr "Logiese operateur vir die filter groep"
+#. js-lingui-id: hg6l4j
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "March"
+msgstr "Maart"
 
 #. js-lingui-id: hw7Mwk
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
 msgid "Maximum number of records to upsert is {QUERY_MAX_RECORDS}."
-msgstr ""
+msgstr "Maksimum aantal rekords om by te voeg is {QUERY_MAX_RECORDS}."
+
+#. js-lingui-id: 3JzsDb
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "May"
+msgstr "Mei"
 
 #. js-lingui-id: EnfPm2
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1908,6 +1965,11 @@ msgstr "Boodskapkanaalboodskapassosiasie"
 msgid "Message Channel Message Associations"
 msgstr "Boodskapkanaalboodskapassosiasies"
 
+#. js-lingui-id: LOU3x5
+#: src/modules/messaging/message-channel-manager/query-hooks/message-channel-update-one.pre-query.hook.ts
+msgid "Message channel not found"
+msgstr "Boodskapkanaal nie gevind nie"
+
 #. js-lingui-id: k7LXPQ
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1935,7 +1997,7 @@ msgstr "Boodskapvouer"
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 msgid "Message folder import policy"
-msgstr ""
+msgstr "Boodskap lêergids invoer beleid"
 
 #. js-lingui-id: p4ANpY
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2030,6 +2092,11 @@ msgstr "Boodskapverskaffer ververstoken"
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Vereiste velde ontbreek: ten minste een unieke beperking moet volledig geïntegreer wees vir '{connectFieldName}'."
 
+#. js-lingui-id: hty0d5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Monday"
+msgstr "Maandag"
+
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must have the same relation type"
@@ -2056,16 +2123,15 @@ msgid "Multi-select field default value must be an array"
 msgstr "Multi-seleksie veld standaardwaarde moet 'n skikking wees"
 
 #. js-lingui-id: 6rLmLu
-#: src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service.ts
+#: src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-matching-record-id.util.ts
 msgid "Multiple records found with the same unique field values for {conflictingFieldsValues}. Cannot determine which record to update."
-msgstr ""
+msgstr "Meervoudige rekords gevind met dieselfde unieke veldwaardes vir {conflictingFieldsValues}. Kan nie bepaal watter rekord om by te werk nie."
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -2091,6 +2157,11 @@ msgstr "Naam \"{flatFieldMetadataName}\" is nie beskikbaar nie"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
 msgstr "Naam \"{flatFieldMetadataName}\" is nie beskikbaar nie aangesien dit reeds deur 'n ander veld gebruik word"
+
+#. js-lingui-id: Q2loDF
+#: src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service.ts
+msgid "Name \"{name}\" is not available."
+msgstr "Naam \"{name}\" is nie beskikbaar nie."
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2133,8 +2204,8 @@ msgid "Name should be in camelCase"
 msgstr "Naam moet in camelCase wees"
 
 #. js-lingui-id: Dr0xtb
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Names are not synced with labels"
 msgstr "Name is nie gesynkroniseer met etikette nie"
 
@@ -2152,6 +2223,11 @@ msgstr "Geen inset verskaf in vormstap nie"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
 msgstr "Geen patroon verskaf in VERVOLGING cron sneller nie"
+
+#. js-lingui-id: 2iURlq
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "No permissions are set for this role on the selected object. Please set object permissions first."
+msgstr "Geen toestemmings is gestel vir hierdie rol op die geselekteerde objek nie. Stel asseblief eers objektoestemmings."
 
 #. js-lingui-id: pOu4u/
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2172,6 +2248,11 @@ msgstr "Geen stappe verskaf in werkvloeiontwikke se weergawe nie"
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No trigger type provided"
 msgstr "Geen sneller tipe verskaf nie"
+
+#. js-lingui-id: /BipSk
+#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+msgid "No valid authentication context found."
+msgstr "Geen geldige verifikasiekonteks gevind nie."
 
 #. js-lingui-id: KiJn9B
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2266,10 +2347,15 @@ msgstr "NotaTeiken geleentheid"
 msgid "NoteTarget person"
 msgstr "NotaTeiken persoon"
 
+#. js-lingui-id: t9QlBd
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "November"
+msgstr "November"
+
 #. js-lingui-id: bR2sEm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Number format"
-msgstr ""
+msgstr "Nommerformaat"
 
 #. js-lingui-id: ioJFzx
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -2277,8 +2363,8 @@ msgid "Number of employees in the company"
 msgstr "Aantal werknemers in die maatskappy"
 
 #. js-lingui-id: ECRKYR
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 msgid "Object already exists"
 msgstr "Objek bestaan reeds"
 
@@ -2292,16 +2378,11 @@ msgstr "Voorwerp etiket is te lank"
 msgid "Object label is too short"
 msgstr "Voorwerp etiket is te kort"
 
-#. js-lingui-id: T/nPf5
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Object Metadata Id"
-msgstr "Objek Metadata Id"
-
 #. js-lingui-id: xrblgA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "Object metadata not found"
-msgstr ""
+msgstr "Voorwerp metadata nie gevind nie"
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-field-metadata-validator.service.ts
@@ -2342,19 +2423,19 @@ msgid "Object with same id already exists"
 msgstr "Objek met dieselfde id bestaan reeds"
 
 #. js-lingui-id: 53pIyA
-#: src/engine/core-modules/view/exceptions/view.exception.ts
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
 msgstr "ObjectMetadataId is benodig om 'n aansig te skep."
 
-#. js-lingui-id: r/A6pA
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Open Record In"
-msgstr "Maak Rekord Oop In"
+#. js-lingui-id: dzQfDY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "October"
+msgstr "Oktober"
 
-#. js-lingui-id: Fzfj4N
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Operand"
-msgstr "Operant"
+#. js-lingui-id: eWQQpx
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "One or more objects you are trying to set permissions for could not be found. They may have been deleted."
+msgstr "Een of meer objekte waarvoor jy toestemmings probeer stel, kon nie gevind word nie. Hulle mag verwyder gewees het."
 
 #. js-lingui-id: 4MyDFl
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2415,11 +2496,13 @@ msgstr "Geleentheid stadium"
 
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is invalid"
 msgstr "Opsie id is ongeldig"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option id is required"
 msgstr "Opsie id word vereis"
 
@@ -2481,12 +2564,6 @@ msgstr "Opsie waarde word vereis"
 msgid "Option value must be a string of at least one character"
 msgstr "Opsie waarde moet 'n string van ten minste een karakter wees"
 
-#. js-lingui-id: eLggyd
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Optional aggregate operation"
-msgstr "Opsionele aggregaat operasie"
-
 #. js-lingui-id: EabrTR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
@@ -2497,20 +2574,36 @@ msgstr "Opsies word vereis vir keusevelde"
 msgid "Page Layout ID"
 msgstr "Bladsyuitleg-ID"
 
-#. js-lingui-id: pDUbN1
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Parent View Filter Group"
-msgstr "Ouer Uitsig Filter Groep"
-
-#. js-lingui-id: YKSmIP
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Parent View Filter Group Id"
-msgstr "Ouer Uitsig Filter Groep Id"
+#. js-lingui-id: G1fWNt
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Parent Folder ID"
+msgstr "Ouergids-ID"
 
 #. js-lingui-id: wT0H4O
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Password too weak"
 msgstr "Wagwoord te swak"
+
+#. js-lingui-id: l6qKfi
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Pending action for folder sync"
+msgstr ""
+
+#. js-lingui-id: ttZgHv
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Pending action for group emails"
+msgstr ""
+
+#. js-lingui-id: 5aGQev
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Pending group emails action"
+msgstr "Hangende groepeposaksie"
+
+#. js-lingui-id: 6jM9pB
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Pending Sync Action"
+msgstr "Hangende sinkroniseeraksie"
 
 #. js-lingui-id: 1wdjme
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -2552,6 +2645,27 @@ msgstr "Telefoon"
 msgid "Phones"
 msgstr "Telefone"
 
+#. js-lingui-id: rxi3R2
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "Please check your connection settings. Make sure the server host, port, and password are correct."
+msgstr "Gaan asseblief jou verbingsinstellings na. Maak seker die bediener host, poort en wagwoord is korrek."
+
+#. js-lingui-id: v0iiWr
+#: src/engine/core-modules/webhook/webhook.service.ts
+#: src/engine/core-modules/webhook/webhook.service.ts
+msgid "Please provide a valid HTTP or HTTPS URL."
+msgstr "Verskaf asseblief 'n geldige HTTP of HTTPS URL."
+
+#. js-lingui-id: RDvKTq
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "Please provide connection details to configure your email account."
+msgstr "Verskaf asseblief verbindingsbesonderhede om jou e-posrekening te konfigureer."
+
+#. js-lingui-id: 0ldKS0
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again."
+msgstr "Kies asseblief 'n geldige verbindings tipe (IMAP, SMTP, of CalDAV) en probeer weer."
+
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Point of Contact"
@@ -2562,9 +2676,6 @@ msgstr "Kontakpunt"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2577,22 +2688,6 @@ msgstr "Kontakpunt"
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Position"
 msgstr "Posisie"
-
-#. js-lingui-id: HH1bMC
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Position in the parent view filter group"
-msgstr "Posisie in die ouer-view filter groep"
-
-#. js-lingui-id: CvOSME
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Position in the view filter group"
-msgstr "Posisie in die view filter groep"
-
-#. js-lingui-id: h8PGuF
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "Position in view filter group"
-msgstr "Posisie in view filter groep"
 
 #. js-lingui-id: TTHIbk
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2637,12 +2732,28 @@ msgstr "verskaffer"
 #. js-lingui-id: OL88cI
 #: src/engine/core-modules/public-domain/public-domain.service.ts
 msgid "Public domain already registered"
-msgstr ""
+msgstr "Publieke domein reeds geregistreer"
+
+#. js-lingui-id: Capzni
+#: src/engine/core-modules/dns-manager/services/dns-manager.service.ts
+msgid "Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable"
+msgstr "Openbare domein URL is nie gedefinieer nie. Stel asseblief die PUBLIC_DOMAIN_URL omgewingsveranderlike."
 
 #. js-lingui-id: YfbwOB
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Received At"
 msgstr "Ontvang Op"
+
+#. js-lingui-id: x93onj
+#: src/engine/metadata-modules/view-field/services/view-field.service.ts
+#: src/engine/metadata-modules/view-field/services/view-field.service.ts
+msgid "Record text must be in first position of the view."
+msgstr "Rekordteks moet in die eerste posisie van die uitsig wees."
+
+#. js-lingui-id: KGmwY/
+#: src/engine/metadata-modules/view-field/services/view-field.service.ts
+msgid "Record text must stay visible."
+msgstr "Rekordteks moet sigbaar bly."
 
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2710,7 +2821,7 @@ msgstr "Rol"
 #. js-lingui-id: MFW30/
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route already exists"
-msgstr ""
+msgstr "Roete bestaan reeds"
 
 #. js-lingui-id: ldQZkA
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
@@ -2718,28 +2829,33 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route not found"
-msgstr ""
+msgstr "Roete nie gevind nie"
 
 #. js-lingui-id: NCQS+K
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route path already exists"
-msgstr ""
+msgstr "Roetepad bestaan reeds"
 
 #. js-lingui-id: v5H7VS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route with same id already exists"
-msgstr ""
+msgstr "Roete met dieselfde id bestaan reeds"
 
 #. js-lingui-id: c10Yre
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-route-trigger-validator.service.ts
 msgid "Route with same path already exists"
-msgstr ""
+msgstr "Roete met dieselfde pad bestaan reeds"
 
 #. js-lingui-id: Tpm2G9
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Runs"
 msgstr "Loopies"
+
+#. js-lingui-id: +5kO8P
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Saturday"
+msgstr "Saterdag"
 
 #. js-lingui-id: N/rFzD
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -2752,10 +2868,15 @@ msgstr "Omvangs"
 msgid "Search vector"
 msgstr "Soekvektor"
 
+#. js-lingui-id: hgvbYY
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "September"
+msgstr "September"
+
 #. js-lingui-id: F3+i2a
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 msgid "Serverless function already exists"
-msgstr ""
+msgstr "Serverless-funksie bestaan reeds"
 
 #. js-lingui-id: MSgd2w
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
@@ -2775,27 +2896,32 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-cron-trigger-validator.service.ts
 msgid "Serverless function not found"
-msgstr ""
+msgstr "Serverless-funksie nie gevind nie"
 
 #. js-lingui-id: jNhvmj
 #: src/engine/metadata-modules/serverless-function/utils/from-update-serverless-function-input-to-flat-serverless-function-to-update-or-throw.util.ts
 msgid "Serverless function to update not found"
-msgstr ""
+msgstr "Serverless-funksie om op te dateer nie gevind nie"
 
 #. js-lingui-id: zoBkIJ
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-serverless-function-validator.service.ts
 msgid "Serverless function with same id already exists"
-msgstr ""
+msgstr "Serverless-funksie met dieselfde id bestaan reeds"
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
 msgstr "Instellings"
 
-#. js-lingui-id: Cj2Gtd
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Size"
-msgstr "Grootte"
+#. js-lingui-id: RyE+Of
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "Some of the information provided is invalid. Please check your input and try again."
+msgstr "Sommige van die verskafde inligting is ongeldig. Gaan asseblief jou invoer na en probeer weer."
+
+#. js-lingui-id: 01Sxb6
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+msgid "Some of the permissions you selected are not valid. Please try again with valid permission settings."
+msgstr "Sommige van die toestemmings wat jy gekies het is nie geldig nie. Probeer asseblief weer met geldige toestemmingsinstellings."
 
 #. js-lingui-id: 3PRxO3
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2859,17 +2985,26 @@ msgstr "Stap is nie 'n vorm nie"
 msgid "String \"{name}\" is not valid: must start with lowercase letter and contain only alphanumeric letters"
 msgstr "String \"{name}\" is nie geldig nie: moet met kleinletter begin en slegs alfanumeriese letters bevat"
 
-#. js-lingui-id: g4jxXh
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Sub field name"
-msgstr "Subveldnaam"
-
 #. js-lingui-id: UJmAAK
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message.workspace-entity.ts
 msgid "Subject"
 msgstr "Onderwerp"
+
+#. js-lingui-id: DBC3t5
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Sunday"
+msgstr "Sondag"
+
+#. js-lingui-id: VuvnTL
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Sync all folders"
+msgstr "Sinkroniseer alle vouers"
+
+#. js-lingui-id: 9PsZjo
+#: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
+msgid "Sync all folders including new ones"
+msgstr "Sinkroniseer alle vouers insluitend nuwe"
 
 #. js-lingui-id: oyJYg7
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -3041,6 +3176,11 @@ msgstr "Die rekening hanteer (e-pos, gebruikersnaam, telefoonnommer, ens.)"
 msgid "The account provider"
 msgstr "Die rekening verskaffer"
 
+#. js-lingui-id: eC8p5b
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "The API key does not have a valid role assigned. Please check your API key configuration."
+msgstr "Die API-sleutel het nie 'n geldige rol toegewys nie. Gaan asseblief jou API-sleutelkonfigurasie na."
+
 #. js-lingui-id: qnNFrW
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "The company Linkedin account"
@@ -3069,6 +3209,7 @@ msgstr "Die maatskappy webblad URL. Ons gebruik hierdie url om die maatskappy ik
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "The creator of the record"
 msgstr "Die skepper van die rekord"
@@ -3083,10 +3224,30 @@ msgstr "Die huidige statusse van die werkstroom weergawes"
 msgid "The date the message was received"
 msgstr "Die datum wat die boodskap ontvang is"
 
+#. js-lingui-id: nCXfEw
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "The default role cannot be deleted as it is required for the workspace to function properly."
+msgstr "Die verstekrol kan nie uitgevee word nie aangesien dit nodig is vir die werkruimte om behoorlik te funksioneer."
+
+#. js-lingui-id: 6BBrjb
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "The default role for this workspace could not be found. Please contact support for assistance."
+msgstr "Die verstek rol vir hierdie werkruimte kon nie gevind word nie. Kontak asseblief ondersteuning vir hulp."
+
 #. js-lingui-id: 8h4mhq
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "The executor of the workflow"
 msgstr "Die uitvoerder van die werkstroom"
+
+#. js-lingui-id: o6DGfJ
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "The field \"{field}\" cannot be updated. Please contact your workspace administrator."
+msgstr "Die veld \"{field}\" kan nie opgedateer word nie. Kontak asseblief jou werkruimte administrateur."
+
+#. js-lingui-id: LdhPiK
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "The field you are trying to set permissions for could not be found. It may have been deleted."
+msgstr "Die veld waarvoor jy toestemmings probeer stel, kon nie gevind word nie. Dit mag verwyder gewees het."
 
 #. js-lingui-id: W3raza
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -3103,10 +3264,34 @@ msgstr "Die aanvanklike weergawe van 'n werkvloei kan nie uitgevee word nie"
 msgid "The name is not available"
 msgstr "Die naam is nie beskikbaar nie"
 
+#. js-lingui-id: hx2IZ4
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "The object you are trying to set permissions for could not be found. It may have been deleted."
+msgstr "Die objek waarvoor jy toestemmings probeer stel kon nie gevind word nie. Dit mag verwyder gewees het."
+
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "Die geleentheid se naam"
+
+#. js-lingui-id: Zi9X+u
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "The role you are looking for could not be found. It may have been deleted or you may not have access to it."
+msgstr "Die rol waarna jy soek, kon nie gevind word nie. Dit mag verwyder gewees het of jy mag nie toegang tot dit hê nie."
+
+#. js-lingui-id: 5h4Nxe
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "The role you are trying to assign could not be found. It may have been deleted."
+msgstr "Die rol wat jy probeer toeken kon nie gevind word nie. Dit mag verwyder gewees het."
+
+#. js-lingui-id: HRcugS
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "The role you are trying to modify could not be found. It may have been deleted or you may not have access to it."
+msgstr "Die rol wat jy probeer wysig kon nie gevind word nie. Dit mag verwyder gewees het of jy mag nie toegang tot dit hê nie."
 
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -3148,6 +3333,36 @@ msgstr "Die werkvloei weergawe se naam"
 msgid "The workflow version status"
 msgstr "Die werkvloei weergawe se status"
 
+#. js-lingui-id: Kfwq7n
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
+msgid "There was an issue with your connection settings. Please try again."
+msgstr "Daar was 'n probleem met jou verbindingsinstellings. Probeer asseblief weer."
+
+#. js-lingui-id: Bm40Ow
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldName} is already taken. Please choose a different value."
+msgstr "Hierdie {fieldName} is reeds geneem. Kies asseblief 'n ander waarde."
+
+#. js-lingui-id: CYyoPc
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This {fieldName} with value {duplicatedValues} is already taken. Please choose a different value."
+msgstr "Hierdie {fieldName} met waarde {duplicatedValues} is reeds geneem. Kies asseblief 'n ander waarde."
+
+#. js-lingui-id: Izdz+Y
+#: src/engine/core-modules/api-key/api-key.service.ts
+msgid "This API Key has been revoked and can no longer be used."
+msgstr "Hierdie API-sleutel is herroep en kan nie meer gebruik word nie."
+
+#. js-lingui-id: Jmzgho
+#: src/engine/core-modules/api-key/api-key.service.ts
+msgid "This API Key has expired. Please create a new one."
+msgstr "Hierdie API-sleutel het verval. Skep asseblief 'n nuwe een."
+
+#. js-lingui-id: r/Z8XK
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This combination of {fieldNames} already exists. Please use different values."
+msgstr "Hierdie kombinasie van {fieldNames} bestaan reeds. Gebruik asseblief verskillende waardes."
+
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available as it is already used by another field."
@@ -3158,6 +3373,29 @@ msgstr "Hierdie naam is nie beskikbaar nie aangesien dit reeds deur 'n ander vel
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available."
 msgstr "Hierdie naam is nie beskikbaar nie."
+
+#. js-lingui-id: eitC3W
+#: src/engine/workspace-datasource/workspace-datasource.service.ts
+msgid "This operation is not allowed. Please try a different approach or contact support if you need assistance."
+msgstr "Hierdie operasie word nie toegelaat nie. Probeer asseblief 'n ander benadering of kontak ondersteuning indien jy hulp benodig."
+
+#. js-lingui-id: TjUnO1
+#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+msgid "This record already exists. Please check your data and try again."
+msgstr "Hierdie rekord bestaan reeds. Gaan asseblief jou data na en probeer weer."
+
+#. js-lingui-id: +L9yxk
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "This role cannot be assigned to users. Please select a different role."
+msgstr "Hierdie rol kan nie aan gebruikers toegeken word nie. Kies asseblief 'n ander rol."
+
+#. js-lingui-id: KoDdqN
+#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/permission-flag/permission-flag.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
+msgstr "Hierdie rol kan nie gewysig word nie aangesien dit 'n stelselrol is. Slegs persoonlike rolle kan gewysig word."
 
 #. js-lingui-id: Zl0BJl
 #: src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity.ts
@@ -3176,6 +3414,11 @@ msgstr "Draad id van die boodskapdiensverskaffer"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Throttle Failure Count"
 msgstr "Reguleer Mislukkingstelling"
+
+#. js-lingui-id: kkDQ8m
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Thursday"
+msgstr "Donderdag"
 
 #. js-lingui-id: n9nSNJ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3209,7 +3452,7 @@ msgstr "Tydlyn Aktiwiteite gekoppel aan die maatskappy"
 #. js-lingui-id: CNev+0
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Timeline activities linked to the dashboard"
-msgstr ""
+msgstr "Tydlyn aktiwiteite gekoppel aan die paneelbord"
 
 #. js-lingui-id: 4/UzU5
 #: src/modules/note/standard-objects/note.workspace-entity.ts
@@ -3260,18 +3503,32 @@ msgstr "Tydlyn Aktiwiteit"
 msgid "Title"
 msgstr "Titel"
 
+#. js-lingui-id: G3myU+
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Tuesday"
+msgstr "Dinsdag"
+
 #. js-lingui-id: +zy2Nq
-#: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
-#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "Type"
 msgstr "Tipe"
+
+#. js-lingui-id: UhRoLN
+#: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
+msgid "Type (deprecated)"
+msgstr "Tipe (verouderd)"
 
 #. js-lingui-id: RBJNRI
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Unique field cannot have a default value"
 msgstr "Unieke veld kan nie 'n standaardwaarde hê nie"
+
+#. js-lingui-id: WWSSTx
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-index-metadata-validator.service.ts
+msgid "Unique index cannot be created for field {fieldName} of type {fieldType}"
+msgstr "Unieke indeks kan nie geskep word vir veld {fieldName} van tipe {fieldType} nie"
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -3294,11 +3551,21 @@ msgstr "Opdateringsdatum en tyd"
 msgid "Updated field name is not synced with label"
 msgstr "Bygewerkte veldnaam is nie gesinchroniseer met etiket nie"
 
+#. js-lingui-id: GkcfmO
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "User already exists"
+msgstr "Gebruiker bestaan reeds"
+
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "Gebruiker het nie toegang tot hierdie werksruimte nie"
+
+#. js-lingui-id: Sl1ElS
+#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+msgid "User does not have permission."
+msgstr "Gebruiker het nie toestemming nie."
 
 #. js-lingui-id: YFciqL
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3310,10 +3577,21 @@ msgstr "Gebruiker se e-pos"
 msgid "User Id"
 msgstr "Gebruiker se Id"
 
+#. js-lingui-id: pMOjQa
+#: src/engine/core-modules/auth/token/services/access-token.service.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User is not a member of the workspace."
+msgstr "Gebruiker is nie deel van die werksruimte nie."
+
 #. js-lingui-id: B43Kks
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User is not part of the workspace"
 msgstr "Gebruiker is nie deel van die werksruimte nie"
+
+#. js-lingui-id: g5Z6no
+#: src/engine/core-modules/admin-panel/admin-panel.service.ts
+msgid "User not found. Please check the email or ID."
+msgstr "Gebruiker nie gevind nie. Gaan asseblief die e-pos of ID na."
 
 #. js-lingui-id: 4juE7s
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3333,7 +3611,7 @@ msgstr "Gebruiker se voorkeur datumformaat"
 #. js-lingui-id: PLfanm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred number format"
-msgstr ""
+msgstr "Gebruiker se voorkeur nommerformaat"
 
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -3348,15 +3626,11 @@ msgstr "Gebruiker se voorkeur tydformaat"
 #. js-lingui-id: xInMK/
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for 0 object(s) and 0 field(s)"
-msgstr ""
-
-#. js-lingui-id: wMHvYH
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "Value"
-msgstr "Waarde"
+msgstr "Validering het misluk vir 0 objek(te) en 0 veld(e)"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Waarde moet in HOOFLETTERS wees en volg die slang_kasus \"{sanitizedValue}\""
 
@@ -3380,299 +3654,190 @@ msgstr "Weergawe sneller"
 msgid "Versions"
 msgstr "Weergawes"
 
-#. js-lingui-id: jpctdh
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View"
-msgstr "Beskou"
-
 #. js-lingui-id: HhN1Bv
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View already exists"
-msgstr ""
-
-#. js-lingui-id: cZPDyy
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field"
-msgstr "Beskou Veld"
+msgstr "Aansig bestaan reeds"
 
 #. js-lingui-id: pTvQqf
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field already exists"
-msgstr ""
+msgstr "Aansigveld bestaan reeds"
 
 #. js-lingui-id: Xm6R6B
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "View field already exists."
 msgstr "Aansigveld bestaan reeds."
 
 #. js-lingui-id: 7jUWQ+
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field metadata already exists"
-msgstr ""
+msgstr "Aansigveld metadata bestaan reeds"
 
 #. js-lingui-id: Yvf7WL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field metadata with id {flatViewFieldId} already exists"
-msgstr ""
+msgstr "Aansigveld metadata met ID {flatViewFieldId} bestaan reeds"
 
-#. js-lingui-id: 6jpoH4
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field position"
-msgstr "Beskou Veld posisie"
-
-#. js-lingui-id: Ju6gri
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field related view"
-msgstr "Bekyk Verwante veld-aansig"
-
-#. js-lingui-id: tvTr2y
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field size"
-msgstr "Bekyk Veldgrootte"
-
-#. js-lingui-id: BkII8t
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field target field"
-msgstr "Bekyk Teikenveld"
-
-#. js-lingui-id: gYT3e0
+#. js-lingui-id: 7LMaUn
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-msgid "View field to delete has not been soft deleted"
-msgstr ""
+msgid "View field position cannot be lower than label identifier view field position"
+msgstr "Aansig veld posisie kan nie laer as etiket identifiseerder aansig veld posisie wees nie"
+
+#. js-lingui-id: WZzm3R
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field related view object metadata not found"
+msgstr "Aansig veld verwante aansig objek metadata nie gevind nie"
 
 #. js-lingui-id: XJlyZS
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/core-modules/view/flat-view/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to delete not found"
-msgstr ""
+msgstr "Sigveld om te verwyder nie gevind nie"
 
 #. js-lingui-id: DXyYuh
-#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view-field/utils/from-destroy-view-field-input-to-flat-view-field-or-throw.util.ts
 msgid "View field to destroy not found"
-msgstr ""
+msgstr "Sigveld om te vernietig nie gevind nie"
 
 #. js-lingui-id: Fpy/K1
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
-#: src/engine/core-modules/view/flat-view/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view-field/utils/from-update-view-field-input-to-flat-view-field-to-update-or-throw.util.ts
 msgid "View field to update not found"
-msgstr ""
+msgstr "Sien veld om by te werk nie gevind nie"
 
-#. js-lingui-id: Gd/LzL
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Field visibility"
-msgstr "Bekyk Veld sigbaarheid"
+#. js-lingui-id: AprfQL
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to update parent view not found"
+msgstr "Aansig veld om ouer aansig by te werk nie gevind nie"
+
+#. js-lingui-id: sqzMKR
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
+msgid "View field to update parent view object not found"
+msgstr "Aansig veld om ouer aansig objek by te werk nie gevind nie"
 
 #. js-lingui-id: 89Wiy+
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View field with same fieldmetadataId and viewId already exists"
-msgstr ""
+msgstr "\"Kyk veld met dieselfde fieldmetadataId en viewId bestaan reeds\""
 
-#. js-lingui-id: GUFYyq
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "View Fields"
-msgstr "Bekyk Velde"
+#. js-lingui-id: 1KSqGE
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter not found"
+msgstr "Sig filter nie gevind nie"
 
-#. js-lingui-id: JRtI7Y
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter"
-msgstr "Bekyk Filter"
+#. js-lingui-id: 3l1ppY
+#: src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util.ts
+msgid "View filter to delete not found"
+msgstr "Sig filter om te verwyder nie gevind nie"
 
-#. js-lingui-id: L2gQ5q
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter Display Value"
-msgstr "Bekyk Filter Vertoonwaarde"
+#. js-lingui-id: 9gedIx
+#: src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util.ts
+msgid "View filter to destroy not found"
+msgstr "Sien filter om te vernietig nie gevind nie"
 
-#. js-lingui-id: l9/6pD
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "View Filter Group"
-msgstr "Bekyk Filtergroep"
+#. js-lingui-id: GzthLy
+#: src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util.ts
+msgid "View filter to update not found"
+msgstr "Sien filter om by te werk nie gevind nie"
 
-#. js-lingui-id: Mbosm8
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter Group Id"
-msgstr "Bekyk Filtergroep-ID"
+#. js-lingui-id: LnNgrI
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter with this id already exists"
+msgstr "Sien filter met hierdie id bestaan reeds"
 
-#. js-lingui-id: /aP3iG
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
-msgid "View Filter Groups"
-msgstr "Bekyk Filtergroepe"
+#. js-lingui-id: MGbEFN
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata already exists"
+msgstr "Aansiggroep metadata bestaan reeds"
 
-#. js-lingui-id: 4MG8+B
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter operand"
-msgstr "Bekyk Filter operand"
+#. js-lingui-id: lbyQO4
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group metadata with id {flatViewGroupId} already exists"
+msgstr "Aansiggroep metadata met ID {flatViewGroupId} bestaan reeds"
 
-#. js-lingui-id: OrUkUF
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter related view"
-msgstr "Bekyk Verwante filter-aansig"
+#. js-lingui-id: JdAvYa
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to delete not found"
+msgstr "Aansiggroep om te verwyder nie gevind nie"
 
-#. js-lingui-id: TyXOtD
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter target field"
-msgstr "Bekyk Filter teikenveld"
+#. js-lingui-id: 34hWb7
+#: src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util.ts
+msgid "View group to destroy not found"
+msgstr "Aansiggroep om te vernietig nie gevind nie"
 
-#. js-lingui-id: 3KzkxN
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filter value"
-msgstr "Bekyk Filter waarde"
+#. js-lingui-id: UP/TXo
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/metadata-modules/flat-view-group/utils/from-update-view-group-input-to-flat-view-group-to-update-or-throw.util.ts
+msgid "View group to update not found"
+msgstr "Aansiggroep om by te werk nie gevind nie"
 
-#. js-lingui-id: vj5JsR
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-filter.workspace-entity.ts
-msgid "View Filters"
-msgstr "Bekyk Filters"
+#. js-lingui-id: XbOhpY
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent field not found"
+msgstr "Aansiggroep om hoofveld by te werk nie gevind nie"
 
-#. js-lingui-id: ziEP12
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Group"
-msgstr "Bekyk Groep"
+#. js-lingui-id: P0grPG
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+msgid "View group to update parent view not found"
+msgstr "Aansiggroep om ouer aansig by te werk nie gevind nie"
 
-#. js-lingui-id: uQ3c2q
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Group related view"
-msgstr "Bekyk Verwante groep-aansig"
-
-#. js-lingui-id: EFlLpQ
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Group target field"
-msgstr "Bekyk Groep teikenveld"
-
-#. js-lingui-id: b1Vc+l
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Group visibility"
-msgstr "Bekyk Groep sigbaarheid"
-
-#. js-lingui-id: V4nZs/
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-msgid "View Groups"
-msgstr "Bekyk Goepe"
-
-#. js-lingui-id: qXlovu
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View icon"
-msgstr "Bekyk ikoon"
-
-#. js-lingui-id: cd/+ZD
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View Kanban column field"
-msgstr "Bekyk Kanban kolom veld"
-
-#. js-lingui-id: vdfZ+A
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View key"
-msgstr "Bekyk sleutel"
-
-#. js-lingui-id: oOljSE
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View name"
-msgstr "Bekyk naam"
+#. js-lingui-id: M7KWZV
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+msgid "View kanban aggregate field metadata not found"
+msgstr "Sien kanban saamgestelde veldmetadata nie gevind nie"
 
 #. js-lingui-id: F4A9mL
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-group-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-field-validator.service.ts
 msgid "View not found"
-msgstr ""
-
-#. js-lingui-id: rhO8zp
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View position"
-msgstr "Bekyk posisie"
-
-#. js-lingui-id: EUjpwJ
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sort"
-msgstr "Bekyk Sorteer"
-
-#. js-lingui-id: znNExx
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "View sort (id: {id}) not found"
-msgstr "Sorteer van aansigte (ID: {id}) nie gevind nie"
-
-#. js-lingui-id: 6ZUale
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sort direction"
-msgstr "Bekyk Sorteer rigting"
-
-#. js-lingui-id: 3zMs+f
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "View sort not found"
-msgstr "Sorteer van aansigte nie gevind nie"
-
-#. js-lingui-id: /rCPqN
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sort related view"
-msgstr "Bekyk Verwante sorteer-aansig"
-
-#. js-lingui-id: +du2wy
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sort target field"
-msgstr "Bekyk Sorteer teikenveld"
-
-#. js-lingui-id: UsdY3K
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-#: src/modules/view/standard-objects/view-sort.workspace-entity.ts
-msgid "View Sorts"
-msgstr "Bekyk Sorts"
-
-#. js-lingui-id: clWwIZ
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View target object"
-msgstr "Bekyk teiken objek"
-
-#. js-lingui-id: eF5yH4
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
-msgid "View to delete has not been soft deleted"
-msgstr ""
+msgstr "Kyk nie gevind nie"
 
 #. js-lingui-id: toB/08
-#: src/engine/core-modules/view/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view/utils/from-delete-view-input-to-flat-view-or-throw.util.ts
 msgid "View to delete not found"
-msgstr ""
+msgstr "Sig om te verwyder nie gevind nie"
 
 #. js-lingui-id: NnD3Ti
-#: src/engine/core-modules/view/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view/utils/from-destroy-view-input-to-flat-view-or-throw.util.ts
 msgid "View to destroy not found"
-msgstr ""
+msgstr "Sig om te vernietig nie gevind nie"
 
 #. js-lingui-id: 3+GbNY
-#: src/engine/core-modules/view/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
 msgid "View to update not found"
-msgstr ""
-
-#. js-lingui-id: bJAIqT
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "View type"
-msgstr "Bekyk tipe"
+msgstr "Sig om by te werk nie gevind nie"
 
 #. js-lingui-id: ZgRtC4
 #: src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-view-validator.service.ts
 msgid "View with same id is already exists"
-msgstr ""
+msgstr "\"Kyk met dieselfde id bestaan reeds\""
 
 #. js-lingui-id: aeqysn
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -3680,40 +3845,30 @@ msgstr ""
 msgid "ViewId"
 msgstr "KykId"
 
-#. js-lingui-id: kpQRY2
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "ViewId is required"
-msgstr "Aansig-ID is benodig"
-
 #. js-lingui-id: l88nXn
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
 msgstr "ViewId is benodig om 'n aansigveld te skep."
 
 #. js-lingui-id: 9XMTpT
-#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
 msgstr "ViewId is benodig om 'n aansigfiltergroep te skep."
 
 #. js-lingui-id: pCCxli
-#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
 msgstr "ViewId is benodig om 'n aansigfilter te skep."
 
 #. js-lingui-id: 1X1RW5
-#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
 msgstr "ViewId is benodig om 'n aansiggroep te skep."
 
 #. js-lingui-id: uGUFcy
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId is benodig om 'n aansigsorteer te skep."
-
-#. js-lingui-id: 1I6UoR
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Views"
-msgstr "Bekyks"
 
 #. js-lingui-id: 2q/Q7x
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -3723,16 +3878,40 @@ msgstr "Bekyks"
 msgid "Visibility"
 msgstr "Sigbaarheid"
 
-#. js-lingui-id: oh8+os
-#: src/modules/view/standard-objects/view-group.workspace-entity.ts
-#: src/modules/view/standard-objects/view-field.workspace-entity.ts
-msgid "Visible"
-msgstr "Sigbaar"
-
 #. js-lingui-id: xvV2NJ
 #: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Ons ondervind 'n tydelike probleem met ons databasis. Probeer asseblief later weer."
+
+#. js-lingui-id: B3CG/U
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't connect to your CalDAV server. Please check your server settings and try again."
+msgstr "Ons kon nie aan jou CalDAV-bediener koppel nie. Kyk asseblief jou bedienerinstellings na en probeer weer."
+
+#. js-lingui-id: ax8unE
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't connect to your email server. Please check your server settings and try again."
+msgstr "Ons kon nie aan jou e-posbediener koppel nie. Kyk asseblief jou bedienerinstellings na en probeer weer."
+
+#. js-lingui-id: g4rOV3
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again."
+msgstr "Ons kon nie aan jou uitgaande e-posbediener koppel nie. Gaan asseblief jou SMTP-instellings na en probeer weer."
+
+#. js-lingui-id: v8UNEA
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't log in to your email account. Please check your email address and password, then try again."
+msgstr "Ons kon nie by jou e-posrekening aanmeld nie. Gaan asseblief jou e-posadres en wagwoord na en probeer weer."
+
+#. js-lingui-id: YxBvFz
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
+msgstr "Ons het 'n probleem ondervind om aan jou e-posrekening te koppel. Kyk asseblief jou instellings na en probeer weer."
+
+#. js-lingui-id: VAcXNz
+#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+msgid "Wednesday"
+msgstr "Woensdag"
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
@@ -3784,6 +3963,11 @@ msgstr "Werksvloei lopie geëindig op"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run enqueued at"
 msgstr "Werksvloei lopie in tou geplaas op"
+
+#. js-lingui-id: C5dusT
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "Workflow run is not running"
+msgstr "Werkvloeiloop is nie aan die gang nie"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3893,6 +4077,11 @@ msgstr "WerksvloeiWeergawe"
 msgid "WorkflowVersion workflow"
 msgstr "WerksvloeiWeergawe werksvloei"
 
+#. js-lingui-id: XsSVrR
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
+msgid "Workspace creation is restricted to admins"
+msgstr "Werkspasieskepping is beperk tot administrateurs"
+
 #. js-lingui-id: rklt6M
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace is not ready to welcome new members"
@@ -3933,38 +4122,33 @@ msgstr "Werkruimte lid posisie"
 msgid "Workspace Members"
 msgstr "Werkruimte Lede"
 
-#. js-lingui-id: bBr+RW
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "WorkspaceId is required"
-msgstr "Werksruimte-ID is benodig"
-
 #. js-lingui-id: kjLpTn
-#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+#: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
 msgstr "WorkspaceId is benodig om 'n aansigveld te skep."
 
 #. js-lingui-id: zWj6VZ
-#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+#: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
 msgstr "WorkspaceId is benodig om 'n aansigfiltergroep te skep."
 
 #. js-lingui-id: jQMXtD
-#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+#: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
 msgstr "WorkspaceId is benodig om 'n aansigfilter te skep."
 
 #. js-lingui-id: NAoJAX
-#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+#: src/engine/metadata-modules/view-group/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
 msgstr "WorkspaceId is benodig om 'n aansiggroep te skep."
 
 #. js-lingui-id: hU1QaN
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+#: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
 msgstr "WorkspaceId is benodig om 'n aansigsorteer te skep."
 
 #. js-lingui-id: jtb/lI
-#: src/engine/core-modules/view/exceptions/view.exception.ts
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
 msgstr "WorkspaceId is benodig om 'n aansig te skep."
 
@@ -3986,6 +4170,62 @@ msgstr "Verkeerde wagwoord"
 msgid "X"
 msgstr "X"
 
+#. js-lingui-id: 1SQnFB
+#: src/engine/metadata-modules/role/role.resolver.ts
+msgid "You cannot change your own role. Please ask another administrator to update your role."
+msgstr "Jy kan nie jou eie rol verander nie. Vra asseblief 'n ander admin om jou rol op te dateer."
+
+#. js-lingui-id: y5haJ4
+#: src/engine/metadata-modules/role/role.service.ts
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "You cannot grant edit permissions without also granting read permissions. Please enable read access first."
+msgstr "Jy kan nie wysigingstoestemmings gee sonder om ook leesregte toe te ken nie. Aktiveer asseblief eers lees toegang."
+
+#. js-lingui-id: 8wovNr
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
+msgstr "Jy kan nie die administrateurrol van die laaste administrateur verwyder nie. Ken asseblief eers 'n ander administrateur toe."
+
+#. js-lingui-id: WUcQVb
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "You cannot set field permissions on system objects as they are managed by the platform."
+msgstr "Jy kan nie veldtoestemmings instel op stelselobjekte nie, aangesien dit deur die platform bestuur word."
+
+#. js-lingui-id: SI6USg
+#: src/engine/metadata-modules/object-permission/object-permission.service.ts
+msgid "You cannot set permissions on system objects as they are managed by the platform."
+msgstr "Jy kan nie toestemmings op stelselobjekte instel nie omdat dit deur die platform bestuur word."
+
+#. js-lingui-id: EFQeXU
+#: src/engine/guards/settings-permission.guard.ts
+msgid "You do not have permission to access this feature. Please contact your workspace administrator for access."
+msgstr "Jy het nie toestemming om toegang tot hierdie funksie te kry nie. Kontak asseblief jou werkruimte-administrateur vir toegang."
+
+#. js-lingui-id: P69VwK
+#: src/engine/core-modules/user/user.resolver.ts
+msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
+msgstr "Jy het nie toestemming om hierdie gebruiker uit die werksruimte te verwyder nie. Kontak asseblief jou werkruimte-administrateur vir toegang."
+
+#. js-lingui-id: +2vVRB
+#: src/engine/guards/impersonate-permission.guard.ts
+msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
+msgstr "Jy het nie toestemming om gebruikers na te boots nie. Kontak asseblief jou werkruimte administrateur vir toegang."
+
+#. js-lingui-id: 1dsy9v
+#: src/engine/core-modules/workspace/services/workspace.service.ts
+msgid "You do not have permission to update these fields: {fieldsList}. Please contact your workspace administrator."
+msgstr "Jy het nie toestemming om hierdie velde op te dateer nie: {fieldsList}. Kontak asseblief jou werkruimte administrateur."
+
+#. js-lingui-id: M1he8p
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to create workspace-level views."
+msgstr "Jy het nie toestemming om werkruimte-vlak uitsigte te skep nie."
+
+#. js-lingui-id: QmL9y9
+#: src/engine/metadata-modules/view/exceptions/view.exception.ts
+msgid "You don't have permission to modify this view."
+msgstr "Jy het nie toestemming om hierdie uitsig te verander nie."
+
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
@@ -3996,10 +4236,22 @@ msgstr "U moet geoutentiseer wees om hierdie aksie uit te voer."
 msgid "Your app version is out of date. Please refresh the page to continue."
 msgstr "Jou toepassingsweergawe is verouderd. Verfris asseblief die bladsy om voort te gaan."
 
+#. js-lingui-id: J5Vm4Q
+#: src/engine/core-modules/billing/billing.validate.ts
+msgid "Your billing subscription is corrupted. Please contact support."
+msgstr "Jou faktuurintekening is beskadig. Kontak asseblief ondersteuning."
+
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
 msgstr "Jou Wagwoord is Suksesvol Verander"
+
+#. js-lingui-id: XxkUFT
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/metadata-modules/permissions/permissions.service.ts
+msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
+msgstr "Jou rol in hierdie werkruimte kon nie gevind word nie. Kontak asseblief jou werkruimte administrateur."
 
 #. js-lingui-id: vPccnr
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -4010,3 +4262,8 @@ msgstr "Jou spanlid verantwoordelik vir die bestuur van die maatskappy rekening"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "Your workspace has been updated with a new data model. Please refresh the page."
 msgstr "U werksruimte is opgedateer met 'n nuwe datamodel. Ververs asseblief die bladsy."
+
+#. js-lingui-id: ZukXiD
+#: src/engine/metadata-modules/user-role/user-role.service.ts
+msgid "Your workspace membership could not be found. You may no longer have access to this workspace."
+msgstr "Jou werkruimte-lidmaatskap kon nie gevind word nie. Jy mag nie meer toegang hê tot hierdie werkruimte nie."

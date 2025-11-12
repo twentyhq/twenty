@@ -1,14 +1,15 @@
+import chalk from 'chalk';
 import { Command } from 'commander';
-import { AppSyncCommand } from './app-sync.command';
-import { AppDevCommand } from './app-dev.command';
-import { AppInitCommand } from './app-init.command';
-import { AppDeleteCommand } from './app-delete.command';
 import {
   AppAddCommand,
   isSyncableEntity,
   SyncableEntity,
 } from './app-add.command';
-import chalk from 'chalk';
+import { AppDeleteCommand } from './app-delete.command';
+import { AppDevCommand } from './app-dev.command';
+import { AppInitCommand } from './app-init.command';
+import { AppSyncCommand } from './app-sync.command';
+import { formatPath } from '../utils/format-path';
 
 export class AppCommand {
   private devCommand = new AppDevCommand();
@@ -22,25 +23,45 @@ export class AppCommand {
     appCommand.description('Application development commands');
 
     appCommand
-      .command('dev')
+      .command('dev [appPath]')
       .description('Watch and sync local application changes')
       .option('-d, --debounce <ms>', 'Debounce delay in milliseconds', '1000')
-      .action(async (options) => {
-        await this.devCommand.execute(options);
+      .action(async (appPath, options) => {
+        await this.devCommand.execute({
+          ...options,
+          appPath: formatPath(appPath),
+        });
       });
 
     appCommand
-      .command('sync')
+      .command('sync [appPath]')
       .description('Sync application to Twenty')
-      .action(async () => {
-        await this.syncCommand.execute();
+      .action(async (appPath?: string) => {
+        try {
+          const result = await this.syncCommand.execute(formatPath(appPath));
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
       });
 
     appCommand
-      .command('delete')
+      .command('delete [appPath]')
       .description('Delete application from Twenty')
-      .action(async () => {
-        await this.deleteCommand.execute();
+      .action(async (appPath?: string) => {
+        try {
+          const result = await this.deleteCommand.execute({
+            appPath: formatPath(appPath),
+            askForConfirmation: true,
+          });
+          if (!result.success) {
+            process.exit(1);
+          }
+        } catch {
+          process.exit(1);
+        }
       });
 
     appCommand

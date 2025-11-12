@@ -1,24 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { DataSource, IsNull, Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
-import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
+import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/api-key-token.dto';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 @Injectable()
 export class ApiKeyService {
   constructor(
-    @InjectRepository(ApiKey)
-    private readonly apiKeyRepository: Repository<ApiKey>,
+    @InjectRepository(ApiKeyEntity)
+    private readonly apiKeyRepository: Repository<ApiKeyEntity>,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     @InjectDataSource()
@@ -26,13 +27,13 @@ export class ApiKeyService {
   ) {}
 
   async create(
-    apiKeyData: Partial<ApiKey> & { roleId: string },
-  ): Promise<ApiKey> {
+    apiKeyData: Partial<ApiKeyEntity> & { roleId: string },
+  ): Promise<ApiKeyEntity> {
     const { roleId, ...apiKeyFields } = apiKeyData;
 
     return await this.dataSource
       .transaction(async (manager) => {
-        const apiKey = manager.create(ApiKey, apiKeyFields);
+        const apiKey = manager.create(ApiKeyEntity, apiKeyFields);
         const savedApiKey = await manager.save(apiKey);
 
         await this.apiKeyRoleService.assignRoleToApiKeyWithManager(manager, {
@@ -50,7 +51,10 @@ export class ApiKeyService {
       });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ApiKey | null> {
+  async findById(
+    id: string,
+    workspaceId: string,
+  ): Promise<ApiKeyEntity | null> {
     return await this.apiKeyRepository.findOne({
       where: {
         id,
@@ -59,7 +63,7 @@ export class ApiKeyService {
     });
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<ApiKey[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<ApiKeyEntity[]> {
     return await this.apiKeyRepository.find({
       where: {
         workspaceId,
@@ -67,7 +71,7 @@ export class ApiKeyService {
     });
   }
 
-  async findActiveByWorkspaceId(workspaceId: string): Promise<ApiKey[]> {
+  async findActiveByWorkspaceId(workspaceId: string): Promise<ApiKeyEntity[]> {
     return await this.apiKeyRepository.find({
       where: {
         workspaceId,
@@ -79,8 +83,8 @@ export class ApiKeyService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: QueryDeepPartialEntity<ApiKey>,
-  ): Promise<ApiKey | null> {
+    updateData: QueryDeepPartialEntity<ApiKeyEntity>,
+  ): Promise<ApiKeyEntity | null> {
     const apiKey = await this.findById(id, workspaceId);
 
     if (!apiKey) {
@@ -92,13 +96,13 @@ export class ApiKeyService {
     return this.findById(id, workspaceId);
   }
 
-  async revoke(id: string, workspaceId: string): Promise<ApiKey | null> {
+  async revoke(id: string, workspaceId: string): Promise<ApiKeyEntity | null> {
     return await this.update(id, workspaceId, {
       revokedAt: new Date(),
     });
   }
 
-  async validateApiKey(id: string, workspaceId: string): Promise<ApiKey> {
+  async validateApiKey(id: string, workspaceId: string): Promise<ApiKeyEntity> {
     const apiKey = await this.findById(id, workspaceId);
 
     if (!apiKey) {
@@ -113,8 +117,7 @@ export class ApiKeyService {
         'This API Key is revoked',
         ApiKeyExceptionCode.API_KEY_REVOKED,
         {
-          userFriendlyMessage:
-            'This API Key has been revoked and can no longer be used.',
+          userFriendlyMessage: msg`This API Key has been revoked and can no longer be used.`,
         },
       );
     }
@@ -124,8 +127,7 @@ export class ApiKeyService {
         'This API Key has expired',
         ApiKeyExceptionCode.API_KEY_EXPIRED,
         {
-          userFriendlyMessage:
-            'This API Key has expired. Please create a new one.',
+          userFriendlyMessage: msg`This API Key has expired. Please create a new one.`,
         },
       );
     }
@@ -175,15 +177,15 @@ export class ApiKeyService {
     return { token };
   }
 
-  isExpired(apiKey: ApiKey): boolean {
+  isExpired(apiKey: ApiKeyEntity): boolean {
     return new Date() > apiKey.expiresAt;
   }
 
-  isRevoked(apiKey: ApiKey): boolean {
+  isRevoked(apiKey: ApiKeyEntity): boolean {
     return !!apiKey.revokedAt;
   }
 
-  isActive(apiKey: ApiKey): boolean {
+  isActive(apiKey: ApiKeyEntity): boolean {
     return !this.isRevoked(apiKey) && !this.isExpired(apiKey);
   }
 }

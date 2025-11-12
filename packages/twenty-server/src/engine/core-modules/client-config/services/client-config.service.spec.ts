@@ -6,14 +6,14 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('ClientConfigService', () => {
   let service: ClientConfigService;
   let twentyConfigService: TwentyConfigService;
-  let domainManagerService: DomainManagerService;
+  let domainServerConfigService: DomainServerConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,7 +26,7 @@ describe('ClientConfigService', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: DomainServerConfigService,
           useValue: {
             getFrontUrl: jest.fn(),
           },
@@ -42,8 +42,9 @@ describe('ClientConfigService', () => {
 
     service = module.get<ClientConfigService>(ClientConfigService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
+    domainServerConfigService = module.get<DomainServerConfigService>(
+      DomainServerConfigService,
+    );
   });
 
   it('should be defined', () => {
@@ -91,7 +92,7 @@ describe('ClientConfigService', () => {
           return mockValues[key];
         });
 
-      jest.spyOn(domainManagerService, 'getFrontUrl').mockReturnValue({
+      jest.spyOn(domainServerConfigService, 'getFrontUrl').mockReturnValue({
         hostname: 'app.twenty.com',
       } as URL);
     });

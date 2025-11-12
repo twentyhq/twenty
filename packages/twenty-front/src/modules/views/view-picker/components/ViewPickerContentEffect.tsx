@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -17,8 +18,11 @@ import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-pick
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
+import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { ViewVisibility } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 
 export const ViewPickerContentEffect = () => {
   const setViewPickerSelectedIcon = useSetRecoilComponentState(
@@ -26,6 +30,9 @@ export const ViewPickerContentEffect = () => {
   );
   const setViewPickerInputName = useSetRecoilComponentState(
     viewPickerInputNameComponentState,
+  );
+  const setViewPickerVisibility = useSetRecoilComponentState(
+    viewPickerVisibilityComponentState,
   );
   const { viewPickerMode } = useViewPickerMode();
 
@@ -66,6 +73,7 @@ export const ViewPickerContentEffect = () => {
 
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
+  const hasViewPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   useEffect(() => {
     if (
@@ -81,6 +89,9 @@ export const ViewPickerContentEffect = () => {
       } else {
         setViewPickerSelectedIcon(referenceView.icon);
       }
+      setViewPickerVisibility(
+        hasViewPermission ? referenceView.visibility : ViewVisibility.UNLISTED,
+      );
       setViewPickerInputName(referenceView.name);
       setViewPickerType(referenceView.type);
     }
@@ -89,10 +100,12 @@ export const ViewPickerContentEffect = () => {
     setViewPickerInputName,
     setViewPickerSelectedIcon,
     setViewPickerType,
+    setViewPickerVisibility,
     viewPickerIsPersisting,
     viewPickerIsDirty,
     viewPickerMode,
     viewPickerType,
+    hasViewPermission,
   ]);
 
   useEffect(() => {

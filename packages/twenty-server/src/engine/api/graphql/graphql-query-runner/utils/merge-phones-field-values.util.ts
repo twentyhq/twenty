@@ -1,11 +1,11 @@
 import { type CountryCode } from 'libphonenumber-js';
 import uniqBy from 'lodash.uniqby';
-
-import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import {
   type AdditionalPhoneMetadata,
   type PhonesMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
+} from 'twenty-shared/types';
+
+import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 
 export const mergePhonesFieldValues = (
   recordsWithValues: { value: PhonesMetadata; recordId: string }[],
@@ -47,11 +47,19 @@ export const mergePhonesFieldValues = (
     }
   }
 
-  const allAdditionalPhones: AdditionalPhoneMetadata[] = [];
+  const allPhones: AdditionalPhoneMetadata[] = [];
 
   recordsWithValues.forEach((record) => {
+    if (hasRecordFieldValue(record.value.primaryPhoneNumber)) {
+      allPhones.push({
+        number: record.value.primaryPhoneNumber,
+        countryCode: record.value.primaryPhoneCountryCode,
+        callingCode: record.value.primaryPhoneCallingCode,
+      });
+    }
+
     if (Array.isArray(record.value.additionalPhones)) {
-      allAdditionalPhones.push(
+      allPhones.push(
         ...record.value.additionalPhones.filter((phone) =>
           hasRecordFieldValue(phone.number),
         ),
@@ -59,13 +67,14 @@ export const mergePhonesFieldValues = (
     }
   });
 
-  const uniqueAdditionalPhones = uniqBy(allAdditionalPhones, 'number');
+  const uniquePhones = uniqBy(allPhones, 'number').filter(
+    (phone) => phone.number !== primaryPhoneNumber,
+  );
 
   return {
     primaryPhoneNumber,
     primaryPhoneCountryCode: primaryPhoneCountryCode!,
     primaryPhoneCallingCode,
-    additionalPhones:
-      uniqueAdditionalPhones.length > 0 ? uniqueAdditionalPhones : null,
+    additionalPhones: uniquePhones.length > 0 ? uniquePhones : null,
   };
 };

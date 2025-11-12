@@ -1,17 +1,18 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useUpdateView } from '@/views/hooks/useUpdateView';
+import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 import { useUpdateViewAggregate } from '../useUpdateViewAggregate';
-import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 
 jest.mock('@/ui/utilities/state/component-state/hooks/useRecoilComponentValue');
-jest.mock('@/views/hooks/useUpdateView');
+jest.mock('@/views/hooks/internal/usePersistView');
+jest.mock('@/views/hooks/useCanPersistViewChanges');
 jest.mock('@/views/hooks/useRefreshCoreViewsByObjectMetadataId');
 jest.mock('recoil');
-
 describe('useUpdateViewAggregate', () => {
   const mockCurrentViewId = 'test-view-id';
   const mockUpdateView = jest.fn();
@@ -20,8 +21,11 @@ describe('useUpdateViewAggregate', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useRecoilComponentValue as jest.Mock).mockReturnValue(mockCurrentViewId);
-    (useUpdateView as jest.Mock).mockReturnValue({
+    (usePersistView as jest.Mock).mockReturnValue({
       updateView: mockUpdateView,
+    });
+    (useCanPersistViewChanges as jest.Mock).mockReturnValue({
+      canPersistChanges: true,
     });
     (useSetRecoilState as jest.Mock).mockReturnValue(
       mockSetRecordIndexKanbanAggregateOperationState,
@@ -44,8 +48,10 @@ describe('useUpdateViewAggregate', () => {
       // updateView is called with 'EARLIEST' converted to 'MIN'
       expect(mockUpdateView).toHaveBeenCalledWith({
         id: mockCurrentViewId,
-        kanbanAggregateOperationFieldMetadataId: 'test-field-id',
-        kanbanAggregateOperation: AggregateOperations.MIN,
+        input: {
+          kanbanAggregateOperationFieldMetadataId: 'test-field-id',
+          kanbanAggregateOperation: AggregateOperations.MIN,
+        },
       });
 
       // setAggregateOperation is called with 'EARLIEST'

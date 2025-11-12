@@ -1,0 +1,1 @@
+export const BAR_CHART_LEGEND_ITEM_THRESHOLD = 10;

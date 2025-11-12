@@ -1,11 +1,11 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import {
   generateMorphOrRelationFlatFieldMetadataPair,
@@ -38,7 +38,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
       error: {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: `Relation creation payload is required`,
-        userFriendlyMessage: t`Relation creation payload is required`,
+        userFriendlyMessage: msg`Relation creation payload is required`,
         value: rawCreationPayload,
       },
     };

@@ -81,6 +81,8 @@ export const SettingsDataModelObjectAboutForm = ({
   const isLabelSyncedWithName = watch('isLabelSyncedWithName');
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
+  const isStandardObject =
+    isDefined(objectMetadataItem?.isCustom) && !objectMetadataItem.isCustom;
   watch('nameSingular');
   watch('namePlural');
   watch('description');
@@ -139,7 +141,11 @@ export const SettingsDataModelObjectAboutForm = ({
             render={({ field: { onChange, value } }) => (
               <IconPicker
                 selectedIconKey={value}
+                disabled={disableEdition}
                 onChange={({ iconKey }) => {
+                  if (disableEdition) {
+                    return;
+                  }
                   onChange(iconKey);
                   onNewDirtyField?.();
                 }}
@@ -169,11 +175,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={
-                objectMetadataItem &&
-                !objectMetadataItem?.isCustom &&
-                isLabelSyncedWithName
-              }
+              disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -200,11 +202,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={() => onNewDirtyField?.()}
-              disabled={
-                objectMetadataItem &&
-                !objectMetadataItem?.isCustom &&
-                isLabelSyncedWithName
-              }
+              disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -222,6 +220,7 @@ export const SettingsDataModelObjectAboutForm = ({
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             onBlur={() => onNewDirtyField?.()}
+            disabled={disableEdition}
           />
         )}
       />
@@ -235,7 +234,8 @@ export const SettingsDataModelObjectAboutForm = ({
                   'nameSingular' as const satisfies StringKeyOf<ObjectMetadataItem>,
                 placeholder: `listing`,
                 defaultValue: objectMetadataItem?.nameSingular ?? '',
-                disableEdition: disableEdition || isLabelSyncedWithName,
+                disableEdition:
+                  isStandardObject || disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
               {
@@ -244,7 +244,8 @@ export const SettingsDataModelObjectAboutForm = ({
                   'namePlural' as const satisfies StringKeyOf<ObjectMetadataItem>,
                 placeholder: `listings`,
                 defaultValue: objectMetadataItem?.namePlural ?? '',
-                disableEdition: disableEdition || isLabelSyncedWithName,
+                disableEdition:
+                  isStandardObject || disableEdition || isLabelSyncedWithName,
                 tooltip: apiNameTooltipText,
               },
             ].map(
@@ -312,7 +313,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 </AdvancedSettingsWrapper>
               ),
             )}
-            {(!objectMetadataItem || objectMetadataItem?.isCustom) && (
+            {!isStandardObject && (
               <AdvancedSettingsWrapper>
                 <Controller
                   name="isLabelSyncedWithName"
@@ -326,6 +327,7 @@ export const SettingsDataModelObjectAboutForm = ({
                         description={t`Should changing an object's label also change the API?`}
                         checked={value ?? true}
                         advancedMode
+                        disabled={disableEdition}
                         onChange={(value) => {
                           onChange(value);
                           const isCustomObject =

@@ -1,9 +1,11 @@
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { useResetChartDraftFiltersSettings } from '@/command-menu/pages/page-layout/hooks/useResetChartDraftFiltersSettings';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -18,19 +20,25 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
+
+const ADVANCED_OBJECTS_MENU_ITEM_ID = 'advanced-objects';
 
 export const ChartDataSourceDropdownContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAdvancedObjectsMenuOpened, setIsAdvancedObjectsMenuOpened] =
+    useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  const currentSource = widgetInEditMode?.objectMetadataId;
+  const currentObjectMetadataItemId = widgetInEditMode?.objectMetadataId as
+    | string
+    | undefined;
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -47,13 +55,23 @@ export const ChartDataSourceDropdownContent = () => {
         objectPermissionsByObjectMetadataId[objectMetadataItem.id];
 
       return (
-        isDefined(objectPermissions) && objectPermissions.canReadObjectRecords
+        isDefined(objectPermissions) &&
+        objectPermissions.canReadObjectRecords &&
+        objectMetadataItem.isActive
       );
     },
   );
 
+  const regularObjects = objectsWithReadAccess
+    .filter((item) => !item.isSystem)
+    .sort((a, b) => a.labelPlural.localeCompare(b.labelPlural));
+
+  const systemObjects = objectsWithReadAccess
+    .filter((item) => item.isSystem)
+    .sort((a, b) => a.labelPlural.localeCompare(b.labelPlural));
+
   const availableObjectMetadataItems = filterBySearchQuery({
-    items: objectsWithReadAccess,
+    items: isAdvancedObjectsMenuOpened ? systemObjects : regularObjects,
     searchQuery,
     getSearchableValues: (item) => [item.labelPlural, item.namePlural],
   });
@@ -65,18 +83,58 @@ export const ChartDataSourceDropdownContent = () => {
 
   const { getIcon } = useIcons();
 
-  const handleSelectSource = (objectMetadataId: string) => {
-    updateCurrentWidgetConfig({
-      objectMetadataId,
-    });
+  const { resetChartDraftFiltersSettings } =
+    useResetChartDraftFiltersSettings();
+
+  const handleSelectSource = (newObjectMetadataItemId: string) => {
+    if (currentObjectMetadataItemId !== newObjectMetadataItemId) {
+      updateCurrentWidgetConfig({
+        objectMetadataId: newObjectMetadataItemId,
+        configToUpdate: {
+          aggregateFieldMetadataId: null,
+          primaryAxisGroupByFieldMetadataId: null,
+          primaryAxisGroupBySubFieldName: null,
+          secondaryAxisGroupByFieldMetadataId: null,
+          secondaryAxisGroupBySubFieldName: null,
+          primaryAxisOrderBy: null,
+          secondaryAxisOrderBy: null,
+          groupByFieldMetadataId: null,
+          groupBySubFieldName: null,
+          filter: {},
+        },
+      });
+
+      if (isDefined(currentObjectMetadataItemId)) {
+        resetChartDraftFiltersSettings(currentObjectMetadataItemId);
+      }
+    }
     closeDropdown();
+  };
+
+  const handleAdvancedObjectsClick = () => {
+    setIsAdvancedObjectsMenuOpened(true);
+    setSearchQuery('');
+  };
+
+  const handleBack = () => {
+    setIsAdvancedObjectsMenuOpened(false);
+    setSearchQuery('');
   };
 
   return (
     <>
-      <DropdownMenuHeader>
-        <Trans>Source</Trans>
-      </DropdownMenuHeader>
+      {isAdvancedObjectsMenuOpened && (
+        <DropdownMenuHeader
+          StartComponent={
+            <DropdownMenuHeaderLeftComponent
+              onClick={handleBack}
+              Icon={IconChevronLeft}
+            />
+          }
+        >
+          <Trans>Advanced objects</Trans>
+        </DropdownMenuHeader>
+      )}
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -89,9 +147,14 @@ export const ChartDataSourceDropdownContent = () => {
         <SelectableList
           selectableListInstanceId={dropdownId}
           focusId={dropdownId}
-          selectableItemIdArray={availableObjectMetadataItems.map(
-            (objectMetadataItem) => objectMetadataItem.id,
-          )}
+          selectableItemIdArray={[
+            ...availableObjectMetadataItems.map(
+              (objectMetadataItem) => objectMetadataItem.id,
+            ),
+            ...(!isAdvancedObjectsMenuOpened
+              ? [ADVANCED_OBJECTS_MENU_ITEM_ID]
+              : []),
+          ]}
         >
           {availableObjectMetadataItems.map((objectMetadataItem) => (
             <SelectableListItem
@@ -103,7 +166,7 @@ export const ChartDataSourceDropdownContent = () => {
             >
               <MenuItemSelect
                 text={objectMetadataItem.labelPlural}
-                selected={currentSource === objectMetadataItem.id}
+                selected={currentObjectMetadataItemId === objectMetadataItem.id}
                 focused={selectedItemId === objectMetadataItem.id}
                 LeftIcon={getIcon(objectMetadataItem.icon)}
                 onClick={() => {
@@ -112,6 +175,19 @@ export const ChartDataSourceDropdownContent = () => {
               />
             </SelectableListItem>
           ))}
+          {!isAdvancedObjectsMenuOpened && (
+            <SelectableListItem
+              itemId={ADVANCED_OBJECTS_MENU_ITEM_ID}
+              onEnter={handleAdvancedObjectsClick}
+            >
+              <MenuItem
+                text={t`Advanced objects`}
+                LeftIcon={IconSettings}
+                onClick={handleAdvancedObjectsClick}
+                hasSubMenu
+              />
+            </SelectableListItem>
+          )}
         </SelectableList>
       </DropdownMenuItemsContainer>
     </>

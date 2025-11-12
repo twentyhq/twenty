@@ -1,21 +1,22 @@
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { Select } from '@/ui/input/components/Select';
-import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
-import { useEffect, useState } from 'react';
-
 import { SidePanelHeader } from '@/command-menu/components/SidePanelHeader';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
+import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { UPDATE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/UpdateRecordAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
+import { type UpdateRecordFormData } from '@/workflow/workflow-steps/workflow-actions/types/update-record-form-data.type';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
+import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
@@ -34,13 +35,6 @@ type WorkflowEditActionUpdateRecordProps = {
         readonly?: false;
         onActionUpdate: (action: WorkflowUpdateRecordAction) => void;
       };
-};
-
-type UpdateRecordFormData = {
-  objectNameSingular: string;
-  objectRecordId: string;
-  fieldsToUpdate: string[];
-  [field: string]: unknown;
 };
 
 export const WorkflowEditActionUpdateRecord = ({
@@ -75,7 +69,13 @@ export const WorkflowEditActionUpdateRecord = ({
     ...action.settings.input.objectRecord,
   });
 
-  const isFormDisabled = actionOptions.readonly;
+  const isFormDisabled = actionOptions.readonly === true;
+
+  const { headerTitle, headerIcon, headerIconColor, headerType } =
+    useWorkflowActionHeader({
+      action,
+      defaultTitle: UPDATE_RECORD_ACTION.defaultLabel,
+    });
 
   const handleFieldChange = (
     fieldName: keyof UpdateRecordFormData,
@@ -99,7 +99,10 @@ export const WorkflowEditActionUpdateRecord = ({
 
   const inlineFieldMetadataItems = selectedObjectMetadataItem?.fields
     .filter((fieldMetadataItem) =>
-      shouldDisplayFormField({ fieldMetadataItem, actionType: action.type }),
+      shouldDisplayFormField({
+        fieldMetadataItem,
+        actionType: 'UPDATE_RECORD',
+      }),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
@@ -136,8 +139,8 @@ export const WorkflowEditActionUpdateRecord = ({
           input: {
             objectName: updatedObjectName,
             objectRecordId: updatedObjectRecordId ?? '',
-            objectRecord: updatedOtherFields,
             fieldsToUpdate: updatedFieldsToUpdate ?? [],
+            objectRecord: updatedOtherFields,
           },
         },
       });
@@ -150,12 +153,6 @@ export const WorkflowEditActionUpdateRecord = ({
       saveAction.flush();
     };
   }, [saveAction]);
-
-  const { headerTitle, headerIcon, headerIconColor, headerType } =
-    useWorkflowActionHeader({
-      action,
-      defaultTitle: 'Update Record',
-    });
 
   return (
     <>
@@ -175,11 +172,11 @@ export const WorkflowEditActionUpdateRecord = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={isFormDisabled}
+        iconTooltip={UPDATE_RECORD_ACTION.defaultLabel}
       />
-
       <WorkflowStepBody>
         <Select
-          dropdownId="workflow-edit-action-record-update-object-name"
+          dropdownId="workflow-update-record-object-name"
           label="Object"
           fullWidth
           disabled={isFormDisabled}
@@ -206,12 +203,12 @@ export const WorkflowEditActionUpdateRecord = ({
 
         {isDefined(objectNameSingular) && (
           <FormSingleRecordPicker
-            testId="workflow-edit-action-record-update-object-record-id"
+            testId="workflow-update-record-object-record-id"
             label="Record"
             onChange={(objectRecordId) =>
               handleFieldChange('objectRecordId', objectRecordId)
             }
-            objectNameSingular={objectNameSingular}
+            objectNameSingulars={[objectNameSingular]}
             defaultValue={formData.objectRecordId}
             disabled={isFormDisabled}
             VariablePicker={WorkflowVariablePicker}
@@ -266,7 +263,7 @@ export const WorkflowEditActionUpdateRecord = ({
           );
         })}
       </WorkflowStepBody>
-      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

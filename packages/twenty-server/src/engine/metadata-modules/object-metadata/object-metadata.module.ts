@@ -9,15 +9,13 @@ import {
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
-import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
@@ -37,6 +35,9 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/search-vector.module';
+import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
@@ -56,7 +57,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
           ObjectMetadataEntity,
           FieldMetadataEntity,
         ]),
-        TypeOrmModule.forFeature([FeatureFlag, ViewEntity]),
+        TypeOrmModule.forFeature([FeatureFlagEntity, ViewEntity]),
         DataSourceModule,
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
@@ -71,7 +72,8 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         WorkspaceDataSourceModule,
         FeatureFlagModule,
         WorkspaceMigrationV2Module,
-        CoreViewModule,
+        ViewModule,
+        ViewFieldModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [
@@ -96,7 +98,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
           },
           create: {
             many: { disabled: true },
-            guards: [SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL)],
+            guards: [SettingsPermissionGuard(PermissionFlagType.DATA_MODEL)],
           },
           update: { disabled: true },
           delete: { disabled: true },

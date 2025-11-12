@@ -1,13 +1,14 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCommandMenuHistory = () => {
@@ -39,7 +40,7 @@ export const useCommandMenuHistory = () => {
         set(commandMenuNavigationStackState, newNavigationStack);
 
         const currentMorphItems = snapshot
-          .getLoadable(commandMenuNavigationMorphItemByPageState)
+          .getLoadable(commandMenuNavigationMorphItemsByPageState)
           .getValue();
 
         if (currentNavigationStack.length > 0) {
@@ -48,15 +49,15 @@ export const useCommandMenuHistory = () => {
           if (isDefined(removedItem)) {
             const newMorphItems = new Map(currentMorphItems);
             newMorphItems.delete(removedItem.pageId);
-            set(commandMenuNavigationMorphItemByPageState, newMorphItems);
+            set(commandMenuNavigationMorphItemsByPageState, newMorphItems);
 
-            const morphItem = currentMorphItems.get(removedItem.pageId);
-            if (isDefined(morphItem)) {
+            const morphItems = currentMorphItems.get(removedItem.pageId);
+            if (isNonEmptyArray(morphItems)) {
               set(
                 activeTabIdComponentState.atomFamily({
                   instanceId: getShowPageTabListComponentId({
                     pageId: removedItem.pageId,
-                    targetObjectId: morphItem.recordId,
+                    targetObjectId: morphItems[0].recordId,
                   }),
                 }),
                 null,
@@ -96,16 +97,16 @@ export const useCommandMenuHistory = () => {
         instanceId: newNavigationStackItem.pageId,
       });
       const currentMorphItems = snapshot
-        .getLoadable(commandMenuNavigationMorphItemByPageState)
+        .getLoadable(commandMenuNavigationMorphItemsByPageState)
         .getValue();
 
-      for (const [pageId, morphItem] of currentMorphItems.entries()) {
+      for (const [pageId, morphItems] of currentMorphItems.entries()) {
         if (!newNavigationStack.some((item) => item.pageId === pageId)) {
           set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId,
-                targetObjectId: morphItem.recordId,
+                targetObjectId: morphItems[0].recordId,
               }),
             }),
             null,
@@ -119,7 +120,7 @@ export const useCommandMenuHistory = () => {
         ),
       );
 
-      set(commandMenuNavigationMorphItemByPageState, newMorphItems);
+      set(commandMenuNavigationMorphItemsByPageState, newMorphItems);
 
       set(hasUserSelectedCommandState, false);
     };

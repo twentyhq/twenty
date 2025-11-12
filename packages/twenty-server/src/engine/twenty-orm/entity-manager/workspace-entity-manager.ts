@@ -1,5 +1,8 @@
 import isEmpty from 'lodash.isempty';
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import {
+  type ObjectsPermissions,
+  type ObjectsPermissionsByRoleId,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type DeleteResult,
@@ -46,6 +49,7 @@ import { type DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { getEntityTarget } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-target';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
+import { type GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
   type OperationType,
@@ -53,13 +57,16 @@ import {
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 type PermissionOptions = {
   shouldBypassPermissionChecks?: boolean;
-  objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+  objectRecordsPermissions?: ObjectsPermissions;
 };
 
 export class WorkspaceEntityManager extends EntityManager {
@@ -70,7 +77,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
   constructor(
     internalContext: WorkspaceInternalContext,
-    connection: WorkspaceDataSource,
+    connection: WorkspaceDataSource | GlobalWorkspaceDataSource,
     queryRunner?: QueryRunner,
   ) {
     super(connection, queryRunner);
@@ -82,33 +89,60 @@ export class WorkspaceEntityManager extends EntityManager {
     return this.connection.featureFlagMap;
   }
 
+  private getPermissionsForRole(
+    roleId: string,
+    permissionsPerRoleId: ObjectsPermissionsByRoleId,
+  ): ObjectsPermissions {
+    if (!isDefined(permissionsPerRoleId?.[roleId])) {
+      throw new PermissionsException(
+        `No permissions found for role in datasource (roleId: ${roleId})`,
+        PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
+      );
+    }
+
+    return permissionsPerRoleId[roleId];
+  }
+
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-    permissionOptions?: {
-      shouldBypassPermissionChecks?: boolean;
-      roleId?: string;
-    },
+    rolePermissionConfig?: RolePermissionConfig,
     authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
     const dataSource = this.connection;
 
     let objectPermissions = {};
+    let shouldBypassPermissionChecks = false;
+    const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
 
-    if (permissionOptions?.roleId) {
-      const objectPermissionsByRoleId = dataSource.permissionsPerRoleId;
+    if (
+      rolePermissionConfig &&
+      'shouldBypassPermissionChecks' in rolePermissionConfig
+    ) {
+      shouldBypassPermissionChecks =
+        rolePermissionConfig.shouldBypassPermissionChecks;
+    }
 
-      if (!isDefined(objectPermissionsByRoleId?.[permissionOptions.roleId])) {
-        throw new PermissionsException(
-          `No permissions found for role in datasource (missing ${
-            !isDefined(objectPermissionsByRoleId)
-              ? 'objectPermissionsByRoleId object'
-              : `roleId in objectPermissionsByRoleId object (${permissionOptions.roleId})`
-          })`,
-          PermissionsExceptionCode.NO_PERMISSIONS_FOUND_IN_DATASOURCE,
+    if (rolePermissionConfig && 'unionOf' in rolePermissionConfig) {
+      if (rolePermissionConfig.unionOf.length === 1) {
+        objectPermissions = this.getPermissionsForRole(
+          rolePermissionConfig.unionOf[0],
+          objectPermissionsByRoleId,
         );
       } else {
-        objectPermissions = objectPermissionsByRoleId[permissionOptions.roleId];
+        // TODO: Implement union logic for combining permissions across multiple roles
+        throw new Error(
+          'Union permission logic for multiple roles not yet implemented',
+        );
       }
+    }
+
+    if (rolePermissionConfig && 'intersectionOf' in rolePermissionConfig) {
+      const allRolePermissions = rolePermissionConfig.intersectionOf.map(
+        (roleId: string) =>
+          this.getPermissionsForRole(roleId, objectPermissionsByRoleId),
+      );
+
+      objectPermissions = computePermissionIntersection(allRolePermissions);
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
@@ -118,7 +152,7 @@ export class WorkspaceEntityManager extends EntityManager {
       dataSource.featureFlagMap,
       this.queryRunner,
       objectPermissions,
-      permissionOptions?.shouldBypassPermissionChecks,
+      shouldBypassPermissionChecks,
       authContext,
     );
 
@@ -131,7 +165,7 @@ export class WorkspaceEntityManager extends EntityManager {
     queryRunner?: QueryRunner,
     options: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+      objectRecordsPermissions?: ObjectsPermissions;
     } = {
       shouldBypassPermissionChecks: false,
       objectRecordsPermissions: {},
@@ -199,7 +233,7 @@ export class WorkspaceEntityManager extends EntityManager {
     conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+      objectRecordsPermissions?: ObjectsPermissions;
     },
     selectedColumns: string[] | '*' = '*',
   ): Promise<InsertResult> {
@@ -233,7 +267,20 @@ export class WorkspaceEntityManager extends EntityManager {
         ),
     );
 
-    return this.createQueryBuilder(
+    const overwrites = [...conflictColumns, ...overwriteColumns].map(
+      (col) => col.databaseName,
+    );
+
+    const conflictTargets = conflictColumns.map((col) => col.databaseName);
+
+    const upsertOptions = {
+      skipUpdateIfNoValuesChanged: options.skipUpdateIfNoValuesChanged,
+      indexPredicate: options.indexPredicate,
+      upsertType:
+        options.upsertType || this.connection.driver.supportedUpsertTypes[0],
+    };
+
+    const queryBuilder = this.createQueryBuilder(
       undefined,
       undefined,
       undefined,
@@ -242,21 +289,10 @@ export class WorkspaceEntityManager extends EntityManager {
       .insert()
       .into(target)
       .values(entities)
-      .orUpdate(
-        [...conflictColumns, ...overwriteColumns].map(
-          (col) => col.databaseName,
-        ),
-        conflictColumns.map((col) => col.databaseName),
-        {
-          skipUpdateIfNoValuesChanged: options.skipUpdateIfNoValuesChanged,
-          indexPredicate: options.indexPredicate,
-          upsertType:
-            options.upsertType ||
-            this.connection.driver.supportedUpsertTypes[0],
-        },
-      )
-      .returning(selectedColumns)
-      .execute();
+      .orUpdate(overwrites, conflictTargets, upsertOptions)
+      .returning(selectedColumns);
+
+    return queryBuilder.execute();
   }
 
   override update<Entity extends ObjectLiteral>(
@@ -388,7 +424,7 @@ export class WorkspaceEntityManager extends EntityManager {
     operationType: OperationType;
     permissionOptions?: {
       shouldBypassPermissionChecks?: boolean;
-      objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+      objectRecordsPermissions?: ObjectsPermissions;
     };
     selectedColumns: string[];
     updatedColumns?: string[];
@@ -1195,22 +1231,26 @@ export class WorkspaceEntityManager extends EntityManager {
         (entity) => !beforeUpdateMapById[entity.id],
       );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPDATED,
-        objectMetadataItem,
-        workspaceId: this.internalContext.workspaceId,
-        entities: updatedEntities,
-        beforeEntities: updatedEntities.map(
-          (entity) => beforeUpdateMapById[entity.id],
-        ),
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadataItem,
+          workspaceId: this.internalContext.workspaceId,
+          entities: updatedEntities,
+          beforeEntities: updatedEntities.map(
+            (entity) => beforeUpdateMapById[entity.id],
+          ),
+        }),
+      );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.CREATED,
-        objectMetadataItem,
-        workspaceId: this.internalContext.workspaceId,
-        entities: createdEntities,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.CREATED,
+          objectMetadataItem,
+          workspaceId: this.internalContext.workspaceId,
+          entities: createdEntities,
+        }),
+      );
 
       const permissionCheckApplies =
         permissionOptionsFromArgs?.shouldBypassPermissionChecks !== true &&
@@ -1387,12 +1427,14 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.objectMetadataMaps,
     );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.DESTROYED,
-      objectMetadataItem,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
-    });
+    this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+      formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.DESTROYED,
+        objectMetadataItem,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResult,
+      }),
+    );
 
     return isEntityArray ? formattedResult : formattedResult[0];
   }
@@ -1500,12 +1542,14 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.objectMetadataMaps,
     );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.DELETED,
-      objectMetadataItem,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
-    });
+    this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+      formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.DELETED,
+        objectMetadataItem,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResult,
+      }),
+    );
 
     return isEntityArray ? formattedResult : formattedResult[0];
   }
@@ -1609,12 +1653,14 @@ export class WorkspaceEntityManager extends EntityManager {
       this.internalContext.objectMetadataMaps,
     );
 
-    await this.internalContext.eventEmitterService.emitMutationEvent({
-      action: DatabaseEventAction.RESTORED,
-      objectMetadataItem,
-      workspaceId: this.internalContext.workspaceId,
-      entities: formattedResult,
-    });
+    this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+      formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.RESTORED,
+        objectMetadataItem,
+        workspaceId: this.internalContext.workspaceId,
+        entities: formattedResult,
+      }),
+    );
 
     return isEntityArray ? formattedResult : formattedResult[0];
   }

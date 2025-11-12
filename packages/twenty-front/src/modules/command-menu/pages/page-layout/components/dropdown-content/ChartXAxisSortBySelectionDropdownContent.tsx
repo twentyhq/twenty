@@ -3,7 +3,6 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -12,24 +11,26 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { Trans } from '@lingui/react/macro';
-
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type GraphOrderBy } from '~/generated/graphql';
 
 export const ChartXAxisSortBySelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
+  const configuration = widgetInEditMode?.configuration;
 
   if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+    configuration?.__typename !== 'BarChartConfiguration' &&
+    configuration?.__typename !== 'LineChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }
 
-  const configuration = widgetInEditMode?.configuration;
-  const currentOrderByX = configuration.orderByX;
+  if (!isDefined(widgetInEditMode?.objectMetadataId)) {
+    throw new Error('No data source in chart');
+  }
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -42,63 +43,58 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
-
   const { closeDropdown } = useCloseDropdown();
 
-  const handleSelectSortOption = (orderByX: GraphOrderBy) => {
+  const { getXSortOptionLabel } = useGraphXSortOptionLabels({
+    objectMetadataId: widgetInEditMode.objectMetadataId,
+  });
+
+  const handleSelect = (orderBy: GraphOrderBy) => {
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        orderByX,
-      },
+      configToUpdate: { primaryAxisOrderBy: orderBy },
     });
     closeDropdown();
   };
 
-  const { getXSortOptionLabel } = useGraphXSortOptionLabels({
-    objectMetadataId: widgetInEditMode?.objectMetadataId,
-  });
-
   return (
-    <>
-      <DropdownMenuHeader>
-        <Trans>X-Axis Sort By</Trans>
-      </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          selectableListInstanceId={dropdownId}
-          focusId={dropdownId}
-          selectableItemIdArray={X_SORT_BY_OPTIONS.map(
-            (option) => option.value,
-          )}
-        >
-          {X_SORT_BY_OPTIONS.map((sortOption) => (
-            <SelectableListItem
-              key={sortOption.value}
-              itemId={sortOption.value}
-              onEnter={() => {
-                handleSelectSortOption(sortOption.value);
+    <DropdownMenuItemsContainer>
+      <SelectableList
+        selectableListInstanceId={dropdownId}
+        focusId={dropdownId}
+        selectableItemIdArray={X_SORT_BY_OPTIONS.map((option) => option.value)}
+      >
+        {X_SORT_BY_OPTIONS.map((sortOption) => (
+          <SelectableListItem
+            key={sortOption.value}
+            itemId={sortOption.value}
+            onEnter={() => {
+              handleSelect(sortOption.value);
+            }}
+          >
+            <MenuItemSelect
+              text={getXSortOptionLabel({
+                graphOrderBy: sortOption.value,
+                groupByFieldMetadataIdX:
+                  configuration.primaryAxisGroupByFieldMetadataId,
+                groupBySubFieldNameX:
+                  configuration.primaryAxisGroupBySubFieldName as
+                    | CompositeFieldSubFieldName
+                    | undefined,
+                aggregateFieldMetadataId:
+                  configuration.aggregateFieldMetadataId ?? undefined,
+                aggregateOperation:
+                  configuration.aggregateOperation ?? undefined,
+              })}
+              selected={configuration.primaryAxisOrderBy === sortOption.value}
+              focused={selectedItemId === sortOption.value}
+              LeftIcon={sortOption.icon}
+              onClick={() => {
+                handleSelect(sortOption.value);
               }}
-            >
-              <MenuItemSelect
-                text={getXSortOptionLabel({
-                  graphOrderBy: sortOption.value,
-                  groupByFieldMetadataIdX:
-                    configuration.groupByFieldMetadataIdX,
-                  aggregateFieldMetadataId:
-                    configuration.aggregateFieldMetadataId,
-                  aggregateOperation: configuration.aggregateOperation,
-                })}
-                selected={currentOrderByX === sortOption.value}
-                focused={selectedItemId === sortOption.value}
-                LeftIcon={sortOption.icon}
-                onClick={() => {
-                  handleSelectSortOption(sortOption.value);
-                }}
-              />
-            </SelectableListItem>
-          ))}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
-    </>
+            />
+          </SelectableListItem>
+        ))}
+      </SelectableList>
+    </DropdownMenuItemsContainer>
   );
 };

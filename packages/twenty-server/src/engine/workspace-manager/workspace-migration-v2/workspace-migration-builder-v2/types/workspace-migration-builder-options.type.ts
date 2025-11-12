@@ -1,4 +1,6 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
 export type WorkspaceMigrationBuilderOptions = {
-  inferDeletionFromMissingEntities: boolean;
+  inferDeletionFromMissingEntities?: Partial<Record<AllMetadataName, boolean>>;
   isSystemBuild: boolean;
 };

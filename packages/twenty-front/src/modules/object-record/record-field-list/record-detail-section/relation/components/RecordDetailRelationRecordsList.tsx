@@ -6,12 +6,16 @@ import { RecordDetailRelationRecordsListItemEffect } from '@/object-record/recor
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type RecordDetailRelationRecordsListProps = {
-  relationRecords: ObjectRecord[];
+  objectNameSingular: string;
+  value: ObjectRecord;
+  fieldMetadataId: string;
 };
 
 export const RecordDetailRelationRecordsList = ({
-  relationRecords,
-}: RecordDetailRelationRecordsListProps) => {
+  recordsWithObjectNameSingular,
+}: {
+  recordsWithObjectNameSingular: RecordDetailRelationRecordsListProps[];
+}) => {
   const [expandedItem, setExpandedItem] = useState('');
 
   const handleItemClick = (recordId: string) =>
@@ -19,20 +23,35 @@ export const RecordDetailRelationRecordsList = ({
 
   return (
     <RecordDetailRecordsListContainer>
-      {relationRecords.slice(0, 5).map((relationRecord) => (
-        <Fragment key={relationRecord.id}>
-          <RecordDetailRelationRecordsListItemEffect
-            key={`${relationRecord.id}-effect`}
-            relationRecordId={relationRecord.id}
-          />
-          <RecordDetailRelationRecordsListItem
-            key={relationRecord.id}
-            isExpanded={expandedItem === relationRecord.id}
-            onClick={handleItemClick}
-            relationRecord={relationRecord}
-          />
-        </Fragment>
-      ))}
+      {recordsWithObjectNameSingular
+        .slice(0, 5)
+        .map((recordWithObjectNameSingular) => (
+          <Fragment
+            key={`${recordWithObjectNameSingular.value.id}-${recordWithObjectNameSingular.fieldMetadataId}`}
+          >
+            <RecordDetailRelationRecordsListItemEffect
+              key={`${recordWithObjectNameSingular.value.id}-effect`}
+              relationRecordId={recordWithObjectNameSingular.value.id}
+              relationObjectMetadataNameSingular={
+                recordWithObjectNameSingular.objectNameSingular
+              }
+            />
+            <RecordDetailRelationRecordsListItem
+              key={recordWithObjectNameSingular.value.id}
+              isExpanded={
+                expandedItem === recordWithObjectNameSingular.value.id
+              }
+              onClick={handleItemClick}
+              relationRecord={recordWithObjectNameSingular.value}
+              relationObjectMetadataNameSingular={
+                recordWithObjectNameSingular.objectNameSingular
+              }
+              relationFieldMetadataId={
+                recordWithObjectNameSingular.fieldMetadataId
+              }
+            />
+          </Fragment>
+        ))}
     </RecordDetailRecordsListContainer>
   );
 };

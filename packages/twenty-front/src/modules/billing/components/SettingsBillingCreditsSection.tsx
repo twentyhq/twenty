@@ -8,12 +8,13 @@ import { useCurrentMetered } from '@/billing/hooks/useCurrentMetered';
 import { useGetWorkflowNodeExecutionUsage } from '@/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { Section } from 'twenty-ui/layout';
-import { BACKGROUND_LIGHT, COLOR } from 'twenty-ui/theme';
+import { BACKGROUND_LIGHT } from 'twenty-ui/theme';
 import { SubscriptionStatus } from '~/generated/graphql';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
@@ -47,6 +48,7 @@ export const SettingsBillingCreditsSection = ({
     getWorkflowNodeExecutionUsage();
 
   const progressBarValue = (usedCredits / grantedCredits) * 100;
+  const displayedProgressBarValue = progressBarValue < 3 ? 3 : progressBarValue;
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
 
@@ -59,6 +61,8 @@ export const SettingsBillingCreditsSection = ({
   const meteredBillingPrices = getCurrentMeteredPricesByInterval(
     currentBillingSubscription.interval,
   );
+
+  const theme = useTheme();
 
   return (
     <>
@@ -73,8 +77,10 @@ export const SettingsBillingCreditsSection = ({
             value={`${formatNumber(usedCredits)}/${formatNumber(grantedCredits, { abbreviate: true, decimals: 2 })}`}
           />
           <ProgressBar
-            value={progressBarValue}
-            barColor={progressBarValue > 100 ? COLOR.red40 : COLOR.blue}
+            value={displayedProgressBarValue}
+            barColor={
+              progressBarValue > 100 ? theme.color.red8 : theme.color.blue
+            }
             backgroundColor={BACKGROUND_LIGHT.tertiary}
             withBorderRadius={true}
           />

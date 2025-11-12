@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const useReadCaptchaToken = () => {
   const readCaptchaToken = useRecoilCallback(
     ({ snapshot }) =>
-      async () => {
+      () => {
         const existingCaptchaToken = snapshot
           .getLoadable(captchaTokenState)
           .getValue();

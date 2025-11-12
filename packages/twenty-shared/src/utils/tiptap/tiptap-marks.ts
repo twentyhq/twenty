@@ -14,10 +14,15 @@ export const TIPTAP_NODE_TYPES = {
   HEADING: 'heading',
   VARIABLE_TAG: 'variableTag',
   IMAGE: 'image',
+  BULLET_LIST: 'bulletList',
+  ORDERED_LIST: 'orderedList',
+  LIST_ITEM: 'listItem',
 } as const;
 
-export type TipTapMarkType = typeof TIPTAP_MARK_TYPES[keyof typeof TIPTAP_MARK_TYPES];
-export type TipTapNodeType = typeof TIPTAP_NODE_TYPES[keyof typeof TIPTAP_NODE_TYPES];
+export type TipTapMarkType =
+  (typeof TIPTAP_MARK_TYPES)[keyof typeof TIPTAP_MARK_TYPES];
+export type TipTapNodeType =
+  (typeof TIPTAP_NODE_TYPES)[keyof typeof TIPTAP_NODE_TYPES];
 
 // Order for mark rendering (inner to outer)
 export const TIPTAP_MARKS_RENDER_ORDER: readonly TipTapMarkType[] = [

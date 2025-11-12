@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
+import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
@@ -7,6 +7,8 @@ import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const useCreateEmptyRecordFilterFromFieldMetadataItem = () => {
+  const { getInitialFilterValue } = useGetInitialFilterValue();
+
   const createEmptyRecordFilterFromFieldMetadataItem = (
     fieldMetadataItem: FieldMetadataItem,
   ) => {

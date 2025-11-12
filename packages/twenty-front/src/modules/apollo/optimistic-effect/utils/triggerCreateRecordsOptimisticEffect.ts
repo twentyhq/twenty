@@ -9,10 +9,12 @@ import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/is
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 
+import { triggerUpdateGroupByQueriesOptimisticEffect } from '@/apollo/optimistic-effect/group-by/utils/triggerUpdateGroupByQueriesOptimisticEffect';
 import { type CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
@@ -33,7 +35,9 @@ type TriggerCreateRecordsOptimisticEffectArgs = {
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
+  upsertRecordsInStore: (records: ObjectRecord[]) => void;
 };
+
 export const triggerCreateRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
@@ -42,6 +46,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
   shouldMatchRootQueryFilter,
   checkForRecordInCache = false,
   objectPermissionsByObjectMetadataId,
+  upsertRecordsInStore,
 }: TriggerCreateRecordsOptimisticEffectArgs) => {
   const getRecordNodeFromCache = (recordId: string): RecordGqlNode | null => {
     const cachedRecord = getRecordFromCache({
@@ -69,6 +74,8 @@ export const triggerCreateRecordsOptimisticEffect = ({
       currentSourceRecord,
       updatedSourceRecord: record,
       objectMetadataItems,
+      upsertRecordsInStore,
+      objectPermissionsByObjectMetadataId,
     });
   });
 
@@ -231,5 +238,13 @@ export const triggerCreateRecordsOptimisticEffect = ({
         };
       },
     },
+  });
+
+  triggerUpdateGroupByQueriesOptimisticEffect({
+    cache,
+    objectMetadataItem,
+    operation: 'create',
+    records: recordsToCreate,
+    shouldMatchRootQueryFilter,
   });
 };

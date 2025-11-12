@@ -3,16 +3,19 @@ import { recordIndexKanbanAggregateOperationState } from '@/object-record/record
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { usePersistView } from '@/views/hooks/internal/usePersistView';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
-import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateViewAggregate = () => {
+  const { canPersistChanges } = useCanPersistViewChanges();
   const currentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
-  const { updateView } = useUpdateView();
+  const { updateView } = usePersistView();
 
   const setRecordIndexKanbanAggregateOperationState = useSetRecoilState(
     recordIndexKanbanAggregateOperationState,
@@ -31,14 +34,28 @@ export const useUpdateViewAggregate = () => {
       kanbanAggregateOperation: ExtendedAggregateOperations | null;
       objectMetadataId: string;
     }) => {
-      const convertedKanbanAggregateOperation =
-        convertExtendedAggregateOperationToAggregateOperation(
-          kanbanAggregateOperation,
-        );
+      if (!canPersistChanges) {
+        return;
+      }
+
+      const convertedKanbanAggregateOperation = isDefined(
+        kanbanAggregateOperation,
+      )
+        ? convertExtendedAggregateOperationToAggregateOperation(
+            kanbanAggregateOperation,
+          )
+        : null;
+
+      if (!isDefined(currentViewId)) {
+        return;
+      }
+
       updateView({
         id: currentViewId,
-        kanbanAggregateOperationFieldMetadataId,
-        kanbanAggregateOperation: convertedKanbanAggregateOperation,
+        input: {
+          kanbanAggregateOperationFieldMetadataId,
+          kanbanAggregateOperation: convertedKanbanAggregateOperation,
+        },
       });
 
       setRecordIndexKanbanAggregateOperationState({
@@ -49,6 +66,7 @@ export const useUpdateViewAggregate = () => {
       refreshCoreViewsByObjectMetadataId(objectMetadataId);
     },
     [
+      canPersistChanges,
       currentViewId,
       updateView,
       setRecordIndexKanbanAggregateOperationState,

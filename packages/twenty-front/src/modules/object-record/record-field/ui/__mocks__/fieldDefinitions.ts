@@ -4,11 +4,12 @@ import {
   FieldActorMetadata,
   FieldFullNameMetadata,
   FieldLinksMetadata,
+  FieldMorphRelationMetadata,
   FieldRatingMetadata,
   FieldSelectMetadata,
   FieldTextMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 export const fieldMetadataId = 'fieldMetadataId';
@@ -126,5 +127,22 @@ export const linksFieldDefinition: FieldDefinition<FieldLinksMetadata> = {
   metadata: {
     fieldName: 'links',
     objectMetadataNameSingular: 'company',
+    settings: null,
   },
 };
+
+export const morphRelationFieldDefinition: FieldDefinition<FieldMorphRelationMetadata> =
+  {
+    fieldMetadataId,
+    label: 'Attachments',
+    iconName: 'IconLink',
+    type: FieldMetadataType.MORPH_RELATION,
+    defaultValue: [],
+    metadata: {
+      fieldName: 'attachments',
+      objectMetadataNameSingular: 'company',
+      morphRelations: [],
+      relationType: RelationType.ONE_TO_MANY,
+      settings: null,
+    },
+  };

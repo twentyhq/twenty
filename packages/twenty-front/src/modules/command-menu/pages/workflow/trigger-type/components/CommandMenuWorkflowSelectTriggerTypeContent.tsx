@@ -1,9 +1,11 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { useCommandMenuWorkflowIdOrThrow } from '@/command-menu/pages/workflow/hooks/useCommandMenuWorkflowIdOrThrow';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import {
+  type WorkflowTrigger,
   type WorkflowTriggerType,
-  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
@@ -12,19 +14,15 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/OtherTriggerTypes';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
+import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated/graphql';
 
-export const CommandMenuWorkflowSelectTriggerTypeContent = ({
-  workflow,
-}: {
-  workflow: WorkflowWithCurrentVersion;
-}) => {
+export const CommandMenuWorkflowSelectTriggerTypeContent = () => {
   const { getIcon } = useIcons();
+  const workflowId = useCommandMenuWorkflowIdOrThrow();
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -34,9 +32,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
     workflowSelectedNodeComponentState,
   );
   const { openWorkflowEditStepInCommandMenu } = useWorkflowCommandMenu();
-  const isIteratorEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
-  );
+  const flow = useFlowOrThrow();
 
   const handleTriggerTypeClick = ({
     type,
@@ -48,19 +44,26 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
     icon: string;
   }) => {
     return async () => {
-      await updateTrigger(
-        getTriggerDefaultDefinition({
-          defaultLabel,
-          type,
-          activeNonSystemObjectMetadataItems,
-          isIteratorEnabled,
-        }),
-      );
+      let updatedTrigger: WorkflowTrigger | null = getTriggerDefaultDefinition({
+        defaultLabel,
+        type,
+        activeNonSystemObjectMetadataItems,
+      });
+
+      if (isDefined(flow.trigger)) {
+        updatedTrigger = {
+          ...updatedTrigger,
+          position: flow.trigger.position,
+          nextStepIds: flow.trigger.nextStepIds,
+        };
+      }
+
+      await updateTrigger(updatedTrigger);
 
       setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
       openWorkflowEditStepInCommandMenu(
-        workflow.id,
+        workflowId,
         defaultLabel,
         getIcon(icon),
       );

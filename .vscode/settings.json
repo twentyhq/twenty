@@ -1,6 +1,8 @@
 {
   "editor.formatOnSave": false,
-  "files.eol": "auto",
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
   "[typescript]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
@@ -50,5 +52,6 @@
     ".cursorrules": "markdown"
   },
   "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "makefile.configureOnOpen": false
 }

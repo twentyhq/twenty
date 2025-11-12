@@ -1,8 +1,7 @@
 import { useContext } from 'react';
 
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useEmailsFieldDisplay = () => {
@@ -13,6 +12,7 @@ export const useEmailsFieldDisplay = () => {
   const fieldValue = useRecordFieldValue<FieldEmailsValue | undefined>(
     recordId,
     fieldName,
+    fieldDefinition,
   );
 
   return {

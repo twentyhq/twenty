@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1 as gmailV1 } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
@@ -11,9 +12,8 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
-import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
-import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
+import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import { type GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
@@ -23,23 +23,26 @@ import { assertNotNull } from 'src/utils/assert';
 export class GmailGetMessageListService {
   private readonly logger = new Logger(GmailGetMessageListService.name);
   constructor(
-    private readonly gmailClientProvider: GmailClientProvider,
     private readonly gmailGetHistoryService: GmailGetHistoryService,
-    private readonly gmailHandleErrorService: GmailHandleErrorService,
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly gmailMessageListFetchErrorHandler: GmailMessageListFetchErrorHandler,
   ) {}
 
   private async getMessageListWithoutCursor(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id' | 'handle'
+      'provider' | 'accessToken' | 'refreshToken' | 'id' | 'handle'
     >,
     messageFolders: Pick<
       MessageFolderWorkspaceEntity,
       'name' | 'externalId' | 'isSynced'
     >[],
   ): Promise<GetMessageListsResponse> {
-    const gmailClient =
-      await this.gmailClientProvider.getGmailClient(connectedAccount);
+    const oAuth2Client =
+      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
+        connectedAccount,
+      );
+    const gmailClient = oAuth2Client.gmail({ version: 'v1' });
 
     let pageToken: string | undefined;
     let hasMoreMessages = true;
@@ -65,7 +68,7 @@ export class GmailGetMessageListService {
             `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
           );
 
-          this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
+          this.gmailMessageListFetchErrorHandler.handleError(error);
 
           return {
             data: {
@@ -108,10 +111,7 @@ export class GmailGetMessageListService {
         id: firstMessageExternalId,
       })
       .catch((error) => {
-        this.gmailHandleErrorService.handleGmailMessagesImportError(
-          error,
-          firstMessageExternalId as string,
-        );
+        this.gmailMessageListFetchErrorHandler.handleError(error);
       });
 
     const nextSyncCursor = firstMessageContent?.data?.historyId;
@@ -139,8 +139,11 @@ export class GmailGetMessageListService {
     connectedAccount,
     messageFolders,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
-    const gmailClient =
-      await this.gmailClientProvider.getGmailClient(connectedAccount);
+    const oAuth2Client =
+      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
+        connectedAccount,
+      );
+    const gmailClient = oAuth2Client.gmail({ version: 'v1' });
 
     if (!isNonEmptyString(messageChannel.syncCursor)) {
       return this.getMessageListWithoutCursor(connectedAccount, messageFolders);

@@ -1,43 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import axios from 'axios';
 import semver from 'semver';
 import { Repository } from 'typeorm';
 import * as z from 'zod';
 
-import { type ConfigVariable } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
-import { type ConfigVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
+import { type ConfigVariableDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variable.dto';
+import { type ConfigVariablesGroupDataDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
 import { type ConfigVariablesOutput } from 'src/engine/core-modules/admin-panel/dtos/config-variables.output';
-import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
-import { type VersionInfo } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
+import { type VersionInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/version-info.dto';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { type FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { type FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_GROUP_METADATA } from 'src/engine/core-modules/twenty-config/constants/config-variables-group-metadata';
 import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 
 @Injectable()
 export class AdminPanelService {
   constructor(
-    private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
-    private readonly auditService: AuditService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly fileService: FileService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async userLookup(userIdentifier: string): Promise<UserLookup> {
@@ -65,7 +62,7 @@ export class AdminPanelService {
     userValidator.assertIsDefinedOrThrow(
       targetUser,
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT, {
-        userFriendlyMessage: 'User not found. Please check the email or ID.',
+        userFriendlyMessage: msg`User not found. Please check the email or ID.`,
       }),
     );
 
@@ -89,7 +86,7 @@ export class AdminPanelService {
             })
           : userWorkspace.workspace.logo,
         allowImpersonation: userWorkspace.workspace.allowImpersonation,
-        workspaceUrls: this.domainManagerService.getWorkspaceUrls({
+        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
           subdomain: userWorkspace.workspace.subdomain,
           customDomain: userWorkspace.workspace.customDomain,
           isCustomDomainEnabled: userWorkspace.workspace.isCustomDomainEnabled,
@@ -106,21 +103,21 @@ export class AdminPanelService {
             userWorkspace.workspace.featureFlags?.find(
               (flag) => flag.key === key,
             )?.value ?? false,
-        })) as FeatureFlag[],
+        })) as FeatureFlagEntity[],
       })),
     };
   }
 
   getConfigVariablesGrouped(): ConfigVariablesOutput {
     const rawEnvVars = this.twentyConfigService.getAll();
-    const groupedData = new Map<ConfigVariablesGroup, ConfigVariable[]>();
+    const groupedData = new Map<ConfigVariablesGroup, ConfigVariableDTO[]>();
 
     for (const [varName, { value, metadata, source }] of Object.entries(
       rawEnvVars,
     )) {
       const { group, description } = metadata;
 
-      const envVar: ConfigVariable = {
+      const envVar: ConfigVariableDTO = {
         name: varName,
         description,
         value: value ?? null,
@@ -138,7 +135,9 @@ export class AdminPanelService {
       groupedData.get(group)?.push(envVar);
     }
 
-    const groups: ConfigVariablesGroupData[] = Array.from(groupedData.entries())
+    const groups: ConfigVariablesGroupDataDTO[] = Array.from(
+      groupedData.entries(),
+    )
       .sort((a, b) => {
         const positionA = CONFIG_VARIABLES_GROUP_METADATA[a[0]].position;
         const positionB = CONFIG_VARIABLES_GROUP_METADATA[b[0]].position;
@@ -155,7 +154,7 @@ export class AdminPanelService {
     return { groups };
   }
 
-  getConfigVariable(key: string): ConfigVariable {
+  getConfigVariable(key: string): ConfigVariableDTO {
     const variableWithMetadata =
       this.twentyConfigService.getVariableWithMetadata(
         key as keyof ConfigVariables,
@@ -179,7 +178,7 @@ export class AdminPanelService {
     };
   }
 
-  async getVersionInfo(): Promise<VersionInfo> {
+  async getVersionInfo(): Promise<VersionInfoDTO> {
     const currentVersion = this.twentyConfigService.get('APP_VERSION');
 
     try {

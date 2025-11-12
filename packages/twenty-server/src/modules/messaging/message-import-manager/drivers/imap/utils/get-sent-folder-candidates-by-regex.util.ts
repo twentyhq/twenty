@@ -5,7 +5,7 @@ import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-m
 
 export function getImapSentFolderCandidatesByRegex(
   list: ListResponse[],
-): string[] {
+): { name: string; path: string }[] {
   const regexCandidateFolders: string[] = [];
 
   for (const folder of list) {
@@ -16,5 +16,12 @@ export function getImapSentFolderCandidatesByRegex(
     }
   }
 
-  return regexCandidateFolders;
+  return regexCandidateFolders.map((folderPath) => {
+    const folder = list.find((folder) => folder.path === folderPath);
+
+    return {
+      name: folder?.name ?? folderPath,
+      path: folderPath,
+    };
+  });
 }

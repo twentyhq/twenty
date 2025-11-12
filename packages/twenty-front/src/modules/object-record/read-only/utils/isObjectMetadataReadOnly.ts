@@ -1,9 +1,13 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectPermission } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type IsObjectMetadataReadOnlyParams = {
-  objectPermissions: ObjectPermission;
-  objectMetadataItem: Pick<ObjectMetadataItem, 'isUIReadOnly' | 'isRemote'>;
+  objectPermissions?: ObjectPermission;
+  objectMetadataItem?: Pick<
+    ObjectMetadataItem,
+    'isUIReadOnly' | 'isRemote' | 'applicationId'
+  >;
 };
 
 export const isObjectMetadataReadOnly = ({
@@ -11,8 +15,9 @@ export const isObjectMetadataReadOnly = ({
   objectMetadataItem,
 }: IsObjectMetadataReadOnlyParams) => {
   return (
-    !objectPermissions.canUpdateObjectRecords ||
-    objectMetadataItem.isUIReadOnly ||
-    objectMetadataItem.isRemote
+    (isDefined(objectPermissions) &&
+      !objectPermissions.canUpdateObjectRecords) ||
+    (isDefined(objectMetadataItem) &&
+      (objectMetadataItem.isUIReadOnly || objectMetadataItem.isRemote))
   );
 };

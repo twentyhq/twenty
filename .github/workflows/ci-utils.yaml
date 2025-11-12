@@ -1,4 +1,5 @@
 name: CI Utils
+
 on:
   # it's usually not recommended to use pull_request_target
   # but we consider it's safe here if we keep the same steps
@@ -6,6 +7,7 @@ on:
   # and: https://github.com/facebook/react-native/pull/34370/files
   pull_request_target:
     types: [opened, synchronize, reopened, closed]
+
 permissions:
   actions: write
   checks: write
@@ -13,6 +15,7 @@ permissions:
   issues: write
   pull-requests: write
   statuses: write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   # We don't cancel in-progress because this workflow is triggered on

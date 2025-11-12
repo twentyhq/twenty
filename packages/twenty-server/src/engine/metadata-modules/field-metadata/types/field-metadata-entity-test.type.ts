@@ -1,26 +1,33 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
-    type FieldMetadataType,
-    type NullablePartial,
+  type AllFieldMetadataSettings,
+  type FieldMetadataDateSettings,
+  type FieldMetadataDateTimeSettings,
+  type FieldMetadataMultiItemSettings,
+  type FieldMetadataNumberSettings,
+  type FieldMetadataRelationSettings,
+  type FieldMetadataTextSettings,
+  type FieldMetadataType,
+  type NullablePartial
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
 import {
-    type FieldMetadataDefaultValueForAnyType,
-    type FieldMetadataDefaultValueForType,
+  type FieldMetadataDefaultValueForAnyType,
+  type FieldMetadataDefaultValueForType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import {
-    type AllFieldMetadataSettings,
-    type FieldMetadataDateSettings,
-    type FieldMetadataDateTimeSettings,
-    type FieldMetadataNumberSettings,
-    type FieldMetadataRelationSettings,
-    type FieldMetadataTextSettings,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+// import {
+//     type AllFieldMetadataSettings,
+//     type FieldMetadataDateSettings,
+//     type FieldMetadataDateTimeSettings,
+//     type FieldMetadataNumberSettings,
+//     type FieldMetadataRelationSettings,
+//     type FieldMetadataTextSettings,
+// } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
-    type FieldMetadataComplexOption,
-    type FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -170,6 +177,30 @@ type SettingsAssertions = [
     HasAllProperties<
       DateTimeFieldMetadata,
       { settings: FieldMetadataDateTimeSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      ArrayFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      PhonesFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      EmailsFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      LinksFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
     >
   >,
 

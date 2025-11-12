@@ -4,23 +4,25 @@
   "projectType": "application",
   "tags": ["scope:cli"],
   "targets": {
-    "after-build": {
+    "before-build": {
       "executor": "nx:run-commands",
       "cache": true,
       "options": {
         "cwd": "packages/twenty-cli",
-        "commands": ["rimraf dist", "tsc"]
-      },
-      "dependsOn": ["^after-build"]
+        "commands": ["rimraf dist", "tsc --project tsconfig.lib.json"]
+      }
     },
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
       "options": {
         "cwd": "packages/twenty-cli",
-        "commands": ["cp -R src/constants/base-application-project dist/constants"]
+        "commands": [
+          "cp -R src/constants/base-application-project dist/constants",
+          "cp -R src/constants/schemas dist/constants"
+        ]
       },
-      "dependsOn": ["after-build"]
+      "dependsOn": ["^build", "before-build"]
     },
     "dev": {
       "executor": "nx:run-commands",
@@ -42,7 +44,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-cli",
-        "command": "tsc --noEmit"
+        "command": "tsc --noEmit --project tsconfig.lib.json"
       }
     },
     "lint": {
@@ -51,7 +53,7 @@
         "maxWarnings": 0
       },
       "configurations": {
-        "ci": { 
+        "ci": {
           "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
           "maxWarnings": 0
         },
@@ -71,6 +73,28 @@
           "watchAll": false
         }
       }
+    },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "cwd": "packages/twenty-cli",
+        "commands": [
+          "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && NODE_ENV=test npx jest --config ./jest.e2e.config.ts"
+        ]
+      },
+      "parallel": false,
+      "dependsOn": [
+        "build",
+        {
+          "target": "database:reset",
+          "projects": "twenty-server"
+        },
+        {
+          "target": "start:ci-if-needed",
+          "projects": "twenty-server"
+        }
+      ]
     }
   }
 }

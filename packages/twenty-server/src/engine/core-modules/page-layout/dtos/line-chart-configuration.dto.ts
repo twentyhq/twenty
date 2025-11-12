@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -8,15 +8,20 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsTimeZone,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { ExtendedAggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/extended-aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
+import { ObjectRecordGroupByDateGranularity } from 'src/engine/core-modules/page-layout/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -32,45 +37,77 @@ export class LineChartConfigurationDTO {
   @IsNotEmpty()
   aggregateFieldMetadataId: string;
 
-  @Field(() => ExtendedAggregateOperations)
-  @IsEnum(ExtendedAggregateOperations)
+  @Field(() => AggregateOperations)
+  @IsEnum(AggregateOperations)
   @IsNotEmpty()
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
   @IsNotEmpty()
-  groupByFieldMetadataIdX: string;
+  primaryAxisGroupByFieldMetadataId: string;
 
-  @Field(() => GraphOrderBy)
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  primaryAxisGroupBySubFieldName?: string;
+
+  @Field(() => ObjectRecordGroupByDateGranularity, {
+    nullable: true,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
+  })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
+  primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity;
+
+  @Field(() => GraphOrderBy, {
+    nullable: true,
+    defaultValue: GraphOrderBy.FIELD_ASC,
+  })
   @IsEnum(GraphOrderBy)
-  @IsNotEmpty()
-  orderByX: GraphOrderBy;
+  @IsOptional()
+  primaryAxisOrderBy?: GraphOrderBy;
 
   @Field(() => UUIDScalarType, { nullable: true })
   @IsUUID()
   @IsOptional()
-  groupByFieldMetadataIdY?: string;
+  secondaryAxisGroupByFieldMetadataId?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  secondaryAxisGroupBySubFieldName?: string;
+
+  @Field(() => ObjectRecordGroupByDateGranularity, {
+    nullable: true,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
+  })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
+  secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity;
 
   @Field(() => GraphOrderBy, { nullable: true })
   @IsEnum(GraphOrderBy)
   @IsOptional()
-  orderByY?: GraphOrderBy;
+  secondaryAxisOrderBy?: GraphOrderBy;
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
   omitNullValues?: boolean;
 
-  @Field(() => AxisNameDisplay)
+  @Field(() => AxisNameDisplay, {
+    nullable: true,
+    defaultValue: AxisNameDisplay.NONE,
+  })
   @IsEnum(AxisNameDisplay)
-  @IsNotEmpty()
-  axisNameDisplay: AxisNameDisplay;
+  @IsOptional()
+  axisNameDisplay?: AxisNameDisplay;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
-  @IsNotEmpty()
-  displayDataLabel: boolean;
+  @IsOptional()
+  displayDataLabel?: boolean;
 
   @Field(() => Number, { nullable: true })
   @IsNumber()
@@ -96,4 +133,15 @@ export class LineChartConfigurationDTO {
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => String, { nullable: true, defaultValue: 'UTC' })
+  @IsTimeZone()
+  @IsOptional()
+  timezone?: string;
+
+  @Field(() => Int, { nullable: true, defaultValue: CalendarStartDay.MONDAY })
+  @IsOptional()
+  @Min(0)
+  @Max(7)
+  firstDayOfTheWeek?: number;
 }

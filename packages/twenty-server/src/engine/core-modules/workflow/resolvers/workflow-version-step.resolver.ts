@@ -5,18 +5,22 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
+import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step-input.dto';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step-input.dto';
+import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request-input.dto';
+import { TestHttpRequestOutput } from 'src/engine/core-modules/workflow/dtos/test-http-request-output.dto';
 import { UpdateWorkflowRunStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-run-step-input.dto';
 import { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
 import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -31,7 +35,7 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
 @UseGuards(
   WorkspaceAuthGuard,
   UserAuthGuard,
-  SettingsPermissionsGuard(PermissionFlagType.WORKFLOWS),
+  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
@@ -43,12 +47,13 @@ export class WorkflowVersionStepResolver {
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    private readonly toolRegistryService: ToolRegistryService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async createWorkflowVersionStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     input: CreateWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
@@ -73,7 +78,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowActionDTO)
   async updateWorkflowVersionStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { step, workflowVersionId }: UpdateWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
@@ -86,7 +91,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async deleteWorkflowVersionStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { stepId, workflowVersionId }: DeleteWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
@@ -99,7 +104,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => Boolean)
   async submitFormStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { stepId, workflowRunId, response }: SubmitFormStepInput,
   ) {
@@ -115,7 +120,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowActionDTO)
   async updateWorkflowRunStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { workflowRunId, step }: UpdateWorkflowRunStepInput,
   ): Promise<WorkflowActionDTO> {
@@ -130,7 +135,7 @@ export class WorkflowVersionStepResolver {
 
   @Mutation(() => WorkflowVersionStepChangesDTO)
   async duplicateWorkflowVersionStep(
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     { stepId, workflowVersionId }: DuplicateWorkflowVersionStepInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
@@ -141,5 +146,18 @@ export class WorkflowVersionStepResolver {
         stepId,
       },
     );
+  }
+
+  @Mutation(() => TestHttpRequestOutput)
+  async testHttpRequest(
+    @Args('input')
+    { url, method, headers, body }: TestHttpRequestInput,
+  ): Promise<TestHttpRequestOutput> {
+    return this.toolRegistryService.getTool(ToolType.HTTP_REQUEST).execute({
+      url,
+      method,
+      headers,
+      body,
+    });
   }
 }

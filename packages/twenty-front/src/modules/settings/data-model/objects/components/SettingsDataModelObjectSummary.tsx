@@ -2,13 +2,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
-import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import {
   IconBox,
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 
 export type SettingsDataModelObjectPreviewProps = {
   className?: string;
@@ -69,7 +68,6 @@ const SettingsDataModelObjectPreviewItem = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem.icon);
-  const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
   return (
     <>
@@ -90,7 +88,7 @@ const SettingsDataModelObjectPreviewItem = ({
             }
           />
         </StyledObjectName>
-        <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
+        <SettingsItemTypeTag item={objectMetadataItem} />
       </StyledObjectPreview>
     </>
   );

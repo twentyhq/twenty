@@ -1,12 +1,14 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceMemberCreateManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-create-many.pre-query.hook';
 import { WorkspaceMemberCreateOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-create-one.pre-query.hook';
 import { WorkspaceMemberDeleteManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook';
+import { WorkspaceMemberDeleteOnePostQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-delete-one.post-query.hook';
 import { WorkspaceMemberDeleteOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook';
 import { WorkspaceMemberDestroyManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-destroy-many.pre-query.hook';
 import { WorkspaceMemberDestroyOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-destroy-one.pre-query.hook';
@@ -22,6 +24,7 @@ import { WorkspaceMemberUpdateOnePreQueryHook } from 'src/modules/workspace-memb
     WorkspaceMemberCreateOnePreQueryHook,
     WorkspaceMemberCreateManyPreQueryHook,
     WorkspaceMemberDeleteOnePreQueryHook,
+    WorkspaceMemberDeleteOnePostQueryHook,
     WorkspaceMemberDeleteManyPreQueryHook,
     WorkspaceMemberDestroyOnePreQueryHook,
     WorkspaceMemberDestroyManyPreQueryHook,
@@ -33,7 +36,8 @@ import { WorkspaceMemberUpdateOnePreQueryHook } from 'src/modules/workspace-memb
   imports: [
     FeatureFlagModule,
     PermissionsModule,
-    TypeOrmModule.forFeature([UserWorkspace]),
+    forwardRef(() => UserWorkspaceModule),
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
 })
 export class WorkspaceMemberQueryHookModule {}

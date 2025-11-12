@@ -13,7 +13,7 @@ import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/servic
 import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('PageLayoutUpdateService', () => {
   let pageLayoutUpdateService: PageLayoutUpdateService;
@@ -30,7 +30,7 @@ describe('PageLayoutUpdateService', () => {
     type: PageLayoutType.DASHBOARD,
     objectMetadataId: 'object-metadata-id',
     tabs: [],
-    workspace: {} as Workspace,
+    workspace: {} as WorkspaceEntity,
     objectMetadata: null,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -43,7 +43,7 @@ describe('PageLayoutUpdateService', () => {
     position: 0,
     pageLayoutId: 'page-layout-id',
     workspaceId: 'workspace-id',
-    workspace: {} as Workspace,
+    workspace: {} as WorkspaceEntity,
     pageLayout: {} as PageLayoutEntity,
     widgets: [],
     createdAt: new Date(),

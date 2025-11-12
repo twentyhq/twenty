@@ -1,113 +1,155 @@
-import { Injectable } from '@nestjs/common';
-
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
+import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ViewExceptionCode } from 'src/engine/core-modules/view/exceptions/view.exception';
-import { FlatViewMaps } from 'src/engine/core-modules/view/flat-view/types/flat-view-maps.type';
-import { FlatView } from 'src/engine/core-modules/view/flat-view/types/flat-view.type';
-import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-import { ViewRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/utils/find-flat-entity-property-update.util';
+import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
 
-type ViewValidationArgs = {
-  flatViewToValidate: FlatView;
-  optimisticFlatViewMaps: FlatViewMaps;
-  dependencyOptimisticFlatEntityMaps: ViewRelatedFlatEntityMaps;
-};
-@Injectable()
 export class FlatViewValidatorService {
   constructor() {}
 
   public validateFlatViewUpdate({
-    flatViewToValidate: updatedFlatView,
-    optimisticFlatViewMaps,
-  }: ViewValidationArgs): FailedFlatEntityValidation<FlatView> {
-    const errors = [];
+    flatEntityId,
+    flatEntityUpdates,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
+      flatFieldMetadataMaps,
+    },
+  }: FlatEntityUpdateValidationArgs<
+    typeof ALL_METADATA_NAME.view
+  >): FailedFlatEntityValidation<FlatView> {
+    const validationResult: FailedFlatEntityValidation<FlatView> = {
+      type: 'update_view',
+      errors: [],
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+      },
+    };
 
-    const existingFlatView = optimisticFlatViewMaps.byId[updatedFlatView.id];
+    const existingFlatView = optimisticFlatViewMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatView)) {
-      errors.push({
+      validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
+        userFriendlyMessage: msg`View not found`,
       });
     }
 
-    return {
-      type: 'update_view',
-      errors,
-      flatEntityMinimalInformation: {
-        id: updatedFlatView.id,
-      },
-    };
+    const kanbanAggregateOperationFieldMetadataIdUpdate =
+      findFlatEntityPropertyUpdate({
+        property: 'kanbanAggregateOperationFieldMetadataId',
+        flatEntityUpdates,
+      });
+
+    if (
+      isDefined(kanbanAggregateOperationFieldMetadataIdUpdate) &&
+      kanbanAggregateOperationFieldMetadataIdUpdate.to !== null &&
+      !isDefined(
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: kanbanAggregateOperationFieldMetadataIdUpdate.to,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
+      )
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View kanban aggregate field metadata not found`,
+        userFriendlyMessage: msg`View kanban aggregate field metadata not found`,
+      });
+    }
+
+    return validationResult;
   }
 
   public validateFlatViewDeletion({
-    flatViewToValidate: { id: viewIdToDelete },
-    optimisticFlatViewMaps,
-  }: ViewValidationArgs): FailedFlatEntityValidation<FlatView> {
-    const errors = [];
-
-    const existingFlatView = optimisticFlatViewMaps.byId[viewIdToDelete];
-
-    if (!isDefined(existingFlatView)) {
-      errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View not found`,
-        userFriendlyMessage: t`View not found`,
-      });
-    } else {
-      if (!isDefined(existingFlatView.deletedAt)) {
-        errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`View to delete has not been soft deleted`,
-          userFriendlyMessage: t`View to delete has not been soft deleted`,
-        });
-      }
-    }
-
-    return {
+    flatEntityToValidate: { id: viewIdToDelete },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
+    },
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.view
+  >): FailedFlatEntityValidation<FlatView> {
+    const validationResult: FailedFlatEntityValidation<FlatView> = {
       type: 'delete_view',
-      errors,
+      errors: [],
       flatEntityMinimalInformation: {
         id: viewIdToDelete,
       },
     };
+
+    const existingFlatView = optimisticFlatViewMaps.byId[viewIdToDelete];
+
+    if (!isDefined(existingFlatView)) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View not found`,
+        userFriendlyMessage: msg`View not found`,
+      });
+    }
+
+    return validationResult;
   }
 
   public async validateFlatViewCreation({
-    dependencyOptimisticFlatEntityMaps: { flatObjectMetadataMaps },
-    flatViewToValidate,
-    optimisticFlatViewMaps,
-  }: ViewValidationArgs): Promise<FailedFlatEntityValidation<FlatView>> {
-    const optimisticFlatObjectMetadata =
-      flatObjectMetadataMaps.byId[flatViewToValidate.objectMetadataId];
-
-    const errors = [];
-
-    if (!isDefined(optimisticFlatObjectMetadata)) {
-      errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`Object metadata not found`,
-        userFriendlyMessage: t`Object metadata not found`,
-      });
-    }
-
-    if (isDefined(optimisticFlatViewMaps.byId[flatViewToValidate.id])) {
-      errors.push({
-        code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View with same id is already exists`,
-        userFriendlyMessage: t`View already exists`,
-      });
-    }
-
-    return {
+    flatEntityToValidate: flatViewToValidate,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatViewMaps: optimisticFlatViewMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    },
+  }: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>): Promise<
+    FailedFlatEntityValidation<FlatView>
+  > {
+    const validationResult: FailedFlatEntityValidation<FlatView> = {
       type: 'create_view',
-      errors,
+      errors: [],
       flatEntityMinimalInformation: {
         id: flatViewToValidate.id,
       },
     };
+
+    const optimisticFlatObjectMetadata =
+      flatObjectMetadataMaps.byId[flatViewToValidate.objectMetadataId];
+
+    if (!isDefined(optimisticFlatObjectMetadata)) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Object metadata not found`,
+        userFriendlyMessage: msg`Object metadata not found`,
+      });
+    }
+
+    if (isDefined(optimisticFlatViewMaps.byId[flatViewToValidate.id])) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View with same id is already exists`,
+        userFriendlyMessage: msg`View already exists`,
+      });
+    }
+
+    if (
+      isDefined(flatViewToValidate.kanbanAggregateOperationFieldMetadataId) &&
+      !isDefined(
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId:
+            flatViewToValidate.kanbanAggregateOperationFieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
+      )
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View kanban aggregate field metadata not found`,
+        userFriendlyMessage: msg`View kanban aggregate field metadata not found`,
+      });
+    }
+
+    return validationResult;
   }
 }

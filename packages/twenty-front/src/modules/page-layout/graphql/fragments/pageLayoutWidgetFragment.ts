@@ -20,10 +20,14 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         graphType
         aggregateFieldMetadataId
         aggregateOperation
-        groupByFieldMetadataIdX
-        orderByX
-        groupByFieldMetadataIdY
-        orderByY
+        primaryAxisGroupByFieldMetadataId
+        primaryAxisGroupBySubFieldName
+        primaryAxisDateGranularity
+        primaryAxisOrderBy
+        secondaryAxisGroupByFieldMetadataId
+        secondaryAxisGroupBySubFieldName
+        secondaryAxisGroupByDateGranularity
+        secondaryAxisOrderBy
         omitNullValues
         axisNameDisplay
         displayDataLabel
@@ -32,15 +36,22 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        groupMode
+        timezone
+        firstDayOfTheWeek
       }
       ... on LineChartConfiguration {
         graphType
         aggregateFieldMetadataId
         aggregateOperation
-        groupByFieldMetadataIdX
-        orderByX
-        groupByFieldMetadataIdY
-        orderByY
+        primaryAxisGroupByFieldMetadataId
+        primaryAxisGroupBySubFieldName
+        primaryAxisDateGranularity
+        primaryAxisOrderBy
+        secondaryAxisGroupByFieldMetadataId
+        secondaryAxisGroupBySubFieldName
+        secondaryAxisGroupByDateGranularity
+        secondaryAxisOrderBy
         omitNullValues
         axisNameDisplay
         displayDataLabel
@@ -49,25 +60,35 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        timezone
+        firstDayOfTheWeek
       }
       ... on PieChartConfiguration {
         graphType
         groupByFieldMetadataId
         aggregateFieldMetadataId
         aggregateOperation
+        groupBySubFieldName
+        dateGranularity
         orderBy
         displayDataLabel
         color
         description
         filter
+        timezone
+        firstDayOfTheWeek
       }
-      ... on NumberChartConfiguration {
+      ... on AggregateChartConfiguration {
         graphType
         aggregateFieldMetadataId
         aggregateOperation
+        label
         displayDataLabel
+        format
         description
         filter
+        timezone
+        firstDayOfTheWeek
       }
       ... on GaugeChartConfiguration {
         graphType
@@ -77,6 +98,8 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         color
         description
         filter
+        timezone
+        firstDayOfTheWeek
       }
       ... on IframeConfiguration {
         url

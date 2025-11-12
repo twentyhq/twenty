@@ -22,7 +22,11 @@ export const useGaugeChartData = ({
   const { value, min, max, color = 'blue' } = data;
 
   const colorScheme = useMemo(
-    () => getColorScheme(colorRegistry, color),
+    () =>
+      getColorScheme({
+        registry: colorRegistry,
+        colorName: color,
+      }),
     [colorRegistry, color],
   );
 

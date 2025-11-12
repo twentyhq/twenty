@@ -1,5 +1,9 @@
 name: 'Push translations to Crowdin'
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   workflow_dispatch:
   workflow_call:
@@ -8,15 +12,12 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   extract_translations:
     name: Extract and upload translations
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -15,6 +15,7 @@ export type RecordTableBodyContextProps = {
     event: React.MouseEvent,
     recordId: string,
   ) => void;
+  hasUserSelectedAllRows?: boolean;
 };
 
 export const [

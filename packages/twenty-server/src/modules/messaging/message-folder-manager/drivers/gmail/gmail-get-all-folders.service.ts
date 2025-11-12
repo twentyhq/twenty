@@ -5,18 +5,20 @@ import {
   MessageFolderDriver,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { extractGmailFolderName } from 'src/modules/messaging/message-folder-manager/drivers/gmail/utils/extract-gmail-folder-name.util';
+import { getGmailFolderParentId } from 'src/modules/messaging/message-folder-manager/drivers/gmail/utils/get-gmail-folder-parent-id.util';
 import { MESSAGING_GMAIL_DEFAULT_NOT_SYNCED_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-default-not-synced-labels';
-import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
-import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
+import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
 
 @Injectable()
 export class GmailGetAllFoldersService implements MessageFolderDriver {
   private readonly logger = new Logger(GmailGetAllFoldersService.name);
 
   constructor(
-    private readonly gmailClientProvider: GmailClientProvider,
-    private readonly gmailHandleErrorService: GmailHandleErrorService,
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly gmailMessageListFetchErrorHandler: GmailMessageListFetchErrorHandler,
   ) {}
 
   private isSyncedByDefault(labelId: string): boolean {
@@ -26,12 +28,16 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
   async getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id' | 'handle'
+      'provider' | 'refreshToken' | 'accessToken' | 'id' | 'handle'
     >,
   ): Promise<MessageFolder[]> {
     try {
-      const gmailClient =
-        await this.gmailClientProvider.getGmailClient(connectedAccount);
+      const oAuth2Client =
+        await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
+          connectedAccount,
+        );
+
+      const gmailClient = oAuth2Client.gmail({ version: 'v1' });
 
       const response = await gmailClient.users.labels
         .list({ userId: 'me' })
@@ -40,7 +46,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
             `Connected account ${connectedAccount.id}: Error fetching labels: ${error.message}`,
           );
 
-          this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
+          this.gmailMessageListFetchErrorHandler.handleError(error);
 
           return { data: { labels: [] } };
         });
@@ -49,18 +55,34 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
 
       const folders: MessageFolder[] = [];
 
+      const labelNameToIdMap = new Map<string, string>();
+
+      for (const label of labels) {
+        if (!label.name || !label.id) {
+          continue;
+        }
+
+        labelNameToIdMap.set(label.name, label.id);
+      }
+
       for (const label of labels) {
         if (!label.name || !label.id) {
           continue;
         }
 
         const isSentFolder = label.id === 'SENT';
+        const folderName = extractGmailFolderName(label.name);
+        const parentFolderId = getGmailFolderParentId(
+          label.name,
+          labelNameToIdMap,
+        );
 
         folders.push({
           externalId: label.id,
-          name: label.name,
+          name: folderName,
           isSynced: this.isSyncedByDefault(label.id),
           isSentFolder,
+          parentFolderId,
         });
       }
 

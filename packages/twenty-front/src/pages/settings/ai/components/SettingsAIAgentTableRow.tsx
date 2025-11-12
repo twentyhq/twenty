@@ -2,9 +2,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 
+import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Tag } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { type Agent } from '~/generated-metadata/graphql';
 
@@ -32,6 +32,7 @@ const StyledActionTableCell = styled(TableCell)`
 
 const StyledIconContainer = styled.div`
   flex-shrink: 0;
+  height: ${({ theme }) => theme.spacing(4)};
 `;
 
 export const SettingsAIAgentTableRow = ({
@@ -52,11 +53,7 @@ export const SettingsAIAgentTableRow = ({
         <OverflowingTextWithTooltip text={agent.label} />
       </StyledNameTableCell>
       <TableCell>
-        <Tag
-          text={agent.isCustom ? 'Custom' : 'Standard'}
-          color={agent.isCustom ? 'orange' : 'blue'}
-          weight="medium"
-        />
+        <SettingsItemTypeTag item={agent} />
       </TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledAIAgentTableRow>

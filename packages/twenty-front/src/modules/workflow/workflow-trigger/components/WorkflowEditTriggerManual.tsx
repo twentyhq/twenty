@@ -6,6 +6,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type WorkflowManualTrigger } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { MANUAL_TRIGGER_AVAILABILITY_TYPE_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerAvailabilityTypeOptions';
 import { MANUAL_TRIGGER_IS_PINNED_OPTIONS } from '@/workflow/workflow-trigger/constants/ManualTriggerIsPinnedOptions';
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
@@ -16,6 +17,7 @@ import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTrigge
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 
@@ -102,6 +104,7 @@ export const WorkflowEditTriggerManual = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={triggerOptions.readonly}
+        iconTooltip={getTriggerDefaultLabel(trigger)}
       />
       <WorkflowStepBody>
         <Select
@@ -237,6 +240,9 @@ export const WorkflowEditTriggerManual = ({
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
       </WorkflowStepBody>
+      {!triggerOptions.readonly && (
+        <WorkflowStepFooter stepId={TRIGGER_STEP_ID} />
+      )}
     </>
   );
 };

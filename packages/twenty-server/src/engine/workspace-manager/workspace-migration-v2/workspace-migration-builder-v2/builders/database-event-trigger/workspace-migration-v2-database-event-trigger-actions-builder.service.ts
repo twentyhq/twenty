@@ -1,54 +1,37 @@
 import { Injectable } from '@nestjs/common';
 
-import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
-import { compareTwoFlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/utils/compare-two-flat-database-event-trigger.util';
-import { DatabaseEventTriggerRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/database-event-trigger-related-flat-entity-maps.type';
-import {
-  FlatEntityUpdateValidationArgs,
-  FlatEntityValidationArgs,
-  FlatEntityValidationReturnType,
-  WorkspaceEntityMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
-import {
-  UpdateDatabaseEventTriggerAction,
-  WorkspaceMigrationDatabaseEventTriggerActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-database-event-trigger-action-v2.type';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+
+import { UpdateDatabaseEventTriggerAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action-v2.type';
+import { WorkspaceEntityMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-entity-migration-builder-v2.service';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-result.type';
 import { FlatDatabaseEventTriggerValidatorService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/validators/services/flat-database-event-trigger-validator.service';
 
 @Injectable()
 export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService extends WorkspaceEntityMigrationBuilderV2Service<
-  'databaseEventTrigger',
-  FlatDatabaseEventTrigger,
-  WorkspaceMigrationDatabaseEventTriggerActionV2,
-  DatabaseEventTriggerRelatedFlatEntityMaps
+  typeof ALL_METADATA_NAME.databaseEventTrigger
 > {
   constructor(
     private readonly flatDatabaseEventTriggerValidatorService: FlatDatabaseEventTriggerValidatorService,
   ) {
-    super('databaseEventTrigger');
+    super(ALL_METADATA_NAME.databaseEventTrigger);
   }
 
-  protected async validateFlatEntityCreation({
-    flatEntityToValidate: flatDatabaseEventTriggerToValidate,
-    optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<
-    FlatDatabaseEventTrigger,
-    DatabaseEventTriggerRelatedFlatEntityMaps
-  >): Promise<
+  protected async validateFlatEntityCreation(
+    args: FlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.databaseEventTrigger
+    >,
+  ): Promise<
     FlatEntityValidationReturnType<
-      WorkspaceMigrationDatabaseEventTriggerActionV2,
-      FlatDatabaseEventTrigger,
-      DatabaseEventTriggerRelatedFlatEntityMaps
+      typeof ALL_METADATA_NAME.databaseEventTrigger,
+      'created'
     >
   > {
     const validationResult =
       await this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerCreation(
-        {
-          flatDatabaseEventTriggerToValidate,
-          optimisticFlatDatabaseEventTriggerMaps,
-          dependencyOptimisticFlatEntityMaps,
-        },
+        args,
       );
 
     if (validationResult.errors.length > 0) {
@@ -57,6 +40,8 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         ...validationResult,
       };
     }
+
+    const { flatEntityToValidate: flatDatabaseEventTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -64,31 +49,22 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         type: 'create_database_event_trigger',
         databaseEventTrigger: flatDatabaseEventTriggerToValidate,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
-  protected async validateFlatEntityDeletion({
-    flatEntityToValidate: flatDatabaseEventTriggerToValidate,
-    optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityValidationArgs<
-    FlatDatabaseEventTrigger,
-    DatabaseEventTriggerRelatedFlatEntityMaps
-  >): Promise<
+  protected async validateFlatEntityDeletion(
+    args: FlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.databaseEventTrigger
+    >,
+  ): Promise<
     FlatEntityValidationReturnType<
-      WorkspaceMigrationDatabaseEventTriggerActionV2,
-      FlatDatabaseEventTrigger,
-      DatabaseEventTriggerRelatedFlatEntityMaps
+      typeof ALL_METADATA_NAME.databaseEventTrigger,
+      'deleted'
     >
   > {
     const validationResult =
       this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerDeletion(
-        {
-          flatDatabaseEventTriggerToValidate,
-          optimisticFlatDatabaseEventTriggerMaps,
-          dependencyOptimisticFlatEntityMaps,
-        },
+        args,
       );
 
     if (validationResult.errors.length > 0) {
@@ -97,6 +73,8 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         ...validationResult,
       };
     }
+
+    const { flatEntityToValidate: flatDatabaseEventTriggerToValidate } = args;
 
     return {
       status: 'success',
@@ -104,45 +82,22 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
         type: 'delete_database_event_trigger',
         databaseEventTriggerId: flatDatabaseEventTriggerToValidate.id,
       },
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 
-  protected async validateFlatEntityUpdate({
-    flatEntityUpdate: {
-      from: fromFlatDatabaseEventTrigger,
-      to: toFlatDatabaseEventTrigger,
-    },
-    optimisticFlatEntityMaps: optimisticFlatDatabaseEventTriggerMaps,
-    dependencyOptimisticFlatEntityMaps,
-  }: FlatEntityUpdateValidationArgs<
-    FlatDatabaseEventTrigger,
-    DatabaseEventTriggerRelatedFlatEntityMaps
-  >): Promise<
-    | FlatEntityValidationReturnType<
-        WorkspaceMigrationDatabaseEventTriggerActionV2,
-        FlatDatabaseEventTrigger,
-        DatabaseEventTriggerRelatedFlatEntityMaps
-      >
-    | undefined
+  protected async validateFlatEntityUpdate(
+    args: FlatEntityUpdateValidationArgs<
+      typeof ALL_METADATA_NAME.databaseEventTrigger
+    >,
+  ): Promise<
+    FlatEntityValidationReturnType<
+      typeof ALL_METADATA_NAME.databaseEventTrigger,
+      'updated'
+    >
   > {
-    const databaseEventTriggerUpdatedProperties =
-      compareTwoFlatDatabaseEventTrigger({
-        fromFlatDatabaseEventTrigger,
-        toFlatDatabaseEventTrigger,
-      });
-
-    if (databaseEventTriggerUpdatedProperties.length === 0) {
-      return undefined;
-    }
-
     const validationResult =
       this.flatDatabaseEventTriggerValidatorService.validateFlatDatabaseEventTriggerUpdate(
-        {
-          flatDatabaseEventTriggerToValidate: toFlatDatabaseEventTrigger,
-          optimisticFlatDatabaseEventTriggerMaps,
-          dependencyOptimisticFlatEntityMaps,
-        },
+        args,
       );
 
     if (validationResult.errors.length > 0) {
@@ -152,16 +107,17 @@ export class WorkspaceMigrationV2DatabaseEventTriggerActionsBuilderService exten
       };
     }
 
+    const { flatEntityId, flatEntityUpdates } = args;
+
     const updateDatabaseEventTriggerAction: UpdateDatabaseEventTriggerAction = {
       type: 'update_database_event_trigger',
-      databaseEventTriggerId: toFlatDatabaseEventTrigger.id,
-      updates: databaseEventTriggerUpdatedProperties,
+      databaseEventTriggerId: flatEntityId,
+      updates: flatEntityUpdates,
     };
 
     return {
       status: 'success',
       action: updateDatabaseEventTriggerAction,
-      dependencyOptimisticFlatEntityMaps,
     };
   }
 }

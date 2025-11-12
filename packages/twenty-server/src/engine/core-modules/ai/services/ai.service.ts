@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { LanguageModel, type ModelMessage, streamText } from 'ai';
 
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 
 @Injectable()
@@ -11,7 +12,7 @@ export class AiService {
   getModel(modelId: string | undefined) {
     const registeredModel = modelId
       ? this.aiModelRegistryService.getModel(modelId)
-      : this.aiModelRegistryService.getDefaultModel();
+      : this.aiModelRegistryService.getDefaultPerformanceModel();
 
     if (!registeredModel) {
       throw new Error(
@@ -40,6 +41,7 @@ export class AiService {
       messages,
       temperature: options?.temperature,
       maxOutputTokens: options?.maxOutputTokens,
+      experimental_telemetry: AI_TELEMETRY_CONFIG,
     });
   }
 }

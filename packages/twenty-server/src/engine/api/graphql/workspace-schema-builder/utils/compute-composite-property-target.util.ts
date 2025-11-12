@@ -1,6 +1,7 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
-
-import { type CompositeProperty } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import {
+  type FieldMetadataType,
+  type CompositeProperty,
+} from 'twenty-shared/types';
 
 export const computeCompositePropertyTarget = (
   type: FieldMetadataType,

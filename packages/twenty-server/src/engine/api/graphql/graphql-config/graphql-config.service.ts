@@ -17,24 +17,24 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useSentryTracing } from 'src/engine/core-modules/exception-handler/hooks/use-sentry-tracing';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 
 export interface GraphQLContext extends YogaDriverServerContext<'express'> {
-  user?: User;
-  workspace?: Workspace;
+  user?: UserEntity;
+  workspace?: WorkspaceEntity;
 }
 
 @Injectable()
@@ -47,22 +47,17 @@ export class GraphQLConfigService
     private readonly moduleRef: ModuleRef,
     private readonly metricsService: MetricsService,
     private readonly dataloaderService: DataloaderService,
+    private readonly i18nService: I18nService,
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
     const isDebugMode =
       this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT;
     const plugins = [
-      useThrottler({
-        ttl: this.twentyConfigService.get('API_RATE_LIMITING_TTL'),
-        limit: this.twentyConfigService.get('API_RATE_LIMITING_LIMIT'),
-        identifyFn: (context) => {
-          return context.req.user?.id ?? context.req.ip ?? 'anonymous';
-        },
-      }),
       useGraphQLErrorHandlerHook({
         metricsService: this.metricsService,
         exceptionHandlerService: this.exceptionHandlerService,
+        i18nService: this.i18nService,
         twentyConfigService: this.twentyConfigService,
       }),
     ];
@@ -75,8 +70,8 @@ export class GraphQLConfigService
       autoSchemaFile: true,
       include: [CoreEngineModule],
       conditionalSchema: async (context) => {
-        let user: User | null | undefined;
-        let workspace: Workspace | undefined;
+        let user: UserEntity | null | undefined;
+        let workspace: WorkspaceEntity | undefined;
 
         try {
           const {

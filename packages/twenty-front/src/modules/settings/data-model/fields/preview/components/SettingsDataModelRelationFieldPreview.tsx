@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
@@ -73,9 +74,10 @@ export const SettingsDataModelRelationFieldPreview = ({
 
   const recordId = `${relationTargetObjectNameSingular}-${fieldName}-preview`;
 
+  const isRelation = fieldMetadataItem.type === FieldMetadataType.RELATION;
   const metadata = {
     fieldName,
-    objectMetadataNameSingular: 'company',
+    objectMetadataNameSingular: CoreObjectNameSingular.Company,
     relationObjectMetadataNameSingular: relationTargetObjectNameSingular,
     options: [],
     settings: fieldMetadataItem.settings,
@@ -106,6 +108,11 @@ export const SettingsDataModelRelationFieldPreview = ({
             } satisfies FieldMetadataItemRelation,
           ]
         : [],
+    relationFieldMetadataId: isRelation ? '' : v4(),
+    relationObjectMetadataId: isRelation ? '' : v4(),
+    relationObjectMetadataNamePlural: isRelation
+      ? ''
+      : relationTargetObjectMetadataItem.namePlural,
   };
 
   return (

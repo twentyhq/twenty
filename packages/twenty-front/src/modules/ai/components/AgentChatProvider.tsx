@@ -1,21 +1,17 @@
 import { AgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { useAgentChatData } from '@/ai/hooks/useAgentChatData';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Suspense } from 'react';
-import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 const AgentChatProviderContent = ({
-  agentId,
   children,
 }: {
-  agentId: string;
   children: React.ReactNode;
 }) => {
-  const { uiMessages, isLoading } = useAgentChatData(agentId);
-  const chatState = useAgentChat(agentId, uiMessages);
+  const { uiMessages, isLoading } = useAgentChatData();
+  const chatState = useAgentChat(uiMessages);
   const combinedIsLoading = chatState.isLoading || isLoading;
 
   return (
@@ -35,11 +31,9 @@ export const AgentChatProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const agentId = currentWorkspace?.defaultAgent?.id;
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  if (!isAiEnabled || !agentId) {
+  if (!isAiEnabled) {
     return (
       <AgentChatContext.Provider value={null}>
         {children}
@@ -49,9 +43,7 @@ export const AgentChatProvider = ({
 
   return (
     <Suspense fallback={null}>
-      <AgentChatProviderContent agentId={agentId}>
-        {children}
-      </AgentChatProviderContent>
+      <AgentChatProviderContent>{children}</AgentChatProviderContent>
     </Suspense>
   );
 };

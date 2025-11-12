@@ -13,10 +13,10 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -25,11 +25,11 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 export class ImpersonationService {
   constructor(
     private readonly auditService: AuditService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(UserWorkspace)
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -69,7 +69,7 @@ export class ImpersonationService {
 
     const hasServerLevelImpersonatePermission =
       impersonatorUserWorkspace.user.canImpersonate === true &&
-      impersonatorUserWorkspace.workspace.allowImpersonation === true;
+      toImpersonateUserWorkspace.workspace.allowImpersonation === true;
 
     if (isServerLevelImpersonation) {
       if (!hasServerLevelImpersonatePermission) {
@@ -102,7 +102,7 @@ export class ImpersonationService {
       if (!has2FAEnabled) {
         throw new AuthException(
           'Two-factor authentication is required for server-level impersonation. Please enable 2FA in your workspace settings before attempting to impersonate users.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED,
         );
       }
 
@@ -135,8 +135,8 @@ export class ImpersonationService {
   }
 
   async generateImpersonationLoginToken(
-    impersonatorUserWorkspace: UserWorkspace,
-    toImpersonateUserWorkspace: UserWorkspace,
+    impersonatorUserWorkspace: UserWorkspaceEntity,
+    toImpersonateUserWorkspace: UserWorkspaceEntity,
     impersonationLevel: 'server' | 'workspace',
   ) {
     const auditService = this.auditService.createContext({
@@ -172,7 +172,7 @@ export class ImpersonationService {
       return {
         workspace: {
           id: toImpersonateUserWorkspace.workspace.id,
-          workspaceUrls: this.domainManagerService.getWorkspaceUrls(
+          workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(
             toImpersonateUserWorkspace.workspace,
           ),
         },

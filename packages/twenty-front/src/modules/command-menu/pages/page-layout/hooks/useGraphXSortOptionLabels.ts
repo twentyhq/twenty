@@ -1,12 +1,12 @@
+import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import {
-  type ExtendedAggregateOperations,
-  GraphOrderBy,
-} from '~/generated/graphql';
+import { GraphOrderBy } from '~/generated/graphql';
 
 export const useGraphXSortOptionLabels = ({
   objectMetadataId,
@@ -22,11 +22,13 @@ export const useGraphXSortOptionLabels = ({
   const getXSortOptionLabel = ({
     graphOrderBy,
     groupByFieldMetadataIdX,
+    groupBySubFieldNameX,
     aggregateFieldMetadataId,
     aggregateOperation,
   }: {
     graphOrderBy: GraphOrderBy;
     groupByFieldMetadataIdX: string;
+    groupBySubFieldNameX?: CompositeFieldSubFieldName;
     aggregateFieldMetadataId?: string;
     aggregateOperation?: ExtendedAggregateOperations;
   }): string => {
@@ -34,7 +36,10 @@ export const useGraphXSortOptionLabels = ({
       (fieldMetadataItem) => fieldMetadataItem.id === groupByFieldMetadataIdX,
     );
 
-    const fieldLabel = groupByField?.label || t`Field`;
+    const fieldLabel = getFieldLabelWithSubField({
+      field: groupByField,
+      subFieldName: groupBySubFieldNameX,
+    });
 
     const aggregateField = objectMetadataItem?.fields.find(
       (fieldMetadataItem) =>

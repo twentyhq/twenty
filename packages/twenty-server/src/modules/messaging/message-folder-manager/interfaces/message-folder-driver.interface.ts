@@ -3,14 +3,19 @@ import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/
 
 export type MessageFolder = Pick<
   MessageFolderWorkspaceEntity,
-  'name' | 'isSynced' | 'isSentFolder' | 'externalId'
+  'name' | 'isSynced' | 'isSentFolder' | 'externalId' | 'parentFolderId'
 >;
 
 export interface MessageFolderDriver {
   getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id' | 'handle' | 'connectionParameters'
+      | 'provider'
+      | 'accessToken'
+      | 'refreshToken'
+      | 'id'
+      | 'handle'
+      | 'connectionParameters'
     >,
   ): Promise<MessageFolder[]>;
 }

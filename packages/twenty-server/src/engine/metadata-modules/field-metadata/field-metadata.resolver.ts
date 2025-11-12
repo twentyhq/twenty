@@ -18,11 +18,12 @@ import {
   ForbiddenError,
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
@@ -52,13 +53,15 @@ export class FieldMetadataResolver {
     private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
     private readonly featureFlagService: FeatureFlagService,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
+    private readonly i18nService: I18nService,
   ) {}
 
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Context() context: I18nContext,
   ) {
     try {
       return await this.fieldMetadataService.createOne({
@@ -66,15 +69,18 @@ export class FieldMetadataResolver {
         workspaceId,
       });
     } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Context() context: I18nContext,
   ) {
     const isWorkspaceMigrationV2Enabled =
@@ -101,15 +107,19 @@ export class FieldMetadataResolver {
         workspaceId,
       });
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
   }
 
-  @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async deleteOneField(
     @Args('input') input: DeleteOneFieldInput,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Context() context: I18nContext,
   ) {
     if (!isDefined(workspaceId)) {
       throw new ForbiddenError('Could not retrieve workspace ID');
@@ -129,7 +139,10 @@ export class FieldMetadataResolver {
         });
       }
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
 
     const fieldMetadata =
@@ -154,20 +167,23 @@ export class FieldMetadataResolver {
     try {
       return await this.fieldMetadataService.deleteOneField(input, workspaceId);
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
   }
 
   @ResolveField(() => RelationDTO, { nullable: true })
   async relation(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
 
     @Parent()
     {
       id: fieldMetadataId,
       objectMetadataId,
     }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<RelationDTO | null> {
     try {
       return await context.loaders.relationLoader.load({
@@ -176,19 +192,22 @@ export class FieldMetadataResolver {
         workspaceId: workspace.id,
       });
     } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
   }
 
   @ResolveField(() => [RelationDTO], { nullable: true })
   async morphRelations(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Parent()
     {
       id: fieldMetadataId,
       objectMetadataId,
     }: Pick<FieldMetadataDTO, 'id' | 'objectMetadataId'>,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders } & I18nContext,
   ): Promise<RelationDTO[] | null> {
     try {
       return await context.loaders.morphRelationLoader.load({
@@ -197,7 +216,10 @@ export class FieldMetadataResolver {
         workspaceId: workspace.id,
       });
     } catch (error) {
-      return fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(
+        error,
+        this.i18nService.getI18nInstance(context.req.locale),
+      );
     }
   }
 }

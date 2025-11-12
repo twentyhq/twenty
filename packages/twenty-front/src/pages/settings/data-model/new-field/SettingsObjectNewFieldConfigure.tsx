@@ -1,7 +1,5 @@
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
@@ -12,15 +10,16 @@ import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fi
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { type View } from '@/views/types/View';
-import { ViewType } from '@/views/types/ViewType';
-import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
+import {
+  AppPath,
+  type RelationCreationPayload,
+  SettingsPath,
+} from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -82,27 +81,6 @@ export const SettingsObjectNewFieldConfigure = () => {
 
   const [isSaving, setIsSaving] = useState(false);
 
-  useFindManyRecords<View>({
-    objectNameSingular: CoreObjectNameSingular.View,
-    filter: {
-      type: { eq: ViewType.Table },
-      objectMetadataId: { eq: activeObjectMetadataItem?.id },
-    },
-  });
-
-  const relationObjectMetadataId = formConfig.watch(
-    'relation.objectMetadataId',
-  );
-
-  useFindManyRecords<View>({
-    objectNameSingular: CoreObjectNameSingular.View,
-    skip: !relationObjectMetadataId,
-    filter: {
-      type: { eq: ViewType.Table },
-      objectMetadataId: { eq: relationObjectMetadataId },
-    },
-  });
-
   useEffect(() => {
     if (!activeObjectMetadataItem) {
       navigateApp(AppPath.NotFound);
@@ -112,41 +90,48 @@ export const SettingsObjectNewFieldConfigure = () => {
   if (!activeObjectMetadataItem) return null;
 
   const { isValid, isSubmitting } = formConfig.formState;
+
   const canSave = isValid && !isSubmitting;
 
   const handleSave = async (
     formValues: SettingsDataModelNewFieldFormValues,
   ) => {
-    try {
-      setIsSaving(true);
-      if (
-        formValues.type === FieldMetadataType.RELATION &&
-        'relation' in formValues
-      ) {
-        const { relation: relationFormValues, ...fieldFormValues } = formValues;
-        await createMetadataField({
-          ...fieldFormValues,
-          objectMetadataId: activeObjectMetadataItem.id,
-          relationCreationPayload: {
-            type: relationFormValues.type,
-            targetObjectMetadataId: relationFormValues.objectMetadataId,
-            targetFieldLabel: relationFormValues.field.label,
-            targetFieldIcon: relationFormValues.field.icon,
-          },
+    setIsSaving(true);
+
+    const createCleanUp = (
+      creationResult: Awaited<ReturnType<typeof createMetadataField>>,
+    ) => {
+      if (creationResult.status === 'successful') {
+        navigate(SettingsPath.ObjectDetail, {
+          objectNamePlural,
         });
-      } else if (
-        formValues.type === FieldMetadataType.MORPH_RELATION &&
-        'morphRelationObjectMetadataIds' in formValues
-      ) {
-        const {
-          morphRelationObjectMetadataIds,
-          targetFieldLabel,
-          iconOnDestination,
-          relationType,
-        } = formValues;
-        await createMetadataField({
+      }
+      setIsSaving(false);
+    };
+
+    if (formValues.type !== FieldMetadataType.MORPH_RELATION) {
+      const creationResult = await createMetadataField({
+        ...formValues,
+        objectMetadataId: activeObjectMetadataItem.id,
+      });
+
+      return createCleanUp(creationResult);
+    }
+
+    const {
+      morphRelationObjectMetadataIds,
+      targetFieldLabel,
+      iconOnDestination,
+      relationType,
+    } = formValues;
+
+    switch (true) {
+      case morphRelationObjectMetadataIds.length > 1: {
+        const creationResult = await createMetadataField({
           ...formValues,
+          type: FieldMetadataType.MORPH_RELATION,
           objectMetadataId: activeObjectMetadataItem.id,
+          isLabelSyncedWithName: false,
           morphRelationsCreationPayload: morphRelationObjectMetadataIds.map(
             (morphRelationObjectMetadataId: string) => ({
               type: relationType,
@@ -156,25 +141,34 @@ export const SettingsObjectNewFieldConfigure = () => {
             }),
           ),
         });
-      } else {
-        await createMetadataField({
-          ...formValues,
-          objectMetadataId: activeObjectMetadataItem.id,
-        });
+        return createCleanUp(creationResult);
       }
+      case morphRelationObjectMetadataIds.length === 1: {
+        const relationCreationPayload = {
+          type: relationType,
+          targetObjectMetadataId: morphRelationObjectMetadataIds[0],
+          targetFieldLabel,
+          targetFieldIcon: iconOnDestination,
+        } satisfies RelationCreationPayload;
 
-      navigate(SettingsPath.ObjectDetail, {
-        objectNamePlural,
-      });
+        const creationResult = await createMetadataField({
+          ...formValues,
+          type: FieldMetadataType.RELATION,
+          objectMetadataId: activeObjectMetadataItem.id,
+          relationCreationPayload,
+        });
 
-      setIsSaving(false);
-    } catch (error) {
-      setIsSaving(false);
-      enqueueErrorSnackBar({
-        apolloError: error instanceof ApolloError ? error : undefined,
-      });
+        return createCleanUp(creationResult);
+      }
+      default: {
+        enqueueErrorSnackBar({
+          message: t`Please select at least one destination object for this relation.`,
+        });
+        return setIsSaving(false);
+      }
     }
   };
+
   if (!activeObjectMetadataItem) return null;
 
   return (

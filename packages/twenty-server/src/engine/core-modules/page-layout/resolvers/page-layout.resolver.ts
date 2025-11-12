@@ -11,9 +11,12 @@ import { PageLayoutDTO } from 'src/engine/core-modules/page-layout/dtos/page-lay
 import { PageLayoutUpdateService } from 'src/engine/core-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Resolver(() => PageLayoutDTO)
 @UseFilters(PageLayoutGraphqlApiExceptionFilter)
@@ -26,8 +29,9 @@ export class PageLayoutResolver {
   ) {}
 
   @Query(() => [PageLayoutDTO])
+  @UseGuards(NoPermissionGuard)
   async getPageLayouts(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
   ): Promise<PageLayoutDTO[]> {
@@ -42,34 +46,38 @@ export class PageLayoutResolver {
   }
 
   @Query(() => PageLayoutDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async getPageLayout(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO | null> {
     return this.pageLayoutService.findByIdOrThrow(id, workspace.id);
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async createPageLayout(
     @Args('input') input: CreatePageLayoutInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
     return this.pageLayoutService.create(input, workspace.id);
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async updatePageLayout(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdatePageLayoutInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
     return this.pageLayoutService.update(id, workspace.id, input);
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async deletePageLayout(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
     const deletedPageLayout = await this.pageLayoutService.delete(
       id,
@@ -80,9 +88,10 @@ export class PageLayoutResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async destroyPageLayout(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<boolean> {
     const deletedPageLayout = await this.pageLayoutService.destroy(
       id,
@@ -93,18 +102,20 @@ export class PageLayoutResolver {
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async restorePageLayout(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
     return this.pageLayoutService.restore(id, workspace.id);
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async updatePageLayoutWithTabsAndWidgets(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdatePageLayoutWithTabsInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutDTO> {
     return this.pageLayoutUpdateService.updatePageLayoutWithTabs({
       id,

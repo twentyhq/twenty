@@ -1,7 +1,8 @@
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
+import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSort';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewSortsToCreate } from '@/views/utils/getViewSortsToCreate';
 import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
@@ -11,11 +12,9 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useSaveRecordSortsToViewSorts = () => {
-  const {
-    createViewSortRecords,
-    updateViewSortRecords,
-    deleteViewSortRecords,
-  } = usePersistViewSortRecords();
+  const { canPersistChanges } = useCanPersistViewChanges();
+  const { createViewSorts, updateViewSorts, deleteViewSorts } =
+    usePersistViewSortRecords();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -26,7 +25,7 @@ export const useSaveRecordSortsToViewSorts = () => {
   const saveRecordSortsToViewSorts = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        if (!isDefined(currentView)) {
+        if (!canPersistChanges || !isDefined(currentView)) {
           return;
         }
 
@@ -56,16 +55,17 @@ export const useSaveRecordSortsToViewSorts = () => {
           newViewSorts,
         );
 
-        await createViewSortRecords(viewSortsToCreate, currentView);
-        await updateViewSortRecords(viewSortsToUpdate);
-        await deleteViewSortRecords(viewSortsToDelete);
+        await createViewSorts(viewSortsToCreate, currentView);
+        await updateViewSorts(viewSortsToUpdate);
+        await deleteViewSorts(viewSortsToDelete);
       },
     [
+      canPersistChanges,
       currentView,
       currentRecordSortsCallbackState,
-      createViewSortRecords,
-      updateViewSortRecords,
-      deleteViewSortRecords,
+      createViewSorts,
+      updateViewSorts,
+      deleteViewSorts,
     ],
   );
 

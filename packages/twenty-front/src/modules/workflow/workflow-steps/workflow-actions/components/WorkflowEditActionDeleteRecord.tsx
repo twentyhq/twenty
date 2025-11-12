@@ -6,8 +6,9 @@ import { type WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { useEffect, useState } from 'react';
 
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { DELETE_RECORD_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/DeleteRecordAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
@@ -118,7 +119,7 @@ export const WorkflowEditActionDeleteRecord = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'Delete Record',
+      defaultTitle: DELETE_RECORD_ACTION.defaultLabel,
     });
 
   return (
@@ -139,6 +140,7 @@ export const WorkflowEditActionDeleteRecord = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={isFormDisabled}
+        iconTooltip={DELETE_RECORD_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         <Select
@@ -172,7 +174,7 @@ export const WorkflowEditActionDeleteRecord = ({
             onChange={(objectRecordId) =>
               handleFieldChange('objectRecordId', objectRecordId)
             }
-            objectNameSingular={objectNameSingular}
+            objectNameSingulars={[objectNameSingular]}
             defaultValue={formData.objectRecordId}
             testId="workflow-edit-action-record-delete-object-record-id"
             disabled={isFormDisabled}
@@ -180,7 +182,7 @@ export const WorkflowEditActionDeleteRecord = ({
           />
         )}
       </WorkflowStepBody>
-      {!actionOptions.readonly && <WorkflowActionFooter stepId={action.id} />}
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };
