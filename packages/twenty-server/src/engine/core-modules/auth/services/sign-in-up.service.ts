@@ -529,6 +529,7 @@ export class SignInUpService {
       await this.workspaceFlatApplicationMapCacheService.invalidateCache({
         workspaceId,
       });
+
       return { user, workspace };
     } catch (error) {
       await queryRunner.rollbackTransaction();
