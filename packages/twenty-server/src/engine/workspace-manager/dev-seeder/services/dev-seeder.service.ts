@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/services/workspace-flat-application-map-cache.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -38,6 +39,7 @@ export class DevSeederService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly devSeederDataService: DevSeederDataService,
     private readonly applicationService: ApplicationService,
+    private readonly workspaceFlatApplicationMapCacheService: WorkspaceFlatApplicationMapCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -58,6 +60,10 @@ export class DevSeederService {
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
         workspaceId,
       );
+
+    await this.workspaceFlatApplicationMapCacheService.invalidateCache({
+      workspaceId
+    });
 
     const dataSourceMetadata =
       await this.dataSourceService.createDataSourceMetadata(

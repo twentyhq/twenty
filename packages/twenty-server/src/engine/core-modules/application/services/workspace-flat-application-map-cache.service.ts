@@ -9,9 +9,13 @@ import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
+import { WorkspaceFlatMapCache } from 'src/engine/workspace-flat-map-cache/decorators/workspace-flat-map-cache.decorator';
 import { WorkspaceFlatMapCacheService } from 'src/engine/workspace-flat-map-cache/services/workspace-flat-map-cache.service';
+import { AllMetadataName } from 'twenty-shared/metadata';
 
 @Injectable()
+@WorkspaceFlatMapCache('flatApplicationMaps' as MetadataToFlatEntityMapsKey<AllMetadataName>) // TODO prastoin introduce SyncableMetadata notion
 export class WorkspaceFlatApplicationMapCacheService extends WorkspaceFlatMapCacheService<FlatApplicationCacheMaps> {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)

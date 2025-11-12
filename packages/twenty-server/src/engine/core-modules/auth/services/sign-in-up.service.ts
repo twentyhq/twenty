@@ -11,6 +11,7 @@ import { v4 } from 'uuid';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/services/workspace-flat-application-map-cache.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -59,6 +60,7 @@ export class SignInUpService {
     private readonly subdomainManagerService: SubdomainManagerService,
     private readonly userService: UserService,
     private readonly metricsService: MetricsService,
+    private readonly workspaceFlatApplicationMapCacheService: WorkspaceFlatApplicationMapCacheService,
     private readonly applicationService: ApplicationService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -524,7 +526,9 @@ export class SignInUpService {
       );
 
       await queryRunner.commitTransaction();
-
+      await this.workspaceFlatApplicationMapCacheService.invalidateCache({
+        workspaceId,
+      });
       return { user, workspace };
     } catch (error) {
       await queryRunner.rollbackTransaction();
