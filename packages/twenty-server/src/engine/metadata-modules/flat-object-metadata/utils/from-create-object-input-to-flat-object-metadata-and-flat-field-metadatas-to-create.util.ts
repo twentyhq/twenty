@@ -1,6 +1,6 @@
 import {
-  capitalize,
-  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+    capitalize,
+    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 

@@ -1,6 +1,7 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
@@ -11,10 +12,12 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   createViewInput: rawCreateViewInput,
   workspaceId,
   createdByUserWorkspaceId,
+  workspaceCustomFlatApplication,
 }: {
   createViewInput: CreateViewInput;
   workspaceId: string;
   createdByUserWorkspaceId?: string;
+  workspaceCustomFlatApplication: FlatApplication;
 }): FlatView => {
   const { objectMetadataId, ...createViewInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -52,6 +55,6 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     viewFieldIds: [],
     viewFilterIds: [],
     viewGroupIds: [],
-    applicationId: createViewInput.applicationId ?? null,
+    applicationId: workspaceCustomFlatApplication.id,
   };
 };
