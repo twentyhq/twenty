@@ -81,8 +81,9 @@ export class RoleService {
       );
     await this.validateRoleInputOrThrow({ input, workspaceId });
 
+    const id = input.id ?? v4();
     const role = await this.roleRepository.save({
-      id: input.id,
+      id,
       label: input.label,
       description: input.description,
       icon: input.icon,
@@ -98,7 +99,7 @@ export class RoleService {
       isEditable: true,
       workspaceId,
       applicationId: workspaceCustomApplication.id,
-      universalIdentifier: input.id,
+      universalIdentifier: id,
     });
 
     await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache({
