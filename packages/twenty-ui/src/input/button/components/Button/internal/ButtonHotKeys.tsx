@@ -14,7 +14,7 @@ const StyledSeparator = styled.div<{
   background: ${({ theme, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return GRAY_SCALE_LIGHT.gray7;
       case 'danger':
         return theme.border.color.danger;
       default:
