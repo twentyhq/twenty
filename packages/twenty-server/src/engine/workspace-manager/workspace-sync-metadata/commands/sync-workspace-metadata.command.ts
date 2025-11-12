@@ -52,15 +52,10 @@ export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMig
     const featureFlags =
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
 
-    const workspace = await this.workspaceRepository.findOneOrFail({
-      where: {
-        id: workspaceId,
-      },
-    });
     const applications =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
-          workspace,
+          workspaceId,
         },
       );
 
