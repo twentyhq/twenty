@@ -58,7 +58,7 @@ export const WidgetPlaceholder = () => {
       onClick={handleClick}
     >
       <WidgetCardHeader
-        isWidgetCardHovered={false}
+        widgetId="widget-placeholder"
         isInEditMode={isPageLayoutInEditMode}
         isResizing={false}
         title={t`Add Widget`}

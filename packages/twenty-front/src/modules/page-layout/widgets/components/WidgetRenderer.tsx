@@ -14,8 +14,10 @@ import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetC
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
+import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { useTheme } from '@emotion/react';
-import { useState, type MouseEvent } from 'react';
+import { useCallback, type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
 import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
@@ -71,15 +73,18 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     deletePageLayoutWidget(widget.id);
   };
 
-  const [isHovered, setIsHovered] = useState(false);
+  const setIsHovered = useSetRecoilComponentFamilyState(
+    widgetCardHoveredComponentFamilyState,
+    widget.id,
+  );
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
-  };
+  }, [setIsHovered]);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
-  };
+  }, [setIsHovered]);
 
   return (
     <WidgetCard
@@ -95,7 +100,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     >
       {showHeader && (
         <WidgetCardHeader
-          isWidgetCardHovered={isHovered}
+          widgetId={widget.id}
           isInEditMode={isPageLayoutInEditMode}
           isResizing={isResizing}
           title={widget.title}
