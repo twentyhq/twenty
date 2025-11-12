@@ -109,6 +109,7 @@ export class WorkspaceManagerService {
           workspaceId,
         },
       );
+
     await this.setupDefaultRoles({
       workspaceId,
       userId,

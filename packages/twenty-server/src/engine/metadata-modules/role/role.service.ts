@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,7 +22,6 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
-import { v4 } from 'uuid';
 
 export class RoleService {
   constructor(
@@ -79,6 +79,7 @@ export class RoleService {
           workspaceId,
         },
       );
+
     await this.validateRoleInputOrThrow({ input, workspaceId });
 
     const id = input.id ?? v4();
@@ -216,6 +217,7 @@ export class RoleService {
     workspaceId: string;
   }): Promise<RoleEntity> {
     const id = v4();
+
     return this.roleRepository.save({
       label: MEMBER_ROLE_LABEL,
       description: 'Member role',
@@ -246,6 +248,7 @@ export class RoleService {
     applicationId: string;
   }): Promise<RoleEntity> {
     const id = v4();
+
     return this.roleRepository.save({
       label: 'Guest',
       description: 'Guest role',

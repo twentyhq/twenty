@@ -31,7 +31,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
     PermissionFlagModule,
     WorkspacePermissionsCacheModule,
     FileModule,
-    ApplicationModule
+    ApplicationModule,
   ],
   providers: [RoleService, RoleResolver],
   exports: [RoleService],

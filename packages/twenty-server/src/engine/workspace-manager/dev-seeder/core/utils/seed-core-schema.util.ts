@@ -42,12 +42,13 @@ export const seedCoreSchema = async ({
   await queryRunner.startTransaction();
 
   try {
-    const customWorkspaceApplication = await applicationService.createWorkspaceCustomApplication(
-      {
-        workspaceId
-      },
-      queryRunner,
-    );
+    const customWorkspaceApplication =
+      await applicationService.createWorkspaceCustomApplication(
+        {
+          workspaceId,
+        },
+        queryRunner,
+      );
 
     await createWorkspace({
       queryRunner,

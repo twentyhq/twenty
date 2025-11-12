@@ -80,7 +80,7 @@ export class DevSeederService {
       );
     }
 
-    const {twentyStandardFlatApplication} =
+    const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
