@@ -19,13 +19,28 @@ export class ApplicationService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
-    workspace,
+    workspaceId,
   }: {
-    workspace: Pick<WorkspaceEntity, 'workspaceCustomApplicationId' | 'id'>;
+    workspaceId: string;
   }) {
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceId,
+      },
+    });
+
+    if (!isDefined(workspace)) {
+      throw new ApplicationException(
+        `Could not find workspace ${workspaceId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
     const [workspaceCustomApplication, twentyStandardApplication] =
       await Promise.all([
         this.findById(workspace.workspaceCustomApplicationId),
