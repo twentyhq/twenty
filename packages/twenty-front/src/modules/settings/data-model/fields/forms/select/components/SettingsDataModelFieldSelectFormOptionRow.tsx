@@ -48,9 +48,6 @@ const StyledColorSample = styled(ColorSample)`
 
   margin-right: ${({ theme }) => theme.spacing(3.5)};
   margin-left: ${({ theme }) => theme.spacing(3.5)};
-  border: 1px solid
-    ${({ theme, colorName }) =>
-      colorName ? theme.tag.text[colorName] : 'transparent'};
 `;
 
 const StyledOptionInput = styled(SettingsTextInput)`
