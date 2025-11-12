@@ -1,0 +1,22 @@
+export const TranslatableCardTitle = ({ children }) => {
+  return <>{children}</>;
+};
+
+export const TranslatableCard = ({ children, ...props }) => {
+  const childrenArray = React.Children.toArray(children);
+
+  let title = '';
+  let content = [];
+
+  childrenArray.forEach((child) => {
+    // Check if child is TranslatableCardTitle component
+    if (child?.type?.name === 'TranslatableCardTitle' || child?.props?.mdxType === 'TranslatableCardTitle') {
+      title = child.props.children;
+    } else {
+      content.push(child);
+    }
+  });
+
+  return <Card title={title} {...props}>{content}</Card>;
+};
+
