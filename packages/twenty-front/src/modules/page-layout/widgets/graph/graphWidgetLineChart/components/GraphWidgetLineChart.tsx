@@ -64,9 +64,9 @@ const getYScaleWithStacking = (
     const linearScale: ScaleLinearSpec = {
       min: 0,
       max: 'auto',
-      ...yScale,
       type: 'linear',
       stacked: stackedArea,
+      ...yScale,
     };
     return linearScale;
   }

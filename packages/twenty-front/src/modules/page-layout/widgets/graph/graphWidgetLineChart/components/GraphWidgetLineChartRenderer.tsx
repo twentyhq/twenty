@@ -65,12 +65,15 @@ export const GraphWidgetLineChartRenderer = ({
         showValues={showDataLabels}
         displayType="shortNumber"
         enableArea={true}
+        stackedArea={true}
         curve="monotoneX"
         xScale={{ type: 'point' }}
         yScale={{
           type: 'linear',
           min: configuration.rangeMin ?? 'auto',
           max: configuration.rangeMax ?? 'auto',
+          stacked: true,
+          clamp: true,
         }}
         enableSlices="x"
       />
