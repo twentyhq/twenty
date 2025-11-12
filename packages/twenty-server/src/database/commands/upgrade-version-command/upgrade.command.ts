@@ -136,15 +136,15 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     const commands_1110: VersionCommands = {
       beforeSyncMetadata: [
         this.createTwentyStandardApplicationCommand,
-        this.associateStandardEntitiesToTwentyStandardApplicationCommand, // Also done in sync metadata ? we should not do v4 in sync :thinking:
+        this.associateStandardEntitiesToTwentyStandardApplicationCommand, // Also partially done in sync metadata
         this.createWorkspaceCustomApplicationCommand,
         this.associateCustomEntitiesToWorkspaceCustomApplicationCommand,
-        this
-          .makeSyncableEntitiesUniversalIdentifierAndApplicationIdNonNullableMigration,
       ],
       afterSyncMetadata: [
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,
+        this
+          .makeSyncableEntitiesUniversalIdentifierAndApplicationIdNonNullableMigration,
       ],
     };
 

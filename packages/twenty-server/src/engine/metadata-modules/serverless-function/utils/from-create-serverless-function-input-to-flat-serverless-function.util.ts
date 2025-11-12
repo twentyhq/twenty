@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import {
   DEFAULT_HANDLER_NAME,
@@ -14,11 +15,13 @@ export type FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs = {
     serverlessFunctionLayerId: string;
   };
   workspaceId: string;
+  workspaceCustomFlatApplication: FlatApplication;
 };
 
 export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
   createServerlessFunctionInput: rawCreateServerlessFunctionInput,
   workspaceId,
+  workspaceCustomFlatApplication,
 }: FromCreateServerlessFunctionInputToFlatServerlessFunctionArgs): FlatServerlessFunction => {
   const id = v4();
   const currentDate = new Date();
@@ -41,7 +44,7 @@ export const fromCreateServerlessFunctionInputToFlatServerlessFunction = ({
     deletedAt: null,
     latestVersion: null,
     publishedVersions: [],
-    applicationId: rawCreateServerlessFunctionInput.applicationId,
+    applicationId: workspaceCustomFlatApplication.id,
     runtime: ServerlessFunctionRuntime.NODE22,
     timeoutSeconds: rawCreateServerlessFunctionInput.timeoutSeconds ?? 300,
     serverlessFunctionLayerId:
