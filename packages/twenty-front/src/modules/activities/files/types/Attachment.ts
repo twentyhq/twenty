@@ -5,6 +5,7 @@ export type { AttachmentFileCategory };
 export type Attachment = {
   id: string;
   name: string;
+  type: string;
   fullPath: string;
   fileCategory: AttachmentFileCategory;
   companyId: string;

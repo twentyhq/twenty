@@ -132,7 +132,7 @@ export const AttachmentGrid = ({
         return (
           <div key={attachment.id}>
             <StyledFileThumbnail onClick={() => handlePreview(attachment)}>
-              <FileIcon fileType={attachment.type} />
+              <FileIcon fileCategory={attachment.fileCategory} />
               {onRemove && (
                 <StyledRemoveButton
                   onClick={(e) => handleRemove(e, attachment.id)}

@@ -75,7 +75,7 @@ export const PdfFieldDisplay = () => {
     <StyledPdfContainer>
       {visibleAttachments.map((attachment) => (
         <StyledPdfItem key={attachment.id} title={attachment.name}>
-          <FileIcon fileType={attachment.type} />
+          <FileIcon fileCategory={attachment.fileCategory} />
           <StyledFileName>
             <OverflowingTextWithTooltip text={attachment.name} />
           </StyledFileName>

@@ -90,8 +90,8 @@ export const ImageFieldInput = () => {
       : { id: '', targetObjectNameSingular: '' },
   );
 
-  const isImageAttachment = (name: string, type: string) => {
-    if (type === 'Image') return true;
+  const isImageAttachment = (name: string, fileCategory: string) => {
+    if (fileCategory === 'IMAGE') return true;
     const ext = name.split('.').at(-1)?.toLowerCase();
     return !!ext && IMAGE_EXTENSIONS.includes(ext);
   };
@@ -302,7 +302,7 @@ export const ImageFieldInput = () => {
           selectedIds={pendingSelection}
           onSelectionChange={handleSelectionChange}
           onClose={handleModalClose}
-          filterAttachment={(a) => isImageAttachment(a.name, a.type)}
+          filterAttachment={(a) => isImageAttachment(a.name, a.fileCategory)}
           title={t`Select Images`}
         />
       </Modal>

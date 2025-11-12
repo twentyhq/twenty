@@ -215,7 +215,7 @@ export const AttachmentSelector = ({
               >
                 <Checkbox checked={isSelected} onChange={() => {}} />
                 <StyledFileInfo>
-                  <FileIcon fileType={attachment.type} />
+                  <FileIcon fileCategory={attachment.fileCategory} />
                   <StyledFileName>
                     <OverflowingTextWithTooltip text={attachment.name} />
                   </StyledFileName>

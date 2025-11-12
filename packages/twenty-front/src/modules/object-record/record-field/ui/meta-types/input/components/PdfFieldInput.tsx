@@ -294,7 +294,7 @@ export const PdfFieldInput = () => {
           selectedIds={pendingSelection}
           onSelectionChange={handleSelectionChange}
           onClose={handleModalClose}
-          filterAttachment={(a) => isPdfAttachment(a.name, a.type)}
+          filterAttachment={(a) => isPdfAttachment(a.name, a.fileCategory)}
           title={t`Select PDFs`}
         />
       </Modal>
