@@ -9,7 +9,7 @@ const FIELD_METADATA_TYPE = FieldMetadataType.EMAILS;
 const successfulTestCases =
   successfulFilterInputByFieldMetadataType[FIELD_METADATA_TYPE];
 
-describe(`Filter input validation - ${FIELD_METADATA_TYPE}`, () => {
+describe(`TEST Filter input validation - ${FIELD_METADATA_TYPE}`, () => {
   let objectMetadataId: string;
   let objectMetadataSingularName: string;
   let objectMetadataPluralName: string;
