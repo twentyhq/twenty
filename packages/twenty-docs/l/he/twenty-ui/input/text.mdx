@@ -1,0 +1,153 @@
+---
+title: טקסט
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## שדה טקסט
+
+מאפשר למשתמשים להזין ולערוך טקסט.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { TextInput } from "@/ui/input/components/TextInput";
+
+export const MyComponent = () => {
+  const handleChange = (text) => {
+    console.log("Input changed:", text);
+  };
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+  };
+
+  return (
+    <RecoilRoot>
+      <TextInput
+        className
+        label="Username"
+        onChange={handleChange}
+        fullWidth={false}
+        disableHotkeys={false}
+        error="Invalid username"
+        onKeyDown={handleKeyDown}
+        RightIcon={null}
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| תכונות         | סוג         | תיאור                                                                                            |
+| -------------- | ----------- | ------------------------------------------------------------------------------------------------ |
+| className      | string      | שם אופציונלי למטרת עיצוב נוסף                                                                    |
+| תווית          | string      | מייצג את תווית הכניסה                                                                            |
+| onChange       | פונקציה     | The function called when the input value changes                                                 |
+| fullWidth      | בוליאני     | מציין אם הקלט צריך לתפוס 100% מהרוחב                                                             |
+| disableHotkeys | בוליאני     | Indicates whether hotkeys are enabled for the input                                              |
+| שגיאה          | string      | מייצג את הודעת השגיאה להצגה. כשקיימת, גם מוסיפה אייקון שגיאה בצד הימני של הקלט   |
+| onKeyDown      | function    | נקראת כאשר מקש נלחץ למטה בעוד שדה הקלט ממוקד. מקבלת `React.KeyboardEvent` כפרמטר |
+| RightIcon      | רכיב אייקון | רכיב אייקון אופציונלי שמופיע בצד הימני של הקלט                                                   |
+
+הרכיב גם מקבל תכונות אלמנט קלט HTML אחרות.
+
+</Tab>
+
+</Tabs>
+
+## קלט טקסט משתנה אוטומטית
+
+רכיב קלט טקסט שמתאים את הגובה שלו אוטומטית על בסיס התוכן.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+export const MyComponent = () => {
+  return (
+    <RecoilRoot>
+      <AutosizeTextInput
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| תכונות          | סוג      | תיאור                                                                                   |
+| --------------- | -------- | --------------------------------------------------------------------------------------- |
+| onValidate      | function | הפונקציה שאתה רוצה להפעיל כאשר המשתמש מאשר את הקלט                                      |
+| שורות מינימליות | מספר     | מספר שורות מינימלי לשטח הטקסט                                                           |
+| טקסט מציין מקום | string   | מילוי זמני שאתה רוצה להציג כאשר שטח הטקסט ריק                                           |
+| onFocus         | function | הפונקציה שאתה רוצה להפעיל כאשר שטח הטקסט מתמקד                                          |
+| גרסה            | string   | גרסת הקלט. אפשרויות כולל: `default`, `icon`, ו-`button` |
+| כותרת כפתור     | string   | הכותרת לכפתור (רק עבור גרסת הכפתור)                                  |
+| ערך             | string   | ערך ראשוני לשטח הטקסט                                                                   |
+
+</Tab>
+
+</Tabs>
+
+## שטח טקסט
+
+מאפשר ליצור קלט טקסט רב שורות.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { TextArea } from "@/ui/input/components/TextArea";
+
+export const MyComponent = () => {
+  return (
+    <TextArea
+    disabled={false}
+    minRows={4}
+    onChange={()=>console.log('On change function fired')}
+    placeholder="Enter text here"
+    value=""
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| תכונות          | סוג     | תיאור                                                 |
+| --------------- | ------- | ----------------------------------------------------- |
+| לא פעיל         | בוליאני | מציין אם שטח הטקסט מושבת                              |
+| שורות מינימליות | מספר    | שורות מינימום נראות לשטח הטקסט.       |
+| onChange        | פונקציה | פונקציית callback שמופעלת כאשר תכולת אזור הטקסט משתנה |
+| טקסט מציין מקום | string  | טקסט מציין מקום מוצג כאשר אזור הטקסט ריק              |
+| ערך             | מחרוזת  | הערך הנוכחי של אזור הטקסט                             |
+
+</Tab>
+</Tabs>

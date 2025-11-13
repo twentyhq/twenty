@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
@@ -44,22 +43,6 @@ export class FlatFieldMetadataTypeValidatorService {
       UUID: DEFAULT_NO_VALIDATION,
 
       MORPH_RELATION: async (args) => {
-        const isMorphRelationEnabled =
-          await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
-            args.workspaceId,
-          );
-
-        if (!isMorphRelationEnabled) {
-          return [
-            {
-              code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
-              message: 'Morph relation feature flag is disabled',
-              userFriendlyMessage: msg`Morph relation fields are disabled for your workspace`,
-            },
-          ];
-        }
-
         return validateMorphOrRelationFlatFieldMetadata(args);
       },
       MULTI_SELECT: validateEnumSelectFlatFieldMetadata,

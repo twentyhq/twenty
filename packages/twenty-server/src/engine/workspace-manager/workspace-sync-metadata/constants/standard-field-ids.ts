@@ -249,7 +249,6 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
   messageFolders: '20202020-cc39-4432-9fe8-ec8ab8bbed94',
   messageFolderImportPolicy: '20202020-cc39-4432-9fe8-ec8ab8bbed95',
-  syncAllFolders: '20202020-e36b-409c-a9bd-79071596cdc0',
   pendingGroupEmailsAction: '20202020-17c5-4e9f-bc50-af46a89fdd42',
   isSyncEnabled: '20202020-d9a6-48e9-990b-b97fdf22e8dd',
   syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',

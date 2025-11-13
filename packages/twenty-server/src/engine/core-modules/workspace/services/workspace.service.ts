@@ -69,6 +69,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     isGoogleAuthEnabled: PermissionFlagType.SECURITY,
     isMicrosoftAuthEnabled: PermissionFlagType.SECURITY,
     isPasswordAuthEnabled: PermissionFlagType.SECURITY,
+    editableProfileFields: PermissionFlagType.SECURITY,
     isTwoFactorAuthenticationEnforced: PermissionFlagType.SECURITY,
     defaultRoleId: PermissionFlagType.ROLES,
     routerModel: PermissionFlagType.WORKSPACE,
@@ -247,7 +248,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     );
 
     await this.workspaceManagerService.init({
-      workspaceId: workspace.id,
+      workspace,
       userId: user.id,
     });
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);

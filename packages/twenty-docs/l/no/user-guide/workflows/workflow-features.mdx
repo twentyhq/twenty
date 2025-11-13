@@ -1,0 +1,320 @@
+---
+title: Arbeidsflyt-funksjoner
+info: Komplett referanse for alle tilgjengelige utløser, handlinger og styringsfunksjoner for arbeidsflyter.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Automatiser prosesser og integrer med eksterne verktøy
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Utløsere for arbeidsflyter
+
+Arbeidsflyter starter alltid med en enkelt utløsning som bestemmer når automasjonen skal kjøre.
+
+### Oppføring opprettes
+
+Starter arbeidsflyten når en ny oppføring opprettes i et valgt objekt (Personer, Selskaper, Muligheter eller andre tilpassede objekter).
+
+**Konfigurasjon**: Velg objekttypen som skal overvåkes for nye oppføringer.
+
+### Oppføring oppdateres
+
+Starter arbeidsflyten når det gjøres endringer i en eksisterende oppføring.
+
+**Konfigurasjon**:
+
+- Velg objekttypen
+- Angi eventuelt hvilke felt som skal overvåkes for endringer
+
+### Oppføring oppdateres eller opprettes
+
+Starter arbeidsflyten når en oppføring enten opprettes eller oppdateres i et valgt objekt.
+
+**Hvorfor dette er viktig**: Denne utløsningen er spesielt nyttig fordi oppføringer opprettet via forskjellige metoder oppfører seg ulikt:
+
+- **API/CSV-importer**: Oppføringer opprettes med alle feltene fylt ut umiddelbart
+- **Manuell opprettelse**: Oppføringer opprettes først, deretter legges felt til i senere oppdateringer
+
+**Konfigurasjon**:
+
+- Velg objekttypen for overvåking
+- Angi eventuelt hvilke felt som skal overvåkes for endringer
+- Arbeidsflyten vil utløse både ved første opprettelse og i alle senere oppdateringer
+
+### Oppføring slettes
+
+Starter arbeidsflyten når en oppføring fjernes fra et objekt.
+
+**Konfigurasjon**: Velg objekttypen som skal overvåkes for slettinger.
+
+### Start manuelt
+
+Starter arbeidsflyten når den utløses av en brukerhandling. Denne utløsningen kan nås gjennom Cmd+K-menyen eller via en tilpasset knapp i den øverste navigasjonslinjen.
+
+**Tilgjengelighetskonfigurasjon**:
+Velg hvordan arbeidsflyten skal håndtere valg av oppføring:
+
+- **Global**: No record is required to trigger this workflow. Arbeidsflyten utløses fra hvor som helst (fra et hvilket som helst objekt) og bruker ikke oppføringer som input.
+
+- **Single**: The selected record(s) will be passed to your workflow. Dette er konfigurert for et gitt objekt. Flere oppføringer kan velges før arbeidsflyten utløses. Arbeidsflyten vil kjøre så mange ganger som det er oppføringer valgt.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Bulk**: De valgte postene vil bli sendt til arbeidsflyten din. Dette er konfigurert for et gitt objekt. Flere oppføringer kan velges før arbeidsflyten utløses. Arbeidsflyten vil kjøre én gang med hele listen av poster som input. Dette betyr at arbeidsflyten må inneholde en Iterasjons-handling. Dette er best for personer som vil optimalisere/begrense antallet arbeidsflytkjøringer.
+
+**Ytterligere Konfigurasjon**:
+
+- Select the target object (for Single and Bulk availability)
+- Velg et ikon for arbeidsflytutløseren
+- Konfigurer navbar-plassering (Feste eller Ikke feste)
+
+**Tilgangsmetoder**:
+
+- Cmd+K-meny for å finne og starte manuelle arbeidsflyter
+- Egendefinert knapp i toppmenyen (hvis konfigurert)
+
+### På en Tidsplan
+
+Starter arbeidsflyten gjentagende etter definerte innstillinger.
+
+**Konfigurasjon**:
+
+- Velg tidsenhet (minutter, timer, dager)
+- Skriv inn en verdi eller bruk egendefinerte cron-uttrykk for avansert tidsplanlegging
+
+### Webhook
+
+Starter arbeidsflyten når en GET- eller POST-forespørsel mottas fra en ekstern tjeneste.
+
+**Konfigurasjon**:
+
+- Motta en unik webhook-url
+- For POST-forespørsler, definer den forventede kroppens struktur
+- Konfigurer autentisering ved behov
+
+## Arbeidsflyt Handlinger
+
+Handlinger definerer hva som skjer etter at en utløser aktiveres. Du kan kjede sammen flere handlinger.
+
+### Opprett en post
+
+Legger til en ny post i et valgt objekt.
+
+**Konfigurasjon**:
+
+- Velg målet for objektet
+- Fyll ut obligatoriske og valgfrie felter
+- Bruk data fra tidligere steg for å fylle inn feltene
+
+**Utdata**: Den nylig opprettede postens data er tilgjengelig for bruk i påfølgende trinn.
+
+### Oppdater post
+
+Endrer en eksisterende post i et valgt objekt.
+
+**Konfigurasjon**:
+
+- Velg målet for objektet
+- Velg spesifikk post å oppdatere
+- Velg felt å endre og skriv inn nye verdier
+
+**Utdata**: Den oppdaterte postens data er tilgjengelig for bruk i påfølgende trinn.
+
+### Slett post
+
+Fjerner en post fra et valgt objekt.
+
+**Konfigurasjon**:
+
+- Velg målet for objektet
+- Velg spesifikk post å slette
+
+**Utdata**: Den slettede postens data er fortsatt tilgjengelig for bruk i påfølgende trinn.
+
+### Søk poster
+
+Finner poster i et valgt objekt ved bruk av filterbetingelser.
+
+**Konfigurasjon**:
+
+- Velg objektet som skal søkes i
+- Sett filterkriterier for å begrense resultater
+- Konfigurer sortering og begrensninger
+
+**Utdata**: Returnerer matchende poster som kan brukes i påfølgende trinn.
+
+**Beste praksis**: Bruk grener etter Søk poster for å håndtere "funnet" vs "ikke funnet"-scenarier.
+
+### Iterator
+
+Gjennomgår en rekke poster returnert fra et tidligere steg, slik at du kan utføre handlinger på hver post individuelt.
+
+**Konfigurasjon**:
+
+- Velg rekken av poster fra et tidligere steg (f.eks. resultater fra Søk poster)
+- Definer handlingene som skal utføres på hver post i loopen
+- Konfigurer variabelnavnet for å referere til hver post i iterasjonen
+
+**Eksempel**: Søk poster returnerer 5 personer, deretter bruk Iterasjon for å sende en e-post til hver person eller oppdatere hver post individuelt.
+
+**Merk**: Iterasjon er for øyeblikket i beta. Aktiver den under Innstillinger > Utgivelser > Lab.
+
+### Filtrer
+
+Filtrerer en rekke poster basert på spesifiserte betingelser, slik at kun poster som oppfyller kriteriene slipper igjennom.
+
+**Konfigurasjon**:
+
+- Velg rekken av poster som skal filtreres
+- Definer filterbetingelser og kriterier
+- Konfigurer hvilke poster som skal slippe gjennom til påfølgende trinn
+
+**Utdata**: Returnerer kun postene som matcher de spesifiserte filterbetingelsene.
+
+### Send e-post
+
+Sender en e-post fra arbeidsflyten din.
+
+**Forutsetninger**: Legg til en e-postkonto under Innstillinger > Kontoer
+
+**Konfigurasjon**:
+
+- Skriv inn mottakers e-postadresse
+- Sett emnelinje
+- Skriv meldingsinnhold
+- Referer til variabler fra tidligere steg for personlig tilpasning
+
+**Merk**: E-postvedlegg vil være tilgjengelige i første kvartal 2026.
+
+### Kode
+
+Kjører tilpasset JavaScript i arbeidsflyten din.
+
+**Konfigurasjon**:
+
+- Skriv JavaScript-kode i redigeringsprogrammet
+- Tilgang til variabler fra tidligere steg
+- Returner variabler for bruk i påfølgende trinn
+- Test kode direkte i steget
+
+**Tilgang**: Håndter API-nøkler under Innstillinger → API & Webhooks
+
+### Skjema
+
+Ber om et skjema under utførelse av arbeidsflyten for å samle brukerinput.
+
+**Konfigurasjon**:
+
+- Definer inndatafelt med typer, etiketter og plasseringsholdere
+- Konfigurere valideringsregler
+- Sett skjemaets tittel og beskrivelse
+
+**Utdata**: Skjemasvar er tilgjengelige for bruk i påfølgende trinn.
+
+<Warning>
+Skjemaer er for øyeblikket kun utformet for manuelle utløsere. For arbeidsflyter med andre utløsere (post opprettet, oppdatert osv.), er skjemaer kun tilgjengelige via arbeidsflytkjøringsgrensesnittet, noe som ikke er den forventede brukeropplevelsen. Et varslingssenter blir lansert i 2026 for å støtte skjemaer i automatiserte arbeidsflyter.
+</Warning>
+
+### HTTP-forespørsel
+
+Sender en forespørsel til en ekstern API som del av arbeidsflyten din.
+
+**Konfigurasjon**:
+
+- Skriv inn API-endepunkt-URL
+- Velg HTTP-metode (GET, POST, PUT, PATCH, DELETE)
+- Legg til nødvendige overskrifter og verdier
+- Inkluder forespørselens innhold for POST/PUT/PATCH-forespørsler
+- Gi eksempelrespons for strukturforhåndsvisning
+
+## Arbeidsflytstyring
+
+### Opprette arbeidsflyter
+
+1. Click "+ Add a Workflow" to begin
+2. Klikk "Uten tittel" for å navngi arbeidsflyten din
+3. Velg og konfigurer arbeidsflytutløseren din
+4. Legg til handlinger i arbeidsflyten din
+5. Test og iterer
+6. Aktiver arbeidsflyten din (for øyeblikket i utkastmodus) når du er ferdig med redigeringen
+
+**Merk**: Hvis du ikke ser delen for Arbeidsflyter, kan det skyldes et tillatelsesproblem. Kontakt arbeidsområdets administrator for å gi deg tilgang til arbeidsflyter.
+
+### Workflow Statuses
+
+- **Utkast**: Blir redigert, ikke publisert ennå
+- **Aktiv**: Live-versjon som svarer på utløsere
+- **Deaktivert**: Tidligere aktiv, men stoppet manuelt
+- **Arkivert**: Tidligere versjoner lagret for historikk
+
+### Aktivering av Arbeidsflyter
+
+Klikk **Aktiver** for å publisere utkastet ditt som en ny versjon. Dette gjør arbeidsflyten kvalifisert til å kjøre når det utløses, men utføres ikke umiddelbart.
+
+### Testing av Arbeidsflyter
+
+Test arbeidsflyter før aktivering ved hjelp av:
+
+- Manual triggers (when no record selected)
+- Individual action testing (especially Code actions)
+- Utkastmodus testing som ikke aktiverer arbeidsflyten
+
+### Arbeidsflyt Kjøringer
+
+En **Kjøring** er en post av arbeidsflytutførelse som inneholder:
+
+- Status (suksess, mislykket, kjører)
+- Utdata fra hvert trinn
+- Forfatter og tidsstempler
+- Feilmeldinger, om nødvendig
+
+**Visning av Kjøringer**:
+
+- Sjekk **Kjøringer**-panelet i arbeidsflytredigereren
+- Åpne **Arbeidsflyt Kjøringer** for å overvåke over alle arbeidsflyter
+
+**Ytelsestips**: Skjul arbeidsflytkjøringer fra "Alle arbeidsflyter"-siden og andre arbeidsflytsider for å forbedre innlastingsytelsen, da store antall kjøringer kan redusere innlastingstiden.
+
+### Versjonshistorikk
+
+- Vis alle versjoner under **Versjoner**-feltet
+- Klikk på hvilken som helst versjon for å se detaljer
+- Bruk **Bruk som utkast** for å gjenopprette tidligere versjoner
+- Håndter utkastkonflikter med overstyring eller returner alternativer
+
+## Beste Praksis
+
+### Organisering av Arbeidsflyt
+
+- **Beskrivende navn**: Bruk klare, spesifikke navn på arbeidsflyten
+- **Trinnnavngivning**: Gi navn på trinn for å beskrive deres funksjon
+- **Dokumentasjon**: Legg til kommentarer i Kodehandlinger
+- **Kategorisering**: Grupper relaterte arbeidsflyter logisk
+- **Egendefinerte Felter**: Legg til felt i Arbeidsflyt-objektet i din datamodell (tilsvarende andre objekter) for å organisere og kategorisere arbeidsflyter med egendefinerte egenskaper
+
+### Ytelsesoptimalisering
+
+- **Minimize API Calls**: Batch operations when possible
+- **Effektive Søk**: Bruk spesifikke filterkriterier
+- **Feilhåndtering**: Planlegg for feilscenarier
+- **Rate Limiting**: Respect external API limits
+
+### Dataflytstyring
+
+- **Grenlogikk**: Bruk grener etter Søk poster
+- **Variabel Bruk**: Utnytt data fra tidligere trinn
+- **Datavalidering**: Valider inndata i Kodehandlinger
+- **Field Mapping**: Plan data transformations carefully
+
+### Overvåking og Vedlikehold
+
+- **Regelmessig Overvåking**: Sjekk arbeidsflytkjøringer for feil
+- **Ytelsesanalyse**: Analyser utføringstider og suksessrater
+- **Oppdateringsstyring**: Test endringer i utkast før aktivering
+- **Teamkoordinering**: Dokumenter arbeidsflyter for teammedlemmer
+
+For praktiske eksempler på disse funksjonene i aksjon, se våre [Interne Automatiseringer](/l/no/user-guide/workflows/internal-automations) og [Ekstern Verktøy Integrasjon](/l/no/user-guide/workflows/external-tool-integration) veiledninger.

@@ -1,18 +1,26 @@
 import { type DataSource } from 'typeorm';
 
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
+import {
+  type SeededWorkspacesIds,
+  SEEDER_CREATE_WORKSPACE_INPUT,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
-import { seedWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
+import { computeWorkspaceCustomCreateApplicationInput } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-workspace-custom-create-application-input';
+import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
 
 type SeedCoreSchemaArgs = {
   dataSource: DataSource;
-  workspaceId: string;
+  workspaceId: SeededWorkspacesIds;
   appVersion: string | undefined;
+  applicationService: ApplicationService;
   seedBilling?: boolean;
   seedFeatureFlags?: boolean;
 };
@@ -21,30 +29,75 @@ export const seedCoreSchema = async ({
   appVersion,
   dataSource,
   workspaceId,
+  applicationService,
   seedBilling = true,
   seedFeatureFlags: shouldSeedFeatureFlags = true,
 }: SeedCoreSchemaArgs) => {
   const schemaName = 'core';
 
-  await seedWorkspaces({
-    dataSource,
-    schemaName,
-    workspaceId,
-    appVersion,
-  });
-  await seedUsers(dataSource, schemaName);
-  await seedUserWorkspaces(dataSource, schemaName, workspaceId);
+  const createWorkspaceStaticInput = SEEDER_CREATE_WORKSPACE_INPUT[workspaceId];
+  const workspaceCustomApplicationCreateInput =
+    computeWorkspaceCustomCreateApplicationInput({
+      workspace: {
+        id: workspaceId,
+        displayName: createWorkspaceStaticInput.displayName,
+      },
+    });
 
-  await seedAgents(dataSource, schemaName, workspaceId);
+  const version = extractVersionMajorMinorPatch(appVersion);
+  const queryRunner = dataSource.createQueryRunner();
 
-  await seedApiKeys(dataSource, schemaName, workspaceId);
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
 
-  if (shouldSeedFeatureFlags) {
-    await seedFeatureFlags(dataSource, schemaName, workspaceId);
-  }
+  try {
+    const customWorkspaceApplication = await applicationService.create(
+      {
+        ...workspaceCustomApplicationCreateInput,
+        serverlessFunctionLayerId: null,
+      },
+      queryRunner,
+    );
 
-  if (seedBilling) {
-    await seedBillingCustomers(dataSource, schemaName, workspaceId);
-    await seedBillingSubscriptions(dataSource, schemaName, workspaceId);
+    await createWorkspace({
+      queryRunner,
+      schemaName,
+      createWorkspaceInput: {
+        ...createWorkspaceStaticInput,
+        version,
+        workspaceCustomApplicationId: customWorkspaceApplication.id,
+      },
+    });
+
+    await seedUsers({ queryRunner, schemaName });
+
+    await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
+
+    await applicationService.createTwentyStandardApplication(
+      {
+        workspaceId,
+      },
+      queryRunner,
+    );
+
+    await seedAgents({ queryRunner, schemaName, workspaceId });
+
+    await seedApiKeys({ queryRunner, schemaName, workspaceId });
+
+    if (shouldSeedFeatureFlags) {
+      await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
+    }
+
+    if (seedBilling) {
+      await seedBillingCustomers({ queryRunner, schemaName, workspaceId });
+      await seedBillingSubscriptions({ queryRunner, schemaName, workspaceId });
+    }
+
+    await queryRunner.commitTransaction();
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    throw error;
+  } finally {
+    await queryRunner.release();
   }
 };

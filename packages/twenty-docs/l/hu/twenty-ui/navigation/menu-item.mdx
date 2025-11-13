@@ -1,0 +1,458 @@
+---
+title: Menüpont
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+Egy sokoldalú menüpont, amely használható menüben vagy navigációs listában.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
+
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok | Típus         | Leírás                                                                                                                               |
+| ------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| BalIkon       | IkonKomponens | Opcionális bal oldali ikon, amely a szöveg előtt jelenik meg a menüelemben                                                           |
+| kiemelés      | string        | Meghatározza a menüpont kiemelő színét. Az opciók a következők: `default`, `danger` és `placeholder` |
+| szöveg        | string        | A menüelem szöveges tartalma                                                                                                         |
+| ikonGombok    | tömb          | Egy tömb objektumokkal, amelyek a menüelemhez tartozó további ikon gombokat tartalmaznak                                             |
+| isTooltipOpen | boolean       | A menüelemhez tartozó eszköztipus láthatóságának szabályozása                                                                        |
+| tesztId       | string        | A data-testid attribútum tesztelési célokra                                                                                          |
+| kattintás     | függvény      | Funkció, amely akkor aktiválódik, amikor a menüelemre kattintanak                                                                    |
+| className     | string        | Opcionális név a további stílushoz                                                                                                   |
+
+</Tab>
+</Tabs>
+
+## Változatok
+
+A menüpont komponens különböző változatai a következőket tartalmazzák:
+
+### Parancs
+
+Egy parancs-stílusú menüpont a menüben billentyűparancsok jelzésére.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
+
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok         | Típus         | Leírás                                                                     |
+| --------------------- | ------------- | -------------------------------------------------------------------------- |
+| BalIkon               | IkonKomponens | Opcionális bal oldali ikon, amely a szöveg előtt jelenik meg a menüelemben |
+| szöveg                | string        | A menüelem szöveges tartalma                                               |
+| elsőGyorsbillentyű    | string        | Az első billentyűparancs, amely a parancshoz társítva van                  |
+| másodikGyorsbillentyű | string        | A második billentyűparancs, amely a parancshoz társítva van                |
+| kiVanVálasztva        | boolean       | Jelzi, hogy a menüelem ki van-e választva vagy ki van-e emelve             |
+| kattintás             | függvény      | Funkció, amely akkor aktiválódik, amikor a menüelemre kattintanak          |
+| className             | string        | Opcionális név a további stílushoz                                         |
+
+</Tab>
+</Tabs>
+
+### Húzható
+
+Egy húzható menüelem-komponens, amelyet olyan menük vagy listák kialakítására terveztek, ahol az elemek húzhatók, és további műveletek végezhetők ikon gombokkal.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok  | Típus         | Leírás                                                                                   |
+| -------------- | ------------- | ---------------------------------------------------------------------------------------- |
+| BalIkon        | IkonKomponens | Opcionális bal oldali ikon, amely a szöveg előtt jelenik meg a menüelemben               |
+| kiemelés       | string        | A menüelem kiemelő színe. Lehet `default`, `placeholder` vagy `danger`   |
+| ikonGombok     | tömb          | Egy tömb objektumokkal, amelyek a menüelemhez tartozó további ikon gombokat tartalmaznak |
+| isTooltipOpen  | boolean       | A menüelemhez tartozó eszköztipus láthatóságának szabályozása                            |
+| kattintás      | függvény      | Visszahívó függvény, amely a link kattintásakor aktiválódik                              |
+| szöveg         | string        | A menüelem szöveges tartalma                                                             |
+| isDragDisabled | boolean       | Jelzi, hogy a húzási funkció le van-e tiltva                                             |
+| className      | string        | Opcionális név a további stílushoz                                                       |
+
+</Tab>
+</Tabs>
+
+### Több elem kiválasztása
+
+Lehetőséget biztosít több elem kiválasztási funkciójának megvalósítására egy társított jelölőnégyzet segítségével.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok  | Típus         | Leírás                                                                        |
+| -------------- | ------------- | ----------------------------------------------------------------------------- |
+| BalIkon        | IkonKomponens | Opcionális bal oldali ikon, amely a szöveg előtt jelenik meg a menüelemben    |
+| szöveg         | string        | A menüelem szöveges tartalma                                                  |
+| kijelölt       | boolean       | Jelzi, hogy a menüelem ki van-e választva (be van jelölve) |
+| onSelectChange | függvény      | A jelölőnégyzet állapotának megváltozásakor aktiválódó visszahívási funkció   |
+| className      | string        | Opcionális név a további stílushoz                                            |
+
+</Tab>
+</Tabs>
+
+### Több elem kiválasztása Avatár
+
+Egy több elem kiválasztására alkalmas menüelem avatárral, jelölőnégyzettel a választáshoz, és szöveges tartalommal.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok  | Típus       | Leírás                                                                        |
+| -------------- | ----------- | ----------------------------------------------------------------------------- |
+| avatár         | `ReactNode` | Az avatar vagy ikon, amelyet a menüelem bal oldalán jelenítünk meg            |
+| szöveg         | string      | A menüelem szöveges tartalma                                                  |
+| kijelölt       | boolean     | Jelzi, hogy a menüelem ki van-e választva (be van jelölve) |
+| onSelectChange | függvény    | A jelölőnégyzet állapotának megváltozásakor aktiválódó visszahívási funkció   |
+| className      | string      | Opcionális név a további stílushoz                                            |
+
+</Tab>
+</Tabs>
+
+### Navigálás
+
+Egy menüelem opcionális bal oldali ikonnal, szöveges tartalommal és jobb oldali nyíl ikon.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
+
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok | Típus         | Leírás                                                                        |
+| ------------- | ------------- | ----------------------------------------------------------------------------- |
+| BalIkon       | IkonKomponens | Opcionális bal oldali ikon, amely a szöveg előtt jelenik meg a menüelemben    |
+| szöveg        | string        | A menüelem szöveges tartalma                                                  |
+| kattintás     | függvény      | Visszahívási funkció, amelyet akkor indítanak el, ha a menüelemre kattintanak |
+| className     | string        | Opcionális név a további stílushoz                                            |
+
+</Tab>
+</Tabs>
+
+### Kiválasztás
+
+Egy választható menüelem, amely opcionális bal oldali tartalmat (ikon és szöveg) tartalmaz és egy jelzőt (pipálikont) a kiválasztott állapot jelölésére.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok     | Típus         | Leírás                                                                        |
+| ----------------- | ------------- | ----------------------------------------------------------------------------- |
+| BalIkon           | IkonKomponens | Opcionális bal oldali ikon, amely a szöveg előtt jelenik meg a menüelemben    |
+| szöveg            | string        | A menüelem szöveges tartalma                                                  |
+| kijelölt          | boolean       | Jelzi, hogy a menüelem ki van-e választva (be van jelölve) |
+| letiltott         | boolean       | Jelzi, hogy a menüelem le van-e tiltva                                        |
+| megfigyelés alatt | boolean       | Jelzi, hogy a menüelem jelenleg felül van-e hoverezve                         |
+| kattintás         | függvény      | Visszahívási funkció, amelyet akkor indítanak el, ha a menüelemre kattintanak |
+| className         | string        | Opcionális név a további stílushoz                                            |
+
+</Tab>
+</Tabs>
+
+### Kiválasztási Avatár
+
+Egy választható menüelem avatárral, amely opcionális bal oldali tartalmat (avatár és szöveg) tartalmaz és egy jelzőt (pipálikont) a kiválasztott állapot jelölésére.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectAvatar } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok     | Típus       | Leírás                                                                        |
+| ----------------- | ----------- | ----------------------------------------------------------------------------- |
+| avatár            | `ReactNode` | Az avatar vagy ikon, amelyet a menüelem bal oldalán jelenítünk meg            |
+| szöveg            | string      | A menüelem szöveges tartalma                                                  |
+| kijelölt          | boolean     | Jelzi, hogy a menüelem ki van-e választva (be van jelölve) |
+| letiltott         | boolean     | Jelzi, hogy a menüelem le van-e tiltva                                        |
+| megfigyelés alatt | boolean     | Jelzi, hogy a menüelem jelenleg felül van-e hoverezve                         |
+| tesztId           | string      | A data-testid attribútum tesztelési célokra                                   |
+| kattintás         | függvény    | Visszahívási funkció, amelyet akkor indítanak el, ha a menüelemre kattintanak |
+| className         | string      | Opcionális név a további stílushoz                                            |
+
+</Tab>
+</Tabs>
+
+### Szín kiválasztása
+
+Egy választható menüelem színmintával olyan esetekre, amikor felhasználóknak színt kell választaniuk egy menüből.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MenuItemSelectColor } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok     | Típus   | Leírás                                                                                                                                                                                                                            |
+| ----------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| szín              | string  | A téma színmintája, amely megjelenik a menüelemben. A választható opciók tartalmazzák a következőket: `zöld`, `türkiz`, `ég`, `kék`, `lila`, `rózsaszín`, `piros`, `narancs`, `sárga` és `szürke` |
+| kijelölt          | boolean | Jelzi, hogy a menüelem ki van-e választva (be van jelölve)                                                                                                                                                     |
+| letiltva          | boolean | Jelzi, hogy a menüelem le van-e tiltva                                                                                                                                                                                            |
+| megfigyelés alatt | boolean | Jelzi, hogy a menüelem jelenleg felül van-e hoverezve                                                                                                                                                                             |
+| változat          | string  | A színminta változata. Lehet `alapértelmezett` vagy `pipeline`                                                                                                                                                    |
+| kattintás         | funkció | Visszahívási funkció, amelyet akkor indítanak el, ha a menüelemre kattintanak                                                                                                                                                     |
+| className         | string  | Opcionális név a további stílushoz                                                                                                                                                                                                |
+
+</Tab>
+</Tabs>
+
+### Kapcsoló
+
+Olyan menüelem, amelyhez kapcsolódó váltókapcsoló tartozik, amely lehetővé teszi a felhasználók számára egy adott funkció engedélyezését vagy letiltását
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Tulajdonságok  | Típus         | Leírás                                                                                 |
+| -------------- | ------------- | -------------------------------------------------------------------------------------- |
+| BalIkon        | IkonKomponent | Opcionális bal oldali ikon, amely a szöveg előtt jelenik meg a menüelemben             |
+| szöveg         | string        | A menüelem szöveges tartalma                                                           |
+| toggled        | boolean       | Jelzi, hogy a váltókapcsoló "be" vagy "ki" állapotban van-e                            |
+| onToggleChange | függvény      | Visszahívási funkció, amelyet a váltókapcsoló állapotának változása során indítanak el |
+| kapcsolóméret  | string        | The size of the toggle switch. It can be either \                     |
+| className      | string        | Opcionális név a további stílushoz                                                     |
+
+</Tab>
+</Tabs>

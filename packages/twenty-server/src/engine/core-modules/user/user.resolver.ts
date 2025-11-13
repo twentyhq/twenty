@@ -38,6 +38,7 @@ import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modul
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
+import { UpdateUserEmailInput } from 'src/engine/core-modules/user/dtos/update-user-email.input';
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import {
@@ -56,6 +57,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -97,7 +99,6 @@ export class UserResolver {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,
-
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -511,5 +512,35 @@ export class UserResolver {
       user,
       authProvider,
     );
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(
+    UserAuthGuard,
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.PROFILE_INFORMATION),
+  )
+  async updateUserEmail(
+    @Args() { newEmail, verifyEmailRedirectPath }: UpdateUserEmailInput,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    const editableFields = workspace.editableProfileFields || [];
+
+    if (!editableFields.includes('email')) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    await this.userService.updateUserEmail({
+      user,
+      workspace,
+      newEmail,
+      verifyEmailRedirectPath,
+    });
+
+    return true;
   }
 }

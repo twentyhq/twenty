@@ -1,0 +1,91 @@
+---
+title: Zapier-sovellus
+image: /images/user-guide/integrations/plug.png
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Synkronoi Twenty vaivattomasti yli 3000 sovelluksen kanssa käyttäen [Zapier](https://zapier.com/). Automatisoi tehtäviä, lisää tuottavuutta ja tehosta asiakassuhteitasi!
+
+## Tietoa Zapierista
+
+Zapier on työkalu, jonka avulla voi automatisoida työnkulkuja yhdistämällä sovelluksia, joita tiimisi käyttää päivittäin. The fundamental concept of Zapier is automation workflows, called Zaps, and include triggers and actions.
+
+You can learn more about how Zapier works [here](https://zapier.com/how-it-works).
+
+## Asetukset
+
+### Vaihe 1: Asenna Zapier-paketit
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### Vaihe 2: Kirjaudu sisään CLI:llä
+
+Käytä Zapier-tunnuksiasi kirjautuaksesi sisään käyttäen CLI:
+
+```bash
+zapier login
+```
+
+### Vaihe 3: Aseta ympäristömuuttujat
+
+Suorita `packages/twenty-zapier`-kansiosta:
+
+```bash
+cp .env.example .env
+```
+
+Suorita sovellus paikallisesti, mene osoitteeseen [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks) ja luo API-avain.
+
+Korvaa **YOUR_API_KEY**-arvo `.env`-tiedostossa juuri luodulla API-avaimella.
+
+## Kehitys
+
+<Warning>
+
+Varmista, että suoritat `yarn build` ennen mitään `zapier`-komentoa.
+
+</Warning>
+
+### Testi
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### Tarkkaile ja kokoa muokatessasi koodia
+
+```bash
+yarn watch
+```
+
+### Tarkista Zapier-sovelluksesi
+
+```bash
+yarn validate
+```
+
+### Ota Zapier-sovellus käyttöön
+
+```bash
+yarn deploy
+```
+
+### Listaa kaikki Zapier CLI -komennot
+
+```bash
+zapier
+```
+

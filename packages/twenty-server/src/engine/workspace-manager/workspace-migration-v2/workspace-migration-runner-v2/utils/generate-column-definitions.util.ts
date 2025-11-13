@@ -1,7 +1,5 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type CompositeProperty, FieldMetadataType } from 'twenty-shared/types';
 import { type ColumnType } from 'typeorm';
-
-import { type CompositeProperty } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import {

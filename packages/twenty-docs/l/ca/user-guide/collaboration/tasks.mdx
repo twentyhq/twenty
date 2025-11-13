@@ -1,0 +1,118 @@
+---
+title: Tasques
+info: Entén com gestionar tasques de manera efectiva a Twenty.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Descobreix com aprofitar Notes i Tasques per a col·laborar millor amb el teu equip.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Gestiona totes les tasques dins del teu espai de treball utilitzant la funció de **Tasques**. This guide will show you how to create and manage tasks, switch between upcoming and completed tasks, edit task details, and much more.
+
+## Aplicacions Comunes
+
+### Seguiment de Vendes
+
+- **Següents Passos de la Reunió**: Crea tasques per a temes d'acció discutits durant les trucades amb clients.
+- **Seguiment de Propostes**: Programa recordatoris per revisar propostes pendents.
+- **Revisions de Contractes**: Programa tasques per a negociació i aprovació de contractes.
+
+### Èxit del Client
+
+- **Tasques d'Integració**: Crea llistes de verificació automàtiques quan es tanca un tracte.
+- **Recordatoris de Consulta**: Programa trucades de control de salut del client de manera regular.
+- **Preparació per la Renovació**: Assigna tasques per preparar renovacions de contractes 90 dies abans.
+
+### Gestió de Projectes Interns
+
+Més enllà de les vendes i l'èxit del client, les Tasques donen suport a necessitats organitzatives més àmplies:
+
+- **Desenvolupament del Producte**: Fes seguiment de llançaments de característiques, reparacions d'errors, i fites de desenvolupament.
+- **Campanyes de Màrqueting**: Gestiona llançaments de campanyes, creació de continguts i activitats promocionals.
+- **Operacions de Recursos Humans**: Gestiona processos de contractació, integració de nous empleats, i avaluacions de rendiment.
+- **Tasques Financeres**: Programa revisions de pressupostos, processament de factures, i informes financers.
+- **Operacions**: Coordina gestió d'instal·lacions, relacions amb proveïdors, i millores de processos.
+
+### Creació Automàtica de Tasques
+
+Utilitza [Fluxos de Treball](/l/ca/user-guide/workflows/getting-started-workflows) per crear tasques automàticament:
+
+- **Activadors Quan es Guanya un Tracte**: Crea automàticament tasques d'integració assignades a l'equip de CS quan es tanca una oportunitat.
+- **Recordatoris per Correu Electrònic**: Configura recordatoris setmanals per correu electrònic per a tasques amb venciment aquesta setmana (enviat cada dilluns).
+- **Pipeline Automation**: Create follow-up tasks when deals stall in specific stages
+- **Integració de Reunions**: Genera automàticament tasques a partir de gravacions de reunions o esdeveniments del calendari.
+
+## Funcionalitats de les Tasques
+
+### Camp de relacions
+
+Les tasques inclouen un camp de `Relacions` que et permet adjuntar una única tasca a múltiples registres de diferents objectes. Per exemple, pots vincular una tasca de seguiment a:
+
+- La Persona que necessites contactar.
+- L'Empresa que representen
+- L'Oportunitat que s'està perseguint.
+- Qualsevol Nota pertinent o altres registres.
+
+This morph many relationship ensures tasks are accessible from all relevant record pages and provides complete context.
+
+### Etiquetatge d'usuari
+
+**Nota**: L'etiquetatge d'usuaris dins les tasques no està disponible actualment. Aquesta funcionalitat està planificada per al 2026, la qual cosa permetrà esmentar membres de l'equip i activar notificacions en assignar o actualitzar tasques.
+
+## Creació de Tasques
+
+Crear tasques a Twenty és senzill. Pots fer-ho de les maneres següents:
+
+- Anar a la pestanya `Tasques` i prémer el botó `+` a la part superior dreta de la pàgina.
+- Utilitzar la funció de cerca prement `cmd/ctrl + k`, després selecciona 'Crear tasca' de la llista d'accions ràpides.
+- Anar a una `Pàgina de Registre` i prémer `+` a la part superior dreta de la pàgina, o anar a la pestanya de Tasques i prémer el botó `Afegir Tasca`.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Afegint Contingut a la Tasca
+
+Una vegada que hagis creat una tasca, pots enriquir-la amb contingut ric, com ara Títols, Punts amb Virola o fins i tot imatges. Per fer-ho, prem `/` i introdueix la comanda desitjada.
+
+## Visualització de Tasques
+
+La pàgina de **Tasques** mostra totes les teves tasques al llarg del teu espai de treball. Aquí pots:
+
+- Filtrar tasques assignades a un usuari específic fent clic al botó amb el teu nom a la part superior dreta de la pantalla.
+- Alterna entre tasques properes a completar (`Per fer`) i tasques completades (`Completat`) per veure què necessita atenció i què has aconseguit.
+
+També pots veure tasques per a un Registre concret a la seva `Pàgina de Registre`.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Editar Tasques
+
+Per editar una tasca, has de fer clic a la seva targeta. Això obrirà un panell lateral oferint les següents característiques:
+
+- **Assignatari i Data de Lliurament**: Actualitza l'assignatari o edita la data de lliurament.
+- **Comentaris**: Treballa conjuntament amb els teus membres d'equip afegint comentaris en les tasques per donar actualitzacions o retroalimentació.
+- **Automatitzacions**: Gràcies a l'API i Webhooks, també pots automatitzar la creació de tasques desencadenada per activitats específiques en el teu espai de treball.
+
+## Marcar Tasques com a Completades
+
+Per marcar una tasca com a completada:
+
+1. Localitza la tasca a la teva pàgina de `Tasques` o dins d'una `Pàgina de Registre`.
+2. Fes clic al cercle a l'esquerra de la targeta de la tasca, canviarà per indicar completament.
+3. L'estat de la tasca s'actualitzarà automàticament a `Completat`.
+
+Aquest procediment ajudarà a mantenir un registre actualitzat dels teus èxits.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Eliminar una tasca
+
+Per eliminar una tasca de forma permanent:
+
+1. Obre la tasca que vols suprimir fent clic a la seva targeta, ja sigui des de la pàgina de `Tasques` o dins d'una `Pàgina de Registre`.
+2. Fes clic a la icona de paperera situada a la part superior dreta del panell de detalls de la tasca.
+
+Cal tenir en compte que eliminar una tasca és permanent i no es pot desfer. Considera marcar les tasques com a `Completades` si hi ha una possibilitat que necessitis referir-te a elles de nou.

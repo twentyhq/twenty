@@ -1,0 +1,153 @@
+---
+title: Văn bản
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## Text Input
+
+Cho phép người dùng nhập và chỉnh sửa văn bản.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { TextInput } from "@/ui/input/components/TextInput";
+
+export const MyComponent = () => {
+  const handleChange = (text) => {
+    console.log("Input changed:", text);
+  };
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+  };
+
+  return (
+    <RecoilRoot>
+      <TextInput
+        className
+        label="Username"
+        onChange={handleChange}
+        fullWidth={false}
+        disableHotkeys={false}
+        error="Invalid username"
+        onKeyDown={handleKeyDown}
+        RightIcon={null}
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Thuộc Tính      | Loại          | Mô tả                                                                                                                          |
+| --------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| className       | string        | Tên tùy chọn cho kiểu dáng bổ sung                                                                                             |
+| nhãn            | string        | Đại diện cho nhãn của đầu vào                                                                                                  |
+| khi thay đổi    | function      | Chức năng được gọi khi giá trị trường nhập thay đổi                                                                            |
+| Toàn chiều rộng | boolean       | Cho biết liệu đầu vào có nên chiếm 100% chiều rộng                                                                             |
+| disableHotkeys  | boolean       | Cho biết liệu phím tắt có được kích hoạt cho đầu vào                                                                           |
+| lỗi             | string        | Đại diện cho thông báo lỗi sẽ hiển thị. Khi cung cấp, nó cũng thêm một biểu tượng lỗi bên phải của đầu vào     |
+| onKeyDown       | hàm           | Được gọi khi một phím được nhấn khi trường nhập liệu được tập trung. Nhận một `React.KeyboardEvent` làm đối số |
+| RightIcon       | IconComponent | Một thành phần biểu tượng tùy chọn được hiển thị ở bên phải của đầu vào                                                        |
+
+Thành phần cũng chấp nhận các thuộc tính phần tử đầu vào HTML khác.
+
+</Tab>
+
+</Tabs>
+
+## Autosize Text Input
+
+Thành phần trường nhập điều chỉnh tự động chiều cao dựa trên nội dung.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+export const MyComponent = () => {
+  return (
+    <RecoilRoot>
+      <AutosizeTextInput
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Thuộc Tính  | Loại   | Mô tả                                                                                                              |
+| ----------- | ------ | ------------------------------------------------------------------------------------------------------------------ |
+| onValidate  | hàm    | Chức năng thực hiện bạn muốn kích hoạt khi người dùng xác nhận đầu vào                                             |
+| minRows     | số     | Số hàng tối thiểu cho khu vực văn bản                                                                              |
+| chỗ giữ chỗ | string | Văn bản giữ chỗ bạn muốn hiển thị khi vùng văn bản trống                                                           |
+| onFocus     | hàm    | The callback function you want to trigger when the text area gains focus                                           |
+| biến thể    | string | The variant of the input. Các tùy chọn bao gồm: `mặc định`, `biểu tượng`, và `nút` |
+| buttonTitle | string | Tiêu đề cho nút (chỉ áp dụng cho biến thể nút)                                                  |
+| giá trị     | string | Giá trị ban đầu cho vùng văn bản                                                                                   |
+
+</Tab>
+
+</Tabs>
+
+## Khu Vực Văn Bản
+
+Cho phép bạn tạo trường nhập liệu đa dòng.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { TextArea } from "@/ui/input/components/TextArea";
+
+export const MyComponent = () => {
+  return (
+    <TextArea
+    disabled={false}
+    minRows={4}
+    onChange={()=>console.log('On change function fired')}
+    placeholder="Enter text here"
+    value=""
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Thuộc Tính   | Loại    | Mô tả                                                                   |
+| ------------ | ------- | ----------------------------------------------------------------------- |
+| vô hiệu hóa  | boolean | Cho biết liệu vùng văn bản có bị vô hiệu hóa                            |
+| minRows      | số      | Số hàng tối thiểu có thể nhìn thấy cho khu vực văn bản. |
+| khi thay đổi | hàm     | Hàm callback được kích hoạt khi nội dung vùng văn bản thay đổi          |
+| chỗ giữ chỗ  | string  | Văn bản giữ chỗ hiển thị khi vùng văn bản rỗng                          |
+| giá trị      | string  | Giá trị hiện tại của vùng văn bản                                       |
+
+</Tab>
+</Tabs>

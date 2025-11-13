@@ -46,14 +46,6 @@ const StyledValueContainer = styled.div<{ readonly: boolean }>`
   min-width: 0;
   position: relative;
   width: 100%;
-
-  ${({ readonly }) =>
-    !readonly &&
-    `
-    &:hover .record-inline-cell-value-display {
-      opacity: 0;
-    }
-  `}
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
@@ -123,7 +115,7 @@ export const RecordInlineCellContainer = () => {
               <IconLabel stroke={theme.icon.stroke.sm} />
             </StyledIconContainer>
           )}
-          {showLabel && label && (
+          {label && (
             <StyledLabelContainer width={labelWidth}>
               <OverflowingTextWithTooltip text={label} displayedMaxRows={1} />
             </StyledLabelContainer>
@@ -144,7 +136,7 @@ export const RecordInlineCellContainer = () => {
       )}
 
       <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
-        <RecordInlineCellValue className="record-inline-cell-value-display" />
+        <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
   );

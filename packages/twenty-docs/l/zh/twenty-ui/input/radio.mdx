@@ -1,0 +1,104 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+當用戶只能從一系列選項中選擇一個時使用。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性              | 類型             | 描述                                            |
+| --------------- | -------------- | --------------------------------------------- |
+| 樣式              | `React.CSS` 屬性 | 為組件提供額外的內聯樣式                                  |
+| 類名稱             | 字串             | 用於額外樣式的可選 CSS 類                               |
+| 選中              | 布爾值            | Indicates whether the radio button is checked |
+| 值               | 字串             | 與單選按鈕相關聯的標籤或文本                                |
+| 變更事件            | function       | 選定的單選按鈕變更時調用的函數                               |
+| onCheckedChange | function       | 單選按鈕的 `checked` 狀態改變時調用的函數                    |
+| 大小              | 字串             | 單選按鈕的大小。 選項包括：`large` 和 `small`               |
+| 禁用              | 布爾值            | 如果為`true`，則單選按鈕被禁用且無法點擊                       |
+| 標籤位置            | 字串             | 標籤文本相對於單選按鈕的位置。 具有兩個選項：`left` 和 `right`       |
+
+</Tab>
+</Tabs>
+
+## Radio Group
+
+將相關的單選按鈕組合在一起。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性    | 類型                | 描述                                 |
+| ----- | ----------------- | ---------------------------------- |
+| 值     | 字串                | 當前選中單選按鈕的值                         |
+| 變更事件  | function          | 單選按鈕變更時觸發的回調函數                     |
+| 變更值事件 | function          | 選定值變更時觸發的回調函數。                     |
+| 子元素   | `React.ReactNode` | 允許將 React 組件（例如 Radio）作為子項傳遞給單選按鈕組 |
+
+</Tab>
+
+</Tabs>

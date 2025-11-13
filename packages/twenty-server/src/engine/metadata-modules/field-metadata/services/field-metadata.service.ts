@@ -3,7 +3,10 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   DataSource,
@@ -17,7 +20,6 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -649,24 +651,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
         { workspaceId: fieldMetadataInputs[0].workspaceId },
       );
-
-    const isMorphRelationEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
-        workspaceId,
-      );
-
-    const isSomeFieldMetadatInputsMorph = fieldMetadataInputs.some(
-      (fieldMetadataInput) =>
-        fieldMetadataInput.type === FieldMetadataType.MORPH_RELATION,
-    );
-
-    if (isSomeFieldMetadatInputsMorph && !isMorphRelationEnabled) {
-      throw new FieldMetadataException(
-        'Morph Relation feature is not enabled for this workspace',
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 

@@ -19,6 +19,7 @@ import {
   IconSparkles,
   IconTable,
   IconTool,
+  IconUser,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
 import {
@@ -102,6 +103,13 @@ export const SettingsRolePermissionsToolSection = ({
       name: t`Sync Account`,
       description: t`Sync email and calendar accounts`,
       Icon: IconAt,
+      isToolPermission: true,
+    },
+    {
+      key: PermissionFlagType.PROFILE_INFORMATION,
+      name: t`Edit Profile`,
+      description: t`Edit own profile information`,
+      Icon: IconUser,
       isToolPermission: true,
     },
     {

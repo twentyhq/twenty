@@ -22,6 +22,7 @@ import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
 import { BackfillRecentViewCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-backfill-recent-view.command';
+import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -77,6 +78,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly cleanOrphanedUserWorkspacesCommand: CleanOrphanedUserWorkspacesCommand,
     protected readonly cleanOrphanedRoleTargetsCommand: CleanOrphanedRoleTargetsCommand,
     protected readonly backfillRecentViewCommand: BackfillRecentViewCommand,
+    protected readonly seedStandardApplicationsCommand: CreateTwentyStandardApplicationCommand,
   ) {
     super(
       workspaceRepository,
@@ -126,7 +128,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_1110: VersionCommands = {
-      beforeSyncMetadata: [],
+      beforeSyncMetadata: [this.seedStandardApplicationsCommand],
       afterSyncMetadata: [
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,

@@ -19,27 +19,27 @@ import {
   ServerlessFunctionTriggerManifest,
 } from 'src/engine/core-modules/application/types/application.types';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
+import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
 import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
 import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
 import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-application-id.util';
 import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
 import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
 import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
 import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
-import { Sources } from 'src/engine/core-modules/file-storage/types/source.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -81,13 +81,22 @@ export class ApplicationSyncService {
       applicationId: application.id,
     });
 
-    await this.syncServerlessFunctions({
-      serverlessFunctionsToSync: manifest.serverlessFunctions,
-      code: manifest.sources,
-      workspaceId,
-      applicationId: application.id,
-      serverlessFunctionLayerId: application.serverlessFunctionLayerId,
-    });
+    if (manifest.serverlessFunctions.length > 0) {
+      if (!isDefined(application.serverlessFunctionLayerId)) {
+        throw new ApplicationException(
+          `Failed to sync serverless function, could not find a serverless function layer.`,
+          ApplicationExceptionCode.FIELD_NOT_FOUND,
+        );
+      }
+
+      await this.syncServerlessFunctions({
+        serverlessFunctionsToSync: manifest.serverlessFunctions,
+        code: manifest.sources,
+        workspaceId,
+        applicationId: application.id,
+        serverlessFunctionLayerId: application.serverlessFunctionLayerId,
+      });
+    }
 
     this.logger.log('✅ Application sync from manifest completed');
   }
@@ -100,56 +109,45 @@ export class ApplicationSyncService {
   }: ApplicationInput & {
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    const application = await this.applicationService.findByUniversalIdentifier(
-      manifest.application.universalIdentifier,
-      workspaceId,
-    );
-
     const name = manifest.application.displayName ?? packageJson.name;
-
-    if (!isDefined(application)) {
-      const serverlessFunctionLayer =
-        await this.serverlessFunctionLayerService.create(
-          {
-            packageJson,
-            yarnLock,
-          },
-          workspaceId,
-        );
-
-      const application = await this.applicationService.create({
+    const application =
+      (await this.applicationService.findByUniversalIdentifier({
+        universalIdentifier: manifest.application.universalIdentifier,
+        workspaceId,
+      })) ??
+      (await this.applicationService.create({
         universalIdentifier: manifest.application.universalIdentifier,
         name,
         description: manifest.application.description,
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
-        serverlessFunctionLayerId: serverlessFunctionLayer.id,
+        serverlessFunctionLayerId: null,
         workspaceId,
-      });
+      }));
 
-      await this.applicationVariableService.upsertManyApplicationVariableEntities(
+    let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
+
+    if (manifest.serverlessFunctions.length > 0) {
+      if (!isDefined(serverlessFunctionLayerId)) {
+        serverlessFunctionLayerId = (
+          await this.serverlessFunctionLayerService.create(
+            {
+              packageJson,
+              yarnLock,
+            },
+            workspaceId,
+          )
+        ).id;
+      }
+
+      await this.serverlessFunctionLayerService.update(
+        serverlessFunctionLayerId,
         {
-          applicationVariables: manifest.application.applicationVariables,
-          applicationId: application.id,
+          packageJson,
+          yarnLock,
         },
       );
-
-      return application;
     }
-
-    await this.serverlessFunctionLayerService.update(
-      application.serverlessFunctionLayerId,
-      {
-        packageJson,
-        yarnLock,
-      },
-    );
-
-    await this.applicationService.update(application.id, {
-      name,
-      description: manifest.application.description,
-      version: packageJson.version,
-    });
 
     await this.applicationVariableService.upsertManyApplicationVariableEntities(
       {
@@ -158,7 +156,12 @@ export class ApplicationSyncService {
       },
     );
 
-    return application;
+    return await this.applicationService.update(application.id, {
+      name,
+      description: manifest.application.description,
+      version: packageJson.version,
+      serverlessFunctionLayerId,
+    });
   }
 
   private async syncFields({
@@ -947,8 +950,7 @@ export class ApplicationSyncService {
     );
 
     const application = await this.applicationService.findByUniversalIdentifier(
-      applicationUniversalIdentifier,
-      workspaceId,
+      { universalIdentifier: applicationUniversalIdentifier, workspaceId },
     );
 
     if (!isDefined(application)) {

@@ -1,0 +1,91 @@
+---
+title: מעבר מ-CRM-ים אחרים
+info: מדריך שלב אחר שלב להעברת נתונים ותהליכים ממערכות CRM אחרות ל-Twenty.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: מדריך קצר להבנת היסודות של Twenty
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## לפני שתתחיל
+
+### 1. בדוק את הנתונים הקיימים שלך
+
+- **בחר את האובייקטים והשדות המועטים להעברה**: המיגרציה הזו היא הזדמנות להתחלה חדשה
+- **ייצא נתונים אלו** מ-CRM הנוכחי שלך
+- **הסר כפילויות** ורשומות לא מעודכנות
+- **List active workflows** and automations
+
+### 2. צור את מודל הנתונים החדש שלך
+
+Follow our [data model guide](/l/he/user-guide/data-model/customize-your-data-model) to:
+
+- **עצב את מודל הנתונים** לו אתה זקוק
+- **מפה שדות קיימים** לאובייקטים/שדות סטנדרטיים של Twenty
+- **זהה את האובייקטים/השדות המותאמים אישית** שתזדקק להם
+- **צור אותם** תחת הגדרות → מודל הנתונים
+
+## תהליך ההעברה
+
+### 1. ייבוא הנתונים שלך
+
+**סדר מומלץ:**
+
+1. **חברות** תחילה (כרשומות בסיס)
+2. **אנשים** שנית (מקושרים לחברות)
+3. **הזדמנויות** שלישית (מקושרות לאנשים/חברות)
+
+השתמש בייבוא CSV דרך תפריט הפקודות `Cmd + K` (Mac) או `Ctrl + K` (Windows). See our [data import guide](/l/he/user-guide/getting-started/import-export-data) for detailed instructions.
+
+### 2. Recreate Workflows
+
+- **התחל פשוט** - צור מחדש את האוטומציות הקריטיות תחילה
+- **Use Twenty's workflow builder** to replace existing automations
+
+## אתגרים נפוצים
+
+### בעיות בפורמט נתונים
+
+- **כתובות דוא\"ל** - הסר כפילויות (דרישת אובייקט אנשים)
+- **דומיין** - הסר כפילויות (דרישת אובייקט חברות)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **פורמטים של תאריכים** - הבטח פורמט עקבי (YYYY-MM-DD) או ערוך פורמט זה תחת הגדרות → חווייה
+- **מספרי טלפון** - השתמש בפורמט בינלאומי (+1234567890)
+
+### מיפוי קשרים
+
+לייבוא קשרים בין רשומות באמצעות פונקציית הייבוא של CSV, אתה יכול להשתמש בשדות הבאים
+
+- **השתמש במזהה Twenty** עבור קשרים מורכבים
+- **השתמש בכתובות דוא\"ל** כדי לקשר רשומות אנשים
+- **השתמש בשמות דומיינים** כדי לקשר רשומות של חברות
+- **השתמש בכל שדה אחר שהגדרת כייחודי**, שניתן לעשות במדור מודל הנתונים.
+  קרא את שלנו [מדריך ייבוא-ייצוא נתונים](/l/he/user-guide/getting-started/import-export-data) להנחיות מפורטות על יצירת קשרים במהלך ייבוא CSV.
+
+## עזרה מקצועית
+
+### השירותים שלנו
+
+- **חבילות עלייה של 4 שעות** להעברה מודרכת
+- **שותפי יישום** לפרויקטים מתקדמים יותר
+
+גלה את [שירותי היישום שלנו](/l/he/user-guide/getting-started/implementation-services).
+
+## מעבר מאירוח עצמי לענן
+
+If you're moving from Twenty self-hosted to Twenty Cloud:
+
+1. **ייצא את הנתונים שלך** מגרסה המאוחסנת עצמית
+2. **עקוב אחר תהליך ההעברה הסטנדרטי** הנ"ל
+3. **אנו יכולים לספק סיוע בהעברה**, פנה לצוות שלנו
+
+## רשימת בדיקות לאחר העברה
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

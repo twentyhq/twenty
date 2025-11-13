@@ -22,6 +22,7 @@ import {
   MessageFolderPendingSyncAction,
   type MessageFolderWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 
 const ONGOING_SYNC_STAGES = [
   MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
@@ -34,6 +35,7 @@ export class MessageChannelUpdateOnePreQueryHook
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
 
   async execute(
@@ -98,6 +100,19 @@ export class MessageChannelUpdateOnePreQueryHook
         {
           userFriendlyMessage: msg`Cannot update message channel while sync is ongoing. Please wait for the sync to complete.`,
         },
+      );
+    }
+
+    const excludeGroupEmailsChanged =
+      payload.data.excludeGroupEmails !== messageChannel.excludeGroupEmails;
+
+    if (excludeGroupEmailsChanged) {
+      await this.messagingProcessGroupEmailActionsService.markMessageChannelAsPendingGroupEmailsAction(
+        messageChannel,
+        workspace.id,
+        payload.data.excludeGroupEmails
+          ? MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_DELETION
+          : MessageChannelPendingGroupEmailsAction.GROUP_EMAILS_IMPORT,
       );
     }
 

@@ -744,20 +744,6 @@ describe('should work as expected for the different field types', () => {
               or: [
                 {
                   phones: {
-                    primaryPhoneCallingCode: { is: 'NULL' },
-                  },
-                },
-                {
-                  phones: {
-                    primaryPhoneCallingCode: { ilike: '' },
-                  },
-                },
-              ],
-            },
-            {
-              or: [
-                {
-                  phones: {
                     additionalPhones: { is: 'NULL' },
                   },
                 },
@@ -783,20 +769,6 @@ describe('should work as expected for the different field types', () => {
                   {
                     phones: {
                       primaryPhoneNumber: { ilike: '' },
-                    },
-                  },
-                ],
-              },
-              {
-                or: [
-                  {
-                    phones: {
-                      primaryPhoneCallingCode: { is: 'NULL' },
-                    },
-                  },
-                  {
-                    phones: {
-                      primaryPhoneCallingCode: { ilike: '' },
                     },
                   },
                 ],

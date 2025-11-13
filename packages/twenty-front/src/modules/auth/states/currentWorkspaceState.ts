@@ -29,6 +29,7 @@ export type CurrentWorkspace = Pick<
   | 'isTwoFactorAuthenticationEnforced'
   | 'trashRetentionDays'
   | 'routerModel'
+  | 'editableProfileFields'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
 };

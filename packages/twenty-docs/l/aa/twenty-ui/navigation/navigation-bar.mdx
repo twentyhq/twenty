@@ -1,0 +1,52 @@
+---
+title: crwdns63506:0crwdne63506:0
+image: crwdns63508:0crwdne63508:0
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+crwdns63510:0crwdne63510:0
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+export const MyComponent = () => {
+
+   const navigationItems = [
+     {
+       name: "Home",
+       Icon: IconHome,
+       onClick: () => console.log("Home clicked"),
+     },
+     {
+       name: "Profile",
+       Icon: IconUser,
+       onClick: () => console.log("Profile clicked"),
+     },
+     {
+       name: "Settings",
+       Icon: IconSettings,
+       onClick: () => console.log("Settings clicked"),
+     },
+   ];
+
+  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| crwdns63512:0crwdne63512:0 | crwdns63514:0crwdne63514:0 | crwdns63516:0crwdne63516:0                                                            |
+| ---------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| crwdns63518:0crwdne63518:0 | crwdns63520:0crwdne63520:0 | crwdns63522:0crwdne63522:0                                                            |
+| crwdns63524:0crwdne63524:0 | crwdns63526:0crwdne63526:0 | crwdns63528:0crwdne63528:0 crwdns63530:0crwdne63530:0 |
+
+</Tab>
+</Tabs>

@@ -1,0 +1,109 @@
+---
+title: Lệnh Backend
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## Lệnh hữu ích
+
+Những lệnh này nên được thực hiện từ thư mục packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Cài đặt lần đầu
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Bắt đầu máy chủ
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Kiểm tra
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+Lưu ý: bạn có thể chạy `npx nx run twenty-server:test:integration:with-db-reset` nếu bạn cần đặt lại cơ sở dữ liệu trước khi chạy các thử nghiệm tích hợp.
+
+### Đặt lại cơ sở dữ liệu
+
+Nếu bạn muốn đặt lại và tạo dữ liệu ban đầu cho cơ sở dữ liệu, bạn có thể chạy lệnh sau:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migrations
+
+#### For objects in Core/Metadata schemas (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Đối tượng Workspace
+
+There are no migrations files, migration are generated automatically for each workspace,
+stored in the database, and applied with this command
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+
+Điều này sẽ xóa cơ sở dữ liệu và chạy lại các di cư và tạo dữ liệu ban đầu.
+
+Hãy chắc chắn sao lưu mọi dữ liệu bạn muốn giữ lại trước khi chạy lệnh này.
+
+</Warning>
+
+## Ngăn xếp Công nghệ
+
+Twenty chủ yếu sử dụng NestJS cho Backend.
+
+Prisma là ORM đầu tiên chúng tôi đã sử dụng. Nhưng để cho phép người dùng tạo các trường tuỳ chỉnh và đối tượng tuỳ chỉnh, một cấp độ thấp hơn sẽ hợp lý hơn khi chúng tôi cần có sự điều khiển chính xác. Dự án hiện tại sử dụng TypeORM.
+
+Here's what the tech stack now looks like.
+
+**Core**
+
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Cơ sở dữ liệu**
+
+- [Postgres](https://www.postgresql.org/)
+
+**Tích hợp bên thứ ba**
+
+- [Sentry](https://sentry.io/welcome/) để theo dõi lỗi
+
+**Kiểm tra**
+
+- [Jest](https://jestjs.io/)
+
+**Công cụ**
+
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Phát triển**
+
+- [AWS EKS](https://aws.amazon.com/eks/)
+

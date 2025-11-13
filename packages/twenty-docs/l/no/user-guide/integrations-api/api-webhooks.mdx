@@ -1,0 +1,83 @@
+---
+title: API-nøkler og webhooks
+info: "Opprett og administrer API-nøkler for autentisering og sett opp webhooks for sanntidsvarsler."
+image: /images/user-guide/api/api.png
+sectionInfo: Lær hvordan du kobler Twenty til dine andre verktøy.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## API-nøkler
+
+API-nøkler gir automatisk tilgang til CRM-dataene dine, synkroniserer data med andre systemer, og lager tilpassede integrasjoner eller løsninger.
+
+### Opprett en API-nøkkel
+
+1. Go to **Settings → APIs & Webhooks**
+2. Klikk på **+ Opprett nøkkel** øverst til høyre
+3. Konfigurer API-nøkkelen din:
+   - **Navn**: Gi API-nøkkelen din et beskrivende navn
+   - **Utløpsdato**: Angi når nøkkelen skal utløpe
+4. Klikk på **Lagre** for å generere API-nøkkelen din
+5. **Viktig**: Kopier og lagre API-nøkkelen din umiddelbart, den vises kun én gang
+
+Når opprettet, gir API-nøkkelen din tilgang til din tilpassede API-dokumentasjon og lekeplass der du kan teste endepunkter med din faktiske datamodell.
+
+<Warning>
+Siden API-nøkkelen din gir tilgang til sensitiv informasjon, bør du ikke dele den med tjenester du ikke stoler helt på. Hvis den lekker, kan noen bruke den ondsinnet. Hvis sikkerheten til API-nøkkelen din er kompromittert, deaktiver den umiddelbart og generer en ny.
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### Administrer API-nøkler
+
+**Generer en ny API-nøkkel:**
+
+1. Go to **Settings → APIs & Webhooks**
+2. Klikk på API-nøkkelen du vil generere på nytt
+3. Klikk på **Generer på nytt**-knappen
+4. Kopier og lagre den nye API-nøkkelen umiddelbart
+
+**Slett en API-nøkkel:**
+
+1. Finn API-nøkkelen i listen din
+2. Klikk på nøkkelen for å åpne detaljene
+3. Klikk **Slett** for å fjerne den permanent
+
+## Webhooks
+
+Webhooks tillater umiddelbare oppdateringer til din spesifiserte URL om endringer eller hendelser relatert til din kundedata.
+
+For example, when an Opportunity moves to "Closed Won", a webhook can automatically trigger invoice creation in your accounting system. Merk at denne typen automatisering også kan oppnås ved å bruke Twentys innebygde [Arbeidsflytfunksjon](/l/no/user-guide/workflows/getting-started-workflows), som tilbyr triggere basert på feltoppdateringer for intern automatisering.
+
+Webhooks er ideelle for integrering med eksterne systemer, mens Arbeidsflyter støtter både intern automatisering og eksterne verktøykoblinger via webhook triggere, kodemoduler og HTTP-moduler.
+
+### Opprett en Webhook
+
+1. Gå til **Innstillinger → API og Webhooks → Webhooks**
+2. Klikk **+ Opprett webhook**
+3. Angi URL-adressen for webhooken (der du vil motta notifikasjoner)
+4. Klikk **Lagre**
+
+Din webhook vil umiddelbart begynne å motta sanntidsvarsler om endringer i din CRM-data.
+
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
+
+### Administrer Webhooks
+
+**Slett en Webhook:**
+
+1. Gå til **Innstillinger → API og Webhooks → Webhooks**
+2. Finn webhooken du vil fjerne
+3. Klikk på webhooken
+4. Klikk **Slett** og bekreft i popup-vinduet
+
+**Rediger en Webhook:**
+
+1. Klikk på webhooken du vil endre
+2. Oppdater URL eller andre innstillinger
+3. Klikk **Lagre** for å bruke endringene
+

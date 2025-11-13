@@ -98,6 +98,7 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannel,
+
   namePlural: 'messageChannels',
   labelSingular: msg`Message Channel`,
   labelPlural: msg`Message Channels`,
@@ -255,16 +256,6 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: true,
   })
   excludeGroupEmails: boolean;
-
-  @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncAllFolders,
-    type: FieldMetadataType.BOOLEAN,
-    label: msg`Sync all folders`,
-    description: msg`Sync all folders including new ones`,
-    icon: 'IconFolders',
-    defaultValue: true,
-  })
-  syncAllFolders: boolean;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.pendingGroupEmailsAction,

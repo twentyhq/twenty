@@ -24,6 +24,7 @@ import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-act
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber } from '@sniptt/guards';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
@@ -66,6 +67,7 @@ export const WorkflowEditActionFindRecords = ({
 }: WorkflowEditActionFindRecordsProps) => {
   const { getIcon } = useIcons();
   const { t } = useLingui();
+  const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -77,12 +79,17 @@ export const WorkflowEditActionFindRecords = ({
       value: item.nameSingular,
     }));
 
-  const [formData, setFormData] = useState<FindRecordsFormData>({
+  const [formData, setFormData] = useState<FindRecordsFormData>(() => ({
     objectNameSingular: action.settings.input.objectName,
-    limit: action.settings.input.limit,
+    limit:
+      isNumber(action.settings.input.limit) &&
+      action.settings.input.limit > QUERY_MAX_RECORDS
+        ? QUERY_MAX_RECORDS
+        : (action.settings.input.limit ?? 1),
     filter: action.settings.input.filter as FindRecordsActionFilter,
     orderBy: action.settings.input.orderBy as FindRecordsActionOrderBy,
-  });
+  }));
+  const [limitError, setLimitError] = useState<string | undefined>(undefined);
   const isFormDisabled = actionOptions.readonly ?? false;
   const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
 
@@ -277,18 +284,35 @@ export const WorkflowEditActionFindRecords = ({
         )}
 
         <FormNumberFieldInput
-          label="Limit"
+          label={t`Limit`}
           defaultValue={formData.limit}
-          placeholder="Enter limit"
+          placeholder={t`Enter limit`}
           readonly={isFormDisabled}
+          hint={t`This action can return up to ${maxRecordsFormatted} records.`}
+          error={limitError}
           onChange={(limit) => {
             if (isFormDisabled === true || !isNumber(limit)) {
               return;
             }
 
+            const normalizedLimit = Math.floor(limit);
+
+            if (normalizedLimit <= 0) {
+              setLimitError(t`Limit must be greater than 0.`);
+              return;
+            }
+
+            const cappedLimit = Math.min(normalizedLimit, QUERY_MAX_RECORDS);
+
+            setLimitError(
+              normalizedLimit > QUERY_MAX_RECORDS
+                ? t`Limit cannot exceed ${maxRecordsFormatted} records.`
+                : undefined,
+            );
+
             const newFormData: FindRecordsFormData = {
               ...formData,
-              limit,
+              limit: cappedLimit,
             };
 
             setFormData(newFormData);

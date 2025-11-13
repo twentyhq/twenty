@@ -16,6 +16,7 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/google')
@@ -24,14 +25,24 @@ export class GoogleAuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get()
-  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard, PublicEndpointGuard)
+  @UseGuards(
+    GoogleProviderEnabledGuard,
+    GoogleOauthGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async googleAuth() {
     // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
   @Get('redirect')
-  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard, PublicEndpointGuard)
+  @UseGuards(
+    GoogleProviderEnabledGuard,
+    GoogleOauthGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     return res.redirect(

@@ -1,0 +1,56 @@
+---
+title: API
+image: /images/docs/getting-started/api.png
+info: Descubra como utilizar nossas APIs.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/api.png" alt="Header" />
+</Frame>
+
+## Visão geral
+
+A API Twenty permite que os desenvolvedores interajam programaticamente com a plataforma CRM Twenty. Usando a API, você pode integrar o Twenty com outros sistemas, automatizar a sincronização de dados e construir soluções personalizadas em torno dos seus dados de cliente. A API fornece endpoints para **criar, ler, atualizar e deletar** objetos principais do CRM (como pessoas e empresas) além de acessar a configuração de metadados.
+
+**Playground da API:** Agora você pode acessar o Playground da API dentro das configurações do aplicativo. Para testar chamadas da API em tempo real, faça login no seu espaço de trabalho do Twenty e navegue até **Configurações → APIs e Webhooks**. Isso abre o Playground da API no aplicativo e as configurações de chaves da API.
+**[Ir para Configurações da API](https://app.twenty.com/settings)**
+
+## Autenticação
+
+A API do Twenty utiliza chaves de API para autenticação. Toda solicitação para endpoints protegidos deve incluir uma chave de API no cabeçalho.
+
+- **Chaves de API:** Você pode gerar uma nova chave de API na página de **configurações da API** do seu aplicativo Twenty. Cada chave de API é um token secreto que concede acesso aos seus dados de CRM, então mantenha-a segura. Se uma chave for comprometida, revogue-a das configurações e gere uma nova.
+- **Cabeçalho de Autenticação:** Uma vez que você tenha uma chave de API, inclua-a no cabeçalho `Authorization` das suas solicitações HTTP. Use o esquema de token Bearer. Por exemplo:
+
+  ```
+  Authorization: Bearer YOUR_API_KEY
+  ```
+
+  Substitua `YOUR_API_KEY` pela chave que você obteve. Este cabeçalho deve estar presente em **todas as solicitações à API**. Se o token estiver ausente ou for inválido, a API responderá com um erro de autenticação (HTTP 401 Unauthorized).
+
+## Endpoints da API
+
+Todos os recursos podem ser acessados via REST ou GraphQL.
+
+- **Nuvem:** `https://api.twenty.com/` ou seu domínio personalizado/subdomínio
+- **Self-Hosted Instances:** If you are running Twenty on your own server, use your own domain in place of `api.twenty.com` (for example, `https://{your-domain}/rest/`).
+
+Os endpoints são agrupados em duas categorias: **API Core** e **API de Metadados**. A **API Core** trata dos dados principais do CRM (por exemplo, pessoas, empresas, notas, tarefas), enquanto a **API de Metadados** cobre dados de configuração (como campos personalizados ou definições de objetos). A maioria das integrações usará principalmente a API Core.
+
+### API Core
+
+Acessado em `/rest/` ou `/graphql/`.
+A **API Core** serve como uma interface unificada para gerenciar entidades principais do CRM (pessoas, empresas, notas, tarefas) e seus relacionamentos, oferecendo **tanto modelos de interação REST quanto GraphQL**.
+
+### API de Metadados
+
+Acessado em `/rest/metadata/` ou `/metadata/`.
+Os endpoints da API de Metadados permitem que você recupere informações sobre seu esquema e configurações. Por exemplo, você pode buscar definições de campos personalizados, esquemas de objetos, etc.
+
+- **Exemplos de Endpoints:**
+
+  - `GET /rest/metadata/objects` – Lista todos os tipos de objetos e seus metadados (campos, relacionamentos).
+  - `GET /rest/metadata/objects/{objectName}` – Obtém metadados para um objeto específico (por exemplo, `pessoas`, `empresas`).
+  - `GET /rest/metadata/picklists` – Recupera as opções de campo de lista suspensa (dropdown) definidas no CRM.
+
+Normalmente, os endpoints de metadados são usados para entender a estrutura dos dados (para integrações dinâmicas ou construção de formulários) em vez de gerenciar registros reais. Na maioria dos casos, eles são apenas leitura. A autenticação também é necessária para eles (use sua chave de API).

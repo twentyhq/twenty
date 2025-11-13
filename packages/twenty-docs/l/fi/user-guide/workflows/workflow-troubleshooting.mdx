@@ -1,0 +1,131 @@
+---
+title: Työnkulun vianmääritys
+info: Etsi ja optimoi työnkulkujasi vianmääritystekniikoilla ja suorituskyvyn optimointivinkeillä.
+image: /images/user-guide/what-is-twenty/20.png
+sectionInfo: Automatisoi prosessit ja integroi ulkoisten työkalujen kanssa
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Vianmääritys työnkulkuajojen avulla
+
+Käytä **Työnkulkuajot**-käyttöliittymää ongelmien selvittämiseen:
+
+- Access via the **Runs** panel in the workflow editor
+- Click on individual runs to see input/output data for each step
+- Check execution status, error messages, and data flow between steps
+
+## Yleisiä ongelmia ja ratkaisuja
+
+### Työnkulkua ei käynnistetä
+
+**Ongelma**: Työnkulku ei suoritu oletetusti.
+
+**Ratkaisuja**:
+
+- Verify the workflow is **Active** (not in Draft mode)
+- Tarkista, että käynnistimen kokoonpano vastaa tietorakennettasi
+- For Record triggers, ensure the correct object and fields are selected
+- Webhooks-käynnistimille tarkista URL ja odotettu tietomuoto
+- Ajastetuille käynnistimille tarkista aikataulukokoonpano
+
+### Lomakkeet eivät ole käytettävissä
+
+**Ongelma**: Lomaketoimintoja on vaikea löytää tai käyttää automatisoiduissa työnkuluissa.
+
+<Warning>
+Lomakkeet on tällä hetkellä suunniteltu vain manuaalisille käynnistimille. For workflows with other triggers (Record Created, Updated, etc.), forms are only accessible via the workflow run interface, which is not the expected user experience. Ilmoituskeskus julkaistaan vuonna 2026 tukemaan lomakkeita asianmukaisesti automatisoiduissa työnkuluissa.
+</Warning>
+
+**Väistökeino**: Käytä manuaalisia käynnistimiä, kun lomakkeita tarvitaan, tai rakenna työnkulut uudelleen välttääksesi lomakkeet automatisoiduissa työnkuluissa.
+
+### Suuri krediittikulutus
+
+**Problem**: Workflows consuming more credits than expected.
+
+**Common Causes & Solutions**:
+
+- **Inefficient API Calls**: Batch API calls when possible instead of individual requests
+- **Väärä manuaalisen käynnistimen kokoonpano**: Käytä `Bulk`-saatavuutta `Single`:n sijasta käsitelläksesi useita tietueita yhdessä työnkulussa
+- **Puuttuvat suodattimet**: Lisää ehdollista logiikkaa pysäyttämään työnkulut, kun ehdot eivät täyty
+- **Tarpeettomat vaiheet**: Poista ylimääräiset toimet ja optimoi työnkulun logiikka
+- **Reaaliaikainen vs. ajastettu**: Käytä ajastettuja työnkulkuja kiireettömiin prosesseihin
+
+### Rinnakkaisten työnkulkujen rajoitukset
+
+**Ongelma**: Saavutetaan 100 rinnakkaisen työnkulun raja per workspace.
+
+<Warning>
+You cannot run more than 100 workflows in parallel at any given time per workspace.
+</Warning>
+
+**Ratkaisuja**:
+
+- Käytä manuaalisille käynnistimille `Bulk`-saatavuutta käsitelläksesi useita tietueita yhdellä ajolla
+- Toteutat viiveitä työnkulkujen suorittamisen välille käyttämällä ajastettuja käynnistimiä
+- Optimoi työnkulut niin, että ne toimivat nopeammin ja vähentävät samanaikaisen suorituksen aikaa
+- Harkitse eräprosessointia poikkeusaikoina
+
+### API-nopeuden rajoittaminen
+
+**Ongelma**: Ulkoiset API-kutsut epäonnistuvat nopeusrajojen vuoksi.
+
+**Ratkaisuja**:
+
+- Käytä suunniteltuja työnkulkuja reaaliaikaisten käynnistimien sijaan aina kun mahdollista
+- Toteuta viiveet API-kutsujen välillä Kooditoimissa
+- Ryhmittele API-pyynnöt, kun ulkoiset palvelut tukevat sitä
+- Valvo työnkulun ajoja nopeusrajausvirheiden varalta ja säädä ajoitusta
+
+### Iteraattoriongelmat
+
+**Ongelma**: Iteraattoritoimet eivät toimi odotetulla tavalla.
+
+**Ratkaisuja**:
+
+- **Huomautus**: Iteraattori on tällä hetkellä beetaversiossa. Aktivoi se kohdassa Asetukset → Julkaisut → Lab
+- Varmista, että syöte on tietueiden joukko edellisestä vaiheesta
+- Tarkista, että Iteraattorin toiminnot on määritetty oikein
+- Käytä Iteraattoria `Bulk` manuaalisilla käynnistimillä parhaan suorituskyvyn saavuttamiseksi
+
+### Puuttuvat oikeudet
+
+**Ongelma**: Et voi käyttää työnkulkuosiota.
+
+<Warning>
+Jos et näe Työnkulku-osiota, tämä johtuu käyttöoikeusongelmasta. Ota yhteyttä työympäristön ylläpitäjään saadaksesi pääsyn työnkulkuihin.
+</Warning>
+
+## Optimointivinkit
+
+### Suorituskyvyn parhaat käytännöt
+
+- **Aloita yksinkertaisesti** ja lisää monimutkaisuutta vähitellen
+- **Käytä `Bulk`-saatavuutta** manuaalisille käynnistimille käsitelläksesi useita tietueita tehokkaasti
+- **Lisää suodattimet aikaisin** pysäyttääksesi työnkulut, kun kriteerit eivät täyty
+- **Ryhmittele API-kutsuja** ja käytä aikataulutettuja työnkulkuja kiireettömiin prosesseihin
+- **Hide workflow runs** from pages showing all workflows to improve loading performance
+- **Seuraa krediittikulutusta** säännöllisesti kohdassa Asetukset → Laskutus
+
+### Virheiden estäminen
+
+- **Testaa luonnostilassa** ennen työnkulkujen aktivointia
+- **Vahvista API-vastaukset** ja toteuta varatoimet
+- **Käytä kuvaavia vaiheiden nimiä** helpottamaan ylläpitoa
+- **Dokumentoi monimutkainen logiikka** tiimin jäsenille
+
+## Avun saaminen
+
+### Itsepalveluresurssit
+
+- Katso [Työnkulkuominaisuudet](/l/fi/user-guide/workflows/workflow-features) saadaksesi teknisiä yksityiskohtia
+- Check [Workflow Credits](/l/fi/user-guide/workflows/workflow-credits) for optimization tips
+- Explore [Internal Automations](/l/fi/user-guide/workflows/internal-automations) and [External Tool Integration](/l/fi/user-guide/workflows/external-tool-integration) for examples
+
+### Ammattimainen tuki
+
+- Ota yhteyttä [Ammattilaispalvelut](/l/fi/user-guide/workflows/professional-services) monimutkaisissa vianmäärityksissä
+- Ota yhteyttä tukeen osoitteessa contact@twenty.com saadaksesi teknistä apua
+

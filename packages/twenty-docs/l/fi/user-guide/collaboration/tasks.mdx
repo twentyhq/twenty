@@ -1,0 +1,118 @@
+---
+title: Tehtävät
+info: Ymmärrä kuinka hallita tehtäviä tehokkaasti Twentyssä.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Löydä, miten voit hyödyntää Muistiinpanoja ja Tehtäviä paremman tiimityön tueksi.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Hallitse kaikkia tehtäviä työtilassasi **Tehtävät** -toiminnon avulla. Tämä opas näyttää, kuinka luodaan ja hallitaan tehtäviä, vaihdetaan tulevien ja suoritettujen tehtävien välillä, muokataan tehtävien yksityiskohtia ja paljon muuta.
+
+## Yleiset käyttötapaukset
+
+### Sales Follow-ups
+
+- **Meeting Next Steps**: Create tasks for action items discussed during client calls
+- **Proposal Follow-ups**: Set reminders to check on pending proposals
+- **Sopimusten Tarkistukset**: Aikatauluta tehtäviä sopimusneuvotteluille ja hyväksynnöille
+
+### Customer Success
+
+- **Perehdytystehtävät**: Luo automaattisesti perehdytyslistat kaupan sulkeutuessa
+- **Check-in Reminders**: Schedule regular customer health check calls
+- **Uusimisen Valmistelu**: Aseta tehtävät sopimusten uusimisen valmisteluun 90 päivää etukäteen
+
+### Sisäinen Projektinhallinta
+
+Myynnin ja asiakassuhteiden menestyksen lisäksi, Tehtävät tukevat laajempia organisaation tarpeita:
+
+- **Tuotekehitys**: Seuraa ominaisuuksien julkaisuja, virheenkorjauksia ja kehityksen virstanpylväitä
+- **Marketing Campaigns**: Manage campaign launches, content creation, and promotional activities
+- **HR Operations**: Handle recruitment processes, employee onboarding, and performance reviews
+- **Finance Tasks**: Schedule budget reviews, invoice processing, and financial reporting
+- **Operations**: Coordinate facility management, vendor relationships, and process improvements
+
+### Automaattinen Tehtävien Luominen
+
+Käytä [Työnkulkuja](/l/fi/user-guide/workflows/getting-started-workflows) luodaksesi automaattisesti tehtäviä:
+
+- **Kaupan Voittotriggerit**: Automaattisesti luo CS-tiimille osoitetut perehdytystehtävät, kun mahdollisuudet sulkeutuvat
+- **Email Reminders**: Set up weekly email reminders for tasks due this week (sent every Monday)
+- **Pipeline Automation**: Create follow-up tasks when deals stall in specific stages
+- **Meeting Integration**: Auto-generate tasks from meeting recordings or calendar events
+
+## Tehtäväominaisuudet
+
+### Relaatiokentät
+
+Tasks include a `Relations` field that allows you to attach a single task to multiple records across different objects. For example, you can link one follow-up task to:
+
+- The Person you need to contact
+- Yhtiöön, jota he edustavat
+- The Opportunity being pursued
+- Any relevant Notes or other records
+
+This morph many relationship ensures tasks are accessible from all relevant record pages and provides complete context.
+
+### Käyttäjien tägäys
+
+**Huom:** Käyttäjien tägäys tehtävissä ei tällä hetkellä ole saatavilla. Tämä ominaisuus on suunniteltu vuodeksi 2026, jolloin voit mainita tiimin jäseniä ja laukaista ilmoituksia tehtäviä luotaessa tai päivitettäessä.
+
+## Tehtävien luominen
+
+Tehtävien luominen Twenty:ssa on saumatonta. Voit joko:
+
+- Siirry `Tehtävät`-välilehdelle ja paina `+`-painiketta sivun oikeassa yläkulmassa.
+- Use the search function by pressing `cmd/ctrl + k`, then select 'Create task' from the list of quick actions.
+- Go to a `Record page` and press `+` at the top right of the page, or go to the Task tab and press the `Add Task` button.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Lisää Tehtävien Sisältö
+
+Kun olet luonut tehtävän, voit rikastuttaa sitä rikkaalla sisällöllä, kuten otsikoilla, luettelomerkkeillä tai jopa kuvilla. Voit tehdä tämän painamalla `/` ja syöttämällä haluamasi komennon.
+
+## Tehtävien katselu
+
+**Tehtävät**-sivu näyttää kaikki tehtäväsi koko työtilassasi. Täällä voit:
+
+- Filter tasks assigned to a specific user by clicking the button with your name at the top right of the screen.
+- Toggle between upcoming (`To do`) and completed (`Done`) tasks to see what needs attention and what you have accomplished.
+
+Näet myös tietyn tietueen tehtävät sen `Tietuesivulla`.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Tehtävien muokkaaminen
+
+Muokataksesi tehtävää, sinun tulee klikata sen korttia. Tämä avaa sivupaneelin, joka tarjoaa seuraavat ominaisuudet:
+
+- **Assignee and Due date**: Update the assignee or edit the due date.
+- **Kommentit**: Työskentele yhdessä tiimin jäsenten kanssa lisäämällä kommentteja tehtäviin, jotta saat päivityksiä tai palautetta.
+- **Automaatiot**: API:n ja Webhookien ansiosta voit myös automatisoida tehtävän luonnin, joka laukaistaan tietyistä toiminnoista työtilassasi.
+
+## Tehtävien merkitseminen valmiiksi
+
+Merkitäksesi tehtävän valmiiksi:
+
+1. Etsi tehtävä `Tehtävät`-sivulta tai `Tietuesivulta`.
+2. Klikkaa ympyrää tehtäväkortin vasemmalla puolella, se muuttuu merkiksi valmiin tehtävän suorituksesta.
+3. Tehtävän tila päivittyy automaattisesti `Valmis`-merkintään.
+
+Tämä menettely auttaa pitämään ajantasaisen kirjanpidon saavutuksistasi.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Poista tehtävä
+
+Poistaaksesi tehtävän pysyvästi:
+
+1. Avaa poistettava tehtävä napsauttamalla sen korttia joko `Tehtävät`-sivulla tai `Tietuesivulla`.
+2. Napsauta roskakorikuvaketta tehtävän yksityiskohtien paneelin oikeassa yläkulmassa.
+
+Huomaa, että tehtävän poistaminen on pysyvää eikä sitä voi kumota. Harkitse tehtävien merkitsemistä 'Valmis', jos on mahdollista, että tarvitset niitä uudelleen.

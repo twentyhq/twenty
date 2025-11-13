@@ -1,0 +1,121 @@
+---
+title: Gestion de l'affichage
+info: "Créez et personnalisez des vues pour organiser vos données avec des filtres, des tris et différents agencements."
+image: /images/user-guide/table-views/table.png
+sectionInfo: "Fonctionnalités essentielles du CRM pour gérer les prospects, les ventes et les clients"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Options de mise en page
+
+Vous pouvez afficher vos données dans trois mises en page différentes, chacune adaptée à des fins différentes. Des mises en page personnalisées pour personnaliser l'apparence de la page pour chaque type d'enregistrement seront disponibles en décembre 2025.
+
+### Vue par défaut
+
+Chaque objet est doté d'une vue non filtrée, non triée et non supprimable connue sous le nom de vue par défaut. Elle est nommée d'après le nom pluriel de l'objet, tel que `Toutes les entreprises`, `Toutes les personnes`, `Toutes les opportunités`.
+<img src="/images/user-guide/views/default-view.png" style={{width:'100%'}}/>
+
+### Disposition en liste
+
+Le format de table standard qui affiche les enregistrements en lignes et en colonnes. Parfait pour voir des informations détaillées en un coup d'œil et comparer des enregistrements côte à côte.
+
+### Agencement de Liste par Groupes
+
+Organise vos enregistrements en les regroupant en fonction d'un champ sélectionné. Par exemple, vous pouvez regrouper les opportunités par étape, les entreprises par emplacement ou tout autre champ sélectionné. Cela vous aide à voir les tendances et à organiser les enregistrements connexes ensemble.
+
+### Disposition Kanban
+
+Un tableau visuel où chaque colonne représente une étape et chaque enregistrement apparaît comme une carte. Cet agencement est idéal pour gérer les pipelines et les flux de travail où les enregistrements passent par différentes étapes. Pour plus de détails sur l'utilisation des vues Kanban pour la gestion des pipelines, consultez notre article [Pipeline](/l/fr/user-guide/crm-essentials/pipeline).
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+## Créer de nouvelles vues
+
+Il y a trois façons de créer une nouvelle vue :
+
+### Utilisation du menu de commande
+
+Utilisez `Cmd+K` sur Mac (ou `Ctrl+K` sur Windows) pour ouvrir le menu de commandes, puis cliquez sur `Créer une nouvelle vue`.
+
+### Utilisation du menu déroulant de la vue
+
+Cliquez sur le menu déroulant de la vue (en haut à gauche), puis cliquez sur `Ajouter une vue` en bas. À partir de ce menu, vous pouvez :
+
+- Choisir une icône et un nom pour votre vue
+- Sélectionner le type de mise en page (Liste ou Kanban)
+
+<Warning>
+Important : Vous devez d'abord sélectionner la mise en page Liste et ensuite ajouter un Groupé par. Vous ne pouvez pas créer une Liste Groupée par directement à partir de là.
+</Warning>
+- Pour les vues Kanban, sélectionnez quel champ de sélection utiliser comme en-têtes de colonne
+
+<VimeoEmbed videoId="927639721" title="Video demonstration" />
+
+### Créer des vues à partir de filtres existants
+
+Lorsque vous modifiez le tri et le filtrage d'une vue existante, un bouton `Enregistrer sous une nouvelle vue` apparaît. Cela vous permet de créer une nouvelle vue basée sur vos personnalisations actuelles.
+
+<VimeoEmbed videoId="927643495" title="Video demonstration" />
+
+## Rendre les vues exploitables
+
+Les conseils ci-dessous vous montrent comment personnaliser les colonnes de vos vues. Nous ne recommandons pas de conserver toutes les colonnes : ces vues peuvent être simplifiées et rendues exploitables en ajoutant des conditions de tri et en affichant uniquement certaines colonnes qui sont pertinentes à votre cas d'utilisation spécifique.
+
+## Personnalisation de vos vues
+
+Toutes les mises en page prennent en charge les mêmes options de personnalisation : tri, filtrage et sélection des champs. Vous pouvez effectuer des modifications rapides et uniques en cliquant directement sur le nom de la colonne, ou utiliser le `Menu d'options` pour une édition plus complète.
+
+### Actions rapides contre Menu d'options
+
+**Pour des modifications uniques** : Cliquez directement sur les en-têtes de colonne pour trier, ou utilisez les boutons `Déplacer à gauche`, `Déplacer à droite`.
+
+**Pour des modifications multiples** : Utilisez le `Menu d'options` (coin supérieur droit) lorsque vous souhaitez effectuer plusieurs changements d'affilée. Ce menu vous donne accès à :
+
+- **Sélection de la mise en page** (Liste, Liste Groupée par, Kanban)
+- **Options de regroupement** (pour la mise en page Liste Groupée par)
+- **Gestion des champs** (afficher/masquer et réorganiser les colonnes)
+
+### Filtrage de vos données
+
+Vous pouvez appliquer des filtres pour montrer uniquement les enregistrements qui correspondent à vos critères. Cliquez sur `Filtrer` dans la barre d'outils, sélectionnez un champ, choisissez votre condition et définissez la valeur. Vous pouvez ajouter plusieurs filtres pour un filtrage avancé basé sur plusieurs conditions.
+
+<VimeoEmbed videoId="926282262" title="Video demonstration" />
+
+### Tri de vos enregistrements
+
+Contrôlez l'ordre de vos enregistrements en cliquant sur n'importe quel en-tête de colonne pour trier par ce champ. Cliquez à nouveau pour inverser l'ordre de tri. Vous pouvez appliquer plusieurs tris pour une organisation complexe.
+
+<VimeoEmbed videoId="927885588" title="Video demonstration" />
+
+### Gestion des champs et des colonnes
+
+Vous pouvez choisir quels champs afficher et les réorganiser. Pour des modifications rapides, cliquez directement sur un nom de colonne. Pour des modifications multiples, utilisez `Menu d'options → Champs` où vous pouvez :
+
+- Afficher ou masquer les champs à l'aide de l'icône œil
+- Réorganiser les champs par glisser-déposer
+- Effectuer plusieurs changements efficacement en un seul endroit
+
+## Gestion de vos vues
+
+### Fonctionnalités du menu déroulant des vues
+
+Le menu déroulant de la vue (en haut à gauche) est votre hub central pour la gestion des vues. À partir d'ici, vous pouvez :
+
+- **Modifier les noms et les icônes des vues** : Cliquez sur les trois points à côté de n'importe quelle vue
+- **Réorganiser les vues** : Glisser-déposer les vues pour les organiser par priorité
+- **Enregistrer les vues comme favoris** : Les favoris apparaissent juste sous Paramètres pour un accès rapide
+
+### Édition et suppression de vues
+
+Pour modifier ou supprimer des vues, ouvrez le menu déroulant des vues et survolez la vue que vous souhaitez modifier. Cliquez sur les trois points qui apparaissent pour accéder aux options de modification et de suppression.
+
+### Favoris et organisation
+
+Les vues enregistrées comme favoris apparaissent juste sous Paramètres dans votre navigation, vous donnant un accès instantané à vos vues les plus importantes. Utilisez le menu déroulant des vues pour organiser vos vues en les faisant glisser dans l'ordre qui convient le mieux à votre flux de travail.
+
+Pour une organisation des données plus avancée, consultez notre section [Modèle de données](/l/fr/user-guide/data-model/customize-your-data-model) pour en savoir plus sur la personnalisation des champs et des objets.

@@ -1,0 +1,96 @@
+---
+title: Frontend Commands
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+## Hasznos parancsok
+
+### Az alkalmazás indítása
+
+```bash
+npx nx start twenty-front
+```
+
+### GraphQL sémát regenerál az API GraphQL sémája alapján
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+VAGY
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Lint
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## Fordítások
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Teszt
+
+```bash
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+```
+
+## Tech Stack
+
+The project has a clean and simple stack, with minimal boilerplate code.
+
+**Alkalmazás**
+
+- [React](https://react.dev/)
+- [Apollo](https://www.apollographql.com/docs/)
+- [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+- [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+- [TypeScript](https://www.typescriptlang.org/)
+
+**Tesztelés**
+
+- [Jest](https://jestjs.io/)
+- [Storybook](https://storybook.js.org/)
+
+**Eszközök**
+
+- [Yarn](https://yarnpkg.com/)
+- [Craco](https://craco.js.org/docs/)
+- [ESLint](https://eslint.org/)
+
+## Architektúra
+
+### Útvonalkezelés
+
+[React Router](https://reactrouter.com/) kezeli az útvonalakat.
+
+Az elkerülendő [re-renders](/l/hu/developers/frontend-development/best-practices-front#managing-re-renders) érdekében az összes útvonalkezelési logika egy `useEffect`-ben található, a `PageChangeEffect`-ben.
+
+### Állapotkezelés
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) kezeli az állapotkezelést.
+
+További információkért lásd [best practices](/l/hu/developers/frontend-development/best-practices-front#state-management) az állapotkezelésről.
+
+## Tesztelés
+
+[Jest](https://jestjs.io/) szolgál az egységtesztelést végző eszközként, míg [Storybook](https://storybook.js.org/) a komponens teszteléshez.
+
+A Jest főként hasznos funkciók tesztelésére szolgál, és nem maguknak a komponenseknek a tesztelésére.
+
+A Storybook az izolált komponensek viselkedésének tesztelésére, valamint a tervezési rendszer megjelenítésére szolgál.
+

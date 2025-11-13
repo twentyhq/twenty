@@ -1,0 +1,183 @@
+---
+title: Atalhos de Teclado
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+## Introdução
+
+When you need to listen to a hotkey, you would normally use the `onKeyDown` event listener.
+
+No `twenty-front` no entanto, você pode ter conflitos entre as mesmas teclas de atalho que são usadas em diferentes componentes, montados ao mesmo tempo.
+
+Por exemplo, se você tiver uma página que escuta a tecla Enter, e um modal que escuta a tecla Enter, com um componente Select dentro desse modal que escuta a tecla Enter, você pode ter um conflito quando todos estão montados ao mesmo tempo.
+
+## The `useScopedHotkeys` hook
+
+Para lidar com esse problema, temos um gancho personalizado que permite ouvir teclas de atalho sem nenhum conflito.
+
+Você o coloca em um componente, e ele só escutará as teclas de atalho quando o componente estiver montado E quando o **escopo de atalho** especificado estiver ativo.
+
+## Como ouvir teclas de atalho na prática?
+
+Há duas etapas envolvidas na configuração da escuta de teclas de atalho:
+
+1. Defina o [escopo de atalho](#what-is-a-hotkey-scope-) que escutará as teclas de atalho
+2. Use the `useScopedHotkeys` hook to listen to hotkeys
+
+Configurar escopos de atalhos é necessário mesmo em páginas simples, porque outros elementos da interface do usuário, como o menu da esquerda ou o menu de comandos, também podem escutar teclas de atalho.
+
+## Casos de uso para teclas de atalho
+
+Geralmente, você terá dois casos de uso que requerem teclas de atalho:
+
+1. Em uma página ou um componente montado em uma página
+2. Em um componente do tipo modal que obtém o foco devido a uma ação do usuário
+
+O segundo caso de uso pode ocorrer de forma recursiva: um dropdown em um modal, por exemplo.
+
+### Escutando teclas de atalho em uma página
+
+Exemplo :
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Escutando teclas de atalho em um componente do tipo modal
+
+Para este exemplo, usaremos um componente modal que escuta a tecla Escape para avisar seu pai para fechá-lo.
+
+Aqui, a interação do usuário está mudando o escopo.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Então, no componente modal:
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+É importante usar este padrão quando você não tem certeza se apenas usar um useEffect com montagem/desmontagem será suficiente para evitar conflitos.
+
+Esses conflitos podem ser difíceis de depurar, e pode acontecer com mais frequência do que o esperado com useEffects.
+
+## O que é um escopo de atalho?
+
+Um escopo de atalho é uma string que representa um contexto no qual as teclas de atalho estão ativas. É geralmente codificado como um enum.
+
+Quando você muda o escopo de atalho, as teclas de atalho que estão ouvindo esse escopo serão habilitadas e as que estão ouvindo outros escopos serão desabilitadas.
+
+Você pode definir apenas um escopo por vez.
+
+Como exemplo, os escopos de atalho para cada página são definidos no enum `PageHotkeyScope`:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Internamente, o escopo atualmente selecionado é armazenado em um estado do Recoil que é compartilhado em toda a aplicação:
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+Mas esse estado Recoil nunca deve ser manipulado manualmente! Veremos como usá-lo na próxima seção.
+
+## Como funciona internamente?
+
+Fizemos um wrapper fino em cima do [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) que o torna mais performático e evita re-renderizações desnecessárias.
+
+Também criamos um estado do Recoil para gerenciar o estado do escopo de atalho e torná-lo disponível em toda a aplicação.

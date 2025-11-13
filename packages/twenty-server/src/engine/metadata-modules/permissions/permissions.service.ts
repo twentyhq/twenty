@@ -114,6 +114,7 @@ export class PermissionsService {
         [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
         [PermissionFlagType.IMPERSONATE]: false,
         [PermissionFlagType.SSO_BYPASS]: false,
+        [PermissionFlagType.PROFILE_INFORMATION]: false,
       },
       objectsPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
@@ -187,7 +188,11 @@ export class PermissionsService {
     role: RoleEntity,
     setting: PermissionFlagType,
   ): boolean {
-    if (role.canUpdateAllSettings === true) {
+    const hasBasePermission = this.isToolPermission(setting)
+      ? role.canAccessAllTools
+      : role.canUpdateAllSettings;
+
+    if (hasBasePermission === true) {
       return true;
     }
 

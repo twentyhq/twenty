@@ -1,0 +1,330 @@
+---
+title: Helyi beállítások
+description: "Útmutató hozzájárulók (vagy kíváncsi fejlesztők) számára, akik helyileg szeretnék futtatni a Twenty-t."
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Előfeltételek
+
+<Tabs>
+<Tab title="Linux and MacOS">
+
+Mielőtt telepítenéd és használnád a Twenty-t, győződj meg róla, hogy a következőket telepítetted a számítógépeden:
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+<Warning>
+`npm` nem fog működni, használd inkább a `yarn`-t. A Yarn már a Node.js-sel érkezik, így nem kell külön telepíteni.
+Csak futtatnod kell a `corepack enable`-t, hogy bekapcsolásd a Yarn-t, ha még nem tetted meg.
+</Warning>
+
+</Tab>
+
+<Tab title="Windows (WSL)">
+
+1. Telepítsd a WSL-t
+   Nyisd meg a PowerShell-t rendszergazdaként, és futtasd:
+
+```powershell
+wsl --install
+```
+
+Most egy üzenet jelenik meg a számítógép újraindításához. Ha nem, indítsd újra manuálisan.
+
+Újraindítás után megnyílik egy powershell ablak, és telepíti az Ubuntut. Ez eltarthat egy ideig.
+You'll see a prompt to create a username and password for your Ubuntu installation.
+
+2. Telepítsd és konfiguráld a git-et
+
+```bash
+sudo apt-get install git
+
+git config --global user.name "Your Name"
+
+git config --global user.email "youremail@domain.com"
+```
+
+3. Telepítsd az nvm-et, a node.js-t és a yarn-t
+
+<Warning>
+Use `nvm` to install the correct `node` version. A `.nvmrc` biztosítja, hogy minden hozzájáruló ugyanazt a verziót használja.
+</Warning>
+
+```bash
+sudo apt-get install curl
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+```
+
+Zárd be és nyisd újra a terminálodat az nvm használatához. Ezután futtasd a következő parancsokat.
+
+```bash
+
+nvm install # installs recommended node version
+
+nvm use # use recommended node version
+
+corepack enable
+```
+
+</Tab>
+</Tabs>
+
+---
+
+## 1. lépés: Git Clone
+
+A terminálodban futtasd a következő parancsot.
+
+<Tabs>
+<Tab title="SSH (Recommended)">
+Ha még nem állítottál be SSH kulcsokat, itt megtudhatod, hogyan teheted meg: [itt](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+</Tab>
+<Tab title="HTTPS">
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
+
+</Tab>
+</Tabs>
+
+## Step 2: Position yourself at the root
+
+```bash
+cd twenty
+```
+
+Az alábbi lépéseknél az összes parancsot a projekt gyökeréből kell futtatnod.
+
+## 3. lépés: PostgreSQL adatbázis beállítása
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1 (preferred):** To provision your database locally:
+    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your database locally with `brew`:
+
+````
+```bash
+  brew install postgresql@16
+  export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+  brew services start postgresql@16
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+
+You can verify if the PostgreSQL server is running by executing:
+```bash
+  brew services list
+```
+
+The installer might not create the `postgres` user by default when installing
+via Homebrew on MacOS. Instead, it creates a PostgreSQL role that matches your macOS
+username (e.g., "john").
+To check and create the `postgres` user if necessary, follow these steps:
+```bash
+  # Connect to PostgreSQL
+  psql postgres
+  or
+  psql -U $(whoami) -d postgres
+```
+
+Once at the psql prompt (postgres=#), run:
+ ```bash
+  # List existing PostgreSQL roles
+  \du
+```
+You'll see output similar to:
+ ```bash
+  Role name | Attributes  | Member of
+  -----------+-------------+-----------
+  john      | Superuser   | {}
+```
+
+If you do not see a `postgres` role listed, proceed to the next step.
+Create the `postgres` role manually:
+ ```bash
+  CREATE ROLE postgres WITH SUPERUSER LOGIN;
+```
+This creates a superuser role named `postgres` with login access.
+
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    All the following steps are to be run in the WSL terminal (within your virtual machine)
+
+````
+**Option 1:** To provision your Postgresql locally:
+Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+```bash
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+**Option 2:** If you have docker installed:
+Running Docker on WSL adds an extra layer of complexity.
+Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+Most már hozzáférhetsz az adatbázishoz a [localhost:5432](localhost:5432) címen, `postgres` felhasználóval és `postgres` jelszóval.
+
+## 4. lépés: Redis adatbázis (gyorsítótár) beállítása
+
+A Twenty redis gyorsítótárat igényel a legjobb teljesítmény érdekében
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your Redis locally with `brew`:
+    ```bash
+    brew install redis
+    ```
+    Start your redis server:
+    ```brew services start redis```
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+Ha szükséged van egy kliens GUI-ra, javasoljuk a [redis insight](https://redis.io/insight/) (elérhető ingyenes verzió)
+
+## 5. lépés: Környezeti változók beállítása
+
+Használj környezeti változókat vagy `.env` fájlokat a projekt konfigurálásához. További információ [itt](https://docs.twenty.com/l/hu/developers/self-hosting/setup)
+
+Másold a `.env.example` fájlokat a `/front` és a `/server` mappákba:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+## 6. lépés: Függőségek telepítése
+
+To build Twenty server and seed some data into your database, run the following command:
+
+```bash
+yarn
+```
+
+Megjegyzés, hogy `npm` vagy `pnpm` nem fog működni
+
+## 7. lépés: A projekt futtatása
+
+<Tabs>
+  <Tab title="Linux">
+    Linux disztribúciódtól függően a Redis szerver automatikusan elindulhat.
+    Ha nem, ellenőrizd a [Redis telepítési útmutatót](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) az adott disztribúciódhoz.
+  </Tab>
+  <Tab title="Mac OS">
+  A Redis már fut. If not, run:
+    ```bash
+    brew services start redis
+    ```  
+</Tab>
+  <Tab title="Windows (WSL)">
+    Linux disztribúciódtól függően a Redis szerver automatikusan elindulhat.
+    Ha nem, ellenőrizd a [Redis telepítési útmutatót](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) az adott disztribúciódhoz.
+  </Tab>
+</Tabs>
+
+Állítsd be az adatbázisodat a következő paranccsal:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+Indítsd el a szervert, a munkafolyamatokat és a frontend szolgáltatásokat:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+Alternatív megoldásként egyszerre elindíthatod az összes szolgáltatást:
+
+```bash
+npx nx start
+```
+
+## Step 8: Use Twenty
+
+**Frontend**
+
+Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001).
+Bejelentkezhetsz az alapértelmezett demó fiók használatával: `tim@apple.dev` (jelszó: `tim@apple.dev`)
+
+**Backend**
+
+- A Twenty szervere a [http://localhost:3000](http://localhost:3000) címen lesz elérhető
+- A GraphQL API a [http://localhost:3000/graphql](http://localhost:3000/graphql) címen érhető el
+- A REST API elérhetősége: [http://localhost:3000/rest](http://localhost:3000/rest)
+
+## Hibakeresés
+
+Ha bármilyen problémát tapasztalsz, nézd meg a [Hibaelhárítást](https://docs.twenty.com/l/hu/developers/self-hosting/troubleshooting) a megoldásokért.

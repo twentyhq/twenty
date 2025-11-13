@@ -2,12 +2,10 @@ import { RecordCalendarMonthBody } from '@/object-record/record-calendar/month/c
 import { RecordCalendarMonthHeader } from '@/object-record/record-calendar/month/components/RecordCalendarMonthHeader';
 import { RecordCalendarMonthContextProvider } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
-import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
-import { useHandleDragOneCalendarCard } from '@/object-record/record-drag/calendar/hooks/useHandleDragOneCalendarCard';
-import { useEndRecordDrag } from '@/object-record/record-drag/shared/hooks/useEndRecordDrag';
-import { useStartRecordDrag } from '@/object-record/record-drag/shared/hooks/useStartRecordDrag';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
+import { useProcessCalendarCardDrop } from '@/object-record/record-drag/hooks/useProcessCalendarCardDrop';
+import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import {
@@ -24,17 +22,13 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordCalendarMonth = () => {
-  const recordCalendarId = useAvailableComponentInstanceIdOrThrow(
-    RecordCalendarComponentInstanceContext,
-  );
-
   const recordCalendarSelectedDate = useRecoilComponentValue(
     recordCalendarSelectedDateComponentState,
   );
 
-  const { processDragOperation } = useHandleDragOneCalendarCard();
-  const { startDrag } = useStartRecordDrag('calendar', recordCalendarId);
-  const { endDrag } = useEndRecordDrag('calendar', recordCalendarId);
+  const { processCalendarCardDrop } = useProcessCalendarCardDrop();
+  const { startRecordDrag } = useStartRecordDrag();
+  const { endRecordDrag } = useEndRecordDrag();
 
   const {
     firstDayOfMonth,
@@ -47,13 +41,15 @@ export const RecordCalendarMonth = () => {
   } = useRecordCalendarMonthDaysRange(recordCalendarSelectedDate);
 
   const handleDragStart = (start: DragStart) => {
-    startDrag(start, []);
+    startRecordDrag(start, []);
   };
 
   const handleDragEnd: OnDragEndResponder = (result) => {
-    endDrag();
+    endRecordDrag();
+
     if (!result.destination) return;
-    processDragOperation(result);
+
+    processCalendarCardDrop(result);
   };
 
   return (
