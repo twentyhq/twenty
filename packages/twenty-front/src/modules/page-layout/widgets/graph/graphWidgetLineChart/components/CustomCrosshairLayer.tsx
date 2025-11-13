@@ -5,7 +5,7 @@ import { LINE_CHART_CROSSHAIR_TRANSITION_DAMPING } from '@/page-layout/widgets/g
 import { LINE_CHART_CROSSHAIR_TRANSITION_STIFFNESS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartCrosshairTransitionStiffness';
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
 import { LINE_CHART_MARGIN_TOP } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginTop';
-import { graphWidgetLineCrosshairXComponentState } from '@/page-layout/widgets/graph/states/graphWidgetLineCrosshairXComponentState';
+import { graphWidgetLineCrosshairXComponentState } from '@/page-layout/widgets/graph/graphWidgetLineChart/states/graphWidgetLineCrosshairXComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useTheme } from '@emotion/react';
 import { type LineSeries, type Point } from '@nivo/line';
