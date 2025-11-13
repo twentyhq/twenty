@@ -93,7 +93,7 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_WORKFLOW_RUN_STOPPAGE_ENABLED,
+        key: FeatureFlagKey.IS_MESSAGE_FOLDER_CONTROL_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
