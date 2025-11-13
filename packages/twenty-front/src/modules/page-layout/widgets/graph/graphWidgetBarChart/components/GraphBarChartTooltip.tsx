@@ -6,7 +6,6 @@ import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetB
 import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphBarChartTooltipProps = {
@@ -36,44 +35,34 @@ export const GraphBarChartTooltip = ({
     graphWidgetBarTooltipComponentState,
   );
 
-  const tooltipData = useMemo(() => {
-    if (!isDefined(tooltipState)) {
-      return null;
-    }
+  const tooltipData = !isDefined(tooltipState)
+    ? null
+    : getBarChartTooltipData({
+        datum: tooltipState.datum,
+        enrichedKeys,
+        data,
+        indexBy,
+        formatOptions,
+        enableGroupTooltip,
+        layout,
+      });
 
-    return getBarChartTooltipData({
-      datum: tooltipState.datum,
-      enrichedKeys,
-      data,
-      indexBy,
-      formatOptions,
-      enableGroupTooltip,
-      layout,
-    });
-  }, [
-    tooltipState,
-    enrichedKeys,
-    data,
-    indexBy,
-    formatOptions,
-    enableGroupTooltip,
-    layout,
-  ]);
+  let reference = null;
+  let boundary = null;
 
-  const { reference, boundary } = useMemo(() => {
-    if (!isDefined(tooltipState)) {
-      return { reference: null, boundary: null };
-    }
-
+  if (isDefined(tooltipState)) {
     try {
-      return getTooltipReferenceFromBarChartElementAnchor(
+      const positioning = getTooltipReferenceFromBarChartElementAnchor(
         tooltipState.anchorElement,
         containerId,
       );
+      reference = positioning.reference;
+      boundary = positioning.boundary;
     } catch {
-      return { reference: null, boundary: null };
+      reference = null;
+      boundary = null;
     }
-  }, [tooltipState, containerId]);
+  }
 
   if (
     !isDefined(tooltipData) ||

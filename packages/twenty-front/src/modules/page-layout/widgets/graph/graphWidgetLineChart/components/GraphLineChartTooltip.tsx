@@ -5,7 +5,6 @@ import { getLineChartTooltipData } from '@/page-layout/widgets/graph/graphWidget
 import { getTooltipReferenceFromLineChartPointAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromLineChartPointAnchor';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphLineChartTooltipProps = {
@@ -26,33 +25,31 @@ export const GraphLineChartTooltip = ({
   const tooltipState = useRecoilComponentValue(
     graphWidgetLineTooltipComponentState,
   );
-  const tooltipData = useMemo(() => {
-    if (!tooltipState) {
-      return null;
-    }
+  const tooltipData = !isDefined(tooltipState)
+    ? null
+    : getLineChartTooltipData({
+        slice: tooltipState.slice,
+        enrichedSeries,
+        formatOptions,
+      });
 
-    return getLineChartTooltipData({
-      slice: tooltipState.slice,
-      enrichedSeries,
-      formatOptions,
-    });
-  }, [tooltipState, enrichedSeries, formatOptions]);
+  let reference = null;
+  let boundary = null;
 
-  const { reference, boundary } = useMemo(() => {
-    if (!tooltipState) {
-      return { reference: null, boundary: null };
-    }
-
+  if (isDefined(tooltipState)) {
     try {
-      return getTooltipReferenceFromLineChartPointAnchor(
+      const positioning = getTooltipReferenceFromLineChartPointAnchor(
         containerId,
         tooltipState.offsetLeft,
         tooltipState.offsetTop,
       );
+      reference = positioning.reference;
+      boundary = positioning.boundary;
     } catch {
-      return { reference: null, boundary: null };
+      reference = null;
+      boundary = null;
     }
-  }, [containerId, tooltipState]);
+  }
 
   if (
     !isDefined(tooltipData) ||
