@@ -3,6 +3,7 @@ name: twenty
 services:
   server:
     image: ghcr.io/connorbelez/flcrmlms:${TAG:-latest}
+    platform: linux/amd64
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     ports:
@@ -60,6 +61,7 @@ services:
 
   worker:
     image: ghcr.io/connorbelez/flcrmlms:${TAG:-latest}
+    platform: linux/amd64
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     command: ['yarn', 'worker:prod']
