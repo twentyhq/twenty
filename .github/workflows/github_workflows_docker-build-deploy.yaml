@@ -31,12 +31,12 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -65,7 +65,7 @@ jobs:
         with:
           context: .
           file: ./packages/twenty-docker/twenty/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
