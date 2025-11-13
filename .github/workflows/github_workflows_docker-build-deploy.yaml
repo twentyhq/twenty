@@ -126,6 +126,7 @@ jobs:
             -e PG_DATABASE_URL="${{ secrets.PG_DATABASE_URL }}" \
             -e REDIS_URL="${{ secrets.REDIS_URL }}" \
             -e APP_SECRET="${{ secrets.APP_SECRET }}" \
+            -e APP_VERSION="0.0.0-${{ github.sha }}" \
             -e DISABLE_CRON_JOBS_REGISTRATION=true \
             ${{ needs.build-and-push.outputs.image-name }}:${{ needs.build-and-push.outputs.image-tag }} \
             sh -c "yarn database:migrate:prod && yarn command:prod upgrade"

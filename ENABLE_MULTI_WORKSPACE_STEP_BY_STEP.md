@@ -30,7 +30,7 @@ DEFAULT_SUBDOMAIN=app
 NODE_ENV=development
 PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/default
 REDIS_URL=redis://localhost:6379
-APP_SECRET=replace_me_with_a_random_string
+APP_SECRET=mk+mc0YBcVlj4HParyCmdA+2VP0q/7PRqupMAYCFhu0=
 SIGN_IN_PREFILLED=true
 
 FRONTEND_URL=http://localhost:3001
@@ -306,7 +306,7 @@ fetch('http://localhost:3000/client-config')
 const handleChange = async () => {
   console.log('Switching workspace to:', availableWorkspace.displayName);
   console.log('isMultiWorkspaceEnabled:', isMultiWorkspaceEnabled);
-  
+
   await redirectToWorkspaceDomain(
     getWorkspaceUrl(availableWorkspace.workspaceUrls),
     pathname,
