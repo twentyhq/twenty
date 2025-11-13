@@ -146,7 +146,6 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsDeveloperDefaultSignInPrefilled(clientConfig.signInPrefilled);
       setIsMultiWorkspaceEnabled(clientConfig.isMultiWorkspaceEnabled);
       setIsEmailVerificationRequired(clientConfig.isEmailVerificationRequired);
-      setIsDebugMode(clientConfig.debugMode);
       setBilling(clientConfig.billing);
       setSupportChat(clientConfig.support);
 
@@ -207,7 +206,6 @@ export const useClientConfig = (): UseClientConfigResult => {
     setCaptcha,
     setChromeExtensionId,
     setClientConfigApiStatus,
-    setIsDebugMode,
     setDomainConfiguration,
     setGoogleCalendarEnabled,
     setGoogleMessagingEnabled,
