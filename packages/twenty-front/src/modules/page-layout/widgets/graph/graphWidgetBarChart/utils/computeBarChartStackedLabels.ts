@@ -1,0 +1,58 @@
+import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { type BarChartLabelData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLabelData';
+import { type ComputedBarDatum } from '@nivo/bar';
+import { isDefined } from 'twenty-shared/utils';
+
+export const computeBarChartStackedLabels = (
+  bars: readonly ComputedBarDatum<BarChartDataItem>[],
+): BarChartLabelData[] => {
+  const groupTotals = new Map<
+    string,
+    {
+      total: number;
+      maxY: number;
+      maxX: number;
+      bars: ComputedBarDatum<BarChartDataItem>[];
+    }
+  >();
+
+  for (const bar of bars) {
+    const groupKey = String(bar.data.indexValue);
+    const existingGroup = groupTotals.get(groupKey);
+
+    if (isDefined(existingGroup)) {
+      existingGroup.total += Number(bar.data.value);
+      existingGroup.maxY = Math.min(existingGroup.maxY, bar.y);
+      existingGroup.maxX = Math.max(existingGroup.maxX, bar.x + bar.width);
+      existingGroup.bars.push(bar);
+    } else {
+      groupTotals.set(groupKey, {
+        total: Number(bar.data.value),
+        maxY: bar.y,
+        maxX: bar.x + bar.width,
+        bars: [bar],
+      });
+    }
+  }
+
+  return Array.from(groupTotals.entries()).map(
+    ([groupKey, { total, maxY, maxX, bars: groupBars }]) => {
+      const centerX =
+        groupBars.reduce((acc, bar) => acc + bar.x + bar.width / 2, 0) /
+        groupBars.length;
+      const centerY =
+        groupBars.reduce((acc, bar) => acc + bar.y + bar.height / 2, 0) /
+        groupBars.length;
+
+      return {
+        key: `total-${groupKey}`,
+        value: total,
+        verticalX: centerX,
+        verticalY: maxY,
+        horizontalX: maxX,
+        horizontalY: centerY,
+        shouldRenderBelow: false,
+      };
+    },
+  );
+};
