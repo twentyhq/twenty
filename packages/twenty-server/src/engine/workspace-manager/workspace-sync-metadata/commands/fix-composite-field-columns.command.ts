@@ -4,8 +4,8 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import {
-    ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-    type RunOnWorkspaceArgs,
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -46,11 +46,10 @@ export class FixCompositeFieldColumnsCommand extends ActiveOrSuspendedWorkspaces
     );
 
     // Find all active composite fields in this workspace
-    const objectMetadataCollection =
-      await this.objectMetadataRepository.find({
-        where: { workspaceId, isActive: true },
-        relations: ['fields'],
-      });
+    const objectMetadataCollection = await this.objectMetadataRepository.find({
+      where: { workspaceId, isActive: true },
+      relations: ['fields'],
+    });
 
     let totalColumnsAdded = 0;
 
@@ -86,10 +85,10 @@ export class FixCompositeFieldColumnsCommand extends ActiveOrSuspendedWorkspaces
           try {
             const columnExists = await queryRunner.query(
               `
-              SELECT column_name 
-              FROM information_schema.columns 
-              WHERE table_schema = $1 
-                AND table_name = $2 
+              SELECT column_name
+              FROM information_schema.columns
+              WHERE table_schema = $1
+                AND table_name = $2
                 AND column_name = $3
             `,
               [schemaName, tableName, columnName],
@@ -120,9 +119,7 @@ export class FixCompositeFieldColumnsCommand extends ActiveOrSuspendedWorkspaces
     }
 
     if (totalColumnsAdded === 0) {
-      this.logger.log(
-        `No missing columns found for workspace ${workspaceId}`,
-      );
+      this.logger.log(`No missing columns found for workspace ${workspaceId}`);
     } else {
       this.logger.log(
         `Added ${totalColumnsAdded} missing composite field columns for workspace ${workspaceId}`,
@@ -147,4 +144,3 @@ export class FixCompositeFieldColumnsCommand extends ActiveOrSuspendedWorkspaces
     return typeMap[fieldType] || 'jsonb';
   }
 }
-
