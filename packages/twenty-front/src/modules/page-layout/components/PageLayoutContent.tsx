@@ -3,14 +3,13 @@ import { PageLayoutGridLayout } from '@/page-layout/components/PageLayoutGridLay
 import { PageLayoutVerticalListEditor } from '@/page-layout/components/PageLayoutVerticalListEditor';
 import { PageLayoutVerticalListViewer } from '@/page-layout/components/PageLayoutVerticalListViewer';
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
+import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
 import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledContainer = styled.div<{ isInPinnedTab: boolean }>`
@@ -33,19 +32,14 @@ export const PageLayoutContent = () => {
     isPageLayoutInEditModeComponentState,
   );
 
-  const { currentPageLayout } = useCurrentPageLayout();
   const { tabId } = usePageLayoutContentContext();
 
   const { reorderWidgets } = useReorderPageLayoutWidgets(tabId);
 
-  const activeTab = currentPageLayout?.tabs.find((tab) => tab.id === tabId);
+  const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(tabId);
 
   const { layoutMode } = usePageLayoutContentContext();
   const { isInPinnedTab } = useIsInPinnedTab();
-
-  if (!isDefined(currentPageLayout) || !isDefined(activeTab)) {
-    return null;
-  }
 
   const isCanvasLayout = isRecordPageEnabled && layoutMode === 'canvas';
   const isVerticalList = isRecordPageEnabled && layoutMode === 'vertical-list';

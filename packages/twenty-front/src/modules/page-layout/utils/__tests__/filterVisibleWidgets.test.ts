@@ -34,8 +34,9 @@ describe('filterVisibleWidgets', () => {
       createMockWidget('widget-3'),
     ];
 
-    const result = filterVisibleWidgets(widgets, {
-      device: 'DESKTOP',
+    const result = filterVisibleWidgets({
+      widgets,
+      context: { device: 'DESKTOP' },
     });
 
     expect(result).toHaveLength(3);
@@ -53,8 +54,9 @@ describe('filterVisibleWidgets', () => {
       }),
     ];
 
-    const result = filterVisibleWidgets(widgets, {
-      device: 'MOBILE',
+    const result = filterVisibleWidgets({
+      widgets,
+      context: { device: 'MOBILE' },
     });
 
     expect(result).toHaveLength(2);
@@ -72,8 +74,9 @@ describe('filterVisibleWidgets', () => {
       }),
     ];
 
-    const result = filterVisibleWidgets(widgets, {
-      device: 'DESKTOP',
+    const result = filterVisibleWidgets({
+      widgets,
+      context: { device: 'DESKTOP' },
     });
 
     expect(result).toHaveLength(2);
@@ -81,8 +84,9 @@ describe('filterVisibleWidgets', () => {
   });
 
   it('should handle empty widgets array', () => {
-    const result = filterVisibleWidgets([], {
-      device: 'DESKTOP',
+    const result = filterVisibleWidgets({
+      widgets: [],
+      context: { device: 'DESKTOP' },
     });
 
     expect(result).toHaveLength(0);
@@ -98,8 +102,9 @@ describe('filterVisibleWidgets', () => {
     ];
     const originalLength = widgets.length;
 
-    filterVisibleWidgets(widgets, {
-      device: 'DESKTOP',
+    filterVisibleWidgets({
+      widgets,
+      context: { device: 'DESKTOP' },
     });
 
     expect(widgets).toHaveLength(originalLength);

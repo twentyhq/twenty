@@ -1,5 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
+import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 
 type FilterTabsWithVisibleWidgetsParams = {
@@ -15,14 +15,12 @@ export const filterTabsWithVisibleWidgets = ({
   isInRightDrawer,
   isEditMode,
 }: FilterTabsWithVisibleWidgetsParams): PageLayoutTab[] => {
-  const context: WidgetVisibilityContext = {
-    device: isMobile || isInRightDrawer ? 'MOBILE' : 'DESKTOP',
-  };
+  const context = buildWidgetVisibilityContext({ isMobile, isInRightDrawer });
 
   return tabs
     .map((tab) => ({
       ...tab,
-      widgets: filterVisibleWidgets(tab.widgets, context),
+      widgets: filterVisibleWidgets({ widgets: tab.widgets, context }),
     }))
     .filter((tab) => {
       if (isEditMode) {
