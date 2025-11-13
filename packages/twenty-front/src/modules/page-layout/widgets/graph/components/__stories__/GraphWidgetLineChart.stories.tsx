@@ -1,13 +1,21 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-
-import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart';
 import { type ComponentProps } from 'react';
+
+import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
+import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphWidgetLineChart';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetLineChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLineChart',
   component: GraphWidgetLineChart,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <GraphWidgetTestWrapper>
+        <Story />
+      </GraphWidgetTestWrapper>
+    ),
+    ComponentDecorator,
+  ],
   parameters: {
     layout: 'centered',
   },
@@ -34,7 +42,7 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
     showGrid: {
       control: 'boolean',
     },
-    enablePoints: {
+    enablePointLabel: {
       control: 'boolean',
     },
     xAxisLabel: {
@@ -43,29 +51,14 @@ const meta: Meta<typeof GraphWidgetLineChart> = {
     yAxisLabel: {
       control: 'text',
     },
-    enableArea: {
-      control: 'boolean',
-    },
-    stackedArea: {
-      control: 'boolean',
-    },
-    curve: {
-      control: 'select',
-      options: [
-        'linear',
-        'monotoneX',
-        'step',
-        'stepBefore',
-        'stepAfter',
-        'natural',
-      ],
-    },
-    lineWidth: {
+    rangeMin: {
       control: 'number',
     },
-    enableSlices: {
-      control: 'select',
-      options: ['x', 'y', false],
+    rangeMax: {
+      control: 'number',
+    },
+    omitNullValues: {
+      control: 'boolean',
     },
   },
 };
@@ -85,20 +78,16 @@ const renderChart = (args: ChartArgs) => (
       data={args.data}
       showLegend={args.showLegend}
       showGrid={args.showGrid}
-      enablePoints={args.enablePoints}
+      enablePointLabel={args.enablePointLabel}
       xAxisLabel={args.xAxisLabel}
       yAxisLabel={args.yAxisLabel}
+      rangeMin={args.rangeMin}
+      rangeMax={args.rangeMax}
+      omitNullValues={args.omitNullValues}
       displayType={args.displayType}
       prefix={args.prefix}
       suffix={args.suffix}
       decimals={args.decimals}
-      enableArea={args.enableArea}
-      stackedArea={args.stackedArea}
-      curve={args.curve}
-      lineWidth={args.lineWidth}
-      enableSlices={args.enableSlices}
-      xScale={args.xScale}
-      yScale={args.yScale}
     />
   </Container>
 );
@@ -129,7 +118,6 @@ export const Default: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
     xAxisLabel: 'Month',
     yAxisLabel: 'Value',
     displayType: 'shortNumber',
@@ -156,10 +144,8 @@ export const WithArea: Story = {
         data: generateLinearData(12),
       },
     ],
-    enableArea: true,
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
     xAxisLabel: 'Period',
     yAxisLabel: 'Amount',
     displayType: 'currency',
@@ -190,43 +176,12 @@ export const StackedArea: Story = {
         data: generateLinearData(8),
       },
     ],
-    enableArea: true,
-    stackedArea: true,
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
-    curve: 'monotoneX',
     xAxisLabel: 'Quarter',
     yAxisLabel: 'Revenue',
-    yScale: {
-      type: 'linear',
-      min: 0,
-      max: 'auto',
-    },
     displayType: 'shortNumber',
     prefix: '$',
-  },
-};
-
-export const WithPoints: Story = {
-  render: renderChart,
-  args: {
-    id: 'line-chart-points',
-    data: [
-      {
-        id: 'performance',
-        label: 'Performance',
-        color: 'pink',
-        data: generateLinearData(8),
-      },
-    ],
-    showLegend: true,
-    showGrid: true,
-    enablePoints: true,
-    lineWidth: 3,
-    xAxisLabel: 'Week',
-    yAxisLabel: 'Score',
-    displayType: 'percentage',
   },
 };
 
@@ -242,11 +197,8 @@ export const StepChart: Story = {
         data: generateLinearData(10),
       },
     ],
-    curve: 'step',
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
-    lineWidth: 2,
     xAxisLabel: 'Day',
     yAxisLabel: 'Units',
     displayType: 'number',
@@ -287,15 +239,8 @@ export const LogScaleDemo: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
     xAxisLabel: 'Time',
     yAxisLabel: 'Value (log scale)',
-    yScale: {
-      type: 'log',
-      base: 10,
-      min: 'auto',
-      max: 'auto',
-    },
     displayType: 'shortNumber',
   },
 };
@@ -322,39 +267,9 @@ export const WithNullValues: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
     xAxisLabel: 'Time',
     yAxisLabel: 'Measurement',
     displayType: 'number',
-  },
-};
-
-export const InteractiveWithLinks: Story = {
-  render: renderChart,
-  args: {
-    id: 'line-chart-interactive',
-    data: [
-      {
-        id: 'clickable',
-        label: 'Click Points',
-        color: 'turquoise',
-        data: [
-          { x: 0, y: 30, to: '#point-0' },
-          { x: 1, y: 45, to: '#point-1' },
-          { x: 2, y: 38, to: '#point-2' },
-          { x: 3, y: 52, to: '#point-3' },
-          { x: 4, y: 48, to: '#point-4' },
-          { x: 5, y: 60, to: '#point-5' },
-        ],
-      },
-    ],
-    showLegend: true,
-    showGrid: true,
-    enablePoints: true,
-    enableSlices: 'x',
-    xAxisLabel: 'Step',
-    yAxisLabel: 'Progress',
-    displayType: 'percentage',
   },
 };
 
@@ -368,14 +283,12 @@ export const MultiSeriesMixed: Story = {
         label: 'Actual',
         color: 'blue',
         data: generateLinearData(12),
-        enableArea: true,
       },
       {
         id: 'forecast',
         label: 'Forecast',
         color: 'purple',
         data: generateLinearData(12),
-        enableArea: false,
       },
       {
         id: 'target',
@@ -385,18 +298,13 @@ export const MultiSeriesMixed: Story = {
           ...dataPoint,
           y: 75,
         })),
-        enableArea: false,
       },
     ],
-    enableArea: false,
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
-    curve: 'monotoneX',
     xAxisLabel: 'Month',
     yAxisLabel: 'Value',
     displayType: 'shortNumber',
-    enableSlices: 'x',
   },
 };
 
@@ -451,11 +359,8 @@ export const OverlappingGradientBlend: Story = {
         ],
       },
     ],
-    enableArea: true,
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
-    curve: 'monotoneX',
     xAxisLabel: 'Time',
     yAxisLabel: 'Value',
     displayType: 'number',
@@ -496,11 +401,8 @@ export const HighContrastOverlap: Story = {
         ],
       },
     ],
-    enableArea: true,
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
-    curve: 'natural',
     xAxisLabel: 'Day',
     yAxisLabel: 'Score',
     displayType: 'number',
@@ -529,8 +431,6 @@ export const CurveComparison: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
-    curve: 'linear',
     xAxisLabel: 'X Axis',
     yAxisLabel: 'Y Axis',
     displayType: 'number',
@@ -584,8 +484,6 @@ export const StepInterpolations: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
-    curve: 'step',
     xAxisLabel: 'Time',
     yAxisLabel: 'Value',
     displayType: 'number',
@@ -626,11 +524,8 @@ export const NaturalVsMonotone: Story = {
         ],
       },
     ],
-    enableArea: true,
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
-    curve: 'natural',
     xAxisLabel: 'Sample',
     yAxisLabel: 'Measurement',
     displayType: 'number',
@@ -684,9 +579,6 @@ export const SliceTooltipDemo: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
-    enableSlices: 'x',
-    xScale: { type: 'point' },
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',
     displayType: 'shortNumber',
@@ -741,69 +633,10 @@ export const PointTooltipDemo: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: true,
-    enableSlices: 'x',
-    xScale: { type: 'point' },
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',
     displayType: 'shortNumber',
     prefix: '$',
-  },
-};
-
-export const IntenseOverlapRGB: Story = {
-  render: renderChart,
-  args: {
-    id: 'line-chart-rgb',
-    data: [
-      {
-        id: 'red',
-        label: 'Red Channel',
-        color: 'red',
-        data: [
-          { x: 0, y: 70 },
-          { x: 1, y: 85 },
-          { x: 2, y: 75 },
-          { x: 3, y: 90 },
-          { x: 4, y: 80 },
-          { x: 5, y: 85 },
-        ],
-      },
-      {
-        id: 'green',
-        label: 'Green Channel',
-        color: 'turquoise',
-        data: [
-          { x: 0, y: 65 },
-          { x: 1, y: 75 },
-          { x: 2, y: 85 },
-          { x: 3, y: 80 },
-          { x: 4, y: 75 },
-          { x: 5, y: 70 },
-        ],
-      },
-      {
-        id: 'blue',
-        label: 'Blue Channel',
-        color: 'blue',
-        data: [
-          { x: 0, y: 60 },
-          { x: 1, y: 70 },
-          { x: 2, y: 80 },
-          { x: 3, y: 75 },
-          { x: 4, y: 85 },
-          { x: 5, y: 80 },
-        ],
-      },
-    ],
-    enableArea: true,
-    showLegend: true,
-    showGrid: true,
-    enablePoints: false,
-    curve: 'monotoneX',
-    xAxisLabel: 'Position',
-    yAxisLabel: 'Intensity',
-    displayType: 'percentage',
   },
 };
 
@@ -827,8 +660,6 @@ export const Catalog: Story = {
     ],
     showLegend: true,
     showGrid: true,
-    enablePoints: false,
-    enableArea: true,
   },
   decorators: [CatalogDecorator],
   parameters: {
