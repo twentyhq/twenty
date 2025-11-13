@@ -45,7 +45,8 @@
       "options": {
         "cwd": "packages/twenty-cli",
         "command": "tsc --noEmit --project tsconfig.lib.json"
-      }
+      },
+      "dependsOn": ["build"]
     },
     "lint": {
       "options": {
