@@ -8,9 +8,8 @@ export const main = async (params: { recipient?: string }) => {
     // Uncomment the code here
     // Make a second app sync
     // Please find related topic https://github.com/twentyhq/twenty/pull/15791#issuecomment-3528306964
-
     // const client = createClient({
-    //   url: 'http://localhost:3000/graphql',
+    //   url: `${process.env.TWENTY_API_URL}/graphql`,
     //   headers: {
     //     'Content-Type': 'application/json',
     //     Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
