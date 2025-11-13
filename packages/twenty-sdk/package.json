@@ -7,8 +7,7 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "application",
-    "client"
+    "application"
   ],
   "scripts": {
     "build": "vite build"
@@ -21,9 +20,6 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
-    "@genql/cli": "^3.0.3",
-    "axios": "^1.6.2",
-    "graphql": "^16.8.1",
     "twenty-shared": "workspace:*"
   },
   "exports": {
@@ -36,20 +32,12 @@
       "types": "./dist/application/index.d.ts",
       "import": "./dist/application.mjs",
       "require": "./dist/application.cjs"
-    },
-    "./client": {
-      "types": "./dist/client/index.d.ts",
-      "import": "./dist/client.mjs",
-      "require": "./dist/client.cjs"
     }
   },
   "typesVersions": {
     "*": {
       "application": [
         "dist/application/index.d.ts"
-      ],
-      "client": [
-        "dist/client/index.d.ts"
       ]
     }
   }

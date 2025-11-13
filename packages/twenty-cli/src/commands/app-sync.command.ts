@@ -1,9 +1,9 @@
 import chalk from 'chalk';
-import { generateClient } from 'twenty-sdk/client';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { ApiService } from '../services/api.service';
 import { ConfigService } from '../services/config.service';
 import { ApiResponse } from '../types/config.types';
+import { generateClient } from '../utils/generate-client';
 import { loadManifest } from '../utils/load-manifest';
 
 export class AppSyncCommand {

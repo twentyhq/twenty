@@ -17,9 +17,7 @@
       "outputs": [
         "{projectRoot}/dist",
         "{projectRoot}/application/package.json",
-        "{projectRoot}/application/dist",
-        "{projectRoot}/client/package.json",
-        "{projectRoot}/client/dist"
+        "{projectRoot}/application/dist"
       ],
       "options": {
         "cwd": "packages/twenty-sdk",

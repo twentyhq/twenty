@@ -1,6 +1,6 @@
-import { fetchGraphQLSchema } from '@/client/fetch-graphql-schema';
 import { generate } from '@genql/cli';
 import path from 'path';
+import { fetchGraphQLSchema } from './fetch-graphql-schema';
 
 type GenerateClientOptions = {
   url: string;

@@ -25,6 +25,8 @@
   ],
   "license": "AGPL-3.0",
   "dependencies": {
+    "@genql/cli": "^3.0.3",
+    "graphql": "^16.8.1",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "axios": "^1.6.0",
@@ -38,7 +40,6 @@
     "lodash.camelcase": "^4.3.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.kebabcase": "^4.1.1",
-    "twenty-sdk": "workspace:*",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0"
   },
