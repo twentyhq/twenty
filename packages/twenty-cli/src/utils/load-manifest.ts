@@ -1,52 +1,52 @@
 import * as fs from 'fs-extra';
+import { join, posix, relative, resolve, sep } from 'path';
 import {
-  sys,
-  getDecorators,
-  readConfigFile,
-  parseJsonConfigFileContent,
-  formatDiagnosticsWithColorAndContext,
-  createProgram,
   Decorator,
-  isPropertyAccessExpression,
-  isNumericLiteral,
-  SyntaxKind,
-  isArrayLiteralExpression,
   Expression,
-  isPropertyAssignment,
-  isComputedPropertyName,
-  isStringLiteralLike,
-  isShorthandPropertyAssignment,
-  isIdentifier,
   FunctionDeclaration,
-  VariableDeclaration,
-  Program,
-  Node,
-  isClassDeclaration,
-  isCallExpression,
-  isObjectLiteralExpression,
-  forEachChild,
-  SourceFile,
-  isVariableStatement,
-  isArrowFunction,
-  isFunctionExpression,
-  isExportAssignment,
   Modifier,
-  isPropertyDeclaration,
+  Node,
+  Program,
+  SourceFile,
+  SyntaxKind,
+  VariableDeclaration,
+  createProgram,
+  forEachChild,
+  formatDiagnosticsWithColorAndContext,
+  getDecorators,
+  isArrayLiteralExpression,
+  isArrowFunction,
+  isCallExpression,
+  isClassDeclaration,
+  isComputedPropertyName,
+  isExportAssignment,
+  isFunctionExpression,
+  isIdentifier,
   isNoSubstitutionTemplateLiteral,
+  isNumericLiteral,
+  isObjectLiteralExpression,
+  isPropertyAccessExpression,
+  isPropertyAssignment,
+  isPropertyDeclaration,
+  isShorthandPropertyAssignment,
+  isStringLiteralLike,
   isTemplateExpression,
+  isVariableStatement,
+  parseJsonConfigFileContent,
+  readConfigFile,
+  sys,
 } from 'typescript';
 import {
   AppManifest,
   Application,
+  FieldMetadata,
   ObjectManifest,
   PackageJson,
   ServerlessFunctionManifest,
   Sources,
-  FieldMetadata,
 } from '../types/config.types';
-import { posix, relative, sep, resolve, join } from 'path';
-import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
 import { findPathFile } from '../utils/find-path-file';
+import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
 
 type JSONValue =
   | string
@@ -516,13 +516,12 @@ export const loadManifest = async (
 
   validateProgram(program);
 
-  const [objects, serverlessFunctions, application, sources] =
-    await Promise.all([
-      Promise.resolve(collectObjects(program)),
-      Promise.resolve(collectServerlessFunctions(program, appPath)),
-      Promise.resolve(extractTwentyAppConfig(program)),
-      loadFolderContentIntoJson(appPath),
-    ]);
+  const [objects, serverlessFunctions, application, sources] = [
+    collectObjects(program),
+    collectServerlessFunctions(program, appPath),
+    extractTwentyAppConfig(program),
+    await loadFolderContentIntoJson(appPath),
+  ];
 
   return {
     packageJson,
