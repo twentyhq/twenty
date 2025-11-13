@@ -138,7 +138,7 @@ export const WorkflowEditTriggerCronForm = ({
       <WorkflowStepBody>
         <FormSelectFieldInput
           label={t`Trigger interval`}
-          hint="Cron will be triggered at UTC time"
+          hint={t`Cron will be triggered at UTC time`}
           defaultValue={trigger.settings.type}
           options={CRON_TRIGGER_INTERVAL_OPTIONS}
           readonly={triggerOptions.readonly}
