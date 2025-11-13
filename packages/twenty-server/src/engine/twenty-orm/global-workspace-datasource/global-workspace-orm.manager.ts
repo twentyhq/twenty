@@ -65,7 +65,7 @@ export class GlobalWorkspaceOrmManager {
     return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSource();
   }
 
-  async executeInWorkspaceAuthContext<T>(
+  async executeInWorkspaceContext<T>(
     authContext: WorkspaceAuthContext,
     fn: () => T | Promise<T>,
   ): Promise<T> {
