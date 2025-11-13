@@ -7,7 +7,6 @@ export type DataMessagePart = {
       contextBuildTimeMs?: number;
       agentExecutionStartTimeMs?: number;
       agentExecutionTimeMs?: number;
-      timeToFirstTokenMs?: number;
       toolGenerationTimeMs?: number;
       agentContextBuildTimeMs?: number;
       aiRequestPrepTimeMs?: number;

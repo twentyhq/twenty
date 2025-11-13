@@ -86,33 +86,6 @@ export class AgentStreamingService {
             },
           });
 
-          const contextBuildStart = Date.now();
-          let contextString = '';
-          let contextRecordCount = 0;
-
-          if (recordIdsByObjectMetadataNameSingular.length > 0) {
-            try {
-              contextString =
-                await this.agentExecutionService.getContextForSystemPrompt(
-                  workspace,
-                  recordIdsByObjectMetadataNameSingular,
-                  userWorkspaceId,
-                );
-              const contextData = JSON.parse(contextString);
-
-              contextRecordCount = Array.isArray(contextData)
-                ? contextData.length
-                : 0;
-            } catch (error) {
-              this.logger.warn(
-                'Failed to build context for debug info:',
-                error,
-              );
-            }
-          }
-
-          const contextBuildTime = Date.now() - contextBuildStart;
-
           const routingStart = Date.now();
           const routeResult = await this.aiRouterService.routeMessage(
             {
@@ -169,6 +142,20 @@ export class AgentStreamingService {
             }
           }
 
+          const agentExecutionStart = Date.now();
+
+          const {
+            stream: result,
+            timings,
+            contextInfo,
+          } = await this.agentExecutionService.streamChatResponse({
+            workspace,
+            agentId: agent.id,
+            userWorkspaceId,
+            messages,
+            recordIdsByObjectMetadataNameSingular,
+          });
+
           const routedStatusPart = {
             type: 'data-routing-status' as const,
             id: 'routing-status',
@@ -177,18 +164,15 @@ export class AgentStreamingService {
               state: 'routed',
               debug: {
                 routingTimeMs: routingTime,
-                contextBuildTimeMs: contextBuildTime,
                 agentExecutionStartTimeMs: Date.now() - startTime,
                 selectedAgentId: agent.id,
                 selectedAgentLabel: agent.label,
                 availableAgents: debugInfo?.availableAgents,
                 routerModel: debugInfo?.routerModel,
                 agentModel: agent.modelId,
-                context: contextString || undefined,
-                contextRecordCount,
-                contextSizeBytes: contextString
-                  ? Buffer.byteLength(contextString, 'utf8')
-                  : 0,
+                context: contextInfo.contextString || undefined,
+                contextRecordCount: contextInfo.contextRecordCount,
+                contextSizeBytes: contextInfo.contextSizeBytes,
                 routingPromptTokens: debugInfo?.promptTokens,
                 routingCompletionTokens: debugInfo?.completionTokens,
                 routingTotalTokens: debugInfo?.totalTokens,
@@ -198,33 +182,6 @@ export class AgentStreamingService {
           };
 
           writer.write(routedStatusPart);
-
-          const agentExecutionStart = Date.now();
-          let timeToFirstToken: number | undefined;
-          let firstTokenReceived = false;
-
-          const { stream: result, timings } =
-            await this.agentExecutionService.streamChatResponse({
-              workspace,
-              agentId: agent.id,
-              userWorkspaceId,
-              messages,
-              recordIdsByObjectMetadataNameSingular,
-            });
-
-          (async () => {
-            try {
-              for await (const chunk of result.textStream) {
-                if (!firstTokenReceived && chunk) {
-                  timeToFirstToken = Date.now() - agentExecutionStart;
-                  firstTokenReceived = true;
-                  break;
-                }
-              }
-            } catch {
-              // Timing is optional, ignore errors
-            }
-          })();
 
           writer.merge(
             result.toUIMessageStream({
@@ -317,7 +274,6 @@ export class AgentStreamingService {
                     debug: {
                       ...routedStatusPart.data.debug,
                       agentExecutionTimeMs: agentExecutionTime,
-                      timeToFirstTokenMs: timeToFirstToken,
                       toolCallCount,
                       toolCount: timings.toolCount,
                       agentContextBuildTimeMs: timings.contextBuildTimeMs,
