@@ -2,6 +2,7 @@ import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/Char
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useGraphBarChartWidgetData';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
+import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -48,7 +49,11 @@ export const GraphWidgetBarChartRenderer = ({
     hasGroupByOnSecondaryAxis,
   );
 
-  const filterStateKey = `${configuration.rangeMin ?? ''}-${configuration.rangeMax ?? ''}-${configuration.omitNullValues ?? ''}`;
+  const chartFilterKey = generateChartAggregateFilterKey(
+    configuration.rangeMin,
+    configuration.rangeMax,
+    configuration.omitNullValues,
+  );
 
   if (loading) {
     return <ChartSkeletonLoader />;
@@ -61,7 +66,7 @@ export const GraphWidgetBarChartRenderer = ({
       />
       <Suspense fallback={<ChartSkeletonLoader />}>
         <GraphWidgetBarChart
-          key={filterStateKey}
+          key={chartFilterKey}
           data={data}
           series={series}
           indexBy={indexBy}

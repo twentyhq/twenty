@@ -37,7 +37,7 @@ export const GraphBarChartTooltip = ({
   );
 
   const tooltipData = useMemo(() => {
-    if (!tooltipState) {
+    if (!isDefined(tooltipState)) {
       return null;
     }
 
@@ -61,7 +61,7 @@ export const GraphBarChartTooltip = ({
   ]);
 
   const { reference, boundary } = useMemo(() => {
-    if (!tooltipState) {
+    if (!isDefined(tooltipState)) {
       return { reference: null, boundary: null };
     }
 

@@ -121,10 +121,7 @@ export const GraphWidgetBarChart = ({
 
   const hasClickableItems = data.some((item) => isDefined(item.to));
 
-  const hideTooltip = useCallback(
-    () => setActiveBarTooltip(null),
-    [setActiveBarTooltip],
-  );
+  const hideTooltip = () => setActiveBarTooltip(null);
   const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
 
   const handleTooltipMouseEnter = () => {

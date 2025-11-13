@@ -78,13 +78,13 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     widget.id,
   );
 
-  const handleMouseEnter = useCallback(() => {
+  const handleMouseEnter = () => {
     setIsHovered(true);
-  }, [setIsHovered]);
+  };
 
-  const handleMouseLeave = useCallback(() => {
+  const handleMouseLeave = () => {
     setIsHovered(false);
-  }, [setIsHovered]);
+  };
 
   return (
     <WidgetCard

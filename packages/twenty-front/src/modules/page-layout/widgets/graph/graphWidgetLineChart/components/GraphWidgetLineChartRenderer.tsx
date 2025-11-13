@@ -1,6 +1,8 @@
 import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
+import { LINE_CHART_IS_STACKED_DEFAULT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartIsStackedDefault';
 import { useGraphLineChartWidgetData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useGraphLineChartWidgetData';
+import { generateChartAggregateFilterKey } from '@/page-layout/widgets/graph/utils/generateChartAggregateFilterKey';
 import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -40,11 +42,16 @@ export const GraphWidgetLineChartRenderer = ({
   );
 
   const groupMode =
-    hasGroupByOnSecondaryAxis && (configuration.isStacked ?? true)
+    hasGroupByOnSecondaryAxis &&
+    (configuration.isStacked ?? LINE_CHART_IS_STACKED_DEFAULT)
       ? 'stacked'
       : undefined;
 
-  const filterStateKey = `${configuration.rangeMin ?? ''}-${configuration.rangeMax ?? ''}-${configuration.omitNullValues ?? ''}`;
+  const chartFilterKey = generateChartAggregateFilterKey(
+    configuration.rangeMin,
+    configuration.rangeMax,
+    configuration.omitNullValues,
+  );
 
   if (loading) {
     return <ChartSkeletonLoader />;
@@ -56,7 +63,7 @@ export const GraphWidgetLineChartRenderer = ({
         hasTooManyGroups={hasTooManyGroups}
       />
       <GraphWidgetLineChart
-        key={filterStateKey}
+        key={chartFilterKey}
         id={widget.id}
         data={series}
         xAxisLabel={xAxisLabel}
