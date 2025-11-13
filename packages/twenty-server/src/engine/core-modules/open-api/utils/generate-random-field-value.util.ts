@@ -58,7 +58,7 @@ export const generateRandomFieldValue = ({
       return {
         primaryLinkLabel: '',
         primaryLinkUrl: faker.internet.url(),
-        additionalLinks: [],
+        secondaryLinks: [],
       };
     }
 
@@ -82,10 +82,10 @@ export const generateRandomFieldValue = ({
 
     case FieldMetadataType.SELECT: {
       if (!isDefined(field.options) || !isDefined(field.options[0].value)) {
-        return [];
+        return null;
       }
 
-      return [field.options[0].value];
+      return field.options[0].value;
     }
 
     case FieldMetadataType.MULTI_SELECT: {
