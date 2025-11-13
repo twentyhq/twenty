@@ -70,7 +70,7 @@ describe('Core REST API Delete Many endpoint', () => {
   it('should require filters for bulk delete operations', async () => {
     const response = await makeRestAPIRequest({
       method: 'delete',
-      path: `/people?permanent=false`,
+      path: `/people?soft_delete=true`,
     });
 
     expect(response.status).toBe(400);
@@ -89,7 +89,7 @@ describe('Core REST API Destroy Many endpoint', () => {
   it('should require filters for bulk destroy operations', async () => {
     const response = await makeRestAPIRequest({
       method: 'delete',
-      path: `/people?permanent=true`,
+      path: `/people?soft_delete=false`,
     });
 
     expect(response.status).toBe(400);
