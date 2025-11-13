@@ -12,8 +12,8 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
-import { useRecoilCallback } from 'recoil';
 import { t } from '@lingui/core/macro';
+import { useRecoilCallback } from 'recoil';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -53,14 +53,7 @@ export const useRunWorkflowRecordActions = ({
           'id' | 'workflowId' | 'trigger'
         >,
       ) => {
-        let limitedSelectedRecordIds = selectedRecordIds;
-
         if (selectedRecordIds.length > QUERY_MAX_RECORDS) {
-          limitedSelectedRecordIds = selectedRecordIds.slice(
-            0,
-            QUERY_MAX_RECORDS,
-          );
-
           const selectedCountFormatted =
             selectedRecordIds.length.toLocaleString();
           const limitFormatted = QUERY_MAX_RECORDS.toLocaleString();
@@ -72,6 +65,11 @@ export const useRunWorkflowRecordActions = ({
             },
           });
         }
+
+        const limitedSelectedRecordIds = selectedRecordIds.slice(
+          0,
+          QUERY_MAX_RECORDS,
+        );
 
         if (
           isDefined(activeWorkflowVersion?.trigger) &&

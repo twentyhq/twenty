@@ -85,7 +85,7 @@ export const WorkflowEditActionFindRecords = ({
       isNumber(action.settings.input.limit) &&
       action.settings.input.limit > QUERY_MAX_RECORDS
         ? QUERY_MAX_RECORDS
-        : action.settings.input.limit ?? 1,
+        : (action.settings.input.limit ?? 1),
     filter: action.settings.input.filter as FindRecordsActionFilter,
     orderBy: action.settings.input.orderBy as FindRecordsActionOrderBy,
   }));
@@ -152,32 +152,6 @@ export const WorkflowEditActionFindRecords = ({
       action,
       defaultTitle: FIND_RECORDS_ACTION.defaultLabel,
     });
-
-  useEffect(() => {
-    if (
-      actionOptions.readonly === true ||
-      !isNumber(action.settings.input.limit) ||
-      action.settings.input.limit <= QUERY_MAX_RECORDS
-    ) {
-      return;
-    }
-
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          ...action.settings.input,
-          limit: QUERY_MAX_RECORDS,
-        },
-      },
-    });
-  }, [
-    action,
-    action.settings.input,
-    action.settings.input.limit,
-    actionOptions,
-  ]);
 
   return (
     <>
