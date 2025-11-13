@@ -14,6 +14,8 @@
       ],
       "outputs": [
         "{projectRoot}/dist",
+        "{projectRoot}/api/package.json",
+        "{projectRoot}/api/dist",
         "{projectRoot}/application/package.json",
         "{projectRoot}/application/dist"
       ]

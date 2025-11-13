@@ -7,21 +7,33 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
+    "api",
     "application"
   ],
   "scripts": {
     "build": "vite build"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "typescript": "5.9.2",
     "vite": "^7.0.0",
     "vite-plugin-dts": "3.8.1"
+  },
+  "dependencies": {
+    "@genql/cli": "^3.0.3",
+    "axios": "^1.6.2",
+    "graphql": "^16.8.1"
   },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api.mjs",
+      "require": "./dist/api.cjs"
     },
     "./application": {
       "types": "./dist/application/index.d.ts",
@@ -31,6 +43,9 @@
   },
   "typesVersions": {
     "*": {
+      "api": [
+        "dist/api/index.d.ts"
+      ],
       "application": [
         "dist/application/index.d.ts"
       ]
