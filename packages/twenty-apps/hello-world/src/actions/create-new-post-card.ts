@@ -1,32 +1,27 @@
+import { createClient } from '@generated';
 import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
-// import { createClient } from '../generated';
 
 export const main = async (params: { recipient?: string }) => {
   try {
-    // Note: Temporary commented code, to test please:
-    // Make a first app sync that will generate the client
-    // Uncomment the code here
-    // Make a second app sync
-    // Please find related topic https://github.com/twentyhq/twenty/pull/15791#issuecomment-3528306964
-    // const client = createClient({
-    //   url: `${process.env.TWENTY_API_URL}/graphql`,
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
-    //   },
-    // });
-    // const createPostCard = await client.mutation({
-    //   createPostCard: {
-    //     __args: {
-    //       data: {
-    //         name: params.recipient ?? 'Hello-world',
-    //       },
-    //     },
-    //     name: true,
-    //     id: true,
-    //   },
-    // });
-    // return createPostCard;
+    const client = createClient({
+      url: `${process.env.TWENTY_API_URL}/graphql`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
+      },
+    });
+    const createPostCard = await client.mutation({
+      createPostCard: {
+        __args: {
+          data: {
+            name: params.recipient ?? 'Hello-world',
+          },
+        },
+        name: true,
+        id: true,
+      },
+    });
+    return createPostCard;
   } catch (error) {
     console.error(error);
     throw error;

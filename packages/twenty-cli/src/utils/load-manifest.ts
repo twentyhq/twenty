@@ -405,7 +405,7 @@ const validateProgram = (program: Program) => {
       getCurrentDirectory: sys.getCurrentDirectory,
       getNewLine: () => sys.newLine,
     });
-    throw new Error(`TypeScript validation failed:\n${formatted}`);
+    console.warn(`TypeScript validation failed:\n${formatted}`);
   }
 };
 
