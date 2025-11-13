@@ -9,12 +9,36 @@ setup_and_migrate_db() {
 
     echo "Running database setup and migrations..."
 
+    # Validate PG_DATABASE_URL is set
+    if [ -z "${PG_DATABASE_URL}" ]; then
+        echo "ERROR: PG_DATABASE_URL environment variable is not set!"
+        echo "Please set PG_DATABASE_URL to your PostgreSQL connection string."
+        echo "Example: postgres://user:password@host:port/database"
+        exit 1
+    fi
+
+    echo "Checking database connection..."
+    echo "Using database URL: ${PG_DATABASE_URL%%:*}://***:***@${PG_DATABASE_URL##*@}"
+
     # Run setup and migration scripts
-    has_schema=$(psql "${PG_DATABASE_URL}" -tAc "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')")
+    has_schema=$(psql "${PG_DATABASE_URL}" -tAc "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')" 2>&1)
+
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to connect to database"
+        echo "Connection error: $has_schema"
+        echo "Please verify:"
+        echo "  1. PG_DATABASE_URL is correct"
+        echo "  2. Database server is accessible"
+        echo "  3. Database credentials are valid"
+        exit 1
+    fi
+
     if [ "$has_schema" = "f" ]; then
         echo "Database appears to be empty, running migrations."
         NODE_OPTIONS="--max-old-space-size=1500" tsx ./scripts/setup-db.ts
         yarn database:migrate:prod
+    else
+        echo "Database schema exists, running upgrade..."
     fi
 
     yarn command:prod upgrade
