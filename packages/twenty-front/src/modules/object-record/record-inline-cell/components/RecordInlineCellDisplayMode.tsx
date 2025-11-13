@@ -104,9 +104,7 @@ export const RecordInlineCellDisplayMode = ({
             children
           ) : shouldShowEmptyPlaceholder ? (
             <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </StyledRecordInlineCellNormalModeInnerContainer>
       </StyledRecordInlineCellNormalModeOuterContainer>
       {showEditButton && (
