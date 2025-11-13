@@ -19,6 +19,16 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm new email"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "Suspended Workspace"
 msgstr "Espai de treball suspès"
@@ -92,11 +102,6 @@ msgstr "Accepta la invitació"
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Confirma la teva adreça de correu electrònic"
-
-#. js-lingui-explicit-id
-#: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Gràcies per registrar-te a Twenty! Abans de començar, només necessitem confirmar que ets tu. Clica a continuació per verificar la teva adreça de correu electrònic."
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
