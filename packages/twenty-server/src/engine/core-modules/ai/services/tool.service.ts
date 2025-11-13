@@ -13,7 +13,10 @@ import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/z
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
-import { type ToolHints } from 'src/engine/metadata-modules/ai-router/types/tool-hints.interface';
+import {
+  type ToolHints,
+  type ToolOperation,
+} from 'src/engine/metadata-modules/ai-router/types/tool-hints.interface';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -112,7 +115,7 @@ export class ToolService {
       ? new Set(toolHints.operations)
       : null;
 
-    const shouldIncludeOperation = (operation: string) =>
+    const shouldIncludeOperation = (operation: ToolOperation) =>
       !operationsSet || operationsSet.has(operation);
 
     const shouldIncludeFind = shouldIncludeOperation('find');
