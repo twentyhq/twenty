@@ -32,7 +32,7 @@ describe('computeSchemaComponents', () => {
         "lastName": "Osinski",
       },
       "fieldLinks": {
-        "additionalLinks": [],
+        "secondaryLinks": [],
         "primaryLinkLabel": "",
         "primaryLinkUrl": "https://narrow-help.net/",
       },
@@ -535,7 +535,7 @@ describe('computeSchemaComponents', () => {
         "lastName": "Jones",
       },
       "fieldLinks": {
-        "additionalLinks": [],
+        "secondaryLinks": [],
         "primaryLinkLabel": "",
         "primaryLinkUrl": "https://unlawful-blowgun.biz",
       },
