@@ -1,3 +1,4 @@
+import { sanitizeMessageToRenderInSnackbar } from '@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -196,13 +197,19 @@ export const SnackBar = ({
     }
   };
 
+  const sanitizedMessage = sanitizeMessageToRenderInSnackbar(message);
+  const sanitizedDetailedMessage =
+    sanitizeMessageToRenderInSnackbar(detailedMessage);
+
   return (
     <StyledContainer
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      title={message || defaultAriaLabelByVariant[variant]}
-      {...{ className, id, role, variant }}
+      title={sanitizedMessage ?? defaultAriaLabelByVariant[variant]}
+      className={className}
+      id={id}
+      role={role}
       data-globally-prevent-click-outside
     >
       <StyledProgressBar
@@ -211,7 +218,7 @@ export const SnackBar = ({
       />
       <StyledHeader>
         <StyledIcon>{icon}</StyledIcon>
-        <StyledMessage>{message}</StyledMessage>
+        <StyledMessage>{sanitizedMessage ?? ''}</StyledMessage>
         <StyledActions>
           {!!onCancel && <LightButton title={t`Cancel`} onClick={onCancel} />}
 
@@ -220,8 +227,8 @@ export const SnackBar = ({
           )}
         </StyledActions>
       </StyledHeader>
-      {detailedMessage && (
-        <StyledDescription>{detailedMessage}</StyledDescription>
+      {isDefined(sanitizedDetailedMessage) && (
+        <StyledDescription>{sanitizedDetailedMessage}</StyledDescription>
       )}
       {link && <StyledLink to={link.href}>{link.text}</StyledLink>}
     </StyledContainer>
