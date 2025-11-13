@@ -11,6 +11,7 @@ import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-en
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { compareTwoFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/compare-two-flat-entity.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration-v2/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration-v2/utils/should-infer-deletion-from-missing-entities.util';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
 
 export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
@@ -54,7 +55,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
   const fromMap = new Map(from.map((obj) => [obj.universalIdentifier, obj]));
   const toMap = new Map(to.map((obj) => [obj.universalIdentifier, obj]));
 
-  if (buildOptions.inferDeletionFromMissingEntities?.[metadataName]) {
+  if (shouldInferDeletionFromMissingEntities({ buildOptions, metadataName })) {
     for (const [universalIdentifier, fromEntity] of fromMap) {
       if (toMap.has(universalIdentifier)) {
         continue;
