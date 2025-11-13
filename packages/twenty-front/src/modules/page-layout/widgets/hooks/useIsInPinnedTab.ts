@@ -1,8 +1,8 @@
 import { usePageLayoutContentContext } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
-import { filterTabsWithVisibleWidgets } from '@/page-layout/utils/filterTabsWithVisibleWidgets';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
+import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,7 +19,7 @@ export const useIsInPinnedTab = () => {
     isPageLayoutInEditModeComponentState,
   );
 
-  const filteredTabs = filterTabsWithVisibleWidgets({
+  const filteredTabs = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
     isMobile,
     isInRightDrawer,

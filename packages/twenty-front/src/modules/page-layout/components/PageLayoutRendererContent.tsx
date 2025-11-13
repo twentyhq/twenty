@@ -10,9 +10,9 @@ import { useReorderPageLayoutTabs } from '@/page-layout/hooks/useReorderPageLayo
 import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
-import { filterTabsWithVisibleWidgets } from '@/page-layout/utils/filterTabsWithVisibleWidgets';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
+import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
@@ -84,7 +84,7 @@ export const PageLayoutRendererContent = () => {
     return null;
   }
 
-  const filteredTabs = filterTabsWithVisibleWidgets({
+  const filteredTabs = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
     isMobile,
     isInRightDrawer,

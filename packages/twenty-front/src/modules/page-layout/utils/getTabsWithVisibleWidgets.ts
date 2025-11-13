@@ -2,30 +2,27 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 
-type FilterTabsWithVisibleWidgetsParams = {
+type GetTabsWithVisibleWidgetsParams = {
   tabs: PageLayoutTab[];
   isMobile: boolean;
   isInRightDrawer: boolean;
   isEditMode: boolean;
 };
 
-export const filterTabsWithVisibleWidgets = ({
+export const getTabsWithVisibleWidgets = ({
   tabs,
   isMobile,
   isInRightDrawer,
   isEditMode,
-}: FilterTabsWithVisibleWidgetsParams): PageLayoutTab[] => {
+}: GetTabsWithVisibleWidgetsParams): PageLayoutTab[] => {
+  if (isEditMode) {
+    return tabs;
+  }
+
   const context = buildWidgetVisibilityContext({ isMobile, isInRightDrawer });
 
-  return tabs
-    .map((tab) => ({
-      ...tab,
-      widgets: filterVisibleWidgets({ widgets: tab.widgets, context }),
-    }))
-    .filter((tab) => {
-      if (isEditMode) {
-        return true;
-      }
-      return tab.widgets.length > 0;
-    });
+  return tabs.map((tab) => ({
+    ...tab,
+    widgets: filterVisibleWidgets({ widgets: tab.widgets, context }),
+  }));
 };

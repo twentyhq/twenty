@@ -1,8 +1,8 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { WidgetType } from '~/generated/graphql';
-import { filterTabsWithVisibleWidgets } from '../filterTabsWithVisibleWidgets';
+import { getTabsWithVisibleWidgets } from '../getTabsWithVisibleWidgets';
 
-describe('filterTabsWithVisibleWidgets', () => {
+describe('getTabsWithVisibleWidgets', () => {
   const createMockWidget = (
     id: string,
     conditionalDisplay?: any,
@@ -43,7 +43,7 @@ describe('filterTabsWithVisibleWidgets', () => {
   });
 
   describe('in read mode', () => {
-    it('should remove tabs with no visible widgets', () => {
+    it('should keep all tabs even if they have no visible widgets', () => {
       const tabs = [
         createMockTab('tab-1', [createMockWidget('widget-1')]),
         createMockTab('tab-2', [
@@ -54,15 +54,20 @@ describe('filterTabsWithVisibleWidgets', () => {
         createMockTab('tab-3', [createMockWidget('widget-3')]),
       ];
 
-      const result = filterTabsWithVisibleWidgets({
+      const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
         isInRightDrawer: false,
         isEditMode: false,
       });
 
-      expect(result).toHaveLength(2);
-      expect(result.map((t) => t.id)).toEqual(['tab-1', 'tab-3']);
+      expect(result).toHaveLength(3);
+      expect(result[0].id).toBe('tab-1');
+      expect(result[0].widgets).toHaveLength(1);
+      expect(result[1].id).toBe('tab-2');
+      expect(result[1].widgets).toHaveLength(0); // widgets filtered out but tab remains
+      expect(result[2].id).toBe('tab-3');
+      expect(result[2].widgets).toHaveLength(1);
     });
 
     it('should keep tabs with at least one visible widget', () => {
@@ -75,7 +80,7 @@ describe('filterTabsWithVisibleWidgets', () => {
         ]),
       ];
 
-      const result = filterTabsWithVisibleWidgets({
+      const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
         isInRightDrawer: false,
@@ -85,106 +90,6 @@ describe('filterTabsWithVisibleWidgets', () => {
       expect(result).toHaveLength(1);
       expect(result[0].widgets).toHaveLength(1);
       expect(result[0].widgets[0].id).toBe('widget-1');
-    });
-
-    it('should return empty array when all tabs have no visible widgets', () => {
-      const tabs = [
-        createMockTab('tab-1', [
-          createMockWidget('widget-1', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
-        ]),
-        createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
-        ]),
-      ];
-
-      const result = filterTabsWithVisibleWidgets({
-        tabs,
-        isMobile: false,
-        isInRightDrawer: false,
-        isEditMode: false,
-      });
-
-      expect(result).toHaveLength(0);
-    });
-
-    it('should handle tabs with no widgets', () => {
-      const tabs = [
-        createMockTab('tab-1', []),
-        createMockTab('tab-2', [createMockWidget('widget-2')]),
-      ];
-
-      const result = filterTabsWithVisibleWidgets({
-        tabs,
-        isMobile: false,
-        isInRightDrawer: false,
-        isEditMode: false,
-      });
-
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('tab-2');
-    });
-  });
-
-  describe('in edit mode', () => {
-    it('should keep all tabs even if they have no visible widgets', () => {
-      const tabs = [
-        createMockTab('tab-1', [createMockWidget('widget-1')]),
-        createMockTab('tab-2', [
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
-        ]),
-        createMockTab('tab-3', [createMockWidget('widget-3')]),
-      ];
-
-      const result = filterTabsWithVisibleWidgets({
-        tabs,
-        isMobile: false,
-        isInRightDrawer: false,
-        isEditMode: true,
-      });
-
-      expect(result).toHaveLength(3);
-      expect(result.map((t) => t.id)).toEqual(['tab-1', 'tab-2', 'tab-3']);
-    });
-
-    it('should still filter widgets within tabs', () => {
-      const tabs = [
-        createMockTab('tab-1', [
-          createMockWidget('widget-1'),
-          createMockWidget('widget-2', {
-            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
-          }),
-        ]),
-      ];
-
-      const result = filterTabsWithVisibleWidgets({
-        tabs,
-        isMobile: false,
-        isInRightDrawer: false,
-        isEditMode: true,
-      });
-
-      expect(result).toHaveLength(1);
-      expect(result[0].widgets).toHaveLength(1);
-      expect(result[0].widgets[0].id).toBe('widget-1');
-    });
-
-    it('should keep tabs with no widgets', () => {
-      const tabs = [createMockTab('tab-1', []), createMockTab('tab-2', [])];
-
-      const result = filterTabsWithVisibleWidgets({
-        tabs,
-        isMobile: false,
-        isInRightDrawer: false,
-        isEditMode: true,
-      });
-
-      expect(result).toHaveLength(2);
     });
 
     it('should keep all tabs even when all widgets are hidden', () => {
@@ -201,7 +106,89 @@ describe('filterTabsWithVisibleWidgets', () => {
         ]),
       ];
 
-      const result = filterTabsWithVisibleWidgets({
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInRightDrawer: false,
+        isEditMode: false,
+      });
+
+      expect(result).toHaveLength(2);
+      expect(result[0].widgets).toHaveLength(0);
+      expect(result[1].widgets).toHaveLength(0);
+    });
+
+    it('should keep tabs with no widgets', () => {
+      const tabs = [
+        createMockTab('tab-1', []),
+        createMockTab('tab-2', [createMockWidget('widget-2')]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInRightDrawer: false,
+        isEditMode: false,
+      });
+
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('tab-1');
+      expect(result[0].widgets).toHaveLength(0);
+      expect(result[1].id).toBe('tab-2');
+      expect(result[1].widgets).toHaveLength(1);
+    });
+  });
+
+  describe('in edit mode', () => {
+    it('should keep all tabs even if they have no visible widgets', () => {
+      const tabs = [
+        createMockTab('tab-1', [createMockWidget('widget-1')]),
+        createMockTab('tab-2', [
+          createMockWidget('widget-2', {
+            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+          }),
+        ]),
+        createMockTab('tab-3', [createMockWidget('widget-3')]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInRightDrawer: false,
+        isEditMode: true,
+      });
+
+      expect(result).toHaveLength(3);
+      expect(result.map((t) => t.id)).toEqual(['tab-1', 'tab-2', 'tab-3']);
+    });
+
+    it('should not filter widgets in edit mode', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('widget-1'),
+          createMockWidget('widget-2', {
+            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+          }),
+        ]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInRightDrawer: false,
+        isEditMode: true,
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].widgets).toHaveLength(2); // All widgets kept in edit mode
+      expect(result[0].widgets[0].id).toBe('widget-1');
+      expect(result[0].widgets[1].id).toBe('widget-2');
+    });
+
+    it('should keep tabs with no widgets', () => {
+      const tabs = [createMockTab('tab-1', []), createMockTab('tab-2', [])];
+
+      const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
         isInRightDrawer: false,
@@ -209,14 +196,38 @@ describe('filterTabsWithVisibleWidgets', () => {
       });
 
       expect(result).toHaveLength(2);
-      expect(result[0].widgets).toHaveLength(0);
-      expect(result[1].widgets).toHaveLength(0);
+    });
+
+    it('should keep all widgets even when they would be hidden in read mode', () => {
+      const tabs = [
+        createMockTab('tab-1', [
+          createMockWidget('widget-1', {
+            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+          }),
+        ]),
+        createMockTab('tab-2', [
+          createMockWidget('widget-2', {
+            and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+          }),
+        ]),
+      ];
+
+      const result = getTabsWithVisibleWidgets({
+        tabs,
+        isMobile: false,
+        isInRightDrawer: false,
+        isEditMode: true,
+      });
+
+      expect(result).toHaveLength(2);
+      expect(result[0].widgets).toHaveLength(1); // Kept in edit mode
+      expect(result[1].widgets).toHaveLength(1); // Kept in edit mode
     });
   });
 
   describe('edge cases', () => {
     it('should handle empty tabs array', () => {
-      const result = filterTabsWithVisibleWidgets({
+      const result = getTabsWithVisibleWidgets({
         tabs: [],
         isMobile: false,
         isInRightDrawer: false,
@@ -237,7 +248,7 @@ describe('filterTabsWithVisibleWidgets', () => {
       const originalLength = tabs.length;
       const originalWidgetsLength = tabs[0].widgets.length;
 
-      filterTabsWithVisibleWidgets({
+      getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
         isInRightDrawer: false,
@@ -273,18 +284,20 @@ describe('filterTabsWithVisibleWidgets', () => {
         ]),
       ];
 
-      const result = filterTabsWithVisibleWidgets({
+      const result = getTabsWithVisibleWidgets({
         tabs,
         isMobile: false,
         isInRightDrawer: false,
         isEditMode: false,
       });
 
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(3);
       expect(result[0].id).toBe('tab-1');
       expect(result[0].widgets).toHaveLength(2);
-      expect(result[1].id).toBe('tab-3');
-      expect(result[1].widgets).toHaveLength(2);
+      expect(result[1].id).toBe('tab-2');
+      expect(result[1].widgets).toHaveLength(0); // No visible widgets but tab remains
+      expect(result[2].id).toBe('tab-3');
+      expect(result[2].widgets).toHaveLength(2);
     });
   });
 });
