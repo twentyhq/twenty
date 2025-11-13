@@ -1,4 +1,4 @@
-import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AIChatScrollWrapperId';
+import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { isDefined } from 'twenty-shared/utils';
 
