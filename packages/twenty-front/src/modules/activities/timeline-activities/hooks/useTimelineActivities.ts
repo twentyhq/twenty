@@ -19,6 +19,7 @@ export const useTimelineActivities = (
     useGenerateDepthRecordGqlFieldsFromObject({
       objectNameSingular: CoreObjectNameSingular.TimelineActivity,
       depth: 1,
+      shouldOnlyLoadRelationIdentifiers: false, // Load complete workspace member data for proper author display
     });
 
   const {
