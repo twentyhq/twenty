@@ -22,21 +22,44 @@ export class AppSyncCommand {
 
       const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
 
-      const result = await this.apiService.syncApplication({
-        manifest,
+      const syncResult = await this.apiService.syncApplication({
+        manifest: {
+          ...manifest,
+          serverlessFunctions: [],
+        },
         packageJson,
         yarnLock,
       });
 
-      if (!result.success) {
-        console.error(chalk.red('❌ Sync failed:'), result.error);
+      if (!syncResult.success) {
+        console.error(chalk.red('❌ Sync failed:'), syncResult.error);
       } else {
         console.log(chalk.green('✅ Application synced successfully'));
 
         await this.generateSdkAfterSync();
       }
 
-      return result;
+      const serverlessSyncResult = await this.apiService.syncApplication({
+        manifest: {
+          application: manifest.application,
+          objects: [],
+          sources: {},
+          serverlessFunctions: manifest.serverlessFunctions,
+        },
+        packageJson,
+        yarnLock,
+      });
+
+      if (!serverlessSyncResult.success) {
+        console.error(
+          chalk.red('❌ Serverless functions Sync failed:'),
+          serverlessSyncResult.error,
+        );
+      } else {
+        console.log(chalk.green('✅ Serverless functions synced successfully'));
+      }
+
+      return serverlessSyncResult;
     } catch (error) {
       console.error(
         chalk.red('Sync failed:'),
