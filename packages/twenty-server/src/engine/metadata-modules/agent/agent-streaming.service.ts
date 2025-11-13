@@ -164,6 +164,7 @@ export class AgentStreamingService {
               state: 'routed',
               debug: {
                 routingTimeMs: routingTime,
+                contextBuildTimeMs: timings.contextBuildTimeMs,
                 agentExecutionStartTimeMs: Date.now() - startTime,
                 selectedAgentId: agent.id,
                 selectedAgentLabel: agent.label,

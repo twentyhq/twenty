@@ -13,7 +13,7 @@ import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/z
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
-import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
+import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -79,7 +79,7 @@ export class ToolService {
       });
 
     const filteredObjectMetadata = allObjectMetadata.filter(
-      (objectMetadata) => !isWorkflowRunObject(objectMetadata),
+      (objectMetadata) => !isWorkflowRelatedObject(objectMetadata),
     );
 
     filteredObjectMetadata.forEach((objectMetadata) => {

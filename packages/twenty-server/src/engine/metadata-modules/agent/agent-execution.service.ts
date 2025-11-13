@@ -169,7 +169,7 @@ export class AgentExecutionService implements AgentExecutionContext {
     }
   }
 
-  private async getContextForSystemPrompt(
+  async getContextForSystemPrompt(
     workspace: WorkspaceEntity,
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType,
     userWorkspaceId: string,
