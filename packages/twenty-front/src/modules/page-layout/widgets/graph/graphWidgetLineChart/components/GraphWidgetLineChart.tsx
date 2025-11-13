@@ -5,6 +5,7 @@ import {
   CustomCrosshairLayer,
   type SliceHoverData,
 } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomCrosshairLayer';
+import { CustomPointLabelsLayer } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/CustomPointLabelsLayer';
 import { GraphLineChartTooltip } from '@/page-layout/widgets/graph/graphWidgetLineChart/components/GraphLineChartTooltip';
 import { LINE_CHART_MARGIN_BOTTOM } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginBottom';
 import { LINE_CHART_MARGIN_LEFT } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMarginLeft';
@@ -37,6 +38,7 @@ import { useCallback, useId, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 type CrosshairLayerProps = LineCustomSvgLayerProps<LineSeries>;
+type PointLabelsLayerProps = LineCustomSvgLayerProps<LineSeries>;
 
 type GraphWidgetLineChartProps = {
   data: LineChartSeries[];
@@ -172,6 +174,21 @@ export const GraphWidgetLineChart = ({
     [dataMap, debouncedHideTooltip, setActiveLineTooltip, setCrosshairX],
   );
 
+  const PointLabelsLayer = (layerProps: PointLabelsLayerProps) => (
+    <>
+      {enablePointLabel && (
+        <CustomPointLabelsLayer
+          points={layerProps.points}
+          yScale={layerProps.yScale}
+          formatValue={(value) => formatGraphValue(value, formatOptions)}
+          offset={theme.spacingMultiplicator * 2}
+          groupMode={groupMode}
+          omitNullValues={_omitNullValues}
+        />
+      )}
+    </>
+  );
+
   const CrosshairLayer = (layerProps: CrosshairLayerProps) => (
     <CustomCrosshairLayer
       key="custom-crosshair-layer"
@@ -227,11 +244,8 @@ export const GraphWidgetLineChart = ({
           areaBaselineValue={0}
           enablePoints={true}
           pointSize={0}
-          enablePointLabel={enablePointLabel}
+          enablePointLabel={false}
           pointBorderWidth={0}
-          pointLabel={(point) =>
-            formatGraphValue(Number(point.data.y), formatOptions)
-          }
           colors={colors}
           areaBlendMode={'normal'}
           defs={defs}
@@ -253,6 +267,7 @@ export const GraphWidgetLineChart = ({
             'lines',
             CrosshairLayer,
             'points',
+            PointLabelsLayer,
             'legends',
           ]}
           useMesh={true}

@@ -1,8 +1,8 @@
+import { GraphDataLabel } from '@/page-layout/widgets/graph/components/GraphDataLabel';
+import { type GraphLabelData } from '@/page-layout/widgets/graph/types/GraphLabelData';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
-import { useTheme } from '@emotion/react';
 import { type BarCustomLayerProps, type ComputedBarDatum } from '@nivo/bar';
-import { animated } from '@react-spring/web';
 import { isDefined } from 'twenty-shared/utils';
 
 type CustomTotalsLayerProps = Pick<
@@ -16,22 +16,22 @@ type CustomTotalsLayerProps = Pick<
   omitNullValues?: boolean;
 };
 
-type LabelData = {
+type BarChartLabelData = {
   key: string;
   value: number;
   verticalX: number;
   verticalY: number;
   horizontalX: number;
   horizontalY: number;
-  isNegative: boolean;
+  shouldRenderBelow: boolean;
 };
 
 const computeGroupedLabels = (
   bars: readonly ComputedBarDatum<BarChartDataItem>[],
-): LabelData[] => {
+): BarChartLabelData[] => {
   return bars.map((bar) => {
     const value = Number(bar.data.value);
-    const isNegative = value < 0;
+    const shouldRenderBelow = value < 0;
     const centerX = bar.x + bar.width / 2;
     const centerY = bar.y + bar.height / 2;
 
@@ -39,17 +39,17 @@ const computeGroupedLabels = (
       key: `value-${bar.data.id}-${bar.data.indexValue}`,
       value,
       verticalX: centerX,
-      verticalY: isNegative ? bar.y + bar.height : bar.y,
-      horizontalX: isNegative ? bar.x : bar.x + bar.width,
+      verticalY: shouldRenderBelow ? bar.y + bar.height : bar.y,
+      horizontalX: shouldRenderBelow ? bar.x : bar.x + bar.width,
       horizontalY: centerY,
-      isNegative,
+      shouldRenderBelow,
     };
   });
 };
 
 const computeStackedLabels = (
   bars: readonly ComputedBarDatum<BarChartDataItem>[],
-): LabelData[] => {
+): BarChartLabelData[] => {
   const groupTotals = new Map<
     string,
     {
@@ -95,42 +95,22 @@ const computeStackedLabels = (
         verticalY: maxY,
         horizontalX: maxX,
         horizontalY: centerY,
-        isNegative: false,
+        shouldRenderBelow: false,
       };
     },
   );
 };
 
-const getLabelStyles = (
-  label: LabelData,
-  isVertical: boolean,
-  offset: number,
-) => {
-  const offsetSign = isVertical
-    ? label.isNegative
-      ? 1
-      : -1
-    : label.isNegative
-      ? -1
-      : 1;
-
-  const axis = isVertical ? 'Y' : 'X';
-  const transformOffset = `translate${axis}(${offsetSign * offset}px)`;
-
-  const textAnchor = isVertical ? 'middle' : label.isNegative ? 'end' : 'start';
-
-  const dominantBaseline = isVertical
-    ? label.isNegative
-      ? 'hanging'
-      : 'auto'
-    : 'central';
-
+const convertToGraphLabelData = (
+  barChartLabel: BarChartLabelData,
+  isVerticalLayout: boolean,
+): GraphLabelData => {
   return {
-    x: isVertical ? label.verticalX : label.horizontalX,
-    y: isVertical ? label.verticalY : label.horizontalY,
-    textAnchor,
-    dominantBaseline,
-    transformOffset,
+    key: barChartLabel.key,
+    value: barChartLabel.value,
+    x: isVerticalLayout ? barChartLabel.verticalX : barChartLabel.horizontalX,
+    y: isVerticalLayout ? barChartLabel.verticalY : barChartLabel.horizontalY,
+    shouldRenderBelow: barChartLabel.shouldRenderBelow,
   };
 };
 
@@ -142,39 +122,33 @@ export const CustomTotalsLayer = ({
   groupMode = 'grouped',
   omitNullValues = false,
 }: CustomTotalsLayerProps) => {
-  const theme = useTheme();
-  const isVertical = layout === BarChartLayout.VERTICAL;
+  const isVerticalLayout = layout === BarChartLayout.VERTICAL;
 
-  const labels =
+  const barChartLabels =
     groupMode === 'stacked'
       ? computeStackedLabels(bars)
       : computeGroupedLabels(bars);
 
-  const labelsToRender = labels.filter(
-    (label) => !omitNullValues || label.value !== 0,
+  const labelsToRender = barChartLabels.filter((label) =>
+    omitNullValues ? label.value !== 0 : true,
   );
 
   return (
     <>
-      {labelsToRender.map((label) => {
-        const styles = getLabelStyles(label, isVertical, offset);
+      {labelsToRender.map((barChartLabel) => {
+        const graphLabel = convertToGraphLabelData(
+          barChartLabel,
+          isVerticalLayout,
+        );
 
         return (
-          <animated.text
-            key={label.key}
-            x={styles.x}
-            y={styles.y}
-            textAnchor={styles.textAnchor}
-            dominantBaseline={styles.dominantBaseline}
-            style={{
-              fill: theme.font.color.light,
-              fontSize: 11,
-              fontWeight: theme.font.weight.medium,
-              transform: styles.transformOffset,
-            }}
-          >
-            {isDefined(formatValue) ? formatValue(label.value) : label.value}
-          </animated.text>
+          <GraphDataLabel
+            key={graphLabel.key}
+            label={graphLabel}
+            formatValue={formatValue}
+            offset={offset}
+            isVerticalLayout={isVerticalLayout}
+          />
         );
       })}
     </>
