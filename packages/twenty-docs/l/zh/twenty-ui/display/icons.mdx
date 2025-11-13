@@ -1,0 +1,83 @@
+---
+title: 圖標
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+我們應用程式中使用的圖標列表。
+
+## Tabler 圖標
+
+We use Tabler icons for React throughout the app.
+
+<Tabs>
+
+<Tab title="Installation"><br/>
+
+```
+yarn add @tabler/icons-react
+```
+
+</Tab>
+
+<Tab title="Props">
+
+您可以將每個圖標匯入為一個組件。 Here's an example: <br />
+
+```jsx
+import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 屬性 | 類型 | 描述               | 預設值          |
+| -- | -- | ---------------- | ------------ |
+| 大小 | 數字 | 圖標的高度和寬度（以像素為單位） | 24           |
+| 顏色 | 字串 | 圖標的顏色            | currentColor |
+| 筆劃 | 數字 | 圖標的筆劃寬度（以像素為單位）  | 2            |
+
+</Tab>
+
+</Tabs>
+
+## 自訂圖標
+
+除了 Tabler 圖標，該應用程式還使用了一些自訂圖標。
+
+### 圖標通訊錄
+
+顯示一個通訊錄圖標。
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { IconAddressBook } from 'twenty-ui/display';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 屬性 | 類型 | 描述               | 預設值 |
+| -- | -- | ---------------- | --- |
+| 大小 | 數字 | 圖標的高度和寬度（以像素為單位） | 24  |
+| 筆劃 | 數字 | 圖標的筆劃寬度（以像素為單位）  | 2   |
+
+</Tab>
+
+</Tabs>

@@ -1,0 +1,45 @@
+---
+title: Egyéni objektumok
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+Az objektumok olyan struktúrák, amelyek lehetővé teszik az adatok (rekordok, attribútumok, értékek) tárolását, amelyek az adott szervezethez kapcsolódnak. Twenty provides both standard and custom objects.
+
+A standard objektumok beépített objektumok, amelyek egy sor attribútumot tartalmaznak, és minden felhasználó számára elérhetők. A Twenty standard objektumok közé például a Vállalat és a Személy tartozik. A standard objektumok olyan standard mezőket tartalmaznak, amelyek szintén elérhetők minden Twenty felhasználó számára, például Vállalat.megjelenítésiNév.
+
+Az egyedi objektumok olyan objektumok, amelyeket saját szervezetének egyedi információinak tárolására hozhat létre. Ezek nem beépítettek; a munkaterület tagjai létrehozhatják és testreszabhatják az egyedi objektumokat annak érdekében, hogy olyan információkat tároljanak, amelyekre a standard objektumok nem alkalmasak.
+
+## Magasszintű séma
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
+</div>
+
+<br/>
+
+## Hogyan működik
+
+Az egyedi objektumok olyan metaadat táblákból származnak, amelyek meghatározzák az objektumok alakját, nevét és típusát. Mindezen információk megtalálhatók a metaadat sémák adatbázisában, amely táblákból áll:
+
+- **Adatforrás**: Meghatározza, hogy hol található az adat.
+- **Objektum**: Leírja az objektumot és kapcsolatban áll egy Adatforrással.
+- **Mező**: Körülhatárolja egy objektum mezőit és kapcsolódik az objektumhoz.
+
+Az egyedi objektum hozzáadásához a munkaterület tagja a /metaadat API-t fogja lekérdezni. Ez a metaadatoknak megfelelően frissül, és egy GraphQL sémát számol a metaadatok alapján, és tárolja azt egy GQL gyorsítótárban későbbi használatra.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+</div>
+
+<br/>
+
+Az adatok lekérdezése érdekében a folyamat magába foglalja a lekérdezéseket a /graphql végponton keresztül, és átadja azokat a Kérdezés Megoldó modullal.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
+</div>
+

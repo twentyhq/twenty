@@ -1,0 +1,104 @@
+---
+title: רדיו
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+משמש כאשר המשתמשים יכולים לבחור רק אפשרות אחת מתוך סדרת אפשרויות.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות          | סוג                | תיאור                                                                                                      |
+| --------------- | ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| סגנון           | תכונות `React.CSS` | סגנונות נוספים עבור הרכיב                                                                                  |
+| className       | string             | מחלקת CSS אופציונלית לסגנון נוסף                                                                           |
+| נבחר            | בוליאני            | Indicates whether the radio button is checked                                                              |
+| ערך             | string             | התווית או הטקסט המשויכים לכפתור הרדיו                                                                      |
+| onChange        | פונקציה            | הפונקציה שנקראת כאשר בחירת כפתור הרדיו משתנה                                                               |
+| onCheckedChange | פונקציה            | הפונקציה שנקראת כאשר מצב ה`נבחר` של הכפתור רדיו משתנה                                                      |
+| גודל            | string             | הגודל של כפתור הרדיו. אפשרויות כוללות: `גדול` ו`קטן`                       |
+| לא פעיל         | בוליאני            | אם `אמת`, כפתור הרדיו מנוטרל ואינו ניתן ללחיצה                                                             |
+| מיקום תווית     | מחרוזת             | המיקום של הטקסט התוויתי ביחס לכפתור הרדיו. יש שתי אפשרויות: `שמאל` ו`ימין` |
+
+</Tab>
+</Tabs>
+
+## קבוצת רדיו
+
+מקבץ כפתורי רדיו קשורים יחדיו.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות        | סוג               | תיאור                                                                  |
+| ------------- | ----------------- | ---------------------------------------------------------------------- |
+| ערך           | string            | הערך של כפתור הרדיו שנבחר כרגע                                         |
+| onChange      | פונקציה           | הפונקציה מופעלת כאשר הכפתור רדיו משתנה                                 |
+| בעת שינוי ערך | פונקציה           | הפונקציה מופעלת כאשר הערך שנבחר בקבוצה משתנה.          |
+| children      | `React.ReactNode` | מאפשר להעביר רכיבי React (כמו רדיו) בתוך קבוצה רדיו |
+
+</Tab>
+
+</Tabs>

@@ -1,0 +1,47 @@
+---
+title: 체크박스
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+사용자가 여러 옵션 중 여러 값을 선택해야 할 때 사용됩니다.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| 프로퍼티            | 유형       | 설명                                                                                                 |
+| --------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| 체크됨             | 부울       | 체크박스가 체크된 상태인지 나타냅니다                                                                               |
+| 불확정             | 부울       | 체크박스가 불확정 상태(체크되지 않음과 체크됨의 중간)에 있는지 나타냅니다                                       |
+| onChange        | function | 체크박스 상태가 변경될 때 호출할 콜백 함수입니다.                                                       |
+| onCheckedChange | function | `checked` 상태가 변경될 때 호출할 콜백 함수입니다.                                                  |
+| 변형              | 문자열      | 박스의 시각적 스타일 변형입니다. 옵션에는 `primary`, `secondary`, `tertiary`가 포함됩니다. |
+| 크기              | 문자열      | 체크박스의 크기입니다. 두 가지 옵션이 있습니다: `small`과 `large`                       |
+| 모양              | 문자열      | 체크박스의 모양입니다. 두 가지 옵션이 있습니다: `squared`와 `rounded`                   |
+
+</Tab>
+</Tabs>

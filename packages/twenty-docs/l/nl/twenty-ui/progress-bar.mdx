@@ -1,0 +1,77 @@
+---
+title: Feedback
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Geeft voortgang of aftelling aan en beweegt van rechts naar links.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { ProgressBar } from "twenty-ui/feedback";
+
+export const MyComponent = () => {
+  return (
+    <ProgressBar
+      duration={6000}
+      delay={0}
+      easing="easeInOut"
+      barHeight={10}
+      barColor="#4bb543"
+      autoStart={true}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props       | Soort      | Beschrijving                                                                                                 | Standaard |
+| ----------- | ---------- | ------------------------------------------------------------------------------------------------------------ | --------- |
+| duur        | nummer     | De totale duur van de voortgangsbalkanimatie in milliseconden.                               | 3         |
+| delay       | nummer     | De vertraging bij het starten van de voortgangsbalkanimatie in milliseconden                                 | 0         |
+| versnelling | tekenreeks | Functie voor versnelling van de voortgangsbalkanimatie                                                       | easeInOut |
+| balkHoogte  | nummer     | De hoogte van de balk in pixels                                                                              | 24        |
+| balkKleur   | tekenreeks | De kleur van de balk                                                                                         | gray80    |
+| autoStart   | booleaan   | Als `waar`, start de voortgangsbalkanimatie automatisch wanneer het onderdeel wordt geladen. | `waar`    |
+
+</Tab>
+</Tabs>
+
+## Circulaire Voortgangsbalk
+
+Geeft de voortgang van een taak aan, vaak gebruikt in laadschermen of gebieden waar u lopende processen aan de gebruiker wilt communiceren.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+export const MyComponent = () => {
+  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props       | Soort      | Beschrijving                                                 | Standaard    |
+| ----------- | ---------- | ------------------------------------------------------------ | ------------ |
+| grootte     | nummer     | De grootte van de circulaire voortgangsbalk. | 50           |
+| balkBreedte | nummer     | De breedte van de voortgangsbalklijn                         | 5            |
+| balkKleur   | tekenreeks | De kleur van de voortgangsbalk                               | huidigeKleur |
+
+</Tab>
+
+</Tabs>

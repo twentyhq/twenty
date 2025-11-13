@@ -1,0 +1,47 @@
+---
+title: Ουρά Μηνυμάτων
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Οι ουρές διευκολύνουν την εκτέλεση ασύγχρονων λειτουργιών. Μπορούν να χρησιμοποιηθούν για την εκτέλεση εργασιών παρασκηνίου, όπως η αποστολή ενός καλωσοριστήριου email κατά την εγγραφή.
+Κάθε περίπτωση χρήσης θα έχει την δική της κλάση ουράς που επεκτείνεται από το `MessageQueueServiceBase`.
+
+Προς το παρόν υποστηρίζουμε μόνο το `bull-mq`[bull-mq](https://bullmq.io/) ως οδηγό ουράς.
+
+## Βήματα για τη δημιουργία και χρήση μιας νέας ουράς
+
+1. Προσθέστε ένα όνομα ουράς για τη νέα σας ουρά κάτω από το enum `MESSAGE_QUEUES`.
+2. Παρέχετε την υλοποίηση του εργοστασίου της ουράς με το όνομα της ουράς ως το διακριτικό εξάρτησης.
+3. Εισάγετε την ουρά που δημιουργήσατε στο απαιτούμενο μονάδα/υπηρεσία με το όνομα της ουράς ως το διακριτικό εξάρτησης.
+4. Προσθέστε κλάση εργαζόμενου με εισαγωγή βάσει διακριτικού όπως ακριβώς και ο παραγωγός.
+
+### Παράδειγμα χρήσης
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```
+

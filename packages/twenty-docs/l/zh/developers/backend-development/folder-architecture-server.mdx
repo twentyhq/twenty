@@ -1,0 +1,130 @@
+---
+title: 資料夾架構
+info: 深入了解我們的伺服器資料夾架構
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+後端目錄結構如下：
+
+```
+server
+  └───ability
+  └───constants 
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Ability
+
+定義每個實體的權限並包含處理程序。
+
+## 裝飾器
+
+Defines custom decorators in NestJS for added functionality.
+
+查看[自訂修飾器](https://docs.nestjs.com/custom-decorators)以獲取更多詳細資訊。
+
+## 篩選
+
+包含例外過濾器以處理可能在 GraphQL 端點上發生的例外。
+
+## 守衛
+
+查看[守衛](https://docs.nestjs.com/guards)以獲取更多詳細資訊。
+
+## Health
+
+包含一個可公開訪問的 REST API（healthz），返回 JSON 以確認數據庫運行正常。
+
+## 元數據
+
+定義自訂物件並提供一個 GraphQL API (graphql/metadata)。
+
+## 工作區
+
+根據元數據生成並提供自訂 GraphQL 結構。
+
+### 工作空間目錄結構
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories 
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils 
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils 
+  └───workspace.module.ts   
+  └───workspace.factory.spec.ts    
+  └───workspace.factory.ts      
+```
+
+工作空間目錄的根目錄包含 `workspace.factory.ts`，一個包含 `createGraphQLSchema` 函數的文件。 該函數使用元數據生成工作區特定的結構，以便為個別工作空間定制結構。 通過將結構和解決器構建分開，我們使用 `makeExecutableSchema` 函數，將這些離散元素結合在一起。
+
+此策略不僅關乎組織，還有助於優化，例如緩存生成的類型定義以提高性能和擴展性。
+
+### 工作空間結構生成器
+
+生成 GraphQL 結構，包含：
+
+#### 工廠：
+
+專門構造生成與 GraphQL 相關的構建。
+
+- type.factory 使用 `TypeMapperService` 轉換字段元數據為 GraphQL 類型。
+- type-definition.factory 創建從 `objectMetadata` 派生的 GraphQL 輸入或輸出物件。
+
+#### GraphQL 類型
+
+包括枚舉、輸入、物件和標量，並作為結構構建的基本組件。
+
+#### 介面和物件定義
+
+包含 GraphQL 實體藍圖，包含預定義和自訂類型如`MONEY`或 `URL`。
+
+#### 服務
+
+包含將 FieldMetadataType 與其適當的 GraphQL 標量或查詢修改器關聯的服務。
+
+#### 存儲
+
+包含 `TypeDefinitionsStorage` 類，該類包含可重複使用的類型定義，防止重複 GraphQL 類型。
+
+### 工作空間解析器生成器
+
+創建用於查詢和變更 GraphQL 結構的解析器函數。
+
+此目錄中的每個工廠都負責生成一個獨特的解析器類型，例如 `FindManyResolverFactory`，設計用於跨各種表的適應性應用。
+
+### 工作空間查詢運行器
+
+在資料庫上運行生成的查詢並解析結果。

@@ -1,0 +1,56 @@
+---
+title: Ikoon Kieser
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+‘n Dropdown-gebaseerde ikoonkieser wat gebruikers toelaat om ‘n ikoon uit ‘n lys te kies.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Eienskappe         | Tipe       | Beskrywing                                                                                                                                   |
+| ------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| gedeaktiveer       | booleaanse | Disables the icon picker if set to `true`                                                                                                    |
+| opVerandering      | funksie    | The callback function triggered when the user selects an icon. Dit ontvang ‘n objek met `ikoonSleutel` en `Ikoon` eienskappe |
+| gekiesIkoonSleutel | string     | Die sleutel van die aanvanklik gekose ikoon                                                                                                  |
+| onClickOutside     | funksie    | Terugbel funksie geaktiveer wanneer die gebruiker buite die keuselys klik                                                                    |
+| onClose            | funksie    | Terugbel funksie geaktiveer wanneer die keuselys gesluit word                                                                                |
+| onOpen             | funksie    | Terugbel funksie geaktiveer wanneer die keuselys oopgemaak word                                                                              |
+| variant            | string     | Die visuele styl variant van die klikbare ikoon. Opsies sluit in: `primêr`, `sekondêr`, en `tersiêr`         |
+
+</Tab>
+</Tabs>

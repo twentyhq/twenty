@@ -1,0 +1,168 @@
+---
+title: Посилання
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Contact Link
+
+Стилізований компонент для відображення контактної інформації.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from 'twenty-ui/navigation';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Властивості | Тип               | Опис                                                                    |
+| ----------- | ----------------- | ----------------------------------------------------------------------- |
+| className   | рядок             | Необов'язкове ім'я для додаткового стилювання                           |
+| href        | рядок             | Цільова URL-адреса або шлях для посилання                               |
+| onClick     | функція           | Функція зворотного виклику, яка активується при натисканні на посилання |
+| children    | `React.ReactNode` | Зміст, що відображається всередині посилання                            |
+
+</Tab>
+
+</Tabs>
+
+## Сире посилання
+
+Стилізований компонент для відображення посилань.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RawLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| Властивості | Тип               | Опис                                                                    |
+| ----------- | ----------------- | ----------------------------------------------------------------------- |
+| className   | рядок             | Необов'язкове ім'я для додаткового стилювання                           |
+| href        | рядок             | Цільова URL-адреса або шлях для посилання                               |
+| onClick     | функція           | Функція зворотного виклику, яка активується при натисканні на посилання |
+| children    | `React.ReactNode` | Зміст, що відображається всередині посилання                            |
+
+</Tab>
+</Tabs>
+
+## Закруглене посилання
+
+Стилізоване закруглене посилання з компонентом Chip для посилань.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedLink } from "/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Властивості | Тип               | Опис                                                                    |
+| ----------- | ----------------- | ----------------------------------------------------------------------- |
+| href        | рядок             | Цільова URL-адреса або шлях для посилання                               |
+| children    | `React.ReactNode` | Зміст, що відображається всередині посилання                            |
+| onClick     | функція           | Функція зворотного виклику, яка активується при натисканні на посилання |
+
+</Tab>
+</Tabs>
+
+## Соціальне посилання
+
+Стилізовані соціальні посилання з підтримкою різних типів соціальних посилань, таких як URL-адреси, LinkedIn і X (або Twitter).
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { SocialLink } from "twenty-ui/navigation";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Властивості | Тип               | Опис                                                                                                    |
+| ----------- | ----------------- | ------------------------------------------------------------------------------------------------------- |
+| href        | рядок             | Цільова URL-адреса або шлях для посилання                                                               |
+| children    | `React.ReactNode` | Зміст, що відображається всередині посилання                                                            |
+| тип         | рядок             | Тип соціальних посилань. Опції включають: `url`, `LinkedIn` і `Twitter` |
+| onClick     | функція           | Функція зворотного виклику, яка активується при натисканні на посилання                                 |
+
+</Tab>
+</Tabs>

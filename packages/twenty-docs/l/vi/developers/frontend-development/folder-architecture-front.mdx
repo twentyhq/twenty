@@ -1,0 +1,114 @@
+---
+title: Cấu trúc Thư mục
+info: Một cái nhìn chi tiết vào cấu trúc thư mục của chúng tôi
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Trong hướng dẫn này, bạn sẽ khám phá chi tiết cấu trúc thư mục dự án và cách thức nó đóng góp vào việc tổ chức và bảo trì của Twenty.
+
+Bằng cách tuân theo quy ước cấu trúc thư mục này, việc tìm kiếm các tập tin liên quan đến tính năng cụ thể trở nên dễ dàng hơn và đảm bảo rằng ứng dụng có khả năng mở rộng và dễ bảo trì.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Trang
+
+Bao gồm các thành phần cấp cao nhất được định nghĩa bởi đường dẫn ứng dụng. Chúng nhập các thành phần cấp thấp hơn từ thư mục modules (xem chi tiết bên dưới).
+
+## Modules
+
+Mỗi mô-đun đại diện cho một tính năng hoặc nhóm tính năng, bao gồm các thành phần cụ thể, trạng thái và logic hoạt động của nó.
+Tất cả chúng nên tuân theo cấu trúc dưới đây. Bạn có thể lồng mô-đun trong các mô-đun (được gọi là tiểu mô-đun) và các quy tắc tương tự sẽ được áp dụng.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Contexts
+
+Ngữ cảnh là một cách để truyền dữ liệu thông qua cây thành phần mà không cần phải truyền props thủ công ở mọi cấp độ.
+
+Xem [React Context](https://react.dev/reference/react#context-hooks) để biết thêm chi tiết.
+
+### GraphQL
+
+Includes fragments, queries, and mutations.
+
+Xem [GraphQL](https://graphql.org/learn/) để biết thêm chi tiết.
+
+- Fragments
+
+A fragment is a reusable piece of a query, which you can use in different places. Bằng cách sử dụng phần tử, tránh được việc lặp lại mã dễ dàng hơn.
+
+Xem [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) để biết thêm chi tiết.
+
+- Truy vấn
+
+Xem [GraphQL Queries](https://graphql.org/learn/queries/) để biết thêm chi tiết.
+
+- Mutations
+
+Xem [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) để biết thêm chi tiết.
+
+### Hooks
+
+Xem [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) để biết thêm chi tiết.
+
+### Trạng thái
+
+Chứa logic quản lý trạng thái. [RecoilJS](https://recoiljs.org) xử lý việc này.
+
+- Chọn lọc: Xem [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) để biết thêm chi tiết.
+
+Quản lý trạng thái tích hợp sẵn của React vẫn đảm nhận việc quản lý trạng thái trong từng thành phần.
+
+### Tiện ích
+
+Nên chỉ chứa các hàm thuần có thể tái sử dụng. Nếu không, hãy tạo các hooks tùy chỉnh trong thư mục `hooks`.
+
+## Giao diện Người dùng
+
+Chứa tất cả các thành phần giao diện người dùng có thể tái sử dụng trong ứng dụng.
+
+Thư mục này có thể chứa các thư mục con, như `data`, `display`, `feedback` và `input` cho các loại thành phần cụ thể. Mỗi thành phần nên là một đơn vị độc lập và có thể tái sử dụng, để bạn có thể sử dụng nó ở các phần khác nhau của ứng dụng.
+
+Bằng cách tách biệt các thành phần giao diện người dùng với các thành phần khác trong thư mục `modules`, bảo dưỡng thiết kế đồng nhất dễ dàng hơn và thực hiện thay đổi đối với giao diện mà không ảnh hưởng tới các phần khác (logic nghiệp vụ) của mã nguồn.
+
+## Giao diện và phụ thuộc
+
+Bạn có thể nhập mã code mô-đun khác từ bất kỳ mô-đun nào ngoại trừ thư mục `ui`. Điều này sẽ giữ cho mã code dễ kiểm tra.
+
+### Nội bộ
+
+Mỗi phần (hooks, states...) của một mô-đun có thể có một thư mục `internal`, chứa các phần chỉ sử dụng trong mô-đun đó.

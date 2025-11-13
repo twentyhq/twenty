@@ -1,0 +1,62 @@
+---
+title: Câmpuri de relație
+info: Aflați cum să creați relații între obiecte utilizând câmpuri de relație și cum să configurați relații de tip 1-la-mai-mulți.
+image: /images/user-guide/fields/relations_field.png
+sectionInfo: Model de date flexibil proiectat pentru a susține procesele unice ale afacerii tale
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/relations_field.png" alt="Header" />
+</Frame>
+
+## Ce sunt câmpurile de relație?
+
+Câmpurile de relație leagă înregistrările unui obiect de înregistrările dintr-un alt obiect. De exemplu:
+
+- **Persoane** → **Companii** (fiecare persoană lucrează pentru o companie)
+- **Oportunități** → **Persoane** (fiecare tranzacție are o persoană de contact)
+- **Sarcini** → **Oportunități** (fiecare sarcină se referă la o tranzacție specifică)
+
+## Crearea câmpurilor de relație
+
+### 1. Adăugați câmpul
+
+Accesați **Setări → Model de date → [Obiectul dumneavoastră]** și faceți clic pe **Adaugă câmp**.
+
+### 2. Alegeți tipul de relație
+
+- **Tip câmp**: Selectați "Relație"
+- **Obiect țintă**: Alegeți obiectul pe care să îl conectați
+- **Relație**: Actualmente suportă doar relații de tip **1-la-mai-mulți**. Asigurați-vă că creați relația în direcția corectă.
+
+### 3. Configurați denumirile câmpurilor
+
+Va trebui să setați nume pentru ambele părți ale relației:
+
+- **Nume câmp sursă**: Cum apare câmpul pe obiectul curent
+- **Nume câmp țintă**: Cum apare câmpul invers pe obiectul țintă
+
+<Warning>
+Numele câmpurilor nu pot fi editate odată ce relația este salvată, deoarece afectează structura API-ului. Alegeți cu atenție.
+</Warning>
+
+## Relaționarea cu membrii echipei
+
+Puteți crea relații cu orice obiect, inclusiv cu **Membrii Spațiului de Lucru** (utilizatorii echipei dumneavoastră din Twenty). Acest lucru este util pentru crearea câmpurilor de proprietate:
+
+- **Proprietar cont**: Asociază o companie cu un membru al echipei care o gestionează
+- **Proprietar afacere**: Asignați o oportunitate unui vânzător specific
+
+Când creați o relație cu `Membrii Spațiului de Lucru`, veți vedea numele membrilor echipei în selecțiile drop-down, făcând ușoară atribuirea proprietății și responsabilităților.
+
+## Cele mai bune practici
+
+- **Planificați-vă relațiile** înainte de a le crea
+- **Folosiți nume clare și descriptive** pentru ambele denumiri de câmpuri
+- **Testați relațiile** cu date de probă înainte de implementarea completă
+
+## Funcții viitoare
+
+- **Relații de tip Morph Many** (Disponibil Q4 2025)
+- **Many-to-many relationships** (Coming Q1 2026)
+
