@@ -5,7 +5,7 @@ export class EditableProfileFields1762884796640 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "editableProfileFields" character varying array DEFAULT '{email,profilePicture}'`,
+      `ALTER TABLE "core"."workspace" ADD "editableProfileFields" character varying array DEFAULT '{email,profilePicture,firstName,lastName}'`,
     );
   }
 
