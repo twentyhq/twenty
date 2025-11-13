@@ -143,8 +143,8 @@ export const SettingsSecurity = () => {
           <Section>
             <StyledContainer>
               <H2Title
-                title={t`Profile information`}
-                description={t`Decide which profile fields the Profile Information permission can edit`}
+                title={t`Editable Profile Fields`}
+                description={t`Choose which profile fields users with the Edit Profile permission can modify`}
               />
               <SettingsSecurityEditableProfileFields />
             </StyledContainer>

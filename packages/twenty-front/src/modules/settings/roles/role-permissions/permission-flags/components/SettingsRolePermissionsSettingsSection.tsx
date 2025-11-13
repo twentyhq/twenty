@@ -22,7 +22,6 @@ import {
   IconShield,
   IconSparkles,
   IconSpy,
-  IconUser,
   IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
@@ -111,12 +110,6 @@ export const SettingsRolePermissionsSettingsSection = ({
         name: t`SSO Bypass`,
         description: t`Enable bypass options`,
         Icon: IconShield,
-      },
-      {
-        key: PermissionFlagType.PROFILE_INFORMATION,
-        name: t`Profile Information`,
-        description: t`Edit own profile info`,
-        Icon: IconUser,
       },
       {
         key: PermissionFlagType.IMPERSONATE,

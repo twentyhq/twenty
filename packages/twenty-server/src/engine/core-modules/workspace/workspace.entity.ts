@@ -267,7 +267,7 @@ export class WorkspaceEntity {
     type: 'varchar',
     array: true,
     nullable: true,
-    default: '{email,profilePicture}',
+    default: '{email,profilePicture,firstName,lastName}',
   })
   editableProfileFields: string[] | null;
 
