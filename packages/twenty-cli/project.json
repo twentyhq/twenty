@@ -9,7 +9,7 @@
       "cache": true,
       "options": {
         "cwd": "packages/twenty-cli",
-        "commands": ["rimraf dist", "tsc --project tsconfig.lib.json"]
+        "commands": ["^build", "rimraf dist", "tsc --project tsconfig.lib.json"]
       }
     },
     "build": {
