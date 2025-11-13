@@ -1,13 +1,15 @@
 import { inspect } from 'util';
 
 import { isNull, isObject } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  compositeTypeDefinitions,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 export const validateRichTextV2FieldOrThrow = (
   value: unknown,

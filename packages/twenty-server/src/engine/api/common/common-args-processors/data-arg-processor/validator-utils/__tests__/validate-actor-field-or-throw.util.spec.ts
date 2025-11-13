@@ -1,6 +1,7 @@
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { validateActorFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 describe('validateActorFieldOrThrow', () => {
   describe('valid inputs', () => {

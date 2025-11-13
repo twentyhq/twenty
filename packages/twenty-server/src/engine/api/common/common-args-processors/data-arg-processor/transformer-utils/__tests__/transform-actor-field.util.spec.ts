@@ -1,5 +1,6 @@
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { transformActorField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-actor-field.util';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 describe('transformActorField', () => {
   it('should return null when value is null', () => {

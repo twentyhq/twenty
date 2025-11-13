@@ -1,10 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   type RichTextV2Metadata,
   richTextV2ValueSchema,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/rich-text-v2.composite-type';
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const transformRichTextV2Value = async (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
