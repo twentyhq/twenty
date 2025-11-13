@@ -1,0 +1,77 @@
+---
+title: Kom godt i gang med arbejdsgange
+info: "Lær hvordan man tilføjer automations og ideer for at komme i gang."
+image: /images/user-guide/workflows/workflow.png
+sectionInfo: Automatiser processer og integrer med eksterne værktøjer
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Header" />
+</Frame>
+
+## Hvorfor arbejdsgange er vigtige
+
+Twenty blev udviklet for at give sine brugere maksimal fleksibilitet. I stedet for at tvinge dig til at tilpasse dine forretningsprocesser til stive, forudindbyggede funktioner, giver arbejdsgange dig mulighed for at opbygge automations, der skaber det CRM, der bedst understøtter dine unikke forretningsscenarier.
+
+Arbejdsgange er Twenty's in-app funktion til at opbygge disse automations. De giver dig byggestenene til præcis det, din virksomhed har brug for, når den har brug for det.
+
+## Hvad kan jeg gøre med arbejdsgange?
+
+Vi anbefaler at opbygge automations til to hovedformål:
+
+1. **Interne automations for at lette dit teams daglige arbejde**: Reducer mængden af manuelle indtastninger og gentagne opgaver, der bremser dit team.
+2. **Indfør og eksporter data fra Twenty**: Forbind Twenty via API-opkald og webhooks til din database og andre værktøjer.
+
+Lad os udforske eksempler på, hvad der er muligt, før vi dykker ned i hvordan.
+
+## 1. Interne Automations
+
+Dit CRM er kun nyttigt, hvis dataene er opdaterede, men ingen kan lide at opdatere det. Brug arbejdsgange til at automatisere opgaver med lav værdi og gentagelser og hold dit team fokuseret på det, der betyder noget.
+
+Eksempler på, hvad du kan automatisere internt:
+
+- **Datahåndtering**: Automatisk flagning af personlige e-mails, tildeling af leads, datavalidering
+- **Salgsprocesser**: Fasebaserede opdateringer, churn-håndtering, advarsler om stillestående muligheder
+- **Produktivitet**: Ugentlige opgavepåmindelser, mødeopfølgninger, synkronisering af felter på tværs af objekter
+
+For detaljerede eksempler og trin-for-trin vejledning, se vores [Interne Automations](/l/da/user-guide/workflows/internal-automations) guide.
+
+## 2. Eksterne Integrationer
+
+Forbind Twenty med dine andre værktøjer og datakilder for at skabe et samlet forretningssystem. Du kan indføre data i Twenty fra webformularer, produktdatabaser, opkaldsoptagere og berigelsestjenester. Du kan også sende data til e-mail marketing værktøjer, faktureringssystemer og andre forretningsapplikationer.
+
+Eksempler på, hvad du kan integrere:
+
+- **Data ingestion**: Webformular indsendelser, synkronisering af produktdata, mødenoter, data berigelse
+- **Data distribution**: Nyhedsbrevsadministration, e-mail-sekvenser, leadscoring, fakturagenerering
+
+For detaljerede integrationsmønstre og vejledning til implementering, se vores [Eksterne Værktøjsintegration](/l/da/user-guide/workflows/external-tool-integration) guide.
+
+### Hvad hvis jeg ikke ønsker at bygge de forbindelser?
+
+Vi tilbyder [Professionelle Tjenester](/l/da/user-guide/workflows/professional-services) for at hjælpe dig med at skabe de automatiseringer, du har brug for.  
+Afhængigt af omfanget af dit projekt, vil vi foreslå en [Onboarding pakke](https://twenty.com/onboarding-packages) eller vi vil forbinde dig med vores certificerede implementeringspartnere. De kan skabe din datamodel, migrere dine data, bygge dine arbejdsgange.
+
+### Jeg er ikke sikker på, at den forbindelse jeg har brug for, er mulig
+
+Send os en besked, og vi vil hjælpe dig med at vurdere muligheden.
+
+## Workflow Best Practices
+
+As you start building workflows, keep these tips in mind:
+
+- **Edit step names**: Rename your workflow steps to clearly describe what each one does. Dette hjælper med vedligeholdelse og gør det lettere at overdrage til kolleger
+- **Leverage previous step data**: You can use fields from records returned by any previous step in your workflow
+- **Start simple**: Begin with basic workflows and add complexity over time as you become more comfortable with the system
+- **Plan before building**: Map out your workflow logic before you start building to avoid getting stuck halfway through
+- **Use branches wisely**: After a `Search Records` step, create branches to handle both "update existing record" and "create new record" scenarios, then merge the paths back together
+
+## Hvad vi arbejder på
+
+Here are the main items we're working on to improve workflows:
+
+- Løkker (Iterator er i øjeblikket i beta, aktiver det under Indstillinger → Udgivelser → Laboratorium)
+- Hvis / ellers trin
+- AI-agent til at bygge arbejdsforløb på dine vegne
+
+

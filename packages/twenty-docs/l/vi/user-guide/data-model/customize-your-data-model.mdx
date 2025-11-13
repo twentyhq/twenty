@@ -1,0 +1,69 @@
+---
+title: Tuỳ chỉnh mô hình dữ liệu của bạn
+info: "Tìm hiểu cách thiết kế và tạo mô hình dữ liệu phản ánh cách bạn hoạt động."
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: Mô hình dữ liệu linh hoạt được thiết kế để hỗ trợ các quy trình kinh doanh độc đáo của bạn.
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Header" />
+</Frame>
+
+## Mô hình dữ liệu là gì?
+
+Mô hình dữ liệu là cấu trúc định nghĩa cách thông tin được tổ chức trong CRM của bạn. It determines what objects exist (like companies, people, or opportunities), what properties they have (those are the fields), and how they relate to each other. Bạn có thể nghĩ nó như là bản đồ dữ liệu khách hàng của bạn.
+
+## Tại sao bạn nên tùy chỉnh mô hình dữ liệu của mình?
+
+Mỗi doanh nghiệp hoạt động khác nhau. Có thể tùy chỉnh hoàn toàn mô hình dữ liệu của bạn có nghĩa là bạn có thể định hình Twenty xung quanh các quy trình của bạn thay vì ép chúng vào một hệ thống cứng nhắc.  
+Twenty cung cấp sự linh hoạt bạn cần để định hình mô hình dữ liệu tốt nhất hỗ trợ cho công việc hàng ngày của bạn. Bạn có thể tạo bao nhiêu đối tượng và trường tùy chỉnh tùy thích, giá sẽ không thay đổi.
+
+## Tips to design your data model
+
+Hiếm khi chỉ có một cách để xây dựng một mô hình dữ liệu. Dưới đây là một vài mẹo để giúp bạn xây dựng mô hình của mình.
+
+**1. Start with your core objects.**  
+Identify the main concepts you work with (e.g. Companies, People, Opportunities). Ba đối tượng đó đã có sẵn vì chúng được sử dụng rất thường xuyên. But think of any other you might need.  
+Ví dụ: Stripe sẽ cần một đối tượng `Subscriptions`, Airbnb sẽ cần một đối tượng `Trips`, một vườn ươm khởi nghiệp sẽ cần một đối tượng `Batches`.
+
+**2. Sử dụng trường cho các biến thể, không phải đối tượng mới.**  
+Nếu điều gì đó chỉ là đặc điểm của một đối tượng hiện có (ví dụ như `Ngành nghề` cho một Công ty, hoặc `Trạng thái` cho một Cơ hội), hãy biến nó thành một trường. Fields are best for categories, labels, and attributes.
+
+**3. Tạo đối tượng mới khi nó tự đứng riêng.**  
+Nếu khái niệm có vòng đời riêng của nó, thuộc tính hoặc mối quan hệ, nó thường xứng đáng có một đối tượng. Ví dụ:
+
+- **Dự án** có riêng hạn chót, người quản lý, và nhiệm vụ
+- **Đăng ký** kết nối công ty, sản phẩm, và hóa đơn
+- **Sự kiện** liên quan đến nhiều người tham gia và hành động theo dõi
+
+Những điều này vượt qua một trường duy nhất vì chúng mang theo dữ liệu và mối quan hệ riêng của chúng.
+
+**4. Tạo đối tượng khi số lượng bản ghi liên quan là không xác định.**  
+Nếu điều gì đó có thể được liên kết nhiều lần và bạn không biết bao nhiêu, tốt hơn là làm một đối tượng riêng. For instance, instead of creating fields like `Product 1`, `Product 2`, etc., define a `Product` object and relate it to the original record. Bằng cách này, bạn có thể hỗ trợ một, hai, hoặc cả trăm sản phẩm mà không cần thay đổi mô hình.
+
+**5. Giữ mọi thứ đơn giản trước tiên.**  
+Bắt đầu với các trường. Chuyển sang đối tượng mới chỉ khi bạn cảm thấy có giới hạn: quá nhiều trường, bản ghi lặp lại, hoặc mối quan hệ không phù hợp.
+
+### Chú ý đặc biệt về Con người, Công ty và Cơ hội
+
+- **`Con người`, `Công ty` và `Cơ hội` là những đối tượng duy nhất mà bạn có thể truy cập vào các email và cuộc họp được đồng bộ từ hộp thư/ lịch.** Chúng tôi khuyên bạn nên sử dụng chúng nhiều nhất có thể. Nếu bạn cần tạo các loại `Con người` hoặc `Công ty`, hãy sử dụng trường thay vì đối tượng mới.
+
+  Ví dụ: tốt nhất là sử dụng đối tượng `Con người` cho cả khách hàng tiềm năng và đối tác, thêm một trường gọi là `Loại người`. Tránh tạo đối tượng `Đối tác`, vì bạn sẽ không thể truy cập luồng email từ đó. Thay vào đó, tạo các chế độ xem khác nhau dưới `Con người`: một chế độ hiển thị đối tác, một chế độ khác hiển thị khách hàng tiềm năng.
+- Dựa trên điểm trên, không sao cả khi có trường không áp dụng cho mọi bản ghi. Ví dụ, dưới `Con người` bạn có thể thêm một trường `Liên kết Giới thiệu` chỉ có liên quan khi `Loại người = Đối tác`. Điều đó không sao: bạn có thể ẩn trường này khỏi các chế độ xem nơi nó không cần thiết.
+
+### Câu hỏi để hướng dẫn lựa chọn của bạn
+
+Hỏi bản thân:
+
+- Is this just a property of something I already have, or does it need its own properties?
+- Tôi có bao giờ cần theo dõi nhiều cái này trên mỗi bản ghi, mà không biết bao nhiêu từ trước không?
+- Khái niệm này kết nối với nhiều đối tượng khác nhau, không chỉ một duy nhất?
+- Nó có vòng đời riêng của nó (ví dụ: giai đoạn, ngày bắt đầu/kết thúc)?
+
+Nếu câu trả lời là "có" với một hoặc nhiều câu hỏi trên, có lẽ đã đến lúc tạo một đối tượng mới.
+
+## Cần sự giúp đỡ?
+
+Đội ngũ của chúng tôi có thể hỗ trợ bạn thiết kế và tạo mô hình dữ liệu bạn cần. Khám phá gói Khai báo bắt đầu của chúng tôi [tại đây](https://twenty.com/onboarding-packages).
+
+

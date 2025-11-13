@@ -69,6 +69,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     isGoogleAuthEnabled: PermissionFlagType.SECURITY,
     isMicrosoftAuthEnabled: PermissionFlagType.SECURITY,
     isPasswordAuthEnabled: PermissionFlagType.SECURITY,
+    editableProfileFields: PermissionFlagType.SECURITY,
     isTwoFactorAuthenticationEnforced: PermissionFlagType.SECURITY,
     defaultRoleId: PermissionFlagType.ROLES,
     routerModel: PermissionFlagType.WORKSPACE,

@@ -1,0 +1,220 @@
+---
+title: Externe Tool Integratie
+info: Deze workflows richten zich op het importeren en exporteren van data in en uit Twenty via API-oproepen en webhooks.
+image: /images/user-guide/integrations/plug.png
+sectionInfo: Processen automatiseren en integreren met externe tools
+---
+
+<Frame>
+  <img src="/images/user-guide/integrations/plug.png" alt="Header" />
+</Frame>
+
+Hieronder staan workflowvoorbeelden die u kunt uitrollen om Twenty met de rest van uw stack te verbinden.
+
+## Gegevensinvoer Gebruikssituaties
+
+### Webformulier Inzendingen
+
+**Probleem**: U moet leads van websiteformulieren, landingspagina's of contactformulieren direct invoeren in Twenty.
+
+**Oplossing**: Gebruik webhook-triggers om automatisch records aan te maken van formulierinzendingen.
+
+**Setup**:
+
+- Maak een workflow met een Webhook-trigger
+- Configureer de webhook om formuliergegevens te verwachten (naam, e-mail, bedrijf, etc.)
+- Stel de webhook-methode in op POST
+- Definieer de verwachte lichaamstructuur in de trigger
+
+**Trigger**: Webhook (POST-verzoek van uw formulier)
+
+**Acties**:
+
+- Zoek Records om te controleren of persoon/bedrijf al bestaat
+- Tak: Als bestaat → Record bijwerken, Als niet → Record maken
+- Maak Record voor opvolgtaak toegewezen aan salesvertegenwoordiger
+- Stuur een e-mailnotificatie naar het verkoopteam
+
+### Product Data Synchronisatie
+
+**Probleem**: Uw verkoopteam heeft inzicht nodig in de gegevens van productgebruik, facturering of functietoepassing die in uw datawarehouse zijn opgeslagen.
+
+**Oplossing**: Synchroniseer regelmatig productgegevens naar Twenty om verkopers context te geven over hun accounts.
+
+**Trigger**: Op een Schema (dagelijks of wekelijks)
+
+**Acties**:
+
+- HTTP Verzoek naar uw datawarehouse API
+- Codeeractie om de gegevens te verwerken en op te maken
+- Gebruik de Iterator-functie voor de volgende stappen
+- Zoek Records om overeenkomende bedrijfsrecords te vinden
+- Werk Record bij om productgebruik statistieken toe te voegen
+- Maak Record voor taken wanneer gebruik onder de drempelwaarde daalt
+
+### Vergadernotities van Oproeprecorders
+
+**Probleem**: Belangrijke inzichten van verkoopgesprekken raken verloren of worden niet goed gedocumenteerd in de CRM.
+
+**Oplossing**: Maak automatisch notities en actie-items van oproepopnamesystemen.
+
+**Trigger**: Webhook (van oproepopname platform)
+
+**Acties**:
+
+- Codeeractie om vergadersamenvatting en actiepunten te extraheren
+- Zoek Records om de gerelateerde kans of contactpersoon te vinden
+- Maak Record voor een notitie met vergadersamenvatting
+- Maak Record voor vervolgacties gebaseerd op actiepunten
+- Stuur een e-mail naar deelnemers met samenvatting en volgende stappen
+
+### Gegevensverrijking
+
+**Probleem**: Uw contact- en bedrijfsrecords missen belangrijke demografische en firmografische informatie.
+
+**Oplossing**: Verrijk automatisch records met behulp van externe dataverstrekkers.
+
+**Trigger**: Record is Aangemaakt (Mensen- of Bedrijvenobject)
+
+**Acties**:
+
+- HTTP Verzoek naar verrijkings-API
+- Codeeractie om verrijkingsreactie te verwerken
+- Gebruik de Iterator-functie voor de volgende stappen
+- Werk Record bij met aanvullende bedrijfs-/contactinformatie
+- Maak Record voor verkooptaak als een hoogwaardig prospect wordt geïdentificeerd
+- Stuur een e-mailwaarschuwing als verrijking belangrijke koopsignalen onthult
+
+## Data Distributie Gebruikssituaties
+
+### Nieuwsbrief Abonnementsbeheer
+
+**Probleem**: U wilt marketing-e-mails verzenden naar specifieke segmenten van uw CRM-data met behulp van gespecialiseerde e-mailtools.
+
+**Oplossing**: Exporteer abonneelijsten naar uw e-mailmarketingplatform wanneer nodig.
+
+**Instellen**: Maak een weergave in Twenty met alle nieuwsbriefontvangers.
+
+**Trigger**: Handmatig starten (wanneer geen record is geselecteerd)
+
+**Acties**:
+
+- Zoek records met behulp van de criteria voor nieuwsbriefweergave
+- Codeer actie om e-mailadressen te formatteren voor uw e-mailplatform
+- HTTP-verzoek om abonnees toe te voegen aan uw e-mailmarketingtool
+- Maak een record voor campagne-tracking
+- Stuur e-mailbevestiging naar marketingteam
+
+### E-mailreeks Triggers
+
+**Probleem**: U wilt geavanceerde e-mailreeksen triggeren op basis van CRM-evenementen met behulp van speciale e-mailautomatiseringstools.
+
+**Oplossing**: Stuur nieuwe leads of klanten naar uw e-mailautomatiseringsplatform wanneer specifieke evenementen plaatsvinden.
+
+**Trigger**: Record is aangemaakt (Persoonsobject met specifieke criteria)
+
+**Acties**:
+
+- Codeer actie om de juiste e-mailreeks te bepalen
+- HTTP-verzoek om contact toe te voegen aan e-mailautomatiseringsplatform
+- Werk record bij om volgorde-inschrijving te volgen
+- Maak een record voor vervolgtaak om engagement te monitoren
+
+### Lead Scoring Integratie
+
+**Probleem**: U heeft geavanceerde lead scoring nodig die CRM-data combineert met externe signalen.
+
+**Oplossing**: Stuur leadgegevens naar externe scoring tools of implementeer scoringslogica binnen workflows.
+
+**Optie 1 - Externe Tool**:
+
+**Trigger**: Record wordt bijgewerkt (Persoonsobject)
+
+**Acties**:
+
+- HTTP-verzoek om leadgegevens naar scoringplatform te sturen
+- Codeer actie om scoringsantwoord te verwerken
+- Werk record bij met leadscore
+- Maak record voor verkooptaak als score drempel overschrijdt
+
+**Optie 2 - Interne Logica**:
+
+**Trigger**: Record wordt bijgewerkt (Persoonsobject)
+
+**Acties**:
+
+- Codeer actie met scoringsalgoritme (bedrijfsgrootte, industrie, gedrag)
+- Werk record bij met berekende score
+- Stuur e-mailwaarschuwing naar verkoopmedewerker voor hoogscorende leads
+
+### Factuur Genereren
+
+**Probleem**: Wanneer deals gesloten worden, moet uw factureringssysteem bijgewerkt worden met klant- en dealinformatie.
+
+**Oplossing**: Stuur automatisch dealgegevens naar uw facturatiesysteem wanneer kansen worden gewonnen.
+
+**Trigger**: Record wordt bijgewerkt (Kansenobject, Fase = "Gesloten Gewonnen")
+
+**Acties**:
+
+- Zoek records om volledige klantinformatie te verkrijgen
+- Codeer actie om gegevens te formatteren voor factureringssysteem
+- HTTP-verzoek om klant aan te maken in facturatieplatform
+- HTTP-verzoek om factuur aan te maken
+- Werk record bij om factuurreferentie op te slaan
+- Stuur e-mail naar financeteam met factuurdetails
+
+## Advanced Integration Patterns
+
+### Twee-weg Sync
+
+**Probleem**: U moet gegevens tussen Twenty en een ander systeem in beide richtingen synchroniseren.
+
+**Oplossing**: Combineer geplande workflows met webhook-triggers voor realtime synchronisatie.
+
+**Van Twenty naar Extern Systeem**:
+
+**Trigger**: Record wordt bijgewerkt (elk relevant object)
+
+**Acties**:
+
+- HTTP-verzoek om extern systeem bij te werken
+- Werk record bij om synchronisatiestatus en tijdstempel bij te houden
+
+**Van Extern Systeem naar Twenty**:
+
+**Trigger**: Webhook (van extern systeem)
+
+**Acties**:
+
+- Zoek records om overeenkomend record te vinden
+- Werk record bij met nieuwe gegevens van extern systeem
+- Maak record voor conflictoplossingstaak indien nodig
+
+### Multi-stap Gegevensverwerking
+
+**Probleem**: Gegevens van externe bronnen vereisen complexe verwerking voordat ze in Twenty gebruikt kunnen worden.
+
+**Solution**: Use Code actions for data transformation and validation.
+
+**Trigger**: Webhook of Op een Tijdschema
+
+**Acties**:
+
+- Codeer actie om inkomend gegevensformaat te valideren
+- Codeer actie om gegevensstructuur te transformeren
+- Codeer actie om bedrijfsregels en berekeningen toe te passen
+- Zoek records om te controleren op dubbele exemplaren
+- Maak of update record met verwerkte gegevens
+- Stuur e-mailwaarschuwing als er gegevenskwaliteitsproblemen worden gedetecteerd
+
+## Implementatie Tips
+
+- Bewaar API-sleutels veilig in Instellingen → API & Webhooks
+- Gebruik HTTPS voor alle externe API-aanroepen
+- Houd rekening met API-snelheidslimieten - gebruik geplande workflows wanneer mogelijk
+- Overweeg batch-updates "Op een Tijdschema" wanneer realtimeverwerking niet nodig is
+- Onthoud de limiet van 100 gelijktijdige workflows per werkruimte - gebruik "Bulk" beschikbaarheid voor handmatige triggers bij het verwerken van meerdere records (zie [Workflow Kenmerken](/l/nl/user-guide/workflows/workflow-features) voor details)
+- Test met voorbeeldgegevens voordat u workflows activeert
+
+For troubleshooting integration issues, see our [Workflow Troubleshooting](/l/nl/user-guide/workflows/workflow-troubleshooting) guide. Overweeg onze [Professionele Diensten](/l/nl/user-guide/workflows/professional-services) voor hulp bij het implementeren van complexe integraties.

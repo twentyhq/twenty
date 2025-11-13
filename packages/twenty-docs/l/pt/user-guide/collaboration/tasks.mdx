@@ -1,0 +1,118 @@
+---
+title: Tarefas
+info: Entenda como gerenciar efetivamente tarefas no Twenty.
+image: /images/user-guide/tasks/tasks_header.png
+sectionInfo: Descubra como alavancar Notas e Tarefas para melhor colaborar com sua equipe.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Gerencie todas as tarefas dentro do seu espaço de trabalho usando o recurso **Tarefas**. Este guia mostrará como criar e gerenciar tarefas, alternar entre tarefas pendentes e concluídas, editar detalhes das tarefas, e muito mais.
+
+## Casos de Uso Comuns
+
+### Acompanhamentos de Vendas
+
+- **Próximos Passos de Reunião**: Crie tarefas para itens de ação discutidos durante chamadas com clientes
+- **Acompanhamentos de Propostas**: Defina lembretes para verificar propostas pendentes
+- **Revisões de Contratos**: Agende tarefas para negociações de contratos e aprovações
+
+### Sucesso do Cliente
+
+- **Tarefas de Integração**: Crie automaticamente listas de verificação de integração quando negócios forem fechados
+- **Lembretes de Check-in**: Agende chamadas regulares de verificação de saúde do cliente
+- **Preparação para Renovação**: Defina tarefas para se preparar para renovações de contrato 90 dias antes
+
+### Gerenciamento de Projetos Internos
+
+Além de vendas e sucesso do cliente, Tarefas suportam necessidades organizacionais mais amplas:
+
+- **Desenvolvimento de Produtos**: Acompanhe lançamentos de funcionalidades, correções de bugs e marcos de desenvolvimento
+- **Campanhas de Marketing**: Gerencie lançamentos de campanhas, criação de conteúdo e atividades promocionais
+- **Operações de RH**: Lide com processos de recrutamento, integração de funcionários e avaliações de desempenho
+- **Tarefas Financeiras**: Agende revisões de orçamento, processamento de faturas e relatórios financeiros
+- **Operações**: Coordene a gestão de instalações, relacionamento com fornecedores e melhorias de processos
+
+### Criação Automática de Tarefas
+
+Use [Workflows](/l/pt/user-guide/workflows/getting-started-workflows) para criar tarefas automaticamente:
+
+- **Acionadores de Negócios Ganhados**: Crie automaticamente tarefas de integração atribuídas à equipe de CS quando oportunidades forem fechadas
+- **Lembretes por E-mail**: Configure lembretes por e-mail semanais para as tarefas com vencimento esta semana (enviados todas as segundas-feiras)
+- **Automação de Pipeline**: Crie tarefas de acompanhamento quando negócios ficarem estagnados em estágios específicos
+- **Integração de Reuniões**: Gere automaticamente tarefas a partir de gravações de reuniões ou eventos de calendário
+
+## Recursos de Tarefas
+
+### Campos de Relação
+
+As tarefas incluem um campo `Relações` que permite anexar uma única tarefa a vários registros em diferentes objetos. Por exemplo, você pode vincular uma tarefa de acompanhamento a:
+
+- A Pessoa que você precisa contatar
+- A Empresa que ela representa
+- A Oportunidade que está sendo perseguida
+- Qualquer Nota relevante ou outros registros
+
+This morph many relationship ensures tasks are accessible from all relevant record pages and provides complete context.
+
+### Marcação de Usuário
+
+**Nota**: Atualmente, a marcação de usuários nas tarefas não está disponível. Esse recurso está planejado para 2026, permitindo que você mencione membros da equipe e acione notificações ao atribuir ou atualizar tarefas.
+
+## Criando Tarefas
+
+Criar tarefas no Twenty é simples. Você pode:
+
+- Ir para a aba `Tarefas` e pressionar o botão `+` no canto superior direito da página.
+- Utilizar a função de busca pressionando `cmd/ctrl + k`, em seguida selecionar 'Criar tarefa' na lista de ações rápidas.
+- Ir para uma `página de Registro` e pressionar `+` no canto superior direito da página, ou vá para a aba de Tarefas e pressione o botão `Adicionar Tarefa`.
+
+<VimeoEmbed videoId="928786754" title="Creating tasks" />
+
+### Adicionando Conteúdo de Tarefa
+
+Uma vez criada a tarefa, você pode enriquecê-la com conteúdo rico, como Títulos, Marcadores ou até mesmo imagens. Para fazer isso, pressione `/` e insira o comando desejado.
+
+## Visualizando Tarefas
+
+A página **Tarefas** exibe todas as suas tarefas em todo o seu espaço de trabalho. Aqui você pode:
+
+- Filtrar tarefas atribuídas a um usuário específico clicando no botão com seu nome no canto superior direito da tela.
+- Alternar entre tarefas pendentes (`A fazer`) e concluídas (`Feito`) para ver o que precisa de atenção e o que foi realizado.
+
+Você também pode ver tarefas para um determinado Registro na sua `página de Registro`.
+
+<VimeoEmbed videoId="927908280" title="Viewing tasks" />
+
+## Editando Tarefas
+
+Para editar uma tarefa, você deve clicar no cartão dela. Isso abrirá um painel lateral oferecendo os seguintes recursos:
+
+- **Responsável e Data de Vencimento**: Atualize o responsável ou edite a data de vencimento.
+- **Comentários**: Trabalhe em conjunto com os membros da sua equipe adicionando comentários nas tarefas para fornecer atualizações ou feedback.
+- **Automations**: Thanks to the API and Webhooks, you can also automate task creation triggered by specific activities in your workspace.
+
+## Marcando Tarefas como Concluídas
+
+Para marcar uma tarefa como concluída:
+
+1. Localize a tarefa na sua página de `Tarefas` ou dentro de uma `página de Registro`.
+2. Clique no círculo à esquerda do cartão da tarefa, ele mudará para significar conclusão.
+3. O status da tarefa atualizará automaticamente para `Feito`.
+
+Este procedimento ajudará a manter um registro atualizado de suas realizações.
+
+<VimeoEmbed videoId="927910083" title="Marking tasks as complete" />
+
+## Excluir uma tarefa
+
+Para remover permanentemente uma tarefa:
+
+1. Open the task you want to delete by clicking on its card, either from the `Tasks` page or within a `Record page`.
+2. Clique no ícone de lixeira localizado no canto superior direito do painel de detalhes da tarefa.
+
+Por favor, note que excluir uma tarefa é permanente e não pode ser desfeito. Consider marking tasks as `Done` if there is a chance you will need to refer to them again.

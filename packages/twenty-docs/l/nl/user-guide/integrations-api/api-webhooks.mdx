@@ -1,0 +1,83 @@
+---
+title: API-sleutels & Webhooks
+info: "Maak en beheer API-sleutels voor authenticatie en stel webhooks in voor realtime meldingen."
+image: /images/user-guide/api/api.png
+sectionInfo: Leer hoe je Twenty met je andere tools verbindt.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## API-sleutels
+
+API-sleutels maken geautomatiseerde toegang tot uw CRM-gegevens, synchroniseren gegevens met andere systemen, en maken aangepaste integraties of oplossingen mogelijk.
+
+### Maak een API-sleutel
+
+1. Ga naar **Instellingen → API's & Webhooks**
+2. Click **+ Create key** at the top right
+3. Configureer uw API-sleutel:
+   - **Naam**: Geef uw API-sleutel een beschrijvende naam
+   - **Vervaldatum**: Stel in wanneer de sleutel moet vervallen
+4. Klik op **Opslaan** om uw API-sleutel te genereren
+5. **Belangrijk**: Kopieer en bewaar uw API-sleutel onmiddellijk, deze wordt slechts eenmaal getoond
+
+Zodra aangemaakt, biedt uw API-sleutel toegang tot uw aangepaste API-documentatie en speelplaats waar u endpoints kunt testen met uw actuele datamodel.
+
+<Warning>
+Aangezien uw API-sleutel toegang geeft tot gevoelige informatie, moet u deze niet delen met diensten die u niet volledig vertrouwt. Als het uitlekt, kan iemand het op een kwaadaardige manier gebruiken. Als de beveiliging van uw API-sleutel is aangetast, schakelt u deze onmiddellijk uit en genereert u een nieuwe.
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### Beheer API-sleutels
+
+**Regenerate an API Key:**
+
+1. Ga naar **Instellingen → API's & Webhooks**
+2. Klik op de API-sleutel die u opnieuw wilt genereren
+3. Klik op de knop **Opnieuw genereren**
+4. Kopieer en bewaar de nieuwe API-sleutel onmiddellijk
+
+**Verwijder een API-sleutel:**
+
+1. Zoek de API-sleutel in je lijst
+2. Klik op de sleutel om de details te openen
+3. Klik op **Verwijderen** om het permanent te verwijderen
+
+## Webhooks
+
+Webhooks maken directe updates mogelijk naar je opgegeven URL over wijzigingen of gebeurtenissen met betrekking tot je klantgegevens.
+
+For example, when an Opportunity moves to "Closed Won", a webhook can automatically trigger invoice creation in your accounting system. Let op: dit type automatisering kan ook worden bereikt met Twenty's in-app [Workflows-functie](/l/nl/user-guide/workflows/getting-started-workflows), die triggers biedt op basis van veldupdates voor interne automatisering.
+
+Webhooks zijn ideaal voor integratie met externe systemen, terwijl Workflows zowel interne automatisering als verbindingen met externe tools ondersteunt via webhook triggers, code nodes en HTTP nodes.
+
+### Maak een Webhook
+
+1. Ga naar **Instellingen → API's & Webhooks → Webhooks**
+2. Klik op **+ Webhook aanmaken**
+3. Vul je webhook-URL in (waar je meldingen wilt ontvangen)
+4. Klik op **Opslaan**
+
+Je webhook begint onmiddellijk realtime meldingen over wijzigingen in je CRM-gegevens te ontvangen.
+
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
+
+### Webhooks beheren
+
+**Verwijder een Webhook:**
+
+1. Ga naar **Instellingen → API's & Webhooks → Webhooks**
+2. Zoek de webhook die je wilt verwijderen
+3. Klik op de webhook
+4. Klik **Verwijderen** en bevestig in de pop-up
+
+**Bewerk een Webhook:**
+
+1. Klik op de webhook die je wilt wijzigen
+2. Update de URL of andere instellingen
+3. Klik op **Opslaan** om de veranderingen toe te passen
+

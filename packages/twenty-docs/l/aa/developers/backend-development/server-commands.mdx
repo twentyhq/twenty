@@ -1,0 +1,108 @@
+---
+title: crwdns60016:0crwdne60016:0
+image: crwdns60018:0crwdne60018:0
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## crwdns60020:0crwdne60020:0
+
+crwdns60022:0crwdne60022:0
+crwdns64014:0{command}crwdnd64014:0{command}crwdne64014:0
+
+### crwdns60026:0crwdne60026:0
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### crwdns60028:0crwdne60028:0
+
+```
+npx nx run twenty-server:start
+```
+
+### crwdns60030:0crwdne60030:0
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### crwdns60032:0crwdne60032:0
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+crwdns60034:0crwdne60034:0
+
+### crwdns60036:0crwdne60036:0
+
+crwdns60038:0crwdne60038:0
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### crwdns60040:0crwdne60040:0
+
+#### crwdns60042:0crwdne60042:0
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### crwdns60044:0crwdne60044:0
+
+crwdns60046:0crwdne60046:0
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+
+crwdns60048:0crwdne60048:0
+
+crwdns60050:0crwdne60050:0
+
+</Warning>
+
+## crwdns60052:0crwdne60052:0
+
+crwdns60054:0crwdne60054:0
+
+crwdns60056:0crwdne60056:0 crwdns60058:0crwdne60058:0 crwdns60060:0crwdne60060:0
+
+crwdns60062:0crwdne60062:0
+
+crwdns60064:0crwdne60064:0
+
+- crwdns60066:0https://nestjs.com/crwdne60066:0
+- crwdns60068:0https://typeorm.io/crwdne60068:0
+- crwdns60070:0https://the-guild.dev/graphql/yoga-servercrwdne60070:0
+
+crwdns60072:0crwdne60072:0
+
+- crwdns60074:0https://www.postgresql.org/crwdne60074:0
+
+crwdns60076:0crwdne60076:0
+
+- crwdns60078:0https://sentry.io/welcome/crwdne60078:0
+
+crwdns60080:0crwdne60080:0
+
+- crwdns60082:0https://jestjs.io/crwdne60082:0
+
+crwdns60084:0crwdne60084:0
+
+- crwdns60086:0https://yarnpkg.com/crwdne60086:0
+- crwdns60088:0https://eslint.org/crwdne60088:0
+
+crwdns60090:0crwdne60090:0
+
+- crwdns60092:0https://aws.amazon.com/eks/crwdne60092:0
+

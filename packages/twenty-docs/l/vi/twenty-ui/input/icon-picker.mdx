@@ -1,0 +1,56 @@
+---
+title: Trình chọn Biểu tượng
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Trình chọn biểu tượng dựa trên danh sách xổ xuống cho phép người dùng chọn một biểu tượng từ danh sách.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { IconPicker } from "@/ui/input/components/IconPicker";
+
+export const MyComponent = () => {
+
+   const [selectedIcon, setSelectedIcon] = useState("");
+   const handleIconChange = ({ iconKey, Icon }) => {
+     console.log("Selected Icon:", iconKey);
+     setSelectedIcon(iconKey);
+   };
+
+  return (
+    <RecoilRoot>
+      <IconPicker
+        disabled={false}
+        onChange={handleIconChange}
+        selectedIconKey={selectedIcon}
+        variant="primary"
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Thuộc Tính      | Loại     | Mô tả                                                                                                                                                                      |
+| --------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| vô hiệu hóa     | boolean  | Vô hiệu hóa trình chọn biểu tượng nếu được đặt là `true`.                                                                                                  |
+| onChange        | hàm      | Hàm gọi lại được kích hoạt khi người dùng chọn một biểu tượng. Nó nhận một đối tượng với các thuộc tính `iconKey` và `Icon`.               |
+| selectedIconKey | string   | Khóa của biểu tượng được chọn ban đầu.                                                                                                                     |
+| onClickOutside  | hàm      | Hàm gọi lại được kích hoạt khi người dùng bấm ngoài danh sách xổ xuống.                                                                                    |
+| onClose         | hàm      | Hàm gọi lại được kích hoạt khi danh sách xổ xuống được đóng lại.                                                                                           |
+| onOpen          | function | Hàm gọi lại được kích hoạt khi danh sách xổ xuống được mở ra.                                                                                              |
+| biến thể        | string   | Biến thể kiểu dáng trực quan của biểu tượng có thể nhấp được. Các tùy chọn bao gồm: `primary`, `secondary`, và `tertiary`. |
+
+</Tab>
+</Tabs>

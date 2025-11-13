@@ -1,0 +1,38 @@
+---
+title: Step Bar
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+Vertoon die vordering deur 'n reeks genommerde stappe deur die aktiewe stap uit te lig. Dit rangskik 'n houer met stappe, elk verteenwoordig deur die `Stap` komponent.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+export const MyComponent = () => {
+  return (
+    <StepBar activeStep={2}>
+      <StepBar.Step>Step 1</StepBar.Step>
+      <StepBar.Step>Step 2</StepBar.Step>
+      <StepBar.Step>Step 3</StepBar.Step>
+    </StepBar>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Eienskappe | Tipe   | Beskrywing                                                                                                      |
+| ---------- | ------ | --------------------------------------------------------------------------------------------------------------- |
+| activeStep | nommer | Die indeks van die tans aktiewe stap. This determines which step should be visually highlighted |
+
+</Tab>
+</Tabs>

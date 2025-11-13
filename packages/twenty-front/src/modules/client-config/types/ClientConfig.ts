@@ -20,7 +20,6 @@ export type ClientConfig = {
   canManageFeatureFlags: boolean;
   captcha: Captcha;
   chromeExtensionId?: string;
-  debugMode: boolean;
   defaultSubdomain?: string;
   frontDomain: string;
   isAttachmentPreviewEnabled: boolean;

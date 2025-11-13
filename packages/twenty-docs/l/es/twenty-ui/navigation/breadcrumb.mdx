@@ -1,0 +1,44 @@
+---
+title: Migaja de pan
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Renderiza una barra de navegación de migas de pan.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter } from "react-router-dom";
+import { Breadcrumb } from "@/ui/navigation/bread-crumb/components/Breadcrumb";
+
+export const MyComponent = () => {
+  const breadcrumbLinks = [
+    { children: "Home", href: "/" },
+    { children: "Category", href: "/category" },
+    { children: "Subcategory", href: "/category/subcategory" },
+    { children: "Current Page" },
+  ];
+
+  return (
+    <BrowserRouter>
+      <Breadcrumb className links={breadcrumbLinks} />
+    </BrowserRouter>
+    )
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| "Props"     | Tipo     | Descripción                                                                                                                                                                                                                                                                              |
+| ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "className" | "cadena" | Nombre de clase opcional para estilos adicionales                                                                                                                                                                                                                                        |
+| enlaces     | array    | An array of objects, each representing a breadcrumb link. Cada objeto tiene una propiedad `children` (el contenido de texto del enlace) y una propiedad `href` opcional (la URL a la que navegar cuando se hace clic en el enlace) |
+
+</Tab>
+</Tabs>

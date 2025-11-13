@@ -1,0 +1,47 @@
+---
+title: Pole wyboru
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tasks/tasks_header.png" alt="Header" />
+</Frame>
+
+Używane, gdy użytkownik musi wybrać wiele wartości spośród dostępnych opcji.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Checkbox } from "twenty-ui/display";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Właściwości (Props) | Typ         | Opis                                                                                                              |
+| -------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| zaznaczone                             | boolean     | Wskazuje, czy pole wyboru jest zaznaczone                                                                         |
+| indeterminate                          | boolean     | Wskazuje, czy pole wyboru jest w stanie nieokreślonym (ani zaznaczone, ani niezaznaczone)      |
+| onChange                               | funkcja     | Funkcja zwrotna, którą chcesz wywołać, gdy stan pola wyboru się zmieni                                            |
+| onCheckedChange                        | funkcja     | Funkcja zwrotna, którą chcesz wywołać, gdy stan "zaznaczone" się zmieni                                           |
+| wariant                                | ciąg znaków | Wizualny wariant stylu pola. Opcje obejmują: `primary`, `secondary`, i `tertiary` |
+| rozmiar                                | ciąg znaków | Rozmiar pola wyboru. Ma dwie opcje: "mały" i "duży"                               |
+| kształt                                | ciąg znaków | Kształt pola wyboru. Ma dwie opcje: "kwadratowy" i "zaokrąglony"                  |
+
+</Tab>
+</Tabs>

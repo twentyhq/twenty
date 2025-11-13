@@ -1,0 +1,93 @@
+---
+title: Workflow Credits
+info: Begrijp het verbruik, de monitoring en kostenbeheer van workflowcredits voor uw automatiseringen.
+image: /images/user-guide/workflows/workflow-credits.png
+sectionInfo: Processen automatiseren en integreren met externe tools
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Header" />
+</Frame>
+
+Workflowcredits drijven uw automatiseringen in Twenty aan. Begrijpen hoe ze werken helpt u kosten te optimaliseren en uw automatiseringsbudget effectief te beheren.
+
+## Credit Toewijzing per Plan
+
+Workflowcredits worden toegewezen per werkruimte op basis van uw abonnementsplan:
+
+- **Proef**: 5 miljoen credits
+- **Pro Plan**: 10 miljoen credits per maand
+- **Organisatieplan**: 20 miljoen credits per maand
+
+## How Credit Consumption Works
+
+Credits are consumed when workflows execute, not when you create them. Elke workflowactie verbruikt credits op basis van zijn complexiteit:
+
+### Credit Verbruik per Actiesoort
+
+- **Basis interne operaties**: Zeer laag creditverbruik
+  - Records Zoeken
+  - Create Record
+  - Record Bijwerken
+  - Record Verwijderen
+  - Formulieracties
+
+- **Complexe operaties**: Hoger creditverbruik
+  - Codeacties (uitvoering van JavaScript)
+  - HTTP-verzoeken naar externe diensten
+
+- **AI functies**: Significant creditverbruik (binnenkort beschikbaar)
+  - AI prompts and processing will consume credits based on usage
+
+### Real-Time Aftrek
+
+Credits worden in real-time afgetrokken naarmate workflows worden uitgevoerd. Dit betekent:
+
+- Conceptworkflows verbruiken geen credits
+- Alleen actieve, lopende workflows gebruiken uw credittoewijzing
+- Mislukte workflows verbruiken nog steeds credits voor voltooide stappen
+
+## Credits Beheren
+
+### Controleer het Creditgebruik
+
+1. Ga naar **Instellingen → Betalingen**
+2. Bekijk uw huidige creditverbruik en resterende saldo
+3. Houd gebruikspatronen in de gaten om uw workflows te optimaliseren
+
+### Aanvullende Credits Kopen
+
+Als u meer credits nodig heeft dan uw plan toewijst:
+
+1. Ga naar **Instellingen → Betalingen**
+2. Klik op de optie om aanvullende credits te kopen. Pakketten van verschillende groottes zijn beschikbaar.
+3. Credits worden toegevoegd aan uw huidige saldo
+
+## Beste Praktijken
+
+### Efficiënt Workflowontwerp
+
+- **Begin Simpel**: Begin met basisacties en voeg geleidelijk complexiteit toe
+- **Test in Concept**: Test workflows grondig voordat u activeert om te voorkomen dat u credits verspilt aan fouten
+- **Minimize HTTP Requests**: Use efficient search criteria and combine operations where possible
+- **Batchverwerking**: Gebruik bulkoperaties en Iterator-acties efficiënt
+- **Foutenbeheer**: Implementeer correct foutenbeheer om onnodige herhalingen te voorkomen
+- **Handmatige Triggeroptimalisatie**: Kies voor handmatige triggers `Bulk` beschikbaarheid om meerdere records in een enkele workflowuitvoering te verwerken (zie [Workflowkenmerken](/l/nl/user-guide/workflows/workflow-features) voor details)
+
+### Actieoptimalisatie
+
+- Gebruik basis interne operaties waar mogelijk (lager creditverbruik)
+- Optimaliseer Codeacties voor efficiëntie
+- Overweeg handmatige triggers voor niet-dringende processen
+- Batchoperaties om individuele actieroproepen te verminderen
+
+### Creditmanagement
+
+- **Regelmatige Monitoring**: Controleer uw creditgebruik wekelijks in Instellingen → Betalingen
+- **Gebruiksopvolging**: Volg consumptiepatronen op om onverwachte overschrijdingen te voorkomen
+- **Plan Voldoende**: Overweeg het upgraden van uw plan als u consequent meer credits nodig heeft
+- **Workflow Beoordeling**: Beoordeel regelmatig workflows met hoog verbruik en deactiveer ongebruikte
+- **Strategische Planning**: Plan workflow-implementatie op basis van creditbeschikbaarheid
+
+Voor gedetailleerde facturatie-informatie en creditbeheer, ga naar **Instellingen → Betalingen** in uw Twenty werkruimte.
+

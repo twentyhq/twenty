@@ -1,0 +1,93 @@
+---
+title: Créditos de Fluxo de Trabalho
+info: Conheça o consumo de créditos de fluxo de trabalho, monitoramento e gestão de custos das suas automações.
+image: /images/user-guide/workflows/workflow-credits.png
+sectionInfo: Automatize processos e integre com ferramentas externas
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow-credits.png" alt="Header" />
+</Frame>
+
+Workflow credits power your automations in Twenty. Entender como eles funcionam ajuda a otimizar custos e gerenciar seu orçamento de automação de forma eficaz.
+
+## Alocação de Créditos por Plano
+
+Os créditos de fluxo de trabalho são alocados por workspace com base no seu plano de assinatura:
+
+- **Teste**: 5 milhões de créditos
+- **Plano Pro**: 10 milhões de créditos por mês
+- **Plano Organizaçāo**: 20 milhões de créditos por mês
+
+## Como Funciona o Consumo de Créditos
+
+Os créditos são consumidos quando os fluxos de trabalho são executados, não quando você os cria. Cada ação do fluxo de trabalho consome créditos baseados em sua complexidade:
+
+### Consumo de Crédito por Tipo de Ação
+
+- **Operações internas básicas**: Consumo de crédito muito baixo
+  - Pesquisar Registros
+  - Criar Registro
+  - Atualizar Registro
+  - Excluir Registro
+  - Form actions
+
+- **Operações complexas**: Maior consumo de crédito
+  - Ações de código (execução de JavaScript)
+  - Solicitações HTTP para serviços externos
+
+- **Recursos de IA**: Consumo significativo de crédito (em breve)
+  - AI prompts and processing will consume credits based on usage
+
+### Dedução em Tempo Real
+
+Os créditos são deduzidos em tempo real à medida que os fluxos de trabalho são executados. Isso significa:
+
+- Fluxos de trabalho em rascunho não consomem créditos
+- Somente fluxos de trabalho ativos e em execução usam sua alocação de crédito
+- Fluxos de trabalho falhados ainda consomem créditos para etapas concluídas
+
+## Gerenciando Créditos
+
+### Verificar Uso de Créditos
+
+1. Vá para **Configurações → Cobrança**
+2. Veja seu consumo atual de crédito e saldo restante
+3. Monitore padrões de uso para otimizar seus fluxos de trabalho
+
+### Comprando Créditos Adicionais
+
+Se precisar de mais créditos além da alocação do seu plano:
+
+1. Vá para **Configurações → Cobrança**
+2. Clique na opção para comprar créditos adicionais. Pacotes de tamanhos diferentes estão disponíveis.
+3. Os créditos são adicionados ao seu saldo atual
+
+## Melhores Práticas
+
+### Design Eficiente de Fluxos de Trabalho
+
+- **Comece Simples**: Inicie com ações básicas e adicione complexidade gradualmente
+- **Teste em Rascunho**: Teste minuciosamente os fluxos de trabalho antes da ativação para evitar desperdício de créditos com erros
+- **Minimize Solicitações HTTP**: Use critérios de pesquisa eficientes e combine operações quando possível
+- **Processamento em Lote**: Use operações em massa e ações de Iterador de forma eficiente
+- **Tratamento de Erros**: Implemente tratamento de erros adequado para evitar retentativas desnecessárias
+- **Otimização de Disparo Manual**: Para gatilhos manuais, escolha a disponibilidade de `Em Lote` para processar vários registros em uma única execução de fluxo de trabalho (consulte [Recursos de Fluxo de Trabalho](/l/pt/user-guide/workflows/workflow-features) para detalhes)
+
+### Otimização de Ações
+
+- Use operações internas básicas sempre que possível (menor consumo de créditos)
+- Otimize ações de código para eficiência
+- Considere gatilhos manuais para processos não urgentes
+- Agrupe operações para reduzir chamadas individuais de ações
+
+### Gerenciamento de Créditos
+
+- **Monitoramento Regular**: Verifique seu uso de crédito semanalmente em Configurações → Cobrança
+- **Rastreamento de Uso**: Acompanhe os padrões de consumo para evitar excedentes inesperados
+- **Planejamento Adequado**: Considere atualizar seu plano se você precisar consistentemente de mais créditos
+- **Revisão de Fluxos de Trabalho**: Revise regularmente fluxos de trabalho de alto consumo e desative os não utilizados
+- **Planejamento Estratégico**: Planeje a implantação do fluxo de trabalho com base na disponibilidade de créditos
+
+Para informações detalhadas de cobrança e gerenciamento de créditos, visite **Configurações → Cobrança** no seu workspace do Twenty.
+

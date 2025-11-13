@@ -1,0 +1,214 @@
+---
+title: 1-Click w/ Docker Compose
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+<Warning>
+Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](https://docs.twenty.com/l/fi/developers/local-setup).
+</Warning>
+
+## Yleiskatsaus
+
+Tämä opas tarjoaa vaiheittaiset ohjeet, kuinka asentaa ja määrittää Twenty-sovellus käyttämällä Docker Composea. Tavoitteena on tehdä prosessista yksinkertainen ja välttää yleisiä sudenkuoppia, jotka voivat rikkoa asennuksen.
+
+**Tärkeää:** Muuta vain asetuksia, jotka on erikseen mainittu tässä oppaassa. Altering other configurations may lead to issues.
+
+See docs [Setup Environment Variables](https://docs.twenty.com/l/fi/developers/self-hosting/setup) for advanced configuration. Kaikki ympäristömuuttujat on määritettävä docker-compose.yml-tiedostossa palvelin- ja/tai työntekijätasolla muuttujasta riippuen.
+
+## Järjestelmävaatimukset
+
+- RAM: Varmista, että ympäristössäsi on vähintään 2GB RAM-muistia. Riittämätön muisti voi aiheuttaa prosessien kaatumisen.
+- Docker & Docker Compose: Varmista, että molemmat ovat asennettuina ja ajan tasalla.
+
+## Vaihtoehto 1: Yhden rivin skripti
+
+Install the latest stable version of Twenty with a single command:
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+To install a specific version or branch:
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+- Korvaa x.y.z haluamallasi versionumerolla.
+- Replace branch-name with the name of the branch you want to install.
+
+## Vaihtoehto 2: Manuaaliset askeleet
+
+Noudata näitä ohjeita manuaalista asennusta varten.
+
+### Step 1: Set Up the Environment File
+
+1. **Luo .env-tiedosto**
+
+   Copy the example environment file to a new .env file in your working directory:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **Luo salaiset tokenit**
+
+   Suorita seuraava komento luodaksesi ainutlaatuisen satunnaismerkkijonon:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Tärkeää:** Pidä tämä arvo salassa / älä jaa sitä.
+
+3. **Päivitä `.env`**
+
+   Korvaa paikkamerkkiarvo .env-tiedostossasi generoidulla tokenilla:
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **Aseta Postgres-salasana**
+
+   Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters.
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### Step 2: Obtain the Docker Compose File
+
+Lataa `docker-compose.yml` tiedosto työhakemistoosi:
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### Askel 3: Suorita Sovellus
+
+Start the Docker containers:
+
+```bash
+docker compose up -d
+```
+
+### Step 4: Access the Application
+
+Jos isännöit twentyCRM:ää omalla tietokoneellasi, avaa selaimesi ja siirry osoitteeseen [http://localhost:3000](http://localhost:3000).
+
+Jos isännöit palvelimella, tarkista että palvelimesi on toiminnassa ja että kaikki on ok
+
+```bash
+curl http://localhost:3000
+```
+
+## Kokoonpano
+
+### Avaa Twenty ulkoiseen käyttöön
+
+Oletuksena, Twenty toimii `localhost` portissa `3000`. Päästäksesi siihen ulkoisen domainin tai IP-osoitteen kautta, sinun tulee konfiguroida `SERVER_URL` `.env` tiedostossasi.
+
+#### `SERVER_URL`:n Ymmärtäminen
+
+- **Protokolla:** Käytä `http` tai `https` asetuksistasi riippuen.
+  - Use `http` if you haven't set up SSL.
+  - Käytä `https` jos sinulla on SSL asennettuna.
+- **Domain/IP:** Tämä on domain-nimi tai IP-osoite, jossa sovelluksesi on saavutettavissa.
+- **Port:** Include the port number if you're not using the default ports (`80` for `http`, `443` for `https`).
+
+### SSL-vaatimukset
+
+SSL (HTTPS) vaaditaan tiettyjen selaintoimintojen toimimiseksi oikein. Vaikka nämä toiminnot saattavat toimia paikallisessa kehityksessä (koska selaimet käsittelevät localhostia eri tavalla), oikea SSL-asetus vaaditaan, kun isännöit Twentyä normaalilla domainilla.
+
+Esimerkiksi leikepöytä-API saattaa vaatia turvallisen yhteyden - jotkut toiminnot, kuten kopiointipainikkeet koko sovelluksessa, eivät välttämättä toimi ilman HTTPS:ää.
+
+Suosittelemme vahvasti sijoittamaan Twentyn SSL-terminaalin taakse optimaalisen turvallisuuden ja toimivuuden varmistamiseksi.
+
+#### `SERVER_URL`:n Määrittäminen
+
+1. **Määritä Pääsyosoitteesi**
+   - **Ilman Käänteistä Välityspalvelinta (Suora Yhteys):**
+
+     Jos käytät sovellusta ilman käänteistä välityspalvelinta:
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   - **Käänteisellä Välityspalvelimella (Vakioliitäntä):**
+
+     Jos käytät käänteistä välityspalvelinta, kuten Nginx tai Traefik, ja sinulla on SSL asennettuna:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   - **Käänteisellä Välityspalvelimella (Mukautetut Portit):**
+
+     Jos käytät ei-standardeja portteja:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **Päivitä `.env` Tiedosto**
+
+   Avaa `.env` tiedostosi ja päivitä `SERVER_URL`:
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **Esimerkkejä:**
+
+   - Suora pääsy ilman SSL:ää:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   - Pääsy domainin kautta SSL:llä:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **Käynnistä Sovellus Uudelleen**
+
+   Jotta muutokset tulevat voimaan, käynnistä Docker-kontit uudelleen:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### Huomioitavia seikkoja
+
+- **Käänteisen välityspalvelimen konfigurointi:**
+
+  Varmista, että käänteinen välityspalvelimesi välittää pyynnöt oikealle sisäiselle portille (`3000` oletuksena). Konfiguroi SSL-lopetus ja tarvittavat otsikot.
+
+- **Palomuurin asetukset:**
+
+  Avaa tarvittavat portit palomuurissasi ulkoisen pääsyn mahdollistamiseksi.
+
+- **Johdonmukaisuus:**
+
+  `SERVER_URL`:in on vastattava sitä, miten käyttäjät käyttävät sovellustasi selaimillaan.
+
+#### Pysyvyys
+
+- **Datavolyymit:**
+
+  The Docker Compose configuration uses volumes to persist data for the database and server storage.
+
+- **Tilattomat ympäristöt:**
+
+  Jos käytössä on tilaton ympäristö (esim. tietyt pilvipalvelut), konfiguroi ulkoinen tallennustila tietojen säilyvyyden varmistamiseksi.
+
+## Vianmääritys
+
+Jos kohtaat ongelmia, tarkista [Vianmääritys](https://docs.twenty.com/l/fi/developers/self-hosting/troubleshooting) ratkaisujen saamiseksi.
+

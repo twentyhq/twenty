@@ -1,0 +1,77 @@
+---
+title: Відгуки
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Індикатор прогресу або зворотного відліку, що рухається з правої сторони на ліву.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { ProgressBar } from "twenty-ui/feedback";
+
+export const MyComponent = () => {
+  return (
+    <ProgressBar
+      duration={6000}
+      delay={0}
+      easing="easeInOut"
+      barHeight={10}
+      barColor="#4bb543"
+      autoStart={true}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Властивості | Тип         | Опис                                                                                 | За замовчуванням |
+| ----------- | ----------- | ------------------------------------------------------------------------------------ | ---------------- |
+| тривалість  | число       | Загальна тривалість анімації індикатора прогресу в мілісекундах.     | 3                |
+| затримка    | число       | Затримка початку анімації індикатора прогресу в мілісекундах.        | 0                |
+| плавність   | рядок       | Функція плавності для анімації індикатора прогресу.                  | easeInOut        |
+| barHeight   | число       | The height of the bar in pixels                                                      | 24               |
+| barColor    | рядок       | The color of the bar                                                                 | сіро80           |
+| autoStart   | булевий тип | If `true`, the progress bar animation starts automatically when the component mounts | `істинно`        |
+
+</Tab>
+</Tabs>
+
+## Циркулярний індикатор прогресу
+
+Показує прогрес завдання, часто використовується на екранах завантаження або в областях, де потрібно повідомити користувача про процеси, що тривають.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+export const MyComponent = () => {
+  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Властивості | Тип   | Опис                                                     | За замовчуванням |
+| ----------- | ----- | -------------------------------------------------------- | ---------------- |
+| розмір      | число | Розмір циркулярного індикатора прогресу. | 50               |
+| barWidth    | число | The width of the progress bar line                       | 5                |
+| barColor    | рядок | The color of the progress bar                            | currentColor     |
+
+</Tab>
+
+</Tabs>

@@ -1,0 +1,87 @@
+---
+title: Webhooki
+image: /images/docs/getting-started/webhooks.png
+info: Discover how to use our Webhooks.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## Przegląd
+
+Webhooki w Twenty uzupełniają API, umożliwiając **powiadomienia w czasie rzeczywistym** dla twoich aplikacji, kiedy zachodzą określone zdarzenia w twoim CRM. Zamiast ciągle wysyłać zapytania do API w poszukiwaniu zmian, możesz skonfigurować webhooki, aby Twenty **przesyłało** dane do twojego systemu, gdy wystąpią określone zdarzenia (na przykład, gdy zostanie utworzony nowy rekord lub zaktualizowany istniejący rekord). To pomaga natychmiastowo i efektywnie synchronizować zewnętrzne systemy z Twenty.
+
+Przy użyciu webhooków, Twenty wyśle żądanie HTTP POST na adres URL, który określisz, zawierający szczegóły dotyczące zdarzenia. You can then handle that data in your application (e.g., to update your external database, trigger workflows, or send alerts).
+
+## Konfiguracja Webhooka
+
+Aby utworzyć webhook w Twenty, użyj ustawień **API & Webhooki** w swojej aplikacji Twenty:
+
+1. **Przejdź do Ustawień:** W aplikacji Twenty idź do **Ustawienia → API & Webhooki**.
+2. **Utwórz Webhook:** Pod **Webhooki** kliknij **+ Utwórz webhook**.
+3. **Wprowadź URL:** Podaj adres URL punktu końcowego na swoim serwerze, na który chcesz, aby Twenty wysłało żądania webhook. Powinien to być publicznie dostępny URL, który może obsługiwać żądania POST.
+4. **Zapisz:** Kliknij **Zapisz**, aby utworzyć webhook. Nowy webhook będzie aktywny natychmiast.
+
+Możesz utworzyć wiele webhooków, jeśli potrzebujesz wysyłać różne zdarzenia na różne punkty końcowe. Każdy webhook to zasadniczo subskrypcja wszystkich odpowiednich zdarzeń (w tym momencie Twenty wysyła wszystkie typy zdarzeń na podany URL; filtrowanie konkretnych typów zdarzeń może być konfigurowane w interfejsie użytkownika). Jeśli kiedykolwiek będziesz musiał usunąć webhook, możesz go usunąć z tej samej strony ustawień (wybierz webhook i wybierz opcję usuń).
+
+## Zdarzenia i Ładunki
+
+Gdy webhook zostanie skonfigurowany, Twenty wyśle żądanie HTTP POST na określony przez ciebie adres URL, gdy wystąpi zdarzenie wyzwalające w twoich danych CRM. Powszechne zdarzenia wyzwalające webhooki obejmują:
+
+- **Rekord Utworzony:** np. dodano nową osobę (`person.created`), utworzono nową firmę (`company.created`), dodano notatkę (`note.created`) itp.
+- **Rekord Zaktualizowany:** np. zaktualizowano informacje o istniejącej osobie (`person.updated`), zaktualizowano rekord firmy (`company.updated`) itp.
+- **Rekord Usunięty:** np. osoba lub firma została usunięta (`person.deleted`, `company.deleted`).
+- **Inne Zdarzenia:** Jeśli mają zastosowanie, inne zdarzenia obiektowe lub niestandardowe wyzwalacze (na przykład, jeśli zadania lub inne obiekty są aktualizowane, używane będą podobne typy zdarzeń, jak `task.created`, `note.updated` itp.).
+
+Żądanie POST webhook zawiera ładunek JSON w swojej treści. Ładunek będzie zazwyczaj zawierał co najmniej dwie rzeczy: typ zdarzenia i dane związane z tym zdarzeniem (często rekord, który został utworzony/zaktualizowany). Na przykład webhook dla nowo utworzonej osoby mógłby wysłać ładunek taki jak:
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+W tym przykładzie:
+
+- `"event"` określa, co się stało (`person.created`).
+- `"data"` zawiera szczegóły nowego rekordu (te same informacje, które otrzymałbyś, prosząc o tę osobę przez API).
+- `"timestamp"` to kiedy zdarzenie miało miejsce (w UTC).
+
+Twój punkt końcowy powinien być przygotowany do odbierania takich danych JSON przez POST. Zazwyczaj przeanalizujesz JSON, spojrzysz na typ `"event"`, aby zrozumieć, co się stało, a następnie użyjesz `"data"` odpowiednio (np. utworzenie nowego kontaktu w swoim systemie lub zaktualizowanie istniejącego).
+
+**Uwaga:** Ważne jest, aby odpowiedzieć z **kodem statusu HTTP 2xx** ze swojego punktu końcowego webhook, aby potwierdzić pomyślne otrzymanie. Jeśli nadawca webhooka Twenty nie otrzyma odpowiedzi 2xx, może uznać dostarczanie za nieudane. (W przyszłości logika ponownego wysyłania może próbować ponownie przesłać nieudane webhooki, więc zawsze staraj się szybko zwrócić status 200 OK po przetworzeniu danych.)
+
+## Weryfikacja Webhooka
+
+Aby zapewnić bezpieczeństwo swoich punktów końcowych webhooków, Twenty zawiera podpis w nagłówku `X-Twenty-Webhook-Signature`.
+
+Ten podpis to hash HMAC SHA256 ładunku zapytania, obliczany przy użyciu sekretu webhooka.
+
+Aby zweryfikować podpis, potrzebujesz:
+
+1. Połącz znaczniki czasu (z nagłówka `X-Twenty-Webhook-Timestamp`), dwukropek i ciąg JSON ładunku
+2. Oblicz hash HMAC SHA256 przy użyciu swojego sekretu webhooka jako klucza
+3. Porównaj wynikowy hasz szesnastkowy z nagłówkiem podpisu
+
+Oto przykład w Node.js:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```

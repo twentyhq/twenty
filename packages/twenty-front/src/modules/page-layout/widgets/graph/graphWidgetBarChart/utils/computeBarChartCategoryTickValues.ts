@@ -3,6 +3,7 @@ import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBa
 import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
+import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
 
 export const computeBarChartCategoryTickValues = ({
   axisSize,
@@ -21,7 +22,11 @@ export const computeBarChartCategoryTickValues = ({
   xAxisLabel?: string;
   yAxisLabel?: string;
 }): (string | number)[] => {
-  if (axisSize === 0 || data.length === 0) return [];
+  if (axisSize === 0 || data.length === 0) {
+    return [];
+  }
+
+  const values = data.map((item) => item[indexBy] as string | number);
 
   const margins = getBarChartMargins({ xAxisLabel, yAxisLabel, layout });
 
@@ -32,22 +37,14 @@ export const computeBarChartCategoryTickValues = ({
 
   const availableAxisSize = axisSize - totalMargins;
 
-  const numberOfTicks = Math.floor(
-    availableAxisSize /
-      (layout === BarChartLayout.VERTICAL
-        ? BAR_CHART_MINIMUM_WIDTH_PER_TICK
-        : computeMinHeightPerTick({ axisFontSize })),
-  );
+  const minimumSizePerTick =
+    layout === BarChartLayout.VERTICAL
+      ? BAR_CHART_MINIMUM_WIDTH_PER_TICK
+      : computeMinHeightPerTick({ axisFontSize });
 
-  if (numberOfTicks <= 0) return [];
-  if (numberOfTicks === 1) return [data[0][indexBy] as string | number];
-  if (numberOfTicks >= data.length)
-    return data.map((item) => item[indexBy] as string | number);
-
-  const step = (data.length - 1) / (numberOfTicks - 1);
-
-  return Array.from({ length: numberOfTicks }, (_, i) => {
-    const index = Math.min(Math.round(i * step), data.length - 1);
-    return data[index][indexBy] as string | number;
+  return computeChartCategoryTickValues({
+    availableSize: availableAxisSize,
+    minimumSizePerTick,
+    values,
   });
 };

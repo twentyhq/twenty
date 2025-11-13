@@ -1,0 +1,114 @@
+---
+title: Mappearkitektur
+info: En detaljeret gennemgang af vores mappearkitektur
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+I denne guide vil du udforske detaljerne i projektmappe-strukturen og hvordan det bidrager til organiseringen og vedligeholdelsen af Twenty.
+
+Ved at følge denne mappearkitekturkonvention, er det lettere at finde de filer, der er relateret til specifikke funktioner og sikre, at applikationen er skalerbar og vedligeholdelig.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Sider
+
+Includes the top-level components defined by the application routes. They import more low-level components from the modules folder (more details below).
+
+## Moduler
+
+Hvert modul repræsenterer en funktion eller en gruppe af funktioner, der omfatter deres specifikke komponenter, tilstande, og driftslogik.
+De bør alle følge strukturen nedenfor. Du kan indlejre moduler inden i moduler (kaldet undermoduler) og de samme regler vil gælde.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Kontekster
+
+En kontekst er en måde at sende data gennem komponenttræet uden at skulle videregive rekvisitter manuelt ved hvert niveau.
+
+Se [React Context](https://react.dev/reference/react#context-hooks) for flere detaljer.
+
+### GraphQL
+
+Indeholder fragmenter, forespørgsler og mutationer.
+
+Se [GraphQL](https://graphql.org/learn/) for flere detaljer.
+
+- Fragmenter
+
+Et fragment er en genanvendelig del af en forespørgsel, som du kan bruge forskellige steder. Ved at bruge fragmenter er det lettere at undgå duplikering af kode.
+
+Se [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) for flere detaljer.
+
+- Forespørgsler
+
+Se [GraphQL Forespørgsler](https://graphql.org/learn/queries/) for flere detaljer.
+
+- Mutationer
+
+Se [GraphQL Mutationer](https://graphql.org/learn/queries/#mutations) for flere detaljer.
+
+### Hooks
+
+Se [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) for flere detaljer.
+
+### Tilstande
+
+Indeholder tilstandsstyringslogikken. [RecoilJS](https://recoiljs.org) håndterer dette.
+
+- Vælgere: Se [RecoilJS Vælgere](https://recoiljs.org/docs/basic-tutorial/selectors) for flere detaljer.
+
+React's indbyggede tilstandsstyring håndterer stadig tilstand inden for en komponent.
+
+### Værktøjer
+
+Bør kun indeholde genanvendelige rene funktioner. Ellers skal der oprettes brugerdefinerede hooks i `hooks`-mappen.
+
+## UI
+
+Indeholder alle de genanvendelige UI-komponenter, der bruges i applikationen.
+
+Denne mappe kan indeholde undermapper som `data`, `display`, `feedback`, og `input` for specifikke typer af komponenter. Hver komponent bør være selvstændig og genanvendelig, så du kan bruge den i forskellige dele af applikationen.
+
+Ved at adskille UI-komponenterne fra de andre komponenter i `modules`-mappen, er det lettere at opretholde et konsistent design og foretage ændringer i UI uden at påvirke andre dele (forretningslogik) af kodebasen.
+
+## Grænseflade og afhængigheder
+
+Du kan importere anden modul-kode fra ethvert modul undtagen `ui`-mappen. Dette vil holde dens kode let at teste.
+
+### Intern
+
+Hver del (hooks, tilstande, ...) af et modul kan have en `intern` mappe, som indeholder dele, der blot bruges inden for modulet.

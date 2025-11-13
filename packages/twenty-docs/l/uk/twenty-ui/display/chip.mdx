@@ -1,0 +1,148 @@
+---
+title: Чіп
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Візуальний елемент, який можна використовувати як клікабельний або неклікабельний контейнер з міткою, додатковими лівими і правими компонентами та різноманітними стилями для відображення міток та тегів.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Clickable Chip"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Властивості  | Тип                      | Опис                                                                                                                            |
+| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity | рядок                    | Посилання на сутність                                                                                                           |
+| entityId     | рядок                    | Унікальний ідентифікатор для сутності                                                                                           |
+| назва        | рядок                    | Назва сутності                                                                                                                  |
+| pictureUrl   | рядок                    | s picture",                                                                                                                     |
+| Тип аватара  | Тип аватара              | Тип аватара, який ви хочете відобразити. Має два варіанти: `rounded` та `squared`               |
+| variant      | `EntityChipVariant` enum | Варіант чіпа сутності, який ви хочете відобразити. Має два варіанти: `regular` та `transparent` |
+| LeftIcon     | IconComponent            | React-компонент, що представляє іконку. Відображається з лівого боку чіпа                                       |
+
+</Tab>
+</Tabs>
+
+## Приклади
+
+### Прозорий неактивний чіп
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br/>
+
+### Неактивний чіп з підказкою
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Чіп сутності
+
+Елемент, схожий на чіп, для відображення інформації про сутність.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Entity name"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Властивості  | Тип                      | Опис                                                                                                                            |
+| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity | рядок                    | Посилання на сутність                                                                                                           |
+| entityId     | рядок                    | Унікальний ідентифікатор для сутності                                                                                           |
+| назва        | рядок                    | Назва сутності                                                                                                                  |
+| pictureUrl   | рядок                    | s picture",                                                                                                                     |
+| Тип аватара  | Тип аватара              | Тип аватара, який ви хочете відобразити. Має два варіанти: `rounded` та `squared`               |
+| variant      | `EntityChipVariant` enum | Варіант чіпа сутності, який ви хочете відобразити. Має два варіанти: `regular` та `transparent` |
+| LeftIcon     | IconComponent            | React-компонент, що представляє іконку. Відображається з лівого боку чіпа                                       |
+
+</Tab>
+</Tabs>

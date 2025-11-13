@@ -1,0 +1,91 @@
+---
+title: Migration von anderen CRMs
+info: Schritt-für-Schritt-Anleitung zur Migration von Daten und Prozessen von anderen CRM-Systemen zu Twenty.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: Ein kurzer Leitfaden, um die Grundlagen von Twenty zu verstehen
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Bevor Sie beginnen
+
+### 1. Überprüfen Sie Ihre aktuellen Daten
+
+- **Wählen Sie die wenigen Objekte und Felder aus, die migriert werden sollen**: Diese Migration ist die Gelegenheit für einen Neuanfang
+- **Exportieren Sie diese Daten** aus Ihrem aktuellen CRM
+- **Entfernen Sie Duplikate** und veraltete Datensätze
+- **List active workflows** and automations
+
+### 2. Erstellen Sie Ihr neues Datenmodell
+
+Befolgen Sie unseren [Datenmodell-Leitfaden](/l/de/user-guide/data-model/customize-your-data-model):
+
+- **Entwerfen Sie das benötigte Datenmodell**
+- **Ordnen Sie vorhandene Felder** den Standardobjekten/-feldern von Twenty zu
+- **Identifizieren Sie die benutzerdefinierten Objekte/Felder**, die Sie benötigen
+- **Erstellen Sie sie** unter Einstellungen → Datenmodell
+
+## Migrationsprozess
+
+### 1. Importieren Sie Ihre Daten
+
+**Empfohlene Reihenfolge:**
+
+1. **Unternehmen** zuerst (als Basisdatensätze)
+2. **Personen** an zweiter Stelle (mit Unternehmen verknüpft)
+3. **Opportunities** third (linked to people/companies)
+
+Verwenden Sie den CSV-Import über das Befehl-Menü `Cmd + K` (Mac) oder `Ctrl + K` (Windows). Siehe unseren [Datenimport-Leitfaden](/l/de/user-guide/getting-started/import-export-data) für detaillierte Anleitungen.
+
+### 2. Workflows neu erstellen
+
+- **Beginnen Sie einfach** – erstellen Sie zunächst Ihre wichtigsten Automatisierungen neu
+- **Use Twenty's workflow builder** to replace existing automations
+
+## Häufige Herausforderungen
+
+### Datenformatierungsprobleme
+
+- **E-Mail-Adressen** - Duplikate entfernen (People-Objektanforderung)
+- **Domain** - Duplikate entfernen (Companies-Objektanforderung)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **Datumsformate** - Sicherstellen einer einheitlichen Formatierung (JJJJ-MM-TT) oder dieses Format unter Einstellungen → Erfahrung bearbeiten
+- **Telefonnummern** - internationales Format verwenden (+1234567890)
+
+### Beziehungszuordnung
+
+Um Beziehungen zwischen Datensätzen mithilfe der CSV-Importfunktion zu importieren, können Sie die folgenden Felder verwenden
+
+- **Verwenden Sie Twenty-IDs** für komplexe Beziehungen
+- **Verwenden Sie E-Mail-Adressen** um Personen-Datensätze zu verknüpfen
+- **Verwenden Sie Domainnamen** um Unternehmens-Datensätze zu verknüpfen
+- **Verwenden Sie jedes andere Feld, das Sie als eindeutig festlegen**, was im Abschnitt Datenmodell möglich ist.
+  Lesen Sie unseren [Datenimport-Export-Leitfaden](/l/de/user-guide/getting-started/import-export-data) für detaillierte Anleitungen zur Erstellung von Beziehungen während des CSV-Imports.
+
+## Professionelle Hilfe
+
+### Unsere Dienstleistungen
+
+- **4-Stunden Onboarding-Pakete** für geführte Migration
+- **Implementierungspartner** für komplexere Projekte
+
+Entdecken Sie unsere [Implementierungsdienstleistungen](/l/de/user-guide/getting-started/implementation-services).
+
+## Migration von Selbstgehostet zu Cloud
+
+Wenn Sie von Twenty selbstgehostet zu Twenty Cloud wechseln:
+
+1. **Exportieren Sie Ihre Daten** von Ihrer selbstgehosteten Instanz
+2. **Befolgen Sie den oben genannten Standard-Migrationsprozess**
+3. **Wir können Migrationsunterstützung bieten**, kontaktieren Sie unser Team
+
+## Checkliste nach der Migration
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

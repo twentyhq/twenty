@@ -1,0 +1,73 @@
+---
+title: Đường ống
+info: "Theo dõi và quản lý các cơ hội bán hàng của bạn thông qua các giai đoạn đường ống có thể tùy chỉnh."
+image: /images/user-guide/kanban-views/kanban.png
+sectionInfo: "Các tính năng CRM cần thiết để quản lý khách hàng tiềm năng, bán hàng và khách hàng"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## Hiểu Đường ống
+
+A sales pipeline tracks opportunities from initial contact to closed deal. Each stage represents a step in your sales process, and opportunities move through these stages as they progress toward closing.
+
+Twenty includes standard sales stages like Prospecting, Qualification, Proposal, Negotiation, Closed. Bạn có thể tùy chỉnh các giai đoạn này để phù hợp với quy trình bán hàng cụ thể của mình.
+
+## Làm việc với Kanban Views
+
+Kanban views visually map out your pipeline, where each column represents a stage and each card represents an opportunity. Mỗi thẻ hiển thị thông tin chính như giá trị giao dịch, ngày hoàn tất và người được chỉ định. For complete details: including notes, tasks, meetings, and email history, click on any card to open the full opportunity record.
+
+### Di chuyển cơ hội qua đường ống của bạn
+
+Bạn có thể di chuyển mỗi cơ hội giữa các giai đoạn khi nó tiến qua quy trình bán hàng của mình bằng cách kéo và thả. Hold your click on a card and move it to the next stage.
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+### Customizing your pipeline stages
+
+Bạn có thể điều chỉnh đường ống của mình để phù hợp với quy trình bán hàng cụ thể của bạn. Các giai đoạn đại diện cho các giá trị trong một trường chọn, vì vậy bạn có thể thêm, xóa hoặc đổi tên chúng theo nhu cầu.
+
+#### Thêm giai đoạn
+
+To add a stage, access the Select Field Settings by navigating to Settings → Data Model, selecting your object, and then the field your Kanban board depends on.
+
+<VimeoEmbed videoId="927890428" title="Video demonstration" />
+
+#### Xóa giai đoạn
+
+To remove a stage, hover the stage name or the `⋮` icon, click `Edit from settings` in the Select Field settings, and then click `Delete` next to the relevant stage.
+
+<img src="/images/user-guide/kanban-views/edit-stage.png" style={{width:'100%'}}/>
+
+### Tùy chỉnh các thẻ
+
+Bạn có thể cấu hình bảng Kanban của mình để hiển thị một số trường và ẩn các trường khác. To hide a field, click on `Options` on the top right, then on `Fields` to bring up the list of options. Di chuột qua trường bạn muốn ẩn để hiển thị nút `-`. Nhấp vào nó để ẩn trường.
+
+Bạn cũng có thể sắp xếp lại thứ tự của các trường bằng cách giữ tên trường và kéo nó tới vị trí bạn muốn.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}}/>
+
+### Chế độ xem gọn
+
+Bạn cũng có thể ẩn tất cả các trường và có cái nhìn tổng quan về tất cả các cơ hội. To do so, click on `Options` on the top right and turn on the toggle for `Compact view` after selecting layout in kanban view.
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}}/>
+
+## Quản lý đường ống nâng cao
+
+### Tự động hóa với quy trình làm việc
+
+Sử dụng [Quy trình làm việc](/l/vi/user-guide/workflows/getting-started-workflows) để tự động hóa đường ống của bạn:
+
+- **Tiến trình tự động theo giai đoạn**: Di chuyển giao dịch dựa trên các hoạt động
+- **Thông báo**: Cảnh báo thành viên nhóm về sự thay đổi trong giai đoạn
+- **Tạo nhiệm vụ**: Tạo nhiệm vụ theo dõi cho mỗi giai đoạn
+
+### Nhiều đường ống
+
+Bạn có thể tạo các đường ống khác nhau cho các ngành kinh doanh khác nhau, phân khúc thị trường, hoặc các đội bán hàng chuyên biệt bằng cách tạo các chế độ xem mới. Mỗi chế độ xem có thể hiển thị các cơ hội khác nhau với các bộ lọc và giai đoạn cụ thể phù hợp với nhu cầu của bạn. Tìm hiểu cách tạo những chế độ xem đó trong hướng dẫn [Quản lý chế độ xem](/l/vi/user-guide/crm-essentials/view-management).
+

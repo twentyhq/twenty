@@ -1,0 +1,130 @@
+---
+title: Tổng quan về API
+info: Hiểu được bốn loại API khác nhau và khi nào sử dụng từng loại.
+image: /images/user-guide/api/api-overview.png
+sectionInfo: Tìm hiểu cách kết nối Twenty với các công cụ khác của bạn.
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api-overview.png" alt="Header" />
+</Frame>
+
+Twenty được xây dựng thân thiện với nhà phát triển, cung cấp các API mạnh mẽ thích ứng với mô hình dữ liệu tùy chỉnh của bạn. Chúng tôi cung cấp bốn loại API khác biệt để đáp ứng các nhu cầu tích hợp khác nhau.
+
+## Cách tiếp cận ưu tiên cho Nhà phát triển
+
+Twenty tạo ra các API cụ thể cho mô hình dữ liệu của bạn, có nghĩa là:
+
+- **Không cần ID dài**: Sử dụng tên đối tượng và trường của bạn trực tiếp trong các điểm cuối
+- **Đối tượng tiêu chuẩn và tùy chỉnh được xử lý như nhau**: Các đối tượng tùy chỉnh của bạn được xử lý API giống như các đối tượng tích hợp
+- **Điểm cuối dành riêng**: Mỗi đối tượng và trường có điểm cuối API riêng
+- **Tài liệu tùy chỉnh**: Được tạo riêng cho mô hình dữ liệu của không gian làm việc của bạn
+
+<Warning>
+API tùy chỉnh của bạn tạo tài liệu cá nhân hóa có thể truy cập thông qua Cài đặt → API & Webhooks sau khi tạo khóa API. Tài liệu này phản ánh chính xác mô hình dữ liệu và cấu hình trường của bạn.
+</Warning>
+
+## Bốn loại API
+
+Twenty cung cấp các API dưới dạng **REST** và **GraphQL**:
+
+### API REST
+
+#### 1. API Metadata REST
+
+- **Mục đích**: Quản lý cấu trúc không gian làm việc và mô hình dữ liệu của bạn
+- **Trường hợp sử dụng**:
+  - Tạo, sửa đổi, hoặc xóa đối tượng và trường
+  - Cấu hình cài đặt không gian làm việc
+  - Quản lý các mối quan hệ trong mô hình dữ liệu
+- **Truy cập**: Có sẵn thông qua các điểm cuối REST
+
+#### 2. API Core REST
+
+- **Mục đích**: Quản lý các bản ghi dữ liệu thực của bạn
+- **Trường hợp sử dụng**:
+  - Tạo, đọc, cập nhật, xóa bản ghi
+  - Truy vấn dữ liệu cụ thể
+  - Quản lý các mối quan hệ bản ghi
+- **Truy cập**: Có sẵn thông qua các điểm cuối REST
+
+### API GraphQL
+
+#### 3. API Metadata GraphQL
+
+- **Mục đích**: Tương tự như API Metadata REST nhưng có lợi ích của GraphQL
+- **Trường hợp sử dụng**: Quản lý không gian làm việc và mô hình dữ liệu tương tự
+- **Lợi ích bổ sung**:
+  - Truy vấn nhiều loại metadata trong một yêu cầu
+  - Chọn trường chính xác
+  - Hiệu suất tốt hơn cho các truy vấn phức tạp
+
+#### 4. API Core GraphQL
+
+- **Mục đích**: Tương tự như API Core REST nhưng có lợi ích của GraphQL
+- **Trường hợp sử dụng**: Quản lý dữ liệu tương tự
+- **Lợi ích bổ sung**:
+  - **Thao tác hàng loạt**: Có sẵn cho tất cả các thao tác
+  - **Thao tác upsert**: Tạo hoặc cập nhật bản ghi chỉ trong một lần gọi
+  - Truy vấn các mối quan hệ trong một yêu cầu đơn
+  - Truy xuất dữ liệu chính xác
+
+## Thao tác hàng loạt
+
+### Hỗ trợ hàng loạt REST và GraphQL
+
+Cả API REST và GraphQL đều hỗ trợ các thao tác hàng loạt cho hầu hết các hành động.
+
+- **Kích thước lô**: Lên đến 60 bản ghi mỗi yêu cầu
+- **Các thao tác có sẵn**: Tạo, cập nhật, xóa nhiều bản ghi
+- **Hiệu suất**: Nhanh hơn đáng kể so với các cuộc gọi API riêng lẻ
+
+### Các tính năng chỉ có GraphQL
+
+- **Update hàng loạt**: Chỉ có sẵn trong API GraphQL
+- **Sử dụng**: Sử dụng tên đối tượng số nhiều (ví dụ: `CreateCompanies` thay vì `CreateCompany`)
+- **Yêu cầu**: Điều đó là lý do tại sao tên đối tượng đơn và số nhiều phải riêng biệt
+
+## Truy cập tài liệu API
+
+1. Truy cập vào **Cài đặt → API & Webhooks**
+2. Tạo khóa API (bắt buộc để truy cập tài liệu)
+3. Truy cập tài liệu và nền tảng tùy chỉnh của bạn
+4. Kiểm tra API với mô hình dữ liệu thực tế của bạn
+
+Tài liệu của bạn là duy nhất cho không gian làm việc của bạn vì nó phản ánh các đối tượng tùy chỉnh, trường và mối quan hệ của bạn.
+
+## Khi nào sử dụng mỗi API
+
+### Sử dụng API Metadata khi:
+
+- Thiết lập mô hình dữ liệu của bạn
+- Tạo các đối tượng hoặc trường tùy chỉnh
+- Cấu hình cài đặt không gian làm việc
+
+### Sử dụng API Core khi:
+
+- Quản lý dữ liệu hằng ngày (Con người, Công ty, Cơ hội)
+- Tích hợp với các hệ thống bên ngoài
+- Xây dựng ứng dụng tùy chỉnh
+- Tự động hóa quy trình làm việc dữ liệu
+
+### Chọn GraphQL khi:
+
+- Bạn cần các thao tác hàng loạt
+- Bạn muốn giảm thiểu các cuộc gọi API
+- Bạn cần chức năng upsert
+- Bạn đang xây dựng các tích hợp phức tạp
+
+### Chọn REST khi:
+
+- Bạn thích cấu trúc API đơn giản hơn
+- Bạn đang xây dựng các tích hợp cơ bản
+- Đội ngũ của bạn quen thuộc với REST hơn
+- Bạn cần các thao tác CRUD đơn giản
+
+## Các bước tiếp theo
+
+- **[Thiết lập API & Webhooks](/l/vi/user-guide/integrations-api/api-webhooks)**: Tìm hiểu cách tạo khóa API và webhooks
+- **Tài liệu tùy chỉnh**: Truy cập tài liệu API cá nhân hóa của bạn qua Cài đặt → API & Webhooks
+

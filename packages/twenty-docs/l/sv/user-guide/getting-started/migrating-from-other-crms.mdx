@@ -1,0 +1,91 @@
+---
+title: Migrera från andra CRM:er
+info: Steg-för-steg-guide för att migrera data och processer från andra CRM-system till Twenty.
+image: /images/user-guide/what-is-twenty/migrating_crm.png
+sectionInfo: En kort guide för att förstå grunderna i Twenty
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/migrating_crm.png" alt="Header" />
+</Frame>
+
+## Innan du börjar
+
+### 1. Granska din nuvarande data
+
+- **Välj de få objekt och fält som ska migreras**: denna migration är en möjlighet för en nystart
+- **Exportera denna data** från ditt nuvarande CRM
+- **Ta bort dubbletter** och föråldrade poster
+- **Lista aktiva arbetsflöden** och automationer
+
+### 2. Skapa din nya datamodell
+
+Follow our [data model guide](/l/sv/user-guide/data-model/customize-your-data-model) to:
+
+- **Designa den datamodell** du behöver
+- **Map existing fields** to Twenty's standard objects / fields
+- **Identifiera de anpassade objekten/fälten** du kommer behöva
+- **Skapa dem** under Inställningar → Datamodell
+
+## Migrationsprocess
+
+### 1. Importera din data
+
+**Rekommenderad ordning:**
+
+1. **Företag** först (som basposter)
+2. **Personer** som tvåa (länkade till företag)
+3. **Opportunities** third (linked to people/companies)
+
+Use the CSV import via the Command Menu  `Cmd + K` (Mac) or `Ctrl + K` (Windows). Se vår [guide för dataimport](/l/sv/user-guide/getting-started/import-export-data) för detaljerade instruktioner.
+
+### 2. Återskapa arbetsflöden
+
+- **Börja enkelt** – återskapa dina mest kritiska automationer först
+- **Använd Twentys arbetsflödesbyggare** för att ersätta befintliga automationer
+
+## Vanliga utmaningar
+
+### Dataformateringsproblem
+
+- **E-postadresser** – ta bort dubbletter (krav för Person-objektet)
+- **Domän** – ta bort dubbletter (krav för Företagsobjektet)
+
+<Warning>
+Please note that domain URLs created by the synchronization with your mailbox and calendar have the following format ```https://domain.com```
+</Warning>
+
+- **Datumformat** – säkerställ ett konsekvent format (ÅÅÅÅ-MM-DD) eller redigera detta format under Inställningar → Upplevelse
+- **Telefonnummer** – använd internationellt format (+1234567890)
+
+### Relationskartläggning
+
+För att importera relationer mellan poster med hjälp av csv-importfunktionen kan du använda följande fält
+
+- **Använd Twenty ID:n** för komplexa relationer
+- **Använd e-postadresser** för att länka People-poster
+- **Använd domännamn** för att länka Företagsposter
+- **Använd något annat fält du anger som unikt**, vilket kan göras i datamodellavsnittet.
+  Läs vår [guide för import-export av data](/l/sv/user-guide/getting-started/import-export-data) för detaljerade instruktioner om att skapa relationer under csv-import.
+
+## Professionell hjälp
+
+### Våra tjänster
+
+- **4-timmars onboardingpaket** för ledd migration
+- **Implementationspartners** för mer avancerade projekt
+
+Upptäck våra [implementeringstjänster](/l/sv/user-guide/getting-started/implementation-services).
+
+## Migrera från lokal till moln
+
+Om du flyttar från Twenty lokal till Twenty Cloud:
+
+1. **Exportera din data** från din lokala instans
+2. **Följ den standardiserade migrationsprocessen** ovan
+3. **Vi kan erbjuda migrationshjälp**, kontakta vårt team
+
+## Checklista efter migration
+
+<input type="checkbox" /> All data imported successfully <input type="checkbox" /> Custom fields working correctly <input type="checkbox" /> User permissions configured <input type="checkbox" /> Email/calendar sync connected <input type="checkbox" /> Critical workflows recreated and tested <input type="checkbox" /> Team trained on new system
+

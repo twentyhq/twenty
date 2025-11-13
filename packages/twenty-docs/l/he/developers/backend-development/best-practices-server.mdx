@@ -1,0 +1,27 @@
+---
+title: שיטות עבודה מומלצות
+image: /images/user-guide/tips/light-bulb.png
+---
+
+<Frame>
+  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+</Frame>
+
+מסמך זה מתאר את שיטות העבודה המומלצות שעליכם לעקוב אחריהן בעת עבודה על התשתית האחורית.
+
+## עקבו אחרי גישה מודולרית
+
+התשתית האחורית פועלת לפי גישה מודולרית, שהיא עקרון יסוד בעת העבודה עם NestJS. Make sure you break down your code into reusable modules to maintain a clean and organized codebase.
+כל מודול צריך לכלול תכונה או פונקציונליות מסוימת ולהיות עם טווח מוגדר היטב. גישה מודולרית זו מאפשרת הפרדה ברורה של תחומים ומפחיתה מורכבויות מיותרות.
+
+## חשפו שירותים לשימוש במודולים
+
+Always create services that have a clear and single responsibility, which enhances code readability and maintainability. תנו לשירותים שמות תיאוריים ועקביים.
+
+עליכם גם לחשוף שירותים שאתם רוצים להשתמש בהם במודולים אחרים. Exposing services to other modules is possible through NestJS's powerful dependency injection system, and promotes loose coupling between components.
+
+## הימנעו משימוש בסוג `any`
+
+כשאתם מצהירים על משתנה כ-`any`, בודק הסוגים של TypeScript לא מבצע כל בדיקת סוגים, מה שמאפשר להקצות למשתנה כל סוג של ערכים. TypeScript משתמשת בהנחות סוגים כדי לקבוע את סוג המשתנה בהתבסס על הערך. בהצהרה כ-`any`, TypeScript אינה יכולה עוד להניח את הסוג. זה מקשה על איתור שגיאות הקשורות לסוג בזמן הפיתוח, מוביל לשגיאות בזמן הריצה והופך את הקוד לפחות ניתן לתחזוקה, פחות אמין וקשה יותר להבנה לאחרים.
+
+לכן, הכל צריך להיות עם סוג מוגדר. אז אם אתם יוצרים אובייקט חדש עם שם פרטי ושם משפחה, עליכם ליצור ממשק או סוג שמכיל שם פרטי ושם משפחה שמגדירים את צורת האובייקט שאתם עובדים עליו.

@@ -1,0 +1,251 @@
+---
+title: Installatie
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+import OptionTable from '@site/src/theme/OptionTable'
+
+# Configuratiebeheer
+
+<Warning>
+**First time installing?** Follow the [Docker Compose installation guide](https://docs.twenty.com/l/nl/developers/self-hosting/docker-compose) to get Twenty running, then return here for configuration.
+</Warning>
+
+Twenty biedt **twee configuratiemodi** aan die bij verschillende implementatiebehoeften passen:
+
+**Toegang tot beheerpaneel:** Alleen gebruikers met admin-rechten (`canAccessFullAdminPanel: true`) kunnen toegang krijgen tot de configuratie-interface.
+
+## 1. Beheer Paneel Configuratie (Standaard)
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+**De meeste configuraties verlopen via de UI** na installatie:
+
+1. Benader je Twenty-instantie (meestal `http://localhost:3000`)
+2. Ga naar **Instellingen / Beheer Paneel / Configuratie Variabelen**
+3. Configureer integraties, e-mail, opslag, en meer
+4. Wijzigingen worden direct van kracht (binnen 15 seconden voor multi-container implementaties)
+
+<Warning>
+**Multi-Container Implementaties:** Bij gebruik van databaseconfiguratie (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), lezen zowel server als worker containers uit dezelfde database. Wijzigingen in het beheerpaneel beïnvloeden beide automatisch, zodat het niet nodig is om omgevingsvariabelen tussen containers te dupliceren (behalve infrastructuurvariabelen).
+</Warning>
+
+**Wat je kunt configureren via het beheerpaneel:**
+
+- **Authenticatie** - Google/Microsoft OAuth, wachtwoordinstellingen
+- **E-mail** - SMTP-instellingen, sjablonen, verificatie
+- **Opslag** - S3-configuratie, lokale opslagpaden
+- **Integraties** - Gmail, Google Agenda, Microsoft-diensten
+- **Workflow & Rate Limiting** - Execution limits, API throttling
+- **En veel meer...**
+
+![Beheer Paneel Configuratie Variabelen](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+Elke variabele wordt gedocumenteerd met beschrijvingen in je beheer paneel bij **Instellingen → Beheer Paneel → Configuratie Variabelen**.
+Sommige infrastructuurinstellingen zoals databaseconnecties (`PG_DATABASE_URL`), server URL's (`SERVER_URL`), en app geheimen (`APP_SECRET`) kunnen alleen via een `.env` bestand geconfigureerd worden.
+
+[Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) </Warning>
+
+## 2. Alleen Omgeving Configuratie
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**Alle configuraties worden beheerd via `.env` bestanden:**
+
+1. Zet `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` in je `.env` bestand
+2. Voeg alle configuratievariabelen toe aan je `.env` bestand
+3. Herstart containers om wijzigingen door te voeren
+4. Het beheerpaneel toont huidige waarden, maar kan deze niet wijzigen
+
+## Gmail & Google Agenda Integratie
+
+### Maak een Google Cloud Project
+
+1. Ga naar [Google Cloud Console](https://console.cloud.google.com/)
+2. Maak een nieuw project of selecteer een bestaand project
+3. Activeer deze API's:
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Agenda API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### Configureer OAuth
+
+1. Ga naar [Referenties](https://console.cloud.google.com/apis/credentials)
+2. Maak OAuth 2.0 Client ID aan
+3. Voeg deze omleidings-URI's toe:
+   - `https://{your-domain}/auth/google/redirect` (for SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+
+### Instellen in Twenty
+
+1. Ga naar **Instellingen → Beheer Paneel → Configuratie Variabelen**
+2. Vind de **Google Auth** sectie
+3. Stel deze variabelen in:
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+**Vereiste scopes** (automatisch geconfigureerd):
+[Zie relevante broncode](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
+
+### Als je app in testmodus is
+
+Als je app in testmodus is, moet je testgebruikers aan je project toevoegen.
+
+Onder [OAuth toestemmingsscherm](https://console.cloud.google.com/apis/credentials/consent), voeg je testgebruikers toe aan de sectie "Testgebruikers".
+
+## Microsoft 365 Integratie
+
+<Warning>
+Gebruikers moeten een [Microsoft 365 Licentie](https://admin.microsoft.com/Adminportal/Home) hebben om de Agenda en Berichten API te kunnen gebruiken. Ze kunnen hun account niet synchroniseren op Twenty zonder een licentie.
+</Warning>
+
+### Maak een project in Microsoft Azure
+
+Je moet een project aanmaken in [Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2) en de inloggegevens krijgen.
+
+### API's inschakelen
+
+Zet de volgende API's aan in "Permissies" in Microsoft Azure Console:
+
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
+
+Opmerking: "Mail.ReadWrite" en "Mail.Send" zijn alleen verplicht als je e-mails wilt verzenden met onze workflow-acties. Je kunt "Mail.Read" gebruiken als je alleen e-mails wilt ontvangen.
+
+### Geautoriseerde omleidings-URI's
+
+Je moet de volgende omleidings-URI's aan je project toevoegen:
+
+- `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Instellen in Twenty
+
+1. Ga naar **Instellingen → Beheer Paneel → Configuratie Variabelen**
+2. Vind de **Microsoft Auth** sectie
+3. Stel deze variabelen in:
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>
+
+### Configureer scopes
+
+[Zie relevante broncode](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+- 'openid'
+- 'e-mail'
+- 'profiel'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
+
+### Als je app in testmodus is
+
+Als je app in testmodus is, moet je testgebruikers aan je project toevoegen.
+
+Voeg je testgebruikers toe aan de sectie "Gebruikers en groepen".
+
+## Achtergrondtaken voor Agenda & Berichten
+
+Na het configureren van Gmail, Google Agenda of Microsoft 365 integraties, moet je de achtergrondtaken starten die gegevens synchroniseren.
+
+Registreer de volgende terugkerende taken in je worker container:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## E-mail Configuratie
+
+1. Ga naar **Instellingen → Beheer Paneel → Configuratie Variabelen**
+2. Vind de **E-mail** sectie
+3. Configureer je SMTP-instellingen:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+
+  <ArticleTab>
+
+Je moet een [App Wachtwoord](https://support.google.com/accounts/answer/185833) verstrekken.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+Houd er rekening mee dat als je 2FA hebt ingeschakeld, je een [App Wachtwoord](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) moet verstrekken.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+**smtp4dev** is een nep SMTP e-mailserver voor ontwikkeling en testen.
+
+- Voer het smtp4dev image uit: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- Benader de smtp4dev UI hier: [http://localhost:8090](http://localhost:8090)
+- Stel de volgende variabelen in:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
+
+  </ArticleTab>
+
+</ArticleTabs>
+
+<Warning>
+**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+</Warning>

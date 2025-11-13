@@ -1,0 +1,148 @@
+---
+title: Thẻ
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Một yếu tố hình ảnh mà bạn có thể sử dụng như một hộp chứa có thể nhấp hoặc không nhấp với một nhãn, các thành phần trái và phải tùy chọn, và nhiều tùy chọn kiểu dáng để hiển thị nhãn và thẻ.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Clickable Chip"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Thuộc Tính   | Loại                     | Mô tả                                                                                                                 |
+| ------------ | ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity | string                   | Liên kết đến thực thể                                                                                                 |
+| entityId     | string                   | Mã nhận dạng duy nhất cho thực thể                                                                                    |
+| tên          | string                   | Tên của thực thể                                                                                                      |
+| pictureUrl   | string                   | hình ảnh",                                                                                                            |
+| avatarType   | Loại Avatar              | Loại avatar mà bạn muốn hiển thị. Has two options: `rounded` and `squared`            |
+| biến thể     | `EntityChipVariant` enum | Loại chip thực thể mà bạn muốn hiển thị. Has two options: `regular` and `transparent` |
+| LeftIcon     | IconComponent            | Một thành phần React đại diện cho một biểu tượng. Hiển thị ở phía bên trái của thẻ                    |
+
+</Tab>
+</Tabs>
+
+## Ví dụ
+
+### Thẻ Trong Suốt Bị Vô Hiệu
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br/>
+
+### Thẻ Bị Vô Hiệu với Chú Thích Công cụ
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Thẻ Thực Thể
+
+Một yếu tố giống như thẻ để hiển thị thông tin về một thực thể.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Entity name"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Thuộc Tính   | Loại                     | Mô tả                                                                                                                 |
+| ------------ | ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity | string                   | Liên kết đến thực thể                                                                                                 |
+| entityId     | string                   | Mã nhận dạng duy nhất cho thực thể                                                                                    |
+| tên          | string                   | Tên của thực thể                                                                                                      |
+| pictureUrl   | string                   | hình ảnh",                                                                                                            |
+| avatarType   | Loại Avatar              | Loại avatar mà bạn muốn hiển thị. Has two options: `rounded` and `squared`            |
+| biến thể     | `EntityChipVariant` enum | Loại chip thực thể mà bạn muốn hiển thị. Has two options: `regular` and `transparent` |
+| LeftIcon     | IconComponent            | Một thành phần React đại diện cho một biểu tượng. Hiển thị ở phía bên trái của thẻ                    |
+
+</Tab>
+</Tabs>

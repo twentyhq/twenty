@@ -1,0 +1,60 @@
+---
+title: 개체
+info: "Learn about standard objects and how to create custom ones for your business needs."
+image: /images/user-guide/objects/objects_orange.png
+sectionInfo: 고유한 비즈니스 프로세스를 지원하도록 설계된 유연한 데이터 모델
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/objects/objects_orange.png" alt="Header" />
+</Frame>
+
+## 표준 개체
+
+Standard objects are predefined entities in your workspace to help you get started. They're part of a shared data model accessible to all users of Twenty. 기본 상태로 사용하거나 사용자 정의하거나 비활성화할 수 있습니다.
+
+<img src="/images/user-guide/objects/standard-objects.png"style={{width:'100%'}}/>
+
+### 사람들
+
+`People` 객체는 연락처를 저장합니다. 연락처 정보 및 상호 작용 기록이 포함되어 있어 모든 고객 상호 작용을 한 곳에서 볼 수 있습니다.
+
+### 회사
+
+`Companies` 객체는 비즈니스 계정을 저장합니다. 업종, 규모 및 위치와 같은 세부정보가 포함됩니다. Companies는 `People` 및 `Opportunities` 객체와 연결됩니다.
+
+### 기회
+
+`Opportunities` 객체는 거래 관련 데이터를 저장합니다. It tracks the progression of potential sales, from prospecting to closure, recording stages, deal sizes, associated account, and expected close date. 캔반 레이아웃에서 판매 파이프라인을 볼 수 있습니다.
+
+## 사용자 지정 개체
+
+Custom objects let you store information that's unique to your organization and that standard objects can't handle. 예를 들어, SpaceX의 경우 로켓 및 발사에 대한 사용자 정의 개체를 만들 수 있습니다.
+
+<img src="/images/user-guide/objects/custom-objects.png"style={{width:'100%'}}/>
+
+### Creating a new custom object
+
+To create a new custom object:
+
+1. Go to Settings in the sidebar on the left.
+2. Under Workspace, go to Data model. 여기에서 모든 활성 및 비활성 표준 및 사용자 정의 개체의 개요를 볼 수 있습니다.
+
+<VimeoEmbed videoId="926288174" title="Video demonstration" />
+
+3. Click on `+ New object` at the top. 단수 및 복수 이름을 입력하고 아이콘을 선택한 다음 사용자 정의 객체에 대한 설명을 추가하고 저장(오른쪽 상단)을 누릅니다. Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property."
+
+<Warning>
+단수 및 복수 이름은 달라야 합니다. 이것은 우리의 GraphQL API가 제대로 작동하기 위해 필요합니다.
+</Warning>
+
+<VimeoEmbed videoId="926293493" title="Video demonstration" />
+
+4. 사용자 정의 객체를 만들면 이를 관리할 수 있습니다. 이름, 아이콘 및 설명을 편집하고, 다양한 필드를 보고, 필드를 추가할 수 있습니다.
+
+<img src="/images/user-guide/objects/customize-fields.png"style={{width:'100%'}}/>
+
+**참고:** 새 객체나 필드가 필요한지 여부를 확신할 수 없다면, 데이터 모델 설계에 대한 지침을 보려면 [이 문서](/l/ko/user-guide/data-model/customize-your-data-model)를 확인하세요.
+

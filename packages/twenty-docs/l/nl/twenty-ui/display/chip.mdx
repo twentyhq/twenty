@@ -1,0 +1,148 @@
+---
+title: Chip
+image: /images/user-guide/github/github-header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+</Frame>
+
+Een visueel element dat je kunt gebruiken als een klikbare of niet-klikbare container met een label, optionele linker- en rechtercomponenten, en verschillende stijlopties om labels en tags weer te geven.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Chip
+      size="large"
+      label="Clickable Chip"
+      clickable={true}
+      variant="highlighted"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+    />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props        | Soort                    | Beschrijving                                                                                                                     |
+| ------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity | tekenreeks               | De link naar de entiteit                                                                                                         |
+| entityId     | tekenreeks               | De unieke identificator voor de entiteit                                                                                         |
+| naam         | tekenreeks               | De naam van de entiteit                                                                                                          |
+| pictureUrl   | tekenreeks               | afbeelding",                                                                                                                     |
+| avatarType   | Avatar Type              | Het type avatar dat je wilt weergeven. Has two options: `rounded` and `squared`                  |
+| variant      | `EntityChipVariant` enum | Variant van de entiteit chip die je wilt weergeven. Has two options: `regular` and `transparent` |
+| LinkerIcoon  | PictogramComponent       | Een React-component die een pictogram vertegenwoordigt. Weergegeven aan de linkerkant van de chip                |
+
+</Tab>
+</Tabs>
+
+## Voorbeelden
+
+### Transparante Uitgeschakelde Chip
+
+```jsx
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+```
+
+<br/>
+
+### Uitgeschakelde Chip met Tooltip
+
+```jsx
+import { Chip } from "twenty-ui/components";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+```
+
+## Entiteit Chip
+
+Een Chip-achtig element om informatie over een entiteit weer te geven.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconTwentyStar } from 'twenty-ui/display';
+import { Chip } from 'twenty-ui/components';
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <Chip
+        linkToEntity="/entity-link"
+        entityId="entityTest"
+        name="Entity name"
+        pictureUrl=""
+        avatarType="rounded"
+        variant="regular"
+        LeftIcon={IconTwentyStar}
+      />
+    </Router>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Props        | Soort                    | Beschrijving                                                                                                                     |
+| ------------ | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| linkToEntity | tekenreeks               | De link naar de entiteit                                                                                                         |
+| entityId     | tekenreeks               | De unieke identificator voor de entiteit                                                                                         |
+| naam         | tekenreeks               | De naam van de entiteit                                                                                                          |
+| pictureUrl   | tekenreeks               | afbeelding",                                                                                                                     |
+| avatarType   | Avatar Type              | Het type avatar dat je wilt weergeven. Has two options: `rounded` and `squared`                  |
+| variant      | `EntityChipVariant` enum | Variant van de entiteit chip die je wilt weergeven. Has two options: `regular` and `transparent` |
+| LinkerIcoon  | PictogramComponent       | Een React-component die een pictogram vertegenwoordigt. Weergegeven aan de linkerkant van de chip                |
+
+</Tab>
+</Tabs>

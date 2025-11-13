@@ -7,6 +7,5 @@ export interface CommonSelectedFields {
 export type CommonSelectedFieldsResult = {
   select: CommonSelectedFields;
   relations: CommonSelectedFields;
-  //TODO = Refacto-common - to update when rest api will handle aggregates
   aggregate: Record<string, AggregationField>;
 };

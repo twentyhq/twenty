@@ -1,0 +1,69 @@
+---
+title: Pas uw datamodel aan
+info: "Leer hoe u een datamodel ontwerpt en maakt dat weerspiegelt hoe u werkt."
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: Flexibel datamodel ontworpen om uw unieke bedrijfsprocessen te ondersteunen
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Header" />
+</Frame>
+
+## Wat is een datamodel?
+
+Een datamodel is de structuur die bepaalt hoe informatie in uw CRM is georganiseerd. Het bepaalt welke objecten bestaan (zoals bedrijven, mensen of kansen), welke eigenschappen ze hebben (dit zijn de velden) en hoe ze zich tot elkaar verhouden. U kunt het zien als de kaart van uw klantgegevens.
+
+## Waarom zou u uw datamodel aanpassen?
+
+Elk bedrijf werkt anders. Als u uw datamodel volledig kunt aanpassen, betekent dat dat u Twenty kunt vormgeven rondom uw processen in plaats van uw processen in een star systeem te forceren.  
+Twenty biedt de flexibiliteit die u nodig heeft om het datamodel te vormen dat uw dagelijkse activiteiten het beste ondersteunt. U kunt zoveel aangepaste objecten en velden maken als u nodig heeft, de prijs verandert niet.
+
+## Tips om uw datamodel te ontwerpen
+
+Er is zelden maar één manier om een datamodel te bouwen. Hieronder vindt u enkele tips om de uwe te helpen bouwen.
+
+**1. Begin met uw kernobjecten.**  
+Identificeer de belangrijkste concepten waarmee u werkt (bijv. Bedrijven, Mensen, Kansen). Deze drie objecten zijn al beschikbaar omdat ze vaak worden gebruikt. Maar bedenk welke andere u misschien nodig heeft.  
+Voorbeeld: Stripe zou een object `Subscriptions` nodig hebben, Airbnb zou een object `Trips` nodig hebben, een start-up accelerator een object `Batches`.
+
+**2. Gebruik velden voor variaties, niet voor nieuwe objecten.**  
+Als iets slechts een kenmerk is van een bestaand object (bijv. `Industrie` voor een bedrijf of `Status` voor een kans), maak er dan een veld van. Velden zijn het beste voor categorieën, labels en attributen.
+
+**3. Maak een nieuw object wanneer het op zichzelf staat.**  
+Als het concept zijn eigen levenscyclus, eigenschappen of relaties heeft, verdient het meestal een object. Bijvoorbeeld:
+
+- **Projecten** die hun eigen deadlines, eigenaren en taken hebben
+- **Abonnementen** die bedrijven, producten en facturen verbinden
+- **Evenementen** die veel deelnemers en vervolgacties betreffen
+
+Deze gaan verder dan een enkel veld omdat ze hun eigen gegevens en relaties bevatten.
+
+**4. Maak een object wanneer het aantal gerelateerde records open-eindig is.**  
+Als iets meerdere keren kan worden gelinkt en u weet niet hoeveel, is het beter als een eigen object. In plaats van bijvoorbeeld velden te maken zoals `Product 1`, `Product 2`, enz., definieert u een `Product`-object en relateert u het aan het oorspronkelijke record. Op deze manier kunt u één, twee of honderd producten ondersteunen zonder uw model te wijzigen.
+
+**5. Houd het eerst eenvoudig.**  
+Begin met velden. Schakel over naar nieuwe objecten pas wanneer u de grenzen voelt: te veel velden, herhaalde records of relaties die niet netjes passen.
+
+### Speciale opmerking over Mensen, Bedrijven en Kansen
+
+- **`Mensen`, `Bedrijven` en `Kansen` zijn de enige objecten van waaruit u toegang hebt tot de e-mails en vergaderingen die zijn gesynchroniseerd vanuit uw mailbox/kalender.** We raden aan deze zoveel mogelijk te gebruiken. Als u categorieën van `Mensen` of `Bedrijven` moet maken, gebruik dan velden in plaats van nieuwe objecten.
+
+  Voorbeeld: het is het beste om het `Mensen`-object te gebruiken voor zowel prospects als partners, met een veld genaamd `Persoontype`. Vermijd het maken van een `Partner`-object, omdat u vanaf daar geen toegang zou hebben tot e-mailthreads. Maak in plaats daarvan verschillende weergaven onder `Mensen`: één die partners toont, een andere die prospects toont.
+- Gezien het bovenstaande punt is het prima om velden te hebben die niet van toepassing zijn op elke record. Bijvoorbeeld, onder `Mensen` kunt u een `Verwijzingslink`-veld toevoegen dat alleen van belang is wanneer `Persoontype = Partner`. Dat is oké: u kunt dit veld verbergen in weergaven waar het niet nodig is.
+
+### Vragen om uw keuze te begeleiden
+
+Vraag ​​uzelf af:
+
+- Is dit slechts een eigenschap van iets dat ik al heb, of heeft het eigen eigenschappen nodig?
+- Zal ik ooit meerdere van deze per record moeten bijhouden, zonder dat ik van tevoren weet hoeveel?
+- Verbindt dit concept zich met verschillende objecten, niet slechts één?
+- Zal het zijn eigen levenscyclus hebben (bijv. stadia, begin/einddatums)?
+
+Als het antwoord op een of meer van deze vragen 'ja' is, is het waarschijnlijk tijd voor een nieuw object.
+
+## Hulp nodig?
+
+Ons team kan u helpen bij het ontwerpen en creëren van het datamodel dat u nodig heeft. Ontdek ons Onboarding Pack [hier](https://twenty.com/onboarding-packages).
+
+
