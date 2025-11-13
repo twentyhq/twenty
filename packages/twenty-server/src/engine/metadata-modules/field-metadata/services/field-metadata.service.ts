@@ -652,24 +652,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         { workspaceId: fieldMetadataInputs[0].workspaceId },
       );
 
-    const isMorphRelationEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
-        workspaceId,
-      );
-
-    const isSomeFieldMetadatInputsMorph = fieldMetadataInputs.some(
-      (fieldMetadataInput) =>
-        fieldMetadataInput.type === FieldMetadataType.MORPH_RELATION,
-    );
-
-    if (isSomeFieldMetadatInputsMorph && !isMorphRelationEnabled) {
-      throw new FieldMetadataException(
-        'Morph Relation feature is not enabled for this workspace',
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
