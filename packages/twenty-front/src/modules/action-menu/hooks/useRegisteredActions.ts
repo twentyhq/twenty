@@ -68,7 +68,7 @@ export const useRegisteredActions = (
     if (isFullTabWidgetInEditMode) {
       return (
         isDefined(action.availableOn) &&
-        action.availableOn.includes(ActionViewType.FULL_TAB_WIDGET_EDIT_MODE)
+        action.availableOn.includes(ActionViewType.PAGE_EDIT_MODE)
       );
     }
 
