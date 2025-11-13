@@ -19,8 +19,7 @@ export const generateGroupByQueryVariablesFromChartConfiguration = ({
   chartConfiguration: GroupByChartConfiguration;
   aggregateOperation?: string;
 }) => {
-  const groupByFieldXId =
-    chartConfiguration.primaryAxisGroupByFieldMetadataId;
+  const groupByFieldXId = chartConfiguration.primaryAxisGroupByFieldMetadataId;
 
   const groupByFieldYId =
     chartConfiguration.secondaryAxisGroupByFieldMetadataId;
@@ -64,8 +63,7 @@ export const generateGroupByQueryVariablesFromChartConfiguration = ({
         field: groupByFieldY,
         subFieldName: groupBySubFieldNameY,
         dateGranularity:
-          chartConfiguration.secondaryAxisGroupByDateGranularity ??
-          undefined,
+          chartConfiguration.secondaryAxisGroupByDateGranularity ?? undefined,
       }),
     );
   }
@@ -82,8 +80,7 @@ export const generateGroupByQueryVariablesFromChartConfiguration = ({
       getGroupByOrderBy({
         graphOrderBy: chartConfiguration.primaryAxisOrderBy,
         groupByField: groupByFieldX,
-        groupBySubFieldName:
-          chartConfiguration.primaryAxisGroupBySubFieldName,
+        groupBySubFieldName: chartConfiguration.primaryAxisGroupBySubFieldName,
         aggregateOperation,
         dateGranularity:
           chartConfiguration.primaryAxisDateGranularity ?? undefined,
@@ -102,8 +99,7 @@ export const generateGroupByQueryVariablesFromChartConfiguration = ({
           chartConfiguration.secondaryAxisGroupBySubFieldName,
         aggregateOperation,
         dateGranularity:
-          chartConfiguration.secondaryAxisGroupByDateGranularity ??
-          undefined,
+          chartConfiguration.secondaryAxisGroupByDateGranularity ?? undefined,
       }),
     );
   }

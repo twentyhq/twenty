@@ -1,5 +1,4 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type GroupByChartConfiguration } from '@/page-layout/widgets/graph/types/GroupByChartConfiguration';
 import {
   AggregateOperations,
   type BarChartConfiguration,
