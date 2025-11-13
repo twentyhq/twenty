@@ -9,7 +9,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
     "strictNullChecks": true,
     "alwaysStrict": true,

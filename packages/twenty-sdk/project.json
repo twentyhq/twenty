@@ -3,34 +3,20 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-sdk/src",
   "projectType": "library",
-  "tags": [
-    "scope:sdk"
-  ],
+  "tags": ["scope:sdk"],
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "dependsOn": [
-        "generateBarrels",
-        "^build"
-      ],
+      "dependsOn": ["generateBarrels", "^build"],
       "outputs": [
         "{projectRoot}/dist",
         "{projectRoot}/application/package.json",
         "{projectRoot}/application/dist"
-      ],
-      "options": {
-        "cwd": "packages/twenty-sdk",
-        "command": "vite build"
-      }
+      ]
     },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "production",
-        "{projectRoot}/scripts/generateBarrels.ts"
-      ],
+      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.ts"],
       "outputs": [
         "{projectRoot}/src/index.ts",
         "{projectRoot}/src/*/index.ts",
