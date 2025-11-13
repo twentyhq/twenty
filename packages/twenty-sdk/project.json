@@ -14,10 +14,10 @@
       ],
       "outputs": [
         "{projectRoot}/dist",
-        "{projectRoot}/api/package.json",
-        "{projectRoot}/api/dist",
         "{projectRoot}/application/package.json",
-        "{projectRoot}/application/dist"
+        "{projectRoot}/application/dist",
+        "{projectRoot}/client/package.json",
+        "{projectRoot}/client/dist"
       ]
     },
     "generateBarrels": {

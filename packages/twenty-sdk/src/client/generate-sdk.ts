@@ -1,4 +1,4 @@
-import { fetchGraphQLSchema } from '@/api/fetch-graphql-schema';
+import { fetchGraphQLSchema } from '@/client/fetch-graphql-schema';
 import { generate } from '@genql/cli';
 import path from 'path';
 
