@@ -7,4 +7,5 @@
  *                              |___/
  */
 
+export { fetchGraphQLSchema } from './fetch-graphql-schema';
 export { generateSdk } from './generate-sdk';

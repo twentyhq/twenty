@@ -24,9 +24,7 @@ export class SdkCommand {
     return sdkCommand;
   }
 
-  private async generate(options: {
-    output?: string;
-  }): Promise<void> {
+  private async generate(options: { output?: string }): Promise<void> {
     try {
       const config = await this.configService.getConfig();
 
@@ -34,20 +32,18 @@ export class SdkCommand {
       const token = config.apiKey;
 
       if (!url) {
-        console.error(
-          chalk.red('✗ API URL not configured.'),
-        );
+        console.error(chalk.red('✗ API URL not configured.'));
         console.log(
           chalk.yellow('Run `twenty auth login` or set it manually:'),
         );
-        console.log(chalk.gray('  twenty config set apiUrl http://localhost:3000'));
+        console.log(
+          chalk.gray('  twenty config set apiUrl http://localhost:3000'),
+        );
         process.exit(1);
       }
 
       if (!token) {
-        console.error(
-          chalk.red('✗ API token not configured.'),
-        );
+        console.error(chalk.red('✗ API token not configured.'));
         console.log(
           chalk.yellow('Run `twenty auth login` or set it manually:'),
         );
@@ -55,24 +51,17 @@ export class SdkCommand {
         process.exit(1);
       }
 
-      const outputPath = options.output || config.sdkOutputPath || 'src/generated/core';
-      const healthCheckPath = '/healthz';
-      const maxRetries = 600;
-      const retryInterval = 1000;
-      const timeout = 600000;
+      const outputPath =
+        options.output || config.sdkOutputPath || 'src/generated/';
 
       console.log(chalk.blue('📦 Generating Twenty SDK...'));
       console.log(chalk.gray(`API URL: ${url}`));
       console.log(chalk.gray(`Output: ${outputPath}`));
 
       await generateSdk({
-        url,
+        url: `${url}/graphql`,
         token,
-        outputPath,
-        healthCheckPath,
-        maxRetries,
-        retryInterval,
-        timeout,
+        graphqlEndpoint: 'core',
       });
 
       console.log(chalk.green('✓ SDK generated successfully!'));
@@ -92,4 +81,3 @@ export class SdkCommand {
     }
   }
 }
-
