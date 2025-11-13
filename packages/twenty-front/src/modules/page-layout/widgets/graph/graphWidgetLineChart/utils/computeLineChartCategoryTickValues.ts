@@ -1,5 +1,5 @@
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
-import { computeCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeCategoryTickValues';
+import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
 
 const LINE_CHART_MARGIN_LEFT = 70;
 const LINE_CHART_MARGIN_RIGHT = 20;
@@ -12,21 +12,23 @@ export const computeLineChartCategoryTickValues = ({
   width: number;
   data: LineChartSeries[];
 }): (string | number)[] => {
-  if (data.length === 0 || data[0].data.length === 0) return [];
+  if (data.length === 0 || data[0].data.length === 0) {
+    return [];
+  }
 
-  const values = data[0].data.map((point) => point.x);
-  const availableWidth =
-    width - (LINE_CHART_MARGIN_LEFT + LINE_CHART_MARGIN_RIGHT);
-  const numberOfTicks = Math.floor(
-    availableWidth / LINE_CHART_MINIMUM_WIDTH_PER_TICK,
-  );
-
-  const tickIndices = computeCategoryTickValues(numberOfTicks, values.length);
-
-  return tickIndices.map((index) => {
-    const value = values[index];
+  const values = data[0].data.map((point) => {
+    const value = point.x;
     return typeof value === 'number' || typeof value === 'string'
       ? value
       : String(value);
+  });
+
+  const availableWidth =
+    width - (LINE_CHART_MARGIN_LEFT + LINE_CHART_MARGIN_RIGHT);
+
+  return computeChartCategoryTickValues({
+    availableSize: availableWidth,
+    minimumSizePerTick: LINE_CHART_MINIMUM_WIDTH_PER_TICK,
+    values,
   });
 };

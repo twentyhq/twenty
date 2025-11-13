@@ -1,6 +1,6 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
-import { useGraphWidgetLineChartGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetLineChartGroupByQuery';
+import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { transformGroupByDataToLineChartData } from '@/page-layout/widgets/graph/utils/transformGroupByDataToLineChartData';
 import { useMemo } from 'react';
 import { type LineChartConfiguration } from '~/generated/graphql';
@@ -33,7 +33,7 @@ export const useGraphLineChartWidgetData = ({
     loading,
     error,
     aggregateOperation,
-  } = useGraphWidgetLineChartGroupByQuery({
+  } = useGraphWidgetGroupByQuery({
     objectMetadataItemId,
     configuration,
   });

@@ -1,4 +1,5 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type GroupByChartConfiguration } from '@/page-layout/widgets/graph/types/GroupByChartConfiguration';
 import { getGroupByOrderBy } from '@/page-layout/widgets/graph/utils/getGroupByOrderBy';
 import {
   type AggregateOrderByWithGroupByField,
@@ -7,29 +8,28 @@ import {
   type ObjectRecordOrderByWithGroupByDateField,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type LineChartConfiguration } from '~/generated/graphql';
 import { buildGroupByFieldObject } from './buildGroupByFieldObject';
 
-export const generateGroupByQueryVariablesFromLineChartConfiguration = ({
+export const generateGroupByQueryVariablesFromChartConfiguration = ({
   objectMetadataItem,
-  lineChartConfiguration,
+  chartConfiguration,
   aggregateOperation,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  lineChartConfiguration: LineChartConfiguration;
+  chartConfiguration: GroupByChartConfiguration;
   aggregateOperation?: string;
 }) => {
   const groupByFieldXId =
-    lineChartConfiguration.primaryAxisGroupByFieldMetadataId;
+    chartConfiguration.primaryAxisGroupByFieldMetadataId;
 
   const groupByFieldYId =
-    lineChartConfiguration.secondaryAxisGroupByFieldMetadataId;
+    chartConfiguration.secondaryAxisGroupByFieldMetadataId;
 
   const groupBySubFieldNameX =
-    lineChartConfiguration.primaryAxisGroupBySubFieldName ?? undefined;
+    chartConfiguration.primaryAxisGroupBySubFieldName ?? undefined;
 
   const groupBySubFieldNameY =
-    lineChartConfiguration.secondaryAxisGroupBySubFieldName ?? undefined;
+    chartConfiguration.secondaryAxisGroupBySubFieldName ?? undefined;
 
   const groupByFieldX = objectMetadataItem.fields.find(
     (field) => field.id === groupByFieldXId,
@@ -54,7 +54,7 @@ export const generateGroupByQueryVariablesFromLineChartConfiguration = ({
       field: groupByFieldX,
       subFieldName: groupBySubFieldNameX,
       dateGranularity:
-        lineChartConfiguration.primaryAxisDateGranularity ?? undefined,
+        chartConfiguration.primaryAxisDateGranularity ?? undefined,
     }),
   );
 
@@ -64,7 +64,7 @@ export const generateGroupByQueryVariablesFromLineChartConfiguration = ({
         field: groupByFieldY,
         subFieldName: groupBySubFieldNameY,
         dateGranularity:
-          lineChartConfiguration.secondaryAxisGroupByDateGranularity ??
+          chartConfiguration.secondaryAxisGroupByDateGranularity ??
           undefined,
       }),
     );
@@ -77,32 +77,32 @@ export const generateGroupByQueryVariablesFromLineChartConfiguration = ({
     | ObjectRecordOrderByForCompositeField
   > = [];
 
-  if (isDefined(lineChartConfiguration.primaryAxisOrderBy)) {
+  if (isDefined(chartConfiguration.primaryAxisOrderBy)) {
     orderBy.push(
       getGroupByOrderBy({
-        graphOrderBy: lineChartConfiguration.primaryAxisOrderBy,
+        graphOrderBy: chartConfiguration.primaryAxisOrderBy,
         groupByField: groupByFieldX,
         groupBySubFieldName:
-          lineChartConfiguration.primaryAxisGroupBySubFieldName,
+          chartConfiguration.primaryAxisGroupBySubFieldName,
         aggregateOperation,
         dateGranularity:
-          lineChartConfiguration.primaryAxisDateGranularity ?? undefined,
+          chartConfiguration.primaryAxisDateGranularity ?? undefined,
       }),
     );
   }
   if (
     isDefined(groupByFieldY) &&
-    isDefined(lineChartConfiguration.secondaryAxisOrderBy)
+    isDefined(chartConfiguration.secondaryAxisOrderBy)
   ) {
     orderBy.push(
       getGroupByOrderBy({
-        graphOrderBy: lineChartConfiguration.secondaryAxisOrderBy,
+        graphOrderBy: chartConfiguration.secondaryAxisOrderBy,
         groupByField: groupByFieldY,
         groupBySubFieldName:
-          lineChartConfiguration.secondaryAxisGroupBySubFieldName,
+          chartConfiguration.secondaryAxisGroupBySubFieldName,
         aggregateOperation,
         dateGranularity:
-          lineChartConfiguration.secondaryAxisGroupByDateGranularity ??
+          chartConfiguration.secondaryAxisGroupByDateGranularity ??
           undefined,
       }),
     );
