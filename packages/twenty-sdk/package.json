@@ -23,7 +23,8 @@
   "dependencies": {
     "@genql/cli": "^3.0.3",
     "axios": "^1.6.2",
-    "graphql": "^16.8.1"
+    "graphql": "^16.8.1",
+    "twenty-shared": "workspace:*"
   },
   "exports": {
     ".": {
