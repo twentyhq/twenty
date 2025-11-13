@@ -1,8 +1,6 @@
 import { RoutingDebugDisplay } from '@/ai/components/RoutingDebugDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { IconCpu, IconSparkles } from 'twenty-ui/display';
 
@@ -52,7 +50,7 @@ export const RoutingStatusDisplay = ({
   data: DataMessagePart['routing-status'];
 }) => {
   const isLoading = data.state === 'loading';
-  const isDebugMode = useRecoilValue(isDebugModeState);
+  const isDebugMode = process.env.IS_DEBUG_MODE === 'true';
 
   if (data.state === 'error') {
     return null;
