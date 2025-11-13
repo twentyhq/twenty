@@ -239,7 +239,7 @@ export const GraphWidgetLineChart = ({
             clamp: true,
           }}
           curve={'monotoneX'}
-          lineWidth={2}
+          lineWidth={1}
           enableArea={enableArea}
           areaBaselineValue={0}
           enablePoints={true}
