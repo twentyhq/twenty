@@ -6,7 +6,6 @@ import { DataSource, EntityManager } from 'typeorm';
 import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget-with-id.input';
-import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
@@ -131,11 +130,13 @@ export class PageLayoutUpdateService {
       workspaceId,
       pageLayoutId,
       transactionManager,
+      true,
     );
 
     const {
       toCreate: entitiesToCreate,
       toUpdate: entitiesToUpdate,
+      toRestoreAndUpdate: entitiesToRestoreAndUpdate,
       idsToDelete,
     } = computeDiffBetweenObjects<
       PageLayoutTabEntity,
@@ -159,6 +160,23 @@ export class PageLayoutUpdateService {
 
       await this.pageLayoutTabService.update(
         tabToUpdate.id,
+        workspaceId,
+        updateData,
+        transactionManager,
+      );
+    }
+
+    for (const tabToRestoreAndUpdate of entitiesToRestoreAndUpdate) {
+      await this.pageLayoutTabService.restore(
+        tabToRestoreAndUpdate.id,
+        workspaceId,
+        transactionManager,
+      );
+
+      const { widgets: _widgets, ...updateData } = tabToRestoreAndUpdate;
+
+      await this.pageLayoutTabService.update(
+        tabToRestoreAndUpdate.id,
         workspaceId,
         updateData,
         transactionManager,
@@ -197,11 +215,13 @@ export class PageLayoutUpdateService {
         workspaceId,
         tabId,
         transactionManager,
+        true,
       );
 
     const {
       toCreate: entitiesToCreate,
       toUpdate: entitiesToUpdate,
+      toRestoreAndUpdate: entitiesToRestoreAndUpdate,
       idsToDelete,
     } = computeDiffBetweenObjects<
       PageLayoutWidgetEntity,
@@ -231,7 +251,22 @@ export class PageLayoutUpdateService {
       await this.pageLayoutWidgetService.update(
         widgetUpdate.id,
         workspaceId,
-        widgetUpdate as UpdatePageLayoutWidgetInput,
+        widgetUpdate,
+        transactionManager,
+      );
+    }
+
+    for (const widgetToRestoreAndUpdate of entitiesToRestoreAndUpdate) {
+      await this.pageLayoutWidgetService.restore(
+        widgetToRestoreAndUpdate.id,
+        workspaceId,
+        transactionManager,
+      );
+
+      await this.pageLayoutWidgetService.update(
+        widgetToRestoreAndUpdate.id,
+        workspaceId,
+        widgetToRestoreAndUpdate,
         transactionManager,
       );
     }
