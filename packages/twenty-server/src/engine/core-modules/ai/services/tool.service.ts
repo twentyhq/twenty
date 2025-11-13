@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
@@ -13,7 +14,6 @@ import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
 import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
 import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
-import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -36,6 +36,7 @@ export class ToolService {
     rolePermissionConfig: RolePermissionConfig,
     workspaceId: string,
     actorContext?: ActorMetadata,
+    userWorkspaceId?: string,
   ): Promise<ToolSet> {
     const tools: ToolSet = {};
 
@@ -104,6 +105,7 @@ export class ToolService {
               workspaceId,
               rolePermissionConfig,
               createdBy: actorContext,
+              userWorkspaceId,
             });
           },
         };
@@ -129,6 +131,7 @@ export class ToolService {
               objectRecord,
               workspaceId,
               rolePermissionConfig,
+              userWorkspaceId,
             });
           },
         };
@@ -152,6 +155,7 @@ export class ToolService {
               offset,
               workspaceId,
               rolePermissionConfig,
+              userWorkspaceId,
             });
           },
         };
@@ -166,6 +170,7 @@ export class ToolService {
               limit: 1,
               workspaceId,
               rolePermissionConfig,
+              userWorkspaceId,
             });
           },
         };
@@ -182,6 +187,7 @@ export class ToolService {
               workspaceId,
               rolePermissionConfig,
               soft: true,
+              userWorkspaceId,
             });
           },
         };

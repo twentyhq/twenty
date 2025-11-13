@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -22,6 +21,7 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.message,
+
   namePlural: 'messages',
   labelSingular: msg`Message`,
   labelPlural: msg`Messages`,

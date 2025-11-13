@@ -13,7 +13,10 @@ import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
 @Resolver(() => PageLayoutDTO)
 @UseFilters(PageLayoutGraphqlApiExceptionFilter)
@@ -26,6 +29,7 @@ export class PageLayoutResolver {
   ) {}
 
   @Query(() => [PageLayoutDTO])
+  @UseGuards(NoPermissionGuard)
   async getPageLayouts(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('objectMetadataId', { type: () => String, nullable: true })
@@ -42,6 +46,7 @@ export class PageLayoutResolver {
   }
 
   @Query(() => PageLayoutDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async getPageLayout(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -50,6 +55,7 @@ export class PageLayoutResolver {
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async createPageLayout(
     @Args('input') input: CreatePageLayoutInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -58,6 +64,7 @@ export class PageLayoutResolver {
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async updatePageLayout(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdatePageLayoutInput,
@@ -67,6 +74,7 @@ export class PageLayoutResolver {
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async deletePageLayout(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -80,6 +88,7 @@ export class PageLayoutResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async destroyPageLayout(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -93,6 +102,7 @@ export class PageLayoutResolver {
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async restorePageLayout(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -101,6 +111,7 @@ export class PageLayoutResolver {
   }
 
   @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async updatePageLayoutWithTabsAndWidgets(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdatePageLayoutWithTabsInput,

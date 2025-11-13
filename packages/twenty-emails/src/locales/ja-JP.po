@@ -131,7 +131,7 @@ msgstr "パスワードをリセット"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr ""
+msgstr "パスワードを設定してください 🗝"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +141,7 @@ msgstr "リセット"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr ""
+msgstr "設定"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

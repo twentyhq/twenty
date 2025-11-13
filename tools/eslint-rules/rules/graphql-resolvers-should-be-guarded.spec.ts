@@ -12,7 +12,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(UserAuthGuard)
+          @UseGuards(UserAuthGuard, NoPermissionGuard)
           testQuery() {}
         }
       `,
@@ -21,7 +21,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(WorkspaceAuthGuard)
+          @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
           testQuery() {}
         }
       `,
@@ -30,23 +30,14 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(PublicEndpointGuard)
+          @UseGuards(PublicEndpointGuard, NoPermissionGuard)
           testQuery() {}
         }
       `,
     },
     {
       code: `
-        class TestResolver {
-          @Query()
-          @UseGuards(CaptchaGuard, PublicEndpointGuard)
-          testQuery() {}
-        }
-      `,
-    },
-    {
-      code: `
-        @UseGuards(UserAuthGuard)
+        @UseGuards(UserAuthGuard, NoPermissionGuard)
         class TestResolver {
           @Query()
           testQuery() {}
@@ -55,7 +46,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(WorkspaceAuthGuard)
+        @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
         class TestResolver {
           @Query()
           testQuery() {}
@@ -64,10 +55,28 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(PublicEndpointGuard)
+        @UseGuards(PublicEndpointGuard, NoPermissionGuard)
         class TestResolver {
           @Query()
           testQuery() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestResolver {
+          @Subscription()
+          @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+          testSubscription() {}
+        }
+      `,
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+        class TestResolver {
+          @Subscription()
+          testSubscription() {}
         }
       `,
     },
@@ -83,6 +92,42 @@ ruleTester.run(RULE_NAME, rule, {
         class TestResolver {
           @ResolveField()
           testField() {}
+        }
+      `,
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard, SettingsPermissionsGuard(PermissionFlagType.WORKSPACE))
+        class TestResolver {
+          @Mutation(() => String)
+          async createSomething() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestResolver {
+          @Mutation(() => String)
+          @UseGuards(WorkspaceAuthGuard, SettingsPermissionsGuard(PermissionFlagType.WORKSPACE))
+          async createSomething() {}
+        }
+      `,
+    },
+    {
+      code: `
+        class TestResolver {
+          @Mutation(() => String)
+          @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+          async createSomething() {}
+        }
+      `,
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+        class TestResolver {
+          @Mutation(() => String)
+          async createSomething() {}
         }
       `,
     },
@@ -131,6 +176,20 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
+          @UseGuards(UserAuthGuard)
+          testQuery() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'graphqlResolversShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        class TestResolver {
+          @Query()
           @UseGuards(CaptchaGuard)
           testQuery() {}
         }
@@ -155,5 +214,61 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    {
+      code: `
+        class TestResolver {
+          @Subscription()
+          @UseGuards(WorkspaceAuthGuard)
+          testSubscription() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'graphqlResolversShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard)
+        class TestResolver {
+          @Subscription()
+          testSubscription() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'graphqlResolversShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        class TestResolver {
+          @Mutation(() => String)
+          @UseGuards(WorkspaceAuthGuard)
+          async createSomething() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'graphqlResolversShouldBeGuarded',
+        },
+      ],
+    },
+    {
+      code: `
+        @UseGuards(WorkspaceAuthGuard)
+        class TestResolver {
+          @Mutation(() => String)
+          async createSomething() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'graphqlResolversShouldBeGuarded',
+        },
+      ],
+    },
   ],
-}); 
+});

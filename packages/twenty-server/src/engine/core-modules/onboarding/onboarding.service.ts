@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { type QueryRunner } from 'typeorm';
 
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -107,81 +108,108 @@ export class OnboardingService {
     return OnboardingStatus.COMPLETED;
   }
 
-  async setOnboardingConnectAccountPending({
-    userId,
-    workspaceId,
-    value,
-  }: {
-    userId: string;
-    workspaceId: string;
-    value: boolean;
-  }) {
+  async setOnboardingConnectAccountPending(
+    {
+      userId,
+      workspaceId,
+      value,
+    }: {
+      userId: string;
+      workspaceId: string;
+      value: boolean;
+    },
+    queryRunner?: QueryRunner,
+  ) {
     if (!value) {
-      await this.userVarsService.delete({
-        userId,
-        workspaceId,
-        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-      });
+      await this.userVarsService.delete(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+        },
+        queryRunner,
+      );
 
       return;
     }
 
-    await this.userVarsService.set({
-      userId,
-      workspaceId: workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
-      value: true,
-    });
+    await this.userVarsService.set(
+      {
+        userId,
+        workspaceId: workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+        value: true,
+      },
+      queryRunner,
+    );
   }
 
-  async setOnboardingInviteTeamPending({
-    workspaceId,
-    value,
-  }: {
-    workspaceId: string;
-    value: boolean;
-  }) {
+  async setOnboardingInviteTeamPending(
+    {
+      workspaceId,
+      value,
+    }: {
+      workspaceId: string;
+      value: boolean;
+    },
+    queryRunner?: QueryRunner,
+  ) {
     if (!value) {
-      await this.userVarsService.delete({
+      await this.userVarsService.delete(
+        {
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+        },
+        queryRunner,
+      );
+
+      return;
+    }
+
+    await this.userVarsService.set(
+      {
         workspaceId,
         key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
-      });
+        value: true,
+      },
+      queryRunner,
+    );
+  }
+
+  async setOnboardingCreateProfilePending(
+    {
+      userId,
+      workspaceId,
+      value,
+    }: {
+      userId: string;
+      workspaceId: string;
+      value: boolean;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    if (!value) {
+      await this.userVarsService.delete(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
+        },
+        queryRunner,
+      );
 
       return;
     }
 
-    await this.userVarsService.set({
-      workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
-      value: true,
-    });
-  }
-
-  async setOnboardingCreateProfilePending({
-    userId,
-    workspaceId,
-    value,
-  }: {
-    userId: string;
-    workspaceId: string;
-    value: boolean;
-  }) {
-    if (!value) {
-      await this.userVarsService.delete({
+    await this.userVarsService.set(
+      {
         userId,
         workspaceId,
         key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
-      });
-
-      return;
-    }
-
-    await this.userVarsService.set({
-      userId,
-      workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
-      value: true,
-    });
+        value: true,
+      },
+      queryRunner,
+    );
   }
 
   async setOnboardingBookOnboardingPending({

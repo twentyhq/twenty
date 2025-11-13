@@ -3,6 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroup';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetViewFromPrefetchState } from '@/views/hooks/useGetViewFromPrefetchState';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,6 +11,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSaveCurrentViewGroups = () => {
+  const { canPersistChanges } = useCanPersistViewChanges();
   const { createViewGroups, updateViewGroups } = usePersistViewGroupRecords();
 
   const { getViewFromPrefetchState } = useGetViewFromPrefetchState();
@@ -21,6 +23,10 @@ export const useSaveCurrentViewGroups = () => {
   const saveViewGroup = useRecoilCallback(
     ({ snapshot }) =>
       async (viewGroupToSave: ViewGroup) => {
+        if (!canPersistChanges) {
+          return;
+        }
+
         const currentViewId = snapshot
           .getLoadable(currentViewIdCallbackState)
           .getValue();
@@ -75,12 +81,21 @@ export const useSaveCurrentViewGroups = () => {
           },
         ]);
       },
-    [currentViewIdCallbackState, getViewFromPrefetchState, updateViewGroups],
+    [
+      canPersistChanges,
+      currentViewIdCallbackState,
+      getViewFromPrefetchState,
+      updateViewGroups,
+    ],
   );
 
   const saveViewGroups = useRecoilCallback(
     ({ snapshot }) =>
       async (viewGroupsToSave: ViewGroup[]) => {
+        if (!canPersistChanges) {
+          return;
+        }
+
         const currentViewId = snapshot
           .getLoadable(currentViewIdCallbackState)
           .getValue();
@@ -156,6 +171,7 @@ export const useSaveCurrentViewGroups = () => {
         ]);
       },
     [
+      canPersistChanges,
       createViewGroups,
       currentViewIdCallbackState,
       getViewFromPrefetchState,

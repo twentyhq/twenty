@@ -94,7 +94,7 @@ export const GraphWidgetPieChart = ({
     return (
       <GraphWidgetTooltip
         items={[tooltipData.tooltipItem]}
-        showClickHint={tooltipData.showClickHint}
+        linkTo={tooltipData.linkTo}
       />
     );
   };

@@ -9,6 +9,7 @@ import { FileAttachmentListener } from 'src/engine/core-modules/file/listeners/f
 import { FileWorkspaceMemberListener } from 'src/engine/core-modules/file/listeners/file-workspace-member.listener';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 import { FileController } from './controllers/file.controller';
 import { FileEntity } from './entities/file.entity';
@@ -22,6 +23,7 @@ import { FileService } from './services/file.service';
     JwtModule,
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity]),
     HttpModule,
+    PermissionsModule,
   ],
   providers: [
     FileService,

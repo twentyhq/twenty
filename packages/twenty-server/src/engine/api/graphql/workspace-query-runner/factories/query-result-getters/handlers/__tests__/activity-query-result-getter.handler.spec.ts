@@ -1,8 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { FieldActorSource } from 'twenty-shared/types';
+
 import { ActivityQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/activity-query-result-getter.handler';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { type NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 
 const baseNote = {

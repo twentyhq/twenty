@@ -1,9 +1,8 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationOnDeleteAction } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -26,6 +25,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageChannelMessageAssociation,
+
   namePlural: 'messageChannelMessageAssociations',
   labelSingular: msg`Message Channel Message Association`,
   labelPlural: msg`Message Channel Message Associations`,
