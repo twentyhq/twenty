@@ -9,9 +9,9 @@ image: /images/user-guide/notes/notes_header.png
 
 ## Consignes générales
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**Assurez-vous toujours de sauvegarder votre base de données avant de commencer le processus de mise à niveau** en exécutant `docker exec -it <db_container_name_or_id> pg_dumpall -U <postgres_user> > databases_backup.sql`.
 
-To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+Pour restaurer la sauvegarde, exécutez `cat databases_backup.sql | docker exec -i <db_container_name_or_id> psql -U <postgres_user>`.
 
 Si vous avez utilisé Docker Compose, suivez ces étapes :
 
@@ -321,8 +321,8 @@ La commande `yarn command:prod upgrade-0.31` s'occupe de la migration des donné
 
 Mettez à jour votre instance Twenty pour utiliser l'image v0.30.0
 
-**Breaking change**:
-To enhance performances, Twenty now requires redis cache to be configured. Nous avons mis à jour notre [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) pour refléter cela.
+**Changement significatif**:
+Pour améliorer les performances, Twenty nécessite désormais la configuration de cache redis. Nous avons mis à jour notre [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) pour refléter cela.
 Assurez-vous de mettre à jour votre configuration et vos variables d'environnement en conséquence :
 
 ```
