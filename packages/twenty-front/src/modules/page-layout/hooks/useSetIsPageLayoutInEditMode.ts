@@ -1,5 +1,5 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreIsFullTabWidgetInEditModeComponentState } from '@/context-store/states/contextStoreIsFullTabWidgetInEditModeComponentState';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -19,7 +19,7 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
   const contextStoreIsFullTabWidgetInEditModeState =
     useRecoilComponentCallbackState(
-      contextStoreIsFullTabWidgetInEditModeComponentState,
+      contextStoreIsPageInEditModeComponentState,
       MAIN_CONTEXT_STORE_INSTANCE_ID,
     );
 

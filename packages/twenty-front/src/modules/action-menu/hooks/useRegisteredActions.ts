@@ -5,7 +5,7 @@ import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/typ
 import { getActionConfig } from '@/action-menu/actions/utils/getActionConfig';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
-import { contextStoreIsFullTabWidgetInEditModeComponentState } from '@/context-store/states/contextStoreIsFullTabWidgetInEditModeComponentState';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -31,7 +31,7 @@ export const useRegisteredActions = (
   );
 
   const isFullTabWidgetInEditMode = useRecoilComponentValue(
-    contextStoreIsFullTabWidgetInEditModeComponentState,
+    contextStoreIsPageInEditModeComponentState,
   );
 
   const isRecordPageLayoutEnabled = useIsFeatureEnabled(

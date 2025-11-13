@@ -4,7 +4,7 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreIsFullTabWidgetInEditModeComponentState } from '@/context-store/states/contextStoreIsFullTabWidgetInEditModeComponentState';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilCallback } from 'recoil';
@@ -141,14 +141,14 @@ export const useCopyContextStoreStates = () => {
 
         const contextStoreIsFullTabWidgetInEditMode = snapshot
           .getLoadable(
-            contextStoreIsFullTabWidgetInEditModeComponentState.atomFamily({
+            contextStoreIsPageInEditModeComponentState.atomFamily({
               instanceId: instanceIdToCopyFrom,
             }),
           )
           .getValue();
 
         set(
-          contextStoreIsFullTabWidgetInEditModeComponentState.atomFamily({
+          contextStoreIsPageInEditModeComponentState.atomFamily({
             instanceId: instanceIdToCopyTo,
           }),
           contextStoreIsFullTabWidgetInEditMode,
