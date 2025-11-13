@@ -142,6 +142,7 @@ export class WorkspaceDomainsService {
       return {
         subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
         customDomain: null,
+        isCustomDomainEnabled: false,
       };
     }
 
@@ -149,6 +150,7 @@ export class WorkspaceDomainsService {
       return {
         subdomain: workspace.subdomain,
         customDomain: null,
+        isCustomDomainEnabled: false,
       };
     }
 

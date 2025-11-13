@@ -1394,12 +1394,6 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetLoginTokenFromEmailVerificationTokenOutput = {
-  __typename?: 'GetLoginTokenFromEmailVerificationTokenOutput';
-  loginToken: AuthToken;
-  workspaceUrls: WorkspaceUrls;
-};
-
 export type GetServerlessFunctionSourceCodeInput = {
   /** The id of the function. */
   id: Scalars['ID'];
@@ -1781,8 +1775,6 @@ export type Mutation = {
   getAuthTokensFromOTP: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginTokenOutput;
-  getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
-  getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
@@ -1836,6 +1828,7 @@ export type Mutation = {
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePasswordOutput;
+  updateUserEmail: Scalars['Boolean'];
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
@@ -1852,6 +1845,8 @@ export type Mutation = {
   upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginTokenOutput;
+  verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokensOutput;
   verifyEmailingDomain: EmailingDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
@@ -2327,21 +2322,6 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
 };
 
 
-export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerificationToken: Scalars['String'];
-  origin: Scalars['String'];
-};
-
-
-export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerificationToken: Scalars['String'];
-};
-
-
 export type MutationImpersonateArgs = {
   userId: Scalars['UUID'];
   workspaceId: Scalars['UUID'];
@@ -2615,6 +2595,12 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 };
 
 
+export type MutationUpdateUserEmailArgs = {
+  newEmail: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationUpdateWebhookArgs = {
   input: UpdateWebhookInput;
 };
@@ -2697,6 +2683,21 @@ export type MutationUserLookupAdminPanelArgs = {
 
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
+};
+
+
+export type MutationVerifyEmailAndGetLoginTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
+  origin: Scalars['String'];
+};
+
+
+export type MutationVerifyEmailAndGetWorkspaceAgnosticTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
 };
 
 
@@ -2958,6 +2959,7 @@ export enum PermissionFlagType {
   IMPERSONATE = 'IMPERSONATE',
   IMPORT_CSV = 'IMPORT_CSV',
   LAYOUTS = 'LAYOUTS',
+  PROFILE_INFORMATION = 'PROFILE_INFORMATION',
   ROLES = 'ROLES',
   SECURITY = 'SECURITY',
   SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
@@ -4185,6 +4187,7 @@ export type UpdateWorkspaceInput = {
   customDomain?: InputMaybe<Scalars['String']>;
   defaultRoleId?: InputMaybe<Scalars['UUID']>;
   displayName?: InputMaybe<Scalars['String']>;
+  editableProfileFields?: InputMaybe<Array<Scalars['String']>>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
@@ -4307,6 +4310,12 @@ export type VerificationRecord = {
   priority?: Maybe<Scalars['Float']>;
   type: Scalars['String'];
   value: Scalars['String'];
+};
+
+export type VerifyEmailAndGetLoginTokenOutput = {
+  __typename?: 'VerifyEmailAndGetLoginTokenOutput';
+  loginToken: AuthToken;
+  workspaceUrls: WorkspaceUrls;
 };
 
 export type VerifyTwoFactorAuthenticationMethodOutput = {
@@ -4515,6 +4524,7 @@ export type Workspace = {
   defaultRole?: Maybe<Role>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
+  editableProfileFields?: Maybe<Array<Scalars['String']>>;
   featureFlags?: Maybe<Array<FeatureFlagDto>>;
   hasValidEnterpriseKey: Scalars['Boolean'];
   id: Scalars['UUID'];

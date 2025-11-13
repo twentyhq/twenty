@@ -1,13 +1,13 @@
 import { gql } from '@apollo/client';
 
 export const GET_LOGIN_TOKEN_FROM_EMAIL_VERIFICATION_TOKEN = gql`
-  mutation GetLoginTokenFromEmailVerificationToken(
+  mutation VerifyEmailAndGetLoginToken(
     $emailVerificationToken: String!
     $email: String!
     $captchaToken: String
     $origin: String!
   ) {
-    getLoginTokenFromEmailVerificationToken(
+    verifyEmailAndGetLoginToken(
       emailVerificationToken: $emailVerificationToken
       email: $email
       captchaToken: $captchaToken
