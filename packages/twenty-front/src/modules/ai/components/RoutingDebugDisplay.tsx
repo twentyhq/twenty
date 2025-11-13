@@ -177,10 +177,6 @@ const TimingTab = ({
         value={debug.aiRequestPrepTimeMs && `${debug.aiRequestPrepTimeMs}ms`}
       />
       <TimingRow
-        label="Time to first token"
-        value={debug.timeToFirstTokenMs && `${debug.timeToFirstTokenMs}ms`}
-      />
-      <TimingRow
         label="Agent execution"
         value={debug.agentExecutionTimeMs && `${debug.agentExecutionTimeMs}ms`}
       />

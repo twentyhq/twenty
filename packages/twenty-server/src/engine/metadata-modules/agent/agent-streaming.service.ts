@@ -143,8 +143,6 @@ export class AgentStreamingService {
           }
 
           const agentExecutionStart = Date.now();
-          let timeToFirstToken: number | undefined;
-          let firstTokenReceived = false;
 
           const {
             stream: result,
@@ -157,20 +155,6 @@ export class AgentStreamingService {
             messages,
             recordIdsByObjectMetadataNameSingular,
           });
-
-          (async () => {
-            try {
-              for await (const chunk of result.textStream) {
-                if (!firstTokenReceived && chunk) {
-                  timeToFirstToken = Date.now() - agentExecutionStart;
-                  firstTokenReceived = true;
-                  break;
-                }
-              }
-            } catch {
-              // Timing is optional, ignore errors
-            }
-          })();
 
           const routedStatusPart = {
             type: 'data-routing-status' as const,
@@ -291,7 +275,6 @@ export class AgentStreamingService {
                     debug: {
                       ...routedStatusPart.data.debug,
                       agentExecutionTimeMs: agentExecutionTime,
-                      timeToFirstTokenMs: timeToFirstToken,
                       toolCallCount,
                       toolCount: timings.toolCount,
                       agentContextBuildTimeMs: timings.contextBuildTimeMs,

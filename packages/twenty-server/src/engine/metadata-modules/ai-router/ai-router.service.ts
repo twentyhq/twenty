@@ -14,7 +14,7 @@ import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.con
 import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
+import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { DATA_MANIPULATOR_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/data-manipulator-agent';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
@@ -206,13 +206,15 @@ export class AiRouterService {
     workspaceId: string,
   ): Promise<string> {
     try {
-      const objects =
-        await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
+      const objects = await this.objectMetadataService.findManyWithinWorkspace(
+        workspaceId,
+        {
           where: { isActive: true, isSystem: false },
-        });
+        },
+      );
 
       const filteredObjects = objects.filter(
-        (obj) => !isWorkflowRunObject(obj),
+        (obj) => !isWorkflowRelatedObject(obj),
       );
 
       if (filteredObjects.length === 0) {
