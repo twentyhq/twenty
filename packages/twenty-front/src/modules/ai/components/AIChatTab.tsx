@@ -15,10 +15,10 @@ import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoa
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
+import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AIChatScrollWrapperId';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
-import { useAgentChatScrollToBottom } from '@/ai/hooks/useAgentChatScrollToBottom';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
@@ -63,15 +63,8 @@ const StyledButtonsContainer = styled.div`
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const {
-    isLoading,
-    input,
-    handleInputChange,
-    scrollWrapperId,
-    messages,
-    isStreaming,
-    error,
-  } = useAgentChatContextOrThrow();
+  const { isLoading, input, handleInputChange, messages, isStreaming, error } =
+    useAgentChatContextOrThrow();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -80,8 +73,6 @@ export const AIChatTab = () => {
   const { uploadFiles } = useAIChatFileUpload();
   const { createChatThread } = useCreateNewAIChatThread();
   const { navigateCommandMenu } = useCommandMenu();
-
-  useAgentChatScrollToBottom({ messages, scrollWrapperId });
 
   return (
     <StyledContainer
@@ -97,7 +88,9 @@ export const AIChatTab = () => {
       {!isDraggingFile && (
         <>
           {messages.length !== 0 && (
-            <StyledScrollWrapper componentInstanceId={scrollWrapperId}>
+            <StyledScrollWrapper
+              componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
+            >
               {messages.map((message, index) => {
                 const isLastMessage = index === messages.length - 1;
                 const isLastMessageStreaming = isStreaming && isLastMessage;

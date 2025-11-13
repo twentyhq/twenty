@@ -1,30 +1,23 @@
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AIChatScrollWrapperId';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { useLayoutEffect } from 'react';
-import { useRecoilValue } from 'recoil';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useAgentChatScrollToBottom = ({
-  messages,
-  scrollWrapperId,
-}: {
-  scrollWrapperId: string;
-  messages: ExtendedUIMessage[];
-}) => {
-  const { scrollWrapperHTMLElement } =
-    useScrollWrapperHTMLElement(scrollWrapperId);
+export const useAgentChatScrollToBottom = () => {
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
+    AI_CHAT_SCROLL_WRAPPER_ID,
+  );
 
-  const currentAIChatThread = useRecoilValue(currentAIChatThreadState);
-
-  useLayoutEffect(() => {
-    if (!isDefined(scrollWrapperHTMLElement)) {
+  const scrollToBottom = () => {
+    const { scrollWrapperElement } = getScrollWrapperElement();
+    if (!isDefined(scrollWrapperElement)) {
       return;
     }
 
-    scrollWrapperHTMLElement.scrollTo({
-      top: scrollWrapperHTMLElement.scrollHeight,
+    scrollWrapperElement.scrollTo({
+      top: scrollWrapperElement.scrollHeight,
       behavior: 'smooth',
     });
-  }, [scrollWrapperHTMLElement, currentAIChatThread, messages]);
+  };
+
+  return { scrollToBottom };
 };

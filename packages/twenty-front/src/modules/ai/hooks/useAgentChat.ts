@@ -45,8 +45,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   const [agentChatInput, setAgentChatInput] =
     useRecoilState(agentChatInputState);
 
-  const scrollWrapperId = `scroll-wrapper-ai-chat-${currentAIChatThread}`;
-
   const retryFetchWithRenewedToken = async (
     input: RequestInfo | URL,
     init?: RequestInit,
@@ -154,7 +152,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
         },
       },
     );
-
     setAgentChatUploadedFiles([]);
   };
 
@@ -164,7 +161,6 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     input: agentChatInput,
     handleSendMessage,
     isLoading,
-    scrollWrapperId,
     isStreaming,
     error,
     handleRetry: regenerate,
