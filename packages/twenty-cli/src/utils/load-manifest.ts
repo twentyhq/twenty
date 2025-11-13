@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
-import { join, posix, relative, resolve, sep } from 'path';
-import {
+import { posix, relative, resolve, sep } from 'path';
+import ts, {
   Decorator,
   Expression,
   FunctionDeclaration,
@@ -10,9 +10,7 @@ import {
   SourceFile,
   SyntaxKind,
   VariableDeclaration,
-  createProgram,
   forEachChild,
-  formatDiagnosticsWithColorAndContext,
   getDecorators,
   isArrayLiteralExpression,
   isArrowFunction,
@@ -32,9 +30,6 @@ import {
   isStringLiteralLike,
   isTemplateExpression,
   isVariableStatement,
-  parseJsonConfigFileContent,
-  readConfigFile,
-  sys,
 } from 'typescript';
 import {
   AppManifest,
@@ -47,6 +42,7 @@ import {
 } from '../types/config.types';
 import { findPathFile } from '../utils/find-path-file';
 import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
+import { getProgramFromTsconfig } from './get-program-from-tsconfig';
 
 type JSONValue =
   | string
@@ -55,32 +51,6 @@ type JSONValue =
   | null
   | JSONValue[]
   | { [k: string]: JSONValue };
-
-const getProgramFromTsconfig = (
-  appPath: string,
-  tsconfigPath = 'tsconfig.json',
-) => {
-  const configFile = readConfigFile(join(appPath, tsconfigPath), sys.readFile);
-  if (configFile.error)
-    throw new Error(
-      formatDiagnosticsWithColorAndContext([configFile.error], {
-        getCanonicalFileName: (f) => f,
-        getCurrentDirectory: sys.getCurrentDirectory,
-        getNewLine: () => sys.newLine,
-      }),
-    );
-  const parsed = parseJsonConfigFileContent(configFile.config, sys, appPath);
-  if (parsed.errors.length) {
-    throw new Error(
-      formatDiagnosticsWithColorAndContext(parsed.errors, {
-        getCanonicalFileName: (f) => f,
-        getCurrentDirectory: sys.getCurrentDirectory,
-        getNewLine: () => sys.newLine,
-      }),
-    );
-  }
-  return createProgram(parsed.fileNames, parsed.options);
-};
 
 const isDecoratorNamed = (node: Decorator, name: string): node is Decorator => {
   const expr = node.expression;
@@ -392,23 +362,6 @@ const collectServerlessFunctions = (program: Program, appPath: string) => {
   return serverlessFunctions;
 };
 
-const validateProgram = (program: Program) => {
-  const diagnostics = [
-    ...program.getSyntacticDiagnostics(),
-    ...program.getSemanticDiagnostics(),
-    ...program.getGlobalDiagnostics(),
-  ];
-
-  if (diagnostics.length > 0) {
-    const formatted = formatDiagnosticsWithColorAndContext(diagnostics, {
-      getCanonicalFileName: (f) => f,
-      getCurrentDirectory: sys.getCurrentDirectory,
-      getNewLine: () => sys.newLine,
-    });
-    console.warn(`TypeScript validation failed:\n${formatted}`);
-  }
-};
-
 const setNested = (root: Sources, parts: string[], value: string) => {
   let cur: Sources = root;
   for (let i = 0; i < parts.length; i++) {
@@ -430,7 +383,10 @@ const loadFolderContentIntoJson = async (
   const baseAbs = resolve(sourcePath);
 
   // Build the program from tsconfig (uses your getProgramFromTsconfig)
-  const program: Program = getProgramFromTsconfig(baseAbs, tsconfigPath);
+  const program: Program = getProgramFromTsconfig({
+    appPath: baseAbs,
+    tsconfigPath,
+  });
 
   // Iterate only files the TS program knows about.
   for (const sf of program.getSourceFiles()) {
@@ -495,15 +451,17 @@ export const extractTwentyAppConfig = (program: Program): Application => {
   throw new Error('Could not find default exported ApplicationConfig');
 };
 
-export const loadManifest = async (
-  path?: string,
-): Promise<{
+export const loadManifest = async ({
+  program,
+  appPath,
+}: {
+  appPath: string;
+  program: ts.Program;
+}): Promise<{
   packageJson: PackageJson;
   yarnLock: string;
   manifest: AppManifest;
 }> => {
-  const appPath = path ?? process.cwd();
-
   const packageJson = await parseJsoncFile(
     await findPathFile(appPath, 'package.json'),
   );
@@ -511,10 +469,6 @@ export const loadManifest = async (
   const yarnLock = await parseTextFile(
     await findPathFile(appPath, 'yarn.lock'),
   );
-
-  const program = getProgramFromTsconfig(appPath, 'tsconfig.json');
-
-  validateProgram(program);
 
   const [objects, serverlessFunctions, application, sources] = [
     collectObjects(program),
