@@ -14,7 +14,11 @@ describe('generateChartAggregateFilterKey', () => {
   });
 
   it('should handle undefined values as empty strings', () => {
-    const result = generateChartAggregateFilterKey(undefined, undefined, undefined);
+    const result = generateChartAggregateFilterKey(
+      undefined,
+      undefined,
+      undefined,
+    );
 
     expect(result).toBe('--');
   });

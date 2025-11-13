@@ -17,7 +17,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { useTheme } from '@emotion/react';
-import { useCallback, type MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
 import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
