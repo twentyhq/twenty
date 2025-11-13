@@ -6,10 +6,10 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { type User } from 'src/engine/core-modules/user/user.entity';
-import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { TwoFactorAuthenticationResolver } from './two-factor-authentication.resolver';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
@@ -17,7 +17,7 @@ import { TwoFactorAuthenticationService } from './two-factor-authentication.serv
 import { type DeleteTwoFactorAuthenticationMethodInput } from './dto/delete-two-factor-authentication-method.input';
 import { type InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate-two-factor-authentication-provisioning.input';
 import { type VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
-import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
 const createMockRepository = () => ({
   findOne: jest.fn(),
@@ -34,10 +34,10 @@ const createMockLoginTokenService = () => ({
 });
 
 const createMockUserService = () => ({
-  getUserByEmail: jest.fn(),
+  findUserByEmailOrThrow: jest.fn(),
 });
 
-const createMockDomainManagerService = () => ({
+const createMockWorkspaceDomainsService = () => ({
   getWorkspaceByOriginOrDefaultWorkspace: jest.fn(),
 });
 
@@ -48,26 +48,28 @@ describe('TwoFactorAuthenticationResolver', () => {
   >;
   let loginTokenService: ReturnType<typeof createMockLoginTokenService>;
   let userService: ReturnType<typeof createMockUserService>;
-  let domainManagerService: ReturnType<typeof createMockDomainManagerService>;
+  let workspaceDomainsService: ReturnType<
+    typeof createMockWorkspaceDomainsService
+  >;
   let repository: ReturnType<typeof createMockRepository>;
 
-  const mockUser: User = {
+  const mockUser: UserEntity = {
     id: 'user-123',
     email: 'test@example.com',
-  } as User;
+  } as UserEntity;
 
-  const mockWorkspace: Workspace = {
+  const mockWorkspace: WorkspaceEntity = {
     id: 'workspace-123',
     displayName: 'Test Workspace',
-  } as Workspace;
+  } as WorkspaceEntity;
 
-  const mockTwoFactorMethod: TwoFactorAuthenticationMethod = {
+  const mockTwoFactorMethod: TwoFactorAuthenticationMethodEntity = {
     id: '2fa-method-123',
     userWorkspace: {
       userId: 'user-123',
       workspaceId: 'workspace-123',
     },
-  } as TwoFactorAuthenticationMethod;
+  } as TwoFactorAuthenticationMethodEntity;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -86,11 +88,11 @@ describe('TwoFactorAuthenticationResolver', () => {
           useFactory: createMockUserService,
         },
         {
-          provide: DomainManagerService,
-          useFactory: createMockDomainManagerService,
+          provide: WorkspaceDomainsService,
+          useFactory: createMockWorkspaceDomainsService,
         },
         {
-          provide: getRepositoryToken(TwoFactorAuthenticationMethod),
+          provide: getRepositoryToken(TwoFactorAuthenticationMethodEntity),
           useFactory: createMockRepository,
         },
       ],
@@ -102,8 +104,10 @@ describe('TwoFactorAuthenticationResolver', () => {
     twoFactorAuthenticationService = module.get(TwoFactorAuthenticationService);
     loginTokenService = module.get(LoginTokenService);
     userService = module.get(UserService);
-    domainManagerService = module.get(DomainManagerService);
-    repository = module.get(getRepositoryToken(TwoFactorAuthenticationMethod));
+    workspaceDomainsService = module.get(WorkspaceDomainsService);
+    repository = module.get(
+      getRepositoryToken(TwoFactorAuthenticationMethodEntity),
+    );
   });
 
   afterEach(() => {
@@ -125,10 +129,10 @@ describe('TwoFactorAuthenticationResolver', () => {
         sub: mockUser.email,
         workspaceId: mockWorkspace.id,
       });
-      domainManagerService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
+      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
         mockWorkspace,
       );
-      userService.getUserByEmail.mockResolvedValue(mockUser);
+      userService.findUserByEmailOrThrow.mockResolvedValue(mockUser);
       twoFactorAuthenticationService.initiateStrategyConfiguration.mockResolvedValue(
         'otpauth://totp/Twenty:test@example.com?secret=SECRETKEY&issuer=Twenty',
       );
@@ -144,9 +148,11 @@ describe('TwoFactorAuthenticationResolver', () => {
         mockInput.loginToken,
       );
       expect(
-        domainManagerService.getWorkspaceByOriginOrDefaultWorkspace,
+        workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace,
       ).toHaveBeenCalledWith(origin);
-      expect(userService.getUserByEmail).toHaveBeenCalledWith(mockUser.email);
+      expect(userService.findUserByEmailOrThrow).toHaveBeenCalledWith(
+        mockUser.email,
+      );
       expect(
         twoFactorAuthenticationService.initiateStrategyConfiguration,
       ).toHaveBeenCalledWith(
@@ -158,7 +164,7 @@ describe('TwoFactorAuthenticationResolver', () => {
     });
 
     it('should throw WORKSPACE_NOT_FOUND when workspace is not found', async () => {
-      domainManagerService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
+      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
         null,
       );
 

@@ -1,20 +1,21 @@
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import {
   microsoftGraphBatchWithHtmlMessagesResponse,
   microsoftGraphBatchWithTwoMessagesResponse,
 } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
-import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
-
-import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
+import { MicrosoftMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-messages-import-error-handler.service';
 
 describe('Microsoft get messages service', () => {
   let service: MicrosoftGetMessagesService;
@@ -23,14 +24,22 @@ describe('Microsoft get messages service', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MicrosoftGetMessagesService,
-        MicrosoftHandleErrorService,
-        MicrosoftClientProvider,
+        {
+          provide: MicrosoftMessagesImportErrorHandler,
+          useValue: { handleError: jest.fn() },
+        },
+        OAuth2ClientManagerService,
+        GoogleOAuth2ClientManagerService,
         MicrosoftOAuth2ClientManagerService,
         MicrosoftFetchByBatchService,
         ConfigService,
         {
           provide: TwentyConfigService,
           useValue: {},
+        },
+        {
+          provide: Logger,
+          useValue: { log: jest.fn(), error: jest.fn() },
         },
       ],
     }).compile();
@@ -54,6 +63,7 @@ describe('Microsoft get messages service', () => {
     const connectedAccount = {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.MICROSOFT,
+      accessToken: 'access-token',
       refreshToken: 'refresh-token',
       handle: 'John.l@outlook.fr',
       handleAliases: '',
@@ -148,6 +158,7 @@ describe('Microsoft get messages service', () => {
     const connectedAccount = {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.MICROSOFT,
+      accessToken: 'access-token',
       refreshToken: 'refresh-token',
       handle: 'John.l@outlook.fr',
       handleAliases: '',

@@ -8,7 +8,6 @@ import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
-import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,7 +28,6 @@ export const WorkflowDiagramStepNodeEditable = ({
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const { deleteStep } = useDeleteStep();
   const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,
   );
@@ -63,9 +61,6 @@ export const WorkflowDiagramStepNodeEditable = ({
 
           return;
         }
-      }}
-      onDelete={() => {
-        deleteStep(id);
       }}
     />
   );

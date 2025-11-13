@@ -8,7 +8,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
   MAIN_SERVER_PORT: 3000
@@ -34,7 +34,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 45
-    runs-on: shipfox-8vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -55,7 +55,7 @@ jobs:
         ports:
           - 6379:6379
       clickhouse:
-        image: clickhouse/clickhouse-server:latest
+        image: clickhouse/clickhouse-server:25.8.8
         env:
           CLICKHOUSE_PASSWORD: clickhousePassword
           CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
@@ -124,13 +124,14 @@ jobs:
       - name: Setup current branch database
         run: |
           npx nx reset:env twenty-server
-          # Function to set or update environment variable
           set_env_var() {
             local var_name="$1"
             local var_value="$2"
             local env_file="packages/twenty-server/.env"
             
-            if grep -q "^${var_name}=" "$env_file"; then
+            echo "" >> "$env_file"
+            
+            if grep -q "^${var_name}=" "$env_file" 2>/dev/null; then
               sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
             else
               echo "${var_name}=${var_value}" >> "$env_file"
@@ -276,13 +277,14 @@ jobs:
       - name: Setup main branch database
         run: |
           npx nx reset:env twenty-server
-          # Function to set or update environment variable
           set_env_var() {
             local var_name="$1"
             local var_value="$2"
             local env_file="packages/twenty-server/.env"
             
-            if grep -q "^${var_name}=" "$env_file"; then
+            echo "" >> "$env_file"
+            
+            if grep -q "^${var_name}=" "$env_file" 2>/dev/null; then
               sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "$env_file"
             else
               echo "${var_name}=${var_value}" >> "$env_file"

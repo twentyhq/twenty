@@ -118,14 +118,16 @@ export const UserAndViewsProviderEffect = () => {
         ...userQueryData.currentUser.currentWorkspace,
         defaultRole:
           userQueryData.currentUser.currentWorkspace.defaultRole ?? null,
-        defaultAgent:
-          userQueryData.currentUser.currentWorkspace.defaultAgent ?? null,
       });
     }
 
     if (isDefined(userQueryData.currentUser.currentUserWorkspace)) {
       setCurrentUserWorkspace({
-        ...userQueryData.currentUser.currentUserWorkspace,
+        permissionFlags:
+          userQueryData.currentUser.currentUserWorkspace.permissionFlags ?? [],
+        twoFactorAuthenticationMethodSummary:
+          userQueryData.currentUser.currentUserWorkspace
+            .twoFactorAuthenticationMethodSummary ?? [],
         objectsPermissions:
           (userQueryData.currentUser.currentUserWorkspace
             .objectsPermissions as Array<

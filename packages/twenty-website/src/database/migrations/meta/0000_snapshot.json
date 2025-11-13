@@ -1,10 +1,8 @@
 {
-  "id": "a7895a79-44a3-4fad-b750-f89d8c04d85c",
-  "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "issueLabels": {
+    "public.issueLabels": {
       "name": "issueLabels",
       "schema": "",
       "columns": {
@@ -26,26 +24,37 @@
         "issueLabels_issueId_issues_id_fk": {
           "name": "issueLabels_issueId_issues_id_fk",
           "tableFrom": "issueLabels",
+          "columnsFrom": [
+            "issueId"
+          ],
           "tableTo": "issues",
-          "columnsFrom": ["issueId"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "issueLabels_labelId_labels_id_fk": {
           "name": "issueLabels_labelId_labels_id_fk",
           "tableFrom": "issueLabels",
+          "columnsFrom": [
+            "labelId"
+          ],
           "tableTo": "labels",
-          "columnsFrom": ["labelId"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "issues": {
+    "public.issues": {
       "name": "issues",
       "schema": "",
       "columns": {
@@ -109,17 +118,24 @@
         "issues_authorId_users_id_fk": {
           "name": "issues_authorId_users_id_fk",
           "tableFrom": "issues",
+          "columnsFrom": [
+            "authorId"
+          ],
           "tableTo": "users",
-          "columnsFrom": ["authorId"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "labels": {
+    "public.labels": {
       "name": "labels",
       "schema": "",
       "columns": {
@@ -157,9 +173,12 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "pullRequestLabels": {
+    "public.pullRequestLabels": {
       "name": "pullRequestLabels",
       "schema": "",
       "columns": {
@@ -181,26 +200,37 @@
         "pullRequestLabels_pullRequestExternalId_pullRequests_id_fk": {
           "name": "pullRequestLabels_pullRequestExternalId_pullRequests_id_fk",
           "tableFrom": "pullRequestLabels",
+          "columnsFrom": [
+            "pullRequestExternalId"
+          ],
           "tableTo": "pullRequests",
-          "columnsFrom": ["pullRequestExternalId"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "pullRequestLabels_labelId_labels_id_fk": {
           "name": "pullRequestLabels_labelId_labels_id_fk",
           "tableFrom": "pullRequestLabels",
+          "columnsFrom": [
+            "labelId"
+          ],
           "tableTo": "labels",
-          "columnsFrom": ["labelId"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "pullRequests": {
+    "public.pullRequests": {
       "name": "pullRequests",
       "schema": "",
       "columns": {
@@ -264,17 +294,24 @@
         "pullRequests_authorId_users_id_fk": {
           "name": "pullRequests_authorId_users_id_fk",
           "tableFrom": "pullRequests",
+          "columnsFrom": [
+            "authorId"
+          ],
           "tableTo": "users",
-          "columnsFrom": ["authorId"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "users": {
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -306,14 +343,23 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "a7895a79-44a3-4fad-b750-f89d8c04d85c",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "sequences": {},
+  "policies": {},
+  "views": {},
+  "roles": {}
 }

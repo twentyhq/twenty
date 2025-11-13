@@ -1,11 +1,11 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/core-modules/common/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -38,14 +38,14 @@ export const validateFlatObjectMetadataIdentifiers = ({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
           'labelIdentifierFieldMetadataId validation failed: related field metadata not found',
-        userFriendlyMessage: t`Field declared as label identifier not found`,
+        userFriendlyMessage: msg`Field declared as label identifier not found`,
       });
     } else if (!isLabelIdentifierFieldMetadataTypes(flatFieldMetadata.type)) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
           'labelIdentifierFieldMetadataId validation failed: field type not compatible',
-        userFriendlyMessage: t`Field cannot be used as label identifier`,
+        userFriendlyMessage: msg`Field cannot be used as label identifier`,
       });
     }
   }
@@ -61,7 +61,7 @@ export const validateFlatObjectMetadataIdentifiers = ({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
           'imageIdentifierFieldMetadataId validation failed: related field metadata not found',
-        userFriendlyMessage: t`Field declared as image identifier not found`,
+        userFriendlyMessage: msg`Field declared as image identifier not found`,
       });
     }
   }

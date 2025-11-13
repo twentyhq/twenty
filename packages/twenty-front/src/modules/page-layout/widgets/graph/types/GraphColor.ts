@@ -1,4 +1,5 @@
 export type GraphColor =
+  | 'auto'
   | 'blue'
   | 'purple'
   | 'turquoise'
@@ -7,4 +8,5 @@ export type GraphColor =
   | 'yellow'
   | 'red'
   | 'green'
-  | 'sky';
+  | 'sky'
+  | 'gray';

@@ -3,8 +3,8 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
+  AggregateOperations,
   AxisNameDisplay,
-  ExtendedAggregateOperations,
   GraphOrderBy,
   GraphType,
 } from '~/generated/graphql';
@@ -50,11 +50,11 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'BarChartConfiguration' as const,
-        graphType: GraphType.BAR,
+        graphType: GraphType.VERTICAL_BAR,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        groupByFieldMetadataIdX: 'field-2',
-        orderByX: GraphOrderBy.FIELD_ASC,
+        aggregateOperation: AggregateOperations.COUNT,
+        primaryAxisGroupByFieldMetadataId: 'field-2',
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
@@ -72,12 +72,12 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'BarChartConfiguration' as const,
-        graphType: GraphType.BAR,
+        graphType: GraphType.VERTICAL_BAR,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        groupByFieldMetadataIdX: 'field-2',
-        groupByFieldMetadataIdY: 'field-3',
-        orderByX: GraphOrderBy.FIELD_ASC,
+        aggregateOperation: AggregateOperations.COUNT,
+        primaryAxisGroupByFieldMetadataId: 'field-2',
+        secondaryAxisGroupByFieldMetadataId: 'field-3',
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
@@ -98,9 +98,9 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'LineChartConfiguration' as const,
         graphType: GraphType.LINE,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: ExtendedAggregateOperations.SUM,
-        groupByFieldMetadataIdX: 'field-2',
-        orderByX: GraphOrderBy.FIELD_DESC,
+        aggregateOperation: AggregateOperations.SUM,
+        primaryAxisGroupByFieldMetadataId: 'field-2',
+        primaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
@@ -120,7 +120,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'PieChartConfiguration' as const,
         graphType: GraphType.PIE,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         groupByFieldMetadataId: 'field-2',
         orderBy: GraphOrderBy.FIELD_ASC,
         displayDataLabel: false,
@@ -135,13 +135,13 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     expect(result).toContain('field-2');
   });
 
-  it('should extract field IDs from NumberChartConfiguration', () => {
+  it('should extract field IDs from AggregateChartConfiguration', () => {
     const widget = createMockWidget({
       configuration: {
-        __typename: 'NumberChartConfiguration' as const,
-        graphType: GraphType.NUMBER,
+        __typename: 'AggregateChartConfiguration' as const,
+        graphType: GraphType.AGGREGATE,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: ExtendedAggregateOperations.AVG,
+        aggregateOperation: AggregateOperations.AVG,
         displayDataLabel: false,
       },
       objectMetadataId: 'object-1',
@@ -159,7 +159,7 @@ describe('extractFieldMetadataIdsFromWidget', () => {
         __typename: 'GaugeChartConfiguration' as const,
         graphType: GraphType.GAUGE,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: ExtendedAggregateOperations.SUM,
+        aggregateOperation: AggregateOperations.SUM,
         displayDataLabel: false,
       },
       objectMetadataId: 'object-1',
@@ -175,12 +175,12 @@ describe('extractFieldMetadataIdsFromWidget', () => {
     const widget = createMockWidget({
       configuration: {
         __typename: 'BarChartConfiguration' as const,
-        graphType: GraphType.BAR,
+        graphType: GraphType.VERTICAL_BAR,
         aggregateFieldMetadataId: 'field-1',
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        groupByFieldMetadataIdX: 'field-2',
-        groupByFieldMetadataIdY: undefined,
-        orderByX: GraphOrderBy.FIELD_ASC,
+        aggregateOperation: AggregateOperations.COUNT,
+        primaryAxisGroupByFieldMetadataId: 'field-2',
+        secondaryAxisGroupByFieldMetadataId: undefined,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },

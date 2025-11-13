@@ -1,7 +1,9 @@
+import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AxisNameDisplay } from 'src/engine/core-modules/page-layout/enums/axis-name-display.enum';
+import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PAGE_LAYOUT_TAB_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-tab-seeds.constant';
@@ -64,6 +66,7 @@ export const getPageLayoutWidgetDataSeeds = (
   const companyArrFieldId = getFieldId(companyObject, 'annualRecurringRevenue');
   const companyNameFieldId = getFieldId(companyObject, 'name');
   const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
+  const companyAddressFieldId = getFieldId(companyObject, 'address');
 
   const personIdFieldId = getFieldId(personObject, 'id');
   const personCityFieldId = getFieldId(personObject, 'city');
@@ -92,10 +95,12 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
       configuration: isDefined(opportunityAmountFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: opportunityAmountFieldId,
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
+            timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -114,10 +119,12 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 3, rowSpan: 4, columnSpan: 4 },
       configuration: isDefined(rocketIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: rocketIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -141,10 +148,12 @@ export const getPageLayoutWidgetDataSeeds = (
               graphType: 'LINE',
               aggregateFieldMetadataId: opportunityAmountFieldId,
               aggregateOperation: AggregateOperations.SUM,
-              groupByFieldMetadataIdX: opportunityCloseDateFieldId,
-              orderByX: 'FIELD_ASC',
+              primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
+              primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -158,20 +167,25 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
       ),
-      title: 'Deals by Stage',
+      title: 'Pipeline Value by Close Date (Stacked by Stage)',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 6 },
+      gridPosition: { row: 4, column: 0, rowSpan: 8, columnSpan: 6 },
       configuration:
         isDefined(opportunityAmountFieldId) &&
+        isDefined(opportunityCloseDateFieldId) &&
         isDefined(opportunityStageFieldId)
           ? {
-              graphType: 'BAR',
+              graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: opportunityAmountFieldId,
               aggregateOperation: AggregateOperations.SUM,
-              groupByFieldMetadataIdX: opportunityStageFieldId,
-              orderByX: 'FIELD_DESC',
+              primaryAxisGroupByFieldMetadataId: opportunityCloseDateFieldId,
+              secondaryAxisGroupByFieldMetadataId: opportunityStageFieldId,
+              primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -193,13 +207,16 @@ export const getPageLayoutWidgetDataSeeds = (
       configuration:
         isDefined(rocketIdFieldId) && isDefined(rocketCreatedAtFieldId)
           ? {
-              graphType: 'BAR',
+              graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: rocketIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              groupByFieldMetadataIdX: rocketCreatedAtFieldId,
-              orderByX: 'FIELD_ASC',
+              primaryAxisGroupByFieldMetadataId: rocketCreatedAtFieldId,
+              primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: rocketObject?.id ?? null,
@@ -218,10 +235,12 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 5, rowSpan: 5, columnSpan: 7 },
       configuration: isDefined(opportunityIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: opportunityIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: opportunityObject?.id ?? null,
@@ -242,10 +261,12 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
       configuration: isDefined(companyIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: companyIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -268,10 +289,12 @@ export const getPageLayoutWidgetDataSeeds = (
               graphType: 'LINE',
               aggregateFieldMetadataId: companyIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              groupByFieldMetadataIdX: companyCreatedAtFieldId,
-              orderByX: 'FIELD_ASC',
+              primaryAxisGroupByFieldMetadataId: companyCreatedAtFieldId,
+              primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -285,19 +308,27 @@ export const getPageLayoutWidgetDataSeeds = (
         workspaceId,
         PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
       ),
-      title: 'Companies by Size',
+      title: 'Companies by Size (Stacked by City)',
       type: WidgetType.GRAPH,
-      gridPosition: { row: 0, column: 8, rowSpan: 6, columnSpan: 4 },
+      gridPosition: { row: 0, column: 8, rowSpan: 10, columnSpan: 8 },
       configuration:
-        isDefined(companyIdFieldId) && isDefined(companyEmployeesFieldId)
+        isDefined(companyIdFieldId) &&
+        isDefined(companyEmployeesFieldId) &&
+        isDefined(companyAddressFieldId)
           ? {
-              graphType: 'BAR',
+              graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: companyIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              groupByFieldMetadataIdX: companyEmployeesFieldId,
-              orderByX: 'FIELD_ASC',
+              primaryAxisGroupByFieldMetadataId: companyEmployeesFieldId,
+              secondaryAxisGroupByFieldMetadataId: companyAddressFieldId,
+              secondaryAxisGroupBySubFieldName: 'addressCity',
+              secondaryAxisGroupByDateGranularity: 'DAY',
+              primaryAxisOrderBy: 'FIELD_ASC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -318,10 +349,12 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
       configuration: isDefined(companyArrFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
+            timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -347,6 +380,8 @@ export const getPageLayoutWidgetDataSeeds = (
               groupByFieldMetadataId: companyNameFieldId,
               orderBy: 'VALUE_DESC',
               displayDataLabel: true,
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -369,6 +404,8 @@ export const getPageLayoutWidgetDataSeeds = (
             aggregateFieldMetadataId: companyArrFieldId,
             aggregateOperation: AggregateOperations.AVG,
             displayDataLabel: true,
+            timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -387,10 +424,12 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 2, column: 0, rowSpan: 4, columnSpan: 3 },
       configuration: isDefined(companyLinkedinLinkFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: companyLinkedinLinkFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -416,6 +455,8 @@ export const getPageLayoutWidgetDataSeeds = (
               groupByFieldMetadataId: companyLinkedinLinkFieldId,
               orderBy: 'VALUE_DESC',
               displayDataLabel: true,
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: companyObject?.id ?? null,
@@ -433,10 +474,12 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 0, rowSpan: 5, columnSpan: 6 },
       configuration: isDefined(personIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: personIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: personObject?.id ?? null,
@@ -456,13 +499,16 @@ export const getPageLayoutWidgetDataSeeds = (
       configuration:
         isDefined(personIdFieldId) && isDefined(personCityFieldId)
           ? {
-              graphType: 'BAR',
+              graphType: GraphType.VERTICAL_BAR,
               aggregateFieldMetadataId: personIdFieldId,
               aggregateOperation: AggregateOperations.COUNT,
-              groupByFieldMetadataIdX: personCityFieldId,
-              orderByX: 'FIELD_DESC',
+              primaryAxisGroupByFieldMetadataId: personCityFieldId,
+              primaryAxisOrderBy: 'VALUE_DESC',
               axisNameDisplay: AxisNameDisplay.NONE,
               displayDataLabel: false,
+              color: 'auto',
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
@@ -490,6 +536,8 @@ export const getPageLayoutWidgetDataSeeds = (
               groupByFieldMetadataId: personJobTitleFieldId,
               orderBy: 'VALUE_DESC',
               displayDataLabel: true,
+              timezone: 'UTC',
+              firstDayOfTheWeek: CalendarStartDay.MONDAY,
             }
           : null,
       objectMetadataId: personObject?.id ?? null,
@@ -505,10 +553,12 @@ export const getPageLayoutWidgetDataSeeds = (
       gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
       configuration: isDefined(taskIdFieldId)
         ? {
-            graphType: 'NUMBER',
+            graphType: 'AGGREGATE',
             aggregateFieldMetadataId: taskIdFieldId,
             aggregateOperation: AggregateOperations.COUNT,
             displayDataLabel: true,
+            timezone: 'UTC',
+            firstDayOfTheWeek: CalendarStartDay.MONDAY,
           }
         : null,
       objectMetadataId: taskObject?.id ?? null,

@@ -26,15 +26,11 @@ import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
-import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { isFieldRelationManyToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOneValue';
@@ -42,8 +38,8 @@ import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldRichTextValue } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValue';
 import { isFieldRichTextV2Value } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValueV2';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -63,20 +59,19 @@ export const usePersistField = ({
 }: {
   objectMetadataItemId: string;
 }) => {
-  const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
   });
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const persistField = useRecoilCallback(
     ({ set, snapshot }) =>
-      ({
+      async ({
         recordId,
         fieldDefinition,
         valueToPersist,
@@ -195,14 +190,11 @@ export const usePersistField = ({
             .getValue();
 
           if (fieldIsRelationManyToOne) {
-            if (
-              fieldIsRelationManyToOne &&
-              valueToPersist?.id === currentValue?.id
-            ) {
+            if (valueToPersist?.id === currentValue?.id) {
               return;
             }
 
-            updateOneRecord?.({
+            const newRecord = await updateOneRecord?.({
               idToUpdate: recordId,
               updateOneRecordInput: {
                 [getForeignKeyNameFromRelationFieldName(fieldName)]:
@@ -210,75 +202,33 @@ export const usePersistField = ({
               },
             });
 
-            set(
-              recordStoreFamilySelector({ recordId, fieldName }),
-              valueToPersist,
-            );
+            upsertRecordsInStore([
+              getRecordFromRecordNode({
+                recordNode: newRecord,
+              }),
+            ]);
             return;
           }
 
           if (fieldIsMorphRelationManyToOne) {
-            if (isFieldMorphRelation(fieldDefinition)) {
-              // TODO: this is hack, we should refactor the SingleRecordPicker to pass the updated object
-              const objectNameSingulars =
-                fieldDefinition.metadata.morphRelations.map(
-                  (morphRelation) =>
-                    morphRelation.targetObjectMetadata.nameSingular,
-                );
-
-              if (!isDefined(valueToPersist?.id)) {
-                // Handle detach
-                return;
-              }
-
-              for (const objectNameSingular of objectNameSingulars) {
-                const candidateObjectMetadataItem = objectMetadataItems.find(
-                  (objectMetadataItem) =>
-                    objectMetadataItem.nameSingular === objectNameSingular,
-                );
-
-                if (!isDefined(candidateObjectMetadataItem)) {
-                  throw new Error(
-                    `Object metadata item not found for ${objectNameSingular}`,
-                  );
-                }
-
-                const cachedRecord = getRecordFromCache({
-                  cache: apolloCoreClient.cache,
-                  objectMetadataItem: candidateObjectMetadataItem,
-                  objectMetadataItems,
-                  recordId: valueToPersist.id,
-                  objectPermissionsByObjectMetadataId,
-                });
-
-                if (!isDefined(cachedRecord)) {
-                  continue;
-                }
-
-                const computedFieldName = computeMorphRelationFieldName({
-                  fieldName,
-                  relationType: fieldDefinition.metadata.relationType,
-                  targetObjectMetadataNameSingular: objectNameSingular,
-                  targetObjectMetadataNamePlural:
-                    candidateObjectMetadataItem.namePlural,
-                });
-
-                updateOneRecord?.({
-                  idToUpdate: recordId,
-                  updateOneRecordInput: {
-                    [`${computedFieldName}Id`]: valueToPersist.id,
-                  },
-                });
-                set(
-                  recordStoreFamilySelector({
-                    recordId,
-                    fieldName: computedFieldName,
-                  }),
-                  valueToPersist,
-                );
-                return;
-              }
+            if (valueToPersist?.id === currentValue?.id) {
+              return;
             }
+
+            const newRecord = await updateOneRecord?.({
+              idToUpdate: recordId,
+              updateOneRecordInput: {
+                [getForeignKeyNameFromRelationFieldName(fieldName)]:
+                  valueToPersist?.id ?? null,
+              },
+            });
+
+            upsertRecordsInStore([
+              getRecordFromRecordNode({
+                recordNode: newRecord,
+              }),
+            ]);
+            return;
           }
 
           if (isDeeplyEqual(valueToPersist, currentValue)) {
@@ -305,12 +255,7 @@ export const usePersistField = ({
           );
         }
       },
-    [
-      apolloCoreClient.cache,
-      objectMetadataItems,
-      objectPermissionsByObjectMetadataId,
-      updateOneRecord,
-    ],
+    [updateOneRecord, upsertRecordsInStore],
   );
 
   return persistField;

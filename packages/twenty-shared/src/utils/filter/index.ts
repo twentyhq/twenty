@@ -15,7 +15,6 @@ export * from './utils/generateILikeFiltersForCompositeFields';
 export * from './utils/getEmptyRecordGqlOperationFilter';
 export * from './utils/getFilterTypeFromFieldType';
 export * from './utils/isExpectedSubFieldName';
-export * from './utils/resolveDateViewFilterValue';
 export * from './utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export * from './utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 export * from './utils/validation-schemas/jsonRelationFilterValueSchema';

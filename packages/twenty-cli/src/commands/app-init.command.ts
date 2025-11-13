@@ -8,7 +8,7 @@ import kebabCase from 'lodash.kebabcase';
 export class AppInitCommand {
   async execute(directory?: string): Promise<void> {
     try {
-      const { appName, appDirectory, appDescription } =
+      const { appName, appDisplayName, appDirectory, appDescription } =
         await this.getAppInfos(directory);
 
       await this.validateDirectory(appDirectory);
@@ -19,6 +19,7 @@ export class AppInitCommand {
 
       await copyBaseApplicationProject({
         appName,
+        appDisplayName,
         appDescription,
         appDirectory,
       });
@@ -35,17 +36,29 @@ export class AppInitCommand {
 
   private async getAppInfos(directory?: string): Promise<{
     appName: string;
-    appDirectory: string;
+    appDisplayName: string;
     appDescription: string;
+    appDirectory: string;
   }> {
-    const { name, description } = await inquirer.prompt([
+    const { name, displayName, description } = await inquirer.prompt([
       {
         type: 'input',
         name: 'name',
-        message: 'Application name (eg: My awesome application):',
+        message: 'Application name (eg: my-awesome-app):',
         validate: (input) => {
           if (input.length === 0) return 'Application name is required';
           return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'displayName',
+        message: 'Display name (eg: My awesome app):',
+        default: (answers: any) => {
+          return answers.name
+            .split('-')
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
         },
       },
       {
@@ -58,13 +71,15 @@ export class AppInitCommand {
 
     const appName = name.trim();
 
+    const appDisplayName = displayName.trim();
+
     const appDescription = description.trim();
 
     const appDirectory = directory
       ? path.join(process.cwd(), kebabCase(directory))
       : path.join(process.cwd(), kebabCase(appName));
 
-    return { appName, appDirectory, appDescription };
+    return { appName, appDisplayName, appDirectory, appDescription };
   }
 
   private async validateDirectory(appDirectory: string): Promise<void> {

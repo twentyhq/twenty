@@ -21,7 +21,9 @@ export class StandardFieldRelationFactory {
   computeRelationFieldsForCustomObject(
     customObjectMetadata: ObjectMetadataEntity,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-  ): FieldMetadataEntity<FieldMetadataType.RELATION>[] {
+  ): FieldMetadataEntity<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >[] {
     const workspaceRelationMetadataArgsCollection =
       metadataArgsStorage.filterRelations(CustomWorkspaceEntity);
 
@@ -111,7 +113,9 @@ export class StandardFieldRelationFactory {
     standardObjectMetadataWorkspaceEntity: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-  ): FieldMetadataEntity<FieldMetadataType.RELATION>[] {
+  ): FieldMetadataEntity<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >[] {
     const workspaceEntityMetadataArgs = metadataArgsStorage.filterEntities(
       standardObjectMetadataWorkspaceEntity,
     );
@@ -282,9 +286,13 @@ export class StandardFieldRelationFactory {
           );
         }
 
+        const type = workspaceRelationMetadataArgs.isMorphRelation
+          ? FieldMetadataType.MORPH_RELATION
+          : FieldMetadataType.RELATION;
+
         return {
           ...sourceFieldMetadata,
-          type: FieldMetadataType.RELATION,
+          type,
           settings: {
             relationType: workspaceRelationMetadataArgs.type,
             onDelete:
@@ -293,9 +301,10 @@ export class StandardFieldRelationFactory {
                 : undefined,
             joinColumnName,
           },
+          morphId: workspaceRelationMetadataArgs.morphId ?? null,
           relationTargetObjectMetadataId: targetObjectMetadata.id,
           relationTargetFieldMetadataId: targetFieldMetadata.id,
-        } satisfies FieldMetadataEntity<FieldMetadataType.RELATION>;
+        } satisfies FieldMetadataEntity<typeof type>;
       });
 
     return [...staticRelations, ...relationsFromDynamicRelations];

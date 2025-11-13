@@ -14,13 +14,14 @@ import {
   type GraphQLType,
 } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { isDefined } from 'twenty-shared/utils';
 import {
+  FieldMetadataType,
   type FieldMetadataSettings,
   NumberDataType,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+} from 'twenty-shared/types';
+
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
@@ -40,6 +41,7 @@ import { TSVectorFilterType } from 'src/engine/api/graphql/workspace-schema-buil
 import { UUIDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/uuid-filter.input-type';
 import {
   BigFloatScalarType,
+  DateScalarType,
   TSVectorScalarType,
   UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -76,7 +78,7 @@ export class TypeMapperService {
       [FieldMetadataType.UUID, UUIDScalarType],
       [FieldMetadataType.TEXT, GraphQLString],
       [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
-      [FieldMetadataType.DATE, GraphQLISODateTime],
+      [FieldMetadataType.DATE, DateScalarType],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
       [
         FieldMetadataType.NUMBER,
@@ -118,7 +120,7 @@ export class TypeMapperService {
     >([
       [FieldMetadataType.UUID, UUIDFilterType],
       [FieldMetadataType.TEXT, StringFilterType],
-      [FieldMetadataType.DATE_TIME, DateFilterType],
+      [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
       [FieldMetadataType.DATE, DateFilterType],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [
@@ -204,7 +206,7 @@ export class TypeMapperService {
       );
     }
 
-    if (options.nullable === false && options.defaultValue === null) {
+    if (options.nullable === false && !isDefined(options.defaultValue)) {
       graphqlType = new GraphQLNonNull(graphqlType) as unknown as T;
     }
 

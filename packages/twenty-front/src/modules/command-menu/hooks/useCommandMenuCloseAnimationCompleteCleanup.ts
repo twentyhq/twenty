@@ -3,8 +3,7 @@ import { COMMAND_MENU_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/command-menu/con
 import { COMMAND_MENU_LIST_SELECTABLE_LIST_ID } from '@/command-menu/constants/CommandMenuListSelectableListId';
 import { COMMAND_MENU_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuPreviousComponentInstanceId';
 import { useResetContextStoreStates } from '@/command-menu/hooks/useResetContextStoreStates';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
-import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -16,7 +15,9 @@ import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { emitSidePanelCloseEvent } from '@/ui/layout/right-drawer/utils/emitSidePanelCloseEvent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -51,7 +52,8 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         const isPageLayoutEditingPage =
           currentPage === CommandMenuPages.PageLayoutWidgetTypeSelect ||
           currentPage === CommandMenuPages.PageLayoutGraphTypeSelect ||
-          currentPage === CommandMenuPages.PageLayoutIframeConfig;
+          currentPage === CommandMenuPages.PageLayoutIframeSettings ||
+          currentPage === CommandMenuPages.PageLayoutTabSettings;
 
         if (isPageLayoutEditingPage) {
           const targetedRecordsRule = snapshot
@@ -78,6 +80,18 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
                 }),
                 null,
               );
+              set(
+                pageLayoutTabSettingsOpenTabIdComponentState.atomFamily({
+                  instanceId: record.pageLayoutId,
+                }),
+                null,
+              );
+              set(
+                pageLayoutDraggedAreaComponentState.atomFamily({
+                  instanceId: record.pageLayoutId,
+                }),
+                null,
+              );
             }
           }
         }
@@ -91,8 +105,7 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         });
         set(isCommandMenuOpenedState, false);
         set(commandMenuSearchState, '');
-        set(commandMenuNavigationMorphItemByPageState, new Map());
-        set(commandMenuNavigationRecordsState, []);
+        set(commandMenuNavigationMorphItemsByPageState, new Map());
         set(commandMenuNavigationStackState, []);
         resetSelectedItem();
         set(hasUserSelectedCommandState, false);
@@ -106,14 +119,14 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
           WorkflowServerlessFunctionTabId.CODE,
         );
 
-        for (const [pageId, morphItem] of snapshot
-          .getLoadable(commandMenuNavigationMorphItemByPageState)
+        for (const [pageId, morphItems] of snapshot
+          .getLoadable(commandMenuNavigationMorphItemsByPageState)
           .getValue()) {
           set(
             activeTabIdComponentState.atomFamily({
               instanceId: getShowPageTabListComponentId({
                 pageId,
-                targetObjectId: morphItem.recordId,
+                targetObjectId: morphItems[0].recordId,
               }),
             }),
             null,

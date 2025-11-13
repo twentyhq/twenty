@@ -21,7 +21,12 @@ export const useCreateDraftFromWorkflowVersion = () => {
         name: true,
         statuses: true,
         lastPublishedVersionId: true,
-        versions: true,
+        versions: {
+          id: true,
+          status: true,
+          name: true,
+          createdAt: true,
+        },
       },
     });
 

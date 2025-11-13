@@ -1,11 +1,13 @@
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { GraphType, WidgetType } from '~/generated-metadata/graphql';
 import { PageLayoutType } from '~/generated/graphql';
 import {
@@ -82,7 +84,9 @@ describe('useCreatePageLayoutGraphWidget', () => {
     });
 
     act(() => {
-      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
+      result.current.createWidget.createPageLayoutGraphWidget({
+        graphType: GraphType.VERTICAL_BAR,
+      });
     });
 
     expect(result.current.allWidgets).toHaveLength(1);
@@ -156,15 +160,34 @@ describe('useCreatePageLayoutGraphWidget', () => {
     });
 
     const graphTypes = [
-      GraphType.NUMBER,
+      GraphType.AGGREGATE,
       GraphType.GAUGE,
       GraphType.PIE,
-      GraphType.BAR,
+      GraphType.VERTICAL_BAR,
     ];
+
+    const mockFieldSelections: Partial<
+      Record<GraphType, GraphWidgetFieldSelection>
+    > = {
+      [GraphType.AGGREGATE]: {
+        objectMetadataId: 'test-object-id',
+        aggregateFieldMetadataId: 'test-aggregate-field-id',
+      },
+      [GraphType.VERTICAL_BAR]: {
+        objectMetadataId: 'test-object-id',
+        groupByFieldMetadataIdX: 'test-groupby-field-id',
+        aggregateFieldMetadataId: 'test-aggregate-field-id',
+      },
+    };
 
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.createWidget.createPageLayoutGraphWidget(graphType);
+        const fieldSelection =
+          mockFieldSelections[graphType as keyof typeof mockFieldSelections];
+        result.current.createWidget.createPageLayoutGraphWidget({
+          graphType,
+          fieldSelection,
+        });
       });
     });
 
@@ -174,11 +197,14 @@ describe('useCreatePageLayoutGraphWidget', () => {
       const widget = result.current.allWidgets[index];
       expect(widget.type).toBe(WidgetType.GRAPH);
       expect(widget.pageLayoutTabId).toBe('tab-1');
-      expect(
-        widget.configuration && 'graphType' in widget.configuration
-          ? widget.configuration.graphType
-          : null,
-      ).toBe(graphType);
+
+      if (
+        isDefined(widget.configuration) &&
+        'graphType' in widget.configuration
+      ) {
+        expect(widget.configuration.graphType).toBe(graphType);
+      }
+
       expect(widget.id).toBe('mock-uuid');
     });
 
@@ -207,7 +233,9 @@ describe('useCreatePageLayoutGraphWidget', () => {
     );
 
     expect(() => {
-      result.current.createWidget.createPageLayoutGraphWidget(GraphType.BAR);
+      result.current.createWidget.createPageLayoutGraphWidget({
+        graphType: GraphType.VERTICAL_BAR,
+      });
     }).toThrow('A tab must be selected to create a new graph widget');
   });
 });

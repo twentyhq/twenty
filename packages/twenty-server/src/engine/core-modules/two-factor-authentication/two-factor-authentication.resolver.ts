@@ -11,12 +11,14 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -30,7 +32,7 @@ import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate
 import { InitiateTwoFactorAuthenticationProvisioningOutput } from './dto/initiate-two-factor-authentication-provisioning.output';
 import { VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
 import { VerifyTwoFactorAuthenticationMethodOutput } from './dto/verify-two-factor-authentication-method.output';
-import { TwoFactorAuthenticationMethod } from './entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter, PermissionsGraphqlApiExceptionFilter)
@@ -39,13 +41,13 @@ export class TwoFactorAuthenticationResolver {
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
-    private readonly domainManagerService: DomainManagerService,
-    @InjectRepository(TwoFactorAuthenticationMethod)
-    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
+    @InjectRepository(TwoFactorAuthenticationMethodEntity)
+    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
   ) {}
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningOutput)
-  @UseGuards(PublicEndpointGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async initiateOTPProvisioning(
     @Args()
     initiateTwoFactorAuthenticationProvisioningInput: InitiateTwoFactorAuthenticationProvisioningInput,
@@ -57,7 +59,7 @@ export class TwoFactorAuthenticationResolver {
       );
 
     const workspace =
-      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       );
 
@@ -76,7 +78,7 @@ export class TwoFactorAuthenticationResolver {
       );
     }
 
-    const user = await this.userService.getUserByEmail(userEmail);
+    const user = await this.userService.findUserByEmailOrThrow(userEmail);
 
     const uri =
       await this.twoFactorAuthenticationService.initiateStrategyConfiguration(
@@ -97,10 +99,10 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningOutput)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, NoPermissionGuard)
   async initiateOTPProvisioningForAuthenticatedUser(
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InitiateTwoFactorAuthenticationProvisioningOutput> {
     const uri =
       await this.twoFactorAuthenticationService.initiateStrategyConfiguration(
@@ -121,12 +123,12 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => DeleteTwoFactorAuthenticationMethodOutput)
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
   async deleteTwoFactorAuthenticationMethod(
     @Args()
     deleteTwoFactorAuthenticationMethodInput: DeleteTwoFactorAuthenticationMethodInput,
-    @AuthWorkspace() workspace: Workspace,
-    @AuthUser() user: User,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: UserEntity,
   ): Promise<DeleteTwoFactorAuthenticationMethodOutput> {
     const twoFactorMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne({
@@ -161,12 +163,12 @@ export class TwoFactorAuthenticationResolver {
   }
 
   @Mutation(() => VerifyTwoFactorAuthenticationMethodOutput)
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, NoPermissionGuard)
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
     @Args()
     verifyTwoFactorAuthenticationMethodInput: VerifyTwoFactorAuthenticationMethodInput,
-    @AuthWorkspace() workspace: Workspace,
-    @AuthUser() user: User,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser() user: UserEntity,
   ): Promise<VerifyTwoFactorAuthenticationMethodOutput> {
     return await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
       user.id,

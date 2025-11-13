@@ -8,6 +8,7 @@ import {
   SERVERLESS_FUNCTION_SCHEMA_URL,
   TRIGGER_SCHEMA_URL,
 } from '../constants/schemas';
+import { BASE_SCHEMAS_PATH } from '../constants/constants-path';
 
 export class SchemaValidationError extends Error {
   constructor(
@@ -49,8 +50,7 @@ export const validateSchema = async (
   let schema;
 
   for (const name of Object.keys(schemaUrls) as (keyof typeof schemaUrls)[]) {
-    const schemasDir = path.join(__dirname, '../../schemas');
-    const schemaPath = path.join(schemasDir, `${name}.schema.json`);
+    const schemaPath = path.join(BASE_SCHEMAS_PATH, `${name}.schema.json`);
     ajv.addSchema(await fs.readJson(schemaPath));
 
     if (name === schemaName) {

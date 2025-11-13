@@ -4,6 +4,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { HTTP_REQUEST_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/HttpRequestAction';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
@@ -11,12 +12,13 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
+import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
 import {
@@ -89,6 +91,7 @@ export const WorkflowEditActionHttpRequest = ({
   action,
   actionOptions,
 }: WorkflowEditActionHttpRequestProps) => {
+  const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const activeTabId = useRecoilComponentValue(
@@ -98,7 +101,7 @@ export const WorkflowEditActionHttpRequest = ({
   const { headerTitle, headerIcon, headerIconColor, headerType } =
     useWorkflowActionHeader({
       action,
-      defaultTitle: 'HTTP Request',
+      defaultTitle: HTTP_REQUEST_ACTION.defaultLabel,
     });
 
   const { formData, handleFieldChange, saveAction } = useHttpRequestForm({
@@ -152,6 +155,7 @@ export const WorkflowEditActionHttpRequest = ({
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={actionOptions.readonly}
+        iconTooltip={HTTP_REQUEST_ACTION.defaultLabel}
       />
       <WorkflowStepBody>
         {activeTabId === WorkflowHttpRequestTabId.CONFIGURATION && (
@@ -221,13 +225,13 @@ export const WorkflowEditActionHttpRequest = ({
         )}
       </WorkflowStepBody>
       {!actionOptions.readonly && (
-        <WorkflowActionFooter
+        <WorkflowStepFooter
           stepId={action.id}
           additionalActions={
             activeTabId === WorkflowHttpRequestTabId.TEST
               ? [
                   <CmdEnterActionButton
-                    title="Test"
+                    title={t`Test`}
                     onClick={handleTestRequest}
                     disabled={isTesting}
                   />,

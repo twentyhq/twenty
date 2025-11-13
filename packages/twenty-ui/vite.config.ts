@@ -1,4 +1,3 @@
-/// <reference types='vitest' />
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import * as path from 'path';
@@ -73,6 +72,7 @@ export default defineConfig(({ command }) => {
         plugins: [['@swc/plugin-emotion', {}]],
       }),
       tsconfigPaths({
+        root: __dirname,
         projects: ['tsconfig.json'],
       }),
       svgr(),

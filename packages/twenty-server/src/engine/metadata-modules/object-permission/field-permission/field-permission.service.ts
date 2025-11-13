@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type ObjectsPermissionsByRoleIdDeprecated } from 'twenty-shared/types';
+import { msg } from '@lingui/core/macro';
+import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -182,7 +183,7 @@ export class FieldPermissionService {
     allFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     fieldPermission: UpsertFieldPermissionsInput['fieldPermissions'][0];
     objectMetadataMapsById: ObjectMetadataMaps['byId'];
-    rolesPermissions: ObjectsPermissionsByRoleIdDeprecated;
+    rolesPermissions: ObjectsPermissionsByRoleId;
     role: RoleEntity;
   }) {
     const duplicateFieldPermissions = allFieldPermissions.filter(
@@ -207,8 +208,7 @@ export class FieldPermissionService {
         PermissionsExceptionMessage.ONLY_FIELD_RESTRICTION_ALLOWED,
         PermissionsExceptionCode.ONLY_FIELD_RESTRICTION_ALLOWED,
         {
-          userFriendlyMessage:
-            'Field permissions can only be used to restrict access, not to grant additional permissions.',
+          userFriendlyMessage: msg`Field permissions can only be used to restrict access, not to grant additional permissions.`,
         },
       );
     }
@@ -221,8 +221,7 @@ export class FieldPermissionService {
         PermissionsExceptionMessage.OBJECT_METADATA_NOT_FOUND,
         PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'The object you are trying to set permissions for could not be found. It may have been deleted.',
+          userFriendlyMessage: msg`The object you are trying to set permissions for could not be found. It may have been deleted.`,
         },
       );
     }
@@ -232,8 +231,7 @@ export class FieldPermissionService {
         PermissionsExceptionMessage.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
         PermissionsExceptionCode.CANNOT_ADD_FIELD_PERMISSION_ON_SYSTEM_OBJECT,
         {
-          userFriendlyMessage:
-            'You cannot set field permissions on system objects as they are managed by the platform.',
+          userFriendlyMessage: msg`You cannot set field permissions on system objects as they are managed by the platform.`,
         },
       );
     }
@@ -248,8 +246,7 @@ export class FieldPermissionService {
         PermissionsExceptionMessage.FIELD_METADATA_NOT_FOUND,
         PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'The field you are trying to set permissions for could not be found. It may have been deleted.',
+          userFriendlyMessage: msg`The field you are trying to set permissions for could not be found. It may have been deleted.`,
         },
       );
     }
@@ -262,8 +259,7 @@ export class FieldPermissionService {
         PermissionsExceptionMessage.OBJECT_PERMISSION_NOT_FOUND,
         PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'No permissions are set for this role on the selected object. Please set object permissions first.',
+          userFriendlyMessage: msg`No permissions are set for this role on the selected object. Please set object permissions first.`,
         },
       );
     }
@@ -289,8 +285,7 @@ export class FieldPermissionService {
         PermissionsExceptionMessage.ROLE_NOT_FOUND,
         PermissionsExceptionCode.ROLE_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.',
+          userFriendlyMessage: msg`The role you are trying to modify could not be found. It may have been deleted or you may not have access to it.`,
         },
       );
     }
@@ -304,8 +299,7 @@ export class FieldPermissionService {
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
         {
-          userFriendlyMessage:
-            'This role cannot be modified because it is a system role. Only custom roles can be edited.',
+          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
         },
       );
     }
@@ -436,10 +430,12 @@ export class FieldPermissionService {
                   firstFieldPermission.canUpdateFieldValue;
 
               if (hasConflictingPermissions) {
+                const fieldName = fieldMetadata.name;
+
                 throw new UserInputError(
                   'Conflicting field permissions found for relation target field',
                   {
-                    userFriendlyMessage: `Contradicting field permissions have been detected on a relation field (${fieldMetadata.name}).`,
+                    userFriendlyMessage: msg`Contradicting field permissions have been detected on a relation field (${fieldName}).`,
                   },
                 );
               }

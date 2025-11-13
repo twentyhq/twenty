@@ -13,5 +13,13 @@ export const workflowFindRecordsActionSettingsSchema =
           gqlOperationFilter: z.any().optional().nullable(),
         })
         .optional(),
+      orderBy: z
+        .object({
+          recordSorts: z.array(z.any()).optional(),
+          gqlOperationOrderBy: z
+            .array(z.record(z.string(), z.any()))
+            .optional(),
+        })
+        .optional(),
     }),
   });

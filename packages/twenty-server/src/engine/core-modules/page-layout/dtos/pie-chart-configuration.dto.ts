@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -7,14 +7,19 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IsTimeZone,
   IsUUID,
+  Max,
+  Min,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { ExtendedAggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/extended-aggregate-operations.constant';
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ObjectRecordGroupByDateGranularity } from 'src/engine/core-modules/page-layout/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/core-modules/page-layout/enums/graph-order-by.enum';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
 
@@ -30,10 +35,10 @@ export class PieChartConfigurationDTO {
   @IsNotEmpty()
   aggregateFieldMetadataId: string;
 
-  @Field(() => ExtendedAggregateOperations)
-  @IsEnum(ExtendedAggregateOperations)
+  @Field(() => AggregateOperations)
+  @IsEnum(AggregateOperations)
   @IsNotEmpty()
-  aggregateOperation: ExtendedAggregateOperations;
+  aggregateOperation: AggregateOperations;
 
   @Field(() => UUIDScalarType)
   @IsUUID()
@@ -45,15 +50,26 @@ export class PieChartConfigurationDTO {
   @IsOptional()
   groupBySubFieldName?: string;
 
-  @Field(() => GraphOrderBy)
-  @IsEnum(GraphOrderBy)
-  @IsNotEmpty()
-  orderBy: GraphOrderBy;
+  @Field(() => ObjectRecordGroupByDateGranularity, {
+    nullable: true,
+    defaultValue: ObjectRecordGroupByDateGranularity.DAY,
+  })
+  @IsEnum(ObjectRecordGroupByDateGranularity)
+  @IsOptional()
+  dateGranularity?: ObjectRecordGroupByDateGranularity;
 
-  @Field(() => Boolean)
+  @Field(() => GraphOrderBy, {
+    nullable: true,
+    defaultValue: GraphOrderBy.VALUE_DESC,
+  })
+  @IsEnum(GraphOrderBy)
+  @IsOptional()
+  orderBy?: GraphOrderBy;
+
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
   @IsBoolean()
-  @IsNotEmpty()
-  displayDataLabel: boolean;
+  @IsOptional()
+  displayDataLabel?: boolean;
 
   @Field(() => String, { nullable: true })
   @IsString()
@@ -69,4 +85,15 @@ export class PieChartConfigurationDTO {
   @IsObject()
   @IsOptional()
   filter?: ObjectRecordFilter;
+
+  @Field(() => String, { nullable: true, defaultValue: 'UTC' })
+  @IsTimeZone()
+  @IsOptional()
+  timezone?: string;
+
+  @Field(() => Int, { nullable: true, defaultValue: CalendarStartDay.MONDAY })
+  @IsOptional()
+  @Min(0)
+  @Max(7)
+  firstDayOfTheWeek?: number;
 }

@@ -1,4 +1,4 @@
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
 import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
@@ -75,7 +75,7 @@ describe('WorkspaceEntityManager', () => {
   let mockDataSource: WorkspaceDataSource;
   let mockPermissionOptions: {
     shouldBypassPermissionChecks: boolean;
-    objectRecordsPermissions?: ObjectsPermissionsDeprecated;
+    objectRecordsPermissions?: ObjectsPermissions;
   };
 
   beforeEach(() => {
@@ -128,20 +128,18 @@ describe('WorkspaceEntityManager', () => {
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
+        IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_RELATION_CONNECT_ENABLED: false,
-        IS_CORE_VIEW_SYNCING_ENABLED: false,
-        IS_CORE_VIEW_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
+        IS_RECORD_PAGE_LAYOUT_ENABLED: false,
         IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
-        IS_WORKFLOW_ITERATOR_ENABLED: false,
-        IS_CALENDAR_VIEW_ENABLED: false,
-        IS_GROUP_BY_ENABLED: true,
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
-        IS_DYNAMIC_SEARCH_FIELDS_ENABLED: false,
+        IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
+        IS_DASHBOARD_V2_ENABLED: false,
+        IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
@@ -158,14 +156,18 @@ describe('WorkspaceEntityManager', () => {
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
+        IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_RELATION_CONNECT_ENABLED: false,
-        IS_CORE_VIEW_SYNCING_ENABLED: false,
-        IS_CORE_VIEW_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
-        IS_WORKFLOW_ITERATOR_ENABLED: false,
+        IS_RECORD_PAGE_LAYOUT_ENABLED: false,
+        IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
+        IS_PUBLIC_DOMAIN_ENABLED: false,
+        IS_EMAILING_DOMAIN_ENABLED: false,
+        IS_WORKFLOW_RUN_STOPPAGE_ENABLED: false,
+        IS_DASHBOARD_V2_ENABLED: false,
+        IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
@@ -174,10 +176,10 @@ describe('WorkspaceEntityManager', () => {
       shouldBypassPermissionChecks: false,
       objectRecordsPermissions: {
         'test-entity': {
-          canRead: true,
-          canUpdate: false,
-          canSoftDelete: false,
-          canDestroy: false,
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+          canDestroyObjectRecords: false,
           restrictedFields: {},
         },
       },

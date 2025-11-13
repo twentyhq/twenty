@@ -1,56 +1,59 @@
 import { Injectable } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityMaps } from 'src/engine/core-modules/common/types/flat-entity-maps.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
 import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
-import { ObjectMetadataRelatedFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/services/workspace-migration-v2-object-actions-builder.service';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/types/failed-flat-entity-validation.type';
-import { WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-builder-options.type';
-import { FlatObjectPropertiesUpdates } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
-
-export type ValidateOneObjectMetadataArgs = {
-  flatObjectMetadataToValidate: FlatObjectMetadata;
-  optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  buildOptions: WorkspaceMigrationBuilderOptions;
-  dependencyOptimisticFlatEntityMaps: ObjectMetadataRelatedFlatEntityMaps;
-};
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-update-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
   public validateFlatObjectMetadataUpdate({
-    optimisticFlatObjectMetadataMaps,
-    flatObjectMetadataToValidate: updatedFlatObjectMetadata,
-    dependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
-    flatObjectPropertiesUpdates,
-  }: ValidateOneObjectMetadataArgs & {
-    flatObjectPropertiesUpdates: FlatObjectPropertiesUpdates;
-  }): FailedFlatEntityValidation<FlatObjectMetadata> {
+    flatEntityId,
+    flatEntityUpdates,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    },
+  }: FlatEntityUpdateValidationArgs<
+    typeof ALL_METADATA_NAME.objectMetadata
+  >): FailedFlatEntityValidation<FlatObjectMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
       type: 'update_object',
       errors: [],
       flatEntityMinimalInformation: {
-        id: updatedFlatObjectMetadata.id,
+        id: flatEntityId,
       },
     };
 
     const existingFlatObjectMetadata =
-      optimisticFlatObjectMetadataMaps.byId[updatedFlatObjectMetadata.id];
+      optimisticFlatObjectMetadataMaps.byId[flatEntityId];
 
     if (!isDefined(existingFlatObjectMetadata)) {
       validationResult.errors.push({
         code: ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: t`Object to update not found`,
-        userFriendlyMessage: t`Object to update not found`,
+        userFriendlyMessage: msg`Object to update not found`,
       });
 
       return validationResult;
     }
+
+    const updatedFlatObjectMetadata = {
+      ...existingFlatObjectMetadata,
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      }),
+    };
+
     validationResult.flatEntityMinimalInformation = {
       id: existingFlatObjectMetadata.id,
       namePlural: existingFlatObjectMetadata.namePlural,
@@ -64,10 +67,9 @@ export class FlatObjectMetadataValidatorService {
       }),
     );
 
-    const labelIdentifierFieldMetadataIdUpdate =
-      flatObjectPropertiesUpdates.find(
-        (update) => update.property === 'labelIdentifierFieldMetadataId',
-      );
+    const labelIdentifierFieldMetadataIdUpdate = flatEntityUpdates.find(
+      (update) => update.property === 'labelIdentifierFieldMetadataId',
+    );
 
     // TODO remove this once we migrated labelIdentifierFieldMetadataId as non nullable
     if (isDefined(labelIdentifierFieldMetadataIdUpdate)) {
@@ -75,7 +77,7 @@ export class FlatObjectMetadataValidatorService {
         validationResult.errors.push({
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: 'labelIdentifierFieldMetadataId cannot be null',
-          userFriendlyMessage: t`Field label identifier is required`,
+          userFriendlyMessage: msg`Field label identifier is required`,
         });
       }
 
@@ -91,10 +93,14 @@ export class FlatObjectMetadataValidatorService {
   }
 
   public validateFlatObjectMetadataDeletion({
-    flatObjectMetadataToValidate: { id: objectMetadataToDeleteId },
-    optimisticFlatObjectMetadataMaps,
+    flatEntityToValidate: { id: objectMetadataToDeleteId },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+    },
     buildOptions,
-  }: ValidateOneObjectMetadataArgs): FailedFlatEntityValidation<FlatObjectMetadata> {
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.objectMetadata
+  >): FailedFlatEntityValidation<FlatObjectMetadata> {
     const validationResult: FailedFlatEntityValidation<FlatObjectMetadata> = {
       type: 'delete_object',
       errors: [],
@@ -110,7 +116,7 @@ export class FlatObjectMetadataValidatorService {
       validationResult.errors.push({
         code: ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: t`Object to delete not found`,
-        userFriendlyMessage: t`Object to delete not found`,
+        userFriendlyMessage: msg`Object to delete not found`,
       });
     } else {
       validationResult.flatEntityMinimalInformation = {
@@ -123,7 +129,7 @@ export class FlatObjectMetadataValidatorService {
         validationResult.errors.push({
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: t`Remote objects are not supported yet`,
-          userFriendlyMessage: t`Remote objects are not supported yet`,
+          userFriendlyMessage: msg`Remote objects are not supported yet`,
         });
       }
 
@@ -134,7 +140,7 @@ export class FlatObjectMetadataValidatorService {
         validationResult.errors.push({
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: t`Standard objects cannot be deleted`,
-          userFriendlyMessage: t`Standard objects cannot be deleted`,
+          userFriendlyMessage: msg`Standard objects cannot be deleted`,
         });
       }
 
@@ -142,7 +148,7 @@ export class FlatObjectMetadataValidatorService {
         validationResult.errors.push({
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: t`Active objects cannot be deleted`,
-          userFriendlyMessage: t`Active objects cannot be deleted`,
+          userFriendlyMessage: msg`Active objects cannot be deleted`,
         });
       }
     }
@@ -151,12 +157,14 @@ export class FlatObjectMetadataValidatorService {
   }
 
   public async validateFlatObjectMetadataCreation({
-    optimisticFlatObjectMetadataMaps,
-    flatObjectMetadataToValidate,
-    dependencyOptimisticFlatEntityMaps: { flatFieldMetadataMaps },
-  }: ValidateOneObjectMetadataArgs): Promise<
-    FailedFlatEntityValidation<FlatObjectMetadata>
-  > {
+    flatEntityToValidate: flatObjectMetadataToValidate,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    },
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.objectMetadata
+  >): Promise<FailedFlatEntityValidation<FlatObjectMetadata>> {
     const objectValidationResult: FailedFlatEntityValidation<FlatObjectMetadata> =
       {
         type: 'create_object',
@@ -176,7 +184,7 @@ export class FlatObjectMetadataValidatorService {
       objectValidationResult.errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message: t`Object with same id already exists`,
-        userFriendlyMessage: t`Object with same id already exists`,
+        userFriendlyMessage: msg`Object with same id already exists`,
       });
     }
 
@@ -184,7 +192,7 @@ export class FlatObjectMetadataValidatorService {
       objectValidationResult.errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message: t`Remote objects are not supported yet`,
-        userFriendlyMessage: t`Remote objects are not supported yet`,
+        userFriendlyMessage: msg`Remote objects are not supported yet`,
       });
     }
 

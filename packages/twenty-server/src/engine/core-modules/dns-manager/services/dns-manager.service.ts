@@ -1,6 +1,7 @@
 /* @license Enterprise */
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import Cloudflare from 'cloudflare';
 import {
   type CustomHostnameCreateParams,
@@ -8,14 +9,14 @@ import {
 } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
+import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import {
   DnsManagerException,
   DnsManagerExceptionCode,
 } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/dns-manager.validate';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 
 type DnsManagerOptions = {
   isPublicDomain?: boolean;
@@ -27,7 +28,7 @@ export class DnsManagerService {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {
     if (this.twentyConfigService.get('CLOUDFLARE_API_KEY')) {
       this.cloudflareClient = new Cloudflare({
@@ -43,7 +44,7 @@ export class DnsManagerService {
       throw new DnsManagerException(
         'Hostname already registered',
         DnsManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED,
-        { userFriendlyMessage: 'Domain is already registered' },
+        { userFriendlyMessage: msg`Domain is already registered` },
       );
     }
 
@@ -60,14 +61,13 @@ export class DnsManagerService {
   ): Promise<DomainValidRecords | undefined> {
     if (
       options?.isPublicDomain &&
-      !isDefined(this.domainManagerService.getPublicDomainUrl().hostname)
+      !isDefined(this.domainServerConfigService.getPublicDomainUrl().hostname)
     ) {
       throw new DnsManagerException(
         'Missing public domain URL',
         DnsManagerExceptionCode.MISSING_PUBLIC_DOMAIN_URL,
         {
-          userFriendlyMessage:
-            'Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable',
+          userFriendlyMessage: msg`Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable`,
         },
       );
     }
@@ -95,8 +95,8 @@ export class DnsManagerService {
           status: statuses.redirection,
           key: hostname,
           value: options?.isPublicDomain
-            ? this.domainManagerService.getPublicDomainUrl().hostname
-            : this.domainManagerService.getBaseUrl().hostname,
+            ? this.domainServerConfigService.getPublicDomainUrl().hostname
+            : this.domainServerConfigService.getBaseUrl().hostname,
         },
         {
           validationType: 'ssl' as const,
@@ -219,11 +219,14 @@ export class DnsManagerService {
     }
 
     // should never happen. error 5xx
+    const hostnameCount = customHostnames.result.length;
+    const domainName = hostname;
+
     throw new DnsManagerException(
       'More than one custom hostname found in cloudflare',
       DnsManagerExceptionCode.MULTIPLE_HOSTNAMES_FOUND,
       {
-        userFriendlyMessage: `${customHostnames.result.length} hostnames found for domain '${hostname}'. Expect 1`,
+        userFriendlyMessage: msg`${hostnameCount} hostnames found for domain '${domainName}'. Expect 1`,
       },
     );
   }

@@ -1,6 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-
-import { type FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { type FullNameMetadata } from 'twenty-shared/types';
 
 export const computeDisplayName = (
   name: FullNameMetadata | null | undefined,

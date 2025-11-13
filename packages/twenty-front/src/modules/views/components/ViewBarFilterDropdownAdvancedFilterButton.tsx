@@ -27,7 +27,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 
 const StyledPill = styled(Pill)`
-  background: ${({ theme }) => theme.color.blueAccent10};
+  background: ${({ theme }) => theme.color.blue3};
   color: ${({ theme }) => theme.color.blue};
 `;
 

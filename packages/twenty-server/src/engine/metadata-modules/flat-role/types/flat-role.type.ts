@@ -1,3 +1,4 @@
+import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
 export const roleEntityRelationProperties = [
@@ -10,9 +11,7 @@ export const roleEntityRelationProperties = [
 export type RoleEntityRelationProperties =
   (typeof roleEntityRelationProperties)[number];
 
-export type FlatRole = Omit<
+export type FlatRole = FlatEntityFrom<
   RoleEntity,
   RoleEntityRelationProperties | 'createdAt' | 'updatedAt'
-> & {
-  universalIdentifier: string;
-};
+>;

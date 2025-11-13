@@ -1,83 +1,107 @@
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { v4 as uuidv4 } from 'uuid';
-import { GraphOrderBy, GraphType } from '~/generated-metadata/graphql';
 import {
+  AggregateOperations,
   AxisNameDisplay,
-  ExtendedAggregateOperations,
+  GraphOrderBy,
+  GraphType,
   type GridPosition,
   type PageLayoutWidget,
   type WidgetConfiguration,
   WidgetType,
 } from '~/generated/graphql';
 
+import { type GraphWidgetFieldSelection } from '@/page-layout/types/GraphWidgetFieldSelection';
+
 const createDefaultGraphConfiguration = (
   graphType: GraphType,
-): WidgetConfiguration => {
-  const placeholderFieldId1 = uuidv4();
-  const placeholderFieldId2 = uuidv4();
-
+  fieldSelection?: GraphWidgetFieldSelection,
+  timezone?: string,
+  firstDayOfTheWeek?: number,
+): WidgetConfiguration | null => {
   switch (graphType) {
-    case GraphType.NUMBER:
+    case GraphType.AGGREGATE:
+      if (!isDefined(fieldSelection?.aggregateFieldMetadataId)) {
+        return null;
+      }
       return {
-        __typename: 'NumberChartConfiguration',
-        graphType: GraphType.NUMBER,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        displayDataLabel: false,
+        __typename: 'AggregateChartConfiguration',
+        graphType: GraphType.AGGREGATE,
+        aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
+        aggregateOperation: AggregateOperations.COUNT,
+        displayDataLabel: true,
+        timezone,
+        firstDayOfTheWeek,
       };
 
     case GraphType.PIE:
-      return {
-        __typename: 'PieChartConfiguration',
-        graphType: GraphType.PIE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        groupByFieldMetadataId: placeholderFieldId2,
-        orderBy: GraphOrderBy.VALUE_DESC,
-        displayDataLabel: false,
-        color: 'blue' satisfies ThemeColor,
-      };
+      return null;
 
-    case GraphType.BAR:
+    case GraphType.VERTICAL_BAR:
+      if (
+        !isDefined(fieldSelection?.aggregateFieldMetadataId) ||
+        !isDefined(fieldSelection?.groupByFieldMetadataIdX)
+      ) {
+        return null;
+      }
       return {
         __typename: 'BarChartConfiguration',
-        graphType: GraphType.BAR,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        groupByFieldMetadataIdX: placeholderFieldId2,
-        orderByX: GraphOrderBy.FIELD_ASC,
+        graphType: GraphType.VERTICAL_BAR,
         displayDataLabel: false,
-        axisNameDisplay: AxisNameDisplay.BOTH,
         color: 'blue' satisfies ThemeColor,
+        primaryAxisGroupByFieldMetadataId:
+          fieldSelection.groupByFieldMetadataIdX,
+        aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
+        aggregateOperation: AggregateOperations.SUM,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.NONE,
+        timezone,
+        firstDayOfTheWeek,
+      };
+
+    case GraphType.HORIZONTAL_BAR:
+      if (
+        !isDefined(fieldSelection?.aggregateFieldMetadataId) ||
+        !isDefined(fieldSelection?.groupByFieldMetadataIdX)
+      ) {
+        return null;
+      }
+      return {
+        __typename: 'BarChartConfiguration',
+        graphType: GraphType.HORIZONTAL_BAR,
+        displayDataLabel: false,
+        color: 'blue' satisfies ThemeColor,
+        primaryAxisGroupByFieldMetadataId:
+          fieldSelection.groupByFieldMetadataIdX,
+        aggregateFieldMetadataId: fieldSelection.aggregateFieldMetadataId,
+        aggregateOperation: AggregateOperations.SUM,
+        primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
+        axisNameDisplay: AxisNameDisplay.NONE,
+        timezone,
+        firstDayOfTheWeek,
       };
 
     case GraphType.LINE:
-      return {
-        __typename: 'LineChartConfiguration',
-        graphType: GraphType.LINE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        groupByFieldMetadataIdX: placeholderFieldId2,
-        orderByX: GraphOrderBy.FIELD_ASC,
-        displayDataLabel: false,
-        axisNameDisplay: AxisNameDisplay.BOTH,
-        color: 'blue' satisfies ThemeColor,
-      };
+      return null;
 
     case GraphType.GAUGE:
-      return {
-        __typename: 'GaugeChartConfiguration',
-        graphType: GraphType.GAUGE,
-        aggregateOperation: ExtendedAggregateOperations.COUNT,
-        aggregateFieldMetadataId: placeholderFieldId1,
-        displayDataLabel: false,
-        color: 'blue' satisfies ThemeColor,
-      };
+      return null;
 
     default:
       assertUnreachable(graphType);
   }
+};
+
+type CreateDefaultGraphWidgetParams = {
+  id: string;
+  pageLayoutTabId: string;
+  title: string;
+  graphType: GraphType;
+  gridPosition: GridPosition;
+  objectMetadataId?: string | null;
+  fieldSelection?: GraphWidgetFieldSelection;
+  timezone?: string;
+  firstDayOfTheWeek?: number;
 };
 
 export const createDefaultGraphWidget = ({
@@ -87,23 +111,29 @@ export const createDefaultGraphWidget = ({
   graphType,
   gridPosition,
   objectMetadataId,
-}: {
-  id: string;
-  pageLayoutTabId: string;
-  title: string;
-  graphType: GraphType;
-  gridPosition: GridPosition;
-  objectMetadataId?: string | null;
-}): PageLayoutWidget => {
+  fieldSelection,
+  timezone,
+  firstDayOfTheWeek,
+}: CreateDefaultGraphWidgetParams): PageLayoutWidget => {
+  const resolvedObjectMetadataId =
+    fieldSelection?.objectMetadataId ?? objectMetadataId ?? null;
+
+  const configuration = createDefaultGraphConfiguration(
+    graphType,
+    fieldSelection,
+    timezone,
+    firstDayOfTheWeek,
+  );
+
   return {
     __typename: 'PageLayoutWidget',
     id,
     pageLayoutTabId,
     title,
     type: WidgetType.GRAPH,
-    configuration: createDefaultGraphConfiguration(graphType),
+    configuration,
     gridPosition,
-    objectMetadataId: objectMetadataId ?? null,
+    objectMetadataId: resolvedObjectMetadataId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

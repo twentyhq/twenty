@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react';
+import { ScrollWrapperDecorator } from '~/testing/decorators/ScrollWrapperDecorator';
 
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableEmptyStateNoRecordFoundForFilter } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter';
@@ -32,6 +33,7 @@ const meta: Meta = {
     SnackBarDecorator,
     ObjectMetadataItemsDecorator,
     I18nFrontDecorator,
+    ScrollWrapperDecorator,
   ],
   parameters: {
     recordTableObjectNameSingular: 'person',

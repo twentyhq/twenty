@@ -11,23 +11,26 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-
+import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { type GraphOrderBy } from '~/generated/graphql';
 
 export const ChartXAxisSortBySelectionDropdownContent = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
+  const configuration = widgetInEditMode?.configuration;
 
   if (
-    widgetInEditMode?.configuration?.__typename !== 'BarChartConfiguration' &&
-    widgetInEditMode?.configuration?.__typename !== 'LineChartConfiguration'
+    configuration?.__typename !== 'BarChartConfiguration' &&
+    configuration?.__typename !== 'LineChartConfiguration'
   ) {
     throw new Error('Invalid configuration type');
   }
 
-  const configuration = widgetInEditMode?.configuration;
-  const currentOrderByX = configuration.orderByX;
+  if (!isDefined(widgetInEditMode?.objectMetadataId)) {
+    throw new Error('No data source in chart');
+  }
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -40,21 +43,18 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
 
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
-
   const { closeDropdown } = useCloseDropdown();
 
-  const handleSelectSortOption = (orderByX: GraphOrderBy) => {
+  const { getXSortOptionLabel } = useGraphXSortOptionLabels({
+    objectMetadataId: widgetInEditMode.objectMetadataId,
+  });
+
+  const handleSelect = (orderBy: GraphOrderBy) => {
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        orderByX,
-      },
+      configToUpdate: { primaryAxisOrderBy: orderBy },
     });
     closeDropdown();
   };
-
-  const { getXSortOptionLabel } = useGraphXSortOptionLabels({
-    objectMetadataId: widgetInEditMode?.objectMetadataId,
-  });
 
   return (
     <DropdownMenuItemsContainer>
@@ -68,22 +68,28 @@ export const ChartXAxisSortBySelectionDropdownContent = () => {
             key={sortOption.value}
             itemId={sortOption.value}
             onEnter={() => {
-              handleSelectSortOption(sortOption.value);
+              handleSelect(sortOption.value);
             }}
           >
             <MenuItemSelect
               text={getXSortOptionLabel({
                 graphOrderBy: sortOption.value,
-                groupByFieldMetadataIdX: configuration.groupByFieldMetadataIdX,
+                groupByFieldMetadataIdX:
+                  configuration.primaryAxisGroupByFieldMetadataId,
+                groupBySubFieldNameX:
+                  configuration.primaryAxisGroupBySubFieldName as
+                    | CompositeFieldSubFieldName
+                    | undefined,
                 aggregateFieldMetadataId:
-                  configuration.aggregateFieldMetadataId,
-                aggregateOperation: configuration.aggregateOperation,
+                  configuration.aggregateFieldMetadataId ?? undefined,
+                aggregateOperation:
+                  configuration.aggregateOperation ?? undefined,
               })}
-              selected={currentOrderByX === sortOption.value}
+              selected={configuration.primaryAxisOrderBy === sortOption.value}
               focused={selectedItemId === sortOption.value}
               LeftIcon={sortOption.icon}
               onClick={() => {
-                handleSelectSortOption(sortOption.value);
+                handleSelect(sortOption.value);
               }}
             />
           </SelectableListItem>

@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`View Group REST API POST /metadata/viewGroups should fail to create view group with missing required fields 1`] = `
+{
+  "error": "METADATA_VALIDATION_ERROR",
+  "errors": {
+    "cronTrigger": [],
+    "databaseEventTrigger": [],
+    "fieldMetadata": [],
+    "index": [],
+    "objectMetadata": [],
+    "routeTrigger": [],
+    "serverlessFunction": [],
+    "view": [],
+    "viewField": [],
+    "viewFilter": [],
+    "viewGroup": [
+      {
+        "errors": [
+          {
+            "code": "INVALID_VIEW_DATA",
+            "message": "Field metadata not found",
+            "userFriendlyMessage": "Field metadata not found",
+          },
+        ],
+        "flatEntityMinimalInformation": {
+          "id": Any<String>,
+          "viewId": Any<String>,
+        },
+        "status": "fail",
+        "type": "create_view_group",
+      },
+    ],
+  },
+  "message": "Multiple validation errors occurred while creating view groups",
+  "statusCode": 400,
+  "summary": {
+    "invalidCronTrigger": 0,
+    "invalidDatabaseEventTrigger": 0,
+    "invalidFieldMetadata": 0,
+    "invalidIndex": 0,
+    "invalidObjectMetadata": 0,
+    "invalidRouteTrigger": 0,
+    "invalidServerlessFunction": 0,
+    "invalidView": 0,
+    "invalidViewField": 0,
+    "invalidViewFilter": 0,
+    "invalidViewGroup": 0,
+    "totalErrors": 0,
+  },
+}
+`;

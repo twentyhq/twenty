@@ -8,6 +8,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
+import { ObjectMetadataOrderByBaseGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/order-by-input/object-metadata-order-by-base.generator';
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
 import {
   TypeMapperService,
@@ -32,6 +33,7 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
   constructor(
     private readonly gqlTypesStorage: GqlTypesStorage,
     private readonly relationFieldMetadataGqlInputTypeGenerator: RelationFieldMetadataGqlInputTypeGenerator,
+    private readonly objectMetadataOrderByBaseGenerator: ObjectMetadataOrderByBaseGenerator,
     private readonly typeMapperService: TypeMapperService,
   ) {}
 
@@ -57,7 +59,16 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
   private generateFields(
     objectMetadata: ObjectMetadataEntity,
   ): GraphQLInputFieldConfigMap {
-    const allGeneratedFields: GraphQLInputFieldConfigMap = {};
+    return {
+      ...this.generateOrderByOnAggregateFields(objectMetadata),
+      ...this.generateOrderByOnDimensionValuesFields(objectMetadata),
+    };
+  }
+
+  private generateOrderByOnAggregateFields(
+    objectMetadata: ObjectMetadataEntity,
+  ): GraphQLInputFieldConfigMap {
+    const allAggregatedFields: GraphQLInputFieldConfigMap = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
       fieldMetadata.isNullable = true;
@@ -89,10 +100,31 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
         );
       }
 
-      Object.assign(allGeneratedFields, generatedFields);
+      Object.assign(allAggregatedFields, generatedFields);
     }
 
-    return allGeneratedFields;
+    const aggregateInputType = new GraphQLInputObjectType({
+      name: `${pascalCase(objectMetadata.nameSingular)}${GqlInputTypeDefinitionKind.OrderByWithGroupBy.toString()}AggregateInput`,
+      description: 'Aggregate-based ordering',
+      fields: () => allAggregatedFields,
+    }) as GraphQLInputObjectType;
+
+    return {
+      aggregate: {
+        type: aggregateInputType,
+        description: 'Order by aggregate values',
+      },
+    };
+  }
+
+  private generateOrderByOnDimensionValuesFields(
+    objectMetadata: ObjectMetadataEntity,
+  ) {
+    return this.objectMetadataOrderByBaseGenerator.generateFields({
+      objectMetadata,
+      logger: this.logger,
+      orderByDateGranularity: true,
+    });
   }
 
   private generateCompositeFieldOrderByInputType(

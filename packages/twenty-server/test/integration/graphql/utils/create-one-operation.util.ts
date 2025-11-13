@@ -3,9 +3,8 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-
-import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 type CreateOneOperationArgs<T> = PerformMetadataQueryParams<T> & {
   objectMetadataSingularName: string;

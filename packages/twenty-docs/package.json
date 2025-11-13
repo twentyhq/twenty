@@ -1,0 +1,21 @@
+{
+  "name": "twenty-docs",
+  "description": "Twenty documentation site powered by Mintlify",
+  "author": "",
+  "private": true,
+  "license": "AGPL-3.0",
+  "scripts": {
+    "dev": "mintlify dev",
+    "build": "mintlify build",
+    "fix-links": "bash scripts/fix-translated-links.sh",
+    "lint": "eslint **/*.mdx --max-warnings=0"
+  },
+  "dependencies": {
+    "mintlify": "latest"
+  },
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
+  }
+}

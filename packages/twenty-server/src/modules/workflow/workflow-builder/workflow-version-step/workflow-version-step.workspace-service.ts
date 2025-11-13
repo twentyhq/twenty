@@ -297,13 +297,15 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
+    const clonedStep =
+      await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
+        step: stepToDuplicate,
+        workspaceId,
+      });
     const duplicatedStep =
-      await this.workflowVersionStepOperationsWorkspaceService.createStepForDuplicate(
-        {
-          step: stepToDuplicate,
-          workspaceId,
-        },
-      );
+      this.workflowVersionStepOperationsWorkspaceService.markStepAsDuplicate({
+        step: clonedStep,
+      });
 
     const { updatedSteps, updatedTrigger } = insertStep({
       existingSteps: workflowVersion.steps ?? [],

@@ -44,7 +44,7 @@ export class IndexMetadataEntity
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @Column({ nullable: false, type: 'uuid' })

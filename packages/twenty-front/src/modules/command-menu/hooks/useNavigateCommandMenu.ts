@@ -2,8 +2,7 @@ import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/Com
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useCommandMenuCloseAnimationCompleteCleanup } from '@/command-menu/hooks/useCommandMenuCloseAnimationCompleteCleanup';
 import { useCopyContextStoreStates } from '@/command-menu/hooks/useCopyContextStoreAndActionMenuStates';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
-import { commandMenuNavigationRecordsState } from '@/command-menu/states/commandMenuNavigationRecordsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageInfoState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
@@ -122,8 +121,7 @@ export const useNavigateCommandMenu = () => {
             },
           ]);
 
-          set(commandMenuNavigationRecordsState, []);
-          set(commandMenuNavigationMorphItemByPageState, new Map());
+          set(commandMenuNavigationMorphItemsByPageState, new Map());
         } else {
           set(commandMenuNavigationStackState, [
             ...currentNavigationStack,

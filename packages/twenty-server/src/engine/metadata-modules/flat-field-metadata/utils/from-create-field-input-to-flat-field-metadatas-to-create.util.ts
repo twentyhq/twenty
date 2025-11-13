@@ -1,5 +1,8 @@
-import { t } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { msg } from '@lingui/core/macro';
+import {
+  FieldMetadataType,
+  type FieldMetadataOptions,
+} from 'twenty-shared/types';
 import {
   assertUnreachable,
   isDefined,
@@ -7,16 +10,15 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-
-import { type AllFlatEntityMaps } from 'src/engine/core-modules/common/types/all-flat-entity-maps.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
+import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 
@@ -59,7 +61,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       error: {
         code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: 'Provided object metadata id does not exist',
-        userFriendlyMessage: t`Created field metadata, parent object metadata not found`,
+        userFriendlyMessage: msg`Created field metadata, parent object metadata not found`,
       },
     };
   }
@@ -167,6 +169,18 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.RICH_TEXT_V2:
     case FieldMetadataType.ACTOR:
     case FieldMetadataType.ARRAY: {
+      const indexMetadatas: FlatIndexMetadata[] = [];
+
+      if (commonFlatFieldMetadata.isUnique) {
+        indexMetadatas.push(
+          generateIndexForFlatFieldMetadata({
+            flatFieldMetadata: commonFlatFieldMetadata,
+            flatObjectMetadata: parentFlatObjectMetadata,
+            workspaceId,
+          }),
+        );
+      }
+
       return {
         status: 'success',
         result: {
@@ -176,7 +190,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
               type: createFieldInput.type,
             },
           ],
-          indexMetadatas: [],
+          indexMetadatas,
         },
       };
     }

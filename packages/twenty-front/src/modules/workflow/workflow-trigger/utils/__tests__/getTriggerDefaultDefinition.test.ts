@@ -10,7 +10,6 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: [],
-        isIteratorEnabled: false,
       });
     }).toThrow();
   });
@@ -21,7 +20,6 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
-        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -43,7 +41,6 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_UPDATED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
-        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -65,7 +62,6 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_DELETED,
         type: 'DATABASE_EVENT',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
-        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'DATABASE_EVENT',
@@ -81,48 +77,25 @@ describe('getTriggerDefaultDefinition', () => {
     });
   });
 
-  it('returns a valid configuration for DATABASE_EVENT trigger type creation', () => {
-    expect(
-      getTriggerDefaultDefinition({
-        defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
-        type: 'DATABASE_EVENT',
-        activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
-        isIteratorEnabled: false,
-      }),
-    ).toStrictEqual({
-      type: 'DATABASE_EVENT',
-      name: 'Record is created',
-      settings: {
-        eventName: `${generatedMockObjectMetadataItems[0].nameSingular}.created`,
-        outputSchema: {},
-      },
-      position: {
-        x: 0,
-        y: 0,
-      },
-    });
-  });
-
   it('returns a valid configuration for MANUAL trigger type', () => {
     expect(
       getTriggerDefaultDefinition({
         defaultLabel: 'Launch manually',
         type: 'MANUAL',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
-        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'MANUAL',
       name: 'Launch manually',
       settings: {
-        objectType: generatedMockObjectMetadataItems[0].nameSingular,
         availability: {
-          objectNameSingular: generatedMockObjectMetadataItems[0].nameSingular,
-          type: 'SINGLE_RECORD',
+          type: 'GLOBAL',
+          locations: undefined,
         },
         outputSchema: {},
         icon: COMMAND_MENU_DEFAULT_ICON,
         isPinned: false,
+        objectType: undefined,
       },
       position: {
         x: 0,
@@ -137,7 +110,6 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'On a schedule',
         type: 'CRON',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
-        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'CRON',
@@ -160,7 +132,6 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: 'Webhook',
         type: 'WEBHOOK',
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
-        isIteratorEnabled: false,
       }),
     ).toStrictEqual({
       type: 'WEBHOOK',
@@ -183,7 +154,6 @@ describe('getTriggerDefaultDefinition', () => {
         defaultLabel: DatabaseTriggerDefaultLabel.RECORD_IS_CREATED,
         type: 'unknown' as any,
         activeNonSystemObjectMetadataItems: generatedMockObjectMetadataItems,
-        isIteratorEnabled: false,
       });
     }).toThrow('Unknown type: unknown');
   });

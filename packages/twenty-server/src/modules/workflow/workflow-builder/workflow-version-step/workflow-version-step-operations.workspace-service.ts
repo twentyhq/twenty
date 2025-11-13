@@ -245,6 +245,28 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.UPSERT_RECORD: {
+        const activeObjectMetadataItem =
+          await this.objectMetadataRepository.findOne({
+            where: { workspaceId, isActive: true, isSystem: false },
+          });
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Create or Update Record',
+            type: WorkflowActionType.UPSERT_RECORD,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                objectName: activeObjectMetadataItem?.nameSingular || '',
+                objectRecord: {},
+                fieldsToUpdate: [],
+              },
+            },
+          },
+        };
+      }
       case WorkflowActionType.FIND_RECORDS: {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
@@ -353,6 +375,27 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           additionalCreatedSteps: [emptyNodeStep],
         };
       }
+      case WorkflowActionType.DELAY: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Delay',
+            type: WorkflowActionType.DELAY,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                delayType: 'DURATION',
+                duration: {
+                  days: 0,
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0,
+                },
+              },
+            },
+          },
+        };
+      }
       default:
         throw new WorkflowVersionStepException(
           `WorkflowActionType '${type}' unknown`,
@@ -431,7 +474,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }, {});
   }
 
-  async createStepForDuplicate({
+  async cloneStep({
     step,
     workspaceId,
   }: {
@@ -439,8 +482,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workspaceId: string;
   }): Promise<WorkflowAction> {
     const duplicatedStepPosition = {
-      x: (step.position?.x ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
-      y: (step.position?.y ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+      x: step.position?.x ?? 0,
+      y: step.position?.y ?? 0,
     };
 
     switch (step.type) {
@@ -455,7 +498,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           ...step,
           id: v4(),
-          name: `${step.name} (Duplicate)`,
           nextStepIds: [],
           position: duplicatedStepPosition,
           settings: {
@@ -468,16 +510,41 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.ITERATOR: {
+        return {
+          ...step,
+          id: v4(),
+          nextStepIds: [],
+          position: duplicatedStepPosition,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              initialLoopStepIds: [],
+            },
+          },
+        };
+      }
       default: {
         return {
           ...step,
           id: v4(),
-          name: `${step.name} (Duplicate)`,
           nextStepIds: [],
           position: duplicatedStepPosition,
         };
       }
     }
+  }
+
+  markStepAsDuplicate({ step }: { step: WorkflowAction }): WorkflowAction {
+    return {
+      ...step,
+      name: `${step.name} (Duplicate)`,
+      position: {
+        x: (step.position?.x ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+        y: (step.position?.y ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+      },
+    };
   }
 
   async createEmptyNodeForIteratorStep({
@@ -515,7 +582,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     const emptyNodeStep: WorkflowEmptyAction = {
       id: v4(),
-      name: 'Empty Node',
+      name: 'Add an Action',
       type: WorkflowActionType.EMPTY,
       valid: true,
       nextStepIds: [iteratorStepId],

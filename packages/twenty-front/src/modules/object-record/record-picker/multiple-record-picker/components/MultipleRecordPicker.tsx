@@ -29,6 +29,7 @@ type MultipleRecordPickerProps = {
   onClickOutside: () => void;
   focusId: string;
   objectMetadataItemIdForCreate?: string;
+  dropdownWidth?: number;
 };
 
 export const MultipleRecordPicker = ({
@@ -40,6 +41,7 @@ export const MultipleRecordPicker = ({
   componentInstanceId,
   focusId,
   objectMetadataItemIdForCreate,
+  dropdownWidth,
 }: MultipleRecordPickerProps) => {
   const selectableListComponentInstanceId =
     getMultipleRecordPickerSelectableListId(componentInstanceId);
@@ -129,7 +131,7 @@ export const MultipleRecordPicker = ({
         containerRef={containerRef}
         onClickOutside={handleClickOutside}
       />
-      <DropdownContent ref={containerRef}>
+      <DropdownContent ref={containerRef} widthInPixels={dropdownWidth}>
         {layoutDirection === 'search-bar-on-bottom' && (
           <>
             {createNewButtonSection}

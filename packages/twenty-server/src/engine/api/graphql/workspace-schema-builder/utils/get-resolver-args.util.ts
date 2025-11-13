@@ -20,6 +20,10 @@ export const getResolverArgs = (
           type: GraphQLInt,
           isNullable: true,
         },
+        offset: {
+          type: GraphQLInt,
+          isNullable: true,
+        },
         before: {
           type: GraphQLString,
           isNullable: true,
@@ -170,6 +174,11 @@ export const getResolverArgs = (
         },
         orderBy: {
           kind: GqlInputTypeDefinitionKind.OrderByWithGroupBy,
+          isNullable: true,
+          isArray: true,
+        },
+        orderByForRecords: {
+          kind: GqlInputTypeDefinitionKind.OrderBy,
           isNullable: true,
           isArray: true,
         },

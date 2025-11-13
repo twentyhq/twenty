@@ -1,8 +1,8 @@
-import { lazy, Suspense } from 'react';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { lazy, Suspense } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 
 const MarkdownRenderer = lazy(async () => {
   const [{ default: Markdown }, { default: remarkGfm }] = await Promise.all([
@@ -11,11 +11,48 @@ const MarkdownRenderer = lazy(async () => {
   ]);
 
   return {
-    default: ({ children }: { children: string }) => (
-      <Markdown remarkPlugins={[remarkGfm]}>{children}</Markdown>
+    default: ({
+      children,
+      TableScrollContainer,
+    }: {
+      children: string;
+      TableScrollContainer: React.ComponentType<{ children: React.ReactNode }>;
+    }) => (
+      <Markdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          table: ({ children }) => (
+            <TableScrollContainer>
+              <table>{children}</table>
+            </TableScrollContainer>
+          ),
+        }}
+      >
+        {children}
+      </Markdown>
     ),
   };
 });
+
+const StyledTableScrollContainer = styled.div`
+  overflow-x: auto;
+
+  table {
+    border-collapse: collapse;
+    margin-block: ${({ theme }) => theme.spacing(2)};
+  }
+
+  th,
+  td {
+    border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+    padding: ${({ theme }) => theme.spacing(2)};
+  }
+
+  th {
+    background-color: ${({ theme }) => theme.background.secondary};
+    font-weight: ${({ theme }) => theme.font.weight.medium};
+  }
+`;
 
 const StyledSkeletonContainer = styled.div`
   display: flex;
@@ -62,7 +99,9 @@ const LoadingSkeleton = () => {
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
   return (
     <Suspense fallback={<LoadingSkeleton />}>
-      <MarkdownRenderer>{text}</MarkdownRenderer>
+      <MarkdownRenderer TableScrollContainer={StyledTableScrollContainer}>
+        {text}
+      </MarkdownRenderer>
     </Suspense>
   );
 };

@@ -4,7 +4,9 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useCompanyDefaultChartConfig } from '@/page-layout/hooks/useCompanyDefaultChartConfig';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
+import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -18,8 +20,13 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
+  const { buildBarChartFieldSelection } = useCompanyDefaultChartConfig();
+
   const { createPageLayoutGraphWidget } =
     useCreatePageLayoutGraphWidget(pageLayoutId);
+
+  const { createPageLayoutIframeWidget } =
+    useCreatePageLayoutIframeWidget(pageLayoutId);
 
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilComponentState(
@@ -29,7 +36,11 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const handleNavigateToGraphTypeSelect = () => {
     if (!isDefined(pageLayoutEditingWidgetId)) {
-      const newWidget = createPageLayoutGraphWidget(GraphType.BAR);
+      const fieldSelection = buildBarChartFieldSelection();
+      const newWidget = createPageLayoutGraphWidget({
+        graphType: GraphType.VERTICAL_BAR,
+        fieldSelection,
+      });
 
       setPageLayoutEditingWidgetId(newWidget.id);
     }
@@ -39,9 +50,15 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     });
   };
 
-  const handleNavigateToIframeConfig = () => {
+  const handleNavigateToIframeSettings = () => {
+    if (!isDefined(pageLayoutEditingWidgetId)) {
+      const newWidget = createPageLayoutIframeWidget('Untitled iFrame', null);
+
+      setPageLayoutEditingWidgetId(newWidget.id);
+    }
+
     navigatePageLayoutCommandMenu({
-      commandMenuPage: CommandMenuPages.PageLayoutIframeConfig,
+      commandMenuPage: CommandMenuPages.PageLayoutIframeSettings,
     });
   };
 
@@ -61,15 +78,13 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
         </SelectableListItem>
         <SelectableListItem
           itemId="iframe"
-          onEnter={() => {
-            handleNavigateToIframeConfig();
-          }}
+          onEnter={handleNavigateToIframeSettings}
         >
           <CommandMenuItem
             Icon={IconFrame}
-            label="iFrame"
+            label={t`iFrame`}
             id="iframe"
-            onClick={handleNavigateToIframeConfig}
+            onClick={handleNavigateToIframeSettings}
           />
         </SelectableListItem>
       </CommandGroup>

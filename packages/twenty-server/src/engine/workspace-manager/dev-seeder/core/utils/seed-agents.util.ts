@@ -1,14 +1,12 @@
-import { type DataSource } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
 import { AgentChatMessageRole } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
-} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
-const agentTableName = 'agent';
-const workspaceTableName = 'workspace';
 const agentChatThreadTableName = 'agentChatThread';
 const agentChatMessageTableName = 'agentChatMessage';
 const agentChatMessagePartTableName = 'agentChatMessagePart';
@@ -45,12 +43,17 @@ export const AGENT_CHAT_MESSAGE_PART_DATA_SEED_IDS = {
   YCOMBINATOR_MESSAGE_4_PART_1: '20202020-0000-4000-8000-000000000054',
 };
 
-const seedAgentChatThreads = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-  agentId: string,
-) => {
+type SeedChatThreadsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+};
+
+const seedChatThreads = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+}: SeedChatThreadsArgs) => {
   let threadId: string;
   let userWorkspaceId: string;
 
@@ -68,12 +71,11 @@ const seedAgentChatThreads = async (
 
   const now = new Date();
 
-  await dataSource
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${agentChatThreadTableName}`, [
       'id',
-      'agentId',
       'userWorkspaceId',
       'createdAt',
       'updatedAt',
@@ -82,7 +84,6 @@ const seedAgentChatThreads = async (
     .values([
       {
         id: threadId,
-        agentId,
         userWorkspaceId,
         createdAt: now,
         updatedAt: now,
@@ -93,12 +94,19 @@ const seedAgentChatThreads = async (
   return threadId;
 };
 
-const seedAgentChatMessages = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-  threadId: string,
-) => {
+type SeedChatMessagesArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+  threadId: string;
+};
+
+const seedChatMessages = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+  threadId,
+}: SeedChatMessagesArgs) => {
   let messageIds: string[];
   let partIds: string[];
   let messages: Array<{
@@ -279,7 +287,7 @@ const seedAgentChatMessages = async (
     );
   }
 
-  await dataSource
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${agentChatMessageTableName}`, [
@@ -292,7 +300,7 @@ const seedAgentChatMessages = async (
     .values(messages)
     .execute();
 
-  await dataSource
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${agentChatMessagePartTableName}`, [
@@ -308,76 +316,27 @@ const seedAgentChatMessages = async (
     .execute();
 };
 
-export const seedAgents = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
-  let agentId: string;
-  let agentName: string;
-  let agentLabel: string;
-  let agentDescription: string;
+type SeedAgentsArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+};
 
-  if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
-    agentId = AGENT_DATA_SEED_IDS.APPLE_DEFAULT_AGENT;
-    agentName = 'apple-ai-assistant';
-    agentLabel = 'Apple AI Assistant';
-    agentDescription =
-      'AI assistant for Apple workspace to help with tasks, insights, and workflow guidance';
-  } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
-    agentId = AGENT_DATA_SEED_IDS.YCOMBINATOR_DEFAULT_AGENT;
-    agentName = 'yc-ai-assistant';
-    agentLabel = 'YC AI Assistant';
-    agentDescription =
-      'AI assistant for YCombinator workspace to help with tasks, insights, and workflow guidance';
-  } else {
-    throw new Error(
-      `Unsupported workspace ID for agent seeding: ${workspaceId}`,
-    );
-  }
-
-  await dataSource
-    .createQueryBuilder()
-    .insert()
-    .into(`${schemaName}.${agentTableName}`, [
-      'id',
-      'name',
-      'label',
-      'description',
-      'prompt',
-      'modelId',
-      'responseFormat',
-      'workspaceId',
-    ])
-    .orIgnore()
-    .values([
-      {
-        id: agentId,
-        name: agentName,
-        label: agentLabel,
-        description: agentDescription,
-        prompt:
-          'You are a helpful AI assistant for this workspace. Help users with their tasks, provide insights about their data, and guide them through workflows. Be concise but thorough in your responses.',
-        modelId: 'auto',
-        responseFormat: null,
-        workspaceId,
-      },
-    ])
-    .execute();
-
-  await dataSource
-    .createQueryBuilder()
-    .update(`${schemaName}.${workspaceTableName}`)
-    .set({ defaultAgentId: agentId })
-    .where('id = :workspaceId', { workspaceId })
-    .execute();
-
-  const threadId = await seedAgentChatThreads(
-    dataSource,
+export const seedAgents = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+}: SeedAgentsArgs) => {
+  const threadId = await seedChatThreads({
+    queryRunner,
     schemaName,
     workspaceId,
-    agentId,
-  );
+  });
 
-  await seedAgentChatMessages(dataSource, schemaName, workspaceId, threadId);
+  await seedChatMessages({
+    queryRunner,
+    schemaName,
+    workspaceId,
+    threadId,
+  });
 };

@@ -5,7 +5,7 @@
 //
 // import { Repository } from 'typeorm';
 //
-// import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+// import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 // import {
 //   AuthException,
 //   AuthExceptionCode,
@@ -15,16 +15,16 @@
 // import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 // import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 // import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-// import { User } from 'src/engine/core-modules/user/user.entity';
+// import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 // import { userValidator } from 'src/engine/core-modules/user/user.validate';
 //
 // @Injectable()
 // export class OAuthService {
 //   constructor(
-//     @InjectRepository(User)
-//     private readonly userRepository: Repository<User>,
-//     @InjectRepository(AppToken)
-//     private readonly appTokenRepository: Repository<AppToken>,
+//     @InjectRepository(UserEntity)
+//     private readonly userRepository: Repository<UserEntity>,
+//     @InjectRepository(AppTokenEntity)
+//     private readonly appTokenRepository: Repository<AppTokenEntity>,
 //     private readonly accessTokenService: AccessTokenService,
 //     private readonly refreshTokenService: RefreshTokenService,
 //     private readonly loginTokenService: LoginTokenService,

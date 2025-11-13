@@ -13,7 +13,7 @@ import { PullRequests } from '@/app/_components/contributors/PullRequests';
 import { ThankYou } from '@/app/_components/contributors/ThankYou';
 import { Background } from '@/app/_components/oss-friends/Background';
 
-export async function generateMetadata(props: PageProps<'/contributors/[slug]'>): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await props.params;
   return {
     metadataBase: new URL(`https://twenty.com`),
@@ -28,7 +28,7 @@ export async function generateMetadata(props: PageProps<'/contributors/[slug]'>)
   };
 }
 
-export default async function Page(props: PageProps<'/contributors/[slug]'>) {
+export default async function Page(props: { params: Promise<{ slug: string }> }) {
   const { slug } = await props.params;
   try {
     const contributorActivity = await getContributorActivity(slug);

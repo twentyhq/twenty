@@ -1,15 +1,14 @@
 import { plainToInstance } from 'class-transformer';
 import { validateSync, type ValidationError } from 'class-validator';
 
+import { AggregateChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/bar-chart-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/line-chart-configuration.dto';
-import { NumberChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/number-chart-configuration.dto';
 import { PieChartConfigurationDTO } from 'src/engine/core-modules/page-layout/dtos/pie-chart-configuration.dto';
 import { type WidgetConfigurationInterface } from 'src/engine/core-modules/page-layout/dtos/widget-configuration.interface';
 import { GraphType } from 'src/engine/core-modules/page-layout/enums/graph-type.enum';
-import { WidgetConfigurationType } from 'src/engine/core-modules/page-layout/enums/widget-configuration-type.enum';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 
 const formatValidationErrors = (errors: ValidationError[]): string => {
@@ -24,29 +23,42 @@ const formatValidationErrors = (errors: ValidationError[]): string => {
     .join('; ');
 };
 
-const validateGraphConfiguration = (
-  configuration: Record<string, unknown>,
-): WidgetConfigurationInterface | null => {
+const validateGraphConfiguration = ({
+  configuration,
+  isDashboardV2Enabled,
+}: {
+  configuration: Record<string, unknown>;
+  isDashboardV2Enabled: boolean;
+}): WidgetConfigurationInterface | null => {
   const graphType = configuration.graphType as GraphType;
 
   if (!graphType || !Object.values(GraphType).includes(graphType)) {
     return null;
   }
 
+  const v2ChartTypes = [GraphType.PIE, GraphType.LINE, GraphType.GAUGE];
+
+  if (v2ChartTypes.includes(graphType) && !isDashboardV2Enabled) {
+    throw new Error(
+      `Chart type ${graphType} requires IS_DASHBOARD_V2_ENABLED feature flag`,
+    );
+  }
+
   switch (graphType) {
-    case GraphType.BAR: {
+    case GraphType.VERTICAL_BAR:
+    case GraphType.HORIZONTAL_BAR: {
       const instance = plainToInstance(BarChartConfigurationDTO, configuration);
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.BAR_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
     case GraphType.LINE: {
       const instance = plainToInstance(
@@ -54,47 +66,47 @@ const validateGraphConfiguration = (
         configuration,
       );
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.LINE_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
     case GraphType.PIE: {
       const instance = plainToInstance(PieChartConfigurationDTO, configuration);
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.PIE_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
-    case GraphType.NUMBER: {
+    case GraphType.AGGREGATE: {
       const instance = plainToInstance(
-        NumberChartConfigurationDTO,
+        AggregateChartConfigurationDTO,
         configuration,
       );
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.NUMBER_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
     case GraphType.GAUGE: {
       const instance = plainToInstance(
@@ -102,16 +114,16 @@ const validateGraphConfiguration = (
         configuration,
       );
 
-      const errors = validateSync(instance);
+      const errors = validateSync(instance, {
+        whitelist: true,
+        forbidUnknownValues: true,
+      });
 
       if (errors.length > 0) {
         throw errors;
       }
 
-      return {
-        ...instance,
-        configurationType: WidgetConfigurationType.GAUGE_CHART_CONFIG,
-      } as WidgetConfigurationInterface;
+      return instance;
     }
     default:
       return null;
@@ -123,22 +135,27 @@ const validateIframeConfiguration = (
 ): WidgetConfigurationInterface | null => {
   const instance = plainToInstance(IframeConfigurationDTO, configuration);
 
-  const errors = validateSync(instance);
+  const errors = validateSync(instance, {
+    whitelist: true,
+    forbidUnknownValues: true,
+  });
 
   if (errors.length > 0) {
     throw errors;
   }
 
-  return {
-    ...instance,
-    configurationType: WidgetConfigurationType.IFRAME_CONFIG,
-  } as WidgetConfigurationInterface;
+  return instance;
 };
 
-export const validateAndTransformWidgetConfiguration = (
-  type: WidgetType,
-  configuration: unknown,
-): WidgetConfigurationInterface | null => {
+export const validateAndTransformWidgetConfiguration = ({
+  type,
+  configuration,
+  isDashboardV2Enabled,
+}: {
+  type: WidgetType;
+  configuration: unknown;
+  isDashboardV2Enabled: boolean;
+}): WidgetConfigurationInterface | null => {
   if (!configuration || typeof configuration !== 'object') {
     throw new Error('Invalid configuration: not an object');
   }
@@ -146,9 +163,10 @@ export const validateAndTransformWidgetConfiguration = (
   try {
     switch (type) {
       case WidgetType.GRAPH:
-        return validateGraphConfiguration(
-          configuration as Record<string, unknown>,
-        );
+        return validateGraphConfiguration({
+          configuration: configuration as Record<string, unknown>,
+          isDashboardV2Enabled,
+        });
       case WidgetType.IFRAME:
         return validateIframeConfiguration(configuration);
       default:

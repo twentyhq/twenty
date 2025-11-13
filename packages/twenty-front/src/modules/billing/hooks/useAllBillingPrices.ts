@@ -1,8 +1,8 @@
-import {
-  type BillingPriceLicensedDto,
-  type BillingPriceMeteredDto,
-} from '~/generated/graphql';
 import { usePlans } from '@/billing/hooks/usePlans';
+import {
+  type BillingPriceLicensed,
+  type BillingPriceMetered,
+} from '~/generated/graphql';
 
 export const useAllBillingPrices = () => {
   const { listPlans } = usePlans();
@@ -13,7 +13,7 @@ export const useAllBillingPrices = () => {
         ({ prices }) => prices,
       );
     })
-    .flat(2) as Array<BillingPriceLicensedDto | BillingPriceMeteredDto>;
+    .flat(2) as Array<BillingPriceLicensed | BillingPriceMetered>;
 
   return { allBillingPrices };
 };

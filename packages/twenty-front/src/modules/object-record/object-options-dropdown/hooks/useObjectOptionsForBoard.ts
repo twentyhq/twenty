@@ -2,7 +2,7 @@ import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
@@ -41,7 +41,7 @@ export const useObjectOptionsForBoard = ({
   });
 
   const { columnDefinitions } =
-    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+    useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
   const availableColumnDefinitions = useMemo(
     () =>

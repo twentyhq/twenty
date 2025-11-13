@@ -1,9 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not, Repository } from 'typeorm';
+import { type QueryRunner, In, Not, Repository } from 'typeorm';
 
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -14,7 +15,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
   constructor(
@@ -22,21 +23,24 @@ export class UserRoleService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
-    @InjectRepository(UserWorkspace)
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
 
-  public async assignRoleToUserWorkspace({
-    workspaceId,
-    userWorkspaceId,
-    roleId,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string;
-    roleId: string;
-  }): Promise<void> {
+  public async assignRoleToUserWorkspace(
+    {
+      workspaceId,
+      userWorkspaceId,
+      roleId,
+    }: {
+      workspaceId: string;
+      userWorkspaceId: string;
+      roleId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<void> {
     const validationResult = await this.validateAssignRoleInput({
       userWorkspaceId,
       workspaceId,
@@ -47,13 +51,17 @@ export class UserRoleService {
       return;
     }
 
-    const newRoleTarget = await this.roleTargetsRepository.save({
+    const roleTargetsRepo = queryRunner
+      ? queryRunner.manager.getRepository(RoleTargetsEntity)
+      : this.roleTargetsRepository;
+
+    const newRoleTarget = await roleTargetsRepo.save({
       roleId,
       userWorkspaceId,
       workspaceId,
     });
 
-    await this.roleTargetsRepository.delete({
+    await roleTargetsRepo.delete({
       userWorkspaceId,
       workspaceId,
       id: Not(newRoleTarget.id),
@@ -152,6 +160,7 @@ export class UserRoleService {
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMembers = await workspaceMemberRepository.find({
@@ -196,8 +205,7 @@ export class UserRoleService {
         PermissionsExceptionMessage.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE,
         {
-          userFriendlyMessage:
-            'Your role in this workspace could not be found. Please contact your workspace administrator.',
+          userFriendlyMessage: msg`Your role in this workspace could not be found. Please contact your workspace administrator.`,
         },
       );
     }
@@ -235,8 +243,7 @@ export class UserRoleService {
         'User workspace not found',
         PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'Your workspace membership could not be found. You may no longer have access to this workspace.',
+          userFriendlyMessage: msg`Your workspace membership could not be found. You may no longer have access to this workspace.`,
         },
       );
     }
@@ -252,8 +259,7 @@ export class UserRoleService {
         'Role not found',
         PermissionsExceptionCode.ROLE_NOT_FOUND,
         {
-          userFriendlyMessage:
-            'The role you are trying to assign could not be found. It may have been deleted.',
+          userFriendlyMessage: msg`The role you are trying to assign could not be found. It may have been deleted.`,
         },
       );
     }
@@ -263,8 +269,7 @@ export class UserRoleService {
         `Role "${role.label}" cannot be assigned to users`,
         PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
         {
-          userFriendlyMessage:
-            'This role cannot be assigned to users. Please select a different role.',
+          userFriendlyMessage: msg`This role cannot be assigned to users. Please select a different role.`,
         },
       );
     }
@@ -312,8 +317,7 @@ export class UserRoleService {
         PermissionsExceptionMessage.CANNOT_UNASSIGN_LAST_ADMIN,
         PermissionsExceptionCode.CANNOT_UNASSIGN_LAST_ADMIN,
         {
-          userFriendlyMessage:
-            'You cannot remove the admin role from the last administrator. Please assign another administrator first.',
+          userFriendlyMessage: msg`You cannot remove the admin role from the last administrator. Please assign another administrator first.`,
         },
       );
     }

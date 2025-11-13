@@ -5,17 +5,18 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
-import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
 
-import { MicrosoftHandleErrorService } from './microsoft-handle-error.service';
+import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
 
 const mockMessageIds = [
   'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAAA8ZAfgAA',
   'AAkALgAAAAAAHYQDEapmEc2byACqAC-EWg0AGnUPtcQC-Eiwmc39SmMpPgAAAiVYkAAA',
 ];
 
+const accessToken = 'replace-with-your-access-token';
 const refreshToken = 'replace-with-your-refresh-token';
 
 xdescribe('Microsoft dev tests : get messages service', () => {
@@ -26,8 +27,11 @@ xdescribe('Microsoft dev tests : get messages service', () => {
       imports: [TwentyConfigModule.forRoot()],
       providers: [
         MicrosoftGetMessagesService,
-        MicrosoftHandleErrorService,
-        MicrosoftClientProvider,
+        {
+          provide: MicrosoftMessagesImportErrorHandler,
+          useValue: { handleError: jest.fn() },
+        },
+        OAuth2ClientManagerService,
         MicrosoftOAuth2ClientManagerService,
         MicrosoftFetchByBatchService,
         ConfigService,
@@ -44,6 +48,7 @@ xdescribe('Microsoft dev tests : get messages service', () => {
     provider: ConnectedAccountProvider.MICROSOFT,
     handle: 'John.Walker@outlook.fr',
     handleAliases: '',
+    accessToken: accessToken,
     refreshToken: refreshToken,
   };
 

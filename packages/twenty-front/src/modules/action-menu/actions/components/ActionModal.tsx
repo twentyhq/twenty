@@ -14,7 +14,7 @@ import { type ButtonAccent } from 'twenty-ui/input';
 export type ActionModalProps = {
   title: string;
   subtitle: ReactNode;
-  onConfirmClick: () => void;
+  onConfirmClick: () => void | Promise<void>;
   confirmButtonText?: string;
   confirmButtonAccent?: ButtonAccent;
   isLoading?: boolean;
@@ -39,8 +39,8 @@ export const ActionModal = ({
     closeSidePanelOnCommandMenuListActionExecution,
   });
 
-  const handleConfirmClick = () => {
-    onConfirmClick();
+  const handleConfirmClick = async () => {
+    await onConfirmClick();
     closeActionMenu();
   };
 

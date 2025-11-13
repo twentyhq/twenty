@@ -8,6 +8,7 @@ import {
   CalendarEventImportDriverException,
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
+import { CalendarAccountAuthenticationService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-account-authentication.service';
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
@@ -15,10 +16,7 @@ import {
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import {
-  CalendarChannelSyncStage,
-  type CalendarChannelWorkspaceEntity,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { type CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
@@ -32,6 +30,7 @@ export class CalendarFetchEventsService {
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
     private readonly calendarEventsImportService: CalendarEventsImportService,
+    private readonly calendarAccountAuthenticationService: CalendarAccountAuthenticationService,
   ) {}
 
   public async fetchCalendarEvents(
@@ -39,20 +38,29 @@ export class CalendarFetchEventsService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    const syncStep =
-      calendarChannel.syncStage ===
-      CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING
-        ? CalendarEventImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH
-        : CalendarEventImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH;
-
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       [calendarChannel.id],
     );
 
     try {
+      const { accessToken, refreshToken } =
+        await this.calendarAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+          {
+            connectedAccount,
+            workspaceId,
+            calendarChannelId: calendarChannel.id,
+          },
+        );
+
+      const connectedAccountWithFreshTokens = {
+        ...connectedAccount,
+        accessToken,
+        refreshToken,
+      };
+
       const getCalendarEventsResponse =
         await this.getCalendarEventsService.getCalendarEvents(
-          connectedAccount,
+          connectedAccountWithFreshTokens,
           calendarChannel.syncCursor,
         );
 
@@ -125,7 +133,7 @@ export class CalendarFetchEventsService {
       this.logger.error(error);
       await this.calendarEventImportErrorHandlerService.handleDriverException(
         error,
-        syncStep,
+        CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH,
         calendarChannel,
         workspaceId,
       );

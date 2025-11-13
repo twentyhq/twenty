@@ -18,15 +18,15 @@ import {
   EmailingDomainStatus,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'emailingDomain', schema: 'core' })
-@ObjectType()
+@ObjectType('EmailingDomain')
 @Unique('IDX_EMAILING_DOMAIN_DOMAIN_WORKSPACE_ID_UNIQUE', [
   'domain',
   'workspaceId',
 ])
-export class EmailingDomain {
+export class EmailingDomainEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -60,12 +60,12 @@ export class EmailingDomain {
   @Column({ type: 'timestamptz', nullable: true })
   verifiedAt: Date | null;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.emailingDomains, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.emailingDomains, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 }

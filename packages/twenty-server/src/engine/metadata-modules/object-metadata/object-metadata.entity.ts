@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -11,14 +10,16 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 @Entity('objectMetadata')
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
@@ -29,15 +30,15 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
   'namePlural',
   'workspaceId',
 ])
-export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
+export class ObjectMetadataEntity
+  extends SyncableEntity
+  implements Required<ObjectMetadataEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: true, type: 'uuid' })
   standardId: string | null;
-
-  @Column({ nullable: true, type: 'uuid' })
-  applicationId: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   dataSourceId: string;
@@ -136,17 +137,9 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @ManyToOne(() => ApplicationEntity, (application) => application.objects, {
-    onDelete: 'CASCADE',
-    nullable: true,
-  })
-  @JoinColumn({ name: 'applicationId' })
-  application: Relation<ApplicationEntity> | null;
-
   @OneToMany(
     () => ObjectPermissionEntity,
-    (objectPermission: ObjectPermissionEntity) =>
-      objectPermission.objectMetadata,
+    (objectPermission) => objectPermission.objectMetadata,
     {
       cascade: true,
     },
@@ -155,10 +148,15 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
 
   @OneToMany(
     () => FieldPermissionEntity,
-    (fieldPermission: FieldPermissionEntity) => fieldPermission.objectMetadata,
+    (fieldPermission) => fieldPermission.objectMetadata,
     {
       cascade: true,
     },
   )
   fieldPermissions: Relation<FieldPermissionEntity[]>;
+
+  @OneToMany(() => ViewEntity, (view) => view.objectMetadata, {
+    cascade: true,
+  })
+  views: Relation<ViewEntity[]>;
 }

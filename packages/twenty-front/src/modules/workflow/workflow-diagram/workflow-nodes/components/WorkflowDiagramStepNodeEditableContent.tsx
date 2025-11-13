@@ -15,13 +15,12 @@ import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-node
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
+import { isNodeTitleHighlighted } from '@/workflow/workflow-diagram/workflow-nodes/utils/isNodeTitleHighlighted';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { IconTrash } from 'twenty-ui/display';
-import { FloatingIconButton } from 'twenty-ui/input';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -37,27 +36,15 @@ const StyledAddStepButtonContainer = styled.div<{
   transform: translateX(-50%) translateY(100%);
 `;
 
-const StyledDeleteButtonContainer = styled.div`
-  display: flex;
-  align-items: center;
-  position: absolute;
-  right: ${({ theme }) => theme.spacing(-4)};
-  bottom: 0;
-  top: 0;
-  transform: translateX(100%);
-`;
-
 export const WorkflowDiagramStepNodeEditableContent = ({
   id,
   data,
   selected,
   onClick,
-  onDelete,
 }: {
   id: string;
   data: WorkflowDiagramStepNodeData;
   selected: boolean;
-  onDelete: () => void;
   onClick?: () => void;
 }) => {
   const { i18n } = useLingui();
@@ -87,6 +74,11 @@ export const WorkflowDiagramStepNodeEditableContent = ({
     event.stopPropagation();
   };
 
+  const nodeTitleHighlighted = isNodeTitleHighlighted({
+    nodeType: data.nodeType,
+    actionType: data.nodeType === 'action' ? data.actionType : undefined,
+  });
+
   return (
     <>
       <WorkflowNodeContainer
@@ -107,18 +99,10 @@ export const WorkflowDiagramStepNodeEditableContent = ({
             <WorkflowNodeLabel>{capitalize(data.nodeType)}</WorkflowNodeLabel>
           </WorkflowNodeLabelWithCounterPart>
 
-          <WorkflowNodeTitle highlight>{data.name}</WorkflowNodeTitle>
+          <WorkflowNodeTitle highlight={nodeTitleHighlighted}>
+            {data.name}
+          </WorkflowNodeTitle>
         </WorkflowNodeRightPart>
-
-        {selected && (
-          <StyledDeleteButtonContainer>
-            <FloatingIconButton
-              size="medium"
-              Icon={IconTrash}
-              onClick={onDelete}
-            />
-          </StyledDeleteButtonContainer>
-        )}
       </WorkflowNodeContainer>
 
       {!data.hasNextStepIds && !isConnectionInProgress && (

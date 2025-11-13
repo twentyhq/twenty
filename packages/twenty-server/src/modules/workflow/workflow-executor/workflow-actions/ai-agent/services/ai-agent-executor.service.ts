@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateObject, generateText, stepCountIs, ToolSet } from 'ai';
 import { Repository } from 'typeorm';
+import { type ActorMetadata } from 'twenty-shared/types';
 
+import { AI_TELEMETRY_CONFIG } from 'src/engine/core-modules/ai/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
@@ -17,7 +19,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 
 @Injectable()
@@ -28,14 +30,15 @@ export class AiAgentExecutorService {
     private readonly toolAdapterService: ToolAdapterService,
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
   ) {}
 
   private async getTools(
     agentId: string,
     workspaceId: string,
+    actorContext?: ActorMetadata,
+    rolePermissionConfig?: RolePermissionConfig,
+    userWorkspaceId?: string,
   ): Promise<ToolSet> {
     const roleTarget = await this.roleTargetsRepository.findOne({
       where: {
@@ -45,27 +48,36 @@ export class AiAgentExecutorService {
       select: ['roleId'],
     });
 
-    const role = await this.roleRepository.findOne({
-      where: {
-        id: roleTarget?.roleId,
-        workspaceId,
-      },
-    });
+    const agentRoleId = roleTarget?.roleId;
 
-    if (!roleTarget?.roleId || !role) {
-      const actionTools = await this.toolAdapterService.getTools();
+    if (!rolePermissionConfig && !agentRoleId) {
+      return await this.toolAdapterService.getTools();
+    }
 
-      return { ...actionTools };
+    let effectiveRoleContext: RolePermissionConfig;
+
+    if (
+      rolePermissionConfig &&
+      ('intersectionOf' in rolePermissionConfig ||
+        'unionOf' in rolePermissionConfig)
+    ) {
+      effectiveRoleContext = rolePermissionConfig;
+    } else if (agentRoleId) {
+      effectiveRoleContext = { unionOf: [agentRoleId] };
+    } else {
+      return await this.toolAdapterService.getTools();
     }
 
     const actionTools = await this.toolAdapterService.getTools(
-      role.id,
+      effectiveRoleContext,
       workspaceId,
     );
 
     const databaseTools = await this.toolService.listTools(
-      role.id,
+      effectiveRoleContext,
       workspaceId,
+      actorContext,
+      userWorkspaceId,
     );
 
     return {
@@ -78,17 +90,29 @@ export class AiAgentExecutorService {
     agent,
     schema,
     userPrompt,
+    actorContext,
+    rolePermissionConfig,
+    userWorkspaceId,
   }: {
     agent: AgentEntity | null;
     schema: OutputSchema;
     userPrompt: string;
+    actorContext?: ActorMetadata;
+    rolePermissionConfig?: RolePermissionConfig;
+    userWorkspaceId?: string;
   }): Promise<AgentExecutionResult> {
     try {
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       const tools = agent
-        ? await this.getTools(agent.id, agent.workspaceId)
+        ? await this.getTools(
+            agent.id,
+            agent.workspaceId,
+            actorContext,
+            rolePermissionConfig,
+            userWorkspaceId,
+          )
         : {};
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
@@ -99,6 +123,7 @@ export class AiAgentExecutorService {
         model: registeredModel.model,
         prompt: userPrompt,
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
       if (Object.keys(schema).length === 0) {
@@ -116,6 +141,7 @@ export class AiAgentExecutorService {
 
                  Please generate the structured output based on the execution results and context above.`,
         schema: convertOutputSchemaToZod(schema),
+        experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
       return {

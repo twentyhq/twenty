@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { ConfigVariablesGroupData } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
+import { ConfigVariablesGroupDataDTO } from 'src/engine/core-modules/admin-panel/dtos/config-variables-group.dto';
 
-@ObjectType()
+@ObjectType('ConfigVariablesOutput')
 export class ConfigVariablesOutput {
-  @Field(() => [ConfigVariablesGroupData])
-  groups: ConfigVariablesGroupData[];
+  @Field(() => [ConfigVariablesGroupDataDTO])
+  groups: ConfigVariablesGroupDataDTO[];
 }

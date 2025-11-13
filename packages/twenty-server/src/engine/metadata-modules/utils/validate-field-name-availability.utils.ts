@@ -1,7 +1,9 @@
-import { t } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { msg } from '@lingui/core/macro';
+import {
+  FieldMetadataType,
+  compositeTypeDefinitions,
+} from 'twenty-shared/types';
 
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
@@ -54,7 +56,7 @@ export const validateFieldNameAvailabilityOrThrow = ({
       `Name "${name}" is not available as it is already used by another field`,
       InvalidMetadataExceptionCode.NOT_AVAILABLE,
       {
-        userFriendlyMessage: t`This name is not available as it is already used by another field.`,
+        userFriendlyMessage: msg`This name is not available as it is already used by another field.`,
       },
     );
   }
@@ -64,7 +66,7 @@ export const validateFieldNameAvailabilityOrThrow = ({
       `Name "${name}" is not available`,
       InvalidMetadataExceptionCode.RESERVED_KEYWORD,
       {
-        userFriendlyMessage: t`This name is not available.`,
+        userFriendlyMessage: msg`This name is not available.`,
       },
     );
   }

@@ -12,11 +12,11 @@ import {
 
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'publicDomain', schema: 'core' })
-@ObjectType()
-export class PublicDomain {
+@ObjectType('PublicDomain')
+export class PublicDomainEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -35,9 +35,9 @@ export class PublicDomain {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.publicDomains, {
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.publicDomains, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Relation<WorkspaceEntity>;
 }

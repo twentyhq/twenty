@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
+import { FieldActorSource } from 'twenty-shared/types';
 
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
@@ -87,7 +87,11 @@ export const prefillWorkflows = async (
         trigger: JSON.stringify({
           name: 'Launch manually',
           type: 'MANUAL',
-          settings: { outputSchema: {}, icon: 'IconUserPlus' },
+          settings: {
+            outputSchema: {},
+            icon: 'IconUserPlus',
+            availability: { type: 'GLOBAL', locations: undefined },
+          },
           nextStepIds: ['6e089bc9-aabd-435f-865f-f31c01c8f4a7'],
         }),
         steps: JSON.stringify([

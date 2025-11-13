@@ -1,4 +1,4 @@
-import { ESLintUtils, TSESTree } from '@typescript-eslint/utils';
+import { ESLintUtils, type TSESTree } from '@typescript-eslint/utils';
 import ts from 'typescript';
 
 export const RULE_NAME = 'explicit-boolean-predicates-in-if';

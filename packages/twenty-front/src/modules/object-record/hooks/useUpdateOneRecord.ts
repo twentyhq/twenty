@@ -7,11 +7,13 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
+import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
@@ -36,14 +38,21 @@ export const useUpdateOneRecord = <
   objectNameSingular,
   recordGqlFields,
 }: useUpdateOneRecordProps) => {
+  const { registerObjectOperation } = useRegisterObjectOperation();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  const computedRecordGqlFields =
-    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+  const { recordGqlFields: depthOneRecordGqlFields } =
+    useGenerateDepthRecordGqlFieldsFromObject({
+      objectNameSingular,
+      depth: 1,
+    });
+
+  const computedRecordGqlFields = recordGqlFields ?? depthOneRecordGqlFields;
 
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular,
@@ -109,9 +118,11 @@ export const useUpdateOneRecord = <
       isDefined(cachedRecordWithConnection);
 
     if (shouldHandleOptimisticCache) {
-      const recordGqlFields = computeDepthOneRecordGqlFieldsFromRecord({
+      const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
         objectMetadataItem,
+        objectMetadataItems,
         record: optimisticRecordInput,
+        depth: 1,
       });
 
       updateRecordFromCache({
@@ -129,6 +140,8 @@ export const useUpdateOneRecord = <
         currentRecord: cachedRecordWithConnection,
         updatedRecord: optimisticRecordWithConnection,
         objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+        upsertRecordsInStore,
       });
     }
 
@@ -158,6 +171,8 @@ export const useUpdateOneRecord = <
             currentRecord: computedOptimisticRecord,
             updatedRecord: record,
             objectMetadataItems,
+            objectPermissionsByObjectMetadataId,
+            upsertRecordsInStore,
           });
         },
       })
@@ -171,9 +186,11 @@ export const useUpdateOneRecord = <
         ).filter((diffKey) => !cachedRecordKeys.has(diffKey));
 
         const recordGqlFields = {
-          ...computeDepthOneRecordGqlFieldsFromRecord({
+          ...generateDepthRecordGqlFieldsFromRecord({
             objectMetadataItem,
+            objectMetadataItems,
             record: cachedRecord,
+            depth: 1,
           }),
           ...buildRecordFromKeysWithSameValue(
             recordKeysAddedByOptimisticCache,
@@ -202,13 +219,23 @@ export const useUpdateOneRecord = <
           currentRecord: optimisticRecordWithConnection,
           updatedRecord: cachedRecordWithConnection,
           objectMetadataItems,
+          objectPermissionsByObjectMetadataId,
+          upsertRecordsInStore,
         });
 
         throw error;
       });
 
     await refetchAggregateQueries();
-    return updatedRecord?.data?.[mutationResponseField] ?? null;
+
+    const udpatedRecord = updatedRecord?.data?.[mutationResponseField] ?? null;
+
+    registerObjectOperation(objectNameSingular, {
+      type: 'update-one',
+      result: { updatedRecord, updateInput: updateOneRecordInput },
+    });
+
+    return udpatedRecord;
   };
 
   return {

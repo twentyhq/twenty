@@ -7,8 +7,11 @@ export const transformStandardAgentDefinitionToFlatAgent = (
   standardAgentDefinition: StandardAgentDefinition,
   workspaceId: string,
 ): FlatAgent => {
+  const { standardRoleId: _standardRoleId, ...agentData } =
+    standardAgentDefinition;
+
   return {
-    ...standardAgentDefinition,
+    ...agentData,
     id: v4(),
     workspaceId,
     universalIdentifier: standardAgentDefinition.standardId || v4(),

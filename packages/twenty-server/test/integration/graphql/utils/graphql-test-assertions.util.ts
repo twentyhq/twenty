@@ -1,5 +1,5 @@
-import { jestExpectToBeDefined } from 'test/utils/expect-to-be-defined.util.test';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import {
   type BaseGraphQLError,

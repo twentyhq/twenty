@@ -23,11 +23,12 @@ import { MicrosoftAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth/microsoft-apis')
@@ -37,27 +38,35 @@ export class MicrosoftAPIsAuthController {
     private readonly microsoftAPIsService: MicrosoftAPIsService,
     private readonly transientTokenService: TransientTokenService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly domainManagerService: DomainManagerService,
+    private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly onboardingService: OnboardingService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   @Get()
-  @UseGuards(MicrosoftAPIsOauthRequestCodeGuard, PublicEndpointGuard)
+  @UseGuards(
+    MicrosoftAPIsOauthRequestCodeGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async MicrosoftAuth() {
     // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
     return;
   }
 
   @Get('get-access-token')
-  @UseGuards(MicrosoftAPIsOauthExchangeCodeForTokenGuard, PublicEndpointGuard)
+  @UseGuards(
+    MicrosoftAPIsOauthExchangeCodeForTokenGuard,
+    PublicEndpointGuard,
+    NoPermissionGuard,
+  )
   async MicrosoftAuthGetAccessToken(
     @Req() req: MicrosoftAPIsRequest,
     @Res() res: Response,
   ) {
-    let workspace: Workspace | null = null;
+    let workspace: WorkspaceEntity | null = null;
 
     try {
       const { user } = req;
@@ -95,15 +104,16 @@ export class MicrosoftAPIsAuthController {
 
       const handle = emails[0].value;
 
-      await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
-        handle,
-        workspaceMemberId: workspaceMemberId,
-        workspaceId: workspaceId,
-        accessToken,
-        refreshToken,
-        calendarVisibility,
-        messageVisibility,
-      });
+      const connectedAccountId =
+        await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
+          handle,
+          workspaceMemberId: workspaceMemberId,
+          workspaceId: workspaceId,
+          accessToken,
+          refreshToken,
+          calendarVisibility,
+          messageVisibility,
+        });
 
       if (userId) {
         await this.onboardingService.setOnboardingConnectAccountPending({
@@ -120,15 +130,18 @@ export class MicrosoftAPIsAuthController {
         );
       }
 
-      return res.redirect(
-        this.domainManagerService
-          .buildWorkspaceURL({
-            workspace,
-            pathname:
-              redirectLocation || getSettingsPath(SettingsPath.Accounts),
-          })
-          .toString(),
-      );
+      const pathname =
+        redirectLocation ||
+        getSettingsPath(SettingsPath.AccountsConfiguration, {
+          connectedAccountId,
+        });
+
+      const url = this.workspaceDomainsService.buildWorkspaceURL({
+        workspace,
+        pathname,
+      });
+
+      return res.redirect(url.toString());
     } catch (error) {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({

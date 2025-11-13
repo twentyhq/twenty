@@ -1,11 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
+import { type LinkMetadataNullable } from 'twenty-shared/types';
 
 import {
   RecordTransformerException,
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
-import { type LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export const removeEmptyLinks = ({
   primaryLinkUrl,

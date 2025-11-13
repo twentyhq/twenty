@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
-import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { TwentyORMExceptionCode } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { GetDataFromCacheWithRecomputeService } from 'src/engine/workspace-cache-storage/services/get-data-from-cache-with-recompute.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -18,8 +18,8 @@ export class WorkspaceFeatureFlagsMapCacheService {
 
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    @InjectRepository(FeatureFlag)
-    private readonly featureFlagRepository: Repository<FeatureFlag>,
+    @InjectRepository(FeatureFlagEntity)
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly getFromCacheWithRecomputeService: GetDataFromCacheWithRecomputeService<
       string,
       FeatureFlagMap

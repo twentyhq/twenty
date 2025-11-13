@@ -5,11 +5,16 @@ import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/dr
 import { EmailingDomainDto } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+)
 @UsePipes(ResolverValidationPipe)
 @Resolver(() => EmailingDomainDto)
 export class EmailingDomainResolver {
@@ -19,7 +24,7 @@ export class EmailingDomainResolver {
   async createEmailingDomain(
     @Args('domain') domain: string,
     @Args('driver') driver: EmailingDomainDriver,
-    @AuthWorkspace() currentWorkspace: Workspace,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<EmailingDomainDto> {
     const emailingDomain =
       await this.emailingDomainService.createEmailingDomain(
@@ -34,7 +39,7 @@ export class EmailingDomainResolver {
   @Mutation(() => Boolean)
   async deleteEmailingDomain(
     @Args('id') id: string,
-    @AuthWorkspace() currentWorkspace: Workspace,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<boolean> {
     await this.emailingDomainService.deleteEmailingDomain(currentWorkspace, id);
 
@@ -44,7 +49,7 @@ export class EmailingDomainResolver {
   @Mutation(() => EmailingDomainDto)
   async verifyEmailingDomain(
     @Args('id') id: string,
-    @AuthWorkspace() currentWorkspace: Workspace,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<EmailingDomainDto> {
     const emailingDomain =
       await this.emailingDomainService.verifyEmailingDomain(
@@ -57,7 +62,7 @@ export class EmailingDomainResolver {
 
   @Query(() => [EmailingDomainDto])
   async getEmailingDomains(
-    @AuthWorkspace() currentWorkspace: Workspace,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<EmailingDomainDto[]> {
     const emailingDomains =
       await this.emailingDomainService.getEmailingDomains(currentWorkspace);

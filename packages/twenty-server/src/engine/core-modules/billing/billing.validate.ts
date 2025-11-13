@@ -1,15 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
+import { msg } from '@lingui/core/macro';
 
-import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
-import { type BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import {
   type LicensedBillingSubscriptionItem,
   type MeteredBillingSubscriptionItem,
@@ -17,7 +18,7 @@ import {
 import { type BillingSubscriptionWithSubscriptionItems } from 'src/engine/core-modules/billing/types/billing-subscription-with-subscription-items';
 
 const assertIsMeteredTiersSchemaOrThrow = (
-  tiers: BillingPrice['tiers'] | undefined | null,
+  tiers: BillingPriceEntity['tiers'] | undefined | null,
 ): asserts tiers is MeterBillingPriceTiers => {
   const error = new BillingException(
     'Metered price must have exactly two tiers and only one must have a defined limitation (up_to)',
@@ -32,7 +33,7 @@ const assertIsMeteredTiersSchemaOrThrow = (
 };
 
 const isMeteredTiersSchema = (
-  tiers: BillingPrice['tiers'] | undefined | null,
+  tiers: BillingPriceEntity['tiers'] | undefined | null,
 ): tiers is MeterBillingPriceTiers => {
   if (!isDefined(tiers)) {
     return false;
@@ -50,7 +51,7 @@ const isMeteredTiersSchema = (
 };
 
 const assertIsLicensedSubscriptionItem = (
-  subscriptionItem: BillingSubscriptionItem,
+  subscriptionItem: BillingSubscriptionItemEntity,
 ): asserts subscriptionItem is LicensedBillingSubscriptionItem => {
   if (
     subscriptionItem.quantity !== null &&
@@ -66,7 +67,7 @@ const assertIsLicensedSubscriptionItem = (
 };
 
 const assertIsMeteredSubscriptionItem = (
-  subscriptionItem: BillingSubscriptionItem,
+  subscriptionItem: BillingSubscriptionItemEntity,
 ): asserts subscriptionItem is MeteredBillingSubscriptionItem => {
   if (
     subscriptionItem.quantity === null &&
@@ -82,7 +83,7 @@ const assertIsMeteredSubscriptionItem = (
 };
 
 const assertIsMeteredPrice = (
-  price: BillingPrice,
+  price: BillingPriceEntity,
 ): asserts price is BillingMeterPrice => {
   if (
     price.billingProduct?.metadata.priceUsageBased !== BillingUsageType.METERED
@@ -103,7 +104,9 @@ const assertIsMeteredPrice = (
   return;
 };
 
-const isMeteredPrice = (price: BillingPrice): price is BillingMeterPrice => {
+const isMeteredPrice = (
+  price: BillingPriceEntity,
+): price is BillingMeterPrice => {
   if (
     price.billingProduct?.metadata.priceUsageBased !==
       BillingUsageType.METERED ||
@@ -116,8 +119,8 @@ const isMeteredPrice = (price: BillingPrice): price is BillingMeterPrice => {
 };
 
 const assertIsSubscription = (
-  subscription: BillingSubscription | undefined,
-): asserts subscription is BillingSubscription &
+  subscription: BillingSubscriptionEntity | undefined,
+): asserts subscription is BillingSubscriptionEntity &
   BillingSubscriptionWithSubscriptionItems => {
   if (!isDefined(subscription)) {
     throw new BillingException(
@@ -137,8 +140,7 @@ const assertIsSubscription = (
       'Subscription must have exactly two subscription items. Check that stripe and database are in sync',
       BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
       {
-        userFriendlyMessage:
-          'Your billing subscription is corrupted. Please contact support.',
+        userFriendlyMessage: msg`Your billing subscription is corrupted. Please contact support.`,
       },
     );
   }

@@ -29,7 +29,7 @@ export const ViewPickerEditButton = () => {
   if (viewPickerMode === 'edit') {
     return (
       <Button
-        title="Delete"
+        title={t`Delete`}
         onClick={deleteViewFromCurrentState}
         accent="danger"
         fullWidth
@@ -64,7 +64,7 @@ export const ViewPickerEditButton = () => {
   ) {
     return (
       <Button
-        title="Create"
+        title={t`Create`}
         onClick={createViewFromCurrentState}
         accent="blue"
         fullWidth

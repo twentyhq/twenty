@@ -1,7 +1,14 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
+  type FieldMetadataMultiItemSettings,
   type FieldMetadataType,
   type NullablePartial,
+  type AllFieldMetadataSettings,
+  type FieldMetadataDateSettings,
+  type FieldMetadataDateTimeSettings,
+  type FieldMetadataNumberSettings,
+  type FieldMetadataRelationSettings,
+  type FieldMetadataTextSettings,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
@@ -9,14 +16,6 @@ import {
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataDefaultValueForType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import {
-  type AllFieldMetadataSettings,
-  type FieldMetadataDateSettings,
-  type FieldMetadataDateTimeSettings,
-  type FieldMetadataNumberSettings,
-  type FieldMetadataRelationSettings,
-  type FieldMetadataTextSettings,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
   type FieldMetadataComplexOption,
@@ -133,10 +132,6 @@ type SettingsAssertions = [
   Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<ActorFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<ArrayFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<EmailsFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<LinksFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<BooleanFieldMetadata, NotDefinedSettings>>,
 
@@ -162,6 +157,30 @@ type SettingsAssertions = [
     HasAllProperties<
       DateTimeFieldMetadata,
       { settings: FieldMetadataDateTimeSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      ArrayFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      PhonesFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      EmailsFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      LinksFieldMetadata,
+      { settings: FieldMetadataMultiItemSettings | null }
     >
   >,
 

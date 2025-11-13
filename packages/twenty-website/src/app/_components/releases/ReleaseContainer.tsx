@@ -65,20 +65,25 @@ export const ReleaseContainer = ({
 
   return (
     <>
-      {releases.map((note, index) => (
-        <React.Fragment key={note.slug}>
-          <Release
-            githubPublishedAt={getGithubReleaseDateFromReleaseNote(
-              githubReleases,
-              note.release,
-              note.date,
-            )}
-            release={note}
-            mdxReleaseContent={mdxReleasesContent[index]}
-          />
-          {index != releases.length - 1 && <Line />}
-        </React.Fragment>
-      ))}
+      {releases.map((note, index) => {
+        const mdxIndex = visibleReleasesNotes.findIndex(
+          (vNote) => vNote.slug === note.slug,
+        );
+        return (
+          <React.Fragment key={note.slug}>
+            <Release
+              githubPublishedAt={getGithubReleaseDateFromReleaseNote(
+                githubReleases,
+                note.release,
+                note.date,
+              )}
+              release={note}
+              mdxReleaseContent={mdxReleasesContent[mdxIndex]}
+            />
+            {index != releases.length - 1 && <Line />}
+          </React.Fragment>
+        );
+      })}
       <div ref={loaderRef}>{loading && <p>Loading more releases...</p>}</div>
     </>
   );

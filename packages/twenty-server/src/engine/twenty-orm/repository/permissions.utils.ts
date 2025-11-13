@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import {
-  type ObjectsPermissionsDeprecated,
+  type ObjectsPermissions,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,7 +17,34 @@ import {
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
-const getTargetEntityAndOperationType = (expressionMap: QueryExpressionMap) => {
+const getTargetEntityAndOperationType = (
+  expressionMap: QueryExpressionMap,
+):
+  | {
+      isSubQuery: true;
+      mainEntity?: undefined;
+      operationType?: undefined;
+    }
+  | {
+      isSubQuery?: undefined;
+      mainEntity: string;
+      operationType:
+        | 'select'
+        | 'insert'
+        | 'update'
+        | 'delete'
+        | 'restore'
+        | 'soft-delete'
+        | 'relation';
+    } => {
+  const isSubQuery = expressionMap.aliases[0].subQuery;
+
+  if (isSubQuery) {
+    return {
+      isSubQuery: true, // will bypass permission checks because subQuery permissions will be evaluated when it is executed. This is valid for groupBy with records usecase. If your usecase is different, make sure permission checks are run.
+    };
+  }
+
   const mainEntity = expressionMap.aliases[0].metadata.name;
   const operationType = expressionMap.queryType;
 
@@ -38,7 +65,7 @@ export type OperationType =
 type ValidateOperationIsPermittedOrThrowArgs = {
   entityName: string;
   operationType: OperationType;
-  objectsPermissions: ObjectsPermissionsDeprecated;
+  objectsPermissions: ObjectsPermissions;
   objectMetadataMaps: ObjectMetadataMaps;
   selectedColumns: string[] | '*';
   allFieldsSelected: boolean;
@@ -86,7 +113,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
   switch (operationType) {
     case 'select':
-      if (!permissionsForEntity?.canRead) {
+      if (!permissionsForEntity?.canReadObjectRecords) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -102,7 +129,7 @@ export const validateOperationIsPermittedOrThrow = ({
       break;
     case 'insert':
     case 'update':
-      if (!permissionsForEntity?.canUpdate) {
+      if (!permissionsForEntity?.canUpdateObjectRecords) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -124,7 +151,7 @@ export const validateOperationIsPermittedOrThrow = ({
       }
       break;
     case 'delete':
-      if (!permissionsForEntity?.canDestroy) {
+      if (!permissionsForEntity?.canDestroyObjectRecords) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -139,7 +166,7 @@ export const validateOperationIsPermittedOrThrow = ({
       break;
     case 'restore':
     case 'soft-delete':
-      if (!permissionsForEntity?.canSoftDelete) {
+      if (!permissionsForEntity?.canSoftDeleteObjectRecords) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,
@@ -166,7 +193,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
 type ValidateQueryIsPermittedOrThrowArgs = {
   expressionMap: QueryExpressionMap;
-  objectsPermissions: ObjectsPermissionsDeprecated;
+  objectsPermissions: ObjectsPermissions;
   objectMetadataMaps: ObjectMetadataMaps;
   shouldBypassPermissionChecks: boolean;
 };
@@ -181,8 +208,12 @@ export const validateQueryIsPermittedOrThrow = ({
     return;
   }
 
-  const { mainEntity, operationType } =
+  const { mainEntity, operationType, isSubQuery } =
     getTargetEntityAndOperationType(expressionMap);
+
+  if (isSubQuery) {
+    return;
+  }
 
   const allFieldsSelected = expressionMap.selects.some(
     (select) => select.selection === mainEntity,

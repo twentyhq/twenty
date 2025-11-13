@@ -22,6 +22,7 @@ import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
+import { BarChartGroupMode } from '~/generated/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionDropdownContentBaseProps<
@@ -76,8 +77,8 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         items: sourceObjectMetadataItem?.fields || [],
         searchQuery,
         getSearchableValues: (item) => [item.label, item.name],
-        // TODO: remove this once group by is supported for relation fields
-      }).filter((field) => !isFieldRelation(field)),
+        // TODO: remove the relation filter once group by is supported for relation fields
+      }).filter((field) => !isFieldRelation(field) && !field.isSystem),
     [sourceObjectMetadataItem?.fields, searchQuery],
   );
 
@@ -92,18 +93,48 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     return null;
   }
 
+  const buildConfigUpdate = (
+    fieldId: string | null,
+    subFieldName: string | null,
+  ) => {
+    const isSecondaryAxis =
+      fieldMetadataIdKey === 'secondaryAxisGroupByFieldMetadataId';
+    const baseConfig = {
+      [fieldMetadataIdKey]: fieldId,
+      [subFieldNameKey]: subFieldName,
+    };
+
+    if (
+      !isSecondaryAxis ||
+      configuration.__typename !== 'BarChartConfiguration'
+    ) {
+      return baseConfig;
+    }
+
+    return {
+      ...baseConfig,
+      groupMode: isDefined(fieldId)
+        ? (configuration.groupMode ?? BarChartGroupMode.STACKED)
+        : null,
+    };
+  };
+
   const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {
     if (isCompositeFieldType(fieldMetadataItem.type)) {
       setSelectedCompositeField(fieldMetadataItem);
     } else {
       updateCurrentWidgetConfig({
-        configToUpdate: {
-          [fieldMetadataIdKey]: fieldMetadataItem.id,
-          [subFieldNameKey]: null,
-        },
+        configToUpdate: buildConfigUpdate(fieldMetadataItem.id, null),
       });
       closeDropdown();
     }
+  };
+
+  const handleSelectNone = () => {
+    updateCurrentWidgetConfig({
+      configToUpdate: buildConfigUpdate(null, null),
+    });
+    closeDropdown();
   };
 
   const handleBack = () => {
@@ -116,10 +147,10 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     }
 
     updateCurrentWidgetConfig({
-      configToUpdate: {
-        [fieldMetadataIdKey]: selectedCompositeField.id,
-        [subFieldNameKey]: subFieldName,
-      },
+      configToUpdate: buildConfigUpdate(
+        selectedCompositeField.id,
+        subFieldName,
+      ),
     });
     closeDropdown();
   };
@@ -146,41 +177,47 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        {availableFieldMetadataItems.length === 0 ? (
-          <MenuItemSelect text={t`No fields found`} selected={false} disabled />
-        ) : (
-          <SelectableList
-            selectableListInstanceId={dropdownId}
-            focusId={dropdownId}
-            selectableItemIdArray={availableFieldMetadataItems.map(
-              (item) => item.id,
-            )}
-          >
-            {availableFieldMetadataItems.map((fieldMetadataItem) => (
-              <SelectableListItem
-                key={fieldMetadataItem.id}
-                itemId={fieldMetadataItem.id}
-                onEnter={() => {
+        <SelectableList
+          selectableListInstanceId={dropdownId}
+          focusId={dropdownId}
+          selectableItemIdArray={[
+            'none',
+            ...availableFieldMetadataItems.map((item) => item.id),
+          ]}
+        >
+          <SelectableListItem itemId="none" onEnter={handleSelectNone}>
+            <MenuItemSelect
+              text={t`None`}
+              selected={!isDefined(currentGroupByFieldMetadataId)}
+              focused={selectedItemId === 'none'}
+              onClick={handleSelectNone}
+            />
+          </SelectableListItem>
+
+          {availableFieldMetadataItems.map((fieldMetadataItem) => (
+            <SelectableListItem
+              key={fieldMetadataItem.id}
+              itemId={fieldMetadataItem.id}
+              onEnter={() => {
+                handleSelectField(fieldMetadataItem);
+              }}
+            >
+              <MenuItemSelect
+                text={fieldMetadataItem.label}
+                selected={
+                  !isCompositeFieldType(fieldMetadataItem.type) &&
+                  currentGroupByFieldMetadataId === fieldMetadataItem.id
+                }
+                focused={selectedItemId === fieldMetadataItem.id}
+                LeftIcon={getIcon(fieldMetadataItem.icon)}
+                hasSubMenu={isCompositeFieldType(fieldMetadataItem.type)}
+                onClick={() => {
                   handleSelectField(fieldMetadataItem);
                 }}
-              >
-                <MenuItemSelect
-                  text={fieldMetadataItem.label}
-                  selected={
-                    !isCompositeFieldType(fieldMetadataItem.type) &&
-                    currentGroupByFieldMetadataId === fieldMetadataItem.id
-                  }
-                  focused={selectedItemId === fieldMetadataItem.id}
-                  LeftIcon={getIcon(fieldMetadataItem.icon)}
-                  hasSubMenu={isCompositeFieldType(fieldMetadataItem.type)}
-                  onClick={() => {
-                    handleSelectField(fieldMetadataItem);
-                  }}
-                />
-              </SelectableListItem>
-            ))}
-          </SelectableList>
-        )}
+              />
+            </SelectableListItem>
+          ))}
+        </SelectableList>
       </DropdownMenuItemsContainer>
     </>
   );

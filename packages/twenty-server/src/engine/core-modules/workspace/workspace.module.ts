@@ -8,30 +8,31 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/core-modules/common/services/workspace-many-or-all-flat-entity-maps-cache.module';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { CustomDomainManagerModule } from 'src/engine/core-modules/domain/custom-domain-manager/custom-domain-manager.module';
+import { SubdomainManagerModule } from 'src/engine/core-modules/domain/subdomain-manager/subdomain-manager.module';
+import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { CoreViewModule } from 'src/engine/core-modules/view/view.module';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
 import { CheckCustomDomainValidRecordsCronJob } from 'src/engine/core-modules/workspace/crons/jobs/check-custom-domain-valid-records.cron.job';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
-import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -39,7 +40,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
 @Module({
   imports: [
     TypeORMModule,
-    TypeOrmModule.forFeature([BillingSubscription]),
+    TypeOrmModule.forFeature([BillingSubscriptionEntity]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         AuditModule,
@@ -49,10 +50,10 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         FileUploadModule,
         WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature([
-          User,
-          Workspace,
-          UserWorkspace,
-          PublicDomain,
+          UserEntity,
+          WorkspaceEntity,
+          UserWorkspaceEntity,
+          PublicDomainEntity,
         ]),
         UserWorkspaceModule,
         WorkspaceManagerModule,
@@ -63,10 +64,11 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
         PermissionsModule,
         WorkspaceCacheStorageModule,
         RoleModule,
-        AgentModule,
         DnsManagerModule,
-        DomainManagerModule,
-        CoreViewModule,
+        WorkspaceDomainsModule,
+        SubdomainManagerModule,
+        CustomDomainManagerModule,
+        ViewModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [WorkspaceService],

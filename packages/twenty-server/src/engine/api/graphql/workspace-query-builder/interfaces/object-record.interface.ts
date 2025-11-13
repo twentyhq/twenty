@@ -1,11 +1,9 @@
-export interface ObjectRecord {
-  id: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-}
+import {
+  type ObjectRecord,
+  type ObjectRecordGroupByDateGranularity,
+  type ObjectRecordOrderByForCompositeField,
+  type ObjectRecordOrderByForScalarField,
+} from 'twenty-shared/types';
 
 export type ObjectRecordFilter = Partial<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,35 +30,9 @@ export type ObjectRecordGroupByForDateField = Partial<{
   };
 }>;
 
-export enum OrderByDirection {
-  AscNullsFirst = 'AscNullsFirst',
-  AscNullsLast = 'AscNullsLast',
-  DescNullsFirst = 'DescNullsFirst',
-  DescNullsLast = 'DescNullsLast',
-}
-
-export enum ObjectRecordGroupByDateGranularity {
-  DAY = 'DAY',
-  MONTH = 'MONTH',
-  QUARTER = 'QUARTER',
-  YEAR = 'YEAR',
-  DAY_OF_THE_WEEK = 'DAY_OF_THE_WEEK',
-  QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
-  MONTH_OF_THE_YEAR = 'MONTH_OF_THE_YEAR',
-  NONE = 'NONE',
-}
-
 export type ObjectRecordOrderBy = Array<
   ObjectRecordOrderByForScalarField | ObjectRecordOrderByForCompositeField
 >;
-
-export type ObjectRecordOrderByForScalarField = {
-  [Property in keyof ObjectRecord]?: OrderByDirection;
-};
-
-export type ObjectRecordOrderByForCompositeField = {
-  [Property in keyof ObjectRecord]?: Record<string, OrderByDirection>;
-};
 
 export type ObjectRecordCursorLeafScalarValue = string | number | boolean;
 export type ObjectRecordCursorLeafCompositeValue = Record<

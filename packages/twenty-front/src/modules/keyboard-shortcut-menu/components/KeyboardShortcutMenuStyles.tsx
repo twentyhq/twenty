@@ -40,7 +40,7 @@ export const StyledContainer = styled.div`
 `;
 
 export const StyledGroupHeading = styled.label`
-  color: ${({ theme }) => theme.color.gray50};
+  color: ${({ theme }) => theme.color.gray10};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(4)};
 `;

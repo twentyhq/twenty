@@ -1,10 +1,11 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum GraphType {
-  NUMBER = 'NUMBER',
+  AGGREGATE = 'AGGREGATE',
   GAUGE = 'GAUGE',
   PIE = 'PIE',
-  BAR = 'BAR',
+  VERTICAL_BAR = 'VERTICAL_BAR',
+  HORIZONTAL_BAR = 'HORIZONTAL_BAR',
   LINE = 'LINE',
 }
 

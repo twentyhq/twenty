@@ -1,10 +1,9 @@
-import { type AIChatObjectMetadataAndRecordContext } from '@/ai/states/agentChatContextState';
-import { type UIMessageWithMetadata } from '@/ai/types/UIMessageWithMetadata';
 import { createContext } from 'react';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type ObjectRecord } from '../../object-record/types/ObjectRecord';
 
 export type AgentChatContextValue = {
-  messages: UIMessageWithMetadata[];
+  messages: ExtendedUIMessage[];
   isStreaming: boolean;
   isLoading: boolean;
   error?: Error;
@@ -13,12 +12,9 @@ export type AgentChatContextValue = {
   handleInputChange: (value: string) => void;
 
   handleSendMessage: (records?: ObjectRecord[]) => Promise<void>;
-  handleSetContext: (
-    items: Array<AIChatObjectMetadataAndRecordContext>,
-  ) => Promise<void>;
 
   scrollWrapperId: string;
-  context: Array<AIChatObjectMetadataAndRecordContext>;
+  handleRetry: () => void;
 };
 
 export const AgentChatContext = createContext<AgentChatContextValue | null>(

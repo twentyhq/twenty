@@ -7,10 +7,10 @@ import { Repository } from 'typeorm';
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 
 @Injectable()
 export class MessageParticipantListener {
@@ -23,11 +23,15 @@ export class MessageParticipantListener {
 
   @OnCustomBatchEvent('messageParticipant_matched')
   public async handleMessageParticipantMatched(
-    batchEvent: WorkspaceEventBatch<{
+    batchEvent: CustomWorkspaceEventBatch<{
       workspaceMemberId: string;
       participants: MessageParticipantWorkspaceEntity[];
     }>,
   ): Promise<void> {
+    if (!isDefined(batchEvent.workspaceId)) {
+      return;
+    }
+
     const messageObjectMetadata =
       await this.objectMetadataRepository.findOneOrFail({
         where: {

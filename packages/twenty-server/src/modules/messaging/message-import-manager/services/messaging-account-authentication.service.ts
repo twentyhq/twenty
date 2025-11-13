@@ -49,7 +49,7 @@ export class MessagingAccountAuthenticationService {
       };
     }
 
-    return await this.refreshAccessTokenForNonImapProvider({
+    return await this.refreshAccessTokenForOAuthProvider({
       connectedAccount,
       workspaceId,
       messageChannelId,
@@ -79,7 +79,7 @@ export class MessagingAccountAuthenticationService {
     }
   }
 
-  private async refreshAccessTokenForNonImapProvider({
+  private async refreshAccessTokenForOAuthProvider({
     connectedAccount,
     workspaceId,
     messageChannelId,
@@ -98,6 +98,7 @@ export class MessagingAccountAuthenticationService {
           );
         case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
         case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+        case ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN:
           await this.messagingMonitoringService.track({
             eventName: `refresh_token.error.insufficient_permissions`,
             workspaceId,

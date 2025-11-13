@@ -1,7 +1,9 @@
 import { isDefined } from 'class-validator';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  ObjectRecordGroupByDateGranularity,
+} from 'twenty-shared/types';
 
-import { ObjectRecordGroupByDateGranularity } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
@@ -58,9 +60,14 @@ export const parseGroupByArgs = (
     }
     for (const fieldName of Object.keys(fieldNames)) {
       const fieldMetadataId =
-        objectMetadataItemWithFieldMaps.fieldIdByName[fieldName];
+        objectMetadataItemWithFieldMaps.fieldIdByName[fieldName] ||
+        objectMetadataItemWithFieldMaps.fieldIdByJoinColumnName[fieldName];
       const fieldMetadata =
         objectMetadataItemWithFieldMaps.fieldsById[fieldMetadataId];
+
+      if (!isDefined(fieldMetadata) || !isDefined(fieldMetadataId)) {
+        throw new Error(`Unidentified field in groupBy: ${fieldName}`);
+      }
 
       if (
         fieldMetadata.type === FieldMetadataType.DATE ||

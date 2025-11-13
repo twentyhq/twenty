@@ -28,15 +28,14 @@ export const WorkflowDiagramEffect = () => {
   const workflowDiagramState = useRecoilComponentCallbackState(
     workflowDiagramComponentState,
   );
-  const setWorkflowDiagram = useSetRecoilComponentState(
-    workflowDiagramComponentState,
-  );
   const setFlow = useSetRecoilComponentState(flowComponentState);
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
   const workflowLastCreatedStepIdState = useRecoilComponentCallbackState(
     workflowLastCreatedStepIdComponentState,
   );
+
+  const currentVersion = workflowWithCurrentVersion?.currentVersion;
 
   const computeAndMergeNewWorkflowDiagram = useRecoilCallback(
     ({ snapshot, set }) => {
@@ -84,13 +83,8 @@ export const WorkflowDiagramEffect = () => {
     [workflowDiagramState, workflowLastCreatedStepIdState],
   );
 
-  const currentVersion = workflowWithCurrentVersion?.currentVersion;
-
   useEffect(() => {
     if (!isDefined(currentVersion)) {
-      setFlow(undefined);
-      setWorkflowDiagram(undefined);
-
       return;
     }
 
@@ -101,12 +95,7 @@ export const WorkflowDiagramEffect = () => {
     });
 
     computeAndMergeNewWorkflowDiagram(currentVersion);
-  }, [
-    computeAndMergeNewWorkflowDiagram,
-    setFlow,
-    setWorkflowDiagram,
-    currentVersion,
-  ]);
+  }, [computeAndMergeNewWorkflowDiagram, setFlow, currentVersion]);
 
   useEffect(() => {
     if (!isDefined(currentVersion)) {

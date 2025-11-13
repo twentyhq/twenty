@@ -1,12 +1,12 @@
-import { type DataSource } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
-import { type UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { generateRandomUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-random-users.util';
-import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
-} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { generateRandomUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-random-users.util';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const tableName = 'userWorkspace';
 
@@ -28,13 +28,21 @@ const {
 
 export const RANDOM_USER_WORKSPACE_IDS = randomUserWorkspaceIds;
 
-export const seedUserWorkspaces = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
-  let userWorkspaces: Pick<UserWorkspace, 'id' | 'userId' | 'workspaceId'>[] =
-    [];
+type SeedUserWorkspacesArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+};
+
+export const seedUserWorkspaces = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+}: SeedUserWorkspacesArgs) => {
+  let userWorkspaces: Pick<
+    UserWorkspaceEntity,
+    'id' | 'userId' | 'workspaceId'
+  >[] = [];
 
   if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
     const originalUserWorkspaces = [
@@ -87,7 +95,7 @@ export const seedUserWorkspaces = async (
       },
     ];
   }
-  await dataSource
+  await queryRunner.manager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, ['id', 'userId', 'workspaceId'])
@@ -96,12 +104,18 @@ export const seedUserWorkspaces = async (
     .execute();
 };
 
-export const deleteUserWorkspaces = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
-  await dataSource
+type DeleteUserWorkspacesArgs = {
+  queryRunner: QueryRunner;
+  schemaName: string;
+  workspaceId: string;
+};
+
+export const deleteUserWorkspaces = async ({
+  queryRunner,
+  schemaName,
+  workspaceId,
+}: DeleteUserWorkspacesArgs) => {
+  await queryRunner.manager
     .createQueryBuilder()
     .delete()
     .from(`${schemaName}.${tableName}`)

@@ -3,12 +3,15 @@ import { useGraphXSortOptionLabels } from '@/command-menu/pages/page-layout/hook
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/command-menu/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartAxisNameDisplayOptions } from '@/command-menu/pages/page-layout/utils/getChartAxisNameDisplayOptions';
+import { getDateGranularityLabel } from '@/command-menu/pages/page-layout/utils/getDateGranularityLabel';
 import { getFieldLabelWithSubField } from '@/command-menu/pages/page-layout/utils/getFieldLabelWithSubField';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
+import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { useRecoilValue } from 'recoil';
 import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { type GraphOrderBy } from '~/generated-metadata/graphql';
 
 export const useChartSettingsValues = ({
   objectMetadataId,
@@ -37,20 +40,43 @@ export const useChartSettingsValues = ({
     };
   }
 
-  const groupByFieldX =
-    'groupByFieldMetadataIdX' in configuration
-      ? objectMetadataItem?.fields.find(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === configuration.groupByFieldMetadataIdX,
-        )
-      : undefined;
+  const isBarOrLineChart =
+    configuration.__typename === 'BarChartConfiguration' ||
+    configuration.__typename === 'LineChartConfiguration';
+
+  let groupByFieldXId: string | undefined;
+  let groupByFieldYId: string | undefined;
+  let groupBySubFieldNameX: CompositeFieldSubFieldName | undefined;
+  let groupBySubFieldNameY: CompositeFieldSubFieldName | undefined;
+  let xAxisOrderBy: GraphOrderBy | undefined | null;
+  let groupByOrderBy: GraphOrderBy | undefined | null;
+
+  if (isBarOrLineChart) {
+    groupByFieldXId = configuration.primaryAxisGroupByFieldMetadataId;
+    groupByFieldYId = configuration.secondaryAxisGroupByFieldMetadataId;
+    groupBySubFieldNameX = configuration.primaryAxisGroupBySubFieldName as
+      | CompositeFieldSubFieldName
+      | undefined;
+    groupBySubFieldNameY = configuration.secondaryAxisGroupBySubFieldName as
+      | CompositeFieldSubFieldName
+      | undefined;
+    xAxisOrderBy = configuration.primaryAxisOrderBy;
+    groupByOrderBy = configuration.secondaryAxisOrderBy;
+  }
+
+  const groupByFieldX = isDefined(groupByFieldXId)
+    ? objectMetadataItem?.fields.find((field) => field.id === groupByFieldXId)
+    : undefined;
+
+  const groupByFieldY = isDefined(groupByFieldYId)
+    ? objectMetadataItem?.fields.find((field) => field.id === groupByFieldYId)
+    : undefined;
 
   const groupBySubFieldNameXLabel =
-    'groupBySubFieldNameX' in configuration && isDefined(groupByFieldX)
+    isDefined(groupBySubFieldNameX) && isDefined(groupByFieldX)
       ? getFieldLabelWithSubField({
           field: groupByFieldX,
-          subFieldName:
-            configuration.groupBySubFieldNameX as CompositeFieldSubFieldName,
+          subFieldName: groupBySubFieldNameX,
         })
       : undefined;
 
@@ -59,55 +85,42 @@ export const useChartSettingsValues = ({
       fieldMetadataItem.id === configuration.aggregateFieldMetadataId,
   );
 
-  const yAxisAggregateOperation = configuration.aggregateOperation;
-
-  const groupByFieldY =
-    'groupByFieldMetadataIdY' in configuration
-      ? objectMetadataItem?.fields.find(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === configuration.groupByFieldMetadataIdY,
-        )
-      : undefined;
-
-  const xAxisOrderBy =
-    'orderByX' in configuration ? configuration.orderByX : undefined;
+  const aggregateOperation =
+    convertAggregateOperationToExtendedAggregateOperation(
+      configuration.aggregateOperation,
+      aggregateField?.type,
+    );
 
   const xAxisOrderByLabel =
-    isDefined(xAxisOrderBy) && 'groupByFieldMetadataIdX' in configuration
+    isDefined(xAxisOrderBy) && isDefined(groupByFieldXId)
       ? getXSortOptionLabel({
           graphOrderBy: xAxisOrderBy,
-          groupByFieldMetadataIdX: configuration.groupByFieldMetadataIdX,
-          groupBySubFieldNameX:
-            configuration.groupBySubFieldNameX as CompositeFieldSubFieldName,
+          groupByFieldMetadataIdX: groupByFieldXId,
+          groupBySubFieldNameX: groupBySubFieldNameX,
           aggregateFieldMetadataId: configuration.aggregateFieldMetadataId,
-          aggregateOperation: configuration.aggregateOperation,
+          aggregateOperation: configuration.aggregateOperation ?? undefined,
         })
       : undefined;
 
-  const groupByOrderBy =
-    'orderByY' in configuration
-      ? configuration.orderByY
-      : 'orderBy' in configuration
-        ? configuration.orderBy
-        : undefined;
+  if (configuration.__typename === 'PieChartConfiguration') {
+    groupByOrderBy = configuration.orderBy;
+    groupByFieldYId = configuration.groupByFieldMetadataId;
+    groupBySubFieldNameY = configuration.groupBySubFieldName as
+      | CompositeFieldSubFieldName
+      | undefined;
+  }
+
+  const finalGroupByFieldYId = groupByFieldYId;
+  const finalGroupBySubFieldNameY = groupBySubFieldNameY;
 
   const groupByOrderByLabel =
-    isDefined(groupByOrderBy) &&
-    getGroupBySortOptionLabel({
-      graphOrderBy: groupByOrderBy,
-      groupByFieldMetadataId:
-        'groupByFieldMetadataIdY' in configuration
-          ? configuration.groupByFieldMetadataIdY
-          : 'groupByFieldMetadataId' in configuration
-            ? configuration.groupByFieldMetadataId
-            : undefined,
-      groupBySubFieldName:
-        'groupBySubFieldNameY' in configuration
-          ? (configuration.groupBySubFieldNameY as CompositeFieldSubFieldName)
-          : 'groupBySubFieldName' in configuration
-            ? (configuration.groupBySubFieldName as CompositeFieldSubFieldName)
-            : undefined,
-    });
+    isDefined(groupByOrderBy) && isDefined(finalGroupByFieldYId)
+      ? getGroupBySortOptionLabel({
+          graphOrderBy: groupByOrderBy,
+          groupByFieldMetadataId: finalGroupByFieldYId,
+          groupBySubFieldName: finalGroupBySubFieldNameY,
+        })
+      : undefined;
 
   const getChartSettingsValues = (
     itemId: CHART_CONFIGURATION_SETTING_IDS,
@@ -116,17 +129,27 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.SOURCE:
         return objectMetadataItem?.labelPlural;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X:
-        return groupBySubFieldNameXLabel;
+        return groupBySubFieldNameXLabel ?? groupByFieldX?.label;
       case CHART_CONFIGURATION_SETTING_IDS.COLORS:
-        return isDefined(configuration.color) && 'color' in configuration
+        return 'color' in configuration && isDefined(configuration.color)
           ? capitalize(configuration.color)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_Y:
-        return `${aggregateField?.label ?? ''}${aggregateField?.label ? ` (${getAggregateOperationLabel(yAxisAggregateOperation)})` : ''}`;
+      case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_AGGREGATE: {
+        const hasAggregateLabel = isDefined(aggregateField?.label);
+        const hasAggregateOperation = isDefined(aggregateOperation);
+
+        return `${aggregateField?.label ?? ''}${
+          hasAggregateLabel && hasAggregateOperation
+            ? ` (${getAggregateOperationLabel(aggregateOperation)})`
+            : ''
+        }`;
+      }
       case CHART_CONFIGURATION_SETTING_IDS.GROUP_BY:
         return groupByFieldY?.label;
       case CHART_CONFIGURATION_SETTING_IDS.AXIS_NAME:
-        return 'axisNameDisplay' in configuration
+        return 'axisNameDisplay' in configuration &&
+          isDefined(configuration.axisNameDisplay)
           ? getChartAxisNameDisplayOptions(configuration.axisNameDisplay)
           : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_X:
@@ -134,7 +157,40 @@ export const useChartSettingsValues = ({
       case CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD:
         return groupByOrderByLabel;
       case CHART_CONFIGURATION_SETTING_IDS.DATA_LABELS:
-        return configuration.displayDataLabel;
+        return configuration.displayDataLabel ?? undefined;
+      case CHART_CONFIGURATION_SETTING_IDS.STACKED_BARS:
+        return 'groupMode' in configuration
+          ? configuration.groupMode !== 'GROUPED'
+          : true;
+      case CHART_CONFIGURATION_SETTING_IDS.OMIT_NULL_VALUES:
+        return 'omitNullValues' in configuration
+          ? (configuration.omitNullValues ?? false)
+          : false;
+      case CHART_CONFIGURATION_SETTING_IDS.MIN_RANGE:
+        return 'rangeMin' in configuration
+          ? (configuration.rangeMin?.toString() ?? '')
+          : '';
+      case CHART_CONFIGURATION_SETTING_IDS.MAX_RANGE:
+        return 'rangeMax' in configuration
+          ? (configuration.rangeMax?.toString() ?? '')
+          : '';
+      case CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_X:
+        return 'primaryAxisDateGranularity' in configuration &&
+          isDefined(configuration.primaryAxisDateGranularity)
+          ? getDateGranularityLabel(configuration.primaryAxisDateGranularity)
+          : undefined;
+      case CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY_Y:
+        return 'secondaryAxisGroupByDateGranularity' in configuration &&
+          isDefined(configuration.secondaryAxisGroupByDateGranularity)
+          ? getDateGranularityLabel(
+              configuration.secondaryAxisGroupByDateGranularity,
+            )
+          : undefined;
+      case CHART_CONFIGURATION_SETTING_IDS.DATE_GRANULARITY:
+        return 'dateGranularity' in configuration &&
+          isDefined(configuration.dateGranularity)
+          ? getDateGranularityLabel(configuration.dateGranularity)
+          : undefined;
       default:
         return '';
     }

@@ -1,7 +1,4 @@
-import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { type ReactNode } from 'react';
-import { RecoilRoot } from 'recoil';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 
@@ -11,8 +8,10 @@ import {
   variables,
 } from '../__mocks__/useDeleteOneObjectMetadataItem';
 
+import { jestExpectSuccessfulMetadataRequestResult } from '@/object-metadata/hooks/__tests__/utils/jest-expect-metadata-request-status.util';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { FIND_ALL_CORE_VIEWS } from '@/views/graphql/queries/findAllCoreViews';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedCoreViewsData } from '~/testing/mock-data/views';
 import {
@@ -65,13 +64,9 @@ const mocks = [
   },
 ];
 
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
-      {children}
-    </MockedProvider>
-  </RecoilRoot>
-);
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
 describe('useDeleteOneObjectMetadataItem', () => {
   it('should work as expected', async () => {
@@ -83,7 +78,8 @@ describe('useDeleteOneObjectMetadataItem', () => {
       const res =
         await result.current.deleteOneObjectMetadataItem('idToDelete');
 
-      expect(res.data).toEqual({ deleteOneObject: responseData });
+      jestExpectSuccessfulMetadataRequestResult(res);
+      expect(res.response).toEqual({ data: { deleteOneObject: responseData } });
     });
   });
 });

@@ -1,17 +1,18 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 
-import { AutocompleteResultDto } from 'src/engine/core-modules/geo-map/dtos/autocomplete-result.dto';
-import { PlaceDetailsResultDto } from 'src/engine/core-modules/geo-map/dtos/place-details-result.dto';
+import { AutocompleteResultDTO } from 'src/engine/core-modules/geo-map/dtos/autocomplete-result.dto';
+import { PlaceDetailsResultDTO } from 'src/engine/core-modules/geo-map/dtos/place-details-result.dto';
 import { GeoMapService } from 'src/engine/core-modules/geo-map/services/geo-map.service';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Resolver()
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
 export class GeoMapResolver {
   constructor(private readonly geoMapService: GeoMapService) {}
 
-  @Query(() => [AutocompleteResultDto])
+  @Query(() => [AutocompleteResultDTO])
   async getAutoCompleteAddress(
     @Args('address') address: string,
     @Args('token') token: string,
@@ -26,7 +27,7 @@ export class GeoMapResolver {
     );
   }
 
-  @Query(() => PlaceDetailsResultDto)
+  @Query(() => PlaceDetailsResultDTO)
   async getAddressDetails(
     @Args('placeId') placeId: string,
     @Args('token') token: string,

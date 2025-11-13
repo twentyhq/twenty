@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { ArrayContains, IsNull, Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { Webhook } from './webhook.entity';
+import { WebhookEntity } from './webhook.entity';
 import { WebhookException, WebhookExceptionCode } from './webhook.exception';
 
 @Injectable()
 export class WebhookService {
   constructor(
-    @InjectRepository(Webhook)
-    private readonly webhookRepository: Repository<Webhook>,
+    @InjectRepository(WebhookEntity)
+    private readonly webhookRepository: Repository<WebhookEntity>,
   ) {}
 
   private normalizeTargetUrl(targetUrl: string): string {
@@ -35,7 +36,7 @@ export class WebhookService {
     }
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<Webhook[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<WebhookEntity[]> {
     return this.webhookRepository.find({
       where: {
         workspaceId,
@@ -47,7 +48,7 @@ export class WebhookService {
   async findByOperations(
     workspaceId: string,
     operations: string[],
-  ): Promise<Webhook[]> {
+  ): Promise<WebhookEntity[]> {
     return this.webhookRepository.find({
       where: operations.map((operation) => ({
         workspaceId,
@@ -57,7 +58,10 @@ export class WebhookService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<Webhook | null> {
+  async findById(
+    id: string,
+    workspaceId: string,
+  ): Promise<WebhookEntity | null> {
     const webhook = await this.webhookRepository.findOne({
       where: {
         id,
@@ -69,7 +73,7 @@ export class WebhookService {
     return webhook || null;
   }
 
-  async create(webhookData: Partial<Webhook>): Promise<Webhook> {
+  async create(webhookData: Partial<WebhookEntity>): Promise<WebhookEntity> {
     const normalizedTargetUrl = this.normalizeTargetUrl(
       webhookData.targetUrl || '',
     );
@@ -78,7 +82,7 @@ export class WebhookService {
       throw new WebhookException(
         'Invalid target URL provided',
         WebhookExceptionCode.INVALID_TARGET_URL,
-        { userFriendlyMessage: 'Please provide a valid HTTP or HTTPS URL.' },
+        { userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS URL.` },
       );
     }
 
@@ -94,8 +98,8 @@ export class WebhookService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: QueryDeepPartialEntity<Webhook>,
-  ): Promise<Webhook | null> {
+    updateData: QueryDeepPartialEntity<WebhookEntity>,
+  ): Promise<WebhookEntity | null> {
     const webhook = await this.findById(id, workspaceId);
 
     if (!webhook) {
@@ -111,7 +115,9 @@ export class WebhookService {
         throw new WebhookException(
           'Invalid target URL provided',
           WebhookExceptionCode.INVALID_TARGET_URL,
-          { userFriendlyMessage: 'Please provide a valid HTTP or HTTPS URL.' },
+          {
+            userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS URL.`,
+          },
         );
       }
 
@@ -123,7 +129,7 @@ export class WebhookService {
     return this.findById(id, workspaceId);
   }
 
-  async delete(id: string, workspaceId: string): Promise<Webhook | null> {
+  async delete(id: string, workspaceId: string): Promise<WebhookEntity | null> {
     const webhook = await this.findById(id, workspaceId);
 
     if (!webhook) {

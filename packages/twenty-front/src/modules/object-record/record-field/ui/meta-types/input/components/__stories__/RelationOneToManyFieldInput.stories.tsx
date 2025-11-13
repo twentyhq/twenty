@@ -22,6 +22,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from '~/generated-metadata/graphql';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -42,7 +43,7 @@ const RelationOneToManyFieldInputWithContext = () => {
 
   const fieldDefinition = useMemo(
     () => ({
-      fieldMetadataId: 'relation',
+      fieldMetadataId: 'e82262eb-7f58-4167-a23c-fc51ec584d1b',
       label: 'People',
       type: FieldMetadataType.RELATION,
       iconName: 'IconLink',
@@ -51,8 +52,8 @@ const RelationOneToManyFieldInputWithContext = () => {
         relationType: RelationType.ONE_TO_MANY,
         relationObjectMetadataNamePlural: 'companies',
         relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
-        objectMetadataNameSingular: 'company',
-        relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
+        objectMetadataNameSingular: 'person',
+        relationFieldMetadataId: '3c211c59-02a1-4904-ad0f-5bb30b736461',
       },
     }),
     [],
@@ -115,7 +116,11 @@ const meta: Meta = {
   title: 'UI/Data/Field/Input/RelationOneToManyFieldInput',
   component: RelationOneToManyFieldInputWithContext,
   args: {},
-  decorators: [ObjectMetadataItemsDecorator, SnackBarDecorator],
+  decorators: [
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
+    I18nFrontDecorator,
+  ],
   parameters: {
     clearMocks: true,
     msw: graphqlMocks,

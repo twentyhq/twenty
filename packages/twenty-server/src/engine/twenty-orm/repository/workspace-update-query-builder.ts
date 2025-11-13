@@ -1,4 +1,4 @@
-import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type EntityTarget,
@@ -7,6 +7,7 @@ import {
   type UpdateResult,
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type WhereClause } from 'typeorm/query-builder/WhereClause';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -26,14 +27,17 @@ import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repositor
 import { type WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
+import { applyTableAliasOnWhereCondition } from 'src/engine/twenty-orm/utils/apply-table-alias-on-where-condition';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 export class WorkspaceUpdateQueryBuilder<
   T extends ObjectLiteral,
 > extends UpdateQueryBuilder<T> {
-  private objectRecordsPermissions: ObjectsPermissionsDeprecated;
+  private objectRecordsPermissions: ObjectsPermissions;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
@@ -49,7 +53,7 @@ export class WorkspaceUpdateQueryBuilder<
 
   constructor(
     queryBuilder: UpdateQueryBuilder<T>,
-    objectRecordsPermissions: ObjectsPermissionsDeprecated,
+    objectRecordsPermissions: ObjectsPermissions,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -108,12 +112,23 @@ export class WorkspaceUpdateQueryBuilder<
         this.featureFlagMap,
       );
 
+      const tableName = computeTableName(
+        objectMetadata.nameSingular,
+        objectMetadata.isCustom,
+      );
+
       eventSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
       eventSelectQueryBuilder.expressionMap.aliases =
         this.expressionMap.aliases;
       eventSelectQueryBuilder.setParameters(this.getParameters());
 
       const before = await eventSelectQueryBuilder.getMany();
+
+      this.expressionMap.wheres = applyTableAliasOnWhereCondition({
+        condition: this.expressionMap.wheres,
+        tableName,
+        aliasName: objectMetadata.nameSingular,
+      }) as WhereClause[];
 
       const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
         this as unknown as WorkspaceSelectQueryBuilder<T>,
@@ -144,6 +159,7 @@ export class WorkspaceUpdateQueryBuilder<
       );
 
       const result = await super.execute();
+
       const after = await eventSelectQueryBuilder.getMany();
 
       const formattedAfter = formatResult<T[]>(
@@ -152,23 +168,27 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext.objectMetadataMaps,
       );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPDATED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedAfter,
-        beforeEntities: formattedBefore,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          beforeEntities: formattedBefore,
+          authContext: this.authContext,
+        }),
+      );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPSERTED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedAfter,
-        beforeEntities: formattedBefore,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPSERTED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          beforeEntities: formattedBefore,
+          authContext: this.authContext,
+        }),
+      );
 
       const formattedResult = formatResult<T[]>(
         result.raw,
@@ -293,23 +313,27 @@ export class WorkspaceUpdateQueryBuilder<
         this.internalContext.objectMetadataMaps,
       );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPDATED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedAfter,
-        beforeEntities: formattedBefore,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPDATED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          beforeEntities: formattedBefore,
+          authContext: this.authContext,
+        }),
+      );
 
-      await this.internalContext.eventEmitterService.emitMutationEvent({
-        action: DatabaseEventAction.UPSERTED,
-        objectMetadataItem: objectMetadata,
-        workspaceId: this.internalContext.workspaceId,
-        entities: formattedAfter,
-        beforeEntities: formattedBefore,
-        authContext: this.authContext,
-      });
+      this.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+        formatTwentyOrmEventToDatabaseBatchEvent({
+          action: DatabaseEventAction.UPSERTED,
+          objectMetadataItem: objectMetadata,
+          workspaceId: this.internalContext.workspaceId,
+          entities: formattedAfter,
+          beforeEntities: formattedBefore,
+          authContext: this.authContext,
+        }),
+      );
 
       const formattedResults = formatResult<T[]>(
         results.flatMap((result) => result.raw),

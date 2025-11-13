@@ -24,19 +24,23 @@ import {
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
 import { PageLayoutTabRestApiExceptionFilter } from 'src/engine/core-modules/page-layout/filters/page-layout-tab-rest-api-exception.filter';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 
-@Controller('rest/metadata/page-layout-tabs')
+@Controller('rest/metadata/pageLayoutTabs')
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(PageLayoutTabRestApiExceptionFilter)
 export class PageLayoutTabController {
   constructor(private readonly pageLayoutTabService: PageLayoutTabService) {}
 
   @Get()
+  @UseGuards(NoPermissionGuard)
   async findMany(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('pageLayoutId') pageLayoutId: string,
   ): Promise<PageLayoutTabDTO[]> {
     if (!isDefined(pageLayoutId)) {
@@ -55,34 +59,38 @@ export class PageLayoutTabController {
   }
 
   @Get(':id')
+  @UseGuards(NoPermissionGuard)
   async findOne(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO | null> {
     return this.pageLayoutTabService.findByIdOrThrow(id, workspace.id);
   }
 
   @Post()
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async create(
     @Body() input: CreatePageLayoutTabInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
     return this.pageLayoutTabService.create(input, workspace.id);
   }
 
   @Patch(':id')
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async update(
     @Param('id') id: string,
     @Body() input: UpdatePageLayoutTabInput,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
     return this.pageLayoutTabService.update(id, workspace.id, input);
   }
 
   @Delete(':id')
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
   async delete(
     @Param('id') id: string,
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<PageLayoutTabDTO> {
     return this.pageLayoutTabService.delete(id, workspace.id);
   }

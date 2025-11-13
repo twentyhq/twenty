@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
@@ -11,7 +10,6 @@ import {
 
 import { PackageJson } from 'src/engine/core-modules/application/types/application.types';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 
 @Entity('serverlessFunctionLayer')
 export class ServerlessFunctionLayerEntity {
@@ -38,15 +36,6 @@ export class ServerlessFunctionLayerEntity {
     },
   )
   serverlessFunctions: Relation<ServerlessFunctionEntity[]>;
-
-  @OneToOne(
-    () => ApplicationEntity,
-    (application) => application.serverlessFunctionLayer,
-    {
-      nullable: true,
-    },
-  )
-  application: Relation<ApplicationEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

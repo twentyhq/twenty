@@ -4,11 +4,11 @@ import GraphQLJSON from 'graphql-type-json';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
-import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DataloaderService } from 'src/engine/dataloaders/dataloader.service';
@@ -20,6 +20,7 @@ export const metadataModuleFactory = async (
   dataloaderService: DataloaderService,
   cacheStorageService: CacheStorageService,
   metricsService: MetricsService,
+  i18nService: I18nService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -29,16 +30,10 @@ export const metadataModuleFactory = async (
     },
     resolvers: { JSON: GraphQLJSON },
     plugins: [
-      useThrottler({
-        ttl: twentyConfigService.get('API_RATE_LIMITING_TTL'),
-        limit: twentyConfigService.get('API_RATE_LIMITING_LIMIT'),
-        identifyFn: (context) => {
-          return context.req.user?.id ?? context.req.ip ?? 'anonymous';
-        },
-      }),
       useGraphQLErrorHandlerHook({
         metricsService: metricsService,
         exceptionHandlerService,
+        i18nService,
         twentyConfigService,
       }),
       useCachedMetadata({

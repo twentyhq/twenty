@@ -12,7 +12,7 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-contex
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 
-import { ApiKey } from './api-key.entity';
+import { ApiKeyEntity } from './api-key.entity';
 import { ApiKeyService } from './api-key.service';
 
 describe('ApiKeyService', () => {
@@ -26,7 +26,7 @@ describe('ApiKeyService', () => {
   const mockWorkspaceId = 'workspace-123';
   const mockApiKeyId = 'api-key-456';
 
-  const mockApiKey: ApiKey = {
+  const mockApiKey: ApiKeyEntity = {
     id: mockApiKeyId,
     name: 'Test API Key',
     expiresAt: new Date('2025-12-31'),
@@ -37,13 +37,13 @@ describe('ApiKeyService', () => {
     workspace: {} as any,
   };
 
-  const mockRevokedApiKey: ApiKey = {
+  const mockRevokedApiKey: ApiKeyEntity = {
     ...mockApiKey,
     id: 'revoked-api-key',
     revokedAt: new Date('2024-06-01'),
   };
 
-  const mockExpiredApiKey: ApiKey = {
+  const mockExpiredApiKey: ApiKeyEntity = {
     ...mockApiKey,
     id: 'expired-api-key',
     expiresAt: new Date('2024-01-01'),
@@ -83,7 +83,7 @@ describe('ApiKeyService', () => {
       providers: [
         ApiKeyService,
         {
-          provide: getRepositoryToken(ApiKey),
+          provide: getRepositoryToken(ApiKeyEntity),
           useValue: mockApiKeyRepository,
         },
         {
@@ -154,7 +154,7 @@ describe('ApiKeyService', () => {
 
       expect(mockDataSource.transaction).toHaveBeenCalled();
       expect(mockManagerCreate).toHaveBeenCalledWith(
-        ApiKey,
+        ApiKeyEntity,
         expectedApiKeyFields,
       );
       expect(mockManagerSave).toHaveBeenCalledWith(mockApiKey);

@@ -1,7 +1,7 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/record-page/states/viewableRecordNameSingularComponentState';
-import { commandMenuNavigationMorphItemByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsState';
+import { commandMenuNavigationMorphItemsByPageState } from '@/command-menu/states/commandMenuNavigationMorphItemsByPageState';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -142,7 +142,7 @@ export const useOpenRecordInCommandMenu = () => {
         );
 
         const currentMorphItems = snapshot
-          .getLoadable(commandMenuNavigationMorphItemByPageState)
+          .getLoadable(commandMenuNavigationMorphItemsByPageState)
           .getValue();
 
         const morphItemToAdd = {
@@ -150,10 +150,10 @@ export const useOpenRecordInCommandMenu = () => {
           recordId,
         };
 
-        const newMorphItems = new Map(currentMorphItems);
-        newMorphItems.set(pageComponentInstanceId, morphItemToAdd);
+        const newMorphItemsMap = new Map(currentMorphItems);
+        newMorphItemsMap.set(pageComponentInstanceId, [morphItemToAdd]);
 
-        set(commandMenuNavigationMorphItemByPageState, newMorphItems);
+        set(commandMenuNavigationMorphItemsByPageState, newMorphItemsMap);
 
         const Icon = objectMetadataItem?.icon
           ? getIcon(objectMetadataItem.icon)

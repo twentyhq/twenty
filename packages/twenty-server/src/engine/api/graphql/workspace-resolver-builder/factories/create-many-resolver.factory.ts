@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import graphqlFields from 'graphql-fields';
+import { ObjectRecord } from 'twenty-shared/types';
+
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
   type CreateManyResolverArgs,
@@ -8,7 +10,9 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { type WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
-import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service';
+import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
+import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 
 @Injectable()
@@ -18,7 +22,7 @@ export class CreateManyResolverFactory
   public static methodName = RESOLVER_METHOD_NAMES.CREATE_MANY;
 
   constructor(
-    private readonly graphqlQueryRunnerService: GraphqlQueryCreateManyResolverService,
+    private readonly commonCreateManyQueryRunnerService: CommonCreateManyQueryRunnerService,
   ) {}
 
   create(
@@ -27,19 +31,31 @@ export class CreateManyResolverFactory
     const internalContext = context;
 
     return async (_source, args, _context, info) => {
-      const options: WorkspaceQueryRunnerOptions = {
-        authContext: internalContext.authContext,
-        info,
-        objectMetadataMaps: internalContext.objectMetadataMaps,
-        objectMetadataItemWithFieldMaps:
-          internalContext.objectMetadataItemWithFieldMaps,
-      };
+      const selectedFields = graphqlFields(info);
 
-      return await this.graphqlQueryRunnerService.execute(
-        args,
-        options,
-        CreateManyResolverFactory.methodName,
-      );
+      try {
+        const records = await this.commonCreateManyQueryRunnerService.execute(
+          { ...args, selectedFields },
+          internalContext,
+        );
+
+        const typeORMObjectRecordsParser =
+          new ObjectRecordsToGraphqlConnectionHelper(
+            internalContext.objectMetadataMaps,
+          );
+
+        return records.map((record: ObjectRecord) =>
+          typeORMObjectRecordsParser.processRecord({
+            objectRecord: record,
+            objectName:
+              internalContext.objectMetadataItemWithFieldMaps.nameSingular,
+            take: 1,
+            totalCount: 1,
+          }),
+        );
+      } catch (error) {
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+      }
     };
   }
 }

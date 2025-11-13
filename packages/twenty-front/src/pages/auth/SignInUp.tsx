@@ -5,6 +5,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Logo } from '@/auth/components/Logo';
@@ -26,12 +27,23 @@ import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/inte
 import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { Loader } from 'twenty-ui/feedback';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
 import { type PublicWorkspaceDataOutput } from '~/generated/graphql';
+
+const StyledLoaderContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing(8)};
+  width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+`;
 
 const StandardContent = ({
   workspacePublicData,
@@ -70,13 +82,15 @@ const StandardContent = ({
 export const SignInUp = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
-  const { loading } = useGetPublicWorkspaceDataByDomain();
+  const { loading: getPublicWorkspaceDataLoading } =
+    useGetPublicWorkspaceDataByDomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
@@ -121,7 +135,13 @@ export const SignInUp = () => {
   ]);
 
   const signInUpForm = useMemo(() => {
-    if (loading) return null;
+    if (getPublicWorkspaceDataLoading || !clientConfigApiStatus.isLoadedOnce) {
+      return (
+        <StyledLoaderContainer>
+          <Loader color="gray" />
+        </StyledLoaderContainer>
+      );
+    }
 
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
       return (
@@ -163,10 +183,11 @@ export const SignInUp = () => {
       </>
     );
   }, [
+    clientConfigApiStatus.isLoadedOnce,
     isDefaultDomain,
     isMultiWorkspaceEnabled,
     isOnAWorkspace,
-    loading,
+    getPublicWorkspaceDataLoading,
     signInUpStep,
     workspacePublicData,
   ]);

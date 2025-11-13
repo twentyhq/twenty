@@ -73,7 +73,7 @@ const StyledDelete = styled.button<{ variant: SortOrFilterChipVariant }>`
     background-color: ${({ theme, variant }) => {
       switch (variant) {
         case 'danger':
-          return theme.color.red20;
+          return theme.color.red5;
         case 'default':
         default:
           return theme.accent.secondary;

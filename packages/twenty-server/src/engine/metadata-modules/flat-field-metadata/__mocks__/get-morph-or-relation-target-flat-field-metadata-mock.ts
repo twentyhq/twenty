@@ -32,6 +32,11 @@ export const getRelationTargetFlatFieldMetadataMock = ({
   const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
 
   return {
+    calendarViewIds: [],
+    viewFilterIds: [],
+    viewGroupIds: [],
+    viewFieldIds: [],
+    kanbanAggregateOperationViewIds: [],
     createdAt,
     updatedAt: createdAt,
     description: 'default flat field metadata description',
@@ -59,5 +64,6 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     ...overrides,
     defaultValue: null,
     options: null,
+    applicationId: faker.string.uuid(),
   };
 };

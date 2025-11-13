@@ -19,6 +19,7 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -27,7 +28,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconPlus, IconPoint } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/layout';
-import { MAIN_COLORS } from 'twenty-ui/theme';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
@@ -48,6 +48,7 @@ export type SettingsDataModelFieldSelectFormValues = z.infer<
 type SettingsDataModelFieldSelectFormProps = {
   fieldType: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
   existingFieldMetadataId: string;
+  disabled?: boolean;
 };
 
 const StyledContainer = styled(CardContent)`
@@ -88,7 +89,7 @@ const StyledLabelContainer = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
-  border-right: 1px solid ${MAIN_COLORS.yellow};
+  border-right: 1px solid ${({ theme }) => theme.color.yellow};
   display: flex;
 
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
@@ -112,6 +113,7 @@ const StyledButton = styled(LightButton)`
 export const SettingsDataModelFieldSelectForm = ({
   existingFieldMetadataId,
   fieldType,
+  disabled = false,
 }: SettingsDataModelFieldSelectFormProps) => {
   const { initialDefaultValue, initialOptions } =
     useSelectSettingsFormInitialValues({
@@ -246,6 +248,8 @@ export const SettingsDataModelFieldSelectForm = ({
     setFormValue('options', newOptions, { shouldDirty: true });
   };
 
+  const theme = useTheme();
+
   return (
     <>
       <Controller
@@ -267,8 +271,8 @@ export const SettingsDataModelFieldSelectForm = ({
                     <StyledIconContainer>
                       <StyledIconPoint
                         size={12}
-                        color={MAIN_COLORS.yellow}
-                        fill={MAIN_COLORS.yellow}
+                        color={theme.color.yellow}
+                        fill={theme.color.yellow}
                       />
                     </StyledIconContainer>
                     <StyledApiKey>{t`API values`}</StyledApiKey>
@@ -281,7 +285,11 @@ export const SettingsDataModelFieldSelectForm = ({
                 </StyledOptionsLabel>
               </StyledLabelContainer>
               <DraggableList
-                onDragEnd={(result) => handleDragEnd(options, result, onChange)}
+                onDragEnd={(result) =>
+                  !disabled
+                    ? handleDragEnd(options, result, onChange)
+                    : undefined
+                }
                 draggableItems={
                   <>
                     {options.map((option, index) => (
@@ -297,6 +305,9 @@ export const SettingsDataModelFieldSelectForm = ({
                             option={option}
                             isNewRow={index === options.length - 1}
                             onChange={(nextOption) => {
+                              if (disabled) {
+                                return;
+                              }
                               const nextOptions = toSpliced(
                                 options,
                                 index,
@@ -315,6 +326,9 @@ export const SettingsDataModelFieldSelectForm = ({
                               }
                             }}
                             onRemove={() => {
+                              if (disabled) {
+                                return;
+                              }
                               const nextOptions = toSpliced(
                                 options,
                                 index,
@@ -326,13 +340,24 @@ export const SettingsDataModelFieldSelectForm = ({
                               onChange(nextOptions);
                             }}
                             isDefault={isOptionDefaultValue(option.value)}
-                            onSetAsDefault={() =>
-                              handleSetOptionAsDefault(option.value)
-                            }
-                            onRemoveAsDefault={() =>
-                              handleRemoveOptionAsDefault(option.value)
-                            }
-                            onInputEnter={handleInputEnter}
+                            onSetAsDefault={() => {
+                              if (disabled) {
+                                return;
+                              }
+                              handleSetOptionAsDefault(option.value);
+                            }}
+                            onRemoveAsDefault={() => {
+                              if (disabled) {
+                                return;
+                              }
+                              handleRemoveOptionAsDefault(option.value);
+                            }}
+                            onInputEnter={() => {
+                              if (disabled) {
+                                return;
+                              }
+                              handleInputEnter();
+                            }}
                           />
                         }
                       />
@@ -341,13 +366,15 @@ export const SettingsDataModelFieldSelectForm = ({
                 }
               />
             </StyledContainer>
-            <StyledFooter>
-              <StyledButton
-                title={t`Add option`}
-                Icon={IconPlus}
-                onClick={handleAddOption}
-              />
-            </StyledFooter>
+            {!disabled && (
+              <StyledFooter>
+                <StyledButton
+                  title={t`Add option`}
+                  Icon={IconPlus}
+                  onClick={handleAddOption}
+                />
+              </StyledFooter>
+            )}
           </>
         )}
       />
