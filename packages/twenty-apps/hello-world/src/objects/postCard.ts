@@ -1,10 +1,10 @@
 import {
-  BaseObjectMetadata,
-  FieldMetadata,
-  ObjectMetadata,
-  FieldMetadataType,
-  type FullNameMetadata,
-  type AddressMetadata,
+  BaseObject,
+  Field,
+  Object,
+  FieldType,
+  type FullNameField,
+  type AddressField,
 } from 'twenty-sdk/application';
 
 enum PostCardStatus {
@@ -14,7 +14,7 @@ enum PostCardStatus {
   RETURNED = 'RETURNED',
 }
 
-@ObjectMetadata({
+@Object({
   universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
   nameSingular: 'postCard',
   namePlural: 'postCards',
@@ -23,35 +23,35 @@ enum PostCardStatus {
   description: ' A post card object',
   icon: 'IconMail',
 })
-export class PostCard extends BaseObjectMetadata {
-  @FieldMetadata({
+export class PostCard extends BaseObject {
+  @Field({
     universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-    type: FieldMetadataType.TEXT,
+    type: FieldType.TEXT,
     label: 'Content',
     description: "Postcard's content",
     icon: 'IconAbc',
   })
   content: string;
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
-    type: FieldMetadataType.FULL_NAME,
+    type: FieldType.FULL_NAME,
     label: 'Recipient name',
     icon: 'IconUser',
   })
-  recipientName: FullNameMetadata;
+  recipientName: FullNameField;
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
-    type: FieldMetadataType.ADDRESS,
+    type: FieldType.ADDRESS,
     label: 'Recipient address',
     icon: 'IconHome',
   })
-  recipientAddress: AddressMetadata;
+  recipientAddress: AddressField;
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
-    type: FieldMetadataType.SELECT,
+    type: FieldType.SELECT,
     label: 'Status',
     icon: 'IconSend',
     defaultValue: `'${PostCardStatus.DRAFT}'`,
@@ -86,9 +86,9 @@ export class PostCard extends BaseObjectMetadata {
 
   //  notes?: string // optional internal notes or comments
 
-  @FieldMetadata({
+  @Field({
     universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
-    type: FieldMetadataType.DATE_TIME,
+    type: FieldType.DATE_TIME,
     label: 'Delivered at',
     icon: 'IconCheck',
     isNullable: true,

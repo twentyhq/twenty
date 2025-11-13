@@ -171,8 +171,10 @@ const collectObjects = (program: Program) => {
     const visit = (node: Node) => {
       if (isClassDeclaration(node) && getDecorators(node)?.length) {
         const decorators = getDecorators(node);
-        const objectDec = decorators?.find((d) =>
-          isDecoratorNamed(d, 'ObjectMetadata'),
+        const objectDec = decorators?.find(
+          (d) =>
+            isDecoratorNamed(d, 'ObjectMetadata') ||
+            isDecoratorNamed(d, 'Object'),
         );
         if (objectDec) {
           const cfg = getFirstArgObject(objectDec);
@@ -184,8 +186,10 @@ const collectObjects = (program: Program) => {
                 continue;
               }
 
-              const fieldDec = getDecorators(member)?.find((d) =>
-                isDecoratorNamed(d, 'FieldMetadata'),
+              const fieldDec = getDecorators(member)?.find(
+                (d) =>
+                  isDecoratorNamed(d, 'FieldMetadata') ||
+                  isDecoratorNamed(d, 'Field'),
               );
 
               if (!fieldDec) {

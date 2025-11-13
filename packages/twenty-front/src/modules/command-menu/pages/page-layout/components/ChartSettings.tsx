@@ -18,6 +18,7 @@ import { shouldHideChartSetting } from '@/command-menu/pages/page-layout/utils/s
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { BAR_CHART_MAXIMUM_NUMBER_OF_BARS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMaximumNumberOfBars.constant';
+import { LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS } from '@/page-layout/widgets/graph/graphWidgetLineChart/constants/LineChartMaximumNumberOfDataPoints.constant';
 import { hasWidgetTooManyGroupsComponentState } from '@/page-layout/widgets/graph/states/hasWidgetTooManyGroupsComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -89,7 +90,8 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
 
     if (
       graphType !== GraphType.VERTICAL_BAR &&
-      graphType !== GraphType.HORIZONTAL_BAR
+      graphType !== GraphType.HORIZONTAL_BAR &&
+      graphType !== GraphType.LINE
     ) {
       setHasWidgetTooManyGroups(false);
     }
@@ -124,7 +126,11 @@ export const ChartSettings = ({ widget }: { widget: PageLayoutWidget }) => {
       />
       {hasWidgetTooManyGroups && (
         <StyledSidePanelInformationBanner
-          message={t`Max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter`}
+          message={
+            currentGraphType === GraphType.LINE
+              ? t`Max ${LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter`
+              : t`Max ${BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter`
+          }
         />
       )}
       {chartSettings.map((group) => {

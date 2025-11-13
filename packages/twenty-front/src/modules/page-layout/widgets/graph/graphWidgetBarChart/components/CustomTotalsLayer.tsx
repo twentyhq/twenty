@@ -1,4 +1,5 @@
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { useTheme } from '@emotion/react';
 import { type BarCustomLayerProps, type ComputedBarDatum } from '@nivo/bar';
 import { animated } from '@react-spring/web';
@@ -10,7 +11,7 @@ type CustomTotalsLayerProps = Pick<
 > & {
   formatValue?: (value: number) => string;
   offset?: number;
-  layout?: 'vertical' | 'horizontal';
+  layout?: BarChartLayout;
   groupMode?: 'grouped' | 'stacked';
   omitNullValues?: boolean;
 };
@@ -137,12 +138,12 @@ export const CustomTotalsLayer = ({
   bars,
   formatValue,
   offset = 0,
-  layout = 'vertical',
+  layout = BarChartLayout.VERTICAL,
   groupMode = 'grouped',
   omitNullValues = false,
 }: CustomTotalsLayerProps) => {
   const theme = useTheme();
-  const isVertical = layout === 'vertical';
+  const isVertical = layout === BarChartLayout.VERTICAL;
 
   const labels =
     groupMode === 'stacked'

@@ -74,15 +74,6 @@ export const RecordChip = ({
 
   // TODO temporary until we create a record show page for Workspaces members
 
-  const avatarChip = (
-    <AvatarChip
-      placeholder={recordChipData.name}
-      placeholderColorSeed={record.id}
-      avatarType={recordChipData.avatarType}
-      avatarUrl={recordChipData.avatarUrl ?? ''}
-    />
-  );
-
   if (
     forceDisableClick ||
     objectNameSingular === CoreObjectNameSingular.WorkspaceMember
@@ -94,7 +85,16 @@ export const RecordChip = ({
         maxWidth={maxWidth}
         className={className}
         variant={ChipVariant.Transparent}
-        leftComponent={isIconHidden ? null : avatarChip}
+        leftComponent={
+          isIconHidden ? null : (
+            <AvatarChip
+              placeholder={recordChipData.name}
+              placeholderColorSeed={record.id}
+              avatarType={recordChipData.avatarType}
+              avatarUrl={recordChipData.avatarUrl ?? ''}
+            />
+          )
+        }
       />
     );
   }
@@ -105,7 +105,16 @@ export const RecordChip = ({
       maxWidth={maxWidth}
       label={recordChipData.name}
       isLabelHidden={isLabelHidden}
-      leftComponent={isIconHidden ? null : avatarChip}
+      leftComponent={
+        isIconHidden ? null : (
+          <AvatarChip
+            placeholder={recordChipData.name}
+            placeholderColorSeed={record.id}
+            avatarType={recordChipData.avatarType}
+            avatarUrl={recordChipData.avatarUrl ?? ''}
+          />
+        )
+      }
       className={className}
       variant={
         variant ??

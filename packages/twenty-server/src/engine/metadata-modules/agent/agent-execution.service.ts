@@ -286,23 +286,38 @@ export class AgentExecutionService implements AgentExecutionContext {
       aiRequestPrepTimeMs: number;
       toolCount: number;
     };
+    contextInfo: {
+      contextString: string;
+      contextRecordCount: number;
+      contextSizeBytes: number;
+    };
   }> {
     try {
       const agent = await this.agentService.findOneAgent(agentId, workspace.id);
 
       const contextBuildStart = Date.now();
-      let contextString = '';
+      let contextPart = '';
+      let contextRecordCount = 0;
 
       if (recordIdsByObjectMetadataNameSingular.length > 0) {
-        const contextPart = await this.getContextForSystemPrompt(
+        contextPart = await this.getContextForSystemPrompt(
           workspace,
           recordIdsByObjectMetadataNameSingular,
           userWorkspaceId,
         );
 
-        contextString = `\n\nCONTEXT:\n${contextPart}`;
+        try {
+          const contextData = JSON.parse(contextPart);
+
+          contextRecordCount = Array.isArray(contextData)
+            ? contextData.length
+            : 0;
+        } catch (error) {
+          this.logger.warn('Failed to parse context for record count:', error);
+        }
       }
 
+      const contextString = contextPart ? `\n\nCONTEXT:\n${contextPart}` : '';
       const contextBuildTime = Date.now() - contextBuildStart;
 
       const { actorContext, roleId } =
@@ -354,6 +369,13 @@ export class AgentExecutionService implements AgentExecutionContext {
           toolGenerationTimeMs: toolGenerationTime,
           aiRequestPrepTimeMs: aiRequestPrepTime,
           toolCount,
+        },
+        contextInfo: {
+          contextString: contextPart,
+          contextRecordCount,
+          contextSizeBytes: contextPart
+            ? Buffer.byteLength(contextPart, 'utf8')
+            : 0,
         },
       };
     } catch (error) {
