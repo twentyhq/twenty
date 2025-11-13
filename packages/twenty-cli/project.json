@@ -9,8 +9,9 @@
       "cache": true,
       "options": {
         "cwd": "packages/twenty-cli",
-        "commands": ["^build", "rimraf dist", "tsc --project tsconfig.lib.json"]
-      }
+        "commands": ["rimraf dist", "tsc --project tsconfig.lib.json"]
+      },
+      "dependsOn": ["^build"]
     },
     "build": {
       "executor": "nx:run-commands",
@@ -22,7 +23,7 @@
           "cp -R src/constants/schemas dist/constants"
         ]
       },
-      "dependsOn": ["^build", "before-build"]
+      "dependsOn": ["before-build"]
     },
     "dev": {
       "executor": "nx:run-commands",
