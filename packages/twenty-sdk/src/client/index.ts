@@ -8,4 +8,4 @@
  */
 
 export { fetchGraphQLSchema } from './fetch-graphql-schema';
-export { generateSdk } from './generate-sdk';
+export { generateClient } from './generate-client';

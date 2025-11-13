@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { generateSdk } from 'twenty-sdk/client';
+import { generateClient } from 'twenty-sdk/client';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
 import { ApiService } from '../services/api.service';
 import { ConfigService } from '../services/config.service';
@@ -68,7 +68,7 @@ export class AppSyncCommand {
       console.log(chalk.gray(`API URL: ${url}`));
       console.log(chalk.gray(`Output: ${outputPath}`));
 
-      await generateSdk({
+      await generateClient({
         url: `${url}/graphql`,
         token,
         graphqlEndpoint: 'core',

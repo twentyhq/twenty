@@ -2,19 +2,19 @@ import { fetchGraphQLSchema } from '@/client/fetch-graphql-schema';
 import { generate } from '@genql/cli';
 import path from 'path';
 
-type GenerateSdkOptions = {
+type GenerateClientOptions = {
   url: string;
   graphqlEndpoint: 'metadata' | 'core';
   token: string;
   outputPath?: string;
 };
 
-export const generateSdk = async ({
+export const generateClient = async ({
   url,
   token,
   graphqlEndpoint,
   outputPath = 'src/generated',
-}: GenerateSdkOptions): Promise<void> => {
+}: GenerateClientOptions): Promise<void> => {
   try {
     console.log('Fetching GraphQL schema...');
 
