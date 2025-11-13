@@ -26,7 +26,6 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "@genql/cli": "^3.0.3",
-    "graphql": "^16.8.1",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "axios": "^1.6.0",
@@ -35,6 +34,7 @@
     "commander": "^12.0.0",
     "dotenv": "^16.4.0",
     "fs-extra": "^11.2.0",
+    "graphql": "^16.8.1",
     "inquirer": "^10.0.0",
     "jsonc-parser": "^3.2.0",
     "lodash.camelcase": "^4.3.0",

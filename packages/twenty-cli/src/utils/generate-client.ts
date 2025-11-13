@@ -6,14 +6,14 @@ type GenerateClientOptions = {
   url: string;
   graphqlEndpoint: 'metadata' | 'core';
   token: string;
-  outputPath?: string;
+  outputPath: string;
 };
 
 export const generateClient = async ({
   url,
   token,
   graphqlEndpoint,
-  outputPath = 'src/generated',
+  outputPath,
 }: GenerateClientOptions): Promise<void> => {
   try {
     console.log('Fetching GraphQL schema...');

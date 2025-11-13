@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
+import { GENERATED_FOLDER_NAME } from '../constants/generated-folder-name';
 import { ApiService } from '../services/api.service';
 import { ConfigService } from '../services/config.service';
 import { ApiResponse } from '../types/config.types';
@@ -63,8 +64,7 @@ export class AppSyncCommand {
         return;
       }
 
-      const outputPath = config.sdkOutputPath || 'src/generated/';
-
+      const outputPath = GENERATED_FOLDER_NAME;
       console.log(chalk.gray(`API URL: ${url}`));
       console.log(chalk.gray(`Output: ${outputPath}`));
 

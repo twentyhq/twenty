@@ -1,8 +1,6 @@
 export interface TwentyConfig {
   apiUrl: string;
   apiKey?: string;
-  defaultApp?: string;
-  sdkOutputPath?: string;
 }
 
 export type PackageJson = {
