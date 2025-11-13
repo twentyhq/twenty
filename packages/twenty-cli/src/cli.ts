@@ -21,8 +21,8 @@ program
   .version(packageJson.version);
 
 program.option(
-  '--profile <name>',
-  'Use a named configuration profile',
+  '--workspace <name>',
+  'Use a specific workspace configuration',
   'default',
 );
 
@@ -30,9 +30,11 @@ program.hook('preAction', (thisCommand) => {
   const opts = (thisCommand as any).optsWithGlobals
     ? (thisCommand as any).optsWithGlobals()
     : thisCommand.opts();
-  const profile = opts.profile;
-  ConfigService.setActiveProfile(profile);
-  console.log(chalk.gray(`👩‍💻 Profile - ${ConfigService.getActiveProfile()}`));
+  const workspace = opts.workspace;
+  ConfigService.setActiveWorkspace(workspace);
+  console.log(
+    chalk.gray(`👩‍💻 Workspace - ${ConfigService.getActiveWorkspace()}`),
+  );
 });
 
 program.addCommand(new AuthCommand().getCommand());

@@ -7,26 +7,26 @@ type PersistedConfig = TwentyConfig & {
   profiles?: Record<string, TwentyConfig>;
 };
 
-const DEFAULT_PROFILE_NAME = 'default';
+const DEFAULT_WORKSPACE_NAME = 'default';
 
 export class ConfigService {
   private readonly configPath: string;
-  private static activeProfile = DEFAULT_PROFILE_NAME;
+  private static activeWorkspace = DEFAULT_WORKSPACE_NAME;
 
   constructor() {
     this.configPath = path.join(os.homedir(), '.twenty', 'config.json');
   }
 
-  static setActiveProfile(name?: string) {
-    this.activeProfile = name ?? DEFAULT_PROFILE_NAME;
+  static setActiveWorkspace(name?: string) {
+    this.activeWorkspace = name ?? DEFAULT_WORKSPACE_NAME;
   }
 
-  static getActiveProfile(): string {
-    return this.activeProfile;
+  static getActiveWorkspace(): string {
+    return this.activeWorkspace;
   }
 
-  private getActiveProfileName(): string {
-    return ConfigService.getActiveProfile();
+  private getActiveWorkspaceName(): string {
+    return ConfigService.getActiveWorkspace();
   }
 
   private async readRawConfig(): Promise<PersistedConfig> {
@@ -39,11 +39,11 @@ export class ConfigService {
     const defaultConfig = this.getDefaultConfig();
     try {
       const raw = await this.readRawConfig();
-      const profile = this.getActiveProfileName();
+      const profile = this.getActiveWorkspaceName();
 
       const profileConfig =
-        profile === DEFAULT_PROFILE_NAME &&
-        !raw.profiles?.[DEFAULT_PROFILE_NAME]
+        profile === DEFAULT_WORKSPACE_NAME &&
+        !raw.profiles?.[DEFAULT_WORKSPACE_NAME]
           ? raw
           : raw.profiles?.[profile];
 
@@ -62,7 +62,7 @@ export class ConfigService {
 
   async setConfig(config: Partial<TwentyConfig>): Promise<void> {
     const raw = await this.readRawConfig();
-    const profile = this.getActiveProfileName();
+    const profile = this.getActiveWorkspaceName();
 
     // Ensure profiles map exists
     if (!raw.profiles) {
@@ -80,7 +80,7 @@ export class ConfigService {
   async clearConfig(): Promise<void> {
     // Clear only the active profile credentials (non-breaking for other profiles)
     const raw = await this.readRawConfig();
-    const profile = this.getActiveProfileName();
+    const profile = this.getActiveWorkspaceName();
 
     if (!raw.profiles) {
       raw.profiles = {};
@@ -91,7 +91,7 @@ export class ConfigService {
     }
 
     // Also clear legacy top-level apiKey for compatibility when active profile is default
-    if (profile === DEFAULT_PROFILE_NAME) {
+    if (profile === DEFAULT_WORKSPACE_NAME) {
       const defaultConfig = this.getDefaultConfig();
       delete raw.apiKey;
       raw.apiUrl = defaultConfig.apiUrl;
@@ -103,7 +103,7 @@ export class ConfigService {
 
   async unsetKey(key: keyof TwentyConfig): Promise<void> {
     const raw = await this.readRawConfig();
-    const profile = this.getActiveProfileName();
+    const profile = this.getActiveWorkspaceName();
     if (!raw.profiles) {
       raw.profiles = {};
     }
@@ -112,7 +112,7 @@ export class ConfigService {
     delete (prof as any)[key];
     raw.profiles[profile] = prof;
 
-    if (profile === DEFAULT_PROFILE_NAME) {
+    if (profile === DEFAULT_WORKSPACE_NAME) {
       delete (raw as any)[key];
     }
 

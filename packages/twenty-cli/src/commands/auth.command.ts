@@ -31,8 +31,8 @@ export class AuthCommand {
     authCommand
       .command('status')
       .description('Check authentication status')
-      .action(async (options) => {
-        await this.status(options);
+      .action(async () => {
+        await this.status();
       });
 
     return authCommand;
@@ -92,10 +92,10 @@ export class AuthCommand {
       const isValid = await this.apiService.validateAuth();
 
       if (isValid) {
-        const activeProfile = ConfigService.getActiveProfile();
+        const activeWorkspace = ConfigService.getActiveWorkspace();
         console.log(
           chalk.green(
-            `✓ Successfully authenticated with Twenty (profile: ${activeProfile})`,
+            `✓ Successfully authenticated with Twenty (workspace: ${activeWorkspace})`,
           ),
         );
       } else {
@@ -116,9 +116,11 @@ export class AuthCommand {
   private async logout(): Promise<void> {
     try {
       await this.configService.clearConfig();
-      const activeProfile = ConfigService.getActiveProfile();
+      const activeWorkspace = ConfigService.getActiveWorkspace();
       console.log(
-        chalk.green(`✓ Successfully logged out (profile: ${activeProfile})`),
+        chalk.green(
+          `✓ Successfully logged out (workspace: ${activeWorkspace})`,
+        ),
       );
     } catch (error) {
       console.error(
@@ -129,13 +131,13 @@ export class AuthCommand {
     }
   }
 
-  private async status(_options?: { profile?: string }): Promise<void> {
+  private async status(): Promise<void> {
     try {
-      const activeProfile = ConfigService.getActiveProfile();
+      const activeWorkspace = ConfigService.getActiveWorkspace();
       const config = await this.configService.getConfig();
 
       console.log(chalk.blue('Authentication Status:'));
-      console.log(`Profile: ${activeProfile}`);
+      console.log(`Workspace: ${activeWorkspace}`);
       console.log(`API URL: ${config.apiUrl}`);
       console.log(
         `API Key: ${config.apiKey ? '***' + config.apiKey.slice(-4) : 'Not set'}`,
