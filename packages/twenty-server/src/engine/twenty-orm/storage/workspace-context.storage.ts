@@ -2,11 +2,13 @@ import { AsyncLocalStorage } from 'async_hooks';
 
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
+
 import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
-export type WorkspaceContextForStorage = {
-  workspaceId: string;
+export type WorkspaceContext = {
+  authContext: WorkspaceAuthContext;
   objectMetadataMaps: ObjectMetadataMaps;
   metadataVersion: number;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
@@ -14,9 +16,9 @@ export type WorkspaceContextForStorage = {
 };
 
 export const workspaceContextStorage =
-  new AsyncLocalStorage<WorkspaceContextForStorage>();
+  new AsyncLocalStorage<WorkspaceContext>();
 
-export const getWorkspaceContext = (): WorkspaceContextForStorage => {
+export const getWorkspaceContext = (): WorkspaceContext => {
   const context = workspaceContextStorage.getStore();
 
   if (!context) {
@@ -29,14 +31,12 @@ export const getWorkspaceContext = (): WorkspaceContextForStorage => {
 };
 
 export const withWorkspaceContext = <T>(
-  context: WorkspaceContextForStorage,
+  context: WorkspaceContext,
   fn: () => T | Promise<T>,
 ): T | Promise<T> => {
   return workspaceContextStorage.run(context, fn);
 };
 
-export const setWorkspaceContext = (
-  context: WorkspaceContextForStorage,
-): void => {
+export const setWorkspaceContext = (context: WorkspaceContext): void => {
   workspaceContextStorage.enterWith(context);
 };

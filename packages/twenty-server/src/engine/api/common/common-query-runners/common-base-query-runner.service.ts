@@ -133,8 +133,8 @@ export abstract class CommonBaseQueryRunnerService<
       );
 
     if (isGlobalDatasourceEnabled) {
-      return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext.workspace.id,
+      return this.globalWorkspaceOrmManager.executeInWorkspaceAuthContext(
+        authContext,
         async () =>
           this.executeQueryAndEnrichResults(
             processedArgs,
