@@ -9,26 +9,18 @@
 
 export type { ApplicationConfig } from './application-config';
 export {
-  actorCompositeType,
-  ActorMetadata,
-  addressCompositeType,
-  AddressMetadata,
-  currencyCompositeType,
-  CurrencyMetadata,
-  emailsCompositeType,
-  EmailsMetadata,
-  fullNameCompositeType,
-  FullNameMetadata,
-  linksCompositeType,
-  LinksMetadata,
-  phonesCompositeType,
-  PhonesMetadata,
-  richTextV2CompositeType,
-  RichTextV2Metadata,
+  ActorField,
+  AddressField,
+  CurrencyField,
+  EmailsField,
+  FullNameField,
+  LinksField,
+  PhonesField,
+  RichTextField,
 } from './field-metadata/composite-fields';
-export { FieldMetadataType } from './field-metadata/field-metadata-type';
-export { FieldMetadata } from './field-metadata/field-metadata.decorator';
-export { BaseObjectMetadata } from './object-metadata/base-object-metadata';
-export { ObjectMetadata } from './object-metadata/object-metadata.decorator';
+export { FieldType } from './field-metadata/field-type';
+export { Field } from './field-metadata/field.decorator';
+export { BaseObject } from './object-metadata/base-object';
+export { Object } from './object-metadata/object.decorator';
 export type { ServerlessFunctionConfig } from './serverless-function-config';
 export type { SyncableEntityOptions } from './syncable-entity-options.type';

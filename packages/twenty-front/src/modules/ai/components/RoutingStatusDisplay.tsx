@@ -1,3 +1,4 @@
+import { RoutingDebugDisplay } from '@/ai/components/RoutingDebugDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import styled from '@emotion/styled';
 import { type DataMessagePart } from 'twenty-shared/ai';
@@ -38,27 +39,38 @@ const StyledText = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
+const StyledWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const RoutingStatusDisplay = ({
   data,
 }: {
   data: DataMessagePart['routing-status'];
 }) => {
   const isLoading = data.state === 'loading';
+  const isDebugMode = process.env.IS_DEBUG_MODE === 'true';
 
   if (data.state === 'error') {
     return null;
   }
 
   return (
-    <StyledRoutingContainer>
-      <StyledIconContainer isLoading={isLoading}>
-        {isLoading ? <IconSparkles size={16} /> : <IconCpu size={16} />}
-      </StyledIconContainer>
-      {isLoading ? (
-        <ShimmeringText>{data.text}</ShimmeringText>
-      ) : (
-        <StyledText>{data.text}</StyledText>
+    <StyledWrapper>
+      <StyledRoutingContainer>
+        <StyledIconContainer isLoading={isLoading}>
+          {isLoading ? <IconSparkles size={16} /> : <IconCpu size={16} />}
+        </StyledIconContainer>
+        {isLoading ? (
+          <ShimmeringText>{data.text}</ShimmeringText>
+        ) : (
+          <StyledText>{data.text}</StyledText>
+        )}
+      </StyledRoutingContainer>
+      {isDebugMode && data.state === 'routed' && data.debug && (
+        <RoutingDebugDisplay debug={data.debug} />
       )}
-    </StyledRoutingContainer>
+    </StyledWrapper>
   );
 };

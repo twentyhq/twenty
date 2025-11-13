@@ -158,7 +158,6 @@ describe('WorkspaceEntityManager', () => {
         IS_AI_ENABLED: false,
         IS_APPLICATION_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
-        IS_MORPH_RELATION_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_ENABLED: false,

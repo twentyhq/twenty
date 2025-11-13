@@ -17,6 +17,7 @@ import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTrigge
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
@@ -61,6 +62,7 @@ export const WorkflowEditTriggerManual = ({
   const { t } = useLingui();
 
   const { getIcon } = useIcons();
+  const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -82,7 +84,7 @@ export const WorkflowEditTriggerManual = ({
 
   const availabilityDescriptions = {
     SINGLE_RECORD: t`The selected record will be passed to your workflow`,
-    BULK_RECORDS: t`The selected records will be passed to your workflow`,
+    BULK_RECORDS: t`The selected records (up to ${maxRecordsFormatted}) will be passed to your workflow`,
     GLOBAL: t`No record is required to trigger this workflow`,
   };
 

@@ -278,27 +278,55 @@ export class AgentExecutionService implements AgentExecutionContext {
     agentId: string;
     messages: UIMessage<unknown, UIDataTypes, UITools>[];
     recordIdsByObjectMetadataNameSingular: RecordIdsByObjectMetadataNameSingularType;
-  }) {
+  }): Promise<{
+    stream: ReturnType<typeof streamText>;
+    timings: {
+      contextBuildTimeMs: number;
+      toolGenerationTimeMs: number;
+      aiRequestPrepTimeMs: number;
+      toolCount: number;
+    };
+    contextInfo: {
+      contextString: string;
+      contextRecordCount: number;
+      contextSizeBytes: number;
+    };
+  }> {
     try {
       const agent = await this.agentService.findOneAgent(agentId, workspace.id);
 
-      let contextString = '';
+      const contextBuildStart = Date.now();
+      let contextPart = '';
+      let contextRecordCount = 0;
 
       if (recordIdsByObjectMetadataNameSingular.length > 0) {
-        const contextPart = await this.getContextForSystemPrompt(
+        contextPart = await this.getContextForSystemPrompt(
           workspace,
           recordIdsByObjectMetadataNameSingular,
           userWorkspaceId,
         );
 
-        contextString = `\n\nCONTEXT:\n${contextPart}`;
+        try {
+          const contextData = JSON.parse(contextPart);
+
+          contextRecordCount = Array.isArray(contextData)
+            ? contextData.length
+            : 0;
+        } catch (error) {
+          this.logger.warn('Failed to parse context for record count:', error);
+        }
       }
+
+      const contextString = contextPart ? `\n\nCONTEXT:\n${contextPart}` : '';
+      const contextBuildTime = Date.now() - contextBuildStart;
 
       const { actorContext, roleId } =
         await this.agentActorContextService.buildUserAndAgentActorContext(
           userWorkspaceId,
           workspace.id,
         );
+
+      const aiRequestPrepStart = Date.now();
 
       const aiRequestConfig = await this.prepareAIRequestConfig({
         system: `${AGENT_SYSTEM_PROMPTS.AGENT_CHAT}\n\n${agent.prompt}${contextString}`,
@@ -309,8 +337,12 @@ export class AgentExecutionService implements AgentExecutionContext {
         userWorkspaceId,
       });
 
+      const aiRequestPrepTime = Date.now() - aiRequestPrepStart;
+      const toolCount = Object.keys(aiRequestConfig.tools || {}).length;
+      const toolGenerationTime = aiRequestPrepTime;
+
       this.logger.log(
-        `Sending request to AI model with ${messages.length} messages`,
+        `Sending request to AI model with ${messages.length} messages and ${toolCount} tools`,
       );
 
       const model =
@@ -330,7 +362,22 @@ export class AgentExecutionService implements AgentExecutionContext {
           this.logger.error('Failed to get usage information:', usageError);
         });
 
-      return stream;
+      return {
+        stream,
+        timings: {
+          contextBuildTimeMs: contextBuildTime,
+          toolGenerationTimeMs: toolGenerationTime,
+          aiRequestPrepTimeMs: aiRequestPrepTime,
+          toolCount,
+        },
+        contextInfo: {
+          contextString: contextPart,
+          contextRecordCount,
+          contextSizeBytes: contextPart
+            ? Buffer.byteLength(contextPart, 'utf8')
+            : 0,
+        },
+      };
     } catch (error) {
       this.logger.error('Error in streamChatResponse:', error);
       throw new AgentException(

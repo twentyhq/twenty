@@ -1,19 +1,19 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
+import { type GroupByChartConfiguration } from '@/page-layout/widgets/graph/types/GroupByChartConfiguration';
 import { generateGroupByQuery } from '@/page-layout/widgets/graph/utils/generateGroupByQuery';
-import { generateGroupByQueryVariablesFromBarChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromBarChartConfiguration';
+import { generateGroupByQueryVariablesFromChartConfiguration } from '@/page-layout/widgets/graph/utils/generateGroupByQueryVariablesFromChartConfiguration';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type BarChartConfiguration } from '~/generated-metadata/graphql';
 
 export const useGraphWidgetGroupByQuery = ({
   objectMetadataItemId,
   configuration,
 }: {
   objectMetadataItemId: string;
-  configuration: BarChartConfiguration;
+  configuration: GroupByChartConfiguration;
 }) => {
   const { objectMetadataItem, aggregateField, gqlOperationFilter } =
     useGraphWidgetQueryCommon({
@@ -43,9 +43,9 @@ export const useGraphWidgetGroupByQuery = ({
   }
 
   const groupByQueryVariables =
-    generateGroupByQueryVariablesFromBarChartConfiguration({
+    generateGroupByQueryVariablesFromChartConfiguration({
       objectMetadataItem,
-      barChartConfiguration: configuration,
+      chartConfiguration: configuration,
       aggregateOperation: aggregateOperation,
     });
 

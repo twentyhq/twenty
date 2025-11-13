@@ -1,37 +1,19 @@
-import styled from '@emotion/styled';
-import { NotificationCounter } from 'twenty-ui/navigation';
-
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
+import { RecordTableRowMultiDragCounterChip } from '@/object-record/record-table/record-table-row/components/RecordTableRowMultiDragCounterChip';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 
-const StyledNotificationCounter = styled(NotificationCounter)`
-  position: absolute;
-  top: -7px;
-  left: -7px;
-  z-index: 1000;
-`;
-
-type RecordTableRowMultiDragPreviewProps = {
-  isDragging: boolean;
-};
-
-export const RecordTableRowMultiDragPreview = ({
-  isDragging,
-}: RecordTableRowMultiDragPreviewProps) => {
+export const RecordTableRowMultiDragPreview = () => {
   const { recordId } = useRecordTableRowContextOrThrow();
-  const { recordTableId } = useRecordTableContextOrThrow();
-  const multiDragState = useRecordDragState('table', recordTableId);
 
-  const isCurrentRowSelected =
-    multiDragState?.originalSelection.includes(recordId) || false;
-  const selectedCount = multiDragState?.originalSelection.length ?? 0;
+  const isRecordIdPrimaryDragMultiple = useRecoilComponentFamilyValue(
+    isRecordIdPrimaryDragMultipleComponentFamilyState,
+    { recordId },
+  );
 
-  const shouldShow = isDragging && isCurrentRowSelected && selectedCount > 1;
-
-  if (!shouldShow) {
+  if (!isRecordIdPrimaryDragMultiple) {
     return null;
   }
 
-  return <StyledNotificationCounter count={selectedCount} />;
+  return <RecordTableRowMultiDragCounterChip />;
 };
