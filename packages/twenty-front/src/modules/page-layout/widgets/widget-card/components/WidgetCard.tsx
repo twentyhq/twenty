@@ -15,6 +15,7 @@ export type WidgetCardProps = {
   isEditing: boolean;
   isDragging: boolean;
   isInPinnedTab: boolean;
+  isResizing?: boolean;
   className?: string;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
@@ -28,13 +29,14 @@ const StyledWidgetCard = styled.div<{
   isPageLayoutInEditMode: boolean;
   isEditing: boolean;
   isDragging: boolean;
+  isResizing: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  position: relative;
   height: 100%;
   width: 100%;
-  position: relative;
 
   ${({
     theme,
@@ -44,6 +46,7 @@ const StyledWidgetCard = styled.div<{
     isEditing,
     isDragging,
     isInPinnedTab,
+    isResizing,
     onClick,
   }) => {
     if (layoutMode === 'canvas') {
@@ -64,6 +67,7 @@ const StyledWidgetCard = styled.div<{
           ${isPageLayoutInEditMode &&
           !isDragging &&
           !isEditing &&
+          !isResizing &&
           css`
             &:hover {
               border: 1px solid ${theme.border.color.strong};
@@ -101,6 +105,7 @@ const StyledWidgetCard = styled.div<{
           ${isPageLayoutInEditMode &&
           !isDragging &&
           !isEditing &&
+          !isResizing &&
           css`
             &:hover {
               border: 1px solid ${theme.border.color.strong};
@@ -150,6 +155,7 @@ export const WidgetCard = ({
   isEditing,
   isDragging,
   isInPinnedTab,
+  isResizing = false,
   className,
   onMouseEnter,
   onMouseLeave,
@@ -167,6 +173,7 @@ export const WidgetCard = ({
       isEditing={isEditing}
       isDragging={isDragging}
       isInPinnedTab={isInPinnedTab}
+      isResizing={isResizing}
       className={className}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

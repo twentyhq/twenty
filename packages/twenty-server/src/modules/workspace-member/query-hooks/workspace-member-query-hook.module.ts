@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -36,7 +36,7 @@ import { WorkspaceMemberUpdateOnePreQueryHook } from 'src/modules/workspace-memb
   imports: [
     FeatureFlagModule,
     PermissionsModule,
-    UserWorkspaceModule,
+    forwardRef(() => UserWorkspaceModule),
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
 })

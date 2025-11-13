@@ -158,6 +158,7 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-lingui": "^0.9.0",
+    "eslint-plugin-mdx": "^3.6.2",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^5.1.2",
     "eslint-plugin-project-structure": "^3.9.1",

@@ -8,18 +8,19 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { McpService } from 'src/engine/core-modules/ai/services/mcp.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller('mcp')
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 @UseFilters(RestApiExceptionFilter)
 export class McpController {
   constructor(private readonly mcpService: McpService) {}

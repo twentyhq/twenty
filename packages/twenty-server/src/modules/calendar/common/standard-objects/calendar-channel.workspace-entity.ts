@@ -69,6 +69,7 @@ registerEnumType(CalendarChannelContactAutoCreationPolicy, {
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannel,
+
   namePlural: 'calendarChannels',
   labelSingular: msg`Calendar Channel`,
   labelPlural: msg`Calendar Channels`,

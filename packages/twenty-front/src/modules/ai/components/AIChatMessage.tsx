@@ -132,6 +132,7 @@ const StyledAvatarContainer = styled.div<{ isUser?: boolean }>`
 `;
 
 const StyledMessageContainer = styled.div`
+  min-width: 0;
   width: 100%;
 `;
 

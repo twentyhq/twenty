@@ -474,7 +474,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }, {});
   }
 
-  async createStepForDuplicate({
+  async cloneStep({
     step,
     workspaceId,
   }: {
@@ -482,8 +482,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workspaceId: string;
   }): Promise<WorkflowAction> {
     const duplicatedStepPosition = {
-      x: (step.position?.x ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
-      y: (step.position?.y ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+      x: step.position?.x ?? 0,
+      y: step.position?.y ?? 0,
     };
 
     switch (step.type) {
@@ -498,7 +498,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           ...step,
           id: v4(),
-          name: `${step.name} (Duplicate)`,
           nextStepIds: [],
           position: duplicatedStepPosition,
           settings: {
@@ -511,16 +510,41 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.ITERATOR: {
+        return {
+          ...step,
+          id: v4(),
+          nextStepIds: [],
+          position: duplicatedStepPosition,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              initialLoopStepIds: [],
+            },
+          },
+        };
+      }
       default: {
         return {
           ...step,
           id: v4(),
-          name: `${step.name} (Duplicate)`,
           nextStepIds: [],
           position: duplicatedStepPosition,
         };
       }
     }
+  }
+
+  markStepAsDuplicate({ step }: { step: WorkflowAction }): WorkflowAction {
+    return {
+      ...step,
+      name: `${step.name} (Duplicate)`,
+      position: {
+        x: (step.position?.x ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+        y: (step.position?.y ?? 0) + DUPLICATED_STEP_POSITION_OFFSET,
+      },
+    };
   }
 
   async createEmptyNodeForIteratorStep({

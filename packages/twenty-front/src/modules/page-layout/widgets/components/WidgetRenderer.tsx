@@ -5,6 +5,7 @@ import { useEditPageLayoutWidget } from '@/page-layout/hooks/useEditPageLayoutWi
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
 import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetContentRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
@@ -13,8 +14,10 @@ import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetC
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
+import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { useTheme } from '@emotion/react';
-import { useState, type MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import { IconLock } from 'twenty-ui/display';
 import { PageLayoutType, type PageLayoutWidget } from '~/generated/graphql';
 
@@ -35,6 +38,10 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     pageLayoutDraggingWidgetIdComponentState,
   );
 
+  const resizingWidgetId = useRecoilComponentValue(
+    pageLayoutResizingWidgetIdComponentState,
+  );
+
   const currentlyEditingWidgetId = useRecoilComponentValue(
     pageLayoutEditingWidgetIdComponentState,
   );
@@ -42,6 +49,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const isEditing = currentlyEditingWidgetId === widget.id;
 
   const isDragging = draggingWidgetId === widget.id;
+
+  const isResizing = resizingWidgetId === widget.id;
 
   const { hasAccess, restriction } = useWidgetPermissions(widget);
 
@@ -64,7 +73,10 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     deletePageLayoutWidget(widget.id);
   };
 
-  const [isHovered, setIsHovered] = useState(false);
+  const setIsHovered = useSetRecoilComponentFamilyState(
+    widgetCardHoveredComponentFamilyState,
+    widget.id,
+  );
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -76,9 +88,10 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   return (
     <WidgetCard
-      isEditing={isEditing}
       isDragging={isDragging}
+      isResizing={isResizing}
       layoutMode={layoutMode}
+      isEditing={isEditing}
       pageLayoutType={currentPageLayout.type}
       isInPinnedTab={isInPinnedTab}
       onClick={isPageLayoutInEditMode ? handleClick : undefined}
@@ -87,8 +100,9 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     >
       {showHeader && (
         <WidgetCardHeader
-          isWidgetCardHovered={isHovered}
+          widgetId={widget.id}
           isInEditMode={isPageLayoutInEditMode}
+          isResizing={isResizing}
           title={widget.title}
           onRemove={handleRemove}
           forbiddenDisplay={

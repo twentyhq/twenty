@@ -104,19 +104,29 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
       [subFieldNameKey]: subFieldName,
     };
 
-    if (
-      !isSecondaryAxis ||
-      configuration.__typename !== 'BarChartConfiguration'
-    ) {
+    if (!isSecondaryAxis) {
       return baseConfig;
     }
 
-    return {
-      ...baseConfig,
-      groupMode: isDefined(fieldId)
-        ? (configuration.groupMode ?? BarChartGroupMode.STACKED)
-        : null,
-    };
+    if (configuration.__typename === 'BarChartConfiguration') {
+      return {
+        ...baseConfig,
+        groupMode: isDefined(fieldId)
+          ? (configuration.groupMode ?? BarChartGroupMode.STACKED)
+          : null,
+      };
+    }
+
+    if (configuration.__typename === 'LineChartConfiguration') {
+      return {
+        ...baseConfig,
+        isStacked: isDefined(fieldId)
+          ? (configuration.isStacked ?? true)
+          : null,
+      };
+    }
+
+    return baseConfig;
   };
 
   const handleSelectField = (fieldMetadataItem: FieldMetadataItem) => {

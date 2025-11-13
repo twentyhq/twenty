@@ -21,7 +21,7 @@ export const OnboardingModalCircularIcon = ({
   Icon,
 }: OnboardingModalCircularIconProps) => {
   const theme = useTheme();
-  const color = theme.grayScale.gray2;
+  const color = theme.background.invertedPrimary;
 
   return (
     <StyledCheckContainer color={color}>

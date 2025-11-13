@@ -30,6 +30,8 @@ import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-q
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -45,6 +47,8 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
@@ -60,6 +64,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly dataArgProcessor: DataArgProcessor;
   @Inject()
   protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
+  @Inject()
+  protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
   @Inject()
@@ -78,6 +84,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly twentyConfigService: TwentyConfigService;
   @Inject()
   protected readonly metricsService: MetricsService;
+  @Inject()
+  protected readonly featureFlagService: FeatureFlagService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -90,7 +98,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     if (!isWorkspaceAuthContext(authContext)) {
       throw new CommonQueryRunnerException(
-        'Invalid auth context',
+        `Invalid auth context: ${JSON.stringify(authContext)}`,
         CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
       );
     }
@@ -118,24 +126,33 @@ export abstract class CommonBaseQueryRunnerService<
       commonQueryParser,
     );
 
-    const extendedQueryRunnerContext =
-      await this.prepareExtendedQueryRunnerContext(
-        authContext,
-        queryRunnerContext,
+    const isGlobalDatasourceEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED,
+        authContext.workspace.id,
       );
 
-    const results = await this.run(processedArgs, {
-      ...extendedQueryRunnerContext,
-      commonQueryParser,
-    });
+    if (isGlobalDatasourceEnabled) {
+      return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        authContext.workspace.id,
+        async () =>
+          this.executeQueryAndEnrichResults(
+            processedArgs,
+            authContext,
+            queryRunnerContext,
+            commonQueryParser,
+            isGlobalDatasourceEnabled,
+          ),
+      );
+    }
 
-    return this.enrichResultsWithGettersAndHooks({
-      results,
-      operationName: this.operationName,
+    return this.executeQueryAndEnrichResults(
+      processedArgs,
       authContext,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-    });
+      queryRunnerContext,
+      commonQueryParser,
+      isGlobalDatasourceEnabled,
+    );
   }
 
   protected abstract run(
@@ -186,6 +203,38 @@ export abstract class CommonBaseQueryRunnerService<
       ...hookedArgs,
       selectedFieldsResult,
     };
+  }
+
+  private async executeQueryAndEnrichResults(
+    processedArgs: CommonExtendedInput<Args>,
+    authContext: WorkspaceAuthContext,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+    commonQueryParser: GraphqlQueryParser,
+    isGlobalDatasourceEnabled: boolean,
+  ): Promise<Output> {
+    const extendedQueryRunnerContext = isGlobalDatasourceEnabled
+      ? await this.prepareExtendedQueryRunnerContextWithGlobalDatasource(
+          authContext,
+          queryRunnerContext,
+        )
+      : await this.prepareExtendedQueryRunnerContext(
+          authContext,
+          queryRunnerContext,
+        );
+
+    const results = await this.run(processedArgs, {
+      ...extendedQueryRunnerContext,
+      commonQueryParser,
+    });
+
+    return this.enrichResultsWithGettersAndHooks({
+      results,
+      operationName: this.operationName,
+      authContext,
+      objectMetadataItemWithFieldMaps:
+        queryRunnerContext.objectMetadataItemWithFieldMaps,
+      objectMetadataMaps: queryRunnerContext.objectMetadataMaps,
+    });
   }
 
   private async enrichResultsWithGettersAndHooks({
@@ -328,6 +377,38 @@ export abstract class CommonBaseQueryRunnerService<
       ...queryRunnerContext,
       authContext,
       workspaceDataSource,
+      rolePermissionConfig,
+      repository,
+    };
+  }
+
+  private async prepareExtendedQueryRunnerContextWithGlobalDatasource(
+    authContext: WorkspaceAuthContext,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
+    const workspaceId = authContext.workspace.id;
+
+    const { roleId } = await this.getRoleIdAndObjectsPermissions(
+      authContext,
+      workspaceId,
+    );
+
+    const rolePermissionConfig = { unionOf: [roleId] };
+
+    const repository = await this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
+      queryRunnerContext.objectMetadataItemWithFieldMaps.nameSingular,
+      rolePermissionConfig,
+    );
+
+    const globalWorkspaceDataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+    return {
+      ...queryRunnerContext,
+      authContext,
+      workspaceDataSource:
+        globalWorkspaceDataSource as unknown as WorkspaceDataSource,
       rolePermissionConfig,
       repository,
     };

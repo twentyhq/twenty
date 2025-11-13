@@ -129,7 +129,6 @@ describe('ClientConfigService', () => {
         isEmailVerificationRequired: true,
         defaultSubdomain: 'app',
         frontDomain: 'app.twenty.com',
-        debugMode: true,
         support: {
           supportDriver: 'FRONT',
           supportFrontChatId: 'chat-123',
@@ -172,7 +171,6 @@ describe('ClientConfigService', () => {
 
       const result = await service.getClientConfig();
 
-      expect(result.debugMode).toBe(false);
       expect(result.canManageFeatureFlags).toBe(false);
       expect(result.aiModels).toEqual([]);
     });

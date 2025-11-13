@@ -1,17 +1,16 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
-import { GraphWidgetTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetTooltip';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
+import { GraphBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphBarChartTooltip';
 import { BAR_CHART_MINIMUM_INNER_PADDING } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartMinimumInnerPadding';
 import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartData';
-import { useBarChartHandlers } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartHandlers';
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
-import { useBarChartTooltip } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTooltip';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
-import { calculateBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateBarChartValueRange';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
+import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartMargins } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartMargins';
@@ -20,14 +19,23 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
+
 import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDimensionEffect';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { type ComputedBarDatum, ResponsiveBar } from '@nivo/bar';
-import { useMemo, useRef, useState } from 'react';
+import {
+  ResponsiveBar,
+  type BarItemProps,
+  type ComputedBarDatum,
+  type ComputedDatum,
+} from '@nivo/bar';
+import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useDebouncedCallback } from 'use-debounce';
 
-const LEGEND_THRESHOLD = 10;
+import { CHART_LEGEND_ITEM_THRESHOLD } from '@/page-layout/widgets/graph/constants/ChartLegendItemThreshold';
+import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
@@ -40,12 +48,11 @@ type GraphWidgetBarChartProps = {
   xAxisLabel?: string;
   yAxisLabel?: string;
   id: string;
-  layout?: 'vertical' | 'horizontal';
+  layout?: BarChartLayout;
   groupMode?: 'grouped' | 'stacked';
   seriesLabels?: Record<string, string>;
   rangeMin?: number;
   rangeMax?: number;
-  enableGroupTooltip?: boolean;
   omitNullValues?: boolean;
 } & GraphValueFormatOptions;
 
@@ -69,12 +76,11 @@ export const GraphWidgetBarChart = ({
   xAxisLabel,
   yAxisLabel,
   id,
-  layout = 'vertical',
+  layout = BarChartLayout.VERTICAL,
   groupMode,
   seriesLabels,
   rangeMin,
   rangeMax,
-  enableGroupTooltip,
   omitNullValues = false,
   displayType,
   decimals,
@@ -84,12 +90,15 @@ export const GraphWidgetBarChart = ({
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
   const colorRegistry = createGraphColorRegistry(theme);
+
+  // Chart dimensions
   const [chartWidth, setChartWidth] = useState<number>(0);
   const [chartHeight, setChartHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const shouldEnableGroupTooltip =
-    enableGroupTooltip ?? groupMode === 'stacked';
+  const setActiveBarTooltip = useSetRecoilComponentState(
+    graphWidgetBarTooltipComponentState,
+  );
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,
@@ -98,12 +107,6 @@ export const GraphWidgetBarChart = ({
     suffix,
     customFormatter,
   };
-
-  const { hoveredBar, setHoveredBar, handleBarClick, hasClickableItems } =
-    useBarChartHandlers({
-      data,
-      indexBy,
-    });
 
   const chartTheme = useBarChartTheme();
 
@@ -116,16 +119,36 @@ export const GraphWidgetBarChart = ({
     seriesLabels,
   });
 
-  const { renderTooltip: getTooltipData } = useBarChartTooltip({
-    hoveredBar,
-    enrichedKeys,
-    data,
-    indexBy,
-    formatOptions,
-    enableGroupTooltip: shouldEnableGroupTooltip,
-  });
+  const hasClickableItems = data.some((item) => isDefined(item.to));
 
-  const areThereTooManyKeys = keys.length > LEGEND_THRESHOLD;
+  const hideTooltip = () => setActiveBarTooltip(null);
+  const debouncedHideTooltip = useDebouncedCallback(hideTooltip, 300);
+
+  const handleTooltipMouseEnter = () => {
+    debouncedHideTooltip.cancel();
+  };
+
+  const handleTooltipMouseLeave = debouncedHideTooltip;
+
+  const handleBarEnter = useCallback(
+    (
+      datum: ComputedDatum<BarChartDataItem>,
+      event: MouseEvent<SVGRectElement>,
+    ) => {
+      debouncedHideTooltip.cancel();
+      setActiveBarTooltip({
+        datum,
+        anchorElement: event.currentTarget,
+      });
+    },
+    [debouncedHideTooltip, setActiveBarTooltip],
+  );
+
+  const handleBarLeave = useCallback(() => {
+    debouncedHideTooltip();
+  }, [debouncedHideTooltip]);
+
+  const areThereTooManyKeys = keys.length > CHART_LEGEND_ITEM_THRESHOLD;
 
   const shouldShowLegend = showLegend && !areThereTooManyKeys;
 
@@ -142,21 +165,8 @@ export const GraphWidgetBarChart = ({
       axisFontSize: chartTheme.axis.ticks.text.fontSize,
     });
 
-  const renderTooltip = (datum: Parameters<typeof getTooltipData>[0]) => {
-    const tooltipData = getTooltipData(datum);
-    if (!isDefined(tooltipData)) return null;
-
-    return (
-      <GraphWidgetTooltip
-        items={tooltipData.tooltipItems}
-        showClickHint={tooltipData.showClickHint}
-        indexLabel={tooltipData.indexLabel}
-      />
-    );
-  };
-
   const BarItemWithContext = useMemo(
-    () => (props: any) => (
+    () => (props: BarItemProps<BarChartDataItem>) => (
       <CustomBarItem
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
@@ -190,18 +200,18 @@ export const GraphWidgetBarChart = ({
     </>
   );
 
-  const calculatedRange =
+  const calculatedValueRange =
     groupMode === 'stacked'
       ? calculateStackedBarChartValueRange(data, keys)
-      : calculateBarChartValueRange(data, keys);
-  const effectiveMin = rangeMin ?? calculatedRange.min;
-  const effectiveMax = rangeMax ?? calculatedRange.max;
+      : calculateValueRangeFromBarChartKeys(data, keys);
+  const effectiveMinimumValue = rangeMin ?? calculatedValueRange.minimum;
+  const effectiveMaximumValue = rangeMax ?? calculatedValueRange.maximum;
 
-  const hasNegativeValues = calculatedRange.min < 0;
+  const hasNegativeValues = calculatedValueRange.minimum < 0;
   const zeroMarker = hasNegativeValues
     ? [
         {
-          axis: (layout === 'vertical' ? 'y' : 'x') as 'y' | 'x',
+          axis: (layout === BarChartLayout.VERTICAL ? 'y' : 'x') as 'y' | 'x',
           value: 0,
           lineStyle: {
             stroke: theme.border.color.medium,
@@ -238,8 +248,8 @@ export const GraphWidgetBarChart = ({
           layout={layout}
           valueScale={{
             type: 'linear',
-            min: effectiveMin,
-            max: effectiveMax,
+            min: effectiveMinimumValue,
+            max: effectiveMaximumValue,
             clamp: true,
           }}
           indexScale={{ type: 'band', round: true }}
@@ -250,36 +260,42 @@ export const GraphWidgetBarChart = ({
           axisRight={null}
           axisBottom={axisBottomConfig}
           axisLeft={axisLeftConfig}
-          enableGridX={layout === 'horizontal' && showGrid}
-          enableGridY={layout === 'vertical' && showGrid}
-          gridXValues={layout === 'horizontal' ? 5 : undefined}
-          gridYValues={layout === 'vertical' ? 5 : undefined}
+          enableGridX={layout === BarChartLayout.HORIZONTAL && showGrid}
+          enableGridY={layout === BarChartLayout.VERTICAL && showGrid}
+          gridXValues={layout === BarChartLayout.HORIZONTAL ? 5 : undefined}
+          gridYValues={layout === BarChartLayout.VERTICAL ? 5 : undefined}
           enableLabel={false}
           labelSkipWidth={12}
           innerPadding={
-            groupMode !== 'stacked' ? BAR_CHART_MINIMUM_INNER_PADDING : 0
+            groupMode === 'grouped' ? BAR_CHART_MINIMUM_INNER_PADDING : 0
           }
           labelSkipHeight={12}
           valueFormat={(value) =>
             formatGraphValue(Number(value), formatOptions)
           }
           labelTextColor={theme.font.color.primary}
-          label={(d) => formatGraphValue(Number(d.value), formatOptions)}
-          tooltip={(props) => renderTooltip(props)}
-          onClick={handleBarClick}
-          onMouseEnter={(datum) => {
-            if (isDefined(datum.id) && isDefined(datum.indexValue)) {
-              setHoveredBar({
-                key: String(datum.id),
-                indexValue: datum.indexValue,
-              });
-            }
-          }}
-          onMouseLeave={() => setHoveredBar(null)}
+          label={(barDatumCandidate) =>
+            formatGraphValue(Number(barDatumCandidate.value), formatOptions)
+          }
+          tooltip={() => null}
+          onMouseEnter={handleBarEnter}
+          onMouseLeave={handleBarLeave}
           theme={chartTheme}
           borderRadius={parseInt(theme.border.radius.sm)}
         />
       </GraphWidgetChartContainer>
+
+      <GraphBarChartTooltip
+        containerId={id}
+        enrichedKeys={enrichedKeys}
+        data={data}
+        indexBy={indexBy}
+        formatOptions={formatOptions}
+        enableGroupTooltip={groupMode === 'stacked'}
+        layout={layout}
+        onMouseEnter={handleTooltipMouseEnter}
+        onMouseLeave={handleTooltipMouseLeave}
+      />
       <GraphWidgetLegend
         show={shouldShowLegend}
         items={enrichedKeys.map((item) => {

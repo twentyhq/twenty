@@ -46,6 +46,7 @@ export class PageLayoutWidgetService {
     workspaceId: string,
     pageLayoutTabId: string,
     transactionManager?: EntityManager,
+    withDeleted = false,
   ): Promise<PageLayoutWidgetEntity[]> {
     const repository = this.getPageLayoutWidgetRepository(transactionManager);
 
@@ -53,9 +54,9 @@ export class PageLayoutWidgetService {
       where: {
         pageLayoutTabId,
         workspaceId,
-        deletedAt: IsNull(),
       },
       order: { createdAt: 'ASC' },
+      withDeleted,
     });
   }
 

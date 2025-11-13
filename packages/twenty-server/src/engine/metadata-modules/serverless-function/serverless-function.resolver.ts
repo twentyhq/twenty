@@ -10,7 +10,10 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
 import { GetServerlessFunctionSourceCodeInput } from 'src/engine/metadata-modules/serverless-function/dtos/get-serverless-function-source-code.input';
 import { PublishServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/publish-serverless-function.input';
@@ -21,9 +24,12 @@ import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serve
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
-import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 
-@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  FeatureFlagGuard,
+  SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+)
 @Resolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
@@ -92,6 +98,7 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async deleteOneServerlessFunction(
     @Args('input') input: ServerlessFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -107,6 +114,7 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async updateOneServerlessFunction(
     @Args('input')
     input: UpdateServerlessFunctionInput,
@@ -123,6 +131,7 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async createOneServerlessFunction(
     @Args('input')
     input: CreateServerlessFunctionInput,
@@ -139,6 +148,7 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionExecutionResultDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async executeOneServerlessFunction(
     @Args('input') input: ExecuteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -158,6 +168,7 @@ export class ServerlessFunctionResolver {
   }
 
   @Mutation(() => ServerlessFunctionDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async publishServerlessFunction(
     @Args('input') input: PublishServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

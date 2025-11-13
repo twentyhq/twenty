@@ -148,9 +148,6 @@ export class ClientConfig {
   frontDomain: string;
 
   @Field(() => Boolean)
-  debugMode: boolean;
-
-  @Field(() => Boolean)
   analyticsEnabled: boolean;
 
   @Field(() => Support)

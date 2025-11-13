@@ -3,7 +3,6 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
-import { isDefined } from 'twenty-shared/utils';
 
 type UseGaugeChartTooltipProps = {
   value: number;
@@ -31,12 +30,14 @@ export const useGaugeChartTooltip = ({
 
     return {
       tooltipItem: {
+        // TODO: temporary use label as key, ideally key should be unique id -- change when we work on gauge
+        key: label,
         label: label,
         formattedValue,
         value,
         dotColor: colorScheme.solid,
       },
-      showClickHint: isDefined(to),
+      linkTo: to,
     };
   };
 

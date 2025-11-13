@@ -5,14 +5,19 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { FindManyRemoteTablesInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/find-many-remote-tables-input';
 import { RemoteTableInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table-input';
 import { RemoteTableDTO } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { remoteTableGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/remote-server/remote-table/utils/remote-table-graphql-api-exception-handler.util';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
+)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @Resolver()
@@ -36,6 +41,7 @@ export class RemoteTableResolver {
   }
 
   @Mutation(() => RemoteTableDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async syncRemoteTable(
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -48,6 +54,7 @@ export class RemoteTableResolver {
   }
 
   @Mutation(() => RemoteTableDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async unsyncRemoteTable(
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -63,6 +70,7 @@ export class RemoteTableResolver {
   }
 
   @Mutation(() => RemoteTableDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async syncRemoteTableSchemaChanges(
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
