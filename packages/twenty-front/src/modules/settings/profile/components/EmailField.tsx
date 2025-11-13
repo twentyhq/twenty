@@ -7,6 +7,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { IconCheck, IconPencil, IconX } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
@@ -17,9 +18,24 @@ const StyledContainer = styled.div`
 
 const StyledFieldRow = styled.div`
   display: flex;
-  flex-direction: row;
+  align-items: stretch;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledActionWrapper = styled.div`
+  display: flex;
+  align-items: stretch;
+
+  & > button + button {
+    border-left: none;
+  }
+`;
+
+const StyledActionButton = styled(Button)`
+  height: 100%;
+  display: inline-flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(3)};
+  justify-content: center;
 `;
 
 export const EmailField = () => {
@@ -28,16 +44,41 @@ export const EmailField = () => {
   const { canEdit } = useCanEditProfileField('email');
   const { updateEmail } = useUpdateEmail();
 
-  const [email, setEmail] = useState(currentUser?.email || '');
-  const isEmailChanged = email.length > 0 && email !== currentUser?.email;
+  const [draftEmail, setDraftEmail] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleUpdate = async () => {
-    if (!canEdit || !isEmailChanged) {
+  const currentEmail = currentUser?.email ?? '';
+
+  const normalizedDraftEmail = draftEmail.trim().toLowerCase();
+
+  const isEmailChanged =
+    normalizedDraftEmail.length > 0 && normalizedDraftEmail !== currentEmail;
+  const isEmailFormatValid =
+    normalizedDraftEmail.includes('@') && !normalizedDraftEmail.endsWith('@');
+
+  const isSaveDisabled =
+    !canEdit || !isEditing || !isEmailChanged || !isEmailFormatValid;
+
+  const handleStartEditing = () => {
+    if (!canEdit) {
       return;
     }
 
-    await updateEmail(email);
-    setEmail(currentUser?.email || '');
+    setDraftEmail(currentEmail);
+    setIsEditing(true);
+  };
+
+  const handleCancelEditing = () => {
+    setIsEditing(false);
+  };
+
+  const handleSave = async () => {
+    if (isSaveDisabled) {
+      return;
+    }
+
+    setIsEditing(false);
+    await updateEmail(normalizedDraftEmail);
   };
 
   const currentUserId = currentUser?.id;
@@ -47,19 +88,45 @@ export const EmailField = () => {
       <StyledFieldRow>
         <SettingsTextInput
           instanceId={`user-email-${currentUserId}`}
-          value={email}
-          onChange={setEmail}
-          disabled={!canEdit}
+          value={isEditing ? draftEmail : currentEmail}
+          onChange={setDraftEmail}
+          disabled={!canEdit || !isEditing}
           fullWidth
           type="email"
-          onInputEnter={handleUpdate}
+          onInputEnter={handleSave}
         />
-        <Button
-          variant="secondary"
-          title={t`Update email`}
-          onClick={handleUpdate}
-          disabled={!canEdit || !isEmailChanged}
-        />
+        {isEditing ? (
+          <StyledActionWrapper key="editing">
+            <StyledActionButton
+              Icon={IconCheck}
+              variant="secondary"
+              position="left"
+              size="small"
+              onClick={handleSave}
+              disabled={isSaveDisabled}
+              type="button"
+            />
+            <StyledActionButton
+              Icon={IconX}
+              variant="secondary"
+              position="right"
+              size="small"
+              onClick={handleCancelEditing}
+              type="button"
+            />
+          </StyledActionWrapper>
+        ) : (
+          <StyledActionWrapper key="view">
+            <StyledActionButton
+              Icon={IconPencil}
+              variant="secondary"
+              size="small"
+              onClick={handleStartEditing}
+              disabled={!canEdit}
+              type="button"
+            />
+          </StyledActionWrapper>
+        )}
       </StyledFieldRow>
     </StyledContainer>
   );
