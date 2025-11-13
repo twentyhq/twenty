@@ -84,7 +84,7 @@ export const PageLayoutRendererContent = () => {
     return null;
   }
 
-  const filteredTabs = getTabsWithVisibleWidgets({
+  const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
     isMobile,
     isInRightDrawer,
@@ -92,7 +92,7 @@ export const PageLayoutRendererContent = () => {
   });
 
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
-    tabs: filteredTabs,
+    tabs: tabsWithVisibleWidgets,
     pageLayoutType: currentPageLayout.type,
     isMobile,
     isInRightDrawer,

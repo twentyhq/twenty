@@ -19,7 +19,7 @@ export const useIsInPinnedTab = () => {
     isPageLayoutInEditModeComponentState,
   );
 
-  const filteredTabs = getTabsWithVisibleWidgets({
+  const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
     isMobile,
     isInRightDrawer,
@@ -27,7 +27,7 @@ export const useIsInPinnedTab = () => {
   });
 
   const { pinnedLeftTab } = getTabsByDisplayMode({
-    tabs: filteredTabs,
+    tabs: tabsWithVisibleWidgets,
     pageLayoutType: currentPageLayout.type,
     isMobile,
     isInRightDrawer,
