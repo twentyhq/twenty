@@ -10,22 +10,22 @@ import {
   CRON_TRIGGER_INTERVAL_OPTIONS,
   type CronTriggerInterval,
 } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
-import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
 import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
+import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { isNumber } from '@sniptt/guards';
-import { type Locale } from 'date-fns';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
   triggerOptions:
@@ -47,46 +47,6 @@ type FormErrorMessages = {
   HOURS_hour?: string | undefined;
   HOURS_minute?: string | undefined;
   MINUTES?: string | undefined;
-};
-
-const convertScheduleToCronExpression = (
-  trigger: WorkflowCronTrigger,
-): string | null => {
-  switch (trigger.settings.type) {
-    case 'CUSTOM':
-      return trigger.settings.pattern;
-    case 'DAYS':
-      return `${trigger.settings.schedule.minute} ${trigger.settings.schedule.hour} */${trigger.settings.schedule.day} * *`;
-    case 'HOURS':
-      return `${trigger.settings.schedule.minute} */${trigger.settings.schedule.hour} * * *`;
-    case 'MINUTES':
-      return `*/${trigger.settings.schedule.minute} * * * *`;
-    default:
-      return null;
-  }
-};
-
-const getTriggerScheduleDescription = (
-  trigger: WorkflowCronTrigger,
-  localeCatalog?: Locale,
-): string | null => {
-  const cronExpression = convertScheduleToCronExpression(trigger);
-
-  if (!cronExpression) {
-    return null;
-  }
-
-  try {
-    return describeCronExpression(
-      cronExpression,
-      { use24HourTimeFormat: true },
-      localeCatalog,
-    );
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : t`Invalid cron expression`;
-    return errorMessage;
-  }
 };
 
 export const WorkflowEditTriggerCronForm = ({

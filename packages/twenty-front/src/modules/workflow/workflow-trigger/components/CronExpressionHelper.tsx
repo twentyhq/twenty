@@ -1,54 +1,14 @@
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { InputHint } from '@/ui/input/components/InputHint';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
-import { describeCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/describeCronExpression';
+import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/cron-to-human/utils/convertScheduleToCronExpression';
+import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { CronExpressionParser } from 'cron-parser';
-import { type Locale } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
-
-const convertScheduleToCronExpression = (
-  trigger: WorkflowCronTrigger,
-): string | null => {
-  switch (trigger.settings.type) {
-    case 'CUSTOM':
-      return trigger.settings.pattern;
-    case 'DAYS':
-      return `${trigger.settings.schedule.minute} ${trigger.settings.schedule.hour} */${trigger.settings.schedule.day} * *`;
-    case 'HOURS':
-      return `${trigger.settings.schedule.minute} */${trigger.settings.schedule.hour} * * *`;
-    case 'MINUTES':
-      return `*/${trigger.settings.schedule.minute} * * * *`;
-    default:
-      return null;
-  }
-};
-
-const getTriggerScheduleDescription = (
-  trigger: WorkflowCronTrigger,
-  localeCatalog?: Locale,
-): string | null => {
-  const cronExpression = convertScheduleToCronExpression(trigger);
-
-  if (!cronExpression) {
-    return null;
-  }
-
-  try {
-    return describeCronExpression(
-      cronExpression,
-      { use24HourTimeFormat: true },
-      localeCatalog,
-    );
-  } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : t`Invalid cron expression`;
-    return errorMessage;
-  }
-};
 
 const getNextExecutions = (cronExpression: string): Date[] => {
   try {
