@@ -30,7 +30,7 @@ See:
 
 # Does the world need another CRM?
 
-We built Twenty for three reasons:
+We built Twenty for different reasons:
 
 **CRMs are too expensive, and users are trapped.** Companies use locked-in customer data to hike prices. It shouldn't be that way.
 
