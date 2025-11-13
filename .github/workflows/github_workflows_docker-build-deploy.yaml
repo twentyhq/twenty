@@ -63,7 +63,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             REACT_APP_SERVER_BASE_URL=${{ secrets.SERVER_URL }}
-            APP_VERSION=${{ github.sha }}
+            APP_VERSION=0.0.0-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
