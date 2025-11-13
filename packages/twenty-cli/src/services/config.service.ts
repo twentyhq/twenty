@@ -101,25 +101,6 @@ export class ConfigService {
     await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
   }
 
-  async unsetKey(key: keyof TwentyConfig): Promise<void> {
-    const raw = await this.readRawConfig();
-    const profile = this.getActiveWorkspaceName();
-    if (!raw.profiles) {
-      raw.profiles = {};
-    }
-
-    const prof = raw.profiles[profile] || {};
-    delete (prof as any)[key];
-    raw.profiles[profile] = prof;
-
-    if (profile === DEFAULT_WORKSPACE_NAME) {
-      delete (raw as any)[key];
-    }
-
-    await fs.ensureDir(path.dirname(this.configPath));
-    await fs.writeFile(this.configPath, JSON.stringify(raw, null, 2));
-  }
-
   private getDefaultConfig(): TwentyConfig {
     return {
       apiUrl: 'http://localhost:3000',

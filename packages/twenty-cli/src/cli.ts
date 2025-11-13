@@ -6,7 +6,6 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { AppCommand } from './commands/app.command';
 import { AuthCommand } from './commands/auth.command';
-import { ConfigCommand } from './commands/config.command';
 import { ConfigService } from './services/config.service';
 
 const packageJson = JSON.parse(
@@ -39,7 +38,6 @@ program.hook('preAction', (thisCommand) => {
 
 program.addCommand(new AuthCommand().getCommand());
 program.addCommand(new AppCommand().getCommand());
-program.addCommand(new ConfigCommand().getCommand());
 
 program.exitOverride();
 
