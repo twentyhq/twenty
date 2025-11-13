@@ -87,8 +87,7 @@ export const RecordInlineCellDisplayMode = ({
 
   const emptyPlaceHolder = label ?? t`Empty`;
 
-  const shouldShowValue =
-    !isFieldEmpty || isFieldInputOnly || (!isFieldEmpty && readonly);
+  const shouldShowValue = !isFieldEmpty || isFieldInputOnly;
 
   const shouldShowEmptyPlaceholder = isFieldEmpty;
 
