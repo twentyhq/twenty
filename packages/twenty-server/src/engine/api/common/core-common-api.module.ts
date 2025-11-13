@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CommonArgsHandlers } from 'src/engine/api/common/common-args-handlers/common-query-selected-fields/common-arg-handlers';
+import { CommonArgsProcessors } from 'src/engine/api/common/common-args-processors/common-args-processors';
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
@@ -14,6 +14,8 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
+import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -39,13 +41,15 @@ import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-wo
     ViewFilterGroupModule,
     ThrottlerModule,
     MetricsModule,
+    RecordPositionModule,
+    RecordTransformerModule,
     GlobalWorkspaceDataSourceModule,
     FeatureFlagModule,
   ],
   providers: [
     ProcessNestedRelationsHelper,
     ProcessNestedRelationsV2Helper,
-    ...CommonArgsHandlers,
+    ...CommonArgsProcessors,
     ProcessAggregateHelper,
     ...CommonQueryRunners,
     CommonResultGettersService,
