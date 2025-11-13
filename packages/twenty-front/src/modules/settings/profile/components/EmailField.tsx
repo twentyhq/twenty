@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -39,7 +38,6 @@ const StyledActionButton = styled(Button)`
 `;
 
 export const EmailField = () => {
-  const { t } = useLingui();
   const currentUser = useRecoilValue(currentUserState);
   const { canEdit } = useCanEditProfileField('email');
   const { updateEmail } = useUpdateEmail();

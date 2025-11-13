@@ -263,7 +263,12 @@ export class WorkspaceEntity {
   isCustomDomainEnabled: boolean;
 
   @Field(() => [String], { nullable: true })
-  @Column({ type: 'varchar', array: true, nullable: true, default: '{email}' })
+  @Column({
+    type: 'varchar',
+    array: true,
+    nullable: true,
+    default: '{email,profilePicture}',
+  })
   editableProfileFields: string[] | null;
 
   // TODO: set as non nullable
