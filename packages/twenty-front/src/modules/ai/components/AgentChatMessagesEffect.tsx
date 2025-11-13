@@ -12,12 +12,12 @@ export const AgentChatMessagesEffect = ({
   const [, setPreviousMessages] = useState<ExtendedUIMessage[] | null>(null);
 
   useEffect(() => {
-    setPreviousMessages((currentPreviousMessages) => {
+    setPreviousMessages((previousMessages) => {
       if (
-        currentPreviousMessages !== null &&
-        isDeeplyEqual(currentPreviousMessages, messages)
+        previousMessages !== null &&
+        isDeeplyEqual(previousMessages, messages)
       ) {
-        return currentPreviousMessages;
+        return previousMessages;
       }
 
       // We intentionally force this effect because the chat transport streams messages incrementally
