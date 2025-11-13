@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/GraphWidgetBarChart';
+import { BarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLayout';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetBarChart> = {
@@ -280,7 +281,7 @@ export const Horizontal: Story = {
     ],
     indexBy: 'product',
     keys: ['score'],
-    layout: 'horizontal',
+    layout: BarChartLayout.HORIZONTAL,
     showLegend: false,
     showGrid: true,
     xAxisLabel: 'Score',

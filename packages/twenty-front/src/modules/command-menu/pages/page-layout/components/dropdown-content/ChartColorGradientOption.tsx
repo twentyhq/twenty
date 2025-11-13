@@ -46,7 +46,9 @@ export const ChartColorGradientOption = ({
           groupIndex: reversedIndex,
           totalGroups: COLOR_GROUP_COUNT,
         });
-        return <ColorSample key={index} color={groupColor} />;
+        return (
+          <ColorSample key={index} colorName={colorName} color={groupColor} />
+        );
       })}
     </StyledColorSamplesContainer>
   );
