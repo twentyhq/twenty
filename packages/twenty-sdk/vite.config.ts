@@ -48,7 +48,15 @@ export default defineConfig(() => {
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-sdk' },
       rollupOptions: {
-        external: Object.keys((packageJson as any).dependencies || {}),
+        external: [
+          ...Object.keys((packageJson as any).dependencies || {}),
+          'path',
+          'fs',
+          'crypto',
+          'stream',
+          'util',
+          'os',
+        ],
         output: [
           {
             format: 'es',
