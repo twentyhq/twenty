@@ -1,7 +1,7 @@
 import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
 import { createClient } from '../generated';
 
-export const main = async (params: { recipient: string }) => {
+export const main = async (params: { recipient?: string }) => {
   try {
     const client = createClient({
       url: 'http://localhost:3000/graphql',
@@ -14,7 +14,7 @@ export const main = async (params: { recipient: string }) => {
       createPostCard: {
         __args: {
           data: {
-            name: params.recipient,
+            name: params.recipient ?? 'Hello-world',
           },
         },
         name: true,
