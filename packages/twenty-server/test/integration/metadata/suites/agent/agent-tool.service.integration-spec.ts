@@ -55,11 +55,10 @@ describe('AgentToolGeneratorService Integration', () => {
       );
 
       expect(tools).toBeDefined();
-      expect(Object.keys(tools)).toHaveLength(7);
+      expect(Object.keys(tools)).toHaveLength(6);
       expect(Object.keys(tools)).toContain('create_testObject');
       expect(Object.keys(tools)).toContain('update_testObject');
       expect(Object.keys(tools)).toContain('find_testObject');
-      expect(Object.keys(tools)).toContain('find_one_testObject');
       expect(Object.keys(tools)).toContain('soft_delete_testObject');
       expect(Object.keys(tools)).toContain('soft_delete_many_testObject');
       expect(Object.keys(tools)).toContain('http_request');
@@ -100,9 +99,9 @@ describe('AgentToolGeneratorService Integration', () => {
       );
 
       expect(tools).toBeDefined();
-      expect(Object.keys(tools)).toHaveLength(3);
+      expect(Object.keys(tools)).toHaveLength(2);
       expect(Object.keys(tools)).toContain('find_testObject');
-      expect(Object.keys(tools)).toContain('find_one_testObject');
+      expect(Object.keys(tools)).toContain('http_request');
       expect(Object.keys(tools)).not.toContain('create_testObject');
       expect(Object.keys(tools)).not.toContain('update_testObject');
     });
@@ -157,7 +156,7 @@ describe('AgentToolGeneratorService Integration', () => {
         [context.testRoleId],
       );
 
-      expect(Object.keys(tools)).toHaveLength(7);
+      expect(Object.keys(tools)).toHaveLength(6);
     });
   });
 });

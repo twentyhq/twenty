@@ -19,6 +19,8 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { DATA_MANIPULATOR_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/data-manipulator-agent';
 import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/helper-agent';
 
+import { type ToolHints } from './types/tool-hints.interface';
+
 export interface AiRouterContext {
   messages: UIMessage<unknown, UIDataTypes, UITools>[];
   workspaceId: string;
@@ -27,6 +29,7 @@ export interface AiRouterContext {
 
 export interface AiRouterResult {
   agent: AgentEntity | null;
+  toolHints?: ToolHints;
   debugInfo?: {
     availableAgents: Array<{ id: string; label: string }>;
     routerModel: string;
@@ -47,6 +50,9 @@ export class AiRouterService {
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
+  // Routes a user message to the most appropriate agent
+  // Uses AI to analyze the conversation and select the best agent
+  // Returns the selected agent along with tool hints for optimization
   async routeMessage(
     context: AiRouterContext,
     includeDebugInfo = false,
@@ -105,18 +111,42 @@ export class AiRouterService {
         currentMessage,
       );
 
+      const agentIds = availableAgents.map((agent) => agent.id);
+
+      if (agentIds.length === 0) {
+        throw new Error('No agent IDs available for routing schema');
+      }
+
       const routerDecisionSchema = z.object({
         agentId: z
-          .enum(availableAgents.map((agent) => agent.id))
+          .enum([agentIds[0], ...agentIds.slice(1)])
           .describe('The ID of the most suitable agent to handle this message'),
+        toolHints: z
+          .object({
+            relevantObjects: z
+              .array(z.string())
+              .optional()
+              .describe(
+                'Names of the specific objects mentioned in the query (e.g., "person", "company")',
+              ),
+            operations: z
+              .array(z.enum(['find', 'create', 'update', 'delete']))
+              .optional()
+              .describe(
+                'Specific operations needed: find (search/query), create (new records), update (modify), delete (remove)',
+              ),
+          })
+          .optional(),
       });
+
+      const ROUTER_TEMPERATURE = 0.1; // Low temperature for deterministic routing
 
       const result = await generateObject({
         model,
         system: systemPrompt,
         prompt: userPrompt,
         schema: routerDecisionSchema,
-        temperature: 0.1,
+        temperature: ROUTER_TEMPERATURE,
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
@@ -148,7 +178,11 @@ export class AiRouterService {
         }
       }
 
-      return { agent: selectedAgent ?? null, debugInfo };
+      return {
+        agent: selectedAgent ?? null,
+        toolHints: result.object.toolHints,
+        debugInfo,
+      };
     } catch (error) {
       this.logger.error(
         'Routing to agent failed, falling back to Helper agent:',
@@ -260,7 +294,25 @@ ${workspaceObjectsList}`;
 Available agents:
 ${agentDescriptions}
 
-Your task is to analyze the user's message and conversation history, then select the most appropriate agent to handle it. Choose the agent whose description and capabilities best match the user's request.`;
+Your task is to:
+1. Select the most appropriate agent
+2. Identify specific objects mentioned in the query (if any)
+3. Determine which operations are needed
+
+For toolHints:
+- relevantObjects: Extract object names the user is asking about (e.g., if asking about "companies and people", return ["company", "person"])
+- operations: Array of needed operations from: ["find", "create", "update", "delete"]
+  - "find": for searching, querying, or reading data
+  - "create": for creating new records
+  - "update": for modifying existing records
+  - "delete": for removing records
+
+Examples:
+- "Show me all companies" → operations: ["find"]
+- "Create a task for John" → operations: ["create"]
+- "Update the company name" → operations: ["find", "update"]
+
+This helps optimize the agent's tool context by only loading relevant tools.`;
   }
 
   private buildRouterUserPrompt(

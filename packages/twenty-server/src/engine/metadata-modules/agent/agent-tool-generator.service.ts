@@ -9,6 +9,7 @@ import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-ada
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { SearchArticlesTool } from 'src/engine/core-modules/tool/tools/search-articles-tool/search-articles-tool';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { type ToolHints } from 'src/engine/metadata-modules/ai-router/types/tool-hints.interface';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -37,6 +38,7 @@ export class AgentToolGeneratorService {
     actorContext?: ActorMetadata,
     roleIds?: string[],
     userWorkspaceId?: string,
+    toolHints?: ToolHints,
   ): Promise<ToolSet> {
     let tools: ToolSet = {};
 
@@ -78,6 +80,7 @@ export class AgentToolGeneratorService {
         workspaceId,
         actorContext,
         userWorkspaceId,
+        toolHints,
       );
 
       tools = { ...tools, ...databaseTools };
