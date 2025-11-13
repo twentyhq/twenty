@@ -12,6 +12,7 @@ import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconMail,
+  IconPhoto,
   IconUser,
   IconUserCircle,
   type IconComponent,
@@ -43,8 +44,9 @@ export const SettingsSecurityEditableProfileFields = () => {
 
   const profileFieldOptions: ProfileFieldOption[] = [
     { value: 'email', label: t`Email`, Icon: IconMail },
-    { value: 'firstName', label: t`First name`, Icon: IconUserCircle },
-    { value: 'lastName', label: t`Last name`, Icon: IconUser },
+    { value: 'firstName', label: t`First Name`, Icon: IconUserCircle },
+    { value: 'lastName', label: t`Last Name`, Icon: IconUser },
+    { value: 'profilePicture', label: t`Profile Picture`, Icon: IconPhoto },
   ];
 
   const selectedFields =

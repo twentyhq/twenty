@@ -5,12 +5,17 @@ import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils'
 import { useRecoilValue } from 'recoil';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-export type EditableProfileField = 'email' | 'firstName' | 'lastName';
+export type EditableProfileField =
+  | 'email'
+  | 'firstName'
+  | 'lastName'
+  | 'profilePicture';
 
 export const useCanEditProfileField = (field: EditableProfileField) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentUserWorkspace = useRecoilValue(currentUserWorkspaceState);
   const availableWorkspaces = useRecoilValue(availableWorkspacesState);
+
   if (!currentWorkspace || !currentUserWorkspace) {
     return { canEdit: false };
   }
@@ -24,10 +29,8 @@ export const useCanEditProfileField = (field: EditableProfileField) => {
   );
 
   const requiresSingleWorkspace = field === 'email';
-
   const isSingleWorkspaceUser =
     countAvailableWorkspaces(availableWorkspaces) <= 1;
-
   const meetsWorkspaceLimit = !requiresSingleWorkspace || isSingleWorkspaceUser;
 
   return {
