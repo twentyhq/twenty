@@ -4905,7 +4905,7 @@ msgstr "Geben Sie eine JSON-Eingabe ein und drücken Sie \"Ausführen\", um Ihre
 #. js-lingui-id: 4ZM8/a
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Install and manage applications"
-msgstr "Installieren und Verwalten von Anwendungen"
+msgstr ""
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -6407,7 +6407,7 @@ msgstr "jetzt"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "nummer"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -6751,7 +6751,7 @@ msgstr "Passwort"
 #. js-lingui-id: 2OUR5i
 #: src/pages/auth/PasswordReset.tsx
 msgid "Password has been set"
-msgstr "Das Passwort wurde aktualisiert"
+msgstr ""
 
 #. js-lingui-id: BxQ79w
 #: src/pages/auth/PasswordReset.tsx
@@ -7136,7 +7136,7 @@ msgstr "Warteschlange: {queueName}"
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
-msgstr "Erhalten Sie eine E-Mail mit einem Link zur Passwortaktualisierung"
+msgstr ""
 
 #. js-lingui-id: v3xM25
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -8700,7 +8700,7 @@ msgstr "Testen Sie Ihre Funktion"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "text"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8857,8 +8857,7 @@ msgstr "Drittes"
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Diese Aktion kann nicht rückgängig gemacht werden. Dadurch wird Ihr gesamtes Konto dauerhaft gelöscht."
 
@@ -8983,7 +8982,7 @@ msgstr "Zeitstempel und Teilnehmer werden mit Ihrem Team geteilt."
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "titel"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
@@ -9748,7 +9747,7 @@ msgstr "Arbeitsbereichsname"
 #. js-lingui-id: QZi0YX
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Workspace views require manage views permission"
-msgstr "Arbeitsplatzansichten erfordern das Verwaltensrecht von Ansichten"
+msgstr ""
 
 #. js-lingui-id: pmt7u4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx

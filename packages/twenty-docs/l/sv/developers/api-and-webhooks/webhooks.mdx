@@ -1,0 +1,87 @@
+---
+title: Webkrokar
+image: /images/docs/getting-started/webhooks.png
+info: Upptäck hur du använder våra Webhooks.
+---
+
+<Frame>
+  <img src="/images/docs/getting-started/webhooks.png" alt="Header" />
+</Frame>
+
+## Översikt
+
+Webhooks i Twenty kompletterar API:n genom att möjliggöra **realtidsnotifikationer** till dina egna applikationer när vissa händelser inträffar i ditt CRM. Istället för att kontinuerligt undersöka API:n efter ändringar, kan du sätta upp webhooks som gör att Twenty **skickar** data till ditt system när specifika händelser inträffar (till exempel när en ny post skapas eller en befintlig post uppdateras). Detta hjälper till att hålla externa system synkroniserade med Twenty omedelbart och effektivt.
+
+Med webhooks kommer Twenty att skicka en HTTP POST-förfrågan till en URL du anger, med information om händelsen. You can then handle that data in your application (e.g., to update your external database, trigger workflows, or send alerts).
+
+## Så här ställer du in en Webhook
+
+För att skapa en webhook i Twenty, använd inställningarna **APIs & Webhooks** i din Twenty-app:
+
+1. **Navigera till Inställningar:** I din Twenty-applikation, gå till **Inställningar → APIs & Webhooks**.
+2. **Skapa en Webhook:** Under **Webhooks** klicka på **+ Skapa webhook**.
+3. **Ange URL:** Ange endpoint-URL:en på din server där du vill att Twenty ska skicka webhook-förfrågningar. Detta bör vara en offentligt tillgänglig URL som kan hantera POST-förfrågningar.
+4. **Spara:** Klicka på **Spara** för att skapa webbhooken. Den nya webbhooken blir aktiv omedelbart.
+
+Du kan skapa flera webhooks om du behöver skicka olika händelser till olika endpoints. Varje webhook är i grunden en prenumeration för alla relevanta händelser (just nu skickar Twenty alla händelsetyper till den angivna URL:en; filtrering av specifika händelsetyper kan vara konfigurerbart i UI:n). Om du någonsin behöver ta bort en webhook, kan du radera den från samma inställningssida (välj webbhooken och välj ta bort).
+
+## Händelser och nyttolaster
+
+När en webhook är inställd kommer Twenty att skicka en HTTP POST-förfrågan till din angivna URL varje gång en triggerhändelse inträffar i din CRM-data. Vanliga händelser som triggar webhooks inkluderar:
+
+- **Post skapad:** t.ex. en ny person läggs till (`person.created`), ett nytt företag skapas (`company.created`), en notering skapas (`note.created`), etc.
+- **Post uppdaterad:** t.ex. en befintlig persons information uppdateras (`person.updated`), en företagsrapport redigeras (`company.updated`), etc.
+- **Post raderad:** t.ex. en person eller ett företag tas bort (`person.deleted`, `company.deleted`).
+- **Andra händelser:** Om tillämpligt, andra objekthändelser eller anpassade triggers (till exempel om uppgifter eller andra objekt uppdateras, skulle liknande händelsetyper användas som `task.created`, `note.updated`, etc.).
+
+Webhook POST-förfrågan innehåller en JSON-nyttolast i sin kropp. Nyttolasten kommer vanligtvis att inkludera minst två saker: typen av händelse och datan relaterad till den händelsen (ofta posten som skapades/uppdaterades). Till exempel, en webhook för en nyss skapad person kan skicka en nyttolast som:
+
+```
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+I detta exempel:
+
+- `"event"` anger vad som hände (`person.created`).
+- `"data"` innehåller den nya postens detaljer (samma information som du skulle få om du begärde den personen via API:n).
+- `"timestamp"` är när händelsen inträffade (i UTC).
+
+Din endpoint ska vara beredd att ta emot sådan JSON-data via POST. Vanligtvis kommer du att parsa JSON:en, titta på `"event"`-typen för att förstå vad som hände och sedan använda `"data"` därefter (t.ex., skapa en ny kontakt i ditt system, eller uppdatera en befintlig).
+
+**Notera:** Det är viktigt att svara med en **2xx HTTP-status** från din webhook-endpoint för att bekräfta lyckad mottagning. Om Twenty webbhook-sändaren inte får ett 2xx-svar, kan det betraktas som att leveransen misslyckades. (I framtiden kan återförsändningslogik försöka att skicka om misslyckade webhooks, så sträva alltid efter att returnera en 200 OK så snabbt som möjligt efter att ha bearbetat datan.)
+
+## Webhook-validering
+
+För att säkerställa säkerheten för dina webhook-endpoints inkluderar Twenty en signatur i `X-Twenty-Webhook-Signature`-huvudet.
+
+Denna signatur är en HMAC SHA256-hash av begärans nyttolast, beräknad med din webhook-hemlighet.
+
+För att validera signaturen, måste du:
+
+1. Kombinera tidsstämpeln (från `X-Twenty-Webhook-Timestamp`-huvudet), ett kolon, och JSON-strängen för nyttolast
+2. Beräkna HMAC SHA256-hashen med din webhook-hemlighet som nyckel
+3. Jämför det resulterande hexadecimala digestet med signaturhuvudet
+
+Här är ett exempel i Node.js:
+
+```javascript
+const crypto = require("crypto");
+const timestamp = "1735066639761";
+const payload = JSON.stringify({...});
+const secret = "your-secret";
+const stringToSign = `${timestamp}:${JSON.stringify(payload)}`;
+const signature = crypto.createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+```

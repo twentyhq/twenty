@@ -723,7 +723,7 @@ msgstr "Afegeix vista"
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 msgid "Add widget"
-msgstr "Afegeix widget"
+msgstr ""
 
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
@@ -953,7 +953,7 @@ msgstr "Tots els teus objectes personalitzats"
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow downloading files and attachments"
-msgstr "Permetre descarregar arxius i adjunts"
+msgstr ""
 
 #. js-lingui-id: 6BV/aG
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -1003,7 +1003,7 @@ msgstr "Permet que es pugui convidar a usuaris nous compartint un enllaç d'invi
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow uploading files and attachments"
-msgstr "Permetre carregar arxius i adjunts"
+msgstr ""
 
 #. js-lingui-id: vHeVg5
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -1592,7 +1592,7 @@ msgstr "En utilitzar Twenty, accepteu les"
 #. js-lingui-id: Yx41df
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Bypass SSO"
-msgstr "Saltar SSO"
+msgstr ""
 
 #. js-lingui-id: PmmvzS
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue.tsx
@@ -1834,7 +1834,7 @@ msgstr "Xat"
 #. js-lingui-id: UxeiNP
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Chat with AI agents and use AI features"
-msgstr "Xat amb agents d'IA i utilitzar funcions d'IA"
+msgstr ""
 
 #. js-lingui-id: h5C4B4
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -2958,7 +2958,7 @@ msgstr "Suprimeix el compte i totes les dades associades"
 #. js-lingui-id: kvHBHg
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Delete account and all the associated data or leave workspace"
-msgstr "Suprimeix el compte i totes les dades associades o surt de l'espai de treball"
+msgstr ""
 
 #. js-lingui-id: YMNj8z
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
@@ -3280,7 +3280,7 @@ msgstr "Descarrega fitxer"
 #. js-lingui-id: IDPv1P
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Download Files"
-msgstr "Descarregar Arxius"
+msgstr ""
 
 #. js-lingui-id: wrT4hq
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3577,7 +3577,7 @@ msgstr "Objecte Buit"
 #. js-lingui-id: q11Dk2
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Enable bypass options"
-msgstr "Habilita opcions per a saltar"
+msgstr ""
 
 #. js-lingui-id: gZo0V9
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
@@ -4758,7 +4758,7 @@ msgstr "Configuració de l'iFrame"
 #. js-lingui-id: mO+Bte
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "iFrame Widget"
-msgstr "Widget iFrame"
+msgstr ""
 
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
@@ -4952,7 +4952,7 @@ msgstr "Clau API invàlida"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr "Proveïdor d'autenticació d'emergència no vàlid"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5500,7 +5500,7 @@ msgstr "Gestionar claus API i webhooks"
 #. js-lingui-id: IT5nsa
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage billing and subscriptions"
-msgstr "Gestionar facturació i subscripcions"
+msgstr ""
 
 #. js-lingui-id: nvgUPq
 #: src/modules/billing/components/SettingsBillingContent.tsx
@@ -5536,7 +5536,7 @@ msgstr "Gestioneu els membres del vostre espai de treball aquí"
 #. js-lingui-id: /berfj
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Manage Views"
-msgstr "Gestionar Vistes"
+msgstr ""
 
 #. js-lingui-id: fEqDWx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6407,7 +6407,7 @@ msgstr "ara"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "número"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -7988,7 +7988,7 @@ msgstr "Enviar correu electrònic"
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Send emails via connected accounts"
-msgstr "Envia correus electrònics a través de comptes connectats"
+msgstr ""
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -8552,12 +8552,12 @@ msgstr "Canviar a anual"
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Sync Account"
-msgstr "Sincronitza el Compte"
+msgstr ""
 
 #. js-lingui-id: MsxItJ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Sync email and calendar accounts"
-msgstr "Sincronitza comptes de correu electrònic i calendari"
+msgstr ""
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -8567,7 +8567,7 @@ msgstr "Error de sincronització"
 #. js-lingui-id: L4+l7C
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Sync with Google"
-msgstr "Sincronitza amb Google"
+msgstr ""
 
 #. js-lingui-id: EICVgB
 #: src/pages/onboarding/SyncEmails.tsx
@@ -8700,7 +8700,7 @@ msgstr "Prova la teva funció"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "text"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8857,8 +8857,7 @@ msgstr "Tercer"
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Aquesta acció no es pot desfer. Això esborrarà permanentment el teu compte."
 
@@ -8983,7 +8982,7 @@ msgstr "La marca de temps i els participants seran compartits amb el teu equip."
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "títol"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
@@ -9281,7 +9280,7 @@ msgstr "Carrega fitxer"
 #. js-lingui-id: HAKBY9
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Upload Files"
-msgstr "Carregar Arxius"
+msgstr ""
 
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx

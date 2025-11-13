@@ -1,0 +1,295 @@
+---
+title: Водич за Стил
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+Овај документ укључује правила која треба следити приликом писања кода.
+
+Циљ је да се обезбеди конзистентна база кода, која је лакша за читање и одржавање.
+
+Због тога је боље бити мало обимнији него превише концизан.
+
+Увек имајте на уму да се код чита чешће него што се пише, нарочито у пројектима отвореног кода, где свако може допринети.
+
+Постоји много правила која овде нису дефинисана, али их аутоматски проверавају линтери.
+
+## React
+
+### Користите функционалне компоненте
+
+Увек користите TSX функционалне компоненте.
+
+Do not use default `import` with `const`, because it's harder to read and harder to import with code completion.
+
+```tsx
+// ❌ Bad, harder to read, harder to import with code completion
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+
+export default MyComponent;
+
+// ✅ Good, easy to read, easy to import with code completion
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Својства
+
+Креирајте тип за пропсове и назовите га `(ИмеКомпоненте)Props` ако не постоји потреба за експортовањем.
+
+Користите деструктурирање пропсова.
+
+```tsx
+// ❌ Bad, no type
+export const MyComponent = (props) => <div>Hello {props.name}</div>;
+
+// ✅ Good, type
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+#### Избегавајте коришћење `React.FC` или `React.FunctionComponent` за дефинисање типова пропсова.
+
+```tsx
+/* ❌ - Bad, defines the component type annotations with `FC`
+ *    - With `React.FC`, the component implicitly accepts a `children` prop
+ *      even if it's not defined in the prop type. This might not always be
+ *      desirable, especially if the component doesn't intend to render
+ *      children.
+ */
+const EmailField: React.FC<{
+  value: string;
+}> = ({ value }) => <TextInput value={value} disabled fullWidth />;
+```
+
+```tsx
+/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the 
+ *      component's props
+ *    - This method doesn't automatically include the children prop. If
+ *      you want to include it, you have to specify it in OwnProps.
+ */ 
+type EmailFieldProps = {
+  value: string;
+};
+
+const EmailField = ({ value }: EmailFieldProps) => (
+  <TextInput value={value} disabled fullWidth />
+);
+```
+
+#### No Single Variable Prop Spreading in JSX Elements
+
+Avoid using single variable prop spreading in JSX elements, like `{...props}`. Ова пракса често резултује кодом који је теже читати и одржавати јер није јасно који пропсови компонента прима.
+
+```tsx
+/* ❌ - Bad, spreads a single variable prop into the underlying component
+ */
+const MyComponent = (props: OwnProps) => {
+  return <OtherComponent {...props} />;
+}
+```
+
+```tsx
+/* ✅ - Good, Explicitly lists all props
+ *    - Enhances readability and maintainability
+ */ 
+const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
+  return <OtherComponent {...{ prop1, prop2, prop3 }} />;
+};
+```
+
+Оправдање:
+
+- На први поглед, јасније је које пропсове код прослеђује, што олакшава разумевање и одржавање.
+- Помаже у спречавању блиског везивања компонената преко њихових пропсова.
+- Алатке за проверу кода лакше идентификују погрешно написане или непотребне пропсове када експлицитно наводите пропсове.
+
+## JavaScript
+
+### Користите оператор нолицик-[coalescing](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator) `??`
+
+```tsx
+// ❌ Bad, can return 'default' even if value is 0 or ''
+const value = process.env.MY_VALUE || 'default';
+
+// ✅ Good, will return 'default' only if value is null or undefined
+const value = process.env.MY_VALUE ?? 'default';
+```
+
+### Користите опционално повезивање `?.`
+
+```tsx
+// ❌ Bad 
+onClick && onClick();
+
+// ✅ Good
+onClick?.();
+```
+
+## TypeScript
+
+### Користите `type` уместо `interface`
+
+Увек користите `type` уместо `interface`, јер се скоро увек преклапају, а `type` је флексибилнији.
+
+```tsx
+// ❌ Bad
+interface MyInterface {
+  name: string;
+}
+
+// ✅ Good
+type MyType = {
+  name: string;
+};
+```
+
+### Користите стринг литерале уместо енумс-а
+
+[Стринг литерали](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) су начин за рад са енум-сличним вредностима у TypeScript-у. Они су лакши за проширење са Pick и Omit и нуде боље корисничко искуство, нарочито са завршетком кода.
+
+Можете видети зашто TypeScript препоручује избегавање енумс [овде](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+
+```tsx
+// ❌ Bad, utilizes an enum
+enum Color {
+  Red = "red",
+  Green = "green",
+  Blue = "blue",
+}
+
+let color = Color.Red;
+```
+
+```tsx
+// ✅ Good, utilizes a string literal
+
+let color: "red" | "green" | "blue" = "red";
+```
+
+#### GraphQL и интерне библиотеке
+
+Требало би да користите енуме које генерише GraphQL код.
+
+Такође је боље користити енум када се користи интерна библиотека, тако да интерна библиотека не мора да излаже тип стринг литерала који није повезан са интерним АПИ-јем.
+
+Пример:
+
+```TSX
+const {
+  setHotkeyScopeAndMemorizePreviousScope,
+  goBackToPreviousHotkeyScope,
+} = usePreviousHotkeyScope();
+
+setHotkeyScopeAndMemorizePreviousScope(
+  RelationPickerHotkeyScope.RelationPicker,
+);
+```
+
+## Стилизовање
+
+### Use StyledComponents
+
+Стилизујте компоненте са [styled-components](https://emotion.sh/docs/styled).
+
+```tsx
+// ❌ Bad
+<div className="my-class">Hello World</div>
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+Префиксирајте стилизоване компоненте са "Styled" да бисте их разликовали од "реалних" компоненти.
+
+```tsx
+// ❌ Bad
+const Title = styled.div`
+  color: red;
+`;
+```
+
+```tsx
+// ✅ Good
+const StyledTitle = styled.div`
+  color: red;
+`;
+```
+
+### Тематизовање
+
+Коришћење теме за већину стилизовања компоненти је пожељан приступ.
+
+#### Јединице мере
+
+Избегавајте коришћење `px` или `rem` вредности директно у стилизованим компонентама. Потребне вредности су генерално већ дефинисане у теми, па се препоручује коришћење теме у ове сврхе.
+
+#### Боје
+
+Избегавајте увођење нових боја; уместо тога, користите постојећу палету из теме. У случају да палета не одговара, оставите коментар како би тим могао да га исправи.
+
+```tsx
+// ❌ Bad, directly specifies style values without utilizing the theme
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-left: 4px;
+  border-radius: 50px;
+`;
+```
+
+```tsx
+// ✅ Good, utilizes the theme
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  border-radius:  ${({ theme }) => theme.border.rounded};
+`;
+```
+
+## Спровођење Без-Типа Увоза
+
+Избегавајте тип увоза. Да би се применио овај стандард, ESLint проверава и пријављује било који тип увоза. Ово одржава конзистентност и читљивост у TypeScript коду.
+
+```tsx
+// ❌ Bad
+import { type Meta, type StoryObj } from '@storybook/react';
+
+// ❌ Bad
+import type { Meta, StoryObj } from '@storybook/react';
+
+// ✅ Good
+import { Meta, StoryObj } from '@storybook/react';
+```
+
+### Зашто Без-Типа Увози
+
+- **Конзистентност**: Избегавањем увоза типова и употребом истог приступа за увоз типова и вредности, база кода остаје конзистентна у стилу модула увоза.
+
+- **Readability**: No-type imports improve code readability by making it clear when you're importing values or types. Ово смањује неодређеност и олакшава разумевање намене увезених симбола.
+
+- **Одрживост**: Побољшава одрживост базе кода јер програмери могу да идентификују и пронађу увезене типове само када прегледавају или модификују код.
+
+### Правило ESLint-а
+
+An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
+
+Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript сам обесхрабрује ову праксу, као што је наведено у [белешкама о издању за TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
+
+Да бисте осигурали да ваш код поштује ово правило, уверите се да покрећете ESLint као део вашег радног тока развоја.

@@ -1,0 +1,77 @@
+---
+title: Повратна информација
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Означава напредак или одбројавање и креће се са десна на лево.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { ProgressBar } from "twenty-ui/feedback";
+
+export const MyComponent = () => {
+  return (
+    <ProgressBar
+      duration={6000}
+      delay={0}
+      easing="easeInOut"
+      barHeight={10}
+      barColor="#4bb543"
+      autoStart={true}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Својства         | Тип               | Опис                                                                            | Подразумевано |
+| ---------------- | ----------------- | ------------------------------------------------------------------------------- | ------------- |
+| трајање          | број              | Укупно трајање анимације прогрес бара у милисекундама                           | 3             |
+| кашњење          | број              | Кашњење у покретању анимације прогрес бара у милисекундама                      | 0             |
+| easing           | низ               | Easing function for the progress bar animation                                  | easeInOut     |
+| висина бара      | број              | Висина бара у пикселима                                                         | 24            |
+| боја бара        | низ               | Боја бара                                                                       | сива80        |
+| аутоматски старт | булевска вредност | Ако је `true`, анимација прогрес бара почиње аутоматски када се компонент учита | `истина`      |
+
+</Tab>
+</Tabs>
+
+## Кружни прогрес бар
+
+Означава напредак задатка, често се користи на екранима за учитавање или у областима где желите да комуницирате текуће процесе кориснику.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+
+export const MyComponent = () => {
+  return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Својства    | Тип  | Опис                          | Подразумевано |
+| ----------- | ---- | ----------------------------- | ------------- |
+| величина    | број | Величина кружног прогрес бара | 50            |
+| ширина бара | број | Ширина линије прогрес бара    | 5             |
+| боја бара   | низ  | Боја прогрес бара             | тренутна боја |
+
+</Tab>
+
+</Tabs>

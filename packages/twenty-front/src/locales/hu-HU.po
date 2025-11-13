@@ -2775,7 +2775,7 @@ msgstr "Dátum granularitás Y"
 #. js-lingui-id: /ITcnz
 #: src/utils/date-utils.ts
 msgid "day"
-msgstr ""
+msgstr "nap"
 
 #. js-lingui-id: H7OUPr
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -2792,7 +2792,7 @@ msgstr "A hét napja"
 #. js-lingui-id: J/Upwb
 #: src/utils/date-utils.ts
 msgid "days"
-msgstr ""
+msgstr "napok"
 
 #. js-lingui-id: HuVZMK
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -4440,7 +4440,7 @@ msgstr "Ugrás a Cégekhez"
 #. js-lingui-id: dvMw7T
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Dashboards"
-msgstr "Irány a vezérlőpultokhoz"
+msgstr ""
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -4758,7 +4758,7 @@ msgstr "iFrame beállítások"
 #. js-lingui-id: mO+Bte
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "iFrame Widget"
-msgstr "iFrame widget"
+msgstr ""
 
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
@@ -4952,7 +4952,7 @@ msgstr "Érvénytelen API-kulcs"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr "Érvénytelen hitelesítési szolgáltató"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -6407,7 +6407,7 @@ msgstr "most"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "szám"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -8700,7 +8700,7 @@ msgstr "Teszteld a funkciódat"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "szöveg"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8857,8 +8857,7 @@ msgstr "Harmadik"
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Ez a művelet nem visszavonható. Ez véglegesen törli az egész fiókját."
 
@@ -8983,7 +8982,7 @@ msgstr "Időbélyeg és résztvevők meg lesznek osztva a csapatával."
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "cím"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts

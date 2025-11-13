@@ -1255,7 +1255,7 @@ msgstr "Er du sikker på at du vil ødelegge denne posten? Den kan ikke gjenoppr
 #. js-lingui-id: mcHVC1
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
 msgid "Are you sure you want to restore these records?"
-msgstr "Er du sikker på at du vil gjenopprette disse postene?"
+msgstr ""
 
 #. js-lingui-id: lmgkf0
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
@@ -1970,7 +1970,7 @@ msgstr "Koderedigerer"
 #. js-lingui-id: bKJYIa
 #: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab.tsx
 msgid "Code your function"
-msgstr "Koder din funksjon"
+msgstr ""
 
 #. js-lingui-id: H86f9p
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -2657,7 +2657,7 @@ msgstr "Mørk"
 #. js-lingui-id: w6iIMm
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Dashboards"
-msgstr "Dashboards"
+msgstr ""
 
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
@@ -4440,7 +4440,7 @@ msgstr "Gå til Selskaper"
 #. js-lingui-id: dvMw7T
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Dashboards"
-msgstr "Gå til Dashboards"
+msgstr ""
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -5851,7 +5851,7 @@ msgstr "Navn"
 #. js-lingui-id: LPBy3P
 #: src/modules/settings/serverless-functions/components/SettingsServerlessFunctionNewForm.tsx
 msgid "Name and describe your function"
-msgstr "Navnsett og beskriv din funksjon"
+msgstr ""
 
 #. js-lingui-id: XSwyCU
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -6407,7 +6407,7 @@ msgstr "nå"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "nummer"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -6837,7 +6837,7 @@ msgstr "Permanent ødelegg post"
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 msgid "Permanently Destroy Record"
-msgstr "Permanent ødelegg post"
+msgstr ""
 
 #. js-lingui-id: xjWlSJ
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -7329,7 +7329,7 @@ msgstr "Svar"
 #. js-lingui-id: QMiOjK
 #: src/modules/activities/emails/components/EmailThreadBottomBar.tsx
 msgid "Reply to all"
-msgstr "Svar alle"
+msgstr ""
 
 #. js-lingui-id: G42SNI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7407,7 +7407,7 @@ msgstr "Gjenopprett oppføring"
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 msgid "Restore Record"
-msgstr "Gjenopprett post"
+msgstr ""
 
 #. js-lingui-id: Vw369F
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -7418,7 +7418,7 @@ msgstr "Gjenopprett oppføringer"
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
 #: src/modules/action-menu/actions/record-actions/multiple-records/components/RestoreMultipleRecordsAction.tsx
 msgid "Restore Records"
-msgstr "Gjenopprett poster"
+msgstr ""
 
 #. js-lingui-id: kx0s+n
 #: src/modules/command-menu/hooks/useCommandMenuSearchRecords.tsx
@@ -8552,7 +8552,7 @@ msgstr "Bytt til årlig"
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Sync Account"
-msgstr "Synk konto"
+msgstr ""
 
 #. js-lingui-id: MsxItJ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -8700,7 +8700,7 @@ msgstr "Test funksjonen din"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "tekst"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8857,8 +8857,7 @@ msgstr "Tredje"
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Denne handlingen kan ikke angres. Dette vil permanent slette hele kontoen din."
 
@@ -8983,7 +8982,7 @@ msgstr "Tidsstempel og deltakere vil bli delt med teamet ditt."
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "tittel"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts

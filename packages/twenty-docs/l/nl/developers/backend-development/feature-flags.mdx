@@ -1,0 +1,51 @@
+---
+title: Featurevlaggen
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Featurevlaggen worden gebruikt om experimentele functies te verbergen. Voor Twenty worden ze op werkruimte-niveau ingesteld en niet op gebruikersniveau.
+
+## Een nieuwe featurevlag toevoegen
+
+Voeg de featurevlag toe in `FeatureFlagKey.ts`:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+Voeg het ook toe aan de enum in `feature-flag.entity.ts`:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+Om een featurevlag toe te passen op een **backend**-functie, gebruik:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+Om een featurevlag toe te passen op een **frontend**-functie, gebruik:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## Featurevlaggen configureren voor de implementatie
+
+Wijzig het overeenkomstige record in de Tabel `core.featureFlag`:
+
+| id          | sleutel                  | werkruimteId | waarde |
+| ----------- | ------------------------ | ------------ | ------ |
+| Willekeurig | `IS_FEATURENAME_ENABLED` | WorkspaceID  | `waar` |

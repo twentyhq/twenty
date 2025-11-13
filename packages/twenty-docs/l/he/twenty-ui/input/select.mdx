@@ -1,0 +1,54 @@
+---
+title: בחר.
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+מאפשר למשתמשים לבחור ערך מתוך רשימת אפשרויות מוגדרת מראש.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
+
+import { Select } from '@/ui/input/components/Select';
+
+export const MyComponent = () => {
+
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Select an option"
+        options={[
+          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| תכונות    | סוג      | תיאור                                                                                                                                                                                                                                                |
+| --------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className | string   | מחלקת CSS אופציונלית לסגנון נוסף                                                                                                                                                                                                                     |
+| לא פעיל   | בוליאני  | When set to `true`, disables user interaction with the component                                                                                                                                                                                     |
+| תווית     | string   | התווית לתיאור המטרה של רכיב ה-`Select`                                                                                                                                                                                                               |
+| onChange  | פונקציה  | הפונקציה שמופעלת כאשר הערכים הנבחרים משתנים                                                                                                                                                                                                          |
+| אפשרויות  | מַעֲרָךְ | Represents the options available for the `Selected` component. זהו מערך של אובייקטים כאשר לכל אובייקט יש `value` (המזהה הייחודי), `label` (המזהה הייחודי), ו-`Icon` אופציונלי. |
+| ערך       | מחרוזת   | מייצג את הערך שנבחר כרגע. חייב להתאים לאחת מהתכונות `value` במערך `options`.                                                                                                                                         |
+
+</Tab>
+</Tabs>

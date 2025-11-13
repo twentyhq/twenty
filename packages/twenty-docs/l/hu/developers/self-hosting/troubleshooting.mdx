@@ -1,0 +1,227 @@
+---
+title: Hibaelhárítás
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Hibaelhárítás
+
+If you encounter any problem while setting up environment for development, upgrading your instance or self-hosting,
+here are some solutions for common problems.
+
+### Önálló hoszting
+
+#### First install results in `password authentication failed for user "postgres"`
+
+🚨 **FONTOS: Ez a megoldás KIZÁRÓLAG új telepítésekre vonatkozik** 🚨
+Ha már van egy meglévő Twenty példányod termelési adatokkal, **NE** kövesd ezeket a lépéseket, mert ezek véglegesen törlik az adatbázisod!
+
+Az első telepítés során lehet, hogy meg szeretnéd változtatni az alapértelmezett adatbázis jelszót.
+The password you set during the first installation becomes permanently stored in the database volume. Ha ezt a jelszót később megpróbálod megváltoztatni a konfigurációdban a régi térfogat eltávolítása nélkül, hitelesítési hibák léphetnek fel, mert az adatbázis még mindig az eredeti jelszót használja.
+
+⚠️ FIGYELEM: A következő lépések PERMANENSEN TÖRLIK az adatbázis összes adatát! ⚠️
+Csak akkor folytasd, ha ez egy friss telepítés, és nincs fontos adat.
+
+Ahhoz, hogy frissítsd a `PG_DATABASE_PASSWORD` értéket:
+
+```sh
+# Update the PG_DATABASE_PASSWORD in .env
+docker compose down --volumes
+docker compose up -d
+```
+
+#### CR line breaks found [Windows]
+
+This is due to the line break characters of Windows and the git configuration. Try running:
+
+```
+git config --global core.autocrlf false
+```
+
+Then delete the repository and clone it again.
+
+#### Hiányzó metaadat séma
+
+During Twenty installation, you need to provision your postgres database with the right schemas, extensions, and users.
+If you're successful in running this provisioning, you should have `default` and `metadata` schemas in your database.
+Ha nem, győződj meg róla, hogy nem fut egynél több postgres példány a számítógépeden.
+
+#### Cannot find module 'twenty-emails' or its corresponding type declarations.
+
+You have to build the package `twenty-emails` before running the initialization of the database with `npx nx run twenty-emails:build`
+
+#### Missing twenty-x package
+
+Make sure to run yarn in the root directory and then run `npx nx server:dev twenty-server`. If this still doesn't work try building the missing package manually.
+
+#### Lint on Save not working
+
+This should work out of the box with the eslint extension installed. If this doesn't work try adding this to your vscode setting (on the dev container scope):
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### A `npx nx start` vagy `npx nx start twenty-front` futtatása közben memóriahiány hibát dob
+
+In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
+
+**Ha ez nem működik:**  
+Csak azokat a szolgáltatásokat futtasd, amelyeket szükséges, ahelyett, hogy a `npx nx start` parancsot használnád. Például, ha a szerverrel dolgozol, csak a `npx nx worker twenty-server` parancsot futtasd.
+
+**If it does not work:**  
+If you tried to run only `npx nx run twenty-server:start` on WSL and it's failing with the below memory error:
+
+`FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`
+
+A megoldás az, hogy futtasd az alábbi parancsot a terminálban, vagy add hozzá .bashrc profilodhoz, hogy automatikusan beállítsa magát:
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+A --max-old-space-size=8192 zászló 8GB-ra állítja a Node.js heap felső határát; a használat az alkalmazás igényeivel növekszik.
+Referencia: https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**Ha nem működik:**  
+Vizsgáld meg mely folyamatok foglalnak el a legtöbb RAM-ot a gépeden. A Twenty-nél észrevettük, hogy néhány VScode kiterjesztés sok RAM-ot foglal, így ideiglenesen letiltottuk őket.
+
+**Ha ez sem működik:**  
+Indítsd újra a gépedet, hogy megtisztítsd a szellemfolyamatokat.
+
+#### A `npx nx start` indítása során furcsa [0] és [1] jelenik meg a naplóban
+
+Az várható, mivel a `npx nx start` parancs több parancsot is futtat a háttérben
+
+#### Nem küldenek e-maileket
+
+Legtöbbször ez azért van, mert a `worker` nem fut a háttérben. Try to run
+
+```
+npx nx worker twenty-server
+```
+
+#### Nem tudok csatlakozni a Microsoft 365 fiókomhoz
+
+Legtöbbször ez azért van, mert az admin nem engedélyezte a Microsoft 365 Licencet a fiókodhoz. Ellenőrizze [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
+
+Ha az `AADSTS50020` hibakód jelenik meg, az valószínűleg azt jelenti, hogy személyes Microsoft-fiókot használsz. Ez egyelőre nem támogatott. További információ [itt](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### A `yarn` futtatása közben figyelmeztetések jelennek meg a konzolon
+
+Warnings are informing about pulling additional dependencies which aren't explicitly stated in `package.json`, so as long as no breaking error appears, everything should work as expected.
+
+#### Amikor a felhasználó belép a bejelentkezési oldalra, hiba jelenik meg a naplóban a jogosulatlan felhasználóról, aki megpróbál hozzáférni a munkaterülethez
+
+Ez várható, mivel a felhasználó jogosulatlan, amikor ki van jelentkezve, mivel az identitása nem ellenőrzött.
+
+#### Hogyan ellenőrizheted, hogy a workered fut-e?
+
+- Menj a [webhook-test.com](https://webhook-test.com/) weboldalra és másold ki **Egyedi Webhook URL-ed**.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook test" />
+</div>
+- Nyisd meg a Twenty alkalmazásod, navigálj a `/settings` oldalra, és engedélyezd az **Advanced** kapcsolót a képernyő bal alsó részén.
+- Create a new webhook.
+- Paste **Your Unique Webhook URL** in the **Endpoint Url** field in Twenty. Állítsd be a **Szűrőket** `Companies` és `Created` értékekre.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook settings" />
+</div>
+- Menj a `/objects/companies` oldalra és hozz létre egy új céges rekordot.
+- Return to [webhook-test.com](https://webhook-test.com/) and check if a new **POST request** has been received.
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test result" />
+</div>
+- Ha egy **POST kérés** érkezett, a workered sikeresen fut. Ellenkező esetben el kell hárítanod a worker problémáit.
+
+#### Front-end fails to start and returns error TS5042: Option 'project' cannot be mixed with source files on a command line
+
+Kommentálj ki ellenőrző bővítményt a `packages/twenty-ui/vite-config.ts` fájlban, mint az alábbi példában
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### Admin panel not accessible
+
+Futtasd az `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'te@tartomanyod.com';` parancsot az adatbázis konténerben, hogy hozzáférj az admin panelhez.
+
+### 1 kattintásos Docker-összeállítás
+
+#### Unable to Log In
+
+Ha nem tudsz bejelentkezni a beállítás után:
+
+1. Futtassa a következő parancsokat:
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. Indítsd újra a Docker-konténereket:
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+Note the database:reset command will completely erase your database and recreate it from scratch.
+
+#### Kapcsolódási problémák egy fordított proxy mögött
+
+Ha a Twenty-t egy fordított proxy mögött futtatod, és kapcsolódási hibák merülnek fel:
+
+1. **SERVER_URL ellenőrzése:**
+
+   Győződj meg arról, hogy a `.env` fájlban lévő `SERVER_URL` megegyezik a külső elérési URL-el, beleértve a `https`-t, ha az SSL engedélyezve van.
+
+2. **Fordított Proxy Beállítások Ellenőrzése:**
+
+   - Bizonyosodj meg arról, hogy a fordított proxy rendesen továbbítja a kéréseket a Twenty szerver felé.
+   - Győződj meg arról, hogy a `X-Forwarded-For` és `X-Forwarded-Proto` fejlécek megfelelően vannak beállítva.
+
+3. **Szolgáltatások Újraindítása:**
+
+   A változtatások után indítsd újra mind a fordított proxy-t, mind a Twenty konténereket.
+
+#### Hiba a kép feltöltésekor - engedély megtagadva
+
+A probléma megoldódik, ha a gazdagépen a data könyvtár tulajdonjogát megváltoztatod root-ról egy másik felhasználóra és csoportra.
+
+## Segítség kérése
+
+Ha olyan problémába ütközöl, amely nincs ebben az útmutatóban:
+
+- Naplók Ellenőrzése:
+
+  Tekintsd meg a tárolók naplóit hibaüzenetekért:
+
+  ```bash
+  docker compose logs
+  ```
+
+- Közösségi Támogatás:
+
+  Fordulj a [Twenty közösséghez](https://github.com/twentyhq/twenty/issues) vagy [támogatási csatornákhoz](https://discord.gg/cx5n4Jzs57) segítségért.

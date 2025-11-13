@@ -1,0 +1,153 @@
+---
+title: Tekst
+image: /images/user-guide/notes/notes_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+</Frame>
+
+## Text Input
+
+Lar brukerne skrive inn og redigere tekst.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { TextInput } from "@/ui/input/components/TextInput";
+
+export const MyComponent = () => {
+  const handleChange = (text) => {
+    console.log("Input changed:", text);
+  };
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+  };
+
+  return (
+    <RecoilRoot>
+      <TextInput
+        className
+        label="Username"
+        onChange={handleChange}
+        fullWidth={false}
+        disableHotkeys={false}
+        error="Invalid username"
+        onKeyDown={handleKeyDown}
+        RightIcon={null}
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                                                                                     |
+| ----------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span>   | "Valgfritt navn for ekstra styling"                                                                                             |
+| etikett                 | <span>streng</span>   | Representerer etiketten for inndataene                                                                                          |
+| <span>onChange</span>   | <span>funksjon</span> | Funksjonen som kalles når inndataverdien endres                                                                                 |
+| fullWidth               | boolean               | Angir om inndataene skal ta opp 100% av bredden                                                                                 |
+| disableHotkeys          | <span>boolean</span>  | Angir om hurtigtaster er aktivert for inndataene                                                                                |
+| feil                    | <span>streng</span>   | Representerer feilmeldingen som vises. When provided, it also adds an icon error on the right side of the input |
+| vedNedtrykk             | <span>funksjon</span> | Kalles når en tast trykkes ned mens inndatafeltet er i fokus. Mottar en `React.KeyboardEvent` som et argument   |
+| HøyreIkon               | "IkonKomponent"       | En valgfri ikonekomponent vist på høyre side av inndata                                                                         |
+
+The component also accepts other HTML input element props.
+
+</Tab>
+
+</Tabs>
+
+## Autosize Text Input
+
+Text input component that automatically adjusts its height based on the content.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from "recoil";
+import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+export const MyComponent = () => {
+  return (
+    <RecoilRoot>
+      <AutosizeTextInput
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
+      />
+    </RecoilRoot>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                                                                     |
+| ----------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------- |
+| vedValidering           | <span>funksjon</span> | Tilbakekallingsfunksjonen du vil utløse når brukeren validerer inndataene                                       |
+| minRader                | nummer                | Det minste antallet rader for tekstområdet                                                                      |
+| plassholder             | <span>streng</span>   | Plassholderteksten du vil vise når tekstområdet er tomt                                                         |
+| vedFokus                | <span>funksjon</span> | Tilbakekallingsfunksjonen du vil utløse når tekstområdet får fokus                                              |
+| "variant"               | <span>streng</span>   | Varianten av inndataene. Alternativer inkluderer: `default`, `ikon`, og `knapp` |
+| knapptittel             | <span>streng</span>   | Tittelen for knappen (kun gjeldende for knappvariant)                                        |
+| verdi                   | <span>streng</span>   | Den opprinnelige verdien for tekstområdet                                                                       |
+
+</Tab>
+
+</Tabs>
+
+## Text Area
+
+Setter deg i stand til å lage flerlinje inndata.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { TextArea } from "@/ui/input/components/TextArea";
+
+export const MyComponent = () => {
+  return (
+    <TextArea
+    disabled={false}
+    minRows={4}
+    onChange={()=>console.log('On change function fired')}
+    placeholder="Enter text here"
+    value=""
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                        |
+| ----------------------- | --------------------- | ------------------------------------------------------------------ |
+| deaktivert              | boolean               | Angir om tekstområdet er deaktivert                                |
+| minRader                | nummer                | Minimum antall synlige rader for tekstområdet.     |
+| <span>onChange</span>   | <span>funksjon</span> | Tilbakekallingsfunksjon utløst når innholdet i tekstområdet endres |
+| plassholder             | <span>streng</span>   | Placeholder text displayed when the text area is empty             |
+| verdi                   | <span>streng</span>   | Den nåværende verdien av tekstområdet                              |
+
+</Tab>
+</Tabs>

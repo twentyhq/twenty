@@ -83,8 +83,8 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 1. Allez dans [Identifiants](https://console.cloud.google.com/apis/credentials)
 2. Créez un identifiant client OAuth 2.0
 3. Ajoutez ces URI de redirection :
-   - `https://<votre-domaine>/auth/google/redirect` (pour le SSO)
-   - `https://<votre-domaine>/auth/google-apis/get-access-token` (pour les intégrations)
+   - `https://{your-domain}/auth/google/redirect` (for SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
 
 ### Configurez dans Twenty
 
@@ -93,10 +93,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 3. Définissez ces variables :
    - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
    - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
-   - `AUTH_GOOGLE_CLIENT_ID=<client-id>`
-   - `AUTH_GOOGLE_CLIENT_SECRET=<client-secret>`
-   - `AUTH_GOOGLE_CALLBACK_URL=https://<votre-domaine>/auth/google/redirect`
-   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://<votre-domaine>/auth/google-apis/get-access-token`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
 **Mode réservé à l'environnement :** Si vous définissez `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, ajoutez ces variables à votre fichier `.env` à la place.
@@ -144,8 +144,8 @@ Remarque : "Mail.ReadWrite" et "Mail.Send" ne sont obligatoires que si vous souh
 
 Vous devez ajouter les URI de redirection suivantes à votre projet :
 
-- `https://<votre-domaine>/auth/microsoft/redirect` si vous souhaitez utiliser Microsoft SSO
-- `https://<votre-domaine>/auth/microsoft-apis/get-access-token`
+- `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### Configurez dans Twenty
 
@@ -155,10 +155,10 @@ Vous devez ajouter les URI de redirection suivantes à votre projet :
    - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
    - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
    - `AUTH_MICROSOFT_ENABLED=true`
-   - `AUTH_MICROSOFT_CLIENT_ID=<client-id>`
-   - `AUTH_MICROSOFT_CLIENT_SECRET=<client-secret>`
-   - `AUTH_MICROSOFT_CALLBACK_URL=https://<votre-domaine>/auth/microsoft/redirect`
-   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://<votre-domaine>/auth/microsoft-apis/get-access-token`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
 **Mode réservé à l'environnement :** Si vous définissez `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, ajoutez ces variables à votre fichier `.env` à la place.

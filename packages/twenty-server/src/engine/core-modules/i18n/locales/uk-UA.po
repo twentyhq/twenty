@@ -1837,7 +1837,7 @@ msgstr "Мова"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "Last credentials refreshed at"
-msgstr "Останнє оновлення облікових даних"
+msgstr ""
 
 #. js-lingui-id: WvYp6o
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts

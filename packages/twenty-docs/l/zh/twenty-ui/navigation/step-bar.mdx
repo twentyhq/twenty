@@ -1,0 +1,38 @@
+---
+title: 步驟欄
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+通過突出顯示當前步驟來顯示一系列編號步驟的進度。 它會渲染一個容器，其中的每個步驟由 `Step` 組件表示。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { StepBar } from "@/ui/navigation/step-bar/components/StepBar";
+
+export const MyComponent = () => {
+  return (
+    <StepBar activeStep={2}>
+      <StepBar.Step>Step 1</StepBar.Step>
+      <StepBar.Step>Step 2</StepBar.Step>
+      <StepBar.Step>Step 3</StepBar.Step>
+    </StepBar>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 屬性         | 類型 | 描述                       |
+| ---------- | -- | ------------------------ |
+| activeStep | 數字 | 當前活躍步驟的索引。 這決定了應高亮顯示哪個步驟 |
+
+</Tab>
+</Tabs>

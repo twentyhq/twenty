@@ -1,0 +1,130 @@
+---
+title: Mappestruktur
+info: A detailed look into our server folder architecture
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+The backend directory structure is as follows:
+
+```
+server
+  └───ability
+  └───constants 
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Evne
+
+Definerer tillatelser og inkluderer håndterere for hver enhet.
+
+## Dekoratorer
+
+Definerer egendefinerte dekoratorer i NestJS for ytterligere funksjonalitet.
+
+Se [egendefinerte dekoratorer](https://docs.nestjs.com/custom-decorators) for mer informasjon.
+
+## Filtre
+
+Inkluderer unntaksfiltre for å håndtere unntak som kan oppstå i GraphQL-endepunkter.
+
+## Beskyttere
+
+Se [beskyttere](https://docs.nestjs.com/guards) for mer informasjon.
+
+## Helse
+
+Inkluderer et offentlig tilgjengelig REST API (healthz) som returnerer en JSON for å bekrefte om databasen fungerer som forventet.
+
+## Metadata
+
+Definerer egendefinerte objekter og gjør tilgjengelig en GraphQL API (graphql/metadata).
+
+## Arbeidsområde
+
+Genererer og leverer egendefinert GraphQL-skjema basert på metadata.
+
+### Workspace Directory Structure
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories 
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils 
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils 
+  └───workspace.module.ts   
+  └───workspace.factory.spec.ts    
+  └───workspace.factory.ts      
+```
+
+The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. Denne funksjonen genererer arbeidsplass-spesifikke skjema ved å bruke metadata for å skreddersy et skjema for individuelle arbeidsområder. Ved å skille ut skjema- og resolver-konstruksjon, bruker vi funksjonen `makeExecutableSchema` som kombinerer disse diskrete elementene.
+
+Denne strategien handler ikke bare om organisering, men bidrar også til optimalisering, som å cache genererte typedefinisjoner for å forbedre ytelse og skalerbarhet.
+
+### Workspace Schema builder
+
+Genererer GraphQL-skjemaet, og inkluderer:
+
+#### Fabrikker:
+
+Spesialiserte konstruktører for å generere GraphQL-relaterte konstruksjoner.
+
+- Typefabrikken oversetter feltmetadata til GraphQL-typer ved å bruke `TypeMapperService`.
+- Type-definisjons.fabrikken lager GraphQL-inndata- eller utdataobjekter avledet fra `objectMetadata`.
+
+#### GraphQL Typer
+
+Inkluderer enumerasjoner, inndata, objekter og scalars, og fungerer som byggesteinene for skjema-konstruksjonen.
+
+#### Grensesnitt og Objektdefinisjoner
+
+Inneholder blåkopiene for GraphQL-entiteter, og inkluderer både forhåndsdefinerte og egendefinerte typer som `MONEY` eller `URL`.
+
+#### Tjenester
+
+Inneholder tjenesten som er ansvarlig for å knytte FieldMetadataType til sin passende GraphQL-scalar eller forespørsel modifikator.
+
+#### Lager
+
+Inkluderer `TypeDefinitionsStorage`-klassen som inneholder gjenbrukbare type-definisjoner, noe som forhindrer duplisering av GraphQL-typer.
+
+### Workspace Resolver Builder
+
+Lager resolver-funksjoner for å forespørre og mutere GraphQL-skjemaet.
+
+Hver fabrikk i denne katalogen har ansvar for å produsere en distinkt resolver-type, som `FindManyResolverFactory`, designet for tilpasningsdyktig bruk på tvers av forskjellige tabeller.
+
+### Workspace Query Runner
+
+Kjører de genererte forespørslene på databasen og analyserer resultatene.

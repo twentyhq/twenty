@@ -1,0 +1,42 @@
+---
+title: Beeld Invoer
+image: /images/user-guide/objects/objects.png
+---
+
+<Frame>
+  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+</Frame>
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Laat gebruikers toe om 'n beeld op te laai en te verwyder.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Eienskappe       | Tipe       | Beskrywing                                                                                                                          |
+| ---------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| prent            | string     | Die beeld se bron-URL                                                                                                               |
+| onUpload         | funksie    | Die funksie wat geroep word wanneer 'n gebruiker 'n nuwe beeld oplaai. Dit ontvang die `File` objek as 'n parameter |
+| onRemove         | funksie    | Die funksie wat geroep word wanneer die gebruiker op die verwyderknoppie klik                                                       |
+| onAbort          | funksie    | Die funksie wat geroep word wanneer 'n gebruiker op die staakknoppie tydens beeldoplaai klik                                        |
+| isBesigMetOplaai | booleaanse | Dui aan of 'n beeld tans besig is om opgelaai te word                                                                               |
+| foutBoodskap     | string     | 'n Opsionele foutboodskap om onder die beeldinvoer te wys                                                                           |
+| gedeaktiveer     | booleaanse | If `true`, the entire input is disabled, and the buttons are not clickable                                                          |
+
+</Tab>
+</Tabs>

@@ -1,0 +1,130 @@
+---
+title: Kansioarkkitehtuuri
+info: A detailed look into our server folder architecture
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+Palvelimen hakemistojen rakenne on seuraava:
+
+```
+server
+  └───ability
+  └───constants 
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Ability
+
+Määrittää oikeudet ja sisältää käsittelijät kullekin yksikölle.
+
+## Decorators
+
+Defines custom decorators in NestJS for added functionality.
+
+See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+
+## Suodattimet
+
+Sisältää poikkeussuodattimia GraphQL-päätelaitteissa mahdollisesti esiintyvien poikkeusten käsittelemiseksi.
+
+## Guards
+
+See [guards](https://docs.nestjs.com/guards) for more details.
+
+## Terveys
+
+Sisältää julkisesti saatavilla olevan REST API:n (healthz), joka palauttaa JSONin varmistaakseen, että tietokanta toimii odotetusti.
+
+## Metatiedot
+
+Määrittää mukautettuja objekteja ja tarjoaa GraphQL API:n (graphql/metadata).
+
+## Työtila
+
+Luo ja palvelee mukautettua GraphQL-skeemaa metadataan pohjautuen.
+
+### Työtilan hakemistorakenne
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories 
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils 
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils 
+  └───workspace.module.ts   
+  └───workspace.factory.spec.ts    
+  └───workspace.factory.ts      
+```
+
+Työtilahakemiston juuresta löytyy `workspace.factory.ts`, tiedosto, joka sisältää `createGraphQLSchema`-toiminnon. Tämä toiminto luo työtilakohtaisen skeeman hyödyntämällä metadataa räätälöidyn skeeman luomiseksi kullekin työtilalle. Erottamalla skeeman ja ratkaisijan rakennus käytämme `makeExecutableSchema`-toimintoa, joka yhdistää nämä erilliset elementit.
+
+Tämä strategia ei vain järjestä, vaan auttaa myös optimoinnissa, kuten generoitujen tyyppimääritysten välimuistiin tallentamisessa suorituskyvyn ja skaalautuvuuden parantamiseksi.
+
+### Työtilan Skeemanrakentaja
+
+Luo GraphQL-skeeman, ja sisältää:
+
+#### Tehtaat:
+
+Specialised constructors to generate GraphQL-related constructs.
+
+- Type.factory muuntaa kenttämetadatan GraphQL-tyypeiksi `TypeMapperService`ä käyttäen.
+- Type-definition.factory luo GraphQL-tulo- tai lähtöobjekteja, johdetuin `objectMetadata`sta.
+
+#### GraphQL-tyypit
+
+Sisältää luokittelut, syötteet, objektit ja skaalat ja toimii rakennuspalikoina skeemarakennukselle.
+
+#### Interfaces and Object Definitions
+
+Sisältää luonnoksia GraphQL-yksiköille, ja sisältää sekä ennalta määritellyt että mukautetut tyypit, kuten `MONEY` tai `URL`.
+
+#### Palvelut
+
+Sisältää palvelut, jotka vastaavat FieldMetadataType:n yhdistämisestä sopivaan GraphQL-skaalalle tai kyselymoduulille.
+
+#### Tallennus
+
+Sisältää `TypeDefinitionsStorage`-luokan, joka sisältää uudelleenkäytettäviä tyyppimäärityksiä, joten GraphQL-tyyppejä ei tarvitse toistaa.
+
+### Työtilan ratkaisijarakentaja
+
+Luo ratkaisijatoiminnot GraphQL-skeeman kyselemiseen ja muokkaamiseen.
+
+Kukin tämän hakemiston tehdas on vastuussa erillisen ratkaisijatyypin tuottamisesta, kuten `FindManyResolverFactory`, joka on suunniteltu sovellettavaksi eri tauluihin.
+
+### Työtilan kyselysuorittaja
+
+Suorittaa luodut kyselyt tietokannassa ja jäsentää tuloksen.

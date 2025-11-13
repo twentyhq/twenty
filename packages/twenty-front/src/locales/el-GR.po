@@ -2755,22 +2755,22 @@ msgstr "Μορφή Ημερομηνίας"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Date granularity"
-msgstr "Σαφήνεια ημερομηνίας"
+msgstr ""
 
 #. js-lingui-id: dhHZTJ
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity"
-msgstr "Σαφήνεια Ημερομηνίας"
+msgstr ""
 
 #. js-lingui-id: agXC4d
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity X"
-msgstr "Σαφήνεια Ημερομηνίας X"
+msgstr ""
 
 #. js-lingui-id: YsCGZL
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity Y"
-msgstr "Σαφήνεια Ημερομηνίας Y"
+msgstr ""
 
 #. js-lingui-id: /ITcnz
 #: src/utils/date-utils.ts
@@ -4440,7 +4440,7 @@ msgstr "Πήγαινε στις Εταιρείες"
 #. js-lingui-id: dvMw7T
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Dashboards"
-msgstr "Μετάβαση στους Πίνακες Ελέγχου"
+msgstr ""
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -4952,7 +4952,7 @@ msgstr "Μη έγκυρο κλειδί API"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr "Μη έγκυρος πάροχος εξουσιοδότησης παράκαμψης"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5757,7 +5757,7 @@ msgstr "Μήνας"
 #. js-lingui-id: ytTyc9
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Month of the year"
-msgstr "Μήνας του έτους"
+msgstr ""
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/hooks/useBillingWording.ts
@@ -6407,7 +6407,7 @@ msgstr "τώρα"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "αριθμός"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -7116,7 +7116,7 @@ msgstr "Τρίμηνο"
 #. js-lingui-id: GKNfuv
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter of the year"
-msgstr "Τρίμηνο του έτους"
+msgstr ""
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
@@ -8136,8 +8136,7 @@ msgstr "Μοιραστείτε αυτόν τον σύνδεσμο για να π
 #. js-lingui-id: RRXpo1
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 msgid "Short"
-msgstr ""
-"\n"
+msgstr "\n"
 ""
 
 #. js-lingui-id: gWk8gY
@@ -8702,7 +8701,7 @@ msgstr "Δοκιμάστε τη λειτουργία σας"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "κείμενο"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8859,11 +8858,9 @@ msgstr "Τρίτος"
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
-msgstr ""
-"Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Αυτό θα διαγράψει μόνιμα\n"
+msgstr "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Αυτό θα διαγράψει μόνιμα\n"
 "            ολόκληρο τον λογαριασμό σας."
 
 #. js-lingui-id: bNY3MH
@@ -8987,7 +8984,7 @@ msgstr "Η χρονική σήμανση και οι συμμετέχοντες 
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "τίτλος"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts

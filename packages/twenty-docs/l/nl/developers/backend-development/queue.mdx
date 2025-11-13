@@ -1,0 +1,47 @@
+---
+title: Berichtenwachtrij
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Header" />
+</Frame>
+
+Queues facilitate async operations to be performed. Ze kunnen worden gebruikt voor taken op de achtergrond, zoals het versturen van een welkomstmail bij registratie.
+Elke use case heeft zijn eigen wachtrijklasse, uitgebreid van `MessageQueueServiceBase`.
+
+Currently, we only support `bull-mq`[bull-mq](https://bullmq.io/) as the queue driver.
+
+## Stappen om een nieuwe wachtrij te maken en te gebruiken
+
+1. Voeg een wachtrijnaam toe voor je nieuwe wachtrij onder de enum `MESSAGE_QUEUES`.
+2. Provide the factory implementation of the queue with the queue name as the dependency token.
+3. Injecteer de wachtrij die je hebt aangemaakt in de benodigde module/service met de wachtrijnaam als de afhankelijkheidstoken.
+4. Add worker class with token based injection just like producer.
+
+### Voorbeeld van gebruik
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```
+

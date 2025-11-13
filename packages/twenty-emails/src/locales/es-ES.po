@@ -141,7 +141,7 @@ msgstr "Restablecer"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr "Establecer"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

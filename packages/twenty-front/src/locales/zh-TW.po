@@ -635,7 +635,7 @@ msgstr "添加節點"
 #. js-lingui-id: NeOuRn
 #: src/modules/activities/notes/components/NotesCard.tsx
 msgid "Add note"
-msgstr "添加筆記"
+msgstr ""
 
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -723,7 +723,7 @@ msgstr "添加視圖"
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 msgid "Add widget"
-msgstr "添加 Widget"
+msgstr ""
 
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
@@ -2501,7 +2501,7 @@ msgstr "創建您的工作區"
 #. js-lingui-id: OHF273
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Create, edit, and delete workspace views"
-msgstr "創建、編輯和刪除工作空間視圖"
+msgstr ""
 
 #. js-lingui-id: fR16ki
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -3370,7 +3370,7 @@ msgstr "編輯儀表板"
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit data structure and fields"
-msgstr "編輯數據結構和欄位"
+msgstr ""
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -4758,7 +4758,7 @@ msgstr "iFrame 設定"
 #. js-lingui-id: mO+Bte
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "iFrame Widget"
-msgstr "iFrame Widget"
+msgstr ""
 
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
@@ -5500,7 +5500,7 @@ msgstr "管理 API 金鑰和 Webhooks"
 #. js-lingui-id: IT5nsa
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage billing and subscriptions"
-msgstr "管理賬單和訂閱"
+msgstr ""
 
 #. js-lingui-id: nvgUPq
 #: src/modules/billing/components/SettingsBillingContent.tsx
@@ -5814,7 +5814,7 @@ msgstr "必須是一個有效的電子郵件數組"
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "My unlisted views"
-msgstr "我的未列出檢視"
+msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
@@ -6407,7 +6407,7 @@ msgstr "現在"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "數字"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -7136,7 +7136,7 @@ msgstr "隊列：{queueName}"
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
-msgstr "接收包含密碼設置鏈接的電子郵件"
+msgstr ""
 
 #. js-lingui-id: v3xM25
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -7988,7 +7988,7 @@ msgstr "發送電子郵件"
 #. js-lingui-id: CqsED8
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Send emails via connected accounts"
-msgstr "允許通過已連接的帳戶發送電子郵件"
+msgstr ""
 
 #. js-lingui-id: IoAuJG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -8700,7 +8700,7 @@ msgstr "測試您的功能"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "文本"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8857,8 +8857,7 @@ msgstr "第三"
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "此操作無法撤銷。這將永久刪除您的整個帳戶。"
 
@@ -8983,7 +8982,7 @@ msgstr "時間戳和參與者將與您的團隊共享。"
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "標題"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
@@ -9296,7 +9295,7 @@ msgstr "網址"
 #. js-lingui-id: pphDjD
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "URL to Embed"
-msgstr "內嵌URL"
+msgstr ""
 
 #. js-lingui-id: DsBeuB
 #: src/modules/settings/integrations/components/SettingsIntegrationComponent.tsx

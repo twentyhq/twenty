@@ -1,0 +1,104 @@
+---
+title: Radio
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+<Frame>
+  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
+</Frame>
+
+Usado cuando los usuarios solo pueden elegir una opción de una serie de opciones.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { Radio } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const handleRadioChange = (event) => {
+    console.log("Radio button changed:", event.target.checked);
+  };
+
+  const handleCheckedChange = (checked) => {
+    console.log("Checked state changed:", checked);
+  };
+
+
+  return (
+    <Radio
+      checked={true}
+      value="Option 1"
+      onChange={handleRadioChange}
+      onCheckedChange={handleCheckedChange}
+      size="large"
+      disabled={false}
+      labelPosition="right"
+    />
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| "Props"         | Tipo                       | Descripción                                                                                                                                                           |
+| --------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| estilo          | propiedades de `React.CSS` | Estilos en línea adicionales para el componente.                                                                                                      |
+| "className"     | "cadena"                   | Clase CSS opcional para estilo adicional.                                                                                                             |
+| marcado         | booleano                   | Indicates whether the radio button is checked                                                                                                                         |
+| valor           | "cadena"                   | La etiqueta o texto asociado con el botón de opción.                                                                                                  |
+| "onChange"      | "función"                  | La función que se llama cuando se cambia el botón de opción seleccionado.                                                                             |
+| onCheckedChange | "función"                  | La función que se llama cuando el estado de `seleccionado` del botón de opción cambia.                                                                |
+| tamaño          | "cadena"                   | El tamaño del botón de opción. Las opciones incluyen: `grande` y `pequeño`.                                           |
+| "desactivado"   | booleano                   | Si es `verdadero`, el botón de opción está deshabilitado y no se puede hacer clic.                                                                    |
+| labelPosition   | "cadena"                   | La posición del texto de la etiqueta en relación con el botón de opción. Tiene dos opciones: `izquierda` y `derecha`. |
+
+</Tab>
+</Tabs>
+
+## Grupo de Radio
+
+Agrupa botones de opción relacionados.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import React, { useState } from "react";
+import { Radio, RadioGroup } from "twenty-ui/display";
+
+export const MyComponent = () => {
+
+  const [selectedValue, setSelectedValue] = useState("Option 1");
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+  
+  return (
+    <RadioGroup value={selectedValue} onChange={handleChange}>
+      <Radio value="Option 1" />
+      <Radio value="Option 2" />
+      <Radio value="Option 3" />
+    </RadioGroup>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| "Props"         | Tipo              | Descripción                                                                                                           |
+| --------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------- |
+| valor           | "cadena"          | El valor del botón de opción seleccionado actualmente.                                                |
+| "onChange"      | función           | La función de devolución de llamada que se activa cuando se cambia el botón de opción.                |
+| alCambioDeValor | función           | La función de devolución de llamada que se activa cuando se cambia el valor seleccionado en el grupo. |
+| hijos           | `React.ReactNode` | Allows you to pass React components (such as Radio) as children to the Radio Group                 |
+
+</Tab>
+
+</Tabs>

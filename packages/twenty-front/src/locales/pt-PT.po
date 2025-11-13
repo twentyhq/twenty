@@ -2085,7 +2085,7 @@ msgstr "Configure a data, hora, número, fuso horário e dia de início do calen
 #. js-lingui-id: utsXG8
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Configure fallback login methods for users with SSO bypass permissions"
-msgstr "Configurar métodos de login alternativos para usuários com permissões de contornar SSO"
+msgstr ""
 
 #. js-lingui-id: c7wznw
 #: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -4440,7 +4440,7 @@ msgstr "Ir para Empresas"
 #. js-lingui-id: dvMw7T
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Dashboards"
-msgstr "Ir para Dashboards"
+msgstr ""
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -4486,7 +4486,7 @@ msgstr "Ir para Tarefas"
 #. js-lingui-id: 203RqP
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Workflows"
-msgstr "Ir para Workflows"
+msgstr ""
 
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -4952,7 +4952,7 @@ msgstr "Chave API inválida"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr "Fornecedor de autenticação bypass inválido"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -6407,7 +6407,7 @@ msgstr "agora"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "número"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -8700,7 +8700,7 @@ msgstr "Teste sua função"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "texto"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8857,8 +8857,7 @@ msgstr "Terceiro"
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Esta ação não pode ser desfeita. Isto eliminará permanentemente toda a sua conta."
 
@@ -8983,7 +8982,7 @@ msgstr "Carimbo de data/hora e participantes serão partilhados com a sua equipa
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "título"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
@@ -9758,7 +9757,7 @@ msgstr "Espaços de trabalho"
 #. js-lingui-id: F7iCiM
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 msgid "Would you like to remove {recordGroupSort} group sorting?"
-msgstr "Gostaria de remover {recordGroupSort} ordenação de grupo?"
+msgstr ""
 
 #. js-lingui-id: 5iSD9O
 #: src/modules/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm.tsx
