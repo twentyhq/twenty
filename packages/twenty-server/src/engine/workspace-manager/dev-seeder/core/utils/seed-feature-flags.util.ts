@@ -58,11 +58,6 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         workspaceId: workspaceId,
         value: workspaceId === SEED_APPLE_WORKSPACE_ID,
