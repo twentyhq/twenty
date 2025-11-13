@@ -21,7 +21,6 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 
 export enum MessageFolderPendingSyncAction {
   FOLDER_DELETION = 'FOLDER_DELETION',
-  FOLDER_IMPORT = 'FOLDER_IMPORT',
   NONE = 'NONE',
 }
 
@@ -127,15 +126,9 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'red',
       },
       {
-        value: MessageFolderPendingSyncAction.FOLDER_IMPORT,
-        label: 'Folder import',
-        position: 1,
-        color: 'green',
-      },
-      {
         value: MessageFolderPendingSyncAction.NONE,
         label: 'None',
-        position: 2,
+        position: 1,
         color: 'blue',
       },
     ],

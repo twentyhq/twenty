@@ -22,7 +22,6 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
-import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
@@ -79,15 +78,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   messageChannel.excludeNonProfessionalEmails &&
                   !isWorkEmail(participant.handle);
 
-                const isExcludedByGroupEmails =
-                  messageChannel.excludeGroupEmails &&
-                  isGroupEmail(participant.handle);
-
                 const shouldCreateContact =
                   !!participant.handle &&
                   !isParticipantConnectedAccount &&
                   !isExcludedByNonProfessionalEmails &&
-                  !isExcludedByGroupEmails &&
                   (messageChannel.contactAutoCreationPolicy ===
                     MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED ||
                     (messageChannel.contactAutoCreationPolicy ===

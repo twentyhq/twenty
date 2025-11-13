@@ -75,8 +75,10 @@ export class CreateMessageChannelService {
     if (isDefined(connectedAccount)) {
       await this.syncMessageFoldersService.syncMessageFolders({
         workspaceId,
-        messageChannelId: newMessageChannel.id,
-        connectedAccount,
+        messageChannel: {
+          ...newMessageChannel,
+          connectedAccount,
+        },
         manager,
       });
     }
