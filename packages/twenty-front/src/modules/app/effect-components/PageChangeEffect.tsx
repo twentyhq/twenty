@@ -5,7 +5,7 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import {
   setSessionId,
@@ -20,6 +20,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
@@ -99,6 +100,19 @@ export const PageChangeEffect = () => {
 
   const { resetFocusStackToRecordIndex } = useResetFocusStackToRecordIndex();
 
+  const resetIsPageInEditMode = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        set(
+          contextStoreIsPageInEditModeComponentState.atomFamily({
+            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          }),
+          false,
+        );
+      },
+    [],
+  );
+
   useEffect(() => {
     closeCommandMenu();
   }, [location.pathname, closeCommandMenu]);
@@ -107,10 +121,16 @@ export const PageChangeEffect = () => {
     if (!previousLocation || previousLocation !== location.pathname) {
       setPreviousLocation(location.pathname);
       executeTasksOnAnyLocationChange();
+      resetIsPageInEditMode();
     } else {
       return;
     }
-  }, [location, previousLocation, executeTasksOnAnyLocationChange]);
+  }, [
+    location,
+    previousLocation,
+    executeTasksOnAnyLocationChange,
+    resetIsPageInEditMode,
+  ]);
 
   useEffect(() => {
     initializeQueryParamState();
