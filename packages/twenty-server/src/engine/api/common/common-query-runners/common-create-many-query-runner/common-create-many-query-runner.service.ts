@@ -140,7 +140,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     return {
       ...args,
-      data: await this.dataArgProcessor.process({
+      data: await this.queryRunnerArgsFactory.overrideDataByFieldMetadata({
         partialRecordInputs: args.data,
         authContext,
         objectMetadataItemWithFieldMaps,
