@@ -19,7 +19,7 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       label: msg`Edit Dashboard`,
       shortLabel: msg`Edit`,
       isPinned: true,
-      position: 2,
+      position: 3,
       Icon: IconPencil,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
@@ -37,7 +37,7 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       shortLabel: msg`Save`,
       isPinned: true,
       isPrimaryCTA: true,
-      position: 3,
+      position: 4,
       Icon: IconDeviceFloppy,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
@@ -54,7 +54,7 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       label: msg`Cancel Edition`,
       shortLabel: msg`Cancel`,
       isPinned: true,
-      position: 4,
+      position: 5,
       Icon: IconX,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
@@ -95,53 +95,53 @@ export const DASHBOARD_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       label: msg`Navigate to previous dashboard`,
     },
     [NoSelectionRecordActionKeys.CREATE_NEW_RECORD]: {
-      position: 0,
+      position: 2,
       label: msg`Create new dashboard`,
     },
     [SingleRecordActionKeys.DELETE]: {
-      position: 5,
+      position: 6,
       label: msg`Delete dashboard`,
     },
     [SingleRecordActionKeys.ADD_TO_FAVORITES]: {
-      position: 6,
-      isPinned: true,
-    },
-    [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       position: 7,
       isPinned: true,
     },
-    [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
+    [SingleRecordActionKeys.REMOVE_FROM_FAVORITES]: {
       position: 8,
+      isPinned: true,
+    },
+    [SingleRecordActionKeys.EXPORT_FROM_RECORD_SHOW]: {
+      position: 9,
       label: msg`Export dashboard`,
     },
     [SingleRecordActionKeys.DESTROY]: {
-      position: 9,
+      position: 10,
       label: msg`Permanently destroy dashboard`,
     },
     [SingleRecordActionKeys.RESTORE]: {
-      position: 10,
+      position: 11,
       label: msg`Restore dashboard`,
     },
     [NoSelectionRecordActionKeys.GO_TO_WORKFLOWS]: {
-      position: 11,
-    },
-    [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
       position: 12,
     },
-    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
+    [NoSelectionRecordActionKeys.GO_TO_PEOPLE]: {
       position: 13,
     },
-    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
+    [NoSelectionRecordActionKeys.GO_TO_COMPANIES]: {
       position: 14,
     },
-    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
+    [NoSelectionRecordActionKeys.GO_TO_OPPORTUNITIES]: {
       position: 15,
     },
-    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
+    [NoSelectionRecordActionKeys.GO_TO_SETTINGS]: {
       position: 16,
     },
-    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+    [NoSelectionRecordActionKeys.GO_TO_TASKS]: {
       position: 17,
+    },
+    [NoSelectionRecordActionKeys.GO_TO_NOTES]: {
+      position: 18,
     },
   },
 });

@@ -236,7 +236,7 @@ export const WORKFLOW_ACTIONS_CONFIG = inheritActionsFromDefaultConfig({
       label: msg`Duplicate Workflow`,
       shortLabel: msg`Duplicate`,
       isPinned: false,
-      position: 5,
+      position: 12,
       Icon: IconCopy,
       type: ActionType.Standard,
       scope: ActionScope.RecordSelection,
