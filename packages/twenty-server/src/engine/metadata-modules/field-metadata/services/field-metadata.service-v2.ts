@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { FindOneOptions, In, Repository } from 'typeorm';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
@@ -132,7 +132,7 @@ export class FieldMetadataServiceV2 {
     );
   }
 
-  async updateOne({
+  async updateOneField({
     updateFieldInput,
     workspaceId,
   }: {
@@ -375,5 +375,20 @@ export class FieldMetadataServiceV2 {
         workspaceId,
       },
     });
+  }
+
+  public async findOneWithinWorkspace(
+    workspaceId: string,
+    options: FindOneOptions<FieldMetadataEntity>,
+  ) {
+    const [fieldMetadata] = await this.fieldMetadataRepository.find({
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
+    });
+
+    return fieldMetadata;
   }
 }

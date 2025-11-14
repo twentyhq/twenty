@@ -219,7 +219,7 @@ export class ApplicationSyncService {
     );
 
     for (const fieldToDelete of fieldsToDelete) {
-      await this.fieldMetadataServiceV2.updateOne({
+      await this.fieldMetadataServiceV2.updateOneField({
         updateFieldInput: {
           id: fieldToDelete.id,
           isActive: false,
@@ -256,7 +256,7 @@ export class ApplicationSyncService {
         isNullable: fieldToSync.isNullable ?? true,
       };
 
-      await this.fieldMetadataServiceV2.updateOne({
+      await this.fieldMetadataServiceV2.updateOneField({
         updateFieldInput,
         workspaceId,
       });

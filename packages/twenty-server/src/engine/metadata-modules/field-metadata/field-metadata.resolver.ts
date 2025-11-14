@@ -29,12 +29,7 @@ import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-m
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
-import {
-  UpdateOneFieldMetadataInput,
-  type UpdateFieldInput,
-} from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -49,8 +44,6 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 )
 export class FieldMetadataResolver {
   constructor(
-    private readonly fieldMetadataService: FieldMetadataService,
-    private readonly beforeUpdateOneField: BeforeUpdateOneField<UpdateFieldInput>,
     private readonly featureFlagService: FeatureFlagService,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
     private readonly i18nService: I18nService,
@@ -64,8 +57,8 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.fieldMetadataService.createOne({
-        ...input.field,
+      return await this.fieldMetadataServiceV2.createOne({
+        createFieldInput: input.field,
         workspaceId,
       });
     } catch (error) {
@@ -83,27 +76,9 @@ export class FieldMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Context() context: I18nContext,
   ) {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId,
-      );
-
     try {
-      if (isWorkspaceMigrationV2Enabled) {
-        return await this.fieldMetadataServiceV2.updateOne({
-          updateFieldInput: { ...input.update, id: input.id },
-          workspaceId,
-        });
-      }
-
-      const updatedInput = (await this.beforeUpdateOneField.run(input, {
-        workspaceId,
-        locale: context.req.locale,
-      })) as UpdateOneFieldMetadataInput;
-
-      return await this.fieldMetadataService.updateOne(updatedInput.id, {
-        ...updatedInput.update,
+      return await this.fieldMetadataServiceV2.updateOneField({
+        updateFieldInput: { ...input.update, id: input.id },
         workspaceId,
       });
     } catch (error) {
@@ -146,7 +121,7 @@ export class FieldMetadataResolver {
     }
 
     const fieldMetadata =
-      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+      await this.fieldMetadataServiceV2.findOneWithinWorkspace(workspaceId, {
         where: {
           id: input.id.toString(),
         },
@@ -165,7 +140,10 @@ export class FieldMetadataResolver {
     }
 
     try {
-      return await this.fieldMetadataService.deleteOneField(input, workspaceId);
+      return await this.fieldMetadataServiceV2.deleteOneField({
+        deleteOneFieldInput: input,
+        workspaceId,
+      });
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(
         error,

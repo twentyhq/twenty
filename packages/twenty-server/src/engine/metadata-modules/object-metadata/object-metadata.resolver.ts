@@ -112,7 +112,7 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.objectMetadataServiceV2.deleteOneObject({
+      return await this.objectMetadataServiceV2.deleteOne({
         deleteObjectInput: input,
         workspaceId,
       });
@@ -132,7 +132,7 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.objectMetadataServiceV2.updateOneObject({
+      return await this.objectMetadataServiceV2.updateOne({
         updateObjectInput,
         workspaceId,
       });

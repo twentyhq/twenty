@@ -138,7 +138,7 @@ export class DevSeederMetadataService {
     workspaceId: string;
     objectMetadataSeed: ObjectMetadataSeed;
   }): Promise<void> {
-    await this.objectMetadataServiceV2.createOneObject({
+    await this.objectMetadataServiceV2.createOne({
       createObjectInput: {
         ...objectMetadataSeed,
         dataSourceId,
