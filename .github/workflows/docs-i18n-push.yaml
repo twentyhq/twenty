@@ -28,6 +28,9 @@ jobs:
           token: ${{ github.token }}
           ref: ${{ github.ref }}
 
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
       - name: Generate navigation template for Crowdin
         run: yarn docs:generate-navigation-template
 
