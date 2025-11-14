@@ -4,10 +4,8 @@ import { GENERATED_FOLDER_NAME } from '../constants/generated-folder-name';
 import { ApiService } from '../services/api.service';
 import { ConfigService } from '../services/config.service';
 import { ApiResponse } from '../types/config.types';
-import { formatAndWarnTsDiagnostics } from '../utils/format-and-warn-ts-diagnostics';
 import { generateClient } from '../utils/generate-client';
 import { loadManifest } from '../utils/load-manifest';
-import { getTsProgramAndDiagnostics } from '../utils/validate-ts-program';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
@@ -18,16 +16,10 @@ export class AppSyncCommand {
   }: {
     appPath: string;
   }) {
-    const { diagnostics, program } = await getTsProgramAndDiagnostics({
-      appPath,
-    });
     const { manifest, packageJson, yarnLock } = await loadManifest({
       appPath,
-      program,
     });
-    formatAndWarnTsDiagnostics({
-      diagnostics,
-    });
+
     const everythingButServerlessFunctionsSyncResult =
       await this.apiService.syncApplication({
         manifest,
@@ -52,16 +44,8 @@ export class AppSyncCommand {
   }: {
     appPath: string;
   }) {
-    const { diagnostics, program } = await getTsProgramAndDiagnostics({
-      appPath,
-    });
     const { manifest, packageJson, yarnLock } = await loadManifest({
       appPath,
-      program,
-    });
-
-    formatAndWarnTsDiagnostics({
-      diagnostics,
     });
 
     const serverlessSyncResult = await this.apiService.syncApplication({

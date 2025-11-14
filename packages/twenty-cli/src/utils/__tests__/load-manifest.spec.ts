@@ -252,8 +252,9 @@ describe('loadManifest (integration)', () => {
   });
 
   it('builds a full manifest for a valid workspace', async () => {
-    const { packageJson, yarnLock, manifest } =
-      await loadManifest(appDirectory);
+    const { packageJson, yarnLock, manifest } = await loadManifest({
+      appPath: appDirectory,
+    });
 
     expect(packageJson.name).toBe('my-app');
     expect(packageJson.version).toBe('0.0.1');
@@ -395,12 +396,12 @@ export const format = async (params: any): Promise<any> => {
 `,
     );
 
-    const { manifest } = await loadManifest(appDirectory);
+    const { manifest } = await loadManifest({ appPath: appDirectory });
     expect(manifest.serverlessFunctions.length).toBe(1);
   });
 
   it('manifest should contains typescript sources', async () => {
-    const { manifest } = await loadManifest(appDirectory);
+    const { manifest } = await loadManifest({ appPath: appDirectory });
     // the method is already exercised in loadManifest; just assert again:
     expect(Object.keys(manifest.sources)).toEqual([
       'application.config.ts',

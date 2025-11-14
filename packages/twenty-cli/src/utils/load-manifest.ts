@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import { posix, relative, resolve, sep } from 'path';
-import ts, {
+import {
   Decorator,
   Expression,
   FunctionDeclaration,
@@ -42,7 +42,9 @@ import {
 } from '../types/config.types';
 import { findPathFile } from '../utils/find-path-file';
 import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
+import { formatAndWarnTsDiagnostics } from './format-and-warn-ts-diagnostics';
 import { getProgramFromTsconfig } from './get-program-from-tsconfig';
+import { getTsProgramAndDiagnostics } from './validate-ts-program';
 
 type JSONValue =
   | string
@@ -452,11 +454,11 @@ export const extractTwentyAppConfig = (program: Program): Application => {
 };
 
 export const loadManifest = async ({
-  program,
   appPath,
+  tsconfigPath = 'tsconfig.json',
 }: {
   appPath: string;
-  program: ts.Program;
+  tsconfigPath?: string;
 }): Promise<{
   packageJson: PackageJson;
   yarnLock: string;
@@ -470,11 +472,19 @@ export const loadManifest = async ({
     await findPathFile(appPath, 'yarn.lock'),
   );
 
+  const { diagnostics, program } = await getTsProgramAndDiagnostics({
+    appPath,
+  });
+
+  formatAndWarnTsDiagnostics({
+    diagnostics,
+  });
+
   const [objects, serverlessFunctions, application, sources] = [
     collectObjects(program),
     collectServerlessFunctions(program, appPath),
     extractTwentyAppConfig(program),
-    await loadFolderContentIntoJson(appPath),
+    await loadFolderContentIntoJson(appPath, tsconfigPath),
   ];
 
   return {
