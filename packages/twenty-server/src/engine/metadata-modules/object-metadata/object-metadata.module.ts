@@ -11,7 +11,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -25,7 +24,6 @@ import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadat
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
@@ -86,8 +84,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
           },
           create: {
-            many: { disabled: true },
-            guards: [SettingsPermissionGuard(PermissionFlagType.DATA_MODEL)],
+            disabled: true,
           },
           update: { disabled: true },
           delete: { disabled: true },
@@ -98,10 +95,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
       ],
     }),
   ],
-  providers: [
-    ObjectMetadataServiceV2,
-    ObjectMetadataResolver,
-  ],
+  providers: [ObjectMetadataServiceV2, ObjectMetadataResolver],
   exports: [ObjectMetadataServiceV2],
 })
 export class ObjectMetadataModule {}

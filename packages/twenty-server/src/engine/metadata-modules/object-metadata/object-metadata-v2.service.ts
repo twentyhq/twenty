@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 
 import { InjectRepository } from '@nestjs/typeorm';
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -36,7 +37,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class ObjectMetadataServiceV2 {
+export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataEntity> {
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -44,7 +45,9 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+  ) {
+    super(objectMetadataRepository)
+  }
 
   async updateOne({
     updateObjectInput,

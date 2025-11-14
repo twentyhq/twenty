@@ -171,7 +171,7 @@ export class WorkspaceResolver {
       throw new Error('Failed to upload workspace logo');
     }
 
-    await this.workspaceService.updateOneField(id, {
+    await this.workspaceService.updateOneObjectMetadata(id, {
       logo: files[0].path,
     });
 

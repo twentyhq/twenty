@@ -10,13 +10,10 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import {
-  ForbiddenError,
-  ValidationError,
+  ForbiddenError
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -44,7 +41,6 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 )
 export class FieldMetadataResolver {
   constructor(
-    private readonly featureFlagService: FeatureFlagService,
     private readonly fieldMetadataServiceV2: FieldMetadataServiceV2,
     private readonly i18nService: I18nService,
   ) {}
@@ -77,7 +73,7 @@ export class FieldMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.fieldMetadataServiceV2.updateOneField({
+      return await this.fieldMetadataServiceV2.updateOne({
         updateFieldInput: { ...input.update, id: input.id },
         workspaceId,
       });
@@ -92,7 +88,7 @@ export class FieldMetadataResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => FieldMetadataDTO)
   async deleteOneField(
-    @Args('input') input: DeleteOneFieldInput,
+    @Args('input') deleteOneFieldInput: DeleteOneFieldInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Context() context: I18nContext,
   ) {
@@ -101,47 +97,8 @@ export class FieldMetadataResolver {
     }
 
     try {
-      const isWorkspaceMigrationV2Enabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-          workspaceId,
-        );
-
-      if (isWorkspaceMigrationV2Enabled) {
-        return await this.fieldMetadataServiceV2.deleteOneField({
-          deleteOneFieldInput: input,
-          workspaceId,
-        });
-      }
-    } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(
-        error,
-        this.i18nService.getI18nInstance(context.req.locale),
-      );
-    }
-
-    const fieldMetadata =
-      await this.fieldMetadataServiceV2.findOneWithinWorkspace(workspaceId, {
-        where: {
-          id: input.id.toString(),
-        },
-      });
-
-    if (!isDefined(fieldMetadata)) {
-      throw new ValidationError('Field does not exist');
-    }
-
-    if (!fieldMetadata.isCustom) {
-      throw new ValidationError("Standard Fields can't be deleted");
-    }
-
-    if (fieldMetadata.isActive) {
-      throw new ValidationError("Active fields can't be deleted");
-    }
-
-    try {
-      return await this.fieldMetadataServiceV2.deleteOneField({
-        deleteOneFieldInput: input,
+      return await this.fieldMetadataServiceV2.deleteOne({
+        deleteOneFieldInput,
         workspaceId,
       });
     } catch (error) {
@@ -155,7 +112,6 @@ export class FieldMetadataResolver {
   @ResolveField(() => RelationDTO, { nullable: true })
   async relation(
     @AuthWorkspace() workspace: WorkspaceEntity,
-
     @Parent()
     {
       id: fieldMetadataId,

@@ -29,7 +29,7 @@ import { IsNull, Repository } from 'typeorm';
 export class ViewFieldV2Service {
   constructor(
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectRepository(ViewFieldEntity)
     private readonly viewFieldRepository: Repository<ViewFieldEntity>,
   ) {}
@@ -72,7 +72,7 @@ export class ViewFieldV2Service {
       flatViewMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
         flatMapsKeys: [
@@ -123,7 +123,7 @@ export class ViewFieldV2Service {
     }
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
           flatMapsKeys: ['flatViewFieldMaps'],
@@ -147,7 +147,7 @@ export class ViewFieldV2Service {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
         flatMapsKeys: [
@@ -194,7 +194,7 @@ export class ViewFieldV2Service {
     }
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
           flatMapsKeys: ['flatViewFieldMaps'],
@@ -218,7 +218,7 @@ export class ViewFieldV2Service {
       flatViewFieldMaps: existingFlatViewFieldMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
         flatMapsKeys: [
@@ -265,7 +265,7 @@ export class ViewFieldV2Service {
     }
 
     const { flatViewFieldMaps: recomputedExistingFlatViewFieldMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
           flatMapsKeys: ['flatViewFieldMaps'],
@@ -290,7 +290,7 @@ export class ViewFieldV2Service {
       flatViewMaps: existingFlatViewMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
         flatMapsKeys: [

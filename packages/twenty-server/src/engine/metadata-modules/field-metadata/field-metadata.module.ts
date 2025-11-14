@@ -92,14 +92,10 @@ import { UpdateFieldInput } from './dtos/update-field.input';
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
           },
           create: {
-            // Manually created because of the async validation
-            one: { disabled: true },
-            many: { disabled: true },
+            disabled: true,
           },
           update: {
-            // Manually created because of the async validation
-            one: { disabled: true },
-            many: { disabled: true },
+            disabled: true,
           },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],

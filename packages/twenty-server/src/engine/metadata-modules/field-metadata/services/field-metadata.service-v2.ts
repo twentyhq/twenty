@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOneOptions, In, Repository } from 'typeorm';
 
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -24,13 +25,15 @@ import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manag
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
-export class FieldMetadataServiceV2 {
+export class FieldMetadataServiceV2 extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
-  ) {}
+  ) {
+    super(fieldMetadataRepository);
+  }
 
   async createOne({
     createFieldInput,
@@ -39,7 +42,7 @@ export class FieldMetadataServiceV2 {
     createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
     workspaceId: string;
   }): Promise<FieldMetadataEntity> {
-    const [createdFieldMetadata] = await this.createMany({
+    const [createdFieldMetadata] = await this.createManyFields({
       workspaceId,
       createFieldInputs: [createFieldInput],
     });
@@ -54,7 +57,7 @@ export class FieldMetadataServiceV2 {
     return createdFieldMetadata;
   }
 
-  public async deleteOneField({
+  async deleteOne({
     deleteOneFieldInput,
     workspaceId,
     isSystemBuild = false,
@@ -132,7 +135,7 @@ export class FieldMetadataServiceV2 {
     );
   }
 
-  async updateOneField({
+  async updateOne({
     updateFieldInput,
     workspaceId,
   }: {
@@ -272,7 +275,7 @@ export class FieldMetadataServiceV2 {
     });
   }
 
-  async createMany({
+  async createManyFields({
     createFieldInputs,
     workspaceId,
   }: {
