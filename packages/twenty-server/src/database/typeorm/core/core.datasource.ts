@@ -1,11 +1,61 @@
 import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { config } from 'dotenv';
+import { existsSync } from 'node:fs';
+import { dirname, join, parse } from 'node:path';
 import { DataSource, type DataSourceOptions, type LogLevel } from 'typeorm';
-config({
-  path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-  override: true,
-});
+
+const ENV_FILENAME = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
+const SEARCH_ROOTS = Array.from(
+  new Set(
+    [process.cwd(), __dirname, process.env.INIT_CWD].filter(
+      (value): value is string => !!value,
+    ),
+  ),
+);
+
+const findEnvFile = (): string | undefined => {
+  for (const root of SEARCH_ROOTS) {
+    let currentDir = root;
+    const { root: fsRoot } = parse(currentDir);
+
+    while (true) {
+      const candidate = join(currentDir, ENV_FILENAME);
+      if (existsSync(candidate)) {
+        return candidate;
+      }
+
+      if (currentDir === fsRoot) {
+        break;
+      }
+
+      currentDir = dirname(currentDir);
+    }
+  }
+
+  return undefined;
+};
+
+let resolvedEnvPath: string | undefined;
+
+if (!process.env.PG_DATABASE_URL) {
+  resolvedEnvPath = findEnvFile();
+
+  if (resolvedEnvPath) {
+    config({
+      path: resolvedEnvPath,
+      override: false,
+    });
+  }
+}
+
+if (!process.env.PG_DATABASE_URL) {
+  throw new Error(
+    `PG_DATABASE_URL is not defined. Looked for ${ENV_FILENAME}${
+      resolvedEnvPath ? ` (last attempted path: ${resolvedEnvPath})` : ''
+    } starting from: ${SEARCH_ROOTS.join(', ')}`,
+  );
+}
 
 const isRunningCommand = (): boolean => {
   const scriptPath = process.argv[1] || '';

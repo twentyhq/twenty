@@ -8,7 +8,7 @@ import {
   type FieldMetadataRelationSettings,
   type FieldMetadataTextSettings,
   type FieldMetadataType,
-  type NullablePartial
+  type NullablePartial,
 } from 'twenty-shared/types';
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
@@ -146,10 +146,6 @@ type SettingsAssertions = [
   Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<ActorFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<ArrayFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<EmailsFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<LinksFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<PdfFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<ImageFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedSettings>>,

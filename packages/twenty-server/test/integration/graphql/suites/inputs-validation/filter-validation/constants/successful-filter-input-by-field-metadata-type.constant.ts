@@ -138,6 +138,54 @@ export const successfulFilterInputByFieldMetadataType: {
       },
     },
   ],
+  [FieldMetadataType.PDF]: [
+    {
+      gqlFilterInput: {
+        pdfField: { isEmpty: true },
+      },
+      restFilterInput: 'pdfField[isEmpty]:true',
+      validateFilter: (record: Record<string, any>) => {
+        const attachmentIds = record.pdfField?.attachmentIds;
+
+        return !attachmentIds || attachmentIds.length === 0;
+      },
+    },
+    {
+      gqlFilterInput: {
+        pdfField: { isNotEmpty: true },
+      },
+      restFilterInput: 'pdfField[isNotEmpty]:true',
+      validateFilter: (record: Record<string, any>) => {
+        const attachmentIds = record.pdfField?.attachmentIds;
+
+        return Array.isArray(attachmentIds) && attachmentIds.length > 0;
+      },
+    },
+  ],
+  [FieldMetadataType.IMAGE]: [
+    {
+      gqlFilterInput: {
+        imageField: { isEmpty: true },
+      },
+      restFilterInput: 'imageField[isEmpty]:true',
+      validateFilter: (record: Record<string, any>) => {
+        const attachmentIds = record.imageField?.attachmentIds;
+
+        return !attachmentIds || attachmentIds.length === 0;
+      },
+    },
+    {
+      gqlFilterInput: {
+        imageField: { isNotEmpty: true },
+      },
+      restFilterInput: 'imageField[isNotEmpty]:true',
+      validateFilter: (record: Record<string, any>) => {
+        const attachmentIds = record.imageField?.attachmentIds;
+
+        return Array.isArray(attachmentIds) && attachmentIds.length > 0;
+      },
+    },
+  ],
   [FieldMetadataType.UUID]: [
     {
       gqlFilterInput: {

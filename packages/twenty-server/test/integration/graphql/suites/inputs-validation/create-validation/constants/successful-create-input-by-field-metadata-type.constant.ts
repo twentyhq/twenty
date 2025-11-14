@@ -120,6 +120,59 @@ export const successfulCreateInputByFieldMetadataType: {
       },
     },
   ],
+  [FieldMetadataType.PDF]: [
+    {
+      input: {
+        pdfField: {
+          attachmentIds: ['11111111-1111-1111-1111-111111111111'],
+          fullPaths: ['/files/sample.pdf'],
+          names: ['Sample PDF'],
+          types: ['application/pdf'],
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          Array.isArray(record.pdfField?.attachmentIds) &&
+          record.pdfField.attachmentIds.includes(
+            '11111111-1111-1111-1111-111111111111',
+          )
+        );
+      },
+    },
+    {
+      input: {
+        pdfField: null,
+      },
+      validateInput: (record: Record<string, any>) => record.pdfField === null,
+    },
+  ],
+  [FieldMetadataType.IMAGE]: [
+    {
+      input: {
+        imageField: {
+          attachmentIds: ['22222222-2222-2222-2222-222222222222'],
+          fullPaths: ['/files/sample.png'],
+          names: ['Sample Image'],
+          types: ['image/png'],
+        },
+      },
+      validateInput: (record: Record<string, any>) => {
+        return (
+          Array.isArray(record.imageField?.attachmentIds) &&
+          record.imageField.attachmentIds.includes(
+            '22222222-2222-2222-2222-222222222222',
+          )
+        );
+      },
+    },
+    {
+      input: {
+        imageField: null,
+      },
+      validateInput: (record: Record<string, any>) =>
+        record.imageField === null,
+    },
+  ],
   [FieldMetadataType.RAW_JSON]: [
     {
       input: {

@@ -855,7 +855,7 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  IS_CONFIG_VARIABLES_IN_DB_ENABLED = true;
+  IS_CONFIG_VARIABLES_IN_DB_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,

@@ -10,6 +10,8 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { SyncWorkspaceLoggerModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/services/sync-workspace-logger.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { FixCompositeFieldColumnsCommand } from './fix-composite-field-columns.command';
 import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command';
@@ -22,7 +24,11 @@ import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command'
     DataSourceModule,
     WorkspaceDataSourceModule,
     FeatureFlagModule,
-    TypeOrmModule.forFeature([WorkspaceEntity]),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      ObjectMetadataEntity,
+      FieldMetadataEntity,
+    ]),
     SyncWorkspaceLoggerModule,
     ApplicationModule,
   ],

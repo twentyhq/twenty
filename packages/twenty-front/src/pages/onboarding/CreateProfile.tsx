@@ -90,6 +90,10 @@ export const CreateProfile = () => {
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
       try {
+        console.log('[CreateProfile] submit attempt', {
+          data,
+          workspaceMemberId: currentWorkspaceMember?.id,
+        });
         if (!currentWorkspaceMember?.id) {
           throw new Error('User is not logged in');
         }
@@ -135,6 +139,7 @@ export const CreateProfile = () => {
 
         setNextOnboardingStatus();
       } catch (error: any) {
+        console.error('[CreateProfile] submit failed', error);
         enqueueErrorSnackBar({
           apolloError: error instanceof ApolloError ? error : undefined,
         });

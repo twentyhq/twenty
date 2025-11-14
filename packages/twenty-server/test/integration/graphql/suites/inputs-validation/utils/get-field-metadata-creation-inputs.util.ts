@@ -151,6 +151,18 @@ export const getFieldMetadataCreationInputs = (
       type: FieldMetadataType.RAW_JSON,
       objectMetadataId,
     },
+    [FieldMetadataType.PDF]: {
+      name: 'pdfField',
+      label: 'pdfField',
+      type: FieldMetadataType.PDF,
+      objectMetadataId,
+    },
+    [FieldMetadataType.IMAGE]: {
+      name: 'imageField',
+      label: 'imageField',
+      type: FieldMetadataType.IMAGE,
+      objectMetadataId,
+    },
     [FieldMetadataType.ARRAY]: {
       name: 'arrayField',
       label: 'arrayField',
