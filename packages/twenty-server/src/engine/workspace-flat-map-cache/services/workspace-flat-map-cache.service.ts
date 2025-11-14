@@ -16,7 +16,6 @@ import {
 
 @Injectable()
 export abstract class WorkspaceFlatMapCacheService<
-  // TODO challenge
   T,
 > {
   protected readonly logger = new Logger(this.constructor.name);

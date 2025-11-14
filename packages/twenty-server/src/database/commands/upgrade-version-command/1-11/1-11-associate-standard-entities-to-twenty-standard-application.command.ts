@@ -129,10 +129,7 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
                 where: {
                   workspaceId,
                   applicationId: IsNull(),
-                  isCustom: Or(
-                    IsNull(),
-                    false as unknown as FindOperator<boolean>,
-                  ),
+                  isCustom: Or(IsNull(), Not(true)),
                 },
                 withDeleted: true,
               });
@@ -166,10 +163,7 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
                 },
                 where: {
                   view: {
-                    isCustom: Or(
-                      IsNull(),
-                      false as unknown as FindOperator<boolean>,
-                    ),
+                    isCustom: Or(IsNull(), Not(true)),
                   },
                   workspaceId,
                   applicationId: IsNull(),
@@ -199,7 +193,9 @@ export class AssociateStandardEntitiesToTwentyStandardApplicationCommand extends
             }
           }
         } catch (error) {
-          this.logger.error(`Failed to iterate over ${metadataName}`);
+          this.logger.error(
+            `Failed to iterate over ${metadataName} for workspace ${workspaceId}`,
+          );
           throw error;
         }
       }

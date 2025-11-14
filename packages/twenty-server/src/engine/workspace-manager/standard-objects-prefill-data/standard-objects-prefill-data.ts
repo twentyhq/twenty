@@ -9,8 +9,8 @@ export const standardObjectsPrefillData = async (
   dataSource: DataSource,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
-) => {
-  dataSource.transaction(async (entityManager: EntityManager) => {
+): Promise<void> => {
+  return await dataSource.transaction(async (entityManager: EntityManager) => {
     await prefillCompanies(entityManager, schemaName);
 
     await prefillPeople(entityManager, schemaName);

@@ -156,6 +156,7 @@ export const mockCurrentWorkspace: Workspace = {
   workspaceMembersCount: 1,
   databaseSchema: '',
   databaseUrl: '',
+  workspaceCustomApplicationId: '',
   isTwoFactorAuthenticationEnforced: false,
   __typename: 'Workspace',
 };
