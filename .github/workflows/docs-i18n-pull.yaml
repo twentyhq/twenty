@@ -52,11 +52,11 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Setup i18n branch
+      - name: Setup docs localization branch
         if: github.event_name != 'pull_request'
         run: |
-          git fetch origin i18n || true
-          git checkout -B i18n origin/i18n || git checkout -b i18n
+          git fetch origin docs-localized-navigation || true
+          git checkout -B docs-localized-navigation origin/docs-localized-navigation || git checkout -b docs-localized-navigation
 
       - name: Configure git
         run: |
@@ -76,11 +76,10 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
-          download_language: fr
           source: 'packages/twenty-docs/**/*.mdx'
           translation: 'packages/twenty-docs/l/%two_letters_code%/**/%original_file_name%'
           export_only_approved: false
-          localization_branch_name: i18n
+          localization_branch_name: docs-localized-navigation
           base_url: 'https://twenty.api.crowdin.com'
           skip_untranslated_files: true
           push_translations: false
@@ -123,11 +122,10 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
-          download_language: fr
           source: 'packages/twenty-docs/navigation/navigation.template.json'
           translation: 'packages/twenty-docs/l/%two_letters_code%/navigation.json'
           export_only_approved: false
-          localization_branch_name: i18n
+          localization_branch_name: docs-localized-navigation
           base_url: 'https://twenty.api.crowdin.com'
           skip_untranslated_files: true
           push_translations: false
@@ -171,16 +169,5 @@ jobs:
 
       - name: Push changes
         if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
-        run: git push origin HEAD:i18n
-
-      - name: Create pull request
-        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
-        run: |
-          if git diff --name-only origin/main..HEAD | grep -q .; then
-            gh pr create -B main -H i18n --title 'i18n - docs translations' --body 'Created by Github action' || true
-          else
-            echo "No file differences between branches, skipping PR creation"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git push origin HEAD:docs-localized-navigation
 
