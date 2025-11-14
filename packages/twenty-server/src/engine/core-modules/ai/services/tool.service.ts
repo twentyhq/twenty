@@ -17,7 +17,7 @@ import {
   type ToolHints,
   type ToolOperation,
 } from 'src/engine/metadata-modules/ai-router/types/tool-hints.interface';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
@@ -29,7 +29,7 @@ export class ToolService {
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataServiceV2,
     protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly createRecordService: CreateRecordService,
     private readonly updateRecordService: UpdateRecordService,

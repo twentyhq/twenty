@@ -9,8 +9,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import {
   RemoteServerEntity,
   type RemoteServerType,
@@ -57,7 +56,7 @@ export class RemoteTableService {
     >,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly dataSourceService: DataSourceService,
-    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly objectMetadataService: ObjectMetadataServiceV2,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly distantTableService: DistantTableService,
     private readonly foreignTableService: ForeignTableService,
@@ -421,10 +420,10 @@ export class RemoteTableService {
       });
 
     if (objectMetadata) {
-      await this.objectMetadataService.deleteOneObject(
-        { id: objectMetadata.id },
+      await this.objectMetadataService.deleteOneObject({
+        deleteObjectInput: { id: objectMetadata.id },
         workspaceId,
-      );
+      });
     }
 
     await this.foreignTableService.deleteForeignTable(
@@ -455,21 +454,23 @@ export class RemoteTableService {
       ? `${plural(localTableBaseName)}${localTableSuffix}`
       : plural(localTableBaseName);
 
-    const objectMetadata = await this.objectMetadataService.createOne({
-      nameSingular: camelCase(localTableNameSingular),
-      namePlural: camelCase(localTableNamePlural),
-      labelSingular: camelToTitleCase(camelCase(localTableBaseName)),
-      labelPlural: camelToTitleCase(plural(camelCase(localTableBaseName))),
-      description: 'Remote table',
-      dataSourceId: dataSourceMetadataId,
+    const objectMetadata = await this.objectMetadataService.createOneObject({
+      createObjectInput: {
+        nameSingular: camelCase(localTableNameSingular),
+        namePlural: camelCase(localTableNamePlural),
+        labelSingular: camelToTitleCase(camelCase(localTableBaseName)),
+        labelPlural: camelToTitleCase(plural(camelCase(localTableBaseName))),
+        description: 'Remote table',
+        dataSourceId: dataSourceMetadataId,
+        icon: 'IconPlug',
+        isRemote: true,
+        primaryKeyColumnType: distantTableIdColumn.udtName,
+        primaryKeyFieldMetadataSettings: mapUdtNameToFieldSettings(
+          distantTableIdColumn.udtName,
+        ),
+      },
       workspaceId: workspaceId,
-      icon: 'IconPlug',
-      isRemote: true,
-      primaryKeyColumnType: distantTableIdColumn.udtName,
-      primaryKeyFieldMetadataSettings: mapUdtNameToFieldSettings(
-        distantTableIdColumn.udtName,
-      ),
-    } satisfies CreateObjectInput);
+    });
 
     for (const column of distantTableColumns) {
       const columnName = camelCase(column.columnName);

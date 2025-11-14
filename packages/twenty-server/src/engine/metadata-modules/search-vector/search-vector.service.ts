@@ -9,17 +9,17 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/searc
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
+import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata.constants';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
-  TsVectorColumnActionFactory,
-  type TsVectorFieldMetadata,
+    TsVectorColumnActionFactory,
+    type TsVectorFieldMetadata,
 } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-  WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationTableActionType,
+    WorkspaceMigrationColumnActionType,
+    WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
@@ -27,8 +27,8 @@ import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import {
-  type FieldTypeAndNameMetadata,
-  getTsVectorColumnExpressionFromFields,
+    type FieldTypeAndNameMetadata,
+    getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { type SearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 

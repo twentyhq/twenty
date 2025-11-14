@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 
+import { InjectRepository } from '@nestjs/typeorm';
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -19,6 +21,7 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -31,17 +34,22 @@ import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-o
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class ObjectMetadataServiceV2 {
+export class ObjectMetadataServiceV2 extends TypeOrmQueryService<ObjectMetadataEntity> {
   constructor(
+    @InjectRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+  ) {
+    super(objectMetadataRepository);
+  }
 
-  async updateOne({
+  async updateOneObject({
     updateObjectInput,
     workspaceId,
   }: {
@@ -157,7 +165,7 @@ export class ObjectMetadataServiceV2 {
     return fromFlatObjectMetadataToObjectMetadataDto(updatedFlatObjectMetadata);
   }
 
-  async deleteOne({
+  async deleteOneObject({
     deleteObjectInput,
     workspaceId,
     isSystemBuild = false,
@@ -316,7 +324,7 @@ export class ObjectMetadataServiceV2 {
     );
   }
 
-  async createOne({
+  async createOneObject({
     createObjectInput,
     workspaceId,
   }: {

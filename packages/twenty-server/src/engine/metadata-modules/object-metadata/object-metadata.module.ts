@@ -21,15 +21,10 @@ import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
-import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
-import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -77,13 +72,9 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
       ],
       services: [
-        ObjectMetadataService,
         ObjectMetadataServiceV2,
         FlatFieldMetadataValidatorService,
         FlatFieldMetadataTypeValidatorService,
-        ObjectMetadataMigrationService,
-        ObjectMetadataFieldRelationService,
-        ObjectMetadataRelatedRecordsService,
       ],
       resolvers: [
         {
@@ -91,7 +82,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
           DTOClass: ObjectMetadataDTO,
           CreateDTOClass: CreateObjectInput,
           UpdateDTOClass: UpdateObjectPayload,
-          ServiceClass: ObjectMetadataService,
+          ServiceClass: ObjectMetadataServiceV2,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
@@ -110,11 +101,9 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     }),
   ],
   providers: [
-    ObjectMetadataService,
     ObjectMetadataServiceV2,
     ObjectMetadataResolver,
-    BeforeUpdateOneObject,
   ],
-  exports: [ObjectMetadataService, ObjectMetadataServiceV2],
+  exports: [ObjectMetadataServiceV2],
 })
 export class ObjectMetadataModule {}

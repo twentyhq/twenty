@@ -8,8 +8,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -24,12 +22,9 @@ import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dto
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import {
-  UpdateOneObjectInput,
-  type UpdateObjectPayload,
+  UpdateOneObjectInput
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
@@ -44,9 +39,6 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 )
 export class ObjectMetadataResolver {
   constructor(
-    private readonly objectMetadataService: ObjectMetadataService,
-    private readonly beforeUpdateOneObject: BeforeUpdateOneObject<UpdateObjectPayload>,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
     private readonly i18nService: I18nService,
   ) {}
@@ -120,10 +112,10 @@ export class ObjectMetadataResolver {
     @Context() context: I18nContext,
   ) {
     try {
-      return await this.objectMetadataService.deleteOneObject(
-        input,
+      return await this.objectMetadataServiceV2.deleteOneObject({
+        deleteObjectInput: input,
         workspaceId,
-      );
+      });
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(
         error,
@@ -139,39 +131,11 @@ export class ObjectMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Context() context: I18nContext,
   ) {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      try {
-        return await this.objectMetadataServiceV2.updateOne({
-          updateObjectInput,
-          workspaceId,
-        });
-      } catch (error) {
-        objectMetadataGraphqlApiExceptionHandler(
-          error,
-          this.i18nService.getI18nInstance(context.req.locale),
-        );
-      }
-    }
-
     try {
-      const updatedInput = (await this.beforeUpdateOneObject.run(
+      return await this.objectMetadataServiceV2.updateOneObject({
         updateObjectInput,
-        {
-          workspaceId,
-          locale: context.req.locale,
-        },
-      )) as UpdateOneObjectInput;
-
-      return await this.objectMetadataService.updateOneObject(
-        updatedInput,
         workspaceId,
-      );
+      });
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(
         error,

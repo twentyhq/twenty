@@ -13,7 +13,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -29,6 +28,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 describe('WorkspaceManagerService', () => {
   let service: WorkspaceManagerService;
   let objectMetadataServiceV2: ObjectMetadataServiceV2;
+  let objectMetadataService: ObjectMetadataServiceV2;
   let workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>;
   let dataSourceRepository: Repository<DataSourceEntity>;
   let workspaceDataSourceService: WorkspaceDataSourceService;
@@ -100,10 +100,6 @@ describe('WorkspaceManagerService', () => {
         },
         {
           provide: FeatureFlagService,
-          useValue: {},
-        },
-        {
-          provide: ObjectMetadataService,
           useValue: {},
         },
         {
