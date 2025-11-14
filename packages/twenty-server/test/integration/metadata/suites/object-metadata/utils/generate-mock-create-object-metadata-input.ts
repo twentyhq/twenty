@@ -1,9 +1,9 @@
-import { type CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 // TODO would tend to use faker
 export const getMockCreateObjectInput = (
   overrides?: Partial<
-    Omit<CreateOneObjectInput, 'workspaceId' | 'dataSourceId'>
+    Omit<CreateObjectInput, 'workspaceId' | 'dataSourceId'>
   >,
 ) => ({
   namePlural: 'listingas',

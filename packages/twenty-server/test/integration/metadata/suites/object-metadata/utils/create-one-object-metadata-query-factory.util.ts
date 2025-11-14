@@ -1,10 +1,10 @@
 import gql from 'graphql-tag';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 
-import { type CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 export type CreateOneObjectFactoryInput = Omit<
-  CreateOneObjectInput,
+  CreateObjectInput,
   'workspaceId' | 'dataSourceId'
 >;
 
@@ -13,7 +13,7 @@ export const createOneObjectMetadataQueryFactory = ({
   gqlFields = 'id',
 }: PerformMetadataQueryParams<CreateOneObjectFactoryInput>) => ({
   query: gql`
-        mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
+        mutation CreateOneObjectMetadataItem($input: CreateObjectInput!) {
           createOneObject(input: $input) {
             ${gqlFields}
         }

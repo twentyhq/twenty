@@ -5,10 +5,10 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 type CreateObjectInputPayload = Omit<
-  CreateOneObjectInput,
+  CreateObjectInput,
   'workspaceId' | 'dataSourceId'
 >;
 

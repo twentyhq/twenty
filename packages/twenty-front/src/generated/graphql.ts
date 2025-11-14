@@ -800,12 +800,7 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
-export type CreateOneFieldMetadataInput = {
-  /** The record to create */
-  field: CreateFieldInput;
-};
-
-export type CreateOneObjectInput = {
+export type CreateObjectInput = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
@@ -817,6 +812,16 @@ export type CreateOneObjectInput = {
   primaryKeyColumnType?: InputMaybe<Scalars['String']>;
   primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']>;
   shortcut?: InputMaybe<Scalars['String']>;
+};
+
+export type CreateOneFieldMetadataInput = {
+  /** The record to create */
+  field: CreateFieldInput;
+};
+
+export type CreateOneObjectInput = {
+  /** The object to create */
+  object: CreateObjectInput;
 };
 
 export type CreatePageLayoutInput = {
