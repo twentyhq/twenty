@@ -1,4 +1,3 @@
-//TODO : Refacto-common - remove this comment - This parser is a copy of the filter input factory without objectMetadata dependency. Validation will be done in common layer
 import { type FieldValue } from 'src/engine/api/rest/core/types/field-value.type';
 import { addDefaultConjunctionIfMissing } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/add-default-conjunction.util';
 import { checkFilterQuery } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/check-filter-query.util';

@@ -1,0 +1,131 @@
+---
+title: Workflow-Fehlerbehebung
+info: Debuggen und optimieren Sie Ihre Workflows mit Fehlerbehebungstechniken und Performance-Optimierungstipps.
+image: /images/user-guide/what-is-twenty/20.png
+sectionInfo: Automatisieren Sie Prozesse und integrieren Sie externe Werkzeuge
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Debugging with Workflow Runs
+
+Use the **Workflow Runs** interface to debug issues:
+
+- Access via the **Runs** panel in the workflow editor
+- Klicken Sie auf einzelne Ausführungen, um Eingabe-/Ausgabedaten für jeden Schritt zu sehen
+- Überprüfen Sie den Ausführungsstatus, Fehlermeldungen und den Datenfluss zwischen den Schritten
+
+## Häufige Probleme und Lösungen
+
+### Workflow wird nicht ausgelöst
+
+**Problem**: Workflow wird nicht wie erwartet ausgeführt.
+
+**Lösungen**:
+
+- Überprüfen Sie, ob der Workflow **Aktiv** ist (nicht im Entwurfsmodus)
+- Überprüfen Sie, ob die Trigger-Konfiguration mit Ihrer Datenstruktur übereinstimmt
+- Für Datensatz-Trigger: Stellen Sie sicher, dass das richtige Objekt und die Felder ausgewählt sind
+- Bei Webhook-Triggern: Überprüfen Sie die URL und das erwartete Datenformat
+- Bei geplanten Triggern: Überprüfen Sie die Timing-Konfiguration
+
+### Forms Not Accessible
+
+**Problem**: Formularaktionen sind in automatisierten Workflows schwer zu finden oder zu verwenden.
+
+<Warning>
+Formulare sind derzeit nur für manuelle Trigger konzipiert. Bei Workflows mit anderen Triggern (Datensatz erstellt, aktualisiert, etc.) sind Formulare nur über die Workflow-Ausführungsoberfläche zugänglich, was nicht das erwartete Benutzererlebnis ist. Ein Benachrichtigungszentrum wird im Jahr 2026 eingeführt, um die Unterstützung von Formularen in automatisierten Workflows zu verbessern.
+</Warning>
+
+**Umgehungslösung**: Verwenden Sie manuelle Trigger, wenn Formulare erforderlich sind, oder strukturieren Sie Workflows um, um Formulare in automatisierten Abläufen zu vermeiden.
+
+### Hoher Kreditverbrauch
+
+**Problem**: Workflows verbrauchen mehr Credits als erwartet.
+
+**Häufige Ursachen und Lösungen**:
+
+- **Ineffiziente API-Aufrufe**: Bündeln Sie API-Aufrufe, wenn möglich, anstatt einzelne Anfragen zu stellen
+- **Falsche manuelle Trigger-Konfiguration**: Verwenden Sie `Bulk`-Verfügbarkeit statt `Single`, um mehrere Datensätze in einem Workflow-Durchlauf zu verarbeiten
+- **Fehlende Filter**: Fügen Sie bedingte Logik hinzu, um Workflows zu stoppen, wenn die Kriterien nicht erfüllt sind
+- **Unnötige Schritte**: Entfernen Sie überflüssige Aktionen und optimieren Sie die Workflow-Logik
+- **Echtzeit vs. geplant**: Nutzen Sie geplante Workflows für nicht dringende Prozesse
+
+### Gleichzeitige Workflow-Grenzen
+
+**Problem**: Es wird das Limit von 100 gleichzeitigen Workflows pro Arbeitsbereich erreicht.
+
+<Warning>
+You cannot run more than 100 workflows in parallel at any given time per workspace.
+</Warning>
+
+**Lösungen**:
+
+- Verwenden Sie `Bulk`-Verfügbarkeit für manuelle Trigger, um mehrere Datensätze in einem Durchlauf zu verarbeiten
+- Implementieren Sie Verzögerungen zwischen Workflow-Ausführungen mithilfe geplanter Trigger
+- Optimieren Sie Workflows, um schneller zu laufen und die gleichzeitige Ausführungszeit zu reduzieren
+- Setzen Sie auf Batch-Verarbeitung außerhalb der Stoßzeiten
+
+### API-Ratenlimitierung
+
+**Problem**: Externe API-Aufrufe scheitern aufgrund von Ratenlimits.
+
+**Lösungen**:
+
+- Verwenden Sie geplante Workflows anstelle von Echtzeit-Triggern, wenn möglich
+- Implementieren Sie Verzögerungen zwischen API-Aufrufen in Code-Aktionen
+- Bündeln Sie API-Anfragen, wenn der externe Dienst dies unterstützt
+- Überwachen Sie Workflow-Ausführungen auf Ratenfehler und passen Sie das Timing an
+
+### Iterator-Probleme
+
+**Problem**: Iterator-Aktionen funktionieren nicht wie erwartet.
+
+**Lösungen**:
+
+- **Hinweis**: Der Iterator befindet sich derzeit in der Beta-Phase. Aktivieren Sie es unter Einstellungen → Releases → Lab
+- Stellen Sie sicher, dass die Eingabe ein Array von Datensätzen aus einem vorherigen Schritt ist
+- Überprüfen Sie, dass Aktionen innerhalb des Iterators korrekt konfiguriert sind
+- Verwenden Sie den Iterator mit `Bulk`-manuellen Triggern für optimale Leistung
+
+### Fehlende Berechtigungen
+
+**Problem**: Kann nicht auf den Workflow-Bereich zugreifen.
+
+<Warning>
+Wenn Sie den Workflow-Bereich nicht sehen, liegt dies an einem Berechtigungsproblem. Kontaktieren Sie Ihren Workspace-Administrator, um Ihnen Zugriff auf Workflows zu gewähren.
+</Warning>
+
+## Optimierungstipps
+
+### Leistungs-Best-Practices
+
+- **Fangen Sie einfach an** und fügen Sie schrittweise Komplexität hinzu
+- **Verwenden Sie `Bulk`-Verfügbarkeit** für manuelle Trigger, um mehrere Datensätze effizient zu verarbeiten
+- **Fügen Sie frühzeitig Filter hinzu**, um Workflows zu stoppen, wenn die Kriterien nicht erfüllt sind
+- **Bündeln Sie API-Aufrufe** und verwenden Sie geplante Workflows für nicht dringende Prozesse
+- **Verstecken Sie Workflow-Ausführungen** auf Seiten, die alle Workflows anzeigen, um die Ladeleistung zu verbessern
+- **Überwachen Sie den Kreditverbrauch** regelmäßig in Einstellungen → Abrechnung
+
+### Fehlervermeidung
+
+- **Testen Sie im Entwurfsmodus**, bevor Sie Workflows aktivieren
+- **Validieren Sie API-Antworten** und implementieren Sie Fallback-Aktionen
+- **Verwenden Sie beschreibende Schrittbezeichnungen** für einfachere Wartung
+- **Dokumentieren Sie komplexe Logik** für Teammitglieder
+
+## Hilfe erhalten
+
+### Selbstbedienungsressourcen
+
+- Überprüfen Sie [Workflow Features](/l/de/user-guide/workflows/workflow-features) für technische Details
+- Überprüfen Sie [Workflow Credits](/l/de/user-guide/workflows/workflow-credits) für Optimierungstipps
+- Entdecken Sie [Interne Automatisierungen](/l/de/user-guide/workflows/internal-automations) und [Externe Tool-Integration](/l/de/user-guide/workflows/external-tool-integration) für Beispiele
+
+### Professionelle Unterstützung
+
+- Kontaktieren Sie unseren [Professional Services](/l/de/user-guide/workflows/professional-services) für komplexe Problemlösungen
+- Wenden Sie sich an den Support über contact@twenty.com für technische Unterstützung
+

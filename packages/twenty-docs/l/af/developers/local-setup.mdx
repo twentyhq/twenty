@@ -1,0 +1,330 @@
+---
+title: Plaaslike Opstel
+description: "Die gids vir bydraers (of nuuskierige ontwikkelaars) wat Twenty plaaslik wil uitvoer."
+image: /images/user-guide/fields/field.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/field.png" alt="Header" />
+</Frame>
+
+## Vereistes
+
+<Tabs>
+<Tab title="Linux and MacOS">
+
+Voor jy Twenty kan installeer en gebruik, maak seker dat jy die volgende op jou rekenaar installeer:
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+<Warning>
+`npm` sal nie werk nie, jy behoort eerder `yarn` te gebruik. Yarn word nou saam met Node.js gestuur, so jy hoef dit nie apart te installeer nie.
+Jy hoef net `corepack enable` te loop as jy Yarn nog nie aangeskakel het nie.
+</Warning>
+
+</Tab>
+
+<Tab title="Windows (WSL)">
+
+1. Installeer WSL
+   Maak PowerShell oop as Administrator en voer uit:
+
+```powershell
+wsl --install
+```
+
+You should now see a prompt to restart your computer. Indien nie, herbegin dit handmatig.
+
+By herstart sal 'n powershell-venster oopmaak en Ubuntu installeer. Dit mag 'n rukkie neem.
+Jy sal 'n vraagskerm sien om 'n gebruikersnaam en wagwoord vir jou Ubuntu-installering te skep.
+
+2. Installeer en konfigureer git
+
+```bash
+sudo apt-get install git
+
+git config --global user.name "Your Name"
+
+git config --global user.email "youremail@domain.com"
+```
+
+3. Installeer nvm, node.js en yarn
+
+<Warning>
+Gebruik `nvm` om die korrekte `node` weergawe te installeer. Die `.nvmrc` verseker dat alle bydraers dieselfde weergawe gebruik.
+</Warning>
+
+```bash
+sudo apt-get install curl
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+```
+
+Maak jou terminaal toe en heropen om nvm te gebruik. Voer dan die volgende opdragte uit.
+
+```bash
+
+nvm install # installs recommended node version
+
+nvm use # use recommended node version
+
+corepack enable
+```
+
+</Tab>
+</Tabs>
+
+---
+
+## Stap 1: Git Klone
+
+Voer die volgende opdrag in jou terminaal uit.
+
+<Tabs>
+<Tab title="SSH (Recommended)">
+As jy nog nie SSH-sleutels opgestel het nie, kan jy hier leer hoe om dit te doen: [hier](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+</Tab>
+<Tab title="HTTPS">
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
+
+</Tab>
+</Tabs>
+
+## Stap 2: Plaas jouself by die wortel
+
+```bash
+cd twenty
+```
+
+Jy moet al die opdragte in die volgende stappe vanaf die wortel van die projek doen.
+
+## Stap 3: Stel 'n PostgreSQL Databasis op
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1 (preferred):** To provision your database locally:
+    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your database locally with `brew`:
+
+````
+```bash
+  brew install postgresql@16
+  export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+  brew services start postgresql@16
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+
+You can verify if the PostgreSQL server is running by executing:
+```bash
+  brew services list
+```
+
+The installer might not create the `postgres` user by default when installing
+via Homebrew on MacOS. Instead, it creates a PostgreSQL role that matches your macOS
+username (e.g., "john").
+To check and create the `postgres` user if necessary, follow these steps:
+```bash
+  # Connect to PostgreSQL
+  psql postgres
+  or
+  psql -U $(whoami) -d postgres
+```
+
+Once at the psql prompt (postgres=#), run:
+ ```bash
+  # List existing PostgreSQL roles
+  \du
+```
+You'll see output similar to:
+ ```bash
+  Role name | Attributes  | Member of
+  -----------+-------------+-----------
+  john      | Superuser   | {}
+```
+
+If you do not see a `postgres` role listed, proceed to the next step.
+Create the `postgres` role manually:
+ ```bash
+  CREATE ROLE postgres WITH SUPERUSER LOGIN;
+```
+This creates a superuser role named `postgres` with login access.
+
+**Option 2:** If you have docker installed:
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    All the following steps are to be run in the WSL terminal (within your virtual machine)
+
+````
+**Option 1:** To provision your Postgresql locally:
+Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+```bash
+  psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+```
+Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+
+**Option 2:** If you have docker installed:
+Running Docker on WSL adds an extra layer of complexity.
+Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+```bash
+  make postgres-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+Jy kan nou toegang tot die databasis kry by [localhost:5432](localhost:5432), met gebruiker `postgres` en wagwoord `postgres`.
+
+## Stap 4: Stel 'n Redis Databasis (kas) op
+
+Twenty vereis 'n redis kas om die beste prestasie te bied
+
+<Tabs>
+  <Tab title="Linux">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Mac OS">
+    **Option 1 (preferred):** To provision your Redis locally with `brew`:
+    ```bash
+    brew install redis
+    ```
+    Start your redis server:
+    ```brew services start redis```
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+  <Tab title="Windows (WSL)">
+    **Option 1:** To provision your Redis locally:
+    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+````
+**Option 2:** If you have docker installed:
+```bash
+  make redis-on-docker
+```
+````
+
+  </Tab>
+</Tabs>
+
+As jy 'n Kliënt-GUI benodig, beveel ons [redis inzicht](https://redis.io/insight/) aan (gratis weergawe beskikbaar)
+
+## Step 5: Setup environment variables
+
+Gebruik omgewingsveranderlikes of `.env` lêers om jou projek te konfigureer. Meer inligting [hier](https://docs.twenty.com/l/af/developers/self-hosting/setup)
+
+Kopieer die `.env.example` lêers in `/front` en `/server`:
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+## Stap 6: Installeer afhanklikhede
+
+Om die Twenty bediener te bou en sommige data in jou databasis in te saai, voer die volgende opdrag uit:
+
+```bash
+yarn
+```
+
+Let dat `npm` of `pnpm` nie sal werk nie
+
+## Stap 7: Begin die projek
+
+<Tabs>
+  <Tab title="Linux">
+    Afhangende van jou Linux-verspreiding, mag die Redis-bediener outomaties begin word.
+    If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
+  </Tab>
+  <Tab title="Mac OS">
+  Redis behoort reeds te loop. If not, run:
+    ```bash
+    brew services start redis
+    ```  
+</Tab>
+  <Tab title="Windows (WSL)">
+    Afhangende van jou Linux-verspreiding, mag die Redis-bediener outomaties begin word.
+    If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
+  </Tab>
+</Tabs>
+
+Stel jou databasis op met die volgende opdrag:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+Begin die bediener, die werker en die frontend dienste:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+Alternatiewelik, jy kan al die dienste tegelyk begin:
+
+```bash
+npx nx start
+```
+
+## Stap 8: Gebruik Twenty
+
+**Frontend**
+
+Twenty se frontend loop by [http://localhost:3001](http://localhost:3001).
+Jy kan aanmeld met die standaard demo-rekening: `tim@apple.dev` (wagwoord: `tim@apple.dev`)
+
+**Backend**
+
+- Twenty se bediener hardloop by [http://localhost:3000](http://localhost:3000)
+- Die GraphQL API kan bereik word by [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- Die REST API kan bereik word by [http://localhost:3000/rest](http://localhost:3000/rest)
+
+## Probleemoplossing
+
+Indien jy enige probleem ervaar, kyk na [Probleemoplossing](https://docs.twenty.com/l/af/developers/self-hosting/troubleshooting) vir oplossings.

@@ -88,6 +88,8 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "[empty string]"
 msgstr "[空の文字列]"
 
@@ -1022,7 +1024,6 @@ msgstr "メッセージの処理中にエラーが発生しました"
 
 #. js-lingui-id: XyOToQ
 #: src/utils/get-error-message-from-apollo-error.util.ts
-#: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
@@ -1260,7 +1261,7 @@ msgstr "これらのレコードを復元してもよろしいですか？"
 #. js-lingui-id: lmgkf0
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 msgid "Are you sure you want to restore this record?"
-msgstr "このレコードを復元しますか？"
+msgstr ""
 
 #. js-lingui-id: rnCqBK
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -1746,6 +1747,12 @@ msgstr "プラン切替をキャンセルしますか？"
 msgid "Cancel your subscription"
 msgstr "サブスクリプションをキャンセル"
 
+#. js-lingui-id: 8fbdLj
+#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
+#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
+msgid "Cannot display message"
+msgstr ""
+
 #. js-lingui-id: W3MumH
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -1891,6 +1898,11 @@ msgstr "レコードを識別するフィールドを選択してください"
 msgid "Choose the format used to display date value"
 msgstr "日付値を表示するために使用される形式を選択"
 
+#. js-lingui-id: 02EFne
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Choose which profile fields users with the Edit Profile permission can modify"
+msgstr ""
+
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Choose your Trial"
@@ -1980,6 +1992,8 @@ msgstr "関数をコーディング"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Collapse"
 msgstr "折りたたむ"
 
@@ -3292,10 +3306,20 @@ msgstr "サンプルファイルをダウンロード."
 msgid "Drop file here..."
 msgstr "ここにファイルをドロップしてください…"
 
+#. js-lingui-id: euc6Ns
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Duplicate"
+msgstr ""
+
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
 msgstr "ノードを複製"
+
+#. js-lingui-id: 2RpRNn
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Duplicate Workflow"
+msgstr ""
 
 #. js-lingui-id: cheWPw
 #: src/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection.tsx
@@ -3370,7 +3394,7 @@ msgstr "ダッシュボードを編集"
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit data structure and fields"
-msgstr "データ構造とフィールドを編集する"
+msgstr ""
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -3398,10 +3422,20 @@ msgstr "iFrameを編集する"
 msgid "Edit Layout"
 msgstr "レイアウトを編集"
 
+#. js-lingui-id: IaSCqp
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Edit own profile information"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "支払い方法の編集、請求書の確認など"
+
+#. js-lingui-id: QJQd1J
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Edit Profile"
+msgstr ""
 
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -3413,6 +3447,11 @@ msgstr "全オブジェクトでレコードを編集する"
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "サブドメイン名を編集するか、カスタムドメインを設定する。"
 
+#. js-lingui-id: xMkLkW
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Editable Profile Fields"
+msgstr ""
+
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Eighth"
@@ -3423,6 +3462,7 @@ msgstr "第八"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -3555,6 +3595,8 @@ msgstr "空"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Empty Array"
 msgstr "空の配列"
 
@@ -3571,6 +3613,8 @@ msgstr "受信トレイを空にする"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Empty Object"
 msgstr "空のオブジェクト"
 
@@ -3639,6 +3683,11 @@ msgstr "アイテムまたは変数式の配列を入力してください"
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
 msgstr "<0>Unicode</0>形式で入力"
+
+#. js-lingui-id: uV9utd
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Enter limit"
+msgstr ""
 
 #. js-lingui-id: O6t21f
 #: src/modules/advanced-text-editor/components/EditLinkPopover.tsx
@@ -3948,6 +3997,8 @@ msgstr "設定を終了"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Expand"
 msgstr "展開"
 
@@ -4115,6 +4166,11 @@ msgstr "引き継ぎの作成に失敗しました"
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "Failed to delete jobs. Please try again later."
 msgstr "ジョブの削除に失敗しました。後でもう一度お試しください。"
+
+#. js-lingui-id: WYXxQF
+#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+msgid "Failed to duplicate workflow"
+msgstr ""
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AIChatErrorMessage.tsx
@@ -4322,6 +4378,7 @@ msgstr "最初の<b>5</b>行"
 
 #. js-lingui-id: kODvZJ
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "名"
@@ -4952,7 +5009,7 @@ msgstr "無効なAPIキー"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr "無効な認証プロバイダー"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5298,6 +5355,7 @@ msgstr "最後のメッセージ {lastMessageSentAtFormatted}"
 
 #. js-lingui-id: UXBCwc
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
 msgstr "姓"
@@ -5377,10 +5435,25 @@ msgstr "以下"
 msgid "Light"
 msgstr "\\\\u660e\\\\u308b\\\\u3044"
 
+#. js-lingui-id: yRkqG9
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Limit"
+msgstr ""
+
+#. js-lingui-id: JoxPqI
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Limit cannot exceed {maxRecordsFormatted} records."
+msgstr ""
+
 #. js-lingui-id: Qds9fe
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Limit how many values can be added to this field"
 msgstr "このフィールドに追加できる値の数を制限する"
+
+#. js-lingui-id: a4SJUE
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Limit must be greater than 0."
+msgstr ""
 
 #. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
@@ -5564,6 +5637,11 @@ msgstr "最大"
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
 msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
 msgstr "グラフごとに最大{BAR_CHART_MAXIMUM_NUMBER_OF_BARS}本の棒があります。フィルターを追加することを検討してください"
+
+#. js-lingui-id: LH1Pjg
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter"
+msgstr ""
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -6176,6 +6254,11 @@ msgstr "説明なし"
 msgid "No email exchange has occurred with this record yet."
 msgstr "このレコードとのメール交換はまだ行われていません。"
 
+#. js-lingui-id: RM6uKY
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
+msgid "No fields selected"
+msgstr ""
+
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
 msgid "No Files"
@@ -6407,7 +6490,7 @@ msgstr "現在"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "数"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -6457,7 +6540,6 @@ msgid "Object"
 msgstr "オブジェクト"
 
 #. js-lingui-id: Zrauom
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
 msgstr "オブジェクトの目的地"
@@ -6837,7 +6919,7 @@ msgstr "レコードを永久に削除"
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 msgid "Permanently Destroy Record"
-msgstr "レコードを永久に削除"
+msgstr ""
 
 #. js-lingui-id: xjWlSJ
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -7066,6 +7148,11 @@ msgstr "プロフィール"
 msgid "Profile - Settings"
 msgstr "プロフィール - 設定"
 
+#. js-lingui-id: Szskbr
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
+msgid "Profile Picture"
+msgstr ""
+
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
@@ -7116,7 +7203,7 @@ msgstr "四半期"
 #. js-lingui-id: GKNfuv
 #: src/modules/command-menu/pages/page-layout/utils/getDateGranularityLabel.ts
 msgid "Quarter of the year"
-msgstr "年の四半期"
+msgstr ""
 
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
@@ -7407,7 +7494,7 @@ msgstr "レコードを復元"
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/RestoreSingleRecordAction.tsx
 msgid "Restore Record"
-msgstr "レコードを復元"
+msgstr ""
 
 #. js-lingui-id: Vw369F
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -8070,7 +8157,7 @@ msgstr "サブドメイン名を設定"
 #. js-lingui-id: 9HNKkV
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Set your application configuration variables"
-msgstr "アプリケーション設定変数を設定する"
+msgstr ""
 
 #. js-lingui-id: dQsqpC
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -8342,6 +8429,11 @@ msgstr "スタックトレース"
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Stacked bars"
 msgstr "積み重ねられたバー"
+
+#. js-lingui-id: bQSDyq
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Stacked lines"
+msgstr ""
 
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
@@ -8700,7 +8792,7 @@ msgstr "関数をテスト"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "テキスト"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8785,10 +8877,10 @@ msgstr "お探しのページは存在しないか、削除されました。元
 msgid "The selected record will be passed to your workflow"
 msgstr "選択されたレコードがワークフローに渡されます"
 
-#. js-lingui-id: f1lGdk
+#. js-lingui-id: aCcfHJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
-msgid "The selected records will be passed to your workflow"
-msgstr "選択されたレコードがワークフローに渡されます"
+msgid "The selected records (up to {maxRecordsFormatted}) will be passed to your workflow"
+msgstr ""
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -8854,6 +8946,11 @@ msgstr "第三"
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Third"
 msgstr "第三"
+
+#. js-lingui-id: h4vGCD
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "This action can return up to {maxRecordsFormatted} records."
+msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -8983,7 +9080,7 @@ msgstr "タイムスタンプと参加者がチームと共有されます。"
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "タイトル"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
@@ -9345,6 +9442,7 @@ msgid "User Info"
 msgstr "ユーザー情報"
 
 #. js-lingui-id: IjyOjp
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -9667,6 +9765,11 @@ msgstr "ウィジェットタイプ"
 msgid "Worker"
 msgstr "作業者"
 
+#. js-lingui-id: 2jzcC5
+#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+msgid "Workflow duplicated successfully"
+msgstr ""
+
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
@@ -9872,6 +9975,11 @@ msgstr "このウィジェットを表示する権限がありません。"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "メーター制ティア変更をスケジュールしました。キャンセルしますか？"
+
+#. js-lingui-id: qXzOWu
+#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
+msgstr ""
 
 #. js-lingui-id: z8eKS7
 #: src/modules/billing/hooks/useBillingWording.ts

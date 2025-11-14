@@ -1,0 +1,69 @@
+---
+title: Passen Sie Ihr Datenmodell an
+info: "Lernen Sie, wie Sie ein Datenmodell entwerfen und erstellen, das widerspiegelt, wie Sie arbeiten."
+image: /images/user-guide/fields/custom_data_model.png
+sectionInfo: Flexibles Datenmodell, das darauf ausgelegt ist, Ihre einzigartigen Geschäftsprozesse zu unterstützen.
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Header" />
+</Frame>
+
+## Was ist ein Datenmodell?
+
+Ein Datenmodell ist die Struktur, die definiert, wie Informationen in Ihrem CRM organisiert sind. Es bestimmt, welche Objekte existieren (wie Unternehmen, Personen oder Gelegenheiten), welche Eigenschaften sie haben (das sind die Felder) und wie sie miteinander in Beziehung stehen. Sie können es sich als die Landkarte Ihrer Kundendaten vorstellen.
+
+## Warum sollten Sie Ihr Datenmodell anpassen?
+
+Jedes Unternehmen arbeitet anders. Die Möglichkeit, Ihr Datenmodell vollständig anzupassen, bedeutet, dass Sie Twenty um Ihre Prozesse herum gestalten können, anstatt Ihre in ein starres System zu zwängen.  
+Twenty bietet die Flexibilität, die Sie benötigen, um das Datenmodell zu gestalten, das Ihre täglichen Abläufe am besten unterstützt. Sie können so viele benutzerdefinierte Objekte und Felder erstellen, wie Sie brauchen, der Preis ändert sich nicht.
+
+## Tipps zur Gestaltung Ihres Datenmodells
+
+Es gibt selten nur einen Weg, ein Datenmodell zu erstellen. Hier sind ein paar Tipps, die Ihnen bei der Erstellung Ihres Modells helfen.
+
+**1. Beginnen Sie mit Ihren Kernobjekten.**  
+Identifizieren Sie die Hauptkonzepte, mit denen Sie arbeiten (z.B. Unternehmen, Personen, Gelegenheiten). Diese drei Objekte sind bereits verfügbar, da sie sehr oft verwendet werden. Aber denken Sie an andere, die Sie möglicherweise benötigen.  
+Beispiel: Stripe würde ein Objekt `Subscriptions` benötigen, Airbnb ein Objekt `Reisen` und ein Startup-Beschleuniger ein Objekt `Batches`.
+
+**2. Verwenden Sie Felder für Variationen, keine neuen Objekte.**  
+Wenn etwas nur eine Eigenschaft eines bestehenden Objekts ist (z.B. `Industrie` für ein Unternehmen oder `Status` für eine Gelegenheit), machen Sie es zu einem Feld. Felder eignen sich am besten für Kategorien, Labels und Attribute.
+
+**3. Erstellen Sie ein neues Objekt, wenn es eigenständig besteht.**  
+Wenn das Konzept einen eigenen Lebenszyklus, eigene Eigenschaften oder Beziehungen hat, verdient es normalerweise ein Objekt. Zum Beispiel:
+
+- **Projekte** mit eigenen Fristen, Verantwortlichen und Aufgaben
+- **Abonnements**, die Unternehmen, Produkte und Rechnungen verbinden
+- **Veranstaltungen**, die viele Teilnehmer und Folgeaktionen einbeziehen
+
+Dies geht über ein einzelnes Feld hinaus, da sie ihre eigenen Daten und Beziehungen haben.
+
+**4. Erstellen Sie ein Objekt, wenn die Anzahl der verwandten Datensätze offen ist.**  
+Wenn etwas mehrfach verknüpft werden kann und Sie nicht wissen, wie viele, ist es besser als eigenes Objekt. Statt Felder wie `Produkt 1`, `Produkt 2` usw. zu erstellen, definieren Sie ein `Produkt`-Objekt und verknüpfen es mit dem ursprünglichen Datensatz. Auf diese Weise können Sie ein, zwei oder hundert Produkte unterstützen, ohne Ihr Modell zu ändern.
+
+**5. Keep it simple first.**  
+Start with fields. Wechseln Sie zu neuen Objekten, wenn Sie die Grenzen spüren: zu viele Felder, wiederholte Datensätze oder nicht passende Beziehungen.
+
+### Besondere Hinweise zu Personen, Unternehmen und Gelegenheiten
+
+- **`Personen`, `Unternehmen` und `Gelegenheiten` sind die einzigen Objekte, von denen aus Sie auf die E-Mails und Meetings zugreifen können, die von Ihrem Postfach/Kalender synchronisiert wurden.** Wir empfehlen, sie so oft wie möglich zu verwenden. Wenn Sie Kategorien von `Personen` oder `Unternehmen` erstellen müssen, verwenden Sie Felder anstelle neuer Objekte.
+
+  Beispiel: Es ist besser, das `Personen`-Objekt für sowohl Interessenten als auch Partner zu nutzen und ein Feld mit dem Namen `Personentyp` hinzuzufügen. Vermeiden Sie die Erstellung eines `Partner`-Objekts, da Sie von dort aus nicht auf E-Mail-Threads zugreifen könnten. Erstellen Sie stattdessen unterschiedliche Ansichten unter `Personen`: eine zeigt Partner, eine andere Interessenten.
+- In Anbetracht des oben Genannten ist es in Ordnung, Felder zu haben, die nicht auf jeden Datensatz zutreffen. Zum Beispiel könnten Sie unter `Personen` ein `Referral Link`-Feld hinzufügen, das nur relevant ist, wenn `Personentyp = Partner`. Das ist in Ordnung: Sie können dieses Feld aus Ansichten ausblenden, in denen es nicht benötigt wird.
+
+### Fragen zur Auswahlhilfe
+
+Fragen Sie sich:
+
+- Ist dies nur eine Eigenschaft von etwas, das ich bereits habe, oder braucht es eigene Eigenschaften?
+- Werde ich jemals mehrere dieser pro Datensatz nachverfolgen müssen, ohne zu wissen, wie viele im Voraus?
+- Verbindet dieses Konzept mehrere unterschiedliche Objekte, nicht nur eines?
+- Wird es einen eigenen Lebenszyklus haben (z.B. Phasen, Start- und Enddaten)?
+
+Wenn die Antwort auf eine oder mehrere dieser Fragen „ja“ lautet, ist es wahrscheinlich Zeit für ein neues Objekt.
+
+## Benötigen Sie Hilfe?
+
+Unser Team kann Sie beim Entwerfen und Erstellen des Datenmodells, das Sie benötigen, unterstützen. Discover our Onboarding Pack [here](https://twenty.com/onboarding-packages).
+
+

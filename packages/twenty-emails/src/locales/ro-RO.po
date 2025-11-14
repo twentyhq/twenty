@@ -90,13 +90,18 @@ msgstr "Acceptați invitația"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
+msgid "Confirm your new email address"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
 msgid "Confirm your email address"
 msgstr "Confirmați adresa de email"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
-msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
-msgstr "Vă mulțumim că v-ați înregistrat pentru un cont pe Twenty! Înainte de a începe, trebuie doar să confirmăm că acesta sunteți dvs. Faceți clic mai jos pentru a verifica adresa de email."
+msgid "Confirm new email"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx

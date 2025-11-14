@@ -32,7 +32,7 @@ export const transformLinksValue = (
 
   const secondaryLinksArray = isNonEmptyString(secondaryLinksRaw)
     ? parseJson<LinkMetadataNullable[]>(secondaryLinksRaw)
-    : null;
+    : secondaryLinksRaw;
 
   const { primaryLinkLabel, primaryLinkUrl, secondaryLinks } = removeEmptyLinks(
     {

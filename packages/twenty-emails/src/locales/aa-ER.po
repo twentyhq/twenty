@@ -131,7 +131,7 @@ msgstr "crwdns29:0crwdne29:0"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
-msgstr "crwdns54104:0crwdne54104:0"
+msgstr "crwdns63704:0crwdne63704:0"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
@@ -141,7 +141,7 @@ msgstr "crwdns27:0crwdne27:0"
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set"
-msgstr "crwdns54106:0crwdne54106:0"
+msgstr "crwdns63706:0crwdne63706:0"
 
 #. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx

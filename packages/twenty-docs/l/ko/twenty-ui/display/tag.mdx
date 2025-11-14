@@ -1,0 +1,44 @@
+---
+title: 태그
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+콘텐츠를 시각적으로 분류하거나 라벨을 붙이는 구성 요소입니다.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| 프로퍼티    | 유형       | 설명                                                                                                                  |
+| ------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
+| 클래스 네임  | 문자열      | 추가 스타일을 위한 선택적 이름                                                                                                   |
+| 색상      | 문자열      | 태그의 색상. 옵션은 `녹색`, `터키옥색`, `하늘색`, `파랑`, `보라색`, `핑크`, `빨강`, `오렌지`, `노랑`, `회색`을 포함합니다. |
+| 텍스트     | 문자열      | 태그의 콘텐츠                                                                                                             |
+| onClick | function | 사용자가 태그를 클릭할 때 호출되는 선택적 함수                                                                                          |
+
+</Tab>
+
+</Tabs>

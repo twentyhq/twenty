@@ -1,0 +1,131 @@
+---
+title: Solução de problemas de fluxo de trabalho
+info: Depure e otimize seus fluxos de trabalho com técnicas de solução de problemas e dicas de otimização de desempenho.
+image: /images/user-guide/what-is-twenty/20.png
+sectionInfo: Automatize processos e integre com ferramentas externas
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+## Depurando com execuções de fluxo de trabalho
+
+Use a interface de **Execuções de Fluxo de Trabalho** para depurar problemas:
+
+- Acesse via o painel de **Execuções** no editor de fluxo de trabalho
+- Clique em execuções individuais para ver os dados de entrada/saída para cada etapa
+- Verifique o status de execução, mensagens de erro e fluxo de dados entre as etapas
+
+## Problemas Comuns e Soluções
+
+### Fluxo de Trabalho Não Disparando
+
+**Problema**: O fluxo de trabalho não é executado conforme o esperado.
+
+**Soluções**:
+
+- Verifique se o fluxo de trabalho está **Ativo** (não em modo de rascunho)
+- Verifique se a configuração do gatilho corresponde à sua estrutura de dados
+- Para gatilhos de Registro, assegure-se de que o objeto e campos corretos estão selecionados
+- Para gatilhos Webhook, verifique a URL e o formato de dados esperado
+- Para gatilhos programados, verifique a configuração de tempo
+
+### Formulários Não Acessíveis
+
+**Problema**: Ações de formulário são difíceis de encontrar ou acessar em fluxos de trabalho automatizados.
+
+<Warning>
+Formulários são atualmente projetados apenas para acionadores manuais. Para fluxos de trabalho com outros gatilhos (Registro Criado, Atualizado, etc.), os formulários são acessíveis apenas via a interface de execução de fluxo de trabalho, o que não é a experiência esperada para o usuário. Um centro de notificações será lançado em 2026 para suportar adequadamente formulários em fluxos de trabalho automatizados.
+</Warning>
+
+**Solução alternativa**: Use gatilhos manuais quando formulários forem necessários ou reestruture os fluxos de trabalho para evitar formulários em fluxos automatizados.
+
+### Consumo de Crédito Alto
+
+**Problema**: Fluxos de trabalho consumindo mais créditos do que o esperado.
+
+**Causas Comuns & Soluções**:
+
+- **Chamadas de API Ineficientes**: Agrupe chamadas de API quando possível, em vez de solicitações individuais
+- **Configuração de Gatilho Manual Errada**: Use `Bulk` em vez de `Single` para processar vários registros em uma execução de fluxo de trabalho
+- **Filtros Ausentes**: Adicione lógica condicional para interromper fluxos de trabalho quando os critérios não forem atendidos
+- **Etapas Desnecessárias**: Remova ações redundantes e otimize a lógica do fluxo de trabalho
+- **Tempo real vs. Programado**: Use fluxos de trabalho programados para processos não urgentes
+
+### Limites de Fluxo de Trabalho Simultâneo
+
+**Problema**: Atingindo o limite de 100 fluxos de trabalho simultâneos por espaço de trabalho.
+
+<Warning>
+You cannot run more than 100 workflows in parallel at any given time per workspace.
+</Warning>
+
+**Soluções**:
+
+- Use `Bulk` para gatilhos manuais para processar vários registros em uma execução
+- Implemente atrasos entre execuções de fluxo de trabalho usando gatilhos programados
+- Otimize fluxos de trabalho para executar mais rápido e reduzir o tempo de execução simultâneo
+- Considere o processamento em lote durante horários de pouca atividade
+
+### Limitação de Taxa de API
+
+**Problema**: Chamadas de API externas falhando devido a limites de taxa.
+
+**Soluções**:
+
+- Utilize fluxos de trabalho programados em vez de gatilhos em tempo real quando possível
+- Implemente atrasos entre chamadas de API em ações de Código
+- Agrupe solicitações de API quando o serviço externo suportar isso
+- Monitore execuções de fluxo de trabalho para erros de limite de taxa e ajuste o tempo
+
+### Problemas com Iteradores
+
+**Problema**: Ações de iterador não funcionando como esperado.
+
+**Soluções**:
+
+- **Nota**: Iterador está atualmente em beta. Ative-o em Configurações → Lançamentos → Lab
+- Verifique se a entrada é um array de registros de uma etapa anterior
+- Verifique se as ações dentro do Iterador estão configuradas corretamente
+- Use o Iterador com gatilhos manuais `Bulk` para desempenho ideal
+
+### Permissões Ausentes
+
+**Problema**: Não é possível acessar a seção de fluxos de trabalho.
+
+<Warning>
+Se não visualizar a seção de Fluxos de Trabalho, isso se deve a um problema de permissões. Entre em contato com o administrador do seu espaço de trabalho para lhe conceder acesso aos fluxos de trabalho.
+</Warning>
+
+## Dicas de Otimização
+
+### Melhores Práticas de Desempenho
+
+- **Comece de forma simples** e adicione complexidade gradualmente
+- **Use `Bulk`** para gatilhos manuais para processar vários registros com eficiência
+- **Adicione filtros precocemente** para interromper fluxos de trabalho quando os critérios não forem atendidos
+- **Agrupe chamadas de API** e use fluxos de trabalho programados para processos não urgentes
+- **Oculte execuções de fluxo de trabalho** de páginas que exibem todos os fluxos para melhorar o desempenho de carregamento
+- **Monitore o uso de crédito** regularmente em Configurações → Faturamento
+
+### Prevenção de Erros
+
+- **Teste no modo rascunho** antes de ativar fluxos de trabalho
+- **Valide respostas de API** e implemente ações de contingência
+- **Use nomes descritivos para etapas** para facilitar a manutenção
+- **Documente lógica complexa** para membros da equipe
+
+## Obtendo Ajuda
+
+### Recursos de Autoatendimento
+
+- Revise [Recursos de Fluxo de Trabalho](/l/pt/user-guide/workflows/workflow-features) para detalhes técnicos
+- Verifique [Créditos de Fluxo de Trabalho](/l/pt/user-guide/workflows/workflow-credits) para dicas de otimização
+- Explore [Automações Internas](/l/pt/user-guide/workflows/internal-automations) e [Integração de Ferramentas Externas](/l/pt/user-guide/workflows/external-tool-integration) para exemplos
+
+### Suporte Profissional
+
+- Contate nossos [Serviços Profissionais](/l/pt/user-guide/workflows/professional-services) para solução de problemas complexos
+- Entre em contato com suporte através do contact@twenty.com para assistência técnica
+

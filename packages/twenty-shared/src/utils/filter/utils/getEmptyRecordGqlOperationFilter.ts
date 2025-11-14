@@ -74,20 +74,6 @@ export const getEmptyRecordGqlOperationFilter = ({
               or: [
                 {
                   [correspondingField.name]: {
-                    primaryPhoneCallingCode: { is: 'NULL' },
-                  } as PhonesFilter,
-                },
-                {
-                  [correspondingField.name]: {
-                    primaryPhoneCallingCode: { ilike: '' },
-                  } as PhonesFilter,
-                },
-              ],
-            },
-            {
-              or: [
-                {
-                  [correspondingField.name]: {
                     additionalPhones: { is: 'NULL' },
                   } as PhonesFilter,
                 },

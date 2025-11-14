@@ -1,0 +1,54 @@
+---
+title: 選擇
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+<Frame>
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+</Frame>
+
+允許用戶從預定義選項列表中選擇一個值。
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui/display';
+
+import { Select } from '@/ui/input/components/Select';
+
+export const MyComponent = () => {
+
+  return (
+    <RecoilRoot>
+      <Select
+        className
+        disabled={false}
+        label="Select an option"
+        options={[
+          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+        ]}
+        value="option1"
+      />
+    </RecoilRoot>
+  );
+};
+
+```
+
+</Tab>
+<Tab title="Props">
+
+| 屬性   | 類型       | 描述                                                                                                                                                                                                                                                             |
+| ---- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 類名稱  | 字串       | 用於額外樣式的可選 CSS 類                                                                                                                                                                                                                                                |
+| 禁用   | 布爾值      | 當設置為`true`時，禁用用戶與該組件的互動                                                                                                                                                                                                                                        |
+| 標籤   | 字串       | The label to describe the purpose of the `Select` component                                                                                                                                                                                                    |
+| 變更事件 | function | The function called when the selected values change                                                                                                                                                                                                            |
+| 選項   | 數組       | Represents the options available for the `Selected` component. It's an array of objects where each object has a `value` (the unique identifier), `label` (the unique identifier), and an optional `Icon` |
+| 值    | 字串       | 表示當前選定的值。 它應該與`options`數組中的一個`value`屬性匹配                                                                                                                                                                                                                       |
+
+</Tab>
+</Tabs>

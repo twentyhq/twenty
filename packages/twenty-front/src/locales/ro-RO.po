@@ -88,6 +88,8 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "[empty string]"
 msgstr "[șir gol]"
 
@@ -635,7 +637,7 @@ msgstr "Adaugă nod"
 #. js-lingui-id: NeOuRn
 #: src/modules/activities/notes/components/NotesCard.tsx
 msgid "Add note"
-msgstr "Adăugați notă"
+msgstr ""
 
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -686,7 +688,7 @@ msgstr "Adaugă Furnizor de Identitate SSO"
 #. js-lingui-id: hWkQMS
 #: src/modules/activities/tasks/components/AddTaskButton.tsx
 msgid "Add task"
-msgstr "Adăugați sarcină"
+msgstr ""
 
 #. js-lingui-id: FQArA8
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords.tsx
@@ -1003,7 +1005,7 @@ msgstr "Permite invitația de noi utilizatori prin distribuirea unui link de inv
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow uploading files and attachments"
-msgstr "Permite încărcarea fișierelor și atașamentelor"
+msgstr ""
 
 #. js-lingui-id: vHeVg5
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -1021,7 +1023,6 @@ msgid "An error occurred while processing your message"
 msgstr "A apărut o eroare la procesarea mesajului dumneavoastră"
 
 #. js-lingui-id: XyOToQ
-#: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
@@ -1746,6 +1747,12 @@ msgstr "Anulați schimbarea planului?"
 msgid "Cancel your subscription"
 msgstr "Anulează abonamentul"
 
+#. js-lingui-id: 8fbdLj
+#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
+#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
+msgid "Cannot display message"
+msgstr ""
+
 #. js-lingui-id: W3MumH
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -1891,6 +1898,11 @@ msgstr "Alegeți câmpurile care vor identifica înregistrările dvs"
 msgid "Choose the format used to display date value"
 msgstr "Alege formatul utilizat pentru a afișa valoarea datei"
 
+#. js-lingui-id: 02EFne
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Choose which profile fields users with the Edit Profile permission can modify"
+msgstr ""
+
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Choose your Trial"
@@ -1980,6 +1992,8 @@ msgstr "Codificați funcția dumneavoastră"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Collapse"
 msgstr "Restrângere"
 
@@ -2567,7 +2581,7 @@ msgstr "Versiunea curentă"
 #. js-lingui-id: 0b3reS
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid "Current workspace member not found."
-msgstr "Membru curent al spațiului de lucru nu a fost găsit."
+msgstr ""
 
 #. js-lingui-id: 8Tg/JR
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
@@ -2760,17 +2774,17 @@ msgstr "Granularitatea datei"
 #. js-lingui-id: dhHZTJ
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity"
-msgstr "Granularitatea Datei"
+msgstr ""
 
 #. js-lingui-id: agXC4d
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity X"
-msgstr "Granularitatea Datei X"
+msgstr ""
 
 #. js-lingui-id: YsCGZL
 #: src/modules/command-menu/pages/page-layout/utils/__tests__/shouldHideChartSetting.test.ts
 msgid "Date Granularity Y"
-msgstr "Granularitatea Datei Y"
+msgstr ""
 
 #. js-lingui-id: /ITcnz
 #: src/utils/date-utils.ts
@@ -3292,15 +3306,25 @@ msgstr "Descarcă fișierul de mostră."
 msgid "Drop file here..."
 msgstr "Trageți fișierul aici..."
 
+#. js-lingui-id: euc6Ns
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Duplicate"
+msgstr ""
+
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
 msgstr "Duplică nodul"
 
+#. js-lingui-id: 2RpRNn
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Duplicate Workflow"
+msgstr ""
+
 #. js-lingui-id: cheWPw
 #: src/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection.tsx
 msgid "Duplicates"
-msgstr "Duplicat"
+msgstr ""
 
 #. js-lingui-id: KIjvtr
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3398,10 +3422,20 @@ msgstr "Editare iFrame"
 msgid "Edit Layout"
 msgstr "Editează dispunerea"
 
+#. js-lingui-id: IaSCqp
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Edit own profile information"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "Editează metoda de plată, vezi facturile tale și mai mult"
+
+#. js-lingui-id: QJQd1J
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Edit Profile"
+msgstr ""
 
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -3413,6 +3447,11 @@ msgstr "Editează înregistrări pentru toate obiectele"
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Editează numele subdomeniului tău sau setează un domeniu personalizat."
 
+#. js-lingui-id: xMkLkW
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Editable Profile Fields"
+msgstr ""
+
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Eighth"
@@ -3423,6 +3462,7 @@ msgstr "Al optulea"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -3555,6 +3595,8 @@ msgstr "Gol"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Empty Array"
 msgstr "Array Gol"
 
@@ -3571,13 +3613,15 @@ msgstr "Inbox gol"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Empty Object"
 msgstr "Obiect Gol"
 
 #. js-lingui-id: q11Dk2
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Enable bypass options"
-msgstr "Activează opțiunile de evitare"
+msgstr ""
 
 #. js-lingui-id: gZo0V9
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
@@ -3639,6 +3683,11 @@ msgstr "Introduceți un șir de elemente sau o expresie variabilă"
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
 msgstr "Introduceți în format <0>Unicode</0>"
+
+#. js-lingui-id: uV9utd
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Enter limit"
+msgstr ""
 
 #. js-lingui-id: O6t21f
 #: src/modules/advanced-text-editor/components/EditLinkPopover.tsx
@@ -3948,6 +3997,8 @@ msgstr "Ieșire din Setări"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Expand"
 msgstr "Extinde"
 
@@ -4115,6 +4166,11 @@ msgstr "Nu s-a reușit crearea transferului"
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "Failed to delete jobs. Please try again later."
 msgstr "Eșuat la ștergerea locurilor de muncă. Încercați din nou mai târziu."
+
+#. js-lingui-id: WYXxQF
+#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+msgid "Failed to duplicate workflow"
+msgstr ""
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AIChatErrorMessage.tsx
@@ -4322,6 +4378,7 @@ msgstr "Primele 5 linii"
 
 #. js-lingui-id: kODvZJ
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "Prenume"
@@ -4440,7 +4497,7 @@ msgstr "Mergi la Companii"
 #. js-lingui-id: dvMw7T
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Dashboards"
-msgstr "Mergi la tablou de bord"
+msgstr ""
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -4546,7 +4603,7 @@ msgstr "Grupare după"
 #. js-lingui-id: 6JlTu+
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 msgid "Group sorting"
-msgstr "Sortare grup"
+msgstr ""
 
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -4952,7 +5009,7 @@ msgstr "Cheie API nevalidă"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr "Furnizor de autentificare de evitare invalid"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5298,6 +5355,7 @@ msgstr "Ultimul mesaj {lastMessageSentAtFormatted}"
 
 #. js-lingui-id: UXBCwc
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
 msgstr "Nume de familie"
@@ -5377,10 +5435,25 @@ msgstr "Mai mic sau egal"
 msgid "Light"
 msgstr "Luminos"
 
+#. js-lingui-id: yRkqG9
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Limit"
+msgstr ""
+
+#. js-lingui-id: JoxPqI
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Limit cannot exceed {maxRecordsFormatted} records."
+msgstr ""
+
 #. js-lingui-id: Qds9fe
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Limit how many values can be added to this field"
 msgstr "Limitează câte valori pot fi adăugate la acest câmp"
+
+#. js-lingui-id: a4SJUE
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Limit must be greater than 0."
+msgstr ""
 
 #. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
@@ -5564,6 +5637,11 @@ msgstr "Maxim"
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
 msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
 msgstr "Maxim {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bare pe diagramă. Luați în considerare adăugarea unui filtru"
+
+#. js-lingui-id: LH1Pjg
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter"
+msgstr ""
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -6176,6 +6254,11 @@ msgstr "Fără descriere"
 msgid "No email exchange has occurred with this record yet."
 msgstr "Nu a avut loc niciun schimb de emailuri cu acest registru încă."
 
+#. js-lingui-id: RM6uKY
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
+msgid "No fields selected"
+msgstr ""
+
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
 msgid "No Files"
@@ -6407,7 +6490,7 @@ msgstr "acum"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "număr"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -6457,7 +6540,6 @@ msgid "Object"
 msgstr "Obiect"
 
 #. js-lingui-id: Zrauom
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
 msgstr "Destinația obiect"
@@ -6837,7 +6919,7 @@ msgstr "Distrugere definitivă a înregistrării"
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 msgid "Permanently Destroy Record"
-msgstr "Distruge definitiv Înregistrarea"
+msgstr ""
 
 #. js-lingui-id: xjWlSJ
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -7065,6 +7147,11 @@ msgstr "Profil"
 #: src/utils/title-utils.ts
 msgid "Profile - Settings"
 msgstr "Profil - Setări"
+
+#. js-lingui-id: Szskbr
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
+msgid "Profile Picture"
+msgstr ""
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -8343,6 +8430,11 @@ msgstr "Urmărire stivă"
 msgid "Stacked bars"
 msgstr "Bare stivuite"
 
+#. js-lingui-id: bQSDyq
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Stacked lines"
+msgstr ""
+
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Stages"
@@ -8700,7 +8792,7 @@ msgstr "Testează funcția ta"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "text"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8785,10 +8877,10 @@ msgstr "Pagina pe care o căutați a dispărut sau nu a existat niciodată. Hai 
 msgid "The selected record will be passed to your workflow"
 msgstr "Înregistrarea selectată va fi transmisă în fluxul dumneavoastră de lucru"
 
-#. js-lingui-id: f1lGdk
+#. js-lingui-id: aCcfHJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
-msgid "The selected records will be passed to your workflow"
-msgstr "Înregistrările selectate vor fi transmise în fluxul dumneavoastră de lucru"
+msgid "The selected records (up to {maxRecordsFormatted}) will be passed to your workflow"
+msgstr ""
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -8855,6 +8947,11 @@ msgstr "a Treia"
 msgid "Third"
 msgstr "A Treia"
 
+#. js-lingui-id: h4vGCD
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "This action can return up to {maxRecordsFormatted} records."
+msgstr ""
+
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid ""
@@ -8880,7 +8977,7 @@ msgstr "Această acțiune nu poate fi anulată. Acest lucru va elimina permanent
 #. js-lingui-id: fTuKde
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
-msgstr "Această acțiune nu poate fi anulată. Acest lucru va elimina permanent acest membru din acest spațiu de lucru și îi va elimina din toate sarcinile lor."
+msgstr ""
 
 #. js-lingui-id: Ik52hF
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -8983,7 +9080,7 @@ msgstr "Marca temporală și participanții vor fi partajați cu echipa dvs."
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "titlu"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
@@ -9345,6 +9442,7 @@ msgid "User Info"
 msgstr "Informații utilizator"
 
 #. js-lingui-id: IjyOjp
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -9667,6 +9765,11 @@ msgstr "Tip widget"
 msgid "Worker"
 msgstr "Lucrător"
 
+#. js-lingui-id: 2jzcC5
+#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+msgid "Workflow duplicated successfully"
+msgstr ""
+
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
@@ -9872,6 +9975,11 @@ msgstr "Nu aveți permisiunea de a vizualiza acest widget"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "Ați programat o schimbare a nivelului măsurat. Doriți să o anulați?"
+
+#. js-lingui-id: qXzOWu
+#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
+msgstr ""
 
 #. js-lingui-id: z8eKS7
 #: src/modules/billing/hooks/useBillingWording.ts

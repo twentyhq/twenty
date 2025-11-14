@@ -1,0 +1,488 @@
+---
+title: Knapper
+image: /images/user-guide/views/filter.png
+---
+
+<Frame>
+  <img src="/images/user-guide/views/filter.png" alt="Header" />
+</Frame>
+
+En liste over knapper og knappgrupper brukt gjennom hele appen.
+
+## Knapp
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Button } from "@/ui/input/button/components/Button";
+
+export const MyComponent = () => {
+  return (
+    <Button
+      className
+      Icon={null}
+      title="Title"
+      fullWidth={false}
+      variant="primary"
+      size="medium"
+      position="standalone"
+      accent="default"
+      soon={false}
+      disabled={false}
+      focus={true}
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                                                                                                           |
+| ----------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span>   | Optional class name for additional styling                                                                                                            |
+| Ikon                    | `React.ComponentType` | En valgfri ikonkomponent som vises innenfor knappen                                                                                                   |
+| tittel                  | <span>streng</span>   | Tekstinnholdet i knappen                                                                                                                              |
+| fullWidth               | boolean               | Definerer om knappen skal strekke seg over hele bredden til beholderen                                                                                |
+| "variant"               | <span>streng</span>   | Den visuelle stilvarianten av knappen. Options include `primary`, `secondary`, and `tertiary`                                         |
+| størrelse               | <span>streng</span>   | Størrelsen på knappen. Har to alternativer: `small` og `medium`                                                       |
+| stilling                | <span>streng</span>   | Posisjonen til knappen i forhold til sine søsken. Alternativer inkluderer: `standalone`, `left`, `right`, og `middle` |
+| fremhevelse             | <span>streng</span>   | The accent color of the button. Alternativer inkluderer: `default`, `blue`, og `danger`                               |
+| snart                   | boolean               | Indikerer om knappen er merket som "snart" (som for kommende funksjoner)                                                           |
+| "deaktivert"            | <span>boolean</span>  | Angir om knappen er deaktivert eller ikke                                                                                                             |
+| fokus                   | boolean               | Bestemmer om knappen har fokus                                                                                                                        |
+| "onClick"               | <span>funksjon</span> | En tilbakeringingsfunksjon som utløses når brukeren klikker på knappen                                                                                |
+
+</Tab>
+
+</Tabs>
+
+## Knappegruppe
+
+<Tabs>
+<Tab title="Usage">
+```jsx
+import { Button } from "@/ui/input/button/components/Button";
+import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
+
+export const MyComponent = () => {
+return ( <ButtonGroup variant="primary" size="large" accent="blue" className>
+<Button
+className
+Icon={null}
+title="Button 1"
+fullWidth={false}
+variant="primary"
+size="medium"
+position="standalone"
+accent="blue"
+soon={false}
+disabled={false}
+focus={false}
+onClick={() => console.log("click")}
+/>
+<Button
+className
+Icon={null}
+title="Button 2"
+fullWidth={false}
+variant="secondary"
+size="medium"
+position="left"
+accent="blue"
+soon={false}
+disabled={false}
+focus={false}
+onClick={() => console.log("click")}
+/>
+<Button
+className
+Icon={null}
+title="Button 3"
+fullWidth={false}
+variant="tertiary"
+size="medium"
+position="right"
+accent="blue"
+soon={false}
+disabled={false}
+focus={false}
+onClick={() => console.log("click")}
+/> </ButtonGroup>
+);
+};
+
+````
+</Tab>
+
+<Tab title="Props">
+
+
+| Props | Type | Description |
+|-------|------|-------------|
+| variant | string | The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary` |
+| size | string | The size of the buttons within the group. Has two options: `medium` and `small` |
+| accent | string | The accent color of the buttons within the group. Options include `default`, `blue` and `danger` |
+| className | string | Optional class name for additional styling |
+| children | ReactNode | An array of React elements representing the individual buttons within the group |
+
+
+
+</Tab>
+</Tabs>
+
+
+## Floating Button
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+import { IconSearch } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <FloatingButton
+      className
+      Icon={IconSearch}
+      title="Title"
+      size="medium"
+      position="standalone"
+      applyShadow={true}
+      applyBlur={true}
+      disabled={false}
+      focus={true}
+    />
+  );
+};
+````
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                                                                                                        |
+| ----------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span>   | "Valgfritt navn for ekstra styling"                                                                                                                |
+| Ikon                    | `React.ComponentType` | En valgfri ikonkomponent som vises innenfor knappen                                                                                                |
+| tittel                  | <span>streng</span>   | Tekstinnholdet i knappen                                                                                                                           |
+| størrelse               | <span>streng</span>   | Størrelsen på knappen. Har to alternativer: `small` og `medium`                                                    |
+| stilling                | <span>streng</span>   | Posisjonen til knappen i forhold til sine søsken. Alternativer inkluderer: `standalone`, `left`, `middle`, `right` |
+| applyShadow             | boolean               | Bestemmer om det skal brukes skygge på en knapp                                                                                                    |
+| applyBlur               | boolean               | Bestemmer om det skal brukes en uskarphetseffekt på knappen                                                                                        |
+| "deaktivert"            | boolean               | Bestemmer om knappen er deaktivert                                                                                                                 |
+| fokus                   | <span>boolean</span>  | Indikerer om knappen har fokus                                                                                                                     |
+
+</Tab>
+</Tabs>
+
+## Flytende knappegruppe
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
+import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <FloatingButtonGroup size="small">
+      <FloatingButton
+        className
+        Icon={IconClipboardText}
+        title
+        size="small"
+        position="standalone"
+        applyShadow={true}
+        applyBlur={true}
+        disabled={false}
+        focus={true}
+      />
+      <FloatingButton
+        className
+        Icon={IconCheckbox}
+        title
+        size="small"
+        position="standalone"
+        applyShadow={true}
+        applyBlur={true}
+        disabled={false}
+      />
+    </FloatingButtonGroup>
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                | Beskrivelse                                                                                     | Standard |
+| ----------------------- | ------------------- | ----------------------------------------------------------------------------------------------- | -------- |
+| størrelse               | <span>streng</span> | Størrelsen på knappen. Har to alternativer: `small` og `medium` | liten    |
+| children                | ReactNode           | En liste med React-elementer som representerer de enkelte knappene i gruppen                    |          |
+
+</Tab>
+
+</Tabs>
+
+## Floating Icon Button
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
+import { IconSearch } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <FloatingIconButton
+      className
+      Icon={IconSearch}
+      size="small"
+      position="standalone"
+      applyShadow={true}
+      applyBlur={true}
+      disabled={false}
+      focus={false}
+      onClick={() => console.log("click")}
+      isActive={true}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                                                                                                           |
+| ----------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span>   | "Valgfritt navn for ekstra styling"                                                                                                                   |
+| Ikon                    | `React.ComponentType` | En valgfri ikonkomponent som vises innenfor knappen                                                                                                   |
+| størrelse               | <span>streng</span>   | Størrelsen på knappen. Har to alternativer: `small` og `medium`                                                       |
+| stilling                | <span>streng</span>   | Posisjonen til knappen i forhold til sine søsken. Alternativer inkluderer: `standalone`, `left`, `right`, og `middle` |
+| applyShadow             | <span>boolean</span>  | Bestemmer om det skal brukes skygge på en knapp                                                                                                       |
+| applyBlur               | <span>boolean</span>  | Bestemmer om det skal brukes en uskarphetseffekt på knappen                                                                                           |
+| "deaktivert"            | boolean               | Bestemmer om knappen er deaktivert                                                                                                                    |
+| fokus                   | boolean               | Indikerer om knappen har fokus                                                                                                                        |
+| "onClick"               | <span>funksjon</span> | En tilbakeringingsfunksjon som utløses når brukeren klikker på knappen                                                                                |
+| eraktiv                 | <span>boolean</span>  | Bestemmer om knappen er i aktiv tilstand                                                                                                              |
+
+</Tab>
+
+</Tabs>
+
+## Floating Icon Button Group
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
+import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  const iconButtons = [
+    {
+      Icon: IconClipboardText,
+      onClick: () => console.log("Button 1 clicked"),
+      isActive: true,
+    },
+    {
+      Icon: IconCheckbox,
+      onClick: () => console.log("Button 2 clicked"),
+      isActive: true,
+    },
+  ];
+
+  return (
+    <FloatingIconButtonGroup
+    className
+    size="small"
+    iconButtons={iconButtons} />
+  );
+};
+
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                | Beskrivelse                                                                                                                                                                                                                                                           |
+| ----------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span> | "Valgfritt navn for ekstra styling"                                                                                                                                                                                                                                   |
+| størrelse               | <span>streng</span> | Størrelsen på knappen. Har to alternativer: `small` og `medium`                                                                                                                                                                       |
+| ikonknapper             | array               | En liste med objekter, hver representerer en ikonknapp i gruppen. Hvert objekt bør inkludere ikonelementet du vil vise i knappen, funksjonen du vil kalle når en bruker trykker på knappen, og om knappen skal være aktiv eller ikke. |
+
+</Tab>
+
+</Tabs>
+
+## Light Button
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { LightButton } from "@/ui/input/button/components/LightButton";
+
+export const MyComponent = () => {
+  return <LightButton
+  className
+  icon={null}
+  title="Title"
+  accent="secondary"
+  active={false}
+  disabled={false}
+  focus={true}
+  onClick={()=>console.log('click')}
+  />;
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                                                                 |
+| ----------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span>   | "Valgfritt navn for ekstra styling"                                                                         |
+| ikon                    | `React.ReactNode`     | Ikonet du vil vise i knappen                                                                                |
+| tittel                  | <span>streng</span>   | Tekstinnholdet i knappen                                                                                    |
+| fremhevelse             | <span>streng</span>   | The accent color of the button. Options include: `secondary` and `tertiary` |
+| aktiv                   | <span>boolean</span>  | Bestemmer om knappen er i aktiv tilstand                                                                    |
+| "deaktivert"            | <span>boolean</span>  | Bestemmer om knappen er deaktivert                                                                          |
+| fokus                   | <span>boolean</span>  | Indikerer om knappen har fokus                                                                              |
+| "onClick"               | <span>funksjon</span> | En tilbakeringingsfunksjon som utløses når brukeren klikker på knappen                                      |
+
+</Tab>
+
+</Tabs>
+
+## Lett ikonknapp
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
+import { IconSearch } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <LightIconButton
+      className
+      testId="test1"
+      Icon={IconSearch}
+      title="Title"
+      size="small"
+      accent="secondary"
+      active={true}
+      disabled={false}
+      focus={true}
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                  | Beskrivelse                                                                                                 |
+| ----------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| "klasseNavn"            | <span>streng</span>   | "Valgfritt navn for ekstra styling"                                                                         |
+| "testId"                | <span>streng</span>   | Test identifikator for knappen                                                                              |
+| Ikon                    | `React.ComponentType` | En valgfri ikonkomponent som vises innenfor knappen                                                         |
+| tittel                  | <span>streng</span>   | Tekstinnholdet i knappen                                                                                    |
+| størrelse               | <span>streng</span>   | Størrelsen på knappen. Har to alternativer: `small` og `medium`             |
+| fremhevelse             | <span>streng</span>   | The accent color of the button. Options include: `secondary` and `tertiary` |
+| aktiv                   | <span>boolean</span>  | Bestemmer om knappen er i aktiv tilstand                                                                    |
+| deaktivert              | <span>boolean</span>  | Bestemmer om knappen er deaktivert                                                                          |
+| fokus                   | <span>boolean</span>  | Indikerer om knappen har fokus                                                                              |
+| "onClick"               | <span>funksjon</span> | En tilbakeringingsfunksjon som utløses når brukeren klikker på knappen                                      |
+
+</Tab>
+
+</Tabs>
+
+## Hovedknapp
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { MainButton } from "@/ui/input/button/components/MainButton";
+import { IconCheckbox } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <MainButton
+      title="Checkbox"
+      fullWidth={false}
+      variant="primary"
+      soon={false}
+      Icon={IconCheckbox}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                             | Beskrivelse                                                                                             |
+| ----------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| tittel                  | <span>streng</span>              | Tekstinnholdet i knappen                                                                                |
+| fullWidth               | <span>boolean</span>             | Definerer om knappen skal strekke seg over hele bredden til beholderen                                  |
+| "variant"               | <span>streng</span>              | Den visuelle stilvarianten av knappen. Alternativer inkluderer `primary` og `secondary` |
+| snart                   | boolean                          | Indikerer om knappen er merket som "snart" (som for kommende funksjoner)             |
+| Ikon                    | `React.ComponentType`            | En valgfri ikonkomponent som vises innenfor knappen                                                     |
+| React `button` props    | `React.ComponentProps<'button'>` | Alle standard HTML-knappeegenskaper støttes                                                             |
+
+</Tab>
+
+</Tabs>
+
+## Rund ikonknapp
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
+import { IconSearch } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <RoundedIconButton
+      Icon={IconSearch}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| <span>Egenskaper</span> | Type                                            | Beskrivelse |
+| ----------------------- | ----------------------------------------------- | ----------- |
+| Ikon                    | `React.ComponentType`                           |             |
+| React `button` props    | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
+
+</Tab>
+
+</Tabs>

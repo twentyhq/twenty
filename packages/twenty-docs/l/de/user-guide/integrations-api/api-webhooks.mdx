@@ -1,0 +1,83 @@
+---
+title: API-Schlüssel & Webhooks
+info: "Erstellen und verwalten Sie API-Schlüssel für die Authentifizierung und richten Sie Webhooks für Echtzeit-Benachrichtigungen ein."
+image: /images/user-guide/api/api.png
+sectionInfo: Erfahren Sie, wie Sie Twenty mit Ihren anderen Tools verbinden.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+## API-Schlüssel
+
+API-Schlüssel ermöglichen den automatisierten Zugriff auf Ihre CRM-Daten, synchronisieren Daten mit anderen Systemen und erstellen benutzerdefinierte Integrationen oder Lösungen.
+
+### Create an API Key
+
+1. Gehen Sie zu **Einstellungen → APIs & Webhooks**
+2. Klicken Sie oben rechts auf **+ Schlüssel erstellen**
+3. Konfigurieren Sie Ihren API-Schlüssel:
+   - **Name**: Geben Sie Ihrem API-Schlüssel einen beschreibenden Namen
+   - **Ablaufdatum**: Legen Sie fest, wann der Schlüssel ablaufen soll
+4. Klicken Sie auf **Speichern**, um Ihren API-Schlüssel zu generieren
+5. **Wichtig**: Kopieren und speichern Sie Ihren API-Schlüssel sofort, er wird nur einmal angezeigt
+
+Nach der Erstellung bietet Ihr API-Schlüssel Zugriff auf Ihre benutzerdefinierte API-Dokumentation und eine Testumgebung, in der Sie Endpunkte mit Ihrem tatsächlichen Datenmodell testen können.
+
+<Warning>
+Da Ihr API-Schlüssel Zugriff auf sensible Informationen gewährt, sollten Sie ihn nicht an Dienste weitergeben, denen Sie nicht voll vertrauen. Wenn er kompromittiert wird, könnte jemand ihn böswillig verwenden. Wenn die Sicherheit Ihres API-Schlüssels kompromittiert ist, deaktivieren Sie ihn sofort und generieren Sie einen neuen.
+</Warning>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
+
+### API-Schlüssel verwalten
+
+**Einen API-Schlüssel regenerieren:**
+
+1. Gehen Sie zu **Einstellungen → APIs & Webhooks**
+2. Klicken Sie auf den API-Schlüssel, den Sie regenerieren möchten
+3. Klicken Sie auf die **Regenerieren**-Schaltfläche
+4. API-Schlüssel sofort kopieren und speichern
+
+**API-Schlüssel löschen:**
+
+1. Den API-Schlüssel in Ihrer Liste finden
+2. Auf den Schlüssel klicken, um die Details zu öffnen
+3. Klicken Sie auf **Löschen**, um ihn dauerhaft zu entfernen
+
+## Webhooks
+
+Webhooks ermöglichen sofortige Aktualisierungen Ihrer angegebenen URL über Änderungen oder Ereignisse in Bezug auf Ihre Kundendaten.
+
+Zum Beispiel kann ein Webhook, wenn eine Gelegenheit zu "Gewonnene Gelegenheit" wechselt, automatisch die Rechnungserstellung in Ihrem Buchhaltungssystem auslösen. Note that this type of automation can also be achieved using Twenty's in-app [Workflows feature](/l/de/user-guide/workflows/getting-started-workflows), which offers triggers based on field updates for internal automation.
+
+Webhooks eignen sich ideal zur Integration mit externen Systemen, während Workflows sowohl interne Automatisierung als auch Verbindungen zu externen Tools über Webhook-Trigger, Code-Nodes und HTTP-Nodes unterstützen.
+
+### Webhook erstellen
+
+1. Gehen Sie zu **Einstellungen → APIs & Webhooks → Webhooks**
+2. Klicken Sie auf **+ Webhook erstellen**
+3. Geben Sie Ihre Webhook-URL ein (wo Sie Benachrichtigungen erhalten möchten)
+4. Klicken Sie auf **Speichern**
+
+Ihr Webhook beginnt umgehend, Echtzeit-Benachrichtigungen über Änderungen an Ihren CRM-Daten zu empfangen.
+
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
+
+### Webhooks verwalten
+
+**Webhook löschen:**
+
+1. Gehen Sie zu **Einstellungen → APIs & Webhooks → Webhooks**
+2. Den zu entfernenden Webhook finden
+3. Auf den Webhook klicken
+4. Klicken Sie auf **Löschen** und bestätigen Sie im Popup
+
+**Webhook bearbeiten:**
+
+1. Klicken Sie auf den Webhook, den Sie ändern möchten
+2. Die URL oder andere Einstellungen aktualisieren
+3. Klicken Sie auf **Speichern**, um die Änderungen anzuwenden
+

@@ -86,7 +86,7 @@
     "cache-manager-redis-yet": "^4.1.2",
     "chalk": "4.1.2",
     "class-transformer": "0.5.1",
-    "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
+    "class-validator": "0.14.0",
     "class-validator-jsonschema": "^5.0.2",
     "cloudflare": "^4.5.0",
     "connect-redis": "^7.1.1",

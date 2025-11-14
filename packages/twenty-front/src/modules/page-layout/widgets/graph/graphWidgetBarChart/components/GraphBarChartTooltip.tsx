@@ -1,16 +1,14 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
+import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { type BarChartDataItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDataItem';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
-import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { getTooltipReferenceFromBarChartElementAnchor } from '@/page-layout/widgets/graph/utils/getTooltipReferenceFromBarChartElementAnchor';
-import { type BarDatum, type ComputedDatum } from '@nivo/bar';
-import { useMemo } from 'react';
+import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
 type GraphBarChartTooltipProps = {
-  datum: ComputedDatum<BarDatum>;
-  anchorElement: Element;
   containerId: string;
   enrichedKeys: BarChartEnrichedKey[];
   data: BarChartDataItem[];
@@ -23,8 +21,6 @@ type GraphBarChartTooltipProps = {
 };
 
 export const GraphBarChartTooltip = ({
-  datum,
-  anchorElement,
   containerId,
   enrichedKeys,
   data,
@@ -35,38 +31,38 @@ export const GraphBarChartTooltip = ({
   onMouseEnter,
   onMouseLeave,
 }: GraphBarChartTooltipProps) => {
-  const tooltipData = useMemo(
-    () =>
-      getBarChartTooltipData({
-        datum,
+  const tooltipState = useRecoilComponentValue(
+    graphWidgetBarTooltipComponentState,
+  );
+
+  const tooltipData = !isDefined(tooltipState)
+    ? null
+    : getBarChartTooltipData({
+        datum: tooltipState.datum,
         enrichedKeys,
         data,
         indexBy,
         formatOptions,
         enableGroupTooltip,
         layout,
-      }),
-    [
-      datum,
-      enrichedKeys,
-      data,
-      indexBy,
-      formatOptions,
-      enableGroupTooltip,
-      layout,
-    ],
-  );
+      });
 
-  const { reference, boundary } = useMemo(() => {
+  let reference = null;
+  let boundary = null;
+
+  if (isDefined(tooltipState)) {
     try {
-      return getTooltipReferenceFromBarChartElementAnchor(
-        anchorElement,
+      const positioning = getTooltipReferenceFromBarChartElementAnchor(
+        tooltipState.anchorElement,
         containerId,
       );
+      reference = positioning.reference;
+      boundary = positioning.boundary;
     } catch {
-      return { reference: null, boundary: null };
+      reference = null;
+      boundary = null;
     }
-  }, [anchorElement, containerId]);
+  }
 
   if (
     !isDefined(tooltipData) ||

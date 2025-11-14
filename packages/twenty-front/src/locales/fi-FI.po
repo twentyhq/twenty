@@ -88,6 +88,8 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "[empty string]"
 msgstr "[tyhjä merkkijono]"
 
@@ -723,7 +725,7 @@ msgstr "Lisää näkymä"
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/WidgetPlaceholder.tsx
 msgid "Add widget"
-msgstr "Lisää pienoisohjelma"
+msgstr ""
 
 #. js-lingui-id: iRpDWj
 #: src/modules/page-layout/widgets/widget-card/components/WidgetCardHeader.tsx
@@ -786,7 +788,7 @@ msgstr "Edistynyt"
 #. js-lingui-id: +uqBul
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
 msgid "Advanced feature to improve the performance of queries and to enforce unicity constraints."
-msgstr "Edistynyt ominaisuus tiedusteluiden suorituskyvyn parantamiseksi ja ainutlaatuisuusrajoitusten toimeenpanemiseksi."
+msgstr ""
 
 #. js-lingui-id: tMFFwF
 #: src/modules/views/components/ViewBarFilterDropdownAdvancedFilterButton.tsx
@@ -968,7 +970,7 @@ msgstr "Salli tietojen vienti CSV-tiedostoihin"
 #. js-lingui-id: q/pgyN
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Google-based login for users with SSO bypass permissions."
-msgstr "Salli Google-pohjaisen kirjautumisen käyttäjille, joilla on SSO ohitus oikeudet."
+msgstr ""
 
 #. js-lingui-id: gCnKdT
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
@@ -988,7 +990,7 @@ msgstr "Salli kirjautumiset Microsoftin yksittäisen kirjautumisen toiminnolla."
 #. js-lingui-id: pf6MGm
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
-msgstr "Salli Microsoft-pohjaisen kirjautumisen käyttäjille, joilla on SSO ohitus oikeudet."
+msgstr ""
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ToggleImpersonate.tsx
@@ -1003,7 +1005,7 @@ msgstr "Salli uusien käyttäjien kutsuminen jakamalla kutsulinkki."
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow uploading files and attachments"
-msgstr "Salli tiedostojen ja liitteiden lataaminen"
+msgstr ""
 
 #. js-lingui-id: vHeVg5
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -1021,7 +1023,6 @@ msgid "An error occurred while processing your message"
 msgstr "Virhe viestin käsittelyssä"
 
 #. js-lingui-id: XyOToQ
-#: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
 #: src/modules/views/hooks/internal/usePersistViewGroup.ts
@@ -1746,6 +1747,12 @@ msgstr "Peruuta suunnitelman vaihtaminen?"
 msgid "Cancel your subscription"
 msgstr "Peruuta tilauksesi"
 
+#. js-lingui-id: 8fbdLj
+#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
+#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
+msgid "Cannot display message"
+msgstr ""
+
 #. js-lingui-id: W3MumH
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -1891,6 +1898,11 @@ msgstr "Valitse kentät, jotka identifioivat tietueesi"
 msgid "Choose the format used to display date value"
 msgstr "Valitse päivämäärän näyttämiseen käytetty muoto"
 
+#. js-lingui-id: 02EFne
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Choose which profile fields users with the Edit Profile permission can modify"
+msgstr ""
+
 #. js-lingui-id: 9qP96p
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 msgid "Choose your Trial"
@@ -1980,6 +1992,8 @@ msgstr "Koodaa funktiosi"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Collapse"
 msgstr "Sulje"
 
@@ -2295,7 +2309,7 @@ msgstr "Kopioi tämä avain, sillä se ei ole enää nähtävissä"
 #. js-lingui-id: 4Tb3Ry
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Copy view link"
-msgstr "Kopioi näkymän linkki"
+msgstr ""
 
 #. js-lingui-id: SGsgDO
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -3280,7 +3294,7 @@ msgstr "Lataa tiedosto"
 #. js-lingui-id: IDPv1P
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Download Files"
-msgstr "Lataa tiedostoja"
+msgstr ""
 
 #. js-lingui-id: wrT4hq
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -3292,10 +3306,20 @@ msgstr "Lataa esimerkkitiedosto."
 msgid "Drop file here..."
 msgstr "Pudota tiedosto tähän..."
 
+#. js-lingui-id: euc6Ns
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Duplicate"
+msgstr ""
+
 #. js-lingui-id: qaE1sk
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Duplicate node"
 msgstr "Kaksoiskappale solmu"
+
+#. js-lingui-id: 2RpRNn
+#: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
+msgid "Duplicate Workflow"
+msgstr ""
 
 #. js-lingui-id: cheWPw
 #: src/modules/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection.tsx
@@ -3398,10 +3422,20 @@ msgstr "Muokkaa iFrame"
 msgid "Edit Layout"
 msgstr "Muokkaa asettelua"
 
+#. js-lingui-id: IaSCqp
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Edit own profile information"
+msgstr ""
+
 #. js-lingui-id: h2KoTu
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "Edit payment method, see your invoices and more"
 msgstr "Muokkaa maksutapaa, n\\u00e4e laskusi ja paljon muuta"
+
+#. js-lingui-id: QJQd1J
+#: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
+msgid "Edit Profile"
+msgstr ""
 
 #. js-lingui-id: 6n2zpV
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -3413,6 +3447,11 @@ msgstr "Muokkaa tietueita kaikista objekteista"
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Muokkaa alasivustosi nime\\u00e4 tai aseta mukautettu verkkotunnus."
 
+#. js-lingui-id: xMkLkW
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Editable Profile Fields"
+msgstr ""
+
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Eighth"
@@ -3423,6 +3462,7 @@ msgstr "Kahdeksas"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -3555,6 +3595,8 @@ msgstr "Tyhj\\u00e4"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Empty Array"
 msgstr "Tyhjä taulukko"
 
@@ -3571,6 +3613,8 @@ msgstr "Tyhjä Saapuneet"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Empty Object"
 msgstr "Tyhjä objekti"
 
@@ -3639,6 +3683,11 @@ msgstr "Syötä kohteiden taulukko tai muuttujan lauseke"
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
 msgstr "Kirjoita <0>Unicode</0>-muodossa"
+
+#. js-lingui-id: uV9utd
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Enter limit"
+msgstr ""
 
 #. js-lingui-id: O6t21f
 #: src/modules/advanced-text-editor/components/EditLinkPopover.tsx
@@ -3895,7 +3944,7 @@ msgstr "joka minuutti"
 #. js-lingui-id: PsQmAw
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Everyone"
-msgstr "Jokainen"
+msgstr ""
 
 #. js-lingui-id: wqF3jl
 #: src/modules/settings/accounts/components/SettingsAccountsMessageVisibilityCard.tsx
@@ -3948,6 +3997,8 @@ msgstr "Poistu asetuksista"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Expand"
 msgstr "Laajenna"
 
@@ -4115,6 +4166,11 @@ msgstr "Siirron luominen epäonnistui"
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
 msgid "Failed to delete jobs. Please try again later."
 msgstr "Epäonnistui töiden poistamisessa. Yritä myöhemmin uudelleen."
+
+#. js-lingui-id: WYXxQF
+#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+msgid "Failed to duplicate workflow"
+msgstr ""
 
 #. js-lingui-id: Ukrbw5
 #: src/modules/ai/components/AIChatErrorMessage.tsx
@@ -4322,6 +4378,7 @@ msgstr "Ensimmäiset 5 riviä"
 
 #. js-lingui-id: kODvZJ
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "First Name"
 msgstr "Etunimi"
@@ -4440,7 +4497,7 @@ msgstr "Mene Yrityksiin"
 #. js-lingui-id: dvMw7T
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Go to Dashboards"
-msgstr "Siirry hallintapaneeleihin"
+msgstr ""
 
 #. js-lingui-id: dHvI9O
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -4546,7 +4603,7 @@ msgstr "Ryhmittäin"
 #. js-lingui-id: 6JlTu+
 #: src/modules/object-record/record-group/components/RecordGroupReorderConfirmationModal.tsx
 msgid "Group sorting"
-msgstr "Lajitteluryhmä"
+msgstr ""
 
 #. js-lingui-id: eKiSkN
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -4758,7 +4815,7 @@ msgstr "iFrame-asetukset"
 #. js-lingui-id: mO+Bte
 #: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings.tsx
 msgid "iFrame Widget"
-msgstr "iFrame-pienoisohjelma"
+msgstr ""
 
 #. js-lingui-id: YdCuhS
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
@@ -4952,7 +5009,7 @@ msgstr "Virheellinen API-avain"
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Invalid auth bypass provider"
-msgstr "Virheellinen autentikointipalvelu"
+msgstr ""
 
 #. js-lingui-id: NtFk/Z
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -5298,6 +5355,7 @@ msgstr "Viimeinen viesti {lastMessageSentAtFormatted}"
 
 #. js-lingui-id: UXBCwc
 #: src/pages/onboarding/CreateProfile.tsx
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
 msgid "Last Name"
 msgstr "Sukunimi"
@@ -5377,10 +5435,25 @@ msgstr "Pienempi tai yhtä suuri"
 msgid "Light"
 msgstr "Vaalea"
 
+#. js-lingui-id: yRkqG9
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Limit"
+msgstr ""
+
+#. js-lingui-id: JoxPqI
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Limit cannot exceed {maxRecordsFormatted} records."
+msgstr ""
+
 #. js-lingui-id: Qds9fe
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldMaxValuesForm.tsx
 msgid "Limit how many values can be added to this field"
 msgstr "Rajoita kuinka monta arvoa tähän kenttään voidaan lisätä"
+
+#. js-lingui-id: a4SJUE
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "Limit must be greater than 0."
+msgstr ""
 
 #. js-lingui-id: rjuFFw
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
@@ -5536,7 +5609,7 @@ msgstr "Hallinnoi työtilasi jäseniä täällä"
 #. js-lingui-id: /berfj
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Manage Views"
-msgstr "Hallitse näkymiä"
+msgstr ""
 
 #. js-lingui-id: fEqDWx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5564,6 +5637,11 @@ msgstr "Suurin"
 #: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
 msgid "Max {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} bars per chart. Consider adding a filter"
 msgstr "Enintään {BAR_CHART_MAXIMUM_NUMBER_OF_BARS} palkkia per kaavio. Harkitse suodattimen lisäämistä."
+
+#. js-lingui-id: LH1Pjg
+#: src/modules/command-menu/pages/page-layout/components/ChartSettings.tsx
+msgid "Max {LINE_CHART_MAXIMUM_NUMBER_OF_DATA_POINTS} data points per chart. Consider adding a filter"
+msgstr ""
 
 #. js-lingui-id: HFjNu6
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -6176,6 +6254,11 @@ msgstr "Ei kuvausta"
 msgid "No email exchange has occurred with this record yet."
 msgstr "Sähköpostiviestintää tämän tietueen kanssa ei ole vielä tapahtunut."
 
+#. js-lingui-id: RM6uKY
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
+msgid "No fields selected"
+msgstr ""
+
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/FilesCard.tsx
 msgid "No Files"
@@ -6407,7 +6490,7 @@ msgstr "nyt"
 #. js-lingui-id: VVexZo
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "number"
-msgstr ""
+msgstr "numero"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -6457,7 +6540,6 @@ msgid "Object"
 msgstr "Objekti"
 
 #. js-lingui-id: Zrauom
-#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
 msgstr "Kohdeobjekti"
@@ -6837,7 +6919,7 @@ msgstr "Tuhotaan tietue pysyvästi"
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 #: src/modules/action-menu/actions/record-actions/single-record/components/DestroySingleRecordAction.tsx
 msgid "Permanently Destroy Record"
-msgstr "Tuhota tiedosto pysyvästi"
+msgstr ""
 
 #. js-lingui-id: xjWlSJ
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -7066,6 +7148,11 @@ msgstr "Profiili"
 msgid "Profile - Settings"
 msgstr "Profiili - Asetukset"
 
+#. js-lingui-id: Szskbr
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
+msgid "Profile Picture"
+msgstr ""
+
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
@@ -7136,7 +7223,7 @@ msgstr "Jono: {queueName}"
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
 msgid "Receive an email containing password set link"
-msgstr "Vastaanota sähköposti sisältäen salasanan asetusalinkin"
+msgstr ""
 
 #. js-lingui-id: v3xM25
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -8343,6 +8430,11 @@ msgstr "Pinojälki"
 msgid "Stacked bars"
 msgstr "Pystypalkit"
 
+#. js-lingui-id: bQSDyq
+#: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
+msgid "Stacked lines"
+msgstr ""
+
 #. js-lingui-id: ErU1td
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "Stages"
@@ -8700,7 +8792,7 @@ msgstr "Testaa toimintoasi"
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "text"
-msgstr ""
+msgstr "teksti"
 
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
@@ -8785,10 +8877,10 @@ msgstr "Haettua sivua ei ole olemassa tai sitä ei ole koskaan ollut. Ohjataan s
 msgid "The selected record will be passed to your workflow"
 msgstr "Valittu tieto viedään työnkulkuun"
 
-#. js-lingui-id: f1lGdk
+#. js-lingui-id: aCcfHJ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
-msgid "The selected records will be passed to your workflow"
-msgstr "Valitut tiedot viedään työnkulkuun"
+msgid "The selected records (up to {maxRecordsFormatted}) will be passed to your workflow"
+msgstr ""
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -8854,6 +8946,11 @@ msgstr "kolmas"
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Third"
 msgstr "Kolmas"
+
+#. js-lingui-id: h4vGCD
+#: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
+msgid "This action can return up to {maxRecordsFormatted} records."
+msgstr ""
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
@@ -8983,7 +9080,7 @@ msgstr "Aikaleima ja osallistujat jaetaan tiimisi kanssa."
 #. js-lingui-id: q7F5am
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
-msgstr ""
+msgstr "otsikko"
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
@@ -9345,6 +9442,7 @@ msgid "User Info"
 msgstr "Käyttäjän tiedot"
 
 #. js-lingui-id: IjyOjp
+#: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -9524,7 +9622,7 @@ msgstr "Näkyvät ryhmät"
 #. js-lingui-id: i1PB0P
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Visible to you"
-msgstr "Näkyvissä vain sinulle"
+msgstr ""
 
 #. js-lingui-id: 6n7jtr
 #: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
@@ -9666,6 +9764,11 @@ msgstr "Widgetin tyyppi"
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "Worker"
 msgstr "Työntekijä"
+
+#. js-lingui-id: 2jzcC5
+#: src/modules/action-menu/actions/record-actions/single-record/workflow-actions/components/DuplicateWorkflowSingleRecordAction.tsx
+msgid "Workflow duplicated successfully"
+msgstr ""
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -9872,6 +9975,11 @@ msgstr "Sinulla ei ole lupaa tarkastella tätä widgettiä"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "You have scheduled a metered tier change. Do you want to cancel it?"
 msgstr "Olet aikatauluttanut mitatun tason muutoksen. Haluatko peruuttaa sen?"
+
+#. js-lingui-id: qXzOWu
+#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+msgid "You selected {selectedCountFormatted} records but manual triggers can run on at most {limitFormatted} records at once. Only the first {limitFormatted} records will be processed."
+msgstr ""
 
 #. js-lingui-id: z8eKS7
 #: src/modules/billing/hooks/useBillingWording.ts

@@ -1,0 +1,320 @@
+---
+title: Funkce pracovního postupu
+info: Kompletní odkaz na všechny dostupné spouštěče pracovních postupů, akce a funkce správy.
+image: /images/user-guide/workflows/robot.png
+sectionInfo: Automatizujte procesy a integrujte se s externími nástroji
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/robot.png" alt="Header" />
+</Frame>
+
+## Spouštěče pracovních postupů
+
+Pracovní postupy vždy začínají jedním spouštěčem, který určuje, kdy by měla být automatizace spuštěna.
+
+### Záznam je vytvořen
+
+Spouští pracovní postup, když je vytvořen nový záznam ve vybraném objektu (Lidé, Společnosti, Příležitosti nebo jakýkoli vlastní objekt).
+
+**Konfigurace**: Vyberte typ objektu, který chcete sledovat ohledně nových záznamů.
+
+### Záznam je aktualizován
+
+Spouští pracovní postup, když jsou v existujícím záznamu změny provedeny.
+
+**Konfigurace**:
+
+- Vyberte typ objektu
+- Volitelně specifikujte, které pole chcete sledovat pro změny
+
+### Záznam je aktualizován nebo vytvořen
+
+Spouští pracovní postup, když je záznam buď vytvořen, nebo aktualizován ve vybraném objektu.
+
+**Proč to je důležité**: Tento spouštěč je obzvláště užitečný, protože záznamy vytvořené různými metodami se chovají odlišně:
+
+- **API/CSV importy**: Záznamy jsou vytvořeny s okamžitě vyplněnými všemi poli
+- **Manuální tvorba**: Záznamy jsou nejprve vytvořeny, poté jsou pole přidávány v následných aktualizacích
+
+**Konfigurace**:
+
+- Vyberte typ objektu, který chcete sledovat
+- Volitelně specifikujte, které pole chcete sledovat pro změny
+- Pracovní postup se spustí jak při počátečním vytvoření, tak při jakýchkoliv následných aktualizacích
+
+### Záznam je odstraněn
+
+Spouští pracovní postup, když je záznam odstraněn z objektu.
+
+**Konfigurace**: Vyberte typ objektu, který chcete sledovat ohledně odstranění.
+
+### Spustit manuálně
+
+Spouští pracovní postup při vyvolání uživatelskou akcí. Tento spouštěč je přístupný prostřednictvím menu Cmd+K nebo přes vlastní tlačítko v horní navigační liště.
+
+**Konfigurace dostupnosti**:
+Vyberte, jak má pracovní postup zpracovávat výběr záznamů:
+
+- **Global**: No record is required to trigger this workflow. Pracovní postup je spuštěn odkudkoliv (z jakéhokoliv objektu) a nepoužívá jako vstup žádný záznam(y).
+
+- **Single**: The selected record(s) will be passed to your workflow. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup bude spuštěn tolikrát, kolik bylo vybráno záznamů.
+
+  <Warning>
+  You cannot run more than 100 workflows in parallel at any given time.
+  </Warning>
+
+- **Hromadné**: Vybrané záznamy budou předány do vašeho pracovního postupu. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup poběží jednou, přičemž celý seznam záznamů bude použit jako vstup. To znamená, že pracovní postup musí obsahovat akci Iterátor. This is best for people who want to optimize/limit the number of workflow runs.
+
+**Additional Configuration**:
+
+- Select the target object (for Single and Bulk availability)
+- Vyberte ikonu příkazu pro spuštění pracovního postupu
+- Nakonfigurujte umístění navigace (uzamčené nebo neuzamčené)
+
+**Způsoby Přístupu**:
+
+- Cmd+K menu to find and launch manual workflows
+- Vlastní tlačítko v horní navigaci (pokud je nastaveno)
+
+### On a Schedule
+
+Spustí pracovní postup na základě vámi definovaného opakovaného základu.
+
+**Konfigurace**:
+
+- Vyberte časovou jednotku (minuty, hodiny, dny)
+- Zadejte hodnotu nebo použijte vlastní cron výrazy pro rozšířené plánování
+
+### Webhook
+
+Starts the workflow when a GET or POST request is received from an external service.
+
+**Konfigurace**:
+
+- Receive a unique webhook URL
+- Pro POST požadavky definujte očekávanou strukturu těla
+- Konfigurujte autentizaci, pokud je potřeba
+
+## Workflow Actions
+
+Akce definují, co se stane po spuštění. Můžete spojit více akcí dohromady.
+
+### Vytvořit záznam
+
+Přidává nový záznam do vybraného objektu.
+
+**Konfigurace**:
+
+- Vyberte cílový objekt
+- Vyplňte povinná a volitelná pole
+- Použijte data z předchozích kroků k vyplnění polí
+
+**Výstup**: Data nově vytvořeného záznamu jsou k dispozici pro použití v následujících krocích.
+
+### Aktualizovat záznam
+
+Mění existující záznam ve vybraném objektu.
+
+**Konfigurace**:
+
+- Vyberte cílový objekt
+- Vyberte specifický záznam pro aktualizaci
+- Vyberte pole k úpravě a zadejte nové hodnoty
+
+**Výstup**: Data aktualizovaného záznamu jsou k dispozici pro použití v následujících krocích.
+
+### Smazat záznam
+
+Odstraní záznam z vybraného objektu.
+
+**Konfigurace**:
+
+- Vyberte cílový objekt
+- Vyberte specifický záznam pro smazání
+
+**Výstup**: Data smazaného záznamu zůstávají k dispozici pro použití v následujících krocích.
+
+### Hledání záznamů
+
+Najde záznamy ve vybraném objektu pomocí filtračních podmínek.
+
+**Konfigurace**:
+
+- Vyberte objekt pro hledání
+- Nastavte kritéria filtru k zúžení výsledků
+- Nakonfigurujte řazení a limity
+
+**Výstup**: Vrací odpovídající záznamy, které lze použít v následujících krocích.
+
+**Best Practice**: Use branches after Search Records to handle "found" vs "not found" scenarios.
+
+### Iterátor
+
+Prochází polem záznamů vrácených z předchozího kroku, což umožňuje provádět akce na každém jednotlivém záznamu.
+
+**Konfigurace**:
+
+- Vyberte pole záznamů z předchozích kroků (např. výsledky z Hledání záznamů)
+- Definujte akce, které budou provedeny na každém záznamu v cyklu
+- Nakonfigurujte název proměnné pro referenci každého záznamu v iteraci
+
+**Příklad**: Hledání záznamů vrátí 5 osob, pak použijte Iterátor k odeslání e-mailu každé osobě nebo k individuální aktualizaci každého záznamu.
+
+**Poznámka**: Iterátor je aktuálně v beta verzi. Aktivujte ho v Nastavení → Vydání → Laboratoř.
+
+### Filtr
+
+Filtruje pole záznamů na základě specifikovaných podmínek, což umožňuje pouze záznamům, které splňují kritéria, projít.
+
+**Konfigurace**:
+
+- Vyberte pole záznamů k filtrování
+- Definujte filtrační podmínky a kritéria
+- Nakonfigurujte, které záznamy by měly projít do následujících kroků
+
+**Výstup**: Vrací pouze záznamy, které odpovídají zadaným filtračním podmínkám.
+
+### Odeslat e-mail
+
+Odesílá e-mail z vašeho pracovního postupu.
+
+**Předpoklady**: Přidejte e-mailový účet v Nastavení → Účty
+
+**Konfigurace**:
+
+- Zadejte e-mailovou adresu příjemce
+- Nastavte předmět
+- Sestavte tělo zprávy
+- Odkazujte na proměnné z předchozích kroků pro personalizaci
+
+**Poznámka**: E-mailové přílohy budou k dispozici v Q1 2026.
+
+### Kód
+
+Runs custom JavaScript within your workflow.
+
+**Konfigurace**:
+
+- Zapište JavaScriptový kód v editoru
+- Přístup k proměnným z předchozích kroků
+- Vrátit proměnné pro použití v následujících krocích
+- Testovat kód přímo ve kroku
+
+**Přístup**: Spravujte API klíče v Nastavení → API & Webhooky
+
+### Formulář
+
+Vyvolá formulář během provádění pracovního postupu pro sběr uživatelských vstupů.
+
+**Konfigurace**:
+
+- Definujte políčka vstupu s typy, štítky a zástupnými symboly
+- Nakonfigurujte pravidla pro kontrolu vstupů
+- Nastavte název a popis formuláře
+
+**Výstup**: Odpovědi z formuláře jsou k dispozici pro použití v následujících krocích.
+
+<Warning>
+Formuláře jsou aktuálně navrženy pouze pro ruční spuštění. U workflow s jinými spouštěči (vytvoření záznamu, aktualizace atd.) jsou formuláře přístupné pouze přes rozhraní běžů workflow, což neodpovídá očekávané uživatelské zkušenosti. V roce 2026 bude uvedeno centrum oznámení pro správnou podporu formulářů v automatizovaných pracovních postupech.
+</Warning>
+
+### HTTP požadavek
+
+Sends a request to an external API as part of your workflow.
+
+**Konfigurace**:
+
+- Zadejte URL endpointu API
+- Vyberte metodu HTTP (GET, POST, PUT, PATCH, DELETE)
+- Přidejte potřebné hlavičky a hodnoty
+- Zařaďte tělo žádosti pro požadavky POST/PUT/PATCH
+- Poskytněte ukázku odpovědi pro zobrazení struktury
+
+## Správa Pracovních Postupů
+
+### Vytváření Pracovních Postupů
+
+1. Klikněte na "+ Přidat Pracovní Postup" pro zahájení
+2. Klikněte na "Bez názvu" a pojmenujte svůj pracovní postup
+3. Vyberte a nakonfigurujte spouštěč pracovního postupu
+4. Přidejte akce k vašemu pracovnímu postupu
+5. Testujte a opakujte
+6. Activate your workflow (currently in draft mode) once you're done editing it
+
+**Poznámka**: Pokud nevidíte sekci Pracovní Postupy, jedná se o problém s oprávněními. Kontaktujte svého správce pracovního prostoru, aby vám udělil přístup k pracovním postupům.
+
+### Workflow Statuses
+
+- **Koncept**: Upraveno, dosud nezveřejněno
+- **Aktivní**: Živá verze reagující na spouštěče
+- **Deaktivováno**: Dříve aktivní, ale ručně zastaveno
+- **Archivováno**: Minulé verze uchovávané pro historii
+
+### Aktivace Pracovních Postupů
+
+Klikněte na **Aktivovat** pro zveřejnění vašeho konceptu jako nové verze. To udělá pracovní postup způsobilý k provedení při vyvolání, ale okamžitě ho nespustí.
+
+### Testování Pracovních Postupů
+
+Testujte pracovní postupy před aktivací pomocí:
+
+- Manuální spouštěče (pokud není vybrán žádný záznam)
+- Individuální testování akcí (zejména akcí Kódu)
+- Testování v režimu konceptu, které neaktivuje pracovní postup
+
+### Běhy průběhu práce
+
+**Běh** je záznam provedení pracovního postupu obsahující:
+
+- Status (úspěšný, selhal, běží)
+- Data z výstupu z každého kroku
+- Autor a časová razítka
+- Chybové zprávy, pokud je to aplikovatelné
+
+**Zobrazení Běhů**:
+
+- Zkontrolujte panel **Běhů** v editoru pracovních postupů
+- Otevřete pohled **Běhy Pracovních Postupů** pro monitorování všech pracovních postupů
+
+**Performance Tip**: Hide workflow runs from the "All workflows" page and other workflow pages to improve loading performance, as large numbers of runs can slow down page loading.
+
+### Historie Verzí
+
+- Zobrazit všechny verze v poli **Verze**
+- Klikněte na jakoukoliv verzi pro zobrazení detailů
+- Použijte **Použít jako koncept** pro obnovení předchozích verzí
+- Řešte konflikty konceptu s možnostmi přepsání nebo vrácení
+
+## Osvedčené postupy
+
+### Organizace Pracovních Postupů
+
+- **Deskriptivní Názvy**: Používejte jasné, specifické názvy pracovních postupů
+- **Pojmenování Kroků**: Přejmenujte kroky na popis jejich funkce
+- **Dokumentace**: Přidat komentáře v akcích Kódu
+- **Kategorizace**: Logicky seskupujte související pracovní postupy
+- **Vlastní Pole**: Přidat pole do objektu Pracovního Postupu ve vašem datovém modelu (podobně jako pro jiné objekty) k organizování a kategorizování pracovních postupů pomocí vlastních vlastností
+
+### Optimalizace Výkonu
+
+- **Minimalizace API Volání**: Sdružovat operace, když je to možné
+- **Efektivní Hledání**: Používejte specifická filtrační kritéria
+- **Error Handling**: Plan for failure scenarios
+- **Rate Limiting**: Respect external API limits
+
+### Správa Toků Dat
+
+- **Branch Logic**: Use branches after Search Records
+- **Využití Proměnných**: Využít data z předcházejících kroků
+- **Ověřování Dat**: Validovat vstupy v akcích Kódu
+- **Mapování Polí**: Pečlivé plánování datových transformací
+
+### Monitorování a Údržba
+
+- **Pravidelné Monitorování**: Kontrola běhů pracovních postupů pro chyby
+- **Přezkoumání Výkonu**: Analyzovat časy zpracování a úspěšnosti
+- **Správa Aktualizací**: Testujte změny v konceptu před aktivací
+- **Koordinace Týmu**: Dokumentujte pracovní postupy pro členy týmu
+
+Pro praktické příklady těchto funkcí v akci, podívejte se na naše průvodce [Interní automatizace](/l/cs/user-guide/workflows/internal-automations) a [Integrace externích nástrojů](/l/cs/user-guide/workflows/external-tool-integration).

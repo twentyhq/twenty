@@ -1,0 +1,34 @@
+---
+title: Trình soạn thảo khối
+image: /images/user-guide/api/api.png
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api.png" alt="Header" />
+</Frame>
+
+Sử dụng trình soạn thảo văn bản phong phú dựa trên khối từ [BlockNote](https://www.blocknotejs.org/) để cho phép người dùng chỉnh sửa và xem các khối nội dung.
+
+<Tabs>
+<Tab title="Usage">
+
+```jsx
+import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
+
+  return <BlockEditor editor={BlockNoteEditor} />;
+};
+```
+
+</Tab>
+<Tab title="Props">
+
+| Thuộc Tính      | Loại              | Mô tả                                            |
+| --------------- | ----------------- | ------------------------------------------------ |
+| trình soạn thảo | `BlockNoteEditor` | Phiên bản hoặc cấu hình của trình soạn thảo khối |
+
+</Tab>
+</Tabs>

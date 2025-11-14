@@ -1,0 +1,44 @@
+---
+title: Ετικέτα
+image: /images/user-guide/table-views/table.png
+---
+
+<Frame>
+  <img src="/images/user-guide/table-views/table.png" alt="Header" />
+</Frame>
+
+Συστατικό για οπτική κατηγοριοποίηση ή επισήμανση περιεχομένου.
+
+<Tabs>
+
+<Tab title="Usage">
+
+```jsx
+import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};
+```
+
+</Tab>
+
+<Tab title="Props">
+
+| Ιδιότητες   | Τύπος         | Περιγραφή                                                                                                                                                     |
+| ----------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| όνομαΚλάσης | αλφαριθμητικό | Προαιρετική ονομασία για επιπλέον στυλ                                                                                                                        |
+| χρώμα       | αλφαριθμητικό | Χρώμα της ετικέτας. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray` |
+| κείμενο     | αλφαριθμητικό | Το περιεχόμενο της ετικέτας                                                                                                                                   |
+| onClick     | συνάρτηση     | Προαιρετική λειτουργία η οποία καλείται όταν ο χρήστης κάνει κλικ στην ετικέτα                                                                                |
+
+</Tab>
+
+</Tabs>

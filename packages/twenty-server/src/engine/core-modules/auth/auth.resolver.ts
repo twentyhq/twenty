@@ -33,7 +33,6 @@ import { AvailableWorkspacesAndAccessTokensOutput } from 'src/engine/core-module
 import { GetAuthTokenFromEmailVerificationTokenInput } from 'src/engine/core-modules/auth/dto/get-auth-token-from-email-verification-token.input';
 import { GetAuthorizationUrlForSSOInput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.input';
 import { GetAuthorizationUrlForSSOOutput } from 'src/engine/core-modules/auth/dto/get-authorization-url-for-sso.output';
-import { GetLoginTokenFromEmailVerificationTokenOutput } from 'src/engine/core-modules/auth/dto/get-login-token-from-email-verification-token.output';
 import { SignUpOutput } from 'src/engine/core-modules/auth/dto/sign-up.output';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -51,6 +50,7 @@ import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
+import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -76,6 +76,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { VerifyEmailAndGetLoginTokenOutput } from 'src/engine/core-modules/auth/dto/verify-email-and-get-login-token.output';
 
 import { ApiKeyToken } from './dto/api-key-token.dto';
 import { AuthTokens } from './dto/auth-tokens.dto';
@@ -239,9 +240,9 @@ export class AuthResolver {
     };
   }
 
-  @Mutation(() => GetLoginTokenFromEmailVerificationTokenOutput)
+  @Mutation(() => VerifyEmailAndGetLoginTokenOutput)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async getLoginTokenFromEmailVerificationToken(
+  async verifyEmailAndGetLoginToken(
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @Args('origin') origin: string,
@@ -252,19 +253,25 @@ export class AuthResolver {
         getAuthTokenFromEmailVerificationTokenInput,
       );
 
+    if (appToken.context && appToken.context.email !== appToken.user.email) {
+      await this.userService.updateEmailFromVerificationToken(
+        appToken.user.id,
+        appToken.context.email,
+      );
+    }
+
+    const user = await this.userService.markEmailAsVerified(appToken.user.id);
+
+    await this.appTokenRepository.remove(appToken);
+
     const workspace =
       (await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
         origin,
       )) ??
-      (await this.userWorkspaceService.findFirstWorkspaceByUserId(
-        appToken.user.id,
-      ));
-
-    await this.userService.markEmailAsVerified(appToken.user.id);
-    await this.appTokenRepository.remove(appToken);
+      (await this.userWorkspaceService.findFirstWorkspaceByUserId(user.id));
 
     const loginToken = await this.loginTokenService.generateLoginToken(
-      appToken.user.email,
+      user.email,
       workspace.id,
       authProvider,
     );
@@ -277,7 +284,7 @@ export class AuthResolver {
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensOutput)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
-  async getWorkspaceAgnosticTokenFromEmailVerificationToken(
+  async verifyEmailAndGetWorkspaceAgnosticToken(
     @Args()
     getAuthTokenFromEmailVerificationTokenInput: GetAuthTokenFromEmailVerificationTokenInput,
     @AuthProvider() authProvider: AuthProviderEnum,
@@ -287,31 +294,39 @@ export class AuthResolver {
         getAuthTokenFromEmailVerificationTokenInput,
       );
 
-    await this.userService.markEmailAsVerified(appToken.user.id);
+    if (appToken.context && appToken.context.email !== appToken.user.email) {
+      await this.userService.updateEmailFromVerificationToken(
+        appToken.user.id,
+        appToken.context.email,
+      );
+    }
+
+    const user = await this.userService.markEmailAsVerified(appToken.user.id);
+
     await this.appTokenRepository.remove(appToken);
 
     const availableWorkspaces =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
-        appToken.user.email,
+        user.email,
       );
 
     return {
       availableWorkspaces:
         await this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
           availableWorkspaces,
-          appToken.user,
+          user,
           authProvider,
         ),
       tokens: {
         accessOrWorkspaceAgnosticToken:
           await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
             {
-              userId: appToken.user.id,
+              userId: user.id,
               authProvider: AuthProviderEnum.Password,
             },
           ),
         refreshToken: await this.refreshTokenService.generateRefreshToken({
-          userId: appToken.user.id,
+          userId: user.id,
           authProvider: AuthProviderEnum.Password,
           targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
         }),
@@ -377,13 +392,14 @@ export class AuthResolver {
         user.email,
       );
 
-    await this.emailVerificationService.sendVerificationEmail(
-      user.id,
-      user.email,
-      undefined,
-      signUpInput.locale ?? SOURCE_LOCALE,
-      signUpInput.verifyEmailRedirectPath,
-    );
+    await this.emailVerificationService.sendVerificationEmail({
+      userId: user.id,
+      email: user.email,
+      workspace: undefined,
+      locale: signUpInput.locale ?? SOURCE_LOCALE,
+      verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
+      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
+    });
 
     return {
       availableWorkspaces:
@@ -459,13 +475,14 @@ export class AuthResolver {
       },
     });
 
-    await this.emailVerificationService.sendVerificationEmail(
-      user.id,
-      user.email,
+    await this.emailVerificationService.sendVerificationEmail({
+      userId: user.id,
+      email: user.email,
       workspace,
-      signUpInput.locale ?? SOURCE_LOCALE,
-      signUpInput.verifyEmailRedirectPath,
-    );
+      locale: signUpInput.locale ?? SOURCE_LOCALE,
+      verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
+      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
+    });
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,

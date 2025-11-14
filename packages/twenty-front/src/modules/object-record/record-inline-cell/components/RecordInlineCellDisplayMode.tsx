@@ -60,8 +60,6 @@ const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
   height: 20px;
-
-  background-color: ${({ theme }) => theme.background.secondary};
 `;
 
 export const RecordInlineCellDisplayMode = ({
@@ -74,25 +72,24 @@ export const RecordInlineCellDisplayMode = ({
 }>) => {
   const { t } = useLingui();
 
-  const { editModeContentOnly, showLabel, label, buttonIcon, readonly } =
+  const { editModeContentOnly, label, buttonIcon, readonly } =
     useRecordInlineCellContext();
 
-  const isDisplayModeContentEmpty = useIsFieldEmpty();
+  const isFieldEmpty = useIsFieldEmpty();
   const showEditButton =
     buttonIcon &&
     isHovered &&
     !readonly &&
-    !isDisplayModeContentEmpty &&
+    !isFieldEmpty &&
     !editModeContentOnly;
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const shouldDisplayEditModeOnFocus = isHovered && isFieldInputOnly;
+  const emptyPlaceHolder = label ?? t`Empty`;
 
-  const emptyPlaceHolder = showLabel ? t`Empty` : label;
+  const shouldShowValue = !isFieldEmpty || isFieldInputOnly;
 
-  const shouldShowEmptyPlaceholder =
-    (isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) || !children;
+  const shouldShowEmptyPlaceholder = isFieldEmpty;
 
   return (
     <>
@@ -102,11 +99,11 @@ export const RecordInlineCellDisplayMode = ({
         onClick={onClick}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
-          {shouldShowEmptyPlaceholder ? (
-            <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
-          ) : (
+          {shouldShowValue ? (
             children
-          )}
+          ) : shouldShowEmptyPlaceholder ? (
+            <StyledEmptyField>{emptyPlaceHolder}</StyledEmptyField>
+          ) : null}
         </StyledRecordInlineCellNormalModeInnerContainer>
       </StyledRecordInlineCellNormalModeOuterContainer>
       {showEditButton && (

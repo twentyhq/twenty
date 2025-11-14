@@ -1,0 +1,130 @@
+---
+title: APIs Overview
+info: Pochopte čtyři různé typy API a kdy použít každý z nich.
+image: /images/user-guide/api/api-overview.png
+sectionInfo: Naučte se, jak připojit Twenty k vašim dalším nástrojům.
+---
+
+<Frame>
+  <img src="/images/user-guide/api/api-overview.png" alt="Header" />
+</Frame>
+
+Twenty bylo vytvořeno s ohledem na vývojáře, nabízíme výkonné API, které se přizpůsobí vašemu vlastnímu datovému modelu. Nabízíme čtyři typy API, které splňují různé potřeby integrace.
+
+## Přístup orientovaný na vývojáře
+
+Twenty generuje API specificky pro váš datový model, což znamená:
+
+- **Nejsou vyžadována dlouhá ID**: Používejte v koncových bodech přímo názvy objektů a polí.
+- **Standardní a vlastní objekty jsou rovnocenně zpracovány**: Vaše vlastní objekty mají stejnou podporu API jako vestavěné.
+- **Vyhrazené koncové body**: Každý objekt a pole má svůj vlastní koncový bod API.
+- **Vlastní dokumentace**: Generována specificky pro datový model vašeho pracovního prostoru.
+
+<Warning>
+Vaše vlastní API generuje personalizovanou dokumentaci, která je přístupná skrze Nastavení → API & Webhooks po vytvoření API klíče. Tato dokumentace odráží váš přesný datový model a konfiguraci polí.
+</Warning>
+
+## Čtyři typy API
+
+Twenty nabízí API v obou formátech **REST** a **GraphQL**:
+
+### REST API
+
+#### 1. REST Metadata API
+
+- **Účel**: Spravujte strukturu pracovního prostoru a datového modelu.
+- **Případy použití**:
+  - Vytvářet, upravovat nebo mazat objekty a pole.
+  - Konfigurace nastavení pracovního prostoru.
+  - Spravovat vztahy datového modelu.
+- **Přístup**: Dostupné skrze koncové body REST.
+
+#### 2. REST Core API
+
+- **Účel**: Spravujte vaše skutečné datové záznamy.
+- **Případy použití**:
+  - Vytváření, čtení, aktualizace, mazání záznamů.
+  - Dotazování se na konkrétní data.
+  - Spravování vztahů mezi záznamy.
+- **Přístup**: Dostupné skrze koncové body REST.
+
+### GraphQL API
+
+#### 3. GraphQL Metadata API
+
+- **Účel**: Stejný jako REST Metadata API, ale s výhodami GraphQL.
+- **Případy použití**: Stejná správa pracovního prostoru a datového modelu.
+- **Další výhody**:
+  - Dotazy na více typů metadat v jednom požadavku.
+  - Přesný výběr polí.
+  - Lepší výkon pro složité dotazy.
+
+#### 4. GraphQL Core API
+
+- **Účel**: Stejný jako REST Core API, ale s výhodami GraphQL.
+- **Případy použití**: Stejná správa datových záznamů.
+- **Další výhody**:
+  - **Hromadné operace**: Dostupné pro všechny úkony.
+  - **Operace Upsert**: Vytváření nebo aktualizace záznamů v jednom volání.
+  - Dotazy na vztahy v jednotlivých požadavcích.
+  - Přesné načítání dat.
+
+## Hromadné operace
+
+### Podpora hromadných operací v REST i GraphQL.
+
+Obě API, REST a GraphQL, podporují hromadné operace pro většinu akcí:
+
+- **Velikost dávky**: Až 60 záznamů na požadavek.
+- **Dostupné operace**: Vytváření, aktualizace, mazání více záznamů.
+- **Výkon**: Výrazně rychlejší než jednotlivé API volání.
+
+### Funkce pouze pro GraphQL
+
+- **Hromadný Upsert**: Pouze dostupný v GraphQL API.
+- **Využití**: Používejte množné názvy objektů (např. `CreateCompanies` místo `CreateCompany`).
+- **Požadavek**: Proto musí být jména objektů v jednotném a množném čísle rozdílná.
+
+## Přístup k dokumentaci API
+
+1. Přejděte na **Nastavení → API & Webhooks**
+2. Vytvoření API klíče (požadováno pro přístup k dokumentaci).
+3. Přístup k vaší vlastní dokumentaci a hřišti.
+4. Testujte API s vaším skutečným datovým modelem.
+
+Vaše dokumentace je jedinečná pro váš pracovní prostor, protože odráží vaše vlastní objekty, pole a vztahy.
+
+## Kdy použít každý API
+
+### Použijte Metadata API když:
+
+- Nastavujete svůj datový model.
+- Vytváříte vlastní objekty nebo pole.
+- Konfigurujete nastavení pracovního prostoru.
+
+### Použijte Core API když:
+
+- Spravujete denní data (Lidé, Společnosti, Příležitosti).
+- Integrujete s externími systémy.
+- Budujete vlastní aplikace.
+- Automatizujete datové pracovní postupy.
+
+### Vyberte GraphQL když:
+
+- Potřebujete hromadné operace.
+- Chcete minimalizovat API volání.
+- Potřebujete funkci upsert.
+- Budujete složité integrace.
+
+### Vyberte REST když:
+
+- Dáváte přednost jednodušší struktuře API.
+- Budujete základní integrace.
+- Váš tým je více obeznámen s REST.
+- Potřebujete jednoduché CRUD operace.
+
+## Další kroky
+
+- **[API & Webhooks Setup](/l/cs/user-guide/integrations-api/api-webhooks)**: Learn how to create API keys and webhooks
+- **Vlastní dokumentace**: Přístup k vašim osobním API dokumentům přes Nastavení → API & Webhooks.
+

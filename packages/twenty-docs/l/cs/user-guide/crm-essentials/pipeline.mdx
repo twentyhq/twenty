@@ -1,0 +1,73 @@
+---
+title: Pipeline
+info: "Sledujte a spravujte své prodejní příležitosti pomocí přizpůsobitelných fází kanálu."
+image: /images/user-guide/kanban-views/kanban.png
+sectionInfo: "Základní funkce CRM pro správu potenciálních zákazníků, prodeje a zákazníků"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## Porozumění kanálům
+
+Prodejní kanál sleduje příležitosti od prvního kontaktu až po uzavření obchodu. Každá etapa představuje krok ve vašem prodejním procesu a příležitosti procházejí těmito fázemi, jak se blíží ke svému uzavření.
+
+Twenty includes standard sales stages like Prospecting, Qualification, Proposal, Negotiation, Closed. Tyto fáze můžete přizpůsobit tak, aby odpovídaly vašemu specifickému prodejnímu procesu.
+
+## Working with Kanban Views
+
+Kanban views visually map out your pipeline, where each column represents a stage and each card represents an opportunity. Každá karta zobrazuje klíčové informace, jako je hodnota obchodu, datum uzavření a přidělený vlastník. Pro úplné podrobnosti, včetně poznámek, úkolů, schůzek a historie e-mailů, klikněte na libovolnou kartu pro otevření kompletního záznamu příležitosti.
+
+### Přenášení příležitostí vaším kanálem
+
+Každou příležitost můžete mezi fáze přesouvat, jak postupuje vaším prodejním procesem, přetažením. Podržte klik na kartě a přesuňte ji do další fáze.
+
+<VimeoEmbed videoId="927888627" title="Video demonstration" />
+
+### Customizing your pipeline stages
+
+Můžete přizpůsobit váš kanál tak, aby vyhovoval vašemu specifickému prodejnímu procesu. Fáze představují hodnoty v poli výběru, takže je můžete přidat, odstranit nebo přejmenovat podle potřeby.
+
+#### Přidávání fází
+
+To add a stage, access the Select Field Settings by navigating to Settings → Data Model, selecting your object, and then the field your Kanban board depends on.
+
+<VimeoEmbed videoId="927890428" title="Video demonstration" />
+
+#### Odstraňování fází
+
+Chcete-li odstranit fázi, najeďte na název fáze nebo na ikonu `⋮`, klikněte na `Upravit ze nastavení` v nastavení pole výběru a poté klikněte na `Odstranit` vedle relevantní fáze.
+
+<img src="/images/user-guide/kanban-views/edit-stage.png" style={{width:'100%'}}/>
+
+### Přizpůsobení karet
+
+Svou Kanban tabuli můžete nakonfigurovat tak, aby zobrazovala některá pole a skrývala jiná. Chcete-li skrýt pole, klikněte na `Možnosti` v pravém horním rohu a pak na `Pole`, abyste zobrazili seznam možností. Najetím na pole, které chcete skrýt, zobrazíte tlačítko `-`. Klikněte na něj pro skrytí pole.
+
+Pole můžete také přeuspořádat tak, že podržíte název pole a přetáhnete ho tam, kam chcete.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}}/>
+
+### Kompaktní zobrazení
+
+Můžete také skrýt všechna pole a získat přehled o všech příležitostech na první pohled. Pro dosažení tohoto cíle, klikněte na `Možnosti` v pravém horním rohu a zapněte přepínač pro `Kompaktní zobrazení` po výběru rozvržení v zobrazení kanban.
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}}/>
+
+## Pokročilá správa kanálu
+
+### Automation with workflows
+
+Use [Workflows](/l/cs/user-guide/workflows/getting-started-workflows) to automate your pipeline:
+
+- **Automatický postup fází**: Přesun obchodů na základě aktivit
+- **Upozornění**: Upozornění členů týmu na změny fáze
+- **Vytváření úkolů**: Generování úkolů pro následné kroky pro každou fázi
+
+### Multiple pipelines
+
+Můžete vytvořit různé kanály pro různé obchodní linie, segmenty trhu nebo specializované prodejní týmy tím, že vytvoříte nové pohledy. Každý pohled může ukázat různé příležitosti se specifickými filtry a fázemi přizpůsobenými vašim potřebám. Podívejte se, jak vytvořit tyto pohledy v naší příručce [Správa pohledů](/l/cs/user-guide/crm-essentials/view-management).
+

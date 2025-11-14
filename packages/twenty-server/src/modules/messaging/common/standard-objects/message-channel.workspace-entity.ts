@@ -258,16 +258,6 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   excludeGroupEmails: boolean;
 
   @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncAllFolders,
-    type: FieldMetadataType.BOOLEAN,
-    label: msg`Sync all folders`,
-    description: msg`Sync all folders including new ones`,
-    icon: 'IconFolders',
-    defaultValue: true,
-  })
-  syncAllFolders: boolean;
-
-  @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.pendingGroupEmailsAction,
     type: FieldMetadataType.SELECT,
     label: msg`Pending group emails action`,

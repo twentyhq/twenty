@@ -5,6 +5,8 @@ image: /images/user-guide/api/api.png
 sectionInfo: Découvrez comment connecter Twenty à vos autres outils.
 ---
 
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
 <Frame>
   <img src="/images/user-guide/api/api.png" alt="Header" />
 </Frame>
@@ -28,24 +30,7 @@ Une fois créée, votre clé API fournit l'accès à votre documentation API per
 <Warning>
 Étant donné que votre clé API donne accès à des informations sensibles, vous ne devriez pas la partager avec des services auxquels vous ne faites pas pleinement confiance. Si elle est divulguée, quelqu'un peut l'utiliser de manière malveillante. Si la sécurité de votre clé API est compromise, désactivez-la immédiatement et générez-en une nouvelle.
 </Warning>
-<div style={{padding:'70.59% 0 0 0', position:'relative', margin: '32px 0px 0px' }}>
-  <iframe 
-    src="https://player.vimeo.com/video/928786722?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479" 
-    frameBorder="0" 
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
-    style={{
-      position:'absolute',
-      top:0,
-      left:0,
-      width:'100%',
-      height:'100%',
-      borderRadius: '16px', 
-      border:'2px solid black'
-    }}
-    title="Export data"
-  ></iframe>
-</div>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<VimeoEmbed videoId="928786722" title="Creating API key" />
 
 ### Gérer les clés API
 
@@ -79,24 +64,7 @@ Les Webhooks sont idéaux pour l'intégration avec les systèmes externes, tandi
 
 Votre webhook commencera immédiatement à recevoir des notifications en temps réel sur les modifications de vos données CRM.
 
-<div style={{padding:'70.59% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
-  <iframe 
-    src="https://player.vimeo.com/video/928786708?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479" 
-    frameBorder="0" 
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
-    style={{
-      position:'absolute',
-      top:0,
-      left:0,
-      width:'100%',
-      height:'100%',
-      borderRadius: '16px', 
-      border:'2px solid black'
-    }}
-    title="Export data"
-  ></iframe>
-</div>
-<script src="https://player.vimeo.com/api/player.js"></script>
+<VimeoEmbed videoId="928786708" title="Video demonstration" />
 
 ### Gérer les Webhooks
 

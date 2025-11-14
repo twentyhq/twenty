@@ -1,0 +1,170 @@
+---
+title: Automatizaciones internas
+info: "Automatiza tareas repetitivas para reducir el trabajo manual y mantener tus datos precisos."
+image: /images/user-guide/workflows/internal-automations.png
+sectionInfo: Automatiza procesos e integra con herramientas externas
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/internal-automations.png" alt="Header" />
+</Frame>
+
+A continuación se presentan ejemplos de flujos de trabajo que podrías implementar para automatizar tareas repetitivas y mantener tus datos actualizados.
+
+## Automatizaciones de gestión de datos
+
+### Auto-Marcado de Correos Electrónicos Personales
+
+**Problema**: Tu equipo necesita identificar direcciones de correo electrónico personales vs. empresariales para un mejor direccionamiento y cumplimiento.
+
+**Solución**: Crea un flujo de trabajo que actualice automáticamente un campo "es correo personal" cada vez que se agregue o actualice una dirección de correo electrónico.
+
+**Desencadenante**: Se actualiza el Registro (objeto Personas, campo Correo Electrónico)
+
+**Acciones**:
+
+- Acción de código para verificar si el dominio del correo coincide con proveedores comunes personales (gmail.com, yahoo.com, etc.)
+- Actualizar Registro para establecer el indicador "es correo personal"
+
+### Asignación de Liderazgo - Round Robin
+
+**Problema**: Los nuevos leads deben distribuirse equitativamente entre tu equipo de ventas para garantizar cargas de trabajo equilibradas.
+
+**Solución**: Asigna automáticamente nuevos prospectos a representantes de ventas usando un sistema round-robin.
+
+**Desencadenante**: Se crea el Registro (objeto Personas)
+
+**Acciones**:
+
+- Buscar Registros para encontrar al último representante asignado
+- Acción de código para determinar el siguiente representante en la rotación
+- Actualizar Registro para asignar el lead al representante seleccionado
+- Enviar Correo Electrónico para notificar al representante asignado
+
+### Asignación de leads - Basada en Territorio
+
+**Problema**: Los leads deben asignarse en función de territorios geográficos o características de la empresa.
+
+**Solución**: Deriva leads al representante de ventas correspondiente en función de la ubicación, tamaño de la empresa o industria.
+
+**Desencadenante**: Se crea el Registro (objeto Personas o Empresas)
+
+**Acciones**:
+
+- Acción de código para determinar el territorio según las reglas de ubicación/industria
+- Buscar Registros para encontrar al dueño del territorio
+- Actualizar Registro para asignar el lead
+- Crear Registro para una tarea de seguimiento
+
+## Automatizaciones de Procesos de Ventas
+
+### Gestión de Etapas de Oportunidad - Cerrado Ganado
+
+**Problema**: Cuando los acuerdos se cierran, se necesitan múltiples actualizaciones manuales en diferentes registros y miembros del equipo.
+
+**Solución**: Maneja automáticamente todas las actividades posteriores a la victoria cuando una oportunidad se mueve a "Cerrado Ganado".
+
+**Disparador**: Se actualiza un Registro (objeto Oportunidades, campo Etapa = "Cerrado Ganado")
+
+**Acciones**:
+
+- Actualizar Registro para cambiar el tipo de Empresa de "Prospecto" a "Cliente"
+- Crear Registro para tareas de incorporación asignadas al gerente de cuenta
+- Enviar notificación por Correo Electrónico al equipo de éxito del cliente
+- Solicitud HTTP para actualizar el sistema de facturación externo
+
+### Gestión de Etapas de Oportunidad - Renovación Cerrado Perdido
+
+**Problema**: Cuando se pierden oportunidades de renovación, se debe actualizar el estado del cliente para una correcta gestión de cuentas.
+
+**Solución**: Actualiza automáticamente el estado del cliente cuando se pierden acuerdos de renovación.
+
+**Desencadenante**: Se actualiza el Registro (objeto Oportunidades, Etapa = "Cerrado Perdido" Y Tipo = "Renovación")
+
+**Acciones**:
+
+- Actualizar Registro para cambiar el tipo de Empresa de "Cliente" a "Cliente Perdido"
+- Crear Registro para tarea de análisis de baja
+- Enviar alerta por Correo Electrónico al gerente de éxito del cliente
+- Actualizar Registro para agregar fecha y motivo de baja
+
+### Alertas de Oportunidades Estancadas
+
+**Problema**: Las oportunidades permanecen sin actualizaciones, haciendo que los acuerdos se enfríen y las previsiones sean poco fiables.
+
+**Solución**: Envía alertas automáticas cuando las oportunidades no se han actualizado recientemente.
+
+**Desencadenante**: Según un horario (diario)
+
+**Acciones**:
+
+- Buscar Registros para oportunidades no actualizadas en X días
+- Acción de código para dar formato al mensaje de alerta con detalles de la oportunidad
+- Enviar Correo Electrónico al propietario de la oportunidad y al gerente
+- Crear Registro para tarea de seguimiento si no hay respuesta
+
+## Automatizaciones de Productividad
+
+### Recapitulación Semanal de Tareas
+
+**Problema**: Los miembros del equipo pierden de vista sus próximas tareas y plazos.
+
+**Solución**: Envía recordatorios automatizados por correo electrónico semanalmente con resúmenes de tareas.
+
+**Desencadenante**: Según un horario (todos los lunes a las 8 AM)
+
+**Acciones**:
+
+- Buscar Registros de tareas pendientes esta semana por asignado
+- Acción de código para dar formato a la lista de tareas por persona
+- Enviar Correo Electrónico a cada miembro del equipo con su resumen de tareas
+- Enviar Correo Electrónico a los gerentes con una visión general del equipo
+
+### Automatización de Seguimiento de Reuniones
+
+**Problema**: Los elementos importantes de las reuniones se olvidan o se retrasan.
+
+**Solución**: Crea automáticamente tareas de seguimiento cuando se programen o completen reuniones.
+
+**Desencadenante**: Se crea el Registro (objeto Actividades, Tipo = "Reunión")
+
+**Acciones**:
+
+- Crear Registro para tarea de preparación previa a la reunión
+- Crear Registro para tarea de seguimiento posterior a la reunión
+- Enviar recordatorio por Correo Electrónico a los asistentes
+- Actualizar Registro para vincular tareas a la reunión
+
+### Sincronización de Campos Cruzados entre Objetos
+
+**Problema**: Necesitas tener fácilmente accesible la información de registros relacionados (e.g. correo electrónico del contacto principal en el registro de oportunidad).
+
+**Solución**: Sincroniza automáticamente los campos entre objetos relacionados hasta que los campos anidados estén disponibles.
+
+**Desencadenante**: Se actualiza el Registro (objeto Oportunidades, campo Punto de Contacto)
+
+**Acciones**:
+
+- Buscar Registros para encontrar los detalles de la persona vinculada
+- Actualizar Registro para copiar la dirección de correo electrónico a la oportunidad
+- Actualizar Registro para copiar el número de teléfono a la oportunidad
+- Actualizar Registro para copiar la información de la empresa
+
+## Validación y Limpieza de Datos
+
+### Estandarización de Números de Teléfono
+
+**Problema**: Los números de teléfono se ingresan en diferentes formatos, lo que dificulta su uso para llamadas o mensajes.
+
+**Solución**: Formatea automáticamente los números de teléfono a un formato estándar cuando se ingresen.
+
+**Desencadenante**: Se actualiza el Registro (objeto Personas, campo Teléfono)
+
+**Acciones**:
+
+- Acción de código para analizar y formatear el número de teléfono
+- Actualizar Registro con formato de teléfono estandarizado
+- Actualizar Registro para agregar el código de país si falta
+
+Para necesidades de automatización más complejas, considera nuestros [Servicios Profesionales](/l/es/user-guide/workflows/professional-services) o explora [Integración con Herramientas Externas](/l/es/user-guide/workflows/external-tool-integration).
+

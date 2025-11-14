@@ -1,0 +1,104 @@
+---
+title: Tuo/Vie tietoja
+info: "Opettele kuinka tuoda ja viedä tietoja."
+image: /images/user-guide/import-export-data/cloud.png
+sectionInfo: Tutustu Twentyyn, avoimen lähdekoodin CRM:ään.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Header" />
+</Frame>
+
+## Tuo tietoja
+
+- Voit tuoda tietoja mille tahansa objektille käyttämällä .csv, .xlsx tai .xls tiedostoa.
+- Jokaisen ladattavan tiedoston tulee sisältää **vain yksi objektityyppi** (esimerkiksi vain Henkilö-merkinnät).
+- Voit käyttää Tuontia **luodaksesi tai päivittääksesi merkintöjä**.
+
+### Lataa esimerkkitiedosto odotetun muotoilun mukaisesti
+
+1. Siirry näkymään, jossa on objekti, jonka aiot tuoda.
+2. Napsauta oikeassa yläkulmassa olevaa `⋮` kuvaketta ja valitse sitten `Tuo merkinnät`.
+3. Napsauta `Lataa esimerkkitiedosto`.
+
+### Valmistele csv:si
+
+Alla on muutamia asioita, jotka kannattaa tarkistaa ennen tiedoston lataamista.
+
+- Rajoita merkintöjen määrää **10,000 per tiedosto**.
+- **Poista kaksoiskappaleet** tiedostostasi.
+  - `Henkilöiden` yksilöllisyys määritetään oletuksena `id` ja `sähköposti` mukaan. Voit myös määrittää mukautettuja kenttiä `Henkilöistä` yksilöllisiksi, kun konfiguroit datamalliasi.
+  - `Yhtiöiden` yksilöllisyys määritetään oletuksena `id` ja `toimialue` mukaan. Voit myös määrittää mukautettuja kenttiä `Yhtiöistä` yksilöllisiksi, kun konfiguroit datamalliasi.
+  - Muille objekteille, mukaan lukien mukautetut objektit, voit määrittää tietyt kentät yksilöllisiksi. Varmista, ettet sisällytä kaksoiskappaleita tiedostojasi valmisteltaessa.
+- Suosittelemme `https://domain.com`-syntaksin käyttämistä ladatessasi toimialueitasi, sillä tätä käyttää liitos sähköpostilaatikkosi ja kalenterisi kanssa.
+- Voit **tuoda objektien väliset suhteet** antamalla jonkin yhdistetyn merkinnän yksilöllisistä kentistä.
+  - Esimerkki: Haluat liittää henkilön yhtiöön. Lisää tiedostoon sarake, joka sisältää kaikki `Henkilö`-merkinnät ja yhtiön `id` tai `toimialue`. Voit kartoittaa tämän kentän latauksen aikana.
+    <Warning>
+
+**Tärkeä huomautus:**
+
+- Objektien väliset suhteet Twentyn sisällä ovat "Yksi moneen". Tämä tarkoittaa, että jokainen objektin A merkintä voidaan liittää useisiin objektin B merkintöihin. Mutta jokainen objektin B merkintä voi kuulua vain yhteen objektin A merkintään.
+  _Esimerkiksi yksi yhtiö voi olla liitetty useisiin henkilöihin. Ja yksi henkilö voi kuulua vain yhteen yhtiöön._
+
+- Lisätäksesi suhteita Tuo-toiminnon kautta, sinun on annettava kiinnitetyn objektin `id` (tai muu yksilöllinen kenttä) tiedostossa, jossa on suhteen "Monta puolella" merkinnät.  
+  _Esimerkiksi, annat yhtiön `id` tai `toimialue`, kun lataat henkilötietueita. Et anna henkilöiden `id` (tai `sähköposti`), kun lataat tiedostoa yhtiöillä._
+  </Warning>
+
+### Lataa tiedostosi
+
+1. Siirry näkymään, jossa on objekti, jonka aiot tuoda.
+2. Napsauta oikeassa yläkulmassa olevaa `⋮` kuvaketta ja valitse sitten `Tuo merkinnät`.
+3. Napsauta `Valitse tiedosto`.
+4. Vahvista kenttien kartoitus.
+
+- Sinun ei tarvitse tuoda niitä kaikkia, voit valita "Älä kartoittele" vaihtoehdon.
+- Suhteita varten on suositeltavaa kartoittaa vain yksi yksilöllinen kenttä.
+- Sinun täytyy ehkä myös kartoittaa valintatyyppi- ja monivalintatyyppisten kenttien arvot.
+
+5. Napsauta `Seuraavat Vaiheet` ja `Tarkista virhearvot`. Ongelmakohtaiset solut on korostettu. **Voit joko poistaa rivin tai päivittää solun suoraan sieltä**.
+6. Kun olet valmis, napsauta `Vahvista`
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}}/>
+
+### Tuo-ohjeet
+
+<details><summary>Kun näen kaksoiskappaleongelmia tiedostoani ladatessa, mitä minun pitäisi tehdä?</summary>
+
+Please refer to the section **Prepare your csv** above in this article, it contains guideline about what will be considered a duplicate.
+
+</details>
+
+<details><summary>Voinko tuoda suhteita objektien välillä?</summary>
+
+Yes, please refer to the section **Prepare your csv** above in this article, it contains a section about the import of relations.
+
+</details>
+
+<details><summary>Voinko päivittää olemassa olevia merkintöjä Tuonti-toiminnolla?</summary>
+
+Kyllä voit päivittää olemassa olevia merkintöjä Tuonti-toiminnolla. Muista antaa id (tai mikä tahansa muu yksilöllinen kenttä) kun lataat merkintöjä uudelleen.
+
+</details>
+
+<details><summary>Voinko siirtää `id` toisista työkaluistani?</summary>
+
+Kyllä. Sinun on luotava kenttä, jonka määrität yksilölliseksi datamallissasi ja joka sisältää toisten työkalujesi `id`:t. Huomaa, että nimi `id` on suojattu, sillä sitä käytetään Twentyn id:lle.  
+Jos haluat luoda suhteita objektien välillä käyttämällä tätä kenttää, katso artikkelin ylhäältä kohdan **Valmistele csv::si**. Se sisältää osion suhteiden tuonnista.
+
+</details>
+
+## Vie tiedot
+
+Voit ladata tietoja useimmista objekteistasi ja jopa 20,000 merkintää per vienti.
+Viedäksesi tietoja objektista:
+
+1. Vieraile objektin indeksissä.
+2. Valitse näkymä tiedon viennille. Määritä ladattavat sarakkeet piilottamalla tai lisäämällä sarakkeita ja etsi tarvitsemasi merkinnät suodattamalla näkymääsi.
+3. Pääset sivupalkkiin `⋮` kuvakkeen kautta oikeassa yläkulmassa.
+4. Klikkaa `Vie näkymä`.
+5. Valitse CSV-datan tallennuspaikka. Huomaa, että vienti voi kestää aikaa suuren merkintämäärän kanssa.
+
+<VimeoEmbed videoId="926226303" title="Video demonstration" />
+

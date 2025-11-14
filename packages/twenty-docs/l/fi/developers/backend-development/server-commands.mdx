@@ -1,0 +1,108 @@
+---
+title: Taustapalvelun komennot
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+<Frame>
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+</Frame>
+
+## Hyödylliset komennot
+
+Nämä komennot tulisi suorittaa kansiossa packages/twenty-server.
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### Ensimmäinen käyttöönotto
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### Palvelimen käynnistäminen
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### Testi
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+Huomautus: voit suorittaa `npx nx suorita twenty-server:test:integration:with-db-reset`, jos haluat nollata tietokannan ennen integraatiotestien suorittamista.
+
+### Tietokannan nollaaminen
+
+Jos haluat nollata ja siementää tietokannan, voit suorittaa seuraavan komennon:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### Migraatiot
+
+#### Core/Metatietomallien kohteille (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### Työtilan kohteille
+
+Migraatiotiedostoja ei ole; migraatiot luodaan automaattisesti jokaiselle työtilalle, tallennetaan tietokantaan ja sovelletaan komennolla:
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+
+Tämä poistaa tietokannan ja suorittaa migraatiot ja siemenet uudelleen.
+
+Varmista, että varmuuskopioit kaiken säilytettävän datan ennen tämän komennon suorittamista.
+
+</Warning>
+
+## Tekniikkapino
+
+Twenty käyttää pääasiassa NestJS:ää taustapalveluna.
+
+Prisma oli ensimmäinen käyttämämme ORM. Käyttäjien mukautettujen kenttien ja kohteiden luomisen mahdollistamiseksi tarvittiin yksityiskohtaisempaa hallintaa. Hanke käyttää nyt TypeORM:ää.
+
+Here's what the tech stack now looks like.
+
+**Core**
+
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Tietokanta**
+
+- [Postgres](https://www.postgresql.org/)
+
+**Kolmannen osapuolen integraatiot**
+
+- [Sentry](https://sentry.io/welcome/) vikojen seurantaan
+
+**Testaus**
+
+- [Jest](https://jestjs.io/)
+
+**Työkalut**
+
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Kehitys**
+
+- [AWS EKS](https://aws.amazon.com/eks/)
+
