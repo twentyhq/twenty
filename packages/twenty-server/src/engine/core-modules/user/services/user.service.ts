@@ -126,6 +126,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     }
 
     await this.userRepository.softDelete({ id: userId });
+    await this.userWorkspaceService.softDeleteUserWorkspacesByUserId(userId);
 
     return await this.userRepository.findOne({
       where: {
@@ -165,6 +166,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     if (user.userWorkspaces.length === 1) {
       await this.userRepository.softDelete(userId);
+      await this.userWorkspaceService.softDeleteUserWorkspacesByUserId(userId);
     }
 
     return userWorkspace;
@@ -297,9 +299,16 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     user.isEmailVerified = true;
 
-    return queryRunner
+    const savedUser = queryRunner
       ? await queryRunner.manager.save(UserEntity, user)
       : await this.userRepository.save(user);
+
+    await this.userWorkspaceService.syncUserWorkspacesFromUser(
+      savedUser,
+      queryRunner,
+    );
+
+    return savedUser;
   }
 
   async updateEmailFromVerificationToken(userId: string, email: string) {
@@ -308,6 +317,8 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     user.email = email;
 
     const updatedUser = await this.userRepository.save(user);
+
+    await this.userWorkspaceService.syncUserWorkspacesFromUser(updatedUser);
 
     await this.enqueueWorkspaceMemberEmailUpdate({
       userId: user.id,

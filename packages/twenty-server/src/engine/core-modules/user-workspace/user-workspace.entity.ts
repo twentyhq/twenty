@@ -4,6 +4,8 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { PermissionsOnAllObjectRecords } from 'twenty-shared/constants';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -72,8 +74,52 @@ export class UserWorkspaceEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
+  @Field()
+  @Column({ default: '' })
+  firstName: string;
+
+  @Field()
+  @Column({ default: '' })
+  lastName: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  formatEmail?() {
+    if (!this.email) {
+      this.email = '';
+
+      return;
+    }
+
+    this.email = this.email.toLowerCase();
+  }
+
+  @Field()
+  @Column({ default: '' })
+  email: string;
+
   @Column({ nullable: true })
   defaultAvatarUrl: string;
+
+  @Field()
+  @Column({ default: false })
+  isEmailVerified: boolean;
+
+  @Field({ nullable: true })
+  @Column({ default: false })
+  disabled: boolean;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  passwordHash: string;
+
+  @Field()
+  @Column({ default: false })
+  canImpersonate: boolean;
+
+  @Field()
+  @Column({ default: false })
+  canAccessFullAdminPanel: boolean;
 
   @Field(() => String, { nullable: false })
   @Column({ nullable: false, default: SOURCE_LOCALE, type: 'varchar' })

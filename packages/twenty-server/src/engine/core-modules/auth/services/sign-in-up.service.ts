@@ -348,6 +348,8 @@ export class SignInUpService {
       ? await queryRunner.manager.save(UserEntity, userCreated)
       : await this.userRepository.save(userCreated);
 
+    await this.userWorkspaceService.syncUserWorkspacesFromUser(savedUser);
+
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
     this.workspaceEventEmitter.emitCustomBatchEvent(

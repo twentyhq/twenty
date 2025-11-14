@@ -608,9 +608,12 @@ export class AuthService {
 
     const newPasswordHash = await hashPassword(newPassword);
 
+    user.passwordHash = newPasswordHash;
+
     await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
     });
+    await this.userWorkspaceService.syncUserWorkspacesFromUser(user);
 
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,

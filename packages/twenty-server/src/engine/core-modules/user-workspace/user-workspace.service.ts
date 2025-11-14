@@ -84,9 +84,17 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       defaultAvatarUrl,
     });
 
-    return queryRunner
-      ? queryRunner.manager.save(UserWorkspaceEntity, userWorkspace)
-      : this.userWorkspaceRepository.save(userWorkspace);
+    const savedUserWorkspace = queryRunner
+      ? await queryRunner.manager.save(UserWorkspaceEntity, userWorkspace)
+      : await this.userWorkspaceRepository.save(userWorkspace);
+
+    const user = await this.findUserById(userId, queryRunner);
+
+    if (isDefined(user)) {
+      await this.syncUserWorkspacesFromUser(user, queryRunner);
+    }
+
+    return savedUserWorkspace;
   }
 
   async createWorkspaceMember(workspaceId: string, user: UserEntity) {
@@ -492,5 +500,69 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         ),
       ),
     };
+  }
+
+  private buildUserWorkspaceFieldsFromUser(user: UserEntity) {
+    return {
+      firstName: user.firstName ?? '',
+      lastName: user.lastName ?? '',
+      email: (user.email ?? '').toLowerCase(),
+      isEmailVerified: user.isEmailVerified ?? false,
+      disabled: user.disabled ?? false,
+      passwordHash: user.passwordHash ?? null,
+      canImpersonate: user.canImpersonate ?? false,
+      canAccessFullAdminPanel: user.canAccessFullAdminPanel ?? false,
+      locale: user.locale ?? SOURCE_LOCALE,
+    };
+  }
+
+  async syncUserWorkspacesFromUser(
+    user: UserEntity,
+    queryRunner?: QueryRunner,
+  ): Promise<void> {
+    const updatePayload = this.buildUserWorkspaceFieldsFromUser(user);
+
+    if (queryRunner) {
+      await queryRunner.manager.update(
+        UserWorkspaceEntity,
+        { userId: user.id },
+        updatePayload,
+      );
+
+      return;
+    }
+
+    await this.userWorkspaceRepository.update(
+      { userId: user.id },
+      updatePayload,
+    );
+  }
+
+  async softDeleteUserWorkspacesByUserId(
+    userId: string,
+    queryRunner?: QueryRunner,
+  ): Promise<void> {
+    if (queryRunner) {
+      await queryRunner.manager.softDelete(UserWorkspaceEntity, { userId });
+
+      return;
+    }
+
+    await this.userWorkspaceRepository.softDelete({ userId });
+  }
+
+  private async findUserById(
+    userId: string,
+    queryRunner?: QueryRunner,
+  ): Promise<UserEntity | null> {
+    if (queryRunner) {
+      return await queryRunner.manager.findOne(UserEntity, {
+        where: { id: userId },
+      });
+    }
+
+    return await this.userRepository.findOne({
+      where: { id: userId },
+    });
   }
 }
