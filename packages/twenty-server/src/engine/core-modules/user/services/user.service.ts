@@ -125,7 +125,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       );
     }
 
-    await this.userRepository.softDelete({ id: userId });;
+    await this.userRepository.softDelete({ id: userId });
 
     return await this.userRepository.findOne({
       where: {
