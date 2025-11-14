@@ -4224,12 +4224,12 @@ msgstr "{fieldsList} alanlarını güncelleme izniniz yoktur. Lütfen çalışma
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
-msgstr ""
+msgstr "Çalışma alanı seviyesinde görüşler oluşturma izniniz yoktur."
 
 #. js-lingui-id: QmL9y9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to modify this view."
-msgstr ""
+msgstr "Bu görüşü değiştirme izniniz yok."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts

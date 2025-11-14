@@ -88,7 +88,7 @@ workspace
   └───workspace.factory.ts      
 ```
 
-工作空間目錄的根目錄包含 `workspace.factory.ts`，一個包含 `createGraphQLSchema` 函數的文件。 該函數使用元數據生成工作區特定的結構，以便為個別工作空間定制結構。 通過將結構和解決器構建分開，我們使用 `makeExecutableSchema` 函數，將這些離散元素結合在一起。
+工作空間目錄的根目錄包含 `workspace.factory.ts`，一個包含 `createGraphQLSchema` 函數的文件。 該函數使用元數據生成工作區特定的結構，以便為個別工作空間定制結構。 通過將結構和解決器構建分開，我們使用 `makeExecutableSchema` 函數，將這些離散元素結合在一起。 該函數使用元數據生成工作區特定的結構，以便為個別工作空間定制結構。 通過將結構和解決器構建分開，我們使用 `makeExecutableSchema` 函數，將這些離散元素結合在一起。
 
 此策略不僅關乎組織，還有助於優化，例如緩存生成的類型定義以提高性能和擴展性。
 

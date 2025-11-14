@@ -4224,7 +4224,7 @@ msgstr "これらのフィールドを更新する権限がありません: {fie
 #. js-lingui-id: M1he8p
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
 msgid "You don't have permission to create workspace-level views."
-msgstr ""
+msgstr "ワークスペースレベルのビュ​​ーを作成する権限がありません。"
 
 #. js-lingui-id: QmL9y9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts

@@ -34,7 +34,7 @@ docker compose up -d
 
 #### 發現CR換行符 [Windows]
 
-這是由於Windows的換行符和git配置導致的。 嘗試運行：
+這是由於Windows的換行符和git配置導致的。 嘗試運行： 嘗試運行：
 
 ```
 git config --global core.autocrlf false
@@ -54,11 +54,11 @@ git config --global core.autocrlf false
 
 #### 缺少 twenty-x 包
 
-確保在根目錄運行 yarn，然後運行 `npx nx server:dev twenty-server`。 如果還是無法運行，請嘗試手動構建缺失的包。
+確保在根目錄運行 yarn，然後運行 `npx nx server:dev twenty-server`。 如果還是無法運行，請嘗試手動構建缺失的包。 如果還是無法運行，請嘗試手動構建缺失的包。
 
 #### 保存時的 Lint 不工作
 
-這應該在安裝了eslint擴展的情況下開箱即用。 如果這不起作用，請嘗試將此添加到您的vscode設置（在開發容器範圍上）：
+這應該在安裝了eslint擴展的情況下開箱即用。 這應該在安裝了eslint擴展的情況下開箱即用。 如果這不起作用，請嘗試將此添加到您的vscode設置（在開發容器範圍上）：
 
 ```
 "editor.codeActionsOnSave": {
@@ -73,7 +73,7 @@ git config --global core.autocrlf false
 在 `packages/twenty-front/.env` 中取消註釋 `VITE_DISABLE_TYPESCRIPT_CHECKER=true` 和 `VITE_DISABLE_ESLINT_CHECKER=true` 以禁用後台檢查，從而減少所需的RAM量。
 
 **如果不工作：**  
-僅運行您需要的服務，而不是 `npx nx start`。 例如，如果您在服務器上工作，僅運行 `npx nx worker twenty-server`
+僅運行您需要的服務，而不是 `npx nx start`。 例如，如果您在服務器上工作，僅運行 `npx nx worker twenty-server` 例如，如果您在服務器上工作，僅運行 `npx nx worker twenty-server`
 
 **如果不工作：**  
 如果您嘗試僅在 WSL 上運行 `npx nx run twenty-server:start`，但失敗並顯示以下內存錯誤：
@@ -85,6 +85,7 @@ git config --global core.autocrlf false
 `export NODE_OPTIONS="--max-old-space-size=8192"`
 
 \--max-old-space-size=8192 標誌為 Node.js 堆設置了一個上限8GB，使用需求隨應用程序需求而定。
+參考資料：https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 參考資料：https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
 
 **如果不工作：**  
@@ -107,9 +108,9 @@ npx nx worker twenty-server
 
 #### 無法連接我的 Microsoft 365 帳戶
 
-大多數情況下，這是因為您的管理員未為您的帳戶啟用 Microsoft 365 許可證。 檢查 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)。
+大多數情況下，這是因為您的管理員未為您的帳戶啟用 Microsoft 365 許可證。 檢查 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)。 檢查 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)。
 
-如果出現錯誤碼 `AADSTS50020`，這可能意味著您正在使用個人Microsoft帳戶。 這尚不支持。 查看更多信息 [這裡](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+如果出現錯誤碼 `AADSTS50020`，這可能意味著您正在使用個人Microsoft帳戶。 這尚不支持。 如果出現錯誤碼 `AADSTS50020`，這可能意味著您正在使用個人Microsoft帳戶。 這尚不支持。 查看更多信息 [這裡](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
 #### 運行 `yarn` 時控制台中出現警告
 

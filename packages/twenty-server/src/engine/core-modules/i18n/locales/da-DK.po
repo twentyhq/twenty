@@ -4209,7 +4209,7 @@ msgstr "Du har ikke adgang til denne funktion. Kontakt venligst din workspace ad
 #. js-lingui-id: P69VwK
 #: src/engine/core-modules/user/user.resolver.ts
 msgid "You do not have permission to delete this user from the workspace. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "Du har ikke tilladelse til at slette denne bruger fra arbejdsområdet. Kontakt venligst din workspace administrator for adgang."
 
 #. js-lingui-id: +2vVRB
 #: src/engine/guards/impersonate-permission.guard.ts

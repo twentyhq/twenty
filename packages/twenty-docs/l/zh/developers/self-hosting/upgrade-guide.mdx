@@ -17,7 +17,7 @@ To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_
 
 1. 在 Twenty 運行的主機中，關閉 Twenty：`docker compose down`
 
-2. 更改 `.env` 文件中的 `TAG` 值來升級版本。 （我們建議使用 `major.minor` 版本，例如 `v0.53` ）
+2. 更改 `.env` 文件中的 `TAG` 值來升級版本。 （我們建議使用 `major.minor` 版本，例如 `v0.53` ） （我們建議使用 `major.minor` 版本，例如 `v0.53` ）
 
 3. 使用命令 `docker compose up -d` 讓 Twenty 上線
 
@@ -71,6 +71,7 @@ yarn command:prod cache:flush
 
 我們已經將 `metadata` 架構合併到了 `core`，以簡化從 `TypeORM` 檢索數據。
 我們已將 `migrate` 命令步驟合併到 `upgrade` 命令中。 我們不建議在任何 Server/Worker 容器中手動運行 `migrate`。
+我們已將 `migrate` 命令步驟合併到 `upgrade` 命令中。 我們不建議在任何 Server/Worker 容器中手動運行 `migrate`。
 
 ### 自 v0.53
 
@@ -101,6 +102,7 @@ yarn command:prod upgrade
 
 很不幸，`0.52.0` 和 `0.52.6` 已從 dockerHub 完全移除。
 您將需要手動將工作區版本更新到 `0.51.0` 在數據庫中，然後升級使用 Twenty 版本 `0.52.11` 並遵循其上方的升級指南。
+您將需要手動將工作區版本更新到 `0.51.0` 在數據庫中，然後升級使用 Twenty 版本 `0.52.11` 並遵循其上方的升級指南。
 
 ### v0.50到v0.51
 
@@ -123,6 +125,7 @@ yarn command:prod upgrade
 #### docker-compose.yml 變更
 
 此版本包括 `docker-compose.yml` 變更以允許 `worker` 服務訪問 `server-local-data` 卷。
+請更新您的本地 `docker-compose.yml` 以使用 [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)。
 請更新您的本地 `docker-compose.yml` 以使用 [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)。
 
 ### v0.43.0到v0.44.0
@@ -249,7 +252,9 @@ yarn command:prod upgrade-0.34
 - 新增：`FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
 
 我們已經更新了處理前端 URL 的方式。
+我們已經更新了處理前端 URL 的方式。
 您現在可以使用 `FRONT_DOMAIN`, `FRONT_PROTOCOL` 和 `FRONT_PORT` 變量來設置前端 URL。
+如果沒有設定 FRONT_DOMAIN，前端 URL 將回退到 `SERVER_URL`。
 如果沒有設定 FRONT_DOMAIN，前端 URL 將回退到 `SERVER_URL`。
 
 ### v0.32.0 到 v0.33.0
@@ -265,7 +270,11 @@ yarn command:prod upgrade-0.33
 `yarn command:prod cache:flush` 命令將刷新 Redis 快取。
 `yarn database:migrate:prod` 命令將應用到資料庫結構的遷移（核心和元數據架構）
 `yarn command:prod upgrade-0.33` 負責所有工作區的數據遷移。
+`yarn database:migrate:prod` 命令會將遷移應用到資料庫。
+`yarn command:prod workspace:sync-metadata -f` 命令會將標準對象的定義同步到中繼資料表，並將所需的遷移應用到現有工作區。
+`yarn command:prod upgrade-0.22` 命令會應用特定的數據轉換以適應新的對象 defaultRequestInstrumentationOptions。
 
+從此版本開始，twenty-postgres 映像檔被棄用，改用 twenty-postgres-spilo。
 從此版本開始，twenty-postgres 映像檔被棄用，改用 twenty-postgres-spilo。
 如果你想繼續使用 twenty-postgres 映像檔，只需在 docker-compose.yml 中將 `twentycrm/twenty-postgres:${TAG}` 替換為 `twentycrm/twenty-postgres`。
 
@@ -324,6 +333,7 @@ yarn command:prod upgrade-0.31
 **Breaking change**:
 To enhance performances, Twenty now requires redis cache to be configured. 我們已更新 [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) 以反映這一點。
 確保更新您的配置並相應地更新環境變數：
+確保更新您的配置並相應地更新環境變數：
 
 ```
 REDIS_HOST={your-redis-host}
@@ -381,7 +391,8 @@ yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
-`yarn database:migrate:prod` 命令會將遷移應用到資料庫。
+`yarn database:migrate:prod` 命令將應用到資料庫的遷移。
+`yarn command:prod upgrade-0.23` 負責數據遷移，包括將活動轉到任務/筆記。
 `yarn command:prod workspace:sync-metadata -f` 命令會將標準對象的定義同步到中繼資料表，並將所需的遷移應用到現有工作區。
 `yarn command:prod upgrade-0.22` 命令會應用特定的數據轉換以適應新的對象 defaultRequestInstrumentationOptions。
 
