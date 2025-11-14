@@ -99,6 +99,42 @@ jobs:
       - name: Fix translated documentation links
         run: bash packages/twenty-docs/scripts/fix-translated-links.sh
 
+      - name: Detect navigation template change
+        id: nav_change
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF="origin/${{ github.base_ref }}"
+          else
+            BASE_REF="origin/main"
+          fi
+
+          git fetch origin "${BASE_REF#origin/}" || true
+
+          if git diff --quiet "${BASE_REF}" -- packages/twenty-docs/navigation/navigation.template.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Pull navigation translations from Crowdin
+        if: github.event_name != 'pull_request' && steps.nav_change.outputs.changed == 'true'
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: false
+          upload_translations: false
+          download_translations: true
+          download_language: fr
+          source: 'packages/twenty-docs/navigation/navigation.template.json'
+          translation: 'packages/twenty-docs/l/%two_letters_code%/navigation.json'
+          export_only_approved: false
+          localization_branch_name: i18n
+          base_url: 'https://twenty.api.crowdin.com'
+          skip_untranslated_files: true
+          push_translations: false
+          create_pull_request: false
+          skip_ref_checkout: true
+          dryrun_action: false
+
       - name: Regenerate navigation template
         if: github.event_name == 'pull_request'
         run: yarn docs:generate-navigation-template
