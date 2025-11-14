@@ -171,7 +171,7 @@ export class DevSeederMetadataService {
       objectMetadataId: objectMetadata.id,
     }));
 
-    await this.fieldMetadataServiceV2.createMany({
+    await this.fieldMetadataServiceV2.createManyFields({
       createFieldInputs,
       workspaceId,
     });
@@ -241,7 +241,7 @@ export class DevSeederMetadataService {
       objectMetadataMaps,
     });
 
-    await this.fieldMetadataServiceV2.createMany({
+    await this.fieldMetadataServiceV2.createManyFields({
       createFieldInputs,
       workspaceId,
     });
