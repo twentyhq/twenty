@@ -81,6 +81,9 @@ jobs:
       - name: Fix translated documentation links
         run: bash packages/twenty-docs/scripts/fix-translated-links.sh
 
+      - name: Regenerate docs.json
+        run: yarn docs:generate
+
       - name: Check for changes and commit
         id: check_changes
         run: |

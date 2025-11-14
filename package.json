@@ -217,6 +217,8 @@
   "version": "0.2.1",
   "nx": {},
   "scripts": {
+    "docs:generate": "tsx packages/twenty-docs/scripts/generate-docs-json.ts",
+    "docs:generate-navigation-template": "tsx packages/twenty-docs/scripts/generate-navigation-template.ts",
     "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'"
   },
   "workspaces": {

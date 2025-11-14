@@ -28,6 +28,9 @@ jobs:
           token: ${{ github.token }}
           ref: main
 
+      - name: Generate navigation template for Crowdin
+        run: yarn docs:generate-navigation-template
+
       - name: Upload docs to Crowdin
         uses: crowdin/github-action@v2
         with:
