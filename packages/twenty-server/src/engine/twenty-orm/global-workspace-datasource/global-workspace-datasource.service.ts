@@ -15,8 +15,6 @@ import {
 } from 'src/engine/twenty-orm/storage/external-field-drivers.token';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-const TWENTY_MINUTES_IN_MS = 120_000;
-
 @Injectable()
 export class GlobalWorkspaceDataSourceService
   implements OnModuleInit, OnApplicationShutdown
@@ -45,8 +43,8 @@ export class GlobalWorkspaceDataSourceService
             }
           : undefined,
         extra: {
-          query_timeout: 10000,
-          idleTimeoutMillis: TWENTY_MINUTES_IN_MS,
+          query_timeout: 10000, // 10 seconds,
+          idleTimeoutMillis: 120_000, // 2 minutes,
           max: 4,
           allowExitOnIdle: true,
         },

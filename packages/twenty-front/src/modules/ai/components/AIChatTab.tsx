@@ -16,6 +16,7 @@ import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatConte
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { SendMessageWithRecordsContextButton } from '@/ai/components/internal/SendMessageWithRecordsContextButton';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
+import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -62,15 +63,8 @@ const StyledButtonsContainer = styled.div`
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const {
-    isLoading,
-    input,
-    handleInputChange,
-    scrollWrapperId,
-    messages,
-    isStreaming,
-    error,
-  } = useAgentChatContextOrThrow();
+  const { isLoading, input, handleInputChange, messages, isStreaming, error } =
+    useAgentChatContextOrThrow();
 
   const contextStoreCurrentObjectMetadataItemId = useRecoilComponentValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -94,7 +88,9 @@ export const AIChatTab = () => {
       {!isDraggingFile && (
         <>
           {messages.length !== 0 && (
-            <StyledScrollWrapper componentInstanceId={scrollWrapperId}>
+            <StyledScrollWrapper
+              componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}
+            >
               {messages.map((message, index) => {
                 const isLastMessage = index === messages.length - 1;
                 const isLastMessageStreaming = isStreaming && isLastMessage;

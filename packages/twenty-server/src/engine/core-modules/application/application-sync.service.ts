@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { parse } from 'path';
 
-import { ALL_METADATA_NAME, AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -1012,15 +1011,7 @@ export class ApplicationSyncService {
         workspaceId,
         buildOptions: {
           isSystemBuild: true,
-          inferDeletionFromMissingEntities: {
-            ...Object.values(ALL_METADATA_NAME).reduce(
-              (acc, metadataName) => ({
-                ...acc,
-                [metadataName]: true,
-              }),
-              {} as Partial<Record<AllMetadataName, boolean>>,
-            ),
-          },
+          inferDeletionFromMissingEntities: true,
         },
       },
     );
