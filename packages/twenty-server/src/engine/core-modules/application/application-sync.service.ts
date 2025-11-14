@@ -256,7 +256,7 @@ export class ApplicationSyncService {
         isNullable: fieldToSync.isNullable ?? true,
       };
 
-      await this.fieldMetadataServiceV2.updateOneObjectMetadata({
+      await this.fieldMetadataServiceV2.updateOne({
         updateFieldInput,
         workspaceId,
       });
@@ -372,7 +372,7 @@ export class ApplicationSyncService {
         },
       };
 
-      await this.objectMetadataServiceV2.updateOneObjectMetadata({
+      await this.objectMetadataServiceV2.updateOne({
         updateObjectInput,
         workspaceId,
       });

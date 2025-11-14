@@ -484,7 +484,7 @@ export class RemoteTableService {
         );
 
         if (columnName === 'id') {
-          await this.objectMetadataService.updateOneObjectMetadata({
+          await this.objectMetadataService.updateOne({
             workspaceId,
             updateObjectInput: {
               id: objectMetadata.id,
