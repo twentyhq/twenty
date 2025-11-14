@@ -115,7 +115,7 @@ export const RecordInlineCellContainer = () => {
               <IconLabel stroke={theme.icon.stroke.sm} />
             </StyledIconContainer>
           )}
-          {label && (
+          {showLabel && (
             <StyledLabelContainer width={labelWidth}>
               <OverflowingTextWithTooltip text={label} displayedMaxRows={1} />
             </StyledLabelContainer>
@@ -134,7 +134,6 @@ export const RecordInlineCellContainer = () => {
           )}
         </StyledLabelAndIconContainer>
       )}
-
       <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
         <RecordInlineCellValue />
       </StyledValueContainer>

@@ -13,7 +13,6 @@ export type AgentChatContextValue = {
 
   handleSendMessage: (records?: ObjectRecord[]) => Promise<void>;
 
-  scrollWrapperId: string;
   handleRetry: () => void;
 };
 

@@ -1,3 +1,4 @@
+import { AgentChatMessagesEffect } from '@/ai/components/AgentChatMessagesEffect';
 import { AgentChatContext } from '@/ai/contexts/AgentChatContext';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
 import { useAgentChatData } from '@/ai/hooks/useAgentChatData';
@@ -21,6 +22,7 @@ const AgentChatProviderContent = ({
         isLoading: combinedIsLoading,
       }}
     >
+      <AgentChatMessagesEffect messages={chatState.messages} />
       {children}
     </AgentChatContext.Provider>
   );
