@@ -1,6 +1,6 @@
 import {
-  CreateObjectInput,
-  useCreateOneObjectMetadataItemMutation
+  type CreateObjectInput,
+  useCreateOneObjectMetadataItemMutation,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
