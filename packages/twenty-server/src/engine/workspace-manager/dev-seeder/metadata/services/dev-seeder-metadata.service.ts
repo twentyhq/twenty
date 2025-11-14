@@ -4,6 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
@@ -85,7 +86,7 @@ export class DevSeederMetadataService {
     dataSourceMetadata,
     workspaceId,
     featureFlags,
-    applications,
+    twentyStandardFlatApplication,
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
@@ -129,7 +130,7 @@ export class DevSeederMetadataService {
       workspaceId,
       dataSourceMetadata,
       featureFlags,
-      applications,
+      twentyStandardFlatApplication,
     });
   }
 
@@ -185,7 +186,7 @@ export class DevSeederMetadataService {
     workspaceId,
     dataSourceMetadata,
     featureFlags,
-    applications,
+    twentyStandardFlatApplication,
   }: {
     workspaceId: string;
     dataSourceMetadata: DataSourceEntity;
@@ -201,7 +202,7 @@ export class DevSeederMetadataService {
       objectMetadataItems: createdObjectMetadata,
       workspaceSchemaName: dataSourceMetadata.schema,
       featureFlags,
-      applications,
+      twentyStandardFlatApplication,
     });
   }
 
