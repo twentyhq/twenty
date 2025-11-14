@@ -1,6 +1,6 @@
 ---
-title: 資料夾架構
-info: 深入了解我們的伺服器資料夾架構
+title: 文件夹架构
+info: 详细了解我们的服务器文件夹架构
 image: /images/user-guide/fields/field.png
 ---
 
@@ -8,7 +8,7 @@ image: /images/user-guide/fields/field.png
   <img src="/images/user-guide/fields/field.png" alt="Header" />
 </Frame>
 
-後端目錄結構如下：
+后端目录结构如下：
 
 ```
 server
@@ -26,37 +26,37 @@ server
   └───utils
 ```
 
-## Ability
+## 能力
 
-定義每個實體的權限並包含處理程序。
+定义权限并为每个实体提供处理程序。
 
-## 裝飾器
+## 装饰器
 
-Defines custom decorators in NestJS for added functionality.
+为增强功能在NestJS中定义自定义装饰器。
 
-查看[自訂修飾器](https://docs.nestjs.com/custom-decorators)以獲取更多詳細資訊。
+有关更多详细信息，请参阅[自定义装饰器](https://docs.nestjs.com/custom-decorators)。
 
-## 篩選
+## 过滤器
 
-包含例外過濾器以處理可能在 GraphQL 端點上發生的例外。
+包含异常过滤器，以处理可能在GraphQL端点中出现的异常。
 
-## 守衛
+## 守卫
 
-查看[守衛](https://docs.nestjs.com/guards)以獲取更多詳細資訊。
+有关更多详细信息，请参见[守卫](https://docs.nestjs.com/guards)。
 
-## Health
+## 健康
 
-包含一個可公開訪問的 REST API（healthz），返回 JSON 以確認數據庫運行正常。
+包含一个公开可用的REST API（healthz），返回JSON以确认数据库是否按预期工作。
 
-## 元數據
+## 元数据
 
-定義自訂物件並提供一個 GraphQL API (graphql/metadata)。
+定义自定义对象并提供GraphQL API（graphql/metadata）。
 
-## 工作區
+## 工作区
 
-根據元數據生成並提供自訂 GraphQL 結構。
+生成并提供基于元数据的自定义GraphQL架构。
 
-### 工作空間目錄結構
+### 工作空间目录结构
 
 ```
 workspace
@@ -88,43 +88,43 @@ workspace
   └───workspace.factory.ts      
 ```
 
-工作空間目錄的根目錄包含 `workspace.factory.ts`，一個包含 `createGraphQLSchema` 函數的文件。 該函數使用元數據生成工作區特定的結構，以便為個別工作空間定制結構。 通過將結構和解決器構建分開，我們使用 `makeExecutableSchema` 函數，將這些離散元素結合在一起。 該函數使用元數據生成工作區特定的結構，以便為個別工作空間定制結構。 通過將結構和解決器構建分開，我們使用 `makeExecutableSchema` 函數，將這些離散元素結合在一起。
+工作空间目录的根目录包含`workspace.factory.ts`，其中包含`createGraphQLSchema`函数。 此函数通过使用元数据为各个工作空间定制架构来生成工作空间特定的架构。 通过分离架构和解析程序的构建，我们使用`makeExecutableSchema`函数，该函数结合这些离散元素。
 
-此策略不僅關乎組織，還有助於優化，例如緩存生成的類型定義以提高性能和擴展性。
+这个策略不仅仅是关于组织，它还有助于优化，比如缓存生成的类型定义以提高性能和可扩展性。
 
-### 工作空間結構生成器
+### 工作空间架构生成器
 
-生成 GraphQL 結構，包含：
+生成GraphQL架构，并包括：
 
-#### 工廠：
+#### 工厂：
 
-專門構造生成與 GraphQL 相關的構建。
+专门的构造函数用于生成与GraphQL相关的结构。
 
-- type.factory 使用 `TypeMapperService` 轉換字段元數據為 GraphQL 類型。
-- type-definition.factory 創建從 `objectMetadata` 派生的 GraphQL 輸入或輸出物件。
+- type.factory使用`TypeMapperService`将字段元数据翻译为GraphQL类型。
+- type-definition.factory创建从`objectMetadata`派生的GraphQL输入或输出对象。
 
-#### GraphQL 類型
+#### GraphQL类型
 
-包括枚舉、輸入、物件和標量，並作為結構構建的基本組件。
+包括枚举、输入、对象和标量，并作为架构构建的基石。
 
-#### 介面和物件定義
+#### 接口和对象定义
 
-包含 GraphQL 實體藍圖，包含預定義和自訂類型如`MONEY`或 `URL`。
+包含GraphQL实体的蓝图，包括诸如`MONEY`或`URL`之类的预定义和自定义类型。
 
-#### 服務
+#### 服务
 
-包含將 FieldMetadataType 與其適當的 GraphQL 標量或查詢修改器關聯的服務。
+包含负责将FieldMetadataType与其适当GraphQL标量或查询修饰符相关联的服务。
 
-#### 存儲
+#### 存储
 
-包含 `TypeDefinitionsStorage` 類，該類包含可重複使用的類型定義，防止重複 GraphQL 類型。
+包含`TypeDefinitionsStorage`类，其中包含可重用的类型定义，防止重复GraphQL类型。
 
-### 工作空間解析器生成器
+### 工作空间解析器生成器
 
-創建用於查詢和變更 GraphQL 結構的解析器函數。
+创建用于查询和修改GraphQL架构的解析器函数。
 
-此目錄中的每個工廠都負責生成一個獨特的解析器類型，例如 `FindManyResolverFactory`，設計用於跨各種表的適應性應用。
+此目录中的每个工厂负责生成不同类型的解析器，如`FindManyResolverFactory`，旨在跨各种表灵活应用。
 
-### 工作空間查詢運行器
+### 工作空间查询运行器
 
-在資料庫上運行生成的查詢並解析結果。
+在数据库上运行生成的查询并解析结果。
