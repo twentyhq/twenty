@@ -180,6 +180,7 @@ export class ObjectMetadataServiceV2 {
     }
 
     const [deletedObjectMetadataDto] = deletedObjectMetadataDtos;
+
     return deletedObjectMetadataDto;
   }
 

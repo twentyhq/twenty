@@ -5,12 +5,12 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe('Successful user and workspace creation', () => {
   let createdUserAccessToken: string | undefined;
@@ -174,6 +174,7 @@ describe('Successful user and workspace creation', () => {
       'SELECT * FROM core.workspace WHERE id = $1',
       [workspaceId],
     );
+
     expect(workspaceBeforeDeletion).toHaveLength(1);
 
     const tablesToVerify = [
@@ -212,7 +213,7 @@ describe('Successful user and workspace creation', () => {
         `SELECT COUNT(*) as count FROM core."${table}" WHERE "workspaceId" = $1`,
         [workspaceId],
       );
-      console.log({ table, totot: result[0].count });
+
       totalRecordsBefore += parseInt(result[0].count);
     }
 
@@ -229,6 +230,7 @@ describe('Successful user and workspace creation', () => {
       'SELECT * FROM core.workspace WHERE id = $1',
       [workspaceId],
     );
+
     expect(workspaceAfterDeletion).toHaveLength(0);
 
     for (const table of tablesToVerify) {
