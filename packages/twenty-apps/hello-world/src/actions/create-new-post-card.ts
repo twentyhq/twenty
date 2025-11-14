@@ -1,5 +1,5 @@
-import { createClient } from '@generated';
 import { type ServerlessFunctionConfig } from 'twenty-sdk/application';
+import { createClient } from '../../generated';
 
 export const main = async (params: { recipient?: string }) => {
   try {

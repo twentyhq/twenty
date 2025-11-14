@@ -17,14 +17,10 @@
     "strictBindCallApply": false,
     "target": "es2018",
     "module": "esnext",
-    "baseUrl": ".",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "resolveJsonModule": true,
-    "paths": {
-      "@generated": ["./generated/index"]
-    }
   },
 
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
