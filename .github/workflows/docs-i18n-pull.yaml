@@ -21,11 +21,6 @@ on:
         required: false
         type: boolean
         default: false
-  pull_request:
-    paths:
-      - 'packages/twenty-docs/**'
-      - 'crowdin.yml'
-      - '.github/workflows/docs-i18n-pull.yaml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -40,7 +35,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ github.token }}
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
+          ref: ${{ github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -53,7 +48,6 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Setup i18n branch
-        if: github.event_name != 'pull_request'
         run: |
           git fetch origin i18n || true
           git checkout -B i18n origin/i18n || git checkout -b i18n
@@ -64,13 +58,12 @@ jobs:
           git config --global user.email 'github-actions@twenty.com'
 
       - name: Stash any changes before pulling translations
-        if: github.event_name != 'pull_request'
         run: |
           git add .
           git stash || true
 
       - name: Pull translated docs from Crowdin
-        if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         uses: crowdin/github-action@v2
         with:
           upload_sources: false
@@ -92,7 +85,6 @@ jobs:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Fix file permissions
-        if: github.event_name != 'pull_request'
         run: sudo chown -R runner:docker . || true
 
       - name: Fix translated documentation links
@@ -101,22 +93,16 @@ jobs:
       - name: Detect navigation template change
         id: nav_change
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE_REF="origin/${{ github.base_ref }}"
-          else
-            BASE_REF="origin/main"
-          fi
+          git fetch origin main || true
 
-          git fetch origin "${BASE_REF#origin/}" || true
-
-          if git diff --quiet "${BASE_REF}" -- packages/twenty-docs/navigation/navigation.template.json; then
+          if git diff --quiet origin/main -- packages/twenty-docs/navigation/navigation.template.json; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Pull navigation translations from Crowdin
-        if: github.event_name != 'pull_request' && steps.nav_change.outputs.changed == 'true'
+        if: steps.nav_change.outputs.changed == 'true'
         uses: crowdin/github-action@v2
         with:
           upload_sources: false
@@ -137,26 +123,10 @@ jobs:
           CROWDIN_PROJECT_ID: '1'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
-      - name: Regenerate navigation template
-        if: github.event_name == 'pull_request'
-        run: yarn docs:generate-navigation-template
-
       - name: Regenerate docs.json
         run: yarn docs:generate
 
-      - name: Commit artifacts to pull request branch
-        if: github.event_name == 'pull_request'
-        run: |
-          git add packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.template.json
-          if git diff --staged --quiet --exit-code; then
-            echo "No navigation/doc changes to commit."
-            exit 0
-          fi
-          git commit -m "chore: sync docs artifacts"
-          git push origin HEAD:${{ github.head_ref }}
-
       - name: Check for changes and commit
-        if: github.event_name != 'pull_request'
         id: check_changes
         run: |
           git add .
@@ -168,11 +138,11 @@ jobs:
           fi
 
       - name: Push changes
-        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
+        if: steps.check_changes.outputs.changes_detected == 'true'
         run: git push origin HEAD:i18n
 
       - name: Create pull request
-        if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
+        if: steps.check_changes.outputs.changes_detected == 'true'
         run: |
           if git diff --name-only origin/main..HEAD | grep -q .; then
             gh pr create -B main -H i18n --title 'i18n - docs translations' --body 'Created by Github action' || true
