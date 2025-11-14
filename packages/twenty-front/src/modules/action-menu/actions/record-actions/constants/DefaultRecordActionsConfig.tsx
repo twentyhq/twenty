@@ -496,6 +496,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
+      ActionViewType.PAGE_EDIT_MODE,
     ],
     component: (
       <ActionLink
@@ -519,6 +520,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
+      ActionViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -550,6 +552,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
+      ActionViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -612,6 +615,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
+      ActionViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -670,6 +674,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
+      ActionViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
@@ -701,6 +706,7 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       ActionViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
       ActionViewType.INDEX_PAGE_BULK_SELECTION,
       ActionViewType.SHOW_PAGE,
+      ActionViewType.PAGE_EDIT_MODE,
     ],
     shouldBeRegistered: ({
       objectMetadataItem,
