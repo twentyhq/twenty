@@ -120,7 +120,7 @@ describe('Successful user and workspace creation', () => {
     );
   });
 
-  it.only('should delete workspace and related metadata entities when last user is deleted', async () => {
+  it('should delete workspace and related metadata entities when last user is deleted', async () => {
     const { data } = await signUp({
       input: {
         email: `test-delete-5678@example.com`,
