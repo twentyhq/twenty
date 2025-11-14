@@ -47,7 +47,7 @@ export const RECORD_PAGE_LAYOUT_ACTIONS_CONFIG =
           !isDefined(selectedRecord?.deletedAt),
         // TODO: Once backend is ready, uncomment the line below
         // isDefined(selectedRecord?.pageLayoutId),
-        availableOn: [ActionViewType.SHOW_PAGE],
+        availableOn: [ActionViewType.PAGE_EDIT_MODE],
         component: <SaveRecordPageLayoutSingleRecordAction />,
       },
       [PageLayoutSingleRecordActionKeys.CANCEL_LAYOUT_EDITION]: {
@@ -65,7 +65,7 @@ export const RECORD_PAGE_LAYOUT_ACTIONS_CONFIG =
           !isDefined(selectedRecord?.deletedAt),
         // TODO: Once backend is ready, uncomment the line below
         // isDefined(selectedRecord?.pageLayoutId),
-        availableOn: [ActionViewType.SHOW_PAGE],
+        availableOn: [ActionViewType.PAGE_EDIT_MODE],
         component: <CancelRecordPageLayoutSingleRecordAction />,
       },
     },
