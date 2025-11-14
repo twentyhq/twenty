@@ -151,7 +151,8 @@
             "tab": "Developers",
             "groups": [
               {
-                "group": "Developers"
+                "group": "Developers",
+                "pages": []
               },
               {
                 "group": "Getting Started",
@@ -266,10 +267,10 @@
         "language": "fr",
         "tabs": [
           {
-            "tab": "Guide utilisateur",
+            "tab": "Guide de l'utilisateur",
             "groups": [
               {
-                "group": "Prise en main",
+                "group": "Commencer",
                 "icon": "rocket",
                 "pages": [
                   "l/fr/user-guide/introduction",
@@ -335,7 +336,7 @@
                 ]
               },
               {
-                "group": "Intégrations et API",
+                "group": "Intégrations & API",
                 "icon": "plug",
                 "pages": [
                   "l/fr/user-guide/integrations-api/apis-overview",
@@ -366,7 +367,7 @@
                 ]
               },
               {
-                "group": "Tarification",
+                "group": "Tarifs",
                 "icon": "credit-card",
                 "pages": [
                   "l/fr/user-guide/pricing/billing-and-pricing-faq"
@@ -390,7 +391,7 @@
                 "pages": []
               },
               {
-                "group": "Prise en main",
+                "group": "Commencer",
                 "icon": "rocket",
                 "pages": [
                   "l/fr/developers/introduction",
@@ -415,12 +416,12 @@
                 ]
               },
               {
-                "group": "Contribution",
+                "group": "Contribuer",
                 "icon": "code-branch",
                 "pages": [
                   "l/fr/developers/bug-and-requests",
                   {
-                    "group": "Développement frontend",
+                    "group": "Développement du frontend",
                     "pages": [
                       "l/fr/developers/frontend-development/storybook",
                       {
@@ -428,7 +429,7 @@
                         "pages": [
                           "l/fr/twenty-ui/introduction",
                           {
-                            "group": "Affichage",
+                            "group": "Afficher",
                             "pages": [
                               "l/fr/twenty-ui/display/checkmark",
                               "l/fr/twenty-ui/display/chip",
@@ -439,13 +440,13 @@
                             ]
                           },
                           {
-                            "group": "Retours",
+                            "group": "Vos commentaires",
                             "pages": [
                               "l/fr/twenty-ui/progress-bar"
                             ]
                           },
                           {
-                            "group": "Saisie",
+                            "group": "Input",
                             "pages": [
                               "l/fr/twenty-ui/input/buttons",
                               "l/fr/twenty-ui/input/color-scheme",
@@ -481,7 +482,7 @@
                     ]
                   },
                   {
-                    "group": "Développement backend",
+                    "group": "Développement du backend",
                     "pages": [
                       "l/fr/developers/backend-development/server-commands",
                       "l/fr/developers/backend-development/feature-flags",
@@ -531,7 +532,7 @@
                 ]
               },
               {
-                "group": "أساسيات إدارة علاقات العملاء",
+                "group": "أساسيات CRM",
                 "icon": "users",
                 "pages": [
                   "l/ar/user-guide/crm-essentials/contact-and-account-management",
@@ -571,7 +572,7 @@
                 ]
               },
               {
-                "group": "التكامل وواجهة برمجة التطبيقات",
+                "group": "التكاملات & API",
                 "icon": "plug",
                 "pages": [
                   "l/ar/user-guide/integrations-api/apis-overview",
@@ -622,10 +623,11 @@
             "tab": "المطورون",
             "groups": [
               {
-                "group": "المطورون"
+                "group": "المطورين",
+                "pages": []
               },
               {
-                "group": "البدء",
+                "group": "بدء العمل",
                 "icon": "rocket",
                 "pages": [
                   "l/ar/developers/introduction",
@@ -641,7 +643,7 @@
                     ]
                   },
                   {
-                    "group": "واجهات برمجة التطبيقات و Webhooks",
+                    "group": "API و Webhooks",
                     "pages": [
                       "l/ar/developers/api-and-webhooks/api",
                       "l/ar/developers/api-and-webhooks/webhooks"
@@ -655,15 +657,15 @@
                 "pages": [
                   "l/ar/developers/bug-and-requests",
                   {
-                    "group": "تطوير الواجهة الأمامية",
+                    "group": "تطوير الواجهة",
                     "pages": [
                       "l/ar/developers/frontend-development/storybook",
                       {
-                        "group": "واجهة Twenty",
+                        "group": "Twenty UI",
                         "pages": [
                           "l/ar/twenty-ui/introduction",
                           {
-                            "group": "العرض",
+                            "group": "عرض",
                             "pages": [
                               "l/ar/twenty-ui/display/checkmark",
                               "l/ar/twenty-ui/display/chip",
@@ -674,13 +676,13 @@
                             ]
                           },
                           {
-                            "group": "التغذية الراجعة",
+                            "group": "الملاحظات",
                             "pages": [
                               "l/ar/twenty-ui/progress-bar"
                             ]
                           },
                           {
-                            "group": "الإدخال",
+                            "group": "Input",
                             "pages": [
                               "l/ar/twenty-ui/input/buttons",
                               "l/ar/twenty-ui/input/color-scheme",
@@ -695,7 +697,7 @@
                             ]
                           },
                           {
-                            "group": "التنقل",
+                            "group": "Navigation",
                             "pages": [
                               "l/ar/twenty-ui/navigation",
                               "l/ar/twenty-ui/navigation/breadcrumb",
@@ -716,7 +718,7 @@
                     ]
                   },
                   {
-                    "group": "تطوير الواجهة الخلفية",
+                    "group": "تطوير الخلفية",
                     "pages": [
                       "l/ar/developers/backend-development/server-commands",
                       "l/ar/developers/backend-development/feature-flags",
@@ -740,7 +742,7 @@
             "tab": "Uživatelská příručka",
             "groups": [
               {
-                "group": "Začínáme",
+                "group": "Začněme",
                 "icon": "rocket",
                 "pages": [
                   "l/cs/user-guide/introduction",
@@ -766,7 +768,7 @@
                 ]
               },
               {
-                "group": "Základy CRM",
+                "group": "CRM základy",
                 "icon": "users",
                 "pages": [
                   "l/cs/user-guide/crm-essentials/contact-and-account-management",
@@ -776,7 +778,7 @@
                 ]
               },
               {
-                "group": "Zobrazení",
+                "group": "Pohledy",
                 "icon": "table",
                 "pages": [
                   "l/cs/user-guide/views/kanban-views",
@@ -806,7 +808,7 @@
                 ]
               },
               {
-                "group": "Integrace a API",
+                "group": "Integrace & API",
                 "icon": "plug",
                 "pages": [
                   "l/cs/user-guide/integrations-api/apis-overview",
@@ -815,7 +817,7 @@
                 ]
               },
               {
-                "group": "Reporty",
+                "group": "Reportování",
                 "icon": "chart-bar",
                 "pages": [
                   "l/cs/user-guide/reporting/reporting-overview"
@@ -857,16 +859,17 @@
             "tab": "Vývojáři",
             "groups": [
               {
-                "group": "Vývojáři"
+                "group": "Vývojáři",
+                "pages": []
               },
               {
-                "group": "Začínáme",
+                "group": "Začněme",
                 "icon": "rocket",
                 "pages": [
                   "l/cs/developers/introduction",
                   "l/cs/developers/local-setup",
                   {
-                    "group": "Vlastní hosting",
+                    "group": "Samohostování",
                     "pages": [
                       "l/cs/developers/self-hosting/docker-compose",
                       "l/cs/developers/self-hosting/setup",
@@ -876,7 +879,7 @@
                     ]
                   },
                   {
-                    "group": "API a webhooky",
+                    "group": "API a Webhooky",
                     "pages": [
                       "l/cs/developers/api-and-webhooks/api",
                       "l/cs/developers/api-and-webhooks/webhooks"
@@ -885,7 +888,7 @@
                 ]
               },
               {
-                "group": "Přispívání",
+                "group": "Přispěje",
                 "icon": "code-branch",
                 "pages": [
                   "l/cs/developers/bug-and-requests",
@@ -909,13 +912,13 @@
                             ]
                           },
                           {
-                            "group": "Zpětná vazba",
+                            "group": "Komentář",
                             "pages": [
                               "l/cs/twenty-ui/progress-bar"
                             ]
                           },
                           {
-                            "group": "Vstup",
+                            "group": "Input",
                             "pages": [
                               "l/cs/twenty-ui/input/buttons",
                               "l/cs/twenty-ui/input/color-scheme",
@@ -930,7 +933,7 @@
                             ]
                           },
                           {
-                            "group": "Navigace",
+                            "group": "Navigation",
                             "pages": [
                               "l/cs/twenty-ui/navigation",
                               "l/cs/twenty-ui/navigation/breadcrumb",
@@ -1050,7 +1053,7 @@
                 ]
               },
               {
-                "group": "Berichte",
+                "group": "Berichterstattung",
                 "icon": "chart-bar",
                 "pages": [
                   "l/de/user-guide/reporting/reporting-overview"
@@ -1072,7 +1075,7 @@
                 ]
               },
               {
-                "group": "Preise",
+                "group": "Preisgestaltung",
                 "icon": "credit-card",
                 "pages": [
                   "l/de/user-guide/pricing/billing-and-pricing-faq"
@@ -1092,7 +1095,8 @@
             "tab": "Entwickler",
             "groups": [
               {
-                "group": "Entwickler"
+                "group": "Entwickler",
+                "pages": []
               },
               {
                 "group": "Erste Schritte",
@@ -1101,7 +1105,7 @@
                   "l/de/developers/introduction",
                   "l/de/developers/local-setup",
                   {
-                    "group": "Eigenes Hosting",
+                    "group": "Selbst-Hosting",
                     "pages": [
                       "l/de/developers/self-hosting/docker-compose",
                       "l/de/developers/self-hosting/setup",
@@ -1120,7 +1124,7 @@
                 ]
               },
               {
-                "group": "Beiträge",
+                "group": "Mitwirken",
                 "icon": "code-branch",
                 "pages": [
                   "l/de/developers/bug-and-requests",
@@ -1150,7 +1154,7 @@
                             ]
                           },
                           {
-                            "group": "Eingabe",
+                            "group": "Input",
                             "pages": [
                               "l/de/twenty-ui/input/buttons",
                               "l/de/twenty-ui/input/color-scheme",
@@ -1207,10 +1211,10 @@
         "language": "es",
         "tabs": [
           {
-            "tab": "Guía del usuario",
+            "tab": "Guía de usuario",
             "groups": [
               {
-                "group": "Primeros pasos",
+                "group": "Comenzando",
                 "icon": "rocket",
                 "pages": [
                   "l/es/user-guide/introduction",
@@ -1236,7 +1240,7 @@
                 ]
               },
               {
-                "group": "Fundamentos de CRM",
+                "group": "Esenciales de CRM",
                 "icon": "users",
                 "pages": [
                   "l/es/user-guide/crm-essentials/contact-and-account-management",
@@ -1254,7 +1258,7 @@
                 ]
               },
               {
-                "group": "Flujos de trabajo",
+                "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
                   "l/es/user-guide/workflows/getting-started-workflows",
@@ -1327,10 +1331,11 @@
             "tab": "Desarrolladores",
             "groups": [
               {
-                "group": "Desarrolladores"
+                "group": "Desarrolladores",
+                "pages": []
               },
               {
-                "group": "Primeros pasos",
+                "group": "Comenzando",
                 "icon": "rocket",
                 "pages": [
                   "l/es/developers/introduction",
@@ -1346,7 +1351,7 @@
                     ]
                   },
                   {
-                    "group": "API y webhooks",
+                    "group": "API y Webhooks",
                     "pages": [
                       "l/es/developers/api-and-webhooks/api",
                       "l/es/developers/api-and-webhooks/webhooks"
@@ -1355,12 +1360,12 @@
                 ]
               },
               {
-                "group": "Contribuir",
+                "group": "Contribuciones",
                 "icon": "code-branch",
                 "pages": [
                   "l/es/developers/bug-and-requests",
                   {
-                    "group": "Desarrollo frontend",
+                    "group": "Desarrollo Frontend",
                     "pages": [
                       "l/es/developers/frontend-development/storybook",
                       {
@@ -1368,7 +1373,7 @@
                         "pages": [
                           "l/es/twenty-ui/introduction",
                           {
-                            "group": "Visualización",
+                            "group": "Mostrar",
                             "pages": [
                               "l/es/twenty-ui/display/checkmark",
                               "l/es/twenty-ui/display/chip",
@@ -1379,7 +1384,7 @@
                             ]
                           },
                           {
-                            "group": "Comentarios",
+                            "group": "Retroalimentación",
                             "pages": [
                               "l/es/twenty-ui/progress-bar"
                             ]
@@ -1421,7 +1426,7 @@
                     ]
                   },
                   {
-                    "group": "Desarrollo backend",
+                    "group": "Desarrollo de backend",
                     "pages": [
                       "l/es/developers/backend-development/server-commands",
                       "l/es/developers/backend-development/feature-flags",
@@ -1442,10 +1447,10 @@
         "language": "it",
         "tabs": [
           {
-            "tab": "Guida utente",
+            "tab": "Guida Utente",
             "groups": [
               {
-                "group": "Per iniziare",
+                "group": "Per Iniziare",
                 "icon": "rocket",
                 "pages": [
                   "l/it/user-guide/introduction",
@@ -1471,7 +1476,7 @@
                 ]
               },
               {
-                "group": "Fondamenti CRM",
+                "group": "Essentials CRM",
                 "icon": "users",
                 "pages": [
                   "l/it/user-guide/crm-essentials/contact-and-account-management",
@@ -1489,7 +1494,7 @@
                 ]
               },
               {
-                "group": "Flussi di lavoro",
+                "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
                   "l/it/user-guide/workflows/getting-started-workflows",
@@ -1511,7 +1516,7 @@
                 ]
               },
               {
-                "group": "Integrazioni e API",
+                "group": "Integrazioni & API",
                 "icon": "plug",
                 "pages": [
                   "l/it/user-guide/integrations-api/apis-overview",
@@ -1520,7 +1525,7 @@
                 ]
               },
               {
-                "group": "Report",
+                "group": "Reportistica",
                 "icon": "chart-bar",
                 "pages": [
                   "l/it/user-guide/reporting/reporting-overview"
@@ -1562,16 +1567,17 @@
             "tab": "Sviluppatori",
             "groups": [
               {
-                "group": "Sviluppatori"
+                "group": "Sviluppatori",
+                "pages": []
               },
               {
-                "group": "Per iniziare",
+                "group": "Per Iniziare",
                 "icon": "rocket",
                 "pages": [
                   "l/it/developers/introduction",
                   "l/it/developers/local-setup",
                   {
-                    "group": "Self-hosting",
+                    "group": "Auto-Hosting",
                     "pages": [
                       "l/it/developers/self-hosting/docker-compose",
                       "l/it/developers/self-hosting/setup",
@@ -1581,7 +1587,7 @@
                     ]
                   },
                   {
-                    "group": "API e webhook",
+                    "group": "API e Webhook",
                     "pages": [
                       "l/it/developers/api-and-webhooks/api",
                       "l/it/developers/api-and-webhooks/webhooks"
@@ -1590,12 +1596,12 @@
                 ]
               },
               {
-                "group": "Contributi",
+                "group": "Contribuire",
                 "icon": "code-branch",
                 "pages": [
                   "l/it/developers/bug-and-requests",
                   {
-                    "group": "Sviluppo frontend",
+                    "group": "Sviluppo Frontend",
                     "pages": [
                       "l/it/developers/frontend-development/storybook",
                       {
@@ -1635,7 +1641,7 @@
                             ]
                           },
                           {
-                            "group": "Navigazione",
+                            "group": "Navigation",
                             "pages": [
                               "l/it/twenty-ui/navigation",
                               "l/it/twenty-ui/navigation/breadcrumb",
@@ -1656,7 +1662,7 @@
                     ]
                   },
                   {
-                    "group": "Sviluppo backend",
+                    "group": "Sviluppo Backend",
                     "pages": [
                       "l/it/developers/backend-development/server-commands",
                       "l/it/developers/backend-development/feature-flags",
@@ -1680,7 +1686,7 @@
             "tab": "ユーザーガイド",
             "groups": [
               {
-                "group": "はじめに",
+                "group": "始めに",
                 "icon": "rocket",
                 "pages": [
                   "l/ja/user-guide/introduction",
@@ -1746,7 +1752,7 @@
                 ]
               },
               {
-                "group": "統合と API",
+                "group": "連携とAPI",
                 "icon": "plug",
                 "pages": [
                   "l/ja/user-guide/integrations-api/apis-overview",
@@ -1797,10 +1803,11 @@
             "tab": "開発者",
             "groups": [
               {
-                "group": "開発者"
+                "group": "開発者",
+                "pages": []
               },
               {
-                "group": "はじめに",
+                "group": "始めに",
                 "icon": "rocket",
                 "pages": [
                   "l/ja/developers/introduction",
@@ -1816,7 +1823,7 @@
                     ]
                   },
                   {
-                    "group": "API と Webhook",
+                    "group": "APIとWebhooks",
                     "pages": [
                       "l/ja/developers/api-and-webhooks/api",
                       "l/ja/developers/api-and-webhooks/webhooks"
@@ -1855,7 +1862,7 @@
                             ]
                           },
                           {
-                            "group": "入力",
+                            "group": "Input",
                             "pages": [
                               "l/ja/twenty-ui/input/buttons",
                               "l/ja/twenty-ui/input/color-scheme",
@@ -1870,7 +1877,7 @@
                             ]
                           },
                           {
-                            "group": "ナビゲーション",
+                            "group": "Navigation",
                             "pages": [
                               "l/ja/twenty-ui/navigation",
                               "l/ja/twenty-ui/navigation/breadcrumb",
@@ -1912,7 +1919,7 @@
         "language": "ko",
         "tabs": [
           {
-            "tab": "사용자 가이드",
+            "tab": "User Guide",
             "groups": [
               {
                 "group": "시작하기",
@@ -1941,7 +1948,7 @@
                 ]
               },
               {
-                "group": "CRM 기본",
+                "group": "CRM 필수 요소",
                 "icon": "users",
                 "pages": [
                   "l/ko/user-guide/crm-essentials/contact-and-account-management",
@@ -1951,7 +1958,7 @@
                 ]
               },
               {
-                "group": "뷰",
+                "group": "보기들",
                 "icon": "table",
                 "pages": [
                   "l/ko/user-guide/views/kanban-views",
@@ -1959,7 +1966,7 @@
                 ]
               },
               {
-                "group": "워크플로우",
+                "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
                   "l/ko/user-guide/workflows/getting-started-workflows",
@@ -1981,7 +1988,7 @@
                 ]
               },
               {
-                "group": "통합 및 API",
+                "group": "Integrations & API",
                 "icon": "plug",
                 "pages": [
                   "l/ko/user-guide/integrations-api/apis-overview",
@@ -1990,7 +1997,7 @@
                 ]
               },
               {
-                "group": "보고서",
+                "group": "Reporting",
                 "icon": "chart-bar",
                 "pages": [
                   "l/ko/user-guide/reporting/reporting-overview"
@@ -2019,7 +2026,7 @@
                 ]
               },
               {
-                "group": "리소스",
+                "group": "자료",
                 "icon": "book-open",
                 "pages": [
                   "l/ko/user-guide/resources/glossary",
@@ -2032,7 +2039,8 @@
             "tab": "개발자",
             "groups": [
               {
-                "group": "개발자"
+                "group": "개발자",
+                "pages": []
               },
               {
                 "group": "시작하기",
@@ -2065,7 +2073,7 @@
                 "pages": [
                   "l/ko/developers/bug-and-requests",
                   {
-                    "group": "프런트엔드 개발",
+                    "group": "프론트엔드 개발",
                     "pages": [
                       "l/ko/developers/frontend-development/storybook",
                       {
@@ -2073,7 +2081,7 @@
                         "pages": [
                           "l/ko/twenty-ui/introduction",
                           {
-                            "group": "디스플레이",
+                            "group": "표시",
                             "pages": [
                               "l/ko/twenty-ui/display/checkmark",
                               "l/ko/twenty-ui/display/chip",
@@ -2105,7 +2113,7 @@
                             ]
                           },
                           {
-                            "group": "내비게이션",
+                            "group": "네비게이션",
                             "pages": [
                               "l/ko/twenty-ui/navigation",
                               "l/ko/twenty-ui/navigation/breadcrumb",
@@ -2147,10 +2155,10 @@
         "language": "pt",
         "tabs": [
           {
-            "tab": "Guia do usuário",
+            "tab": "Manual do Usuário",
             "groups": [
               {
-                "group": "Primeiros passos",
+                "group": "Começando",
                 "icon": "rocket",
                 "pages": [
                   "l/pt/user-guide/introduction",
@@ -2164,7 +2172,7 @@
                 ]
               },
               {
-                "group": "Modelo de dados",
+                "group": "Modelo de Dados",
                 "icon": "database",
                 "pages": [
                   "l/pt/user-guide/data-model/customize-your-data-model",
@@ -2176,7 +2184,7 @@
                 ]
               },
               {
-                "group": "Fundamentos de CRM",
+                "group": "Essenciais do CRM",
                 "icon": "users",
                 "pages": [
                   "l/pt/user-guide/crm-essentials/contact-and-account-management",
@@ -2194,7 +2202,7 @@
                 ]
               },
               {
-                "group": "Fluxos de trabalho",
+                "group": "Workflows",
                 "icon": "bolt",
                 "pages": [
                   "l/pt/user-guide/workflows/getting-started-workflows",
@@ -2267,16 +2275,17 @@
             "tab": "Desenvolvedores",
             "groups": [
               {
-                "group": "Desenvolvedores"
+                "group": "Desenvolvedores",
+                "pages": []
               },
               {
-                "group": "Primeiros passos",
+                "group": "Começando",
                 "icon": "rocket",
                 "pages": [
                   "l/pt/developers/introduction",
                   "l/pt/developers/local-setup",
                   {
-                    "group": "Auto-hospedagem",
+                    "group": "Auto-Hospedagem",
                     "pages": [
                       "l/pt/developers/self-hosting/docker-compose",
                       "l/pt/developers/self-hosting/setup",
@@ -2286,7 +2295,7 @@
                     ]
                   },
                   {
-                    "group": "API e webhooks",
+                    "group": "API e Webhooks",
                     "pages": [
                       "l/pt/developers/api-and-webhooks/api",
                       "l/pt/developers/api-and-webhooks/webhooks"
@@ -2295,12 +2304,12 @@
                 ]
               },
               {
-                "group": "Contribuição",
+                "group": "Contribuindo",
                 "icon": "code-branch",
                 "pages": [
                   "l/pt/developers/bug-and-requests",
                   {
-                    "group": "Desenvolvimento frontend",
+                    "group": "Desenvolvimento Frontend",
                     "pages": [
                       "l/pt/developers/frontend-development/storybook",
                       {
@@ -2325,7 +2334,7 @@
                             ]
                           },
                           {
-                            "group": "Entrada",
+                            "group": "Input",
                             "pages": [
                               "l/pt/twenty-ui/input/buttons",
                               "l/pt/twenty-ui/input/color-scheme",
@@ -2340,7 +2349,7 @@
                             ]
                           },
                           {
-                            "group": "Navegação",
+                            "group": "Navigation",
                             "pages": [
                               "l/pt/twenty-ui/navigation",
                               "l/pt/twenty-ui/navigation/breadcrumb",
@@ -2361,7 +2370,7 @@
                     ]
                   },
                   {
-                    "group": "Desenvolvimento backend",
+                    "group": "Desenvolvimento de backend",
                     "pages": [
                       "l/pt/developers/backend-development/server-commands",
                       "l/pt/developers/backend-development/feature-flags",
@@ -2382,10 +2391,10 @@
         "language": "ro",
         "tabs": [
           {
-            "tab": "Ghidul utilizatorului",
+            "tab": "Ghid de utilizator",
             "groups": [
               {
-                "group": "Începeți",
+                "group": "Noțiuni de bază",
                 "icon": "rocket",
                 "pages": [
                   "l/ro/user-guide/introduction",
@@ -2411,7 +2420,7 @@
                 ]
               },
               {
-                "group": "Elemente de bază CRM",
+                "group": "Elemente esențiale CRM",
                 "icon": "users",
                 "pages": [
                   "l/ro/user-guide/crm-essentials/contact-and-account-management",
@@ -2451,7 +2460,7 @@
                 ]
               },
               {
-                "group": "Integrare și API",
+                "group": "Integrări & API",
                 "icon": "plug",
                 "pages": [
                   "l/ro/user-guide/integrations-api/apis-overview",
@@ -2502,16 +2511,17 @@
             "tab": "Dezvoltatori",
             "groups": [
               {
-                "group": "Dezvoltatori"
+                "group": "Dezvoltatori",
+                "pages": []
               },
               {
-                "group": "Începeți",
+                "group": "Noțiuni de bază",
                 "icon": "rocket",
                 "pages": [
                   "l/ro/developers/introduction",
                   "l/ro/developers/local-setup",
                   {
-                    "group": "Self-hosting",
+                    "group": "Găzduire proprie",
                     "pages": [
                       "l/ro/developers/self-hosting/docker-compose",
                       "l/ro/developers/self-hosting/setup",
@@ -2521,7 +2531,7 @@
                     ]
                   },
                   {
-                    "group": "API și webhook-uri",
+                    "group": "API și Webhooks",
                     "pages": [
                       "l/ro/developers/api-and-webhooks/api",
                       "l/ro/developers/api-and-webhooks/webhooks"
@@ -2535,7 +2545,7 @@
                 "pages": [
                   "l/ro/developers/bug-and-requests",
                   {
-                    "group": "Dezvoltare frontend",
+                    "group": "Dezvoltare Frontend",
                     "pages": [
                       "l/ro/developers/frontend-development/storybook",
                       {
@@ -2560,7 +2570,7 @@
                             ]
                           },
                           {
-                            "group": "Input",
+                            "group": "Intrare",
                             "pages": [
                               "l/ro/twenty-ui/input/buttons",
                               "l/ro/twenty-ui/input/color-scheme",
@@ -2575,7 +2585,7 @@
                             ]
                           },
                           {
-                            "group": "Navigare",
+                            "group": "Navigation",
                             "pages": [
                               "l/ro/twenty-ui/navigation",
                               "l/ro/twenty-ui/navigation/breadcrumb",
@@ -2596,7 +2606,7 @@
                     ]
                   },
                   {
-                    "group": "Dezvoltare backend",
+                    "group": "Dezvoltare Backend",
                     "pages": [
                       "l/ro/developers/backend-development/server-commands",
                       "l/ro/developers/backend-development/feature-flags",
@@ -2677,7 +2687,7 @@
                 ]
               },
               {
-                "group": "Совместная работа",
+                "group": "Сотрудничество",
                 "icon": "envelope",
                 "pages": [
                   "l/ru/user-guide/collaboration/emails-and-calendars",
@@ -2737,7 +2747,8 @@
             "tab": "Разработчики",
             "groups": [
               {
-                "group": "Разработчики"
+                "group": "Разработчики",
+                "pages": []
               },
               {
                 "group": "Начало работы",
@@ -2770,7 +2781,7 @@
                 "pages": [
                   "l/ru/developers/bug-and-requests",
                   {
-                    "group": "Frontend-разработка",
+                    "group": "Разработка интерфейса",
                     "pages": [
                       "l/ru/developers/frontend-development/storybook",
                       {
@@ -2831,7 +2842,7 @@
                     ]
                   },
                   {
-                    "group": "Backend-разработка",
+                    "group": "Бэкенд разработка",
                     "pages": [
                       "l/ru/developers/backend-development/server-commands",
                       "l/ru/developers/backend-development/feature-flags",
@@ -2852,10 +2863,10 @@
         "language": "tr",
         "tabs": [
           {
-            "tab": "Kullanıcı rehberi",
+            "tab": "User Guide",
             "groups": [
               {
-                "group": "Başlarken",
+                "group": "Getting Started",
                 "icon": "rocket",
                 "pages": [
                   "l/tr/user-guide/introduction",
@@ -2881,7 +2892,7 @@
                 ]
               },
               {
-                "group": "CRM temel bilgiler",
+                "group": "CRM Temelleri",
                 "icon": "users",
                 "pages": [
                   "l/tr/user-guide/crm-essentials/contact-and-account-management",
@@ -2899,7 +2910,7 @@
                 ]
               },
               {
-                "group": "İş akışları",
+                "group": "İş Akışları",
                 "icon": "bolt",
                 "pages": [
                   "l/tr/user-guide/workflows/getting-started-workflows",
@@ -2921,7 +2932,7 @@
                 ]
               },
               {
-                "group": "Entegrasyonlar ve API",
+                "group": "Integrations & API",
                 "icon": "plug",
                 "pages": [
                   "l/tr/user-guide/integrations-api/apis-overview",
@@ -2972,16 +2983,17 @@
             "tab": "Geliştiriciler",
             "groups": [
               {
-                "group": "Geliştiriciler"
+                "group": "Geliştiriciler",
+                "pages": []
               },
               {
-                "group": "Başlarken",
+                "group": "Getting Started",
                 "icon": "rocket",
                 "pages": [
                   "l/tr/developers/introduction",
                   "l/tr/developers/local-setup",
                   {
-                    "group": "Kendi sunucunda barındırma",
+                    "group": "Self-Hosting",
                     "pages": [
                       "l/tr/developers/self-hosting/docker-compose",
                       "l/tr/developers/self-hosting/setup",
@@ -2991,7 +3003,7 @@
                     ]
                   },
                   {
-                    "group": "API ve webhook'lar",
+                    "group": "API and Webhooks",
                     "pages": [
                       "l/tr/developers/api-and-webhooks/api",
                       "l/tr/developers/api-and-webhooks/webhooks"
@@ -3000,12 +3012,12 @@
                 ]
               },
               {
-                "group": "Katkı sağlama",
+                "group": "Katkıda Bulunma",
                 "icon": "code-branch",
                 "pages": [
                   "l/tr/developers/bug-and-requests",
                   {
-                    "group": "Ön uç geliştirme",
+                    "group": "Frontend Geliştirme",
                     "pages": [
                       "l/tr/developers/frontend-development/storybook",
                       {
@@ -3013,7 +3025,7 @@
                         "pages": [
                           "l/tr/twenty-ui/introduction",
                           {
-                            "group": "Görüntüleme",
+                            "group": "Görüntüle",
                             "pages": [
                               "l/tr/twenty-ui/display/checkmark",
                               "l/tr/twenty-ui/display/chip",
@@ -3024,7 +3036,7 @@
                             ]
                           },
                           {
-                            "group": "Geri bildirim",
+                            "group": "Geri Bildirim",
                             "pages": [
                               "l/tr/twenty-ui/progress-bar"
                             ]
@@ -3045,7 +3057,7 @@
                             ]
                           },
                           {
-                            "group": "Navigasyon",
+                            "group": "Gezinme",
                             "pages": [
                               "l/tr/twenty-ui/navigation",
                               "l/tr/twenty-ui/navigation/breadcrumb",
@@ -3066,7 +3078,7 @@
                     ]
                   },
                   {
-                    "group": "Arka uç geliştirme",
+                    "group": "Backend Geliştirme",
                     "pages": [
                       "l/tr/developers/backend-development/server-commands",
                       "l/tr/developers/backend-development/feature-flags",
@@ -3087,10 +3099,10 @@
         "language": "zh",
         "tabs": [
           {
-            "tab": "用户指南",
+            "tab": "User Guide",
             "groups": [
               {
-                "group": "入门",
+                "group": "Getting Started",
                 "icon": "rocket",
                 "pages": [
                   "l/zh/user-guide/introduction",
@@ -3104,7 +3116,7 @@
                 ]
               },
               {
-                "group": "数据模型",
+                "group": "數據模型",
                 "icon": "database",
                 "pages": [
                   "l/zh/user-guide/data-model/customize-your-data-model",
@@ -3116,7 +3128,7 @@
                 ]
               },
               {
-                "group": "CRM 基础",
+                "group": "CRM 基礎知識",
                 "icon": "users",
                 "pages": [
                   "l/zh/user-guide/crm-essentials/contact-and-account-management",
@@ -3126,7 +3138,7 @@
                 ]
               },
               {
-                "group": "视图",
+                "group": "視圖",
                 "icon": "table",
                 "pages": [
                   "l/zh/user-guide/views/kanban-views",
@@ -3134,7 +3146,7 @@
                 ]
               },
               {
-                "group": "工作流程",
+                "group": "Workflow",
                 "icon": "bolt",
                 "pages": [
                   "l/zh/user-guide/workflows/getting-started-workflows",
@@ -3147,7 +3159,7 @@
                 ]
               },
               {
-                "group": "协作",
+                "group": "協作",
                 "icon": "envelope",
                 "pages": [
                   "l/zh/user-guide/collaboration/emails-and-calendars",
@@ -3156,7 +3168,7 @@
                 ]
               },
               {
-                "group": "集成与 API",
+                "group": "Integrations & API",
                 "icon": "plug",
                 "pages": [
                   "l/zh/user-guide/integrations-api/apis-overview",
@@ -3165,14 +3177,14 @@
                 ]
               },
               {
-                "group": "报表",
+                "group": "報告",
                 "icon": "chart-bar",
                 "pages": [
                   "l/zh/user-guide/reporting/reporting-overview"
                 ]
               },
               {
-                "group": "设置",
+                "group": "設置",
                 "icon": "gear",
                 "pages": [
                   "l/zh/user-guide/settings/profile-settings",
@@ -3187,14 +3199,14 @@
                 ]
               },
               {
-                "group": "定价",
+                "group": "定價",
                 "icon": "credit-card",
                 "pages": [
                   "l/zh/user-guide/pricing/billing-and-pricing-faq"
                 ]
               },
               {
-                "group": "资源",
+                "group": "資源",
                 "icon": "book-open",
                 "pages": [
                   "l/zh/user-guide/resources/glossary",
@@ -3204,19 +3216,20 @@
             ]
           },
           {
-            "tab": "开发者",
+            "tab": "開發人員",
             "groups": [
               {
-                "group": "开发者"
+                "group": "開發人員",
+                "pages": []
               },
               {
-                "group": "入门",
+                "group": "Getting Started",
                 "icon": "rocket",
                 "pages": [
                   "l/zh/developers/introduction",
                   "l/zh/developers/local-setup",
                   {
-                    "group": "自托管",
+                    "group": "Self-Hosting",
                     "pages": [
                       "l/zh/developers/self-hosting/docker-compose",
                       "l/zh/developers/self-hosting/setup",
@@ -3226,7 +3239,7 @@
                     ]
                   },
                   {
-                    "group": "API 与 Webhook",
+                    "group": "API 和 Webhooks",
                     "pages": [
                       "l/zh/developers/api-and-webhooks/api",
                       "l/zh/developers/api-and-webhooks/webhooks"
@@ -3235,12 +3248,12 @@
                 ]
               },
               {
-                "group": "贡献",
+                "group": "貢獻",
                 "icon": "code-branch",
                 "pages": [
                   "l/zh/developers/bug-and-requests",
                   {
-                    "group": "前端开发",
+                    "group": "前端開發",
                     "pages": [
                       "l/zh/developers/frontend-development/storybook",
                       {
@@ -3248,7 +3261,7 @@
                         "pages": [
                           "l/zh/twenty-ui/introduction",
                           {
-                            "group": "显示",
+                            "group": "顯示",
                             "pages": [
                               "l/zh/twenty-ui/display/checkmark",
                               "l/zh/twenty-ui/display/chip",
@@ -3259,13 +3272,13 @@
                             ]
                           },
                           {
-                            "group": "反馈",
+                            "group": "反饋",
                             "pages": [
                               "l/zh/twenty-ui/progress-bar"
                             ]
                           },
                           {
-                            "group": "输入",
+                            "group": "輸入",
                             "pages": [
                               "l/zh/twenty-ui/input/buttons",
                               "l/zh/twenty-ui/input/color-scheme",
@@ -3280,7 +3293,7 @@
                             ]
                           },
                           {
-                            "group": "导航",
+                            "group": "導航",
                             "pages": [
                               "l/zh/twenty-ui/navigation",
                               "l/zh/twenty-ui/navigation/breadcrumb",
@@ -3301,7 +3314,7 @@
                     ]
                   },
                   {
-                    "group": "后端开发",
+                    "group": "後端開發",
                     "pages": [
                       "l/zh/developers/backend-development/server-commands",
                       "l/zh/developers/backend-development/feature-flags",
