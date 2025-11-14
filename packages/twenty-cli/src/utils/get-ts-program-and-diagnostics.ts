@@ -1,3 +1,4 @@
+import ts from 'typescript';
 import { join } from 'path';
 import {
   createProgram,
@@ -7,7 +8,7 @@ import {
   sys,
 } from 'typescript';
 
-export const getProgramFromTsconfig = ({
+const getProgramFromTsconfig = ({
   appPath,
   tsconfigPath = 'tsconfig.json',
 }: {
@@ -34,4 +35,24 @@ export const getProgramFromTsconfig = ({
     );
   }
   return createProgram(parsed.fileNames, parsed.options);
+};
+
+export const getTsProgramAndDiagnostics = async ({
+  appPath,
+}: {
+  appPath: string;
+}): Promise<{ program: ts.Program; diagnostics: ts.Diagnostic[] }> => {
+  const program = getProgramFromTsconfig({
+    appPath,
+    tsconfigPath: 'tsconfig.json',
+  });
+
+  return {
+    diagnostics: [
+      ...program.getSyntacticDiagnostics(),
+      ...program.getSemanticDiagnostics(),
+      ...program.getGlobalDiagnostics(),
+    ],
+    program,
+  };
 };

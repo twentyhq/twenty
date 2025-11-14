@@ -25,7 +25,7 @@ export class AppDeleteCommand {
         process.exit(1);
       }
 
-      const { manifest } = await loadManifest({ appPath });
+      const { manifest } = await loadManifest(appPath);
 
       const result = await this.apiService.deleteApplication(
         manifest.application.universalIdentifier,

@@ -30,9 +30,7 @@ export class AppSyncCommand {
   }: {
     appPath: string;
   }) {
-    const { manifest, packageJson, yarnLock } = await loadManifest({
-      appPath,
-    });
+    const { manifest, packageJson, yarnLock } = await loadManifest(appPath);
 
     const serverlessSyncResult = await this.apiService.syncApplication({
       manifest,

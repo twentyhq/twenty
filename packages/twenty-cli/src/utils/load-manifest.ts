@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import { posix, relative, resolve, sep } from 'path';
+import { posix, relative, sep } from 'path';
 import {
   Decorator,
   Expression,
@@ -43,8 +43,7 @@ import {
 import { findPathFile } from '../utils/find-path-file';
 import { parseJsoncFile, parseTextFile } from '../utils/jsonc-parser';
 import { formatAndWarnTsDiagnostics } from './format-and-warn-ts-diagnostics';
-import { getProgramFromTsconfig } from './get-program-from-tsconfig';
-import { getTsProgramAndDiagnostics } from './validate-ts-program';
+import { getTsProgramAndDiagnostics } from '../utils/get-ts-program-and-diagnostics';
 
 type JSONValue =
   | string
@@ -378,17 +377,10 @@ const setNested = (root: Sources, parts: string[], value: string) => {
 };
 
 const loadFolderContentIntoJson = async (
-  sourcePath = '.',
-  tsconfigPath = 'tsconfig.json',
+  program: Program,
+  appPath: string,
 ): Promise<Sources> => {
   const sources: Sources = {};
-  const baseAbs = resolve(sourcePath);
-
-  // Build the program from tsconfig (uses your getProgramFromTsconfig)
-  const program: Program = getProgramFromTsconfig({
-    appPath: baseAbs,
-    tsconfigPath,
-  });
 
   // Iterate only files the TS program knows about.
   for (const sf of program.getSourceFiles()) {
@@ -396,7 +388,7 @@ const loadFolderContentIntoJson = async (
 
     // Skip .d.ts and anything outside sourcePath
     if (sf.isDeclarationFile) continue;
-    if (!abs.startsWith(baseAbs + sep) && abs !== baseAbs) continue;
+    if (!abs.startsWith(appPath + sep) && abs !== appPath) continue;
 
     // Keep only TS/TSX files
     if (!(abs.endsWith('.ts') || abs.endsWith('.tsx'))) continue;
@@ -404,7 +396,7 @@ const loadFolderContentIntoJson = async (
     // Optional extra guard (usually unnecessary if tsconfig excludes node_modules)
     if (abs.includes(`${sep}node_modules${sep}`)) continue;
 
-    const relFromRoot = relative(baseAbs, abs);
+    const relFromRoot = relative(appPath, abs);
     const parts = relFromRoot.split(sep);
 
     const content = await fs.readFile(abs, 'utf8');
@@ -453,13 +445,9 @@ export const extractTwentyAppConfig = (program: Program): Application => {
   throw new Error('Could not find default exported ApplicationConfig');
 };
 
-export const loadManifest = async ({
-  appPath,
-  tsconfigPath = 'tsconfig.json',
-}: {
-  appPath: string;
-  tsconfigPath?: string;
-}): Promise<{
+export const loadManifest = async (
+  appPath: string,
+): Promise<{
   packageJson: PackageJson;
   yarnLock: string;
   manifest: AppManifest;
@@ -484,7 +472,7 @@ export const loadManifest = async ({
     collectObjects(program),
     collectServerlessFunctions(program, appPath),
     extractTwentyAppConfig(program),
-    await loadFolderContentIntoJson(appPath, tsconfigPath),
+    await loadFolderContentIntoJson(program, appPath),
   ];
 
   return {
