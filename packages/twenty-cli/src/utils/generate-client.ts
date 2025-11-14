@@ -15,27 +15,15 @@ export const generateClient = async ({
   graphqlEndpoint,
   outputPath,
 }: GenerateClientOptions): Promise<void> => {
-  try {
-    console.log('Fetching GraphQL schema...');
-
-    const schema = await fetchGraphQLSchema({ url, graphqlEndpoint, token });
-
-    console.log('Generating SDK...');
-
-    await generate({
-      schema,
-      output: path.resolve(outputPath),
-      scalarTypes: {
-        DateTime: 'string',
-        JSON: 'Record<string, unknown>',
-        UUID: 'string',
-      },
-      verbose: true,
-    });
-
-    console.log(`✓ SDK generated successfully at ${outputPath}`);
-  } catch (error) {
-    console.error('Failed to generate SDK:', error);
-    throw error;
-  }
+  const schema = await fetchGraphQLSchema({ url, graphqlEndpoint, token });
+  await generate({
+    schema,
+    output: path.resolve(outputPath),
+    scalarTypes: {
+      DateTime: 'string',
+      JSON: 'Record<string, unknown>',
+      UUID: 'string',
+    },
+    verbose: true,
+  });
 };

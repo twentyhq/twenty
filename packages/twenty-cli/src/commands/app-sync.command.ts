@@ -1,15 +1,11 @@
 import chalk from 'chalk';
 import { CURRENT_EXECUTION_DIRECTORY } from '../constants/current-execution-directory';
-import { GENERATED_FOLDER_NAME } from '../constants/generated-folder-name';
 import { ApiService } from '../services/api.service';
-import { ConfigService } from '../services/config.service';
 import { ApiResponse } from '../types/config.types';
-import { generateClient } from '../utils/generate-client';
 import { loadManifest } from '../utils/load-manifest';
 
 export class AppSyncCommand {
   private apiService = new ApiService();
-  private configService = new ConfigService();
 
   async execute(
     appPath: string = CURRENT_EXECUTION_DIRECTORY,
@@ -18,10 +14,6 @@ export class AppSyncCommand {
       console.log(chalk.blue('🚀 Syncing Twenty Application'));
       console.log(chalk.gray(`📁 App Path: ${appPath}`));
       console.log('');
-
-      await this.synchronizeServerlessFunctions({ appPath });
-
-      await this.generateSdkAfterSync();
 
       return await this.synchronizeServerlessFunctions({ appPath });
     } catch (error) {
@@ -58,44 +50,5 @@ export class AppSyncCommand {
     }
 
     return serverlessSyncResult;
-  }
-
-  private async generateSdkAfterSync(): Promise<void> {
-    try {
-      console.log(chalk.blue('📦 Generating Twenty SDK...'));
-
-      const config = await this.configService.getConfig();
-
-      const url = config.apiUrl;
-      const token = config.apiKey;
-
-      if (!url || !token) {
-        console.log(
-          chalk.yellow(
-            '⚠️  Skipping SDK generation: API URL or token not configured',
-          ),
-        );
-        return;
-      }
-
-      const outputPath = GENERATED_FOLDER_NAME;
-      console.log(chalk.gray(`API URL: ${url}`));
-      console.log(chalk.gray(`Output: ${outputPath}`));
-
-      await generateClient({
-        url: `${url}/graphql`,
-        token,
-        graphqlEndpoint: 'core',
-        outputPath,
-      });
-
-      console.log(chalk.green('✓ SDK generated successfully!'));
-      console.log(chalk.gray(`Generated files at: ${outputPath}`));
-    } catch (error) {
-      console.log(
-        chalk.yellow('⚠️  SDK generation failed:'),
-        error instanceof Error ? error.message : error,
-      );
-    }
   }
 }
