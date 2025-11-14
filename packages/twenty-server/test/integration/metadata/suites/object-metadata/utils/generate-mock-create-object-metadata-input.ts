@@ -2,7 +2,9 @@ import { type CreateOneObjectInput } from 'src/engine/metadata-modules/object-me
 
 // TODO would tend to use faker
 export const getMockCreateObjectInput = (
-  overrides?: Partial<Omit<CreateOneObjectInput, 'workspaceId' | 'dataSourceId'>>,
+  overrides?: Partial<
+    Omit<CreateOneObjectInput, 'workspaceId' | 'dataSourceId'>
+  >,
 ) => ({
   namePlural: 'listingas',
   nameSingular: 'listinga',

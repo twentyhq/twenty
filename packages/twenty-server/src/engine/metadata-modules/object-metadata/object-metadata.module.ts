@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
-    NestjsQueryGraphQLModule,
-    PagingStrategies,
+  NestjsQueryGraphQLModule,
+  PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
