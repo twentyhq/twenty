@@ -7,6 +7,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import {
@@ -20,6 +21,7 @@ import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 import { type JsonValue } from 'type-fest';
 
 export const AdvancedFilterCommandMenuValueFormInput = ({
@@ -129,6 +131,23 @@ export const AdvancedFilterCommandMenuValueFormInput = ({
         readonly={readonly}
         VariablePicker={VariablePicker}
         options={metadata?.options ?? []}
+      />
+    );
+  }
+
+  if (recordFilter.type === FieldMetadataType.BOOLEAN) {
+    const parsedValue = parseBooleanFromStringValue(recordFilter.value) as
+      | boolean
+      | undefined
+      | string;
+
+    return (
+      <FormBooleanFieldInput
+        label=""
+        defaultValue={parsedValue}
+        onChange={handleChange}
+        readonly={readonly}
+        VariablePicker={VariablePicker}
       />
     );
   }
