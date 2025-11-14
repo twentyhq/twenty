@@ -19,7 +19,7 @@ setup_and_migrate_db() {
 
     echo "Checking database connection..."
     echo "Using database URL: ${PG_DATABASE_URL%%:*}://***:***@${PG_DATABASE_URL##*@}"
-    ehco "rest is commented out. If migrations are necessary run them manually"
+    echo "rest is commented out. If migrations are necessary run them manually"
 
     # Run setup and migration scripts
     # has_schema=$(psql "${PG_DATABASE_URL}" -tAc "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')" 2>&1)
