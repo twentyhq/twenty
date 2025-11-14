@@ -2,12 +2,15 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
-import { EXTERNAL_FIELD_DRIVERS, type ExternalFieldDrivers } from 'src/engine/twenty-orm/storage/external-field-drivers.token';
 import { isDefined } from 'twenty-shared/utils';
 import { EntitySchema, Repository } from 'typeorm';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
+import {
+  EXTERNAL_FIELD_DRIVERS,
+  type ExternalFieldDrivers,
+} from 'src/engine/twenty-orm/storage/external-field-drivers.token';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';

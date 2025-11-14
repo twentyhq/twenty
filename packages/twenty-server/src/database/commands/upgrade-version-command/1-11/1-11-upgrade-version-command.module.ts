@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
-import { BackfillRecentViewCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-backfill-recent-view.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -34,13 +33,11 @@ import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-sc
   providers: [
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
-    BackfillRecentViewCommand,
     CreateTwentyStandardApplicationCommand,
   ],
   exports: [
     CleanOrphanedUserWorkspacesCommand,
     CleanOrphanedRoleTargetsCommand,
-    BackfillRecentViewCommand,
     CreateTwentyStandardApplicationCommand,
   ],
 })

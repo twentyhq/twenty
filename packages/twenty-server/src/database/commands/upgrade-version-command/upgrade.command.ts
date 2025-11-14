@@ -21,8 +21,8 @@ import { RegenerateSearchVectorsCommand } from 'src/database/commands/upgrade-ve
 import { SeedDashboardViewCommand } from 'src/database/commands/upgrade-version-command/1-10/1-10-seed-dashboard-view.command';
 import { CleanOrphanedRoleTargetsCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-role-targets.command';
 import { CleanOrphanedUserWorkspacesCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-clean-orphaned-user-workspaces.command';
-import { BackfillRecentViewCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-backfill-recent-view.command';
 import { CreateTwentyStandardApplicationCommand } from 'src/database/commands/upgrade-version-command/1-11/1-11-create-twenty-standard-application.command';
+import { BackfillRecentViewCommand } from 'src/database/commands/upgrade-version-command/1-12/1-12-backfill-recent-view.command';
 import { FixLabelIdentifierPositionAndVisibilityCommand } from 'src/database/commands/upgrade-version-command/1-6/1-6-fix-label-identifier-position-and-visibility.command';
 import { BackfillWorkflowManualTriggerAvailabilityCommand } from 'src/database/commands/upgrade-version-command/1-7/1-7-backfill-workflow-manual-trigger-availability.command';
 import { DeduplicateUniqueFieldsCommand } from 'src/database/commands/upgrade-version-command/1-8/1-8-deduplicate-unique-fields.command';
@@ -77,8 +77,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     // 1.11 Commands
     protected readonly cleanOrphanedUserWorkspacesCommand: CleanOrphanedUserWorkspacesCommand,
     protected readonly cleanOrphanedRoleTargetsCommand: CleanOrphanedRoleTargetsCommand,
-    protected readonly backfillRecentViewCommand: BackfillRecentViewCommand,
     protected readonly seedStandardApplicationsCommand: CreateTwentyStandardApplicationCommand,
+
+    // 1.12 Commands
+    protected readonly backfillRecentViewCommand: BackfillRecentViewCommand,
   ) {
     super(
       workspaceRepository,
@@ -132,8 +134,12 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [
         this.cleanOrphanedUserWorkspacesCommand,
         this.cleanOrphanedRoleTargetsCommand,
-        this.backfillRecentViewCommand,
       ],
+    };
+
+    const commands_1120: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [this.backfillRecentViewCommand],
     };
 
     this.allCommands = {
@@ -142,6 +148,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.8.0': commands_180,
       '1.10.0': commands_1100,
       '1.11.0': commands_1110,
+      '1.12.0': commands_1120,
     };
   }
 

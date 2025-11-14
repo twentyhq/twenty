@@ -20,7 +20,7 @@ import { ViewFilterV2Service } from 'src/engine/metadata-modules/view-filter/ser
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Command({
-  name: 'upgrade:1-11:backfill-recent-view',
+  name: 'upgrade:1-12:backfill-recent-view',
   description:
     'Create a system view "Recently View" with lastViewedAt PAST_1_WEEK filter for all objects that have lastViewedAt, if missing',
 })

@@ -19,6 +19,7 @@ import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBu
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { type ExternalFieldDrivers } from 'src/engine/twenty-orm/storage/external-field-drivers.token';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   PermissionsException,
@@ -48,6 +49,7 @@ export class GlobalWorkspaceDataSource extends DataSource {
   private entityMetadataCache: Map<string, CachedEntityMetadata>;
   private eventEmitterService: WorkspaceEventEmitter;
   private entitySchemaFactory: EntitySchemaFactory;
+  private externalFieldDrivers: ExternalFieldDrivers;
   private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;
 
@@ -55,10 +57,12 @@ export class GlobalWorkspaceDataSource extends DataSource {
     options: DataSourceOptions,
     eventEmitterService: WorkspaceEventEmitter,
     entitySchemaFactory: EntitySchemaFactory,
+    externalFieldDrivers: ExternalFieldDrivers,
   ) {
     super(options);
     this.eventEmitterService = eventEmitterService;
     this.entitySchemaFactory = entitySchemaFactory;
+    this.externalFieldDrivers = externalFieldDrivers;
     this.entityMetadataCache = new Map();
     this._isConstructing = false;
 
@@ -126,6 +130,7 @@ export class GlobalWorkspaceDataSource extends DataSource {
     const fullContext: WorkspaceInternalContext = {
       ...context,
       eventEmitterService: this.eventEmitterService,
+      externalFieldDrivers: this.externalFieldDrivers,
     };
 
     return new WorkspaceEntityManager(fullContext, this, queryRunner);

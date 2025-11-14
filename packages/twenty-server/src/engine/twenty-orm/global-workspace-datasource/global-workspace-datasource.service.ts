@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   Logger,
   OnApplicationShutdown,
@@ -8,6 +9,10 @@ import {
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
+import {
+  EXTERNAL_FIELD_DRIVERS,
+  type ExternalFieldDrivers,
+} from 'src/engine/twenty-orm/storage/external-field-drivers.token';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 const TWENTY_MINUTES_IN_MS = 120_000;
@@ -23,6 +28,8 @@ export class GlobalWorkspaceDataSourceService
     private readonly twentyConfigService: TwentyConfigService,
     private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    @Inject(EXTERNAL_FIELD_DRIVERS)
+    private readonly externalFieldDrivers: ExternalFieldDrivers,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -46,6 +53,7 @@ export class GlobalWorkspaceDataSourceService
       },
       this.workspaceEventEmitter,
       this.entitySchemaFactory,
+      this.externalFieldDrivers,
     );
 
     await this.globalWorkspaceDataSource.initialize();

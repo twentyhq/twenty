@@ -1,14 +1,14 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
   type EntityTarget,
   type FindManyOptions,
   type ObjectLiteral,
   SelectQueryBuilder,
 } from 'typeorm';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { type QueryBuilderCteOptions } from 'typeorm/query-builder/QueryBuilderCte';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { DriverUtils } from 'typeorm/driver/DriverUtils';
+import { type QueryBuilderCteOptions } from 'typeorm/query-builder/QueryBuilderCte';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
@@ -18,6 +18,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
@@ -28,11 +29,10 @@ import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/wo
 import { WorkspaceInsertQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-insert-query-builder';
 import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
 import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
-import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { EXTERNAL_STORAGE_ALIAS } from 'src/engine/twenty-orm/utils/external-storage-alias.constant';
-import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 
 export class WorkspaceSelectQueryBuilder<
   T extends ObjectLiteral,
@@ -517,9 +517,15 @@ export class WorkspaceSelectQueryBuilder<
       findOptions.select as Record<string, boolean>,
     );
 
-    Object.keys(findOptions.select).forEach((field) => {
-      if (external[field]) delete findOptions.select[field];
-    });
+    if (findOptions.select) {
+      Object.keys(findOptions.select as Record<string, boolean>).forEach(
+        (field) => {
+          if (external[field]) {
+            delete (findOptions.select as Record<string, boolean>)[field];
+          }
+        },
+      );
+    }
 
     super.setFindOptions(findOptions);
 
