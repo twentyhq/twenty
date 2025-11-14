@@ -35,7 +35,7 @@ type TemplateFile = {
 
 const baseStructurePath = path.resolve(
   __dirname,
-  '../navigation/base-structure.json',
+  '../navigation/navigation-schema.json',
 );
 const templatePath = path.resolve(
   __dirname,
