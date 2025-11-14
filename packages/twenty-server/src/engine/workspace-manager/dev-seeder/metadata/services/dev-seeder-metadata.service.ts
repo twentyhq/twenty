@@ -25,7 +25,6 @@ import { SURVEY_RESULT_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/d
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 import { type ObjectMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/object-metadata-seed.type';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
-import { TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 @Injectable()
 export class DevSeederMetadataService {
@@ -90,7 +89,7 @@ export class DevSeederMetadataService {
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
-    applications: TwentyStandardApplication;
+   twentyStandardFlatApplication: FlatApplication;
     featureFlags?: Record<string, boolean>;
   }) {
     const config = this.workspaceConfigs[workspaceId];
@@ -191,7 +190,7 @@ export class DevSeederMetadataService {
     workspaceId: string;
     dataSourceMetadata: DataSourceEntity;
     featureFlags?: Record<string, boolean>;
-    applications: TwentyStandardApplication;
+   twentyStandardFlatApplication: FlatApplication;
   }): Promise<void> {
     const createdObjectMetadata =
       await this.objectMetadataServiceV2.findManyWithinWorkspace(workspaceId);

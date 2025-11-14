@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { v4 } from 'uuid';
 
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import {
@@ -8,16 +9,15 @@ import {
   TASK_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { type TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 export const tasksAllView = ({
   objectMetadataItems,
   useCoreNaming = false,
-  applications,
+  twentyStandardFlatApplication,
 }: {
   objectMetadataItems: ObjectMetadataEntity[];
   useCoreNaming?: boolean;
-  applications: TwentyStandardApplication;
+ twentyStandardFlatApplication: FlatApplication;
 }): ViewDefinition => {
   const taskObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.task,
@@ -32,7 +32,7 @@ export const tasksAllView = ({
   return {
     id,
     universalIdentifier: id,
-    applicationId: applications.twentyStandardApplication.id,
+    applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Tasks',
     objectMetadataId: taskObjectMetadata.id,
     type: 'table',

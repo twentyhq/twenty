@@ -2,6 +2,7 @@ import { isString } from '@sniptt/guards';
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -32,7 +33,6 @@ import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objec
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 import { workspaceMembersAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workspace-members-all.view';
-import { type TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
@@ -40,7 +40,7 @@ type PrefillCoreViewsArgs = {
   objectMetadataItems: ObjectMetadataEntity[];
   featureFlags?: Record<string, boolean>;
   workspaceSchemaName: string;
-  applications: TwentyStandardApplication;
+  twentyStandardFlatApplication: FlatApplication;
 };
 
 export const prefillCoreViews = async ({
@@ -48,56 +48,68 @@ export const prefillCoreViews = async ({
   workspaceId,
   objectMetadataItems,
   workspaceSchemaName,
-  applications,
+  twentyStandardFlatApplication,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
   const views: ViewDefinition[] = [
     companiesAllView({
       objectMetadataItems,
       useCoreNaming: true,
-      applications,
+      twentyStandardFlatApplication,
     }),
-    peopleAllView({ objectMetadataItems, useCoreNaming: true, applications }),
+    peopleAllView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      twentyStandardFlatApplication,
+    }),
     opportunitiesAllView({
       objectMetadataItems,
       useCoreNaming: true,
-      applications,
+      twentyStandardFlatApplication,
     }),
     opportunitiesByStageView({
       objectMetadataItems,
       useCoreNaming: true,
-      applications,
+      twentyStandardFlatApplication,
     }),
-    notesAllView({ objectMetadataItems, useCoreNaming: true, applications }),
-    tasksAllView({ objectMetadataItems, useCoreNaming: true, applications }),
+    notesAllView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      twentyStandardFlatApplication,
+    }),
+    tasksAllView({
+      objectMetadataItems,
+      useCoreNaming: true,
+      twentyStandardFlatApplication,
+    }),
     tasksAssignedToMeView({
       objectMetadataItems,
       useCoreNaming: true,
-      applications,
+      twentyStandardFlatApplication,
     }),
     tasksByStatusView({
       objectMetadataItems,
       useCoreNaming: true,
-      applications,
+      twentyStandardFlatApplication,
     }),
     workflowsAllView({
       objectMetadataItems,
       useCoreNaming: true,
-      applications,
+      twentyStandardFlatApplication,
     }),
     workflowVersionsAllView({
       objectMetadataItems,
       useCoreNaming: true,
-      applications,
+      twentyStandardFlatApplication,
     }),
     workflowRunsAllView({
       objectMetadataItems,
       useCoreNaming: true,
-      applications,
+      twentyStandardFlatApplication,
     }),
     dashboardsAllView({
       objectMetadataItems,
       useCoreNaming: true,
-      applications,
+      twentyStandardFlatApplication,
     }),
     workspaceMembersAllView(objectMetadataItems, true),
     messagesAllView(objectMetadataItems, true),
@@ -116,7 +128,7 @@ export const prefillCoreViews = async ({
       queryRunner,
       workspaceId,
       views,
-      applications,
+      twentyStandardFlatApplication,
     );
 
     await prefillWorkspaceFavorites(
@@ -156,7 +168,7 @@ export const createCoreViews = async (
   queryRunner: QueryRunner,
   workspaceId: string,
   viewDefinitions: ViewDefinition[],
-  applications: TwentyStandardApplication,
+  twentyStandardFlatApplication: FlatApplication,
 ): Promise<ViewEntity[]> => {
   const coreViews: Partial<ViewEntity>[] = viewDefinitions.map(
     ({
@@ -210,7 +222,7 @@ export const createCoreViews = async (
           size: field.size,
           viewId: viewDefinition.id,
           workspaceId,
-          applicationId: applications.twentyStandardApplication.id,
+          applicationId: twentyStandardFlatApplication.id,
           universalIdentifier: v4(),
         }));
 
@@ -228,7 +240,7 @@ export const createCoreViews = async (
           operand: filter.operand,
           value: filter.value,
           workspaceId,
-          applicationId: applications.twentyStandardApplication.id,
+          applicationId: twentyStandardFlatApplication.id,
           universalIdentifier: v4(),
         }));
 
@@ -251,7 +263,7 @@ export const createCoreViews = async (
           position: group.position,
           viewId: viewDefinition.id,
           workspaceId,
-          applicationId: applications.twentyStandardApplication.id,
+          applicationId: twentyStandardFlatApplication.id,
           universalIdentifier: v4(),
         }));
 

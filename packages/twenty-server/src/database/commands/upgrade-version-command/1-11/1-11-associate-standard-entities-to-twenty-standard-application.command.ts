@@ -8,7 +8,7 @@ import {
   NotV2YetAllMetadataName,
 } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { DataSource, FindOperator, IsNull, Not, Or, Repository } from 'typeorm';
+import { DataSource, IsNull, Not, Or, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -16,10 +16,10 @@ import {
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/core-modules/application/constants/twenty-standard-applications';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 const ALL_METADATA_NAME_TO_MIGRATE = [
   ...Object.keys(ALL_METADATA_NAME),

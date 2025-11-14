@@ -15,9 +15,7 @@ import {
 } from 'src/engine/workspace-flat-map-cache/exceptions/workspace-flat-map-cache.exception';
 
 @Injectable()
-export abstract class WorkspaceFlatMapCacheService<
-  T,
-> {
+export abstract class WorkspaceFlatMapCacheService<T> {
   protected readonly logger = new Logger(this.constructor.name);
 
   private readonly localCacheFlatMaps = new Map<string, T>();

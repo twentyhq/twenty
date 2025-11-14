@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { v4 } from 'uuid';
 
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewOpenRecordInType } from 'src/engine/metadata-modules/view/types/view-open-record-in-type.type';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
@@ -9,16 +10,15 @@ import {
   DASHBOARD_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { type TwentyStandardApplication } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/twenty-standard-applications';
 
 export const dashboardsAllView = ({
   objectMetadataItems,
   useCoreNaming = false,
-  applications,
+  twentyStandardFlatApplication,
 }: {
   objectMetadataItems: ObjectMetadataEntity[];
   useCoreNaming?: boolean;
-  applications: TwentyStandardApplication;
+ twentyStandardFlatApplication: FlatApplication;
 }): ViewDefinition => {
   const dashboardObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.dashboard,
@@ -33,7 +33,7 @@ export const dashboardsAllView = ({
   return {
     id,
     universalIdentifier: id,
-    applicationId: applications.twentyStandardApplication.id,
+    applicationId: twentyStandardFlatApplication.id,
     name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Dashboards',
     objectMetadataId: dashboardObjectMetadata.id ?? '',
     type: 'table',
