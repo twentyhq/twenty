@@ -218,57 +218,54 @@ export class ObjectMetadataServiceV2 {
       flatObjectMetadatasToDeleteById: {},
     };
 
-    const flatEntityToProcessById = deleteObjectInputs.reduce(
-      (accumulator, deleteObjectInput) => {
-        const {
-          flatFieldMetadatasToDelete,
-          flatObjectMetadataToDelete,
-          flatIndexToDelete,
-        } = fromDeleteObjectInputToFlatFieldMetadatasToDelete({
-          flatObjectMetadataMaps,
-          flatIndexMaps,
-          flatFieldMetadataMaps,
-          deleteObjectInput,
-        });
+    const {
+      flatFieldMetadatasToDeleteById,
+      flatIndexToDeleteById,
+      flatObjectMetadatasToDeleteById,
+    } = deleteObjectInputs.reduce((accumulator, deleteObjectInput) => {
+      const {
+        flatFieldMetadatasToDelete,
+        flatObjectMetadataToDelete,
+        flatIndexToDelete,
+      } = fromDeleteObjectInputToFlatFieldMetadatasToDelete({
+        flatObjectMetadataMaps,
+        flatIndexMaps,
+        flatFieldMetadataMaps,
+        deleteObjectInput,
+      });
 
-        return {
-          flatFieldMetadatasToDeleteById: {
-            ...accumulator.flatFieldMetadatasToDeleteById,
-            ...fromArrayToUniqueKeyRecord({
-              array: flatFieldMetadatasToDelete,
-              uniqueKey: 'id',
-            }),
-          },
-          flatIndexToDeleteById: {
-            ...accumulator.flatIndexToDeleteById,
-            ...fromArrayToUniqueKeyRecord({
-              array: flatIndexToDelete,
-              uniqueKey: 'id',
-            }),
-          },
-          flatObjectMetadatasToDeleteById: {
-            ...accumulator.flatObjectMetadatasToDeleteById,
-            [flatObjectMetadataToDelete.id]: flatObjectMetadataToDelete,
-          },
-        };
-      },
-      initialAccumulator,
-    );
+      return {
+        flatFieldMetadatasToDeleteById: {
+          ...accumulator.flatFieldMetadatasToDeleteById,
+          ...fromArrayToUniqueKeyRecord({
+            array: flatFieldMetadatasToDelete,
+            uniqueKey: 'id',
+          }),
+        },
+        flatIndexToDeleteById: {
+          ...accumulator.flatIndexToDeleteById,
+          ...fromArrayToUniqueKeyRecord({
+            array: flatIndexToDelete,
+            uniqueKey: 'id',
+          }),
+        },
+        flatObjectMetadatasToDeleteById: {
+          ...accumulator.flatObjectMetadatasToDeleteById,
+          [flatObjectMetadataToDelete.id]: flatObjectMetadataToDelete,
+        },
+      };
+    }, initialAccumulator);
 
     const {
       flatFieldMetadatasToDelete,
       flatObjectMetadatasToDelete,
       flatIndexToDelete,
     } = {
-      flatFieldMetadatasToDelete: Object.values(
-        flatEntityToProcessById.flatFieldMetadatasToDeleteById,
-      ),
+      flatFieldMetadatasToDelete: Object.values(flatFieldMetadatasToDeleteById),
       flatObjectMetadatasToDelete: Object.values(
-        flatEntityToProcessById.flatObjectMetadatasToDeleteById,
+        flatObjectMetadatasToDeleteById,
       ),
-      flatIndexToDelete: Object.values(
-        flatEntityToProcessById.flatIndexToDeleteById,
-      ),
+      flatIndexToDelete: Object.values(flatIndexToDeleteById),
     };
 
     const validateAndBuildResult =
