@@ -6,7 +6,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -105,7 +105,6 @@ const validateOtherFieldMetadataNamesConflict = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): void => {
-
   for (const updatedField of otherObjectFlatFieldMetadatasToUpdate) {
     const targetObject =
       flatObjectMetadataMaps.byId[updatedField.objectMetadataId];
@@ -117,12 +116,11 @@ const validateOtherFieldMetadataNamesConflict = ({
       );
     }
 
-    const allFieldsOnTargetObject = findManyFlatEntityByIdInFlatEntityMapsOrThrow(
-      {
+    const allFieldsOnTargetObject =
+      findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityMaps: flatFieldMetadataMaps,
         flatEntityIds: targetObject.fieldMetadataIds,
-      },
-    );
+      });
 
     const conflictingField = allFieldsOnTargetObject.find(
       (existingField) =>

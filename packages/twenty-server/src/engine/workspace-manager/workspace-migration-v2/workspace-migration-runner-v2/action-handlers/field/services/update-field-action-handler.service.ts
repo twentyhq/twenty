@@ -265,14 +265,24 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
       }
     } else {
-      const oldColumnName = isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ? flatFieldMetadata.settings.joinColumnName : update.from;
-      if(!isDefined(oldColumnName)) {
+      const oldColumnName = isMorphOrRelationFlatFieldMetadata(
+        flatFieldMetadata,
+      )
+        ? flatFieldMetadata.settings.joinColumnName
+        : update.from;
+
+      if (!isDefined(oldColumnName)) {
         throw new WorkspaceMigrationRunnerException(
           'Old column name is not defined for relation field',
           WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
         );
       }
-      const newColumnName = isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) ? computeMorphOrRelationFieldJoinColumnName({ name: update.to }) : update.to;
+      const newColumnName = isMorphOrRelationFlatFieldMetadata(
+        flatFieldMetadata,
+      )
+        ? computeMorphOrRelationFieldJoinColumnName({ name: update.to })
+        : update.to;
+
       await this.workspaceSchemaManagerService.columnManager.renameColumn({
         queryRunner,
         schemaName,
