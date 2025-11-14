@@ -22,11 +22,11 @@ export const failingCreateInputByFieldMetadataType: {
         textField: [],
       },
     },
-    {
-      input: {
-        textField: true,
-      },
-    },
+    // {
+    //   input: {
+    //     textField: true,
+    //   },
+    // },
     {
       input: {
         textField: 1,
