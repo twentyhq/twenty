@@ -329,6 +329,11 @@ export const failingCreateInputByFieldMetadataType: {
         phonesField: 'not-a-phone',
       },
     },
+    {
+      input: {
+        phonesField: 'not a second phone',
+      },
+    },
   ],
   [FieldMetadataType.FULL_NAME]: [
     {
