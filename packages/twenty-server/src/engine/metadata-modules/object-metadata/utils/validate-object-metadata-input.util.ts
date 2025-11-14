@@ -1,11 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { validateMetadataNameIsNotTooLongOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils';
@@ -13,7 +13,7 @@ import { validateMetadataNameIsNotTooShortOrThrow } from 'src/engine/metadata-mo
 import { validateMetadataNameOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-or-throw.utils';
 
 export const validateObjectMetadataInputNamesOrThrow = <
-  T extends UpdateObjectPayload | CreateObjectInput,
+  T extends UpdateObjectPayload | CreateOneObjectInput,
 >({
   namePlural,
   nameSingular,
@@ -46,7 +46,7 @@ export const validateObjectMetadataInputNameOrThrow = (name: string): void => {
 };
 
 export const validateObjectMetadataInputLabelsOrThrow = <
-  T extends CreateObjectInput,
+  T extends CreateOneObjectInput,
 >({
   labelPlural,
   labelSingular,

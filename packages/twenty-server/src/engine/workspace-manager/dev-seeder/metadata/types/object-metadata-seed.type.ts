@@ -1,6 +1,6 @@
-import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 export type ObjectMetadataSeed = Omit<
-  CreateObjectInput,
+  CreateOneObjectInput,
   'workspaceId' | 'dataSourceId' | 'fields'
 >;

@@ -827,20 +827,6 @@ export type CreateFieldInput = {
   type: FieldMetadataType;
 };
 
-export type CreateObjectInput = {
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
-  isRemote?: InputMaybe<Scalars['Boolean']>;
-  labelPlural: Scalars['String'];
-  labelSingular: Scalars['String'];
-  namePlural: Scalars['String'];
-  nameSingular: Scalars['String'];
-  primaryKeyColumnType?: InputMaybe<Scalars['String']>;
-  primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']>;
-  shortcut?: InputMaybe<Scalars['String']>;
-};
-
 export type CreateOneAppTokenInput = {
   /** The record to create */
   appToken: CreateAppTokenInput;
@@ -852,8 +838,17 @@ export type CreateOneFieldMetadataInput = {
 };
 
 export type CreateOneObjectInput = {
-  /** The record to create */
-  object: CreateObjectInput;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
+  isRemote?: InputMaybe<Scalars['Boolean']>;
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+  primaryKeyColumnType?: InputMaybe<Scalars['String']>;
+  primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']>;
+  shortcut?: InputMaybe<Scalars['String']>;
 };
 
 export type CreatePageLayoutInput = {

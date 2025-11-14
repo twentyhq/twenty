@@ -10,7 +10,7 @@ import {
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 
 @InputType()
-export class CreateObjectInput {
+export class CreateOneObjectInput {
   @IsString()
   @IsNotEmpty()
   @Field()

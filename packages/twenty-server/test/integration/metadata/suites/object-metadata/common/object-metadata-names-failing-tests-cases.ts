@@ -1,9 +1,9 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 
-import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { type CreateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 export const OBJECT_METADATA_NAMES_FAILING_TEST_CASES: EachTestingContext<
-  Partial<Omit<CreateObjectInput, 'workspaceId' | 'dataSourceId'>>
+  Partial<Omit<CreateOneObjectInput, 'workspaceId' | 'dataSourceId'>>
 >[] = [
   {
     title: 'when nameSingular has invalid characters',
