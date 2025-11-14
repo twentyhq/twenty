@@ -32,9 +32,9 @@ describe('computeSchemaComponents', () => {
         "lastName": "Osinski",
       },
       "fieldLinks": {
+        "additionalLinks": [],
         "primaryLinkLabel": "",
         "primaryLinkUrl": "https://narrow-help.net/",
-        "secondaryLinks": [],
       },
       "fieldMultiSelect": [
         "OPTION_1",
@@ -46,7 +46,9 @@ describe('computeSchemaComponents', () => {
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "06 10 20 30 40",
       },
-      "fieldSelect": "OPTION_1",
+      "fieldSelect": [
+        "OPTION_1",
+      ],
     },
     "properties": {
       "fieldActor": {
@@ -533,9 +535,9 @@ describe('computeSchemaComponents', () => {
         "lastName": "Jones",
       },
       "fieldLinks": {
+        "additionalLinks": [],
         "primaryLinkLabel": "",
         "primaryLinkUrl": "https://unlawful-blowgun.biz",
-        "secondaryLinks": [],
       },
       "fieldMultiSelect": [
         "OPTION_1",
@@ -547,7 +549,9 @@ describe('computeSchemaComponents', () => {
         "primaryPhoneCountryCode": "FR",
         "primaryPhoneNumber": "06 10 20 30 40",
       },
-      "fieldSelect": "OPTION_1",
+      "fieldSelect": [
+        "OPTION_1",
+      ],
     },
     "properties": {
       "fieldActor": {
