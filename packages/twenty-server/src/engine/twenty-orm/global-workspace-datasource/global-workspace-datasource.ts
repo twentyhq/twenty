@@ -16,10 +16,9 @@ import { EntitySchemaTransformer } from 'typeorm/entity-schema/EntitySchemaTrans
 import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
 import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBuilder';
 
+import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -67,6 +66,12 @@ export class GlobalWorkspaceDataSource extends DataSource {
     });
   }
 
+  get authContext(): WorkspaceAuthContext {
+    const context = getWorkspaceContext();
+
+    return context.authContext;
+  }
+
   get featureFlagMap(): FeatureFlagMap {
     const context = getWorkspaceContext();
 
@@ -82,18 +87,18 @@ export class GlobalWorkspaceDataSource extends DataSource {
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
     permissionOptions?: RolePermissionConfig,
-    authContext?: AuthContext,
   ): WorkspaceRepository<Entity> {
     const manager = this.createEntityManager();
 
-    return manager.getRepository(target, permissionOptions, authContext);
+    return manager.getRepository(target, permissionOptions, this.authContext);
   }
 
   override findMetadata(
     target: EntityTarget<ObjectLiteral>,
   ): EntityMetadata | undefined {
     const context = getWorkspaceContext();
-    const { workspaceId, metadataVersion } = context;
+    const { authContext, metadataVersion } = context;
+    const workspaceId = authContext.workspace.id;
     const cacheKey = `${workspaceId}-${metadataVersion}`;
 
     const cachedEntityMetadata = this.getCachedEntityMetadata(cacheKey);
@@ -123,12 +128,17 @@ export class GlobalWorkspaceDataSource extends DataSource {
     }
 
     const context = getWorkspaceContext();
-    const fullContext: WorkspaceInternalContext = {
-      ...context,
-      eventEmitterService: this.eventEmitterService,
-    };
 
-    return new WorkspaceEntityManager(fullContext, this, queryRunner);
+    return new WorkspaceEntityManager(
+      {
+        workspaceId: context.authContext.workspace.id,
+        objectMetadataMaps: context.objectMetadataMaps,
+        featureFlagsMap: context.featureFlagsMap,
+        eventEmitterService: this.eventEmitterService,
+      },
+      this,
+      queryRunner,
+    );
   }
 
   override createQueryRunner(
