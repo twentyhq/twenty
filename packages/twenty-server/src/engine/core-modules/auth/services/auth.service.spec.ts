@@ -128,6 +128,7 @@ describe('AuthService', () => {
             checkUserWorkspaceExists: jest.fn(),
             addUserToWorkspaceIfUserNotInWorkspace: jest.fn(),
             findAvailableWorkspacesByEmail: jest.fn(),
+            syncUserWorkspacesFromUser: jest.fn(),
           },
         },
         {

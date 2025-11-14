@@ -4277,12 +4277,20 @@ export type UserMappingOptionsUser = {
 
 export type UserWorkspace = {
   __typename?: 'UserWorkspace';
+  canAccessFullAdminPanel: Scalars['Boolean'];
+  canImpersonate: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
+  disabled?: Maybe<Scalars['Boolean']>;
+  email: Scalars['String'];
+  firstName: Scalars['String'];
   id: Scalars['UUID'];
+  isEmailVerified: Scalars['Boolean'];
+  lastName: Scalars['String'];
   locale: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   objectsPermissions?: Maybe<Array<ObjectPermission>>;
+  passwordHash?: Maybe<Scalars['String']>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
   updatedAt: Scalars['DateTime'];

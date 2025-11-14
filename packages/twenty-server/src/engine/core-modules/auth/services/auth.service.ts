@@ -124,6 +124,7 @@ export class AuthService {
         user,
         workspace,
       );
+      await this.userWorkspaceService.syncUserWorkspacesFromUser(user);
 
       return;
     }

@@ -85,6 +85,7 @@ describe('UserService', () => {
           provide: UserWorkspaceService,
           useValue: {
             deleteUserWorkspace: jest.fn(),
+            syncUserWorkspacesFromUser: jest.fn(),
           },
         },
         {

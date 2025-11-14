@@ -278,6 +278,8 @@ export class SignInUpService {
         params.workspace,
       );
 
+      await this.userWorkspaceService.syncUserWorkspacesFromUser(user);
+
       return user;
     }
 
@@ -292,6 +294,8 @@ export class SignInUpService {
       user,
       params.workspace,
     );
+
+    await this.userWorkspaceService.syncUserWorkspacesFromUser(user);
 
     return user;
   }
@@ -347,8 +351,6 @@ export class SignInUpService {
     const savedUser = queryRunner
       ? await queryRunner.manager.save(UserEntity, userCreated)
       : await this.userRepository.save(userCreated);
-
-    await this.userWorkspaceService.syncUserWorkspacesFromUser(savedUser);
 
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
@@ -530,6 +532,11 @@ export class SignInUpService {
           workspaceId: workspace.id,
           value: true,
         },
+        queryRunner,
+      );
+
+      await this.userWorkspaceService.syncUserWorkspacesFromUser(
+        user,
         queryRunner,
       );
 
