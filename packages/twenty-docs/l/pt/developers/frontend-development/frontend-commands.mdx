@@ -1,5 +1,5 @@
 ---
-title: Comandos de Frontend
+title: Comandos do Frontend
 image: /images/user-guide/create-workspace/workspace-cover.png
 ---
 
@@ -7,15 +7,15 @@ image: /images/user-guide/create-workspace/workspace-cover.png
   <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Header" />
 </Frame>
 
-## Comandos úteis
+## Comandos Úteis
 
-### Iniciando o app
+### Iniciando o aplicativo
 
 ```bash
 npx nx start twenty-front
 ```
 
-### Regenerate graphql schema based on API graphql schema
+### Regenerar esquema GraphQL baseado no esquema de API GraphQL
 
 ```bash
 npx nx run twenty-front:graphql:generate --configuration=metadata
@@ -49,11 +49,11 @@ npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve
 npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
-## Pilha Tecnológica
+## Pilha de Tecnologias
 
-O projeto tem uma pilha limpa e simples, com código boilerplate mínimo.
+O projeto possui uma pilha limpa e simples, com pouco código boilerplate.
 
-**App**
+**Aplicativo**
 
 - [React](https://react.dev/)
 - [Apollo](https://www.apollographql.com/docs/)
@@ -76,21 +76,21 @@ O projeto tem uma pilha limpa e simples, com código boilerplate mínimo.
 
 ### Roteamento
 
-[React Router](https://reactrouter.com/) lida com o roteamento.
+[React Router](https://reactrouter.com/) gerencia o roteamento.
 
-Para evitar [re-renderizações](/l/pt/developers/frontend-development/best-practices-front#managing-re-renders) desnecessárias, toda a lógica de roteamento está em um `useEffect` em `PageChangeEffect`.
+Para evitar [re-renderizações](/l/pt/developers/frontend-development/best-practices-front#managing-re-renders) desnecessárias, toda a lógica de roteamento está em um `useEffect` no `PageChangeEffect`.
 
 ### Gerenciamento de Estado
 
-[Recoil](https://recoiljs.org/docs/introduction/core-concepts) lida com o gerenciamento de estado.
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) gerencia o estado.
 
-Veja [melhores práticas](/l/pt/developers/frontend-development/best-practices-front#state-management) para mais informações sobre o gerenciamento de estado.
+Veja [melhores práticas](/l/pt/developers/frontend-development/best-practices-front#state-management) para mais informações sobre gerenciamento de estado.
 
 ## Testes
 
-[Jest](https://jestjs.io/) serve como ferramenta para testes unitários enquanto [Storybook](https://storybook.js.org/) é para testes de componentes.
+[Jest](https://jestjs.io/) serve como ferramenta para testes unitários enquanto [Storybook](https://storybook.js.org/) para teste de componentes.
 
-Jest é utilizado principalmente para testar funções utilitárias, não os próprios componentes.
+Jest é principalmente para testar funções utilitárias, e não os componentes em si.
 
-Storybook destina-se a testar o comportamento de componentes isolados, bem como a exibir o sistema de design.
+Storybook é para testar o comportamento de componentes isolados, bem como exibir o sistema de design.
 
