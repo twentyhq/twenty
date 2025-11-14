@@ -219,7 +219,7 @@ export class ApplicationSyncService {
     );
 
     for (const fieldToDelete of fieldsToDelete) {
-      await this.fieldMetadataServiceV2.updateOneObjectMetadata({
+      await this.fieldMetadataServiceV2.updateOne({
         updateFieldInput: {
           id: fieldToDelete.id,
           isActive: false,
