@@ -1,0 +1,91 @@
+{
+  "tabs": {
+    "userGuide": {
+      "label": "Uživatelská příručka",
+      "groups": {
+        "gettingStarted": {
+          "label": "Začněme"
+        },
+        "dataModel": {
+          "label": "Datový model"
+        },
+        "crmEssentials": {
+          "label": "CRM základy"
+        },
+        "views": {
+          "label": "Pohledy"
+        },
+        "workflows": {
+          "label": "Pracovní postupy"
+        },
+        "collaboration": {
+          "label": "Spolupráce"
+        },
+        "integrationsApi": {
+          "label": "Integrace & API"
+        },
+        "reporting": {
+          "label": "Reportování"
+        },
+        "settings": {
+          "label": "Nastavení"
+        },
+        "pricing": {
+          "label": "Ceny"
+        },
+        "resources": {
+          "label": "Zdroje"
+        }
+      }
+    },
+    "developers": {
+      "label": "Vývojáři",
+      "groups": {
+        "developersGroup": {
+          "label": "Vývojáři"
+        },
+        "devGettingStarted": {
+          "label": "Začněme",
+          "groups": {
+            "selfHosting": {
+              "label": "Samohostování"
+            },
+            "apiAndWebhooks": {
+              "label": "API a Webhooky"
+            }
+          }
+        },
+        "contributing": {
+          "label": "Přispěje",
+          "groups": {
+            "frontendDevelopment": {
+              "label": "Vývoj frontendu",
+              "groups": {
+                "twentyUi": {
+                  "label": "Twenty UI",
+                  "groups": {
+                    "display": {
+                      "label": "Zobrazení"
+                    },
+                    "feedback": {
+                      "label": "Komentář"
+                    },
+                    "input": {
+                      "label": "Input"
+                    },
+                    "navigation": {
+                      "label": "Navigation"
+                    }
+                  }
+                }
+              }
+            },
+            "backendDevelopment": {
+              "label": "Vývoj backendu"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 ---
-title: 圖示選擇器
+title: 图标选择器
 image: /images/user-guide/github/github-header.png
 ---
 
@@ -7,7 +7,7 @@ image: /images/user-guide/github/github-header.png
   <img src="/images/user-guide/github/github-header.png" alt="Header" />
 </Frame>
 
-一個基於下拉列表的圖示選擇器，允許使用者從清單中選擇圖示。
+一个基于下拉菜单的图标选择器，允许用户从列表中选择图标。
 
 <Tabs>
 
@@ -42,15 +42,15 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-| 屬性              | 類型       | 描述                                                                                                      |
-| --------------- | -------- | ------------------------------------------------------------------------------------------------------- |
-| 禁用              | 布爾值      | 如果設為 `true`，將停用圖示選擇器                                                                                    |
-| 變更事件            | function | 用戶選擇圖示時觸發的回調函數。 接收一個具有 `iconKey` 和 `Icon` 屬性的對象                                                         |
-| selectedIconKey | 字串       | 最初選擇的圖示的鍵值                                                                                              |
-| onClickOutside  | function | 當用戶點擊下拉列表外部時觸發的回調函數                                                                                     |
-| onClose         | function | 下拉列表關閉時觸發的回調函數                                                                                          |
-| onOpen          | function | 下拉列表打開時觸發的回調函數                                                                                          |
-| 變體              | 字串       | The visual style variant of the clickable icon. 選項包括：`primary`，`secondary` 和 `tertiary` |
+| 属性              | 类型       | 描述                                                     |
+| --------------- | -------- | ------------------------------------------------------ |
+| disabled        | 布尔值      | 如果设置为 `true`，则禁用图标选择器                                  |
+| onChange        | 函数       | 当用户选择图标时触发的回调函数。 它接收一个具有 `iconKey` 和 `Icon` 属性的对象      |
+| selectedIconKey | 字符串      | 初始选中的图标键                                               |
+| onClickOutside  | 函数       | 当用户点击下拉菜单外部时触发的回调函数                                    |
+| onClose         | 函数       | 当下拉菜单关闭时触发的回调函数                                        |
+| onOpen          | function | 当下拉菜单打开时触发的回调函数                                        |
+| 变体              | 字符串      | 可点击图标的视觉风格变体。 可选项包括：`primary`、`secondary` 和 `tertiary` |
 
 </Tab>
 </Tabs>
